@@ -1,7 +1,7 @@
 
-#include "zfstream.h"
+#अन्तर्भाव "zfstream.h"
 
-int main() {
+पूर्णाङ्क main() {
 
   // Construct a stream object with this filebuffer.  Anything sent
   // to this stream will go to standard out.
@@ -17,8 +17,8 @@ int main() {
   setcompressionlevel( os, Z_DEFAULT_COMPRESSION )
     << "I'm compressing again" << endl;
 
-  os.close();
+  os.बंद();
 
-  return 0;
+  फर्काऊ 0;
 
 }

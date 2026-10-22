@@ -12,17 +12,17 @@
 #  define Z_ONCE
 #endif
 
-#include "zutil.h"
-#include "inftrees.h"
-#include "inflate.h"
+#अन्तर्भाव "zutil.h"
+#अन्तर्भाव "inftrees.h"
+#अन्तर्भाव "inflate.h"
 
-#ifndef NULL
-#  define NULL 0
+#ifndef रिक्त
+#  define रिक्त 0
 #endif
 
 #define MAXBITS 15
 
-const char inflate_copyright[] =
+अचर वर्ण inflate_copyright[] =
    " inflate 1.3.2.1 Copyright 1995-2026 Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -43,40 +43,40 @@ const char inflate_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
-                                unsigned codes, code FAR * FAR *table,
-                                unsigned FAR *bits, unsigned short FAR *work) {
-    unsigned len;               /* a code's length in bits */
-    unsigned sym;               /* index of code symbols */
-    unsigned min, max;          /* minimum and maximum code lengths */
-    unsigned root;              /* number of index bits for root table */
-    unsigned curr;              /* number of index bits for current table */
-    unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
-    unsigned used;              /* code entries in table used */
-    unsigned huff;              /* Huffman code */
-    unsigned incr;              /* for incrementing code, index */
-    unsigned fill;              /* index for replicating entries */
-    unsigned low;               /* low bits for current root entry */
-    unsigned mask;              /* mask for low root bits */
+पूर्णाङ्क ZLIB_INTERNAL inflate_table(codetype type, अचिन्हित लघु FAR *lens,
+                                अचिन्हित codes, code FAR * FAR *table,
+                                अचिन्हित FAR *bits, अचिन्हित लघु FAR *work) {
+    अचिन्हित len;               /* a code's length in bits */
+    अचिन्हित sym;               /* index of code symbols */
+    अचिन्हित min, max;          /* minimum and maximum code lengths */
+    अचिन्हित जरा;              /* number of index bits for root table */
+    अचिन्हित curr;              /* number of index bits for current table */
+    अचिन्हित drop;              /* code bits to drop for sub-table */
+    पूर्णाङ्क बायाँ;                   /* number of prefix codes available */
+    अचिन्हित used;              /* code entries in table used */
+    अचिन्हित huff;              /* Huffman code */
+    अचिन्हित incr;              /* for incrementing code, index */
+    अचिन्हित fill;              /* index for replicating entries */
+    अचिन्हित तल्लो;               /* low bits for current root entry */
+    अचिन्हित mask;              /* mask for low root bits */
     code here;                  /* table entry for duplication */
     code FAR *next;             /* next available space in table */
-    const unsigned short FAR *base = NULL;  /* base value table to use */
-    const unsigned short FAR *extra = NULL; /* extra bits table to use */
-    unsigned match = 0;         /* use base and extra for symbol >= match */
-    unsigned short count[MAXBITS+1];    /* number of codes of each length */
-    unsigned short offs[MAXBITS+1];     /* offsets in table for each length */
-    static const unsigned short lbase[31] = { /* Length codes 257..285 base */
+    अचर अचिन्हित लघु FAR *base = रिक्त;  /* base value table to use */
+    अचर अचिन्हित लघु FAR *extra = रिक्त; /* extra bits table to use */
+    अचिन्हित match = 0;         /* use base and extra for symbol >= match */
+    अचिन्हित लघु गन्ती[MAXBITS+1];    /* number of codes of each length */
+    अचिन्हित लघु offs[MAXBITS+1];     /* offsets in table for each length */
+    स्थिर अचर अचिन्हित लघु lbase[31] = { /* Length codes 257..285 base */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
         35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0};
-    static const unsigned short lext[31] = { /* Length codes 257..285 extra */
+    स्थिर अचर अचिन्हित लघु lext[31] = { /* Length codes 257..285 extra */
         16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18,
         19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 68, 193};
-    static const unsigned short dbase[32] = { /* Distance codes 0..29 base */
+    स्थिर अचर अचिन्हित लघु dbase[32] = { /* Distance codes 0..29 base */
         1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
         257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
         8193, 12289, 16385, 24577, 0, 0};
-    static const unsigned short dext[32] = { /* Distance codes 0..29 extra */
+    स्थिर अचर अचिन्हित लघु dext[32] = { /* Distance codes 0..29 extra */
         16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22,
         23, 23, 24, 24, 25, 25, 26, 26, 27, 27,
         28, 28, 29, 29, 64, 64};
@@ -113,47 +113,47 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
      */
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    for (len = 0; len <= MAXBITS; len++)
-        count[len] = 0;
-    for (sym = 0; sym < codes; sym++)
-        count[lens[sym]]++;
+    लागि (len = 0; len <= MAXBITS; len++)
+        गन्ती[len] = 0;
+    लागि (sym = 0; sym < codes; sym++)
+        गन्ती[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
-    root = *bits;
-    for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) {                     /* no symbols to code at all */
-        here.op = (unsigned char)64;    /* invalid code marker */
-        here.bits = (unsigned char)1;
-        here.val = (unsigned short)0;
+    जरा = *bits;
+    लागि (max = MAXBITS; max >= 1; max--)
+        यदि (गन्ती[max] != 0) रोक;
+    यदि (जरा > max) जरा = max;
+    यदि (max == 0) {                     /* no symbols to code at all */
+        here.op = (अचिन्हित वर्ण)64;    /* invalid code marker */
+        here.bits = (अचिन्हित वर्ण)1;
+        here.val = (अचिन्हित लघु)0;
         *(*table)++ = here;             /* make a table to force an error */
         *(*table)++ = here;
         *bits = 1;
-        return 0;     /* no symbols, but wait for decoding to report error */
+        फर्काऊ 0;     /* no symbols, but wait for decoding to report error */
     }
-    for (min = 1; min < max; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+    लागि (min = 1; min < max; min++)
+        यदि (गन्ती[min] != 0) रोक;
+    यदि (जरा < min) जरा = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;
-        left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+    बायाँ = 1;
+    लागि (len = 1; len <= MAXBITS; len++) {
+        बायाँ <<= 1;
+        बायाँ -= गन्ती[len];
+        यदि (बायाँ < 0) फर्काऊ -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    यदि (बायाँ > 0 && (type == CODES || max != 1))
+        फर्काऊ -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + count[len];
+    लागि (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + गन्ती[len];
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+    लागि (sym = 0; sym < codes; sym++)
+        यदि (lens[sym] != 0) work[offs[lens[sym]]++] = (अचिन्हित लघु)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -187,16 +187,16 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
      */
 
     /* set up for code type */
-    switch (type) {
-    case CODES:
+    विकल्प (type) {
+    पक्ष CODES:
         match = 20;
-        break;
-    case LENS:
+        रोक;
+    पक्ष LENS:
         base = lbase;
         extra = lext;
         match = 257;
-        break;
-    case DISTS:
+        रोक;
+    पक्ष DISTS:
         base = dbase;
         extra = dext;
     }
@@ -206,31 +206,31 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     sym = 0;                    /* starting code symbol */
     len = min;                  /* starting code length */
     next = *table;              /* current table to fill in */
-    curr = root;                /* current table index bits */
+    curr = जरा;                /* current table index bits */
     drop = 0;                   /* current bits to drop from code for index */
-    low = (unsigned)(-1);       /* trigger new sub-table when len > root */
-    used = 1U << root;          /* use root table entries */
+    तल्लो = (अचिन्हित)(-1);       /* trigger new sub-table when len > root */
+    used = 1U << जरा;          /* use root table entries */
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used > ENOUGH_LENS) ||
+    यदि ((type == LENS && used > ENOUGH_LENS) ||
         (type == DISTS && used > ENOUGH_DISTS))
-        return 1;
+        फर्काऊ 1;
 
     /* process all codes and make table entries */
-    for (;;) {
+    लागि (;;) {
         /* create table entry */
-        here.bits = (unsigned char)(len - drop);
-        if (work[sym] + 1U < match) {
-            here.op = (unsigned char)0;
+        here.bits = (अचिन्हित वर्ण)(len - drop);
+        यदि (work[sym] + 1U < match) {
+            here.op = (अचिन्हित वर्ण)0;
             here.val = work[sym];
         }
-        else if (work[sym] >= match) {
-            here.op = (unsigned char)(extra[work[sym] - match]);
+        अन्यथा यदि (work[sym] >= match) {
+            here.op = (अचिन्हित वर्ण)(extra[work[sym] - match]);
             here.val = base[work[sym] - match];
         }
-        else {
-            here.op = (unsigned char)(32 + 64);         /* end of block */
+        अन्यथा {
+            here.op = (अचिन्हित वर्ण)(32 + 64);         /* end of block */
             here.val = 0;
         }
 
@@ -238,76 +238,76 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
         incr = 1U << (len - drop);
         fill = 1U << curr;
         min = fill;                 /* save offset to next table */
-        do {
+        गर {
             fill -= incr;
             next[(huff >> drop) + fill] = here;
-        } while (fill != 0);
+        } जबसम्म (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        जबसम्म (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        यदि (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        अन्यथा
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        यदि (--(गन्ती[len]) == 0) {
+            यदि (len == max) रोक;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        यदि (len > जरा && (huff & mask) != तल्लो) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
-                drop = root;
+            यदि (drop == 0)
+                drop = जरा;
 
             /* increment past last table */
             next += min;            /* here min is 1 << curr */
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
-                left -= count[curr + drop];
-                if (left <= 0) break;
+            बायाँ = (पूर्णाङ्क)(1 << curr);
+            जबसम्म (curr + drop < max) {
+                बायाँ -= गन्ती[curr + drop];
+                यदि (बायाँ <= 0) रोक;
                 curr++;
-                left <<= 1;
+                बायाँ <<= 1;
             }
 
             /* check for enough space */
             used += 1U << curr;
-            if ((type == LENS && used > ENOUGH_LENS) ||
+            यदि ((type == LENS && used > ENOUGH_LENS) ||
                 (type == DISTS && used > ENOUGH_DISTS))
-                return 1;
+                फर्काऊ 1;
 
             /* point entry in root table to sub-table */
-            low = huff & mask;
-            (*table)[low].op = (unsigned char)curr;
-            (*table)[low].bits = (unsigned char)root;
-            (*table)[low].val = (unsigned short)(next - *table);
+            तल्लो = huff & mask;
+            (*table)[तल्लो].op = (अचिन्हित वर्ण)curr;
+            (*table)[तल्लो].bits = (अचिन्हित वर्ण)जरा;
+            (*table)[तल्लो].val = (अचिन्हित लघु)(next - *table);
         }
     }
 
     /* fill in remaining table entry if code is incomplete (guaranteed to have
        at most one remaining entry, since if the code is incomplete, the
        maximum code length that was allowed to get this far is one bit) */
-    if (huff != 0) {
-        here.op = (unsigned char)64;            /* invalid code marker */
-        here.bits = (unsigned char)(len - drop);
-        here.val = (unsigned short)0;
+    यदि (huff != 0) {
+        here.op = (अचिन्हित वर्ण)64;            /* invalid code marker */
+        here.bits = (अचिन्हित वर्ण)(len - drop);
+        here.val = (अचिन्हित लघु)0;
         next[huff] = here;
     }
 
     /* set return parameters */
     *table += used;
-    *bits = root;
-    return 0;
+    *bits = जरा;
+    फर्काऊ 0;
 }
 
 #ifdef BUILDFIXED
@@ -318,23 +318,23 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
   return before any other threads are allowed to call inflate.
  */
 
-static code *lenfix, *distfix;
-static code fixed[544];
+स्थिर code *lenfix, *distfix;
+स्थिर code fixed[544];
 
 /* State for z_once(). */
 local z_once_t built = Z_ONCE_INIT;
 
-local void buildtables(void) {
-    unsigned sym, bits;
-    static code *next;
-    unsigned short lens[288], work[288];
+local शून्य buildtables(शून्य) {
+    अचिन्हित sym, bits;
+    स्थिर code *next;
+    अचिन्हित लघु lens[288], work[288];
 
     /* literal/length table */
     sym = 0;
-    while (sym < 144) lens[sym++] = 8;
-    while (sym < 256) lens[sym++] = 9;
-    while (sym < 280) lens[sym++] = 7;
-    while (sym < 288) lens[sym++] = 8;
+    जबसम्म (sym < 144) lens[sym++] = 8;
+    जबसम्म (sym < 256) lens[sym++] = 9;
+    जबसम्म (sym < 280) lens[sym++] = 7;
+    जबसम्म (sym < 288) lens[sym++] = 8;
     next = fixed;
     lenfix = next;
     bits = 9;
@@ -342,12 +342,12 @@ local void buildtables(void) {
 
     /* distance table */
     sym = 0;
-    while (sym < 32) lens[sym++] = 5;
+    जबसम्म (sym < 32) lens[sym++] = 5;
     distfix = next;
     bits = 5;
     inflate_table(DISTS, lens, 32, &(next), &(bits), work);
 }
-#else /* !BUILDFIXED */
+#अन्यथा /* !BUILDFIXED */
 #  include "inffixed.h"
 #endif /* BUILDFIXED */
 
@@ -361,7 +361,7 @@ local void buildtables(void) {
    used for threaded applications if atomics are not available, as it will
    not be thread-safe.
  */
-void inflate_fixed(struct inflate_state FAR *state) {
+शून्य inflate_fixed(संरचना inflate_state FAR *state) {
 #ifdef BUILDFIXED
     z_once(&built, buildtables);
 #endif /* BUILDFIXED */
@@ -372,7 +372,7 @@ void inflate_fixed(struct inflate_state FAR *state) {
 }
 
 #ifdef MAKEFIXED
-#include <stdio.h>
+#अन्तर्भाव <stdio.h>
 
 /*
    Write out the inffixed.h that will be #include'd above.  Defining MAKEFIXED
@@ -383,42 +383,42 @@ void inflate_fixed(struct inflate_state FAR *state) {
        cc -DMAKEFIXED -o fix inftrees.c zutil.c
        ./fix > inffixed.h
  */
-int main(void) {
-    unsigned low, size;
-    struct inflate_state state;
+पूर्णाङ्क main(शून्य) {
+    अचिन्हित तल्लो, size;
+    संरचना inflate_state state;
 
     inflate_fixed(&state);
-    puts("/* inffixed.h -- table for decoding fixed codes");
-    puts(" * Generated automatically by makefixed().");
-    puts(" */");
-    puts("");
-    puts("/* WARNING: this file should *not* be used by applications.");
-    puts("   It is part of the implementation of this library and is");
-    puts("   subject to change. Applications should only use zlib.h.");
-    puts(" */");
-    puts("");
+    माला_दो("/* inffixed.h -- table for decoding fixed codes");
+    माला_दो(" * Generated automatically by makefixed().");
+    माला_दो(" */");
+    माला_दो("");
+    माला_दो("/* WARNING: this file should *not* be used by applications.");
+    माला_दो("   It is part of the implementation of this library and is");
+    माला_दो("   subject to change. Applications should only use zlib.h.");
+    माला_दो(" */");
+    माला_दो("");
     size = 1U << 9;
-    printf("static const code lenfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 7) == 0) printf("\n    ");
-        printf("{%u,%u,%d}", (low & 127) == 99 ? 64 : state.lencode[low].op,
-               state.lencode[low].bits, state.lencode[low].val);
-        if (++low == size) break;
-        putchar(',');
+    म_लिखो("static const code lenfix[%u] = {", size);
+    तल्लो = 0;
+    लागि (;;) {
+        यदि ((तल्लो % 7) == 0) म_लिखो("\n    ");
+        म_लिखो("{%u,%u,%d}", (तल्लो & 127) == 99 ? 64 : state.lencode[तल्लो].op,
+               state.lencode[तल्लो].bits, state.lencode[तल्लो].val);
+        यदि (++तल्लो == size) रोक;
+        अक्षर_दो(',');
     }
-    puts("\n};");
+    माला_दो("\n};");
     size = 1U << 5;
-    printf("\nstatic const code distfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 6) == 0) printf("\n    ");
-        printf("{%u,%u,%d}", state.distcode[low].op, state.distcode[low].bits,
-               state.distcode[low].val);
-        if (++low == size) break;
-        putchar(',');
+    म_लिखो("\nstatic const code distfix[%u] = {", size);
+    तल्लो = 0;
+    लागि (;;) {
+        यदि ((तल्लो % 6) == 0) म_लिखो("\n    ");
+        म_लिखो("{%u,%u,%d}", state.distcode[तल्लो].op, state.distcode[तल्लो].bits,
+               state.distcode[तल्लो].val);
+        यदि (++तल्लो == size) रोक;
+        अक्षर_दो(',');
     }
-    puts("\n};");
-    return 0;
+    माला_दो("\n};");
+    फर्काऊ 0;
 }
 #endif /* MAKEFIXED */

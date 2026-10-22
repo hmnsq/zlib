@@ -12,7 +12,7 @@
 */
 
 
-#if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
+#यदि (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
         #ifndef __USE_FILE_OFFSET64
                 #define __USE_FILE_OFFSET64
         #endif
@@ -27,12 +27,12 @@
         #endif
 #endif
 
-#if defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
+#यदि defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
 // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
-#define FOPEN_FUNC(filename, mode) fopen(filename, mode)
+#define FOPEN_FUNC(filename, mode) ख_खोलो(filename, mode)
 #define FTELLO_FUNC(stream) ftello(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
-#else
+#अन्यथा
 #define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
 #define FTELLO_FUNC(stream) ftello64(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
@@ -43,29 +43,29 @@
 #ifndef _CRT_SECURE_NO_WARNINGS
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <errno.h>
-#include <fcntl.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <fcntl.h>
 
 #ifdef _WIN32
 # include <direct.h>
 # include <io.h>
-#else
+#अन्यथा
 # include <unistd.h>
 # include <utime.h>
 # include <sys/types.h>
 # include <sys/stat.h>
 #endif
 
-#include "zip.h"
-#include "ints.h"
+#अन्तर्भाव "zip.h"
+#अन्तर्भाव "ints.h"
 
 #ifdef _WIN32
         #define USEWIN32IOAPI
-        #include "iowin32.h"
+        #अन्तर्भाव "iowin32.h"
 #endif
 
 
@@ -76,16 +76,16 @@
 #ifdef _WIN32
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
-  (void)tmzip;
-  int ret = 0;
+स्थिर पूर्णाङ्क filetime(अचर वर्ण *f, tm_zip *tmzip, uLong *dt) {
+  (शून्य)tmzip;
+  पूर्णाङ्क ret = 0;
   {
       FILETIME ftLocal;
       HANDLE hFind;
       WIN32_FIND_DATAA ff32;
 
       hFind = FindFirstFileA(f,&ff32);
-      if (hFind != INVALID_HANDLE_VALUE)
+      यदि (hFind != INVALID_HANDLE_मान)
       {
         FileTimeToLocalFileTime(&(ff32.ftLastWriteTime),&ftLocal);
         FileTimeToDosDateTime(&ftLocal,((LPWORD)dt)+1,((LPWORD)dt)+0);
@@ -93,39 +93,39 @@ static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
         ret = 1;
       }
   }
-  return ret;
+  फर्काऊ ret;
 }
-#elif defined(__unix__) || defined(__unix) || defined(__APPLE__)
+#अथवायदि defined(__unix__) || defined(__unix) || defined(__APPLE__)
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
-  (void)dt;
-  int ret=0;
-  struct stat s;        /* results of stat() */
-  struct tm* filedate;
-  time_t tm_t=0;
+स्थिर पूर्णाङ्क filetime(अचर वर्ण *f, tm_zip *tmzip, uLong *dt) {
+  (शून्य)dt;
+  पूर्णाङ्क ret=0;
+  संरचना stat s;        /* results of stat() */
+  संरचना पंचांग* filedate;
+  समय_प्रकार tm_t=0;
 
-  if (strcmp(f,"-")!=0)
+  यदि (म_भेद(f,"-")!=0)
   {
-    char name[MAXFILENAME+1];
-    size_t len = strlen(f);
-    if (len > MAXFILENAME)
+    वर्ण name[MAXFILENAME+1];
+    माप_प्रकार len = म_माप(f);
+    यदि (len > MAXFILENAME)
       len = MAXFILENAME;
 
-    strncpy(name, f,MAXFILENAME-1);
+    म_नकलन(name, f,MAXFILENAME-1);
     /* strncpy doesn't append the trailing NULL, of the string is too long. */
     name[ MAXFILENAME ] = '\0';
 
-    if (name[len - 1] == '/')
+    यदि (name[len - 1] == '/')
       name[len - 1] = '\0';
     /* not all systems allow stat'ing a file with / appended */
-    if (stat(name,&s)==0)
+    यदि (stat(name,&s)==0)
     {
       tm_t = s.st_mtime;
       ret = 1;
     }
   }
-  filedate = localtime(&tm_t);
+  filedate = स_स्थानीय(&tm_t);
 
   tmzip->tm_sec  = filedate->tm_sec;
   tmzip->tm_min  = filedate->tm_min;
@@ -134,40 +134,40 @@ static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
   tmzip->tm_mon  = filedate->tm_mon ;
   tmzip->tm_year = filedate->tm_year;
 
-  return ret;
+  फर्काऊ ret;
 }
-#else
+#अन्यथा
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
-    (void)f;
-    (void)tmzip;
-    (void)dt;
-    return 0;
+स्थिर पूर्णाङ्क filetime(अचर वर्ण *f, tm_zip *tmzip, uLong *dt) {
+    (शून्य)f;
+    (शून्य)tmzip;
+    (शून्य)dt;
+    फर्काऊ 0;
 }
 #endif
 
 
 
 
-static int check_exist_file(const char* filename) {
-    FILE* ftestexist;
-    int ret = 1;
+स्थिर पूर्णाङ्क check_exist_file(अचर वर्ण* filename) {
+    खाता* ftestexist;
+    पूर्णाङ्क ret = 1;
     ftestexist = FOPEN_FUNC(filename,"rb");
-    if (ftestexist==NULL)
+    यदि (ftestexist==रिक्त)
         ret = 0;
-    else
-        fclose(ftestexist);
-    return ret;
+    अन्यथा
+        ख_बंद(ftestexist);
+    फर्काऊ ret;
 }
 
-static void do_banner(void) {
-    printf("MiniZip 1.1, demo of zLib + MiniZip64 package, written by Gilles Vollant\n");
-    printf("more info on MiniZip at https://www.winimage.com/zLibDll/minizip.html\n\n");
+स्थिर शून्य do_banner(शून्य) {
+    म_लिखो("MiniZip 1.1, demo of zLib + MiniZip64 package, written by Gilles Vollant\n");
+    म_लिखो("more info on MiniZip at https://www.winimage.com/zLibDll/minizip.html\n\n");
 }
 
-static void do_help(void) {
-    printf("Usage : minizip [-o] [-a] [-0 to -9] [-p password] [-j] file.zip [files_to_add]\n\n" \
+स्थिर शून्य do_help(शून्य) {
+    म_लिखो("Usage : minizip [-o] [-a] [-0 to -9] [-p password] [-j] file.zip [files_to_add]\n\n" \
            "  -o  Overwrite existing file.zip\n" \
            "  -a  Append to existing file.zip\n" \
            "  -0  Store only\n" \
@@ -178,115 +178,115 @@ static void do_help(void) {
 
 /* calculate the CRC32 of a file,
    because to encrypt a file, we need known the CRC32 of the file before */
-static int getFileCrc(const char* filenameinzip, void* buf, unsigned long size_buf, unsigned long* result_crc) {
-   unsigned long calculate_crc=0;
-   int err=ZIP_OK;
-   FILE * fin = FOPEN_FUNC(filenameinzip,"rb");
+स्थिर पूर्णाङ्क getFileCrc(अचर वर्ण* filenameinzip, शून्य* buf, अचिन्हित दीर्घ size_buf, अचिन्हित दीर्घ* result_crc) {
+   अचिन्हित दीर्घ calculate_crc=0;
+   पूर्णाङ्क err=ZIP_OK;
+   खाता * fin = FOPEN_FUNC(filenameinzip,"rb");
 
-   unsigned long size_read = 0;
+   अचिन्हित दीर्घ size_read = 0;
    /* unsigned long total_read = 0; */
-   if (fin==NULL)
+   यदि (fin==रिक्त)
    {
        err = ZIP_ERRNO;
    }
 
-    if (err == ZIP_OK)
-        do
+    यदि (err == ZIP_OK)
+        गर
         {
             err = ZIP_OK;
-            size_read = (unsigned long)fread(buf,1,size_buf,fin);
-            if (size_read < size_buf)
-                if (feof(fin)==0)
+            size_read = (अचिन्हित दीर्घ)ख_पढ़ो(buf,1,size_buf,fin);
+            यदि (size_read < size_buf)
+                यदि (ख_पूर्ण(fin)==0)
             {
-                printf("error in reading %s\n",filenameinzip);
+                म_लिखो("error in reading %s\n",filenameinzip);
                 err = ZIP_ERRNO;
             }
 
-            if (size_read>0)
+            यदि (size_read>0)
                 calculate_crc = crc32_z(calculate_crc,buf,size_read);
             /* total_read += size_read; */
 
-        } while ((err == ZIP_OK) && (size_read>0));
+        } जबसम्म ((err == ZIP_OK) && (size_read>0));
 
-    if (fin)
-        fclose(fin);
+    यदि (fin)
+        ख_बंद(fin);
 
     *result_crc=calculate_crc;
-    printf("file %s crc %lx\n", filenameinzip, calculate_crc);
-    return err;
+    म_लिखो("file %s crc %lx\n", filenameinzip, calculate_crc);
+    फर्काऊ err;
 }
 
-static int isLargeFile(const char* filename) {
-  int largeFile = 0;
+स्थिर पूर्णाङ्क isLargeFile(अचर वर्ण* filename) {
+  पूर्णाङ्क largeFile = 0;
   ZPOS64_T pos = 0;
-  FILE* pFile = FOPEN_FUNC(filename, "rb");
+  खाता* pFile = FOPEN_FUNC(filename, "rb");
 
-  if(pFile != NULL)
+  यदि(pFile != रिक्त)
   {
-    FSEEKO_FUNC(pFile, 0, SEEK_END);
+    FSEEKO_FUNC(pFile, 0, अंत_से);
     pos = (ZPOS64_T)FTELLO_FUNC(pFile);
 
-                printf("File : %s is %"PUI64" bytes\n", filename, pos);
+                म_लिखो("File : %s is %"PUI64" bytes\n", filename, pos);
 
-    if(pos >= 0xffffffff)
+    यदि(pos >= 0xffffffff)
      largeFile = 1;
 
-                fclose(pFile);
+                ख_बंद(pFile);
   }
 
- return largeFile;
+ फर्काऊ largeFile;
 }
 
-int main(int argc, char *argv[]) {
-    int i;
-    int opt_overwrite=0;
-    int opt_compress_level=Z_DEFAULT_COMPRESSION;
-    int opt_exclude_path=0;
-    int zipfilenamearg = 0;
-    char filename_try[MAXFILENAME+16];
-    int zipok;
-    int err=0;
-    unsigned long size_buf=0;
-    void* buf=NULL;
-    const char* password=NULL;
+पूर्णाङ्क main(पूर्णाङ्क argc, वर्ण *argv[]) {
+    पूर्णाङ्क i;
+    पूर्णाङ्क opt_overwrite=0;
+    पूर्णाङ्क opt_compress_level=Z_DEFAULT_COMPRESSION;
+    पूर्णाङ्क opt_exclude_path=0;
+    पूर्णाङ्क zipfilenamearg = 0;
+    वर्ण filename_try[MAXFILENAME+16];
+    पूर्णाङ्क zipok;
+    पूर्णाङ्क err=0;
+    अचिन्हित दीर्घ size_buf=0;
+    शून्य* buf=रिक्त;
+    अचर वर्ण* password=रिक्त;
 
 
     do_banner();
-    if (argc==1)
+    यदि (argc==1)
     {
         do_help();
-        return 0;
+        फर्काऊ 0;
     }
-    else
+    अन्यथा
     {
-        for (i=1;i<argc;i++)
+        लागि (i=1;i<argc;i++)
         {
-            if ((*argv[i])=='-')
+            यदि ((*argv[i])=='-')
             {
-                const char *p=argv[i]+1;
+                अचर वर्ण *p=argv[i]+1;
 
-                while ((*p)!='\0')
+                जबसम्म ((*p)!='\0')
                 {
-                    char c=*(p++);
-                    if ((c=='o') || (c=='O'))
+                    वर्ण c=*(p++);
+                    यदि ((c=='o') || (c=='O'))
                         opt_overwrite = 1;
-                    if ((c=='a') || (c=='A'))
+                    यदि ((c=='a') || (c=='A'))
                         opt_overwrite = 2;
-                    if ((c>='0') && (c<='9'))
+                    यदि ((c>='0') && (c<='9'))
                         opt_compress_level = c-'0';
-                    if ((c=='j') || (c=='J'))
+                    यदि ((c=='j') || (c=='J'))
                         opt_exclude_path = 1;
 
-                    if (((c=='p') || (c=='P')) && (i+1<argc))
+                    यदि (((c=='p') || (c=='P')) && (i+1<argc))
                     {
                         password=argv[i+1];
                         i++;
                     }
                 }
             }
-            else
+            अन्यथा
             {
-                if (zipfilenamearg == 0)
+                यदि (zipfilenamearg == 0)
                 {
                     zipfilenamearg = i ;
                 }
@@ -295,104 +295,104 @@ int main(int argc, char *argv[]) {
     }
 
     size_buf = WRITEBUFFERSIZE;
-    buf = (void*)malloc(size_buf);
-    if (buf==NULL)
+    buf = (शून्य*)दो_स्मृति(size_buf);
+    यदि (buf==रिक्त)
     {
-        printf("Error allocating memory\n");
-        return ZIP_INTERNALERROR;
+        म_लिखो("Error allocating memory\n");
+        फर्काऊ ZIP_INTERNALERROR;
     }
 
-    if (zipfilenamearg==0)
+    यदि (zipfilenamearg==0)
     {
         zipok=0;
     }
-    else
+    अन्यथा
     {
-        int len;
-        int dot_found=0;
+        पूर्णाङ्क len;
+        पूर्णाङ्क dot_found=0;
 
         zipok = 1 ;
-        strncpy(filename_try, argv[zipfilenamearg],MAXFILENAME-1);
+        म_नकलन(filename_try, argv[zipfilenamearg],MAXFILENAME-1);
         /* strncpy doesn't append the trailing NULL, of the string is too long. */
         filename_try[ MAXFILENAME ] = '\0';
 
-        len=(int)strlen(filename_try);
-        for (i=0;i<len;i++)
-            if (filename_try[i]=='.')
+        len=(पूर्णाङ्क)म_माप(filename_try);
+        लागि (i=0;i<len;i++)
+            यदि (filename_try[i]=='.')
                 dot_found=1;
 
-        if (dot_found==0)
-            strcat(filename_try,".zip");
+        यदि (dot_found==0)
+            म_जोड़ो(filename_try,".zip");
 
-        if (opt_overwrite==2)
+        यदि (opt_overwrite==2)
         {
             /* if the file don't exist, we not append file */
-            if (check_exist_file(filename_try)==0)
+            यदि (check_exist_file(filename_try)==0)
                 opt_overwrite=1;
         }
-        else
-        if (opt_overwrite==0)
-            if (check_exist_file(filename_try)!=0)
+        अन्यथा
+        यदि (opt_overwrite==0)
+            यदि (check_exist_file(filename_try)!=0)
             {
-                char rep=0;
-                do
+                वर्ण rep=0;
+                गर
                 {
-                    char answer[128];
-                    int ret;
-                    printf("The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ",filename_try);
-                    ret = scanf("%1s",answer);
-                    if (ret != 1)
+                    वर्ण answer[128];
+                    पूर्णाङ्क ret;
+                    म_लिखो("The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ",filename_try);
+                    ret = म_पूछो("%1s",answer);
+                    यदि (ret != 1)
                     {
-                       exit(EXIT_FAILURE);
+                       निकास(निकास_त्रुटि);
                     }
                     rep = answer[0] ;
-                    if ((rep>='a') && (rep<='z'))
+                    यदि ((rep>='a') && (rep<='z'))
                         rep -= 0x20;
                 }
-                while ((rep!='Y') && (rep!='N') && (rep!='A'));
-                if (rep=='N')
+                जबसम्म ((rep!='Y') && (rep!='N') && (rep!='A'));
+                यदि (rep=='N')
                     zipok = 0;
-                if (rep=='A')
+                यदि (rep=='A')
                     opt_overwrite = 2;
             }
     }
 
-    if (zipok==1)
+    यदि (zipok==1)
     {
         zipFile zf;
-        int errclose;
+        पूर्णाङ्क errclose;
 #        ifdef USEWIN32IOAPI
         zlib_filefunc64_def ffunc;
         fill_win32_filefunc64A(&ffunc);
-        zf = zipOpen2_64(filename_try,(opt_overwrite==2) ? 2 : 0,NULL,&ffunc);
-#        else
+        zf = zipOpen2_64(filename_try,(opt_overwrite==2) ? 2 : 0,रिक्त,&ffunc);
+#        अन्यथा
         zf = zipOpen64(filename_try,(opt_overwrite==2) ? 2 : 0);
 #        endif
 
-        if (zf == NULL)
+        यदि (zf == रिक्त)
         {
-            printf("error opening %s\n",filename_try);
+            म_लिखो("error opening %s\n",filename_try);
             err= ZIP_ERRNO;
         }
-        else
-            printf("creating %s\n",filename_try);
+        अन्यथा
+            म_लिखो("creating %s\n",filename_try);
 
-        for (i=zipfilenamearg+1;(i<argc) && (err==ZIP_OK);i++)
+        लागि (i=zipfilenamearg+1;(i<argc) && (err==ZIP_OK);i++)
         {
-            if (!((((*(argv[i]))=='-') || ((*(argv[i]))=='/')) &&
+            यदि (!((((*(argv[i]))=='-') || ((*(argv[i]))=='/')) &&
                   ((argv[i][1]=='o') || (argv[i][1]=='O') ||
                    (argv[i][1]=='a') || (argv[i][1]=='A') ||
                    (argv[i][1]=='p') || (argv[i][1]=='P') ||
                    ((argv[i][1]>='0') && (argv[i][1]<='9'))) &&
-                  (strlen(argv[i]) == 2)))
+                  (म_माप(argv[i]) == 2)))
             {
-                FILE * fin = NULL;
-                size_t size_read;
-                const char* filenameinzip = argv[i];
-                const char *savefilenameinzip;
+                खाता * fin = रिक्त;
+                माप_प्रकार size_read;
+                अचर वर्ण* filenameinzip = argv[i];
+                अचर वर्ण *savefilenameinzip;
                 zip_fileinfo zi;
-                unsigned long crcFile=0;
-                int zip64 = 0;
+                अचिन्हित दीर्घ crcFile=0;
+                पूर्णाङ्क zip64 = 0;
 
                 zi.tmz_date.tm_sec = zi.tmz_date.tm_min = zi.tmz_date.tm_hour =
                 zi.tmz_date.tm_mday = zi.tmz_date.tm_mon = zi.tmz_date.tm_year = 0;
@@ -407,7 +407,7 @@ int main(int argc, char *argv[]) {
                                  (opt_compress_level != 0) ? Z_DEFLATED : 0,
                                  opt_compress_level);
 */
-                if ((password != NULL) && (err==ZIP_OK))
+                यदि ((password != रिक्त) && (err==ZIP_OK))
                     err = getFileCrc(filenameinzip,buf,size_buf,&crcFile);
 
                 zip64 = isLargeFile(filenameinzip);
@@ -415,24 +415,24 @@ int main(int argc, char *argv[]) {
                                                          /* The path name saved, should not include a leading slash. */
                /*if it did, windows/xp and dynazip couldn't read the zip file. */
                  savefilenameinzip = filenameinzip;
-                 while( savefilenameinzip[0] == '\\' || savefilenameinzip[0] == '/' )
+                 जबसम्म( savefilenameinzip[0] == '\\' || savefilenameinzip[0] == '/' )
                  {
                      savefilenameinzip++;
                  }
 
                  /*should the zip file contain any path at all?*/
-                 if( opt_exclude_path )
+                 यदि( opt_exclude_path )
                  {
-                     const char *tmpptr;
-                     const char *lastslash = 0;
-                     for( tmpptr = savefilenameinzip; *tmpptr; tmpptr++)
+                     अचर वर्ण *tmpptr;
+                     अचर वर्ण *lastslash = 0;
+                     लागि( tmpptr = savefilenameinzip; *tmpptr; tmpptr++)
                      {
-                         if( *tmpptr == '\\' || *tmpptr == '/')
+                         यदि( *tmpptr == '\\' || *tmpptr == '/')
                          {
                              lastslash = tmpptr;
                          }
                      }
-                     if( lastslash != NULL )
+                     यदि( lastslash != रिक्त )
                      {
                          savefilenameinzip = lastslash+1; /* base filename follows last slash. */
                      }
@@ -440,72 +440,72 @@ int main(int argc, char *argv[]) {
 
                  /**/
                 err = zipOpenNewFileInZip3_64(zf,savefilenameinzip,&zi,
-                                 NULL,0,NULL,0,NULL /* comment*/,
+                                 रिक्त,0,रिक्त,0,रिक्त /* comment*/,
                                  (opt_compress_level != 0) ? Z_DEFLATED : 0,
                                  opt_compress_level,0,
                                  /* -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY, */
                                  -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
                                  password,crcFile, zip64);
 
-                if (err != ZIP_OK)
-                    printf("error in opening %s in zipfile\n",filenameinzip);
-                else
+                यदि (err != ZIP_OK)
+                    म_लिखो("error in opening %s in zipfile\n",filenameinzip);
+                अन्यथा
                 {
                     fin = FOPEN_FUNC(filenameinzip,"rb");
-                    if (fin==NULL)
+                    यदि (fin==रिक्त)
                     {
                         err=ZIP_ERRNO;
-                        printf("error in opening %s for reading\n",filenameinzip);
+                        म_लिखो("error in opening %s for reading\n",filenameinzip);
                     }
                 }
 
-                if (err == ZIP_OK)
-                    do
+                यदि (err == ZIP_OK)
+                    गर
                     {
                         err = ZIP_OK;
-                        size_read = fread(buf,1,size_buf,fin);
-                        if (size_read < size_buf)
-                            if (feof(fin)==0)
+                        size_read = ख_पढ़ो(buf,1,size_buf,fin);
+                        यदि (size_read < size_buf)
+                            यदि (ख_पूर्ण(fin)==0)
                         {
-                            printf("error in reading %s\n",filenameinzip);
+                            म_लिखो("error in reading %s\n",filenameinzip);
                             err = ZIP_ERRNO;
                         }
 
-                        if (size_read>0)
+                        यदि (size_read>0)
                         {
-                            err = zipWriteInFileInZip (zf,buf,(unsigned)size_read);
-                            if (err<0)
+                            err = zipWriteInFileInZip (zf,buf,(अचिन्हित)size_read);
+                            यदि (err<0)
                             {
-                                printf("error in writing %s in the zipfile\n",
+                                म_लिखो("error in writing %s in the zipfile\n",
                                                  filenameinzip);
                             }
 
                         }
-                    } while ((err == ZIP_OK) && (size_read>0));
+                    } जबसम्म ((err == ZIP_OK) && (size_read>0));
 
-                if (fin)
-                    fclose(fin);
+                यदि (fin)
+                    ख_बंद(fin);
 
-                if (err<0)
+                यदि (err<0)
                     err=ZIP_ERRNO;
-                else
+                अन्यथा
                 {
                     err = zipCloseFileInZip(zf);
-                    if (err!=ZIP_OK)
-                        printf("error in closing %s in the zipfile\n",
+                    यदि (err!=ZIP_OK)
+                        म_लिखो("error in closing %s in the zipfile\n",
                                     filenameinzip);
                 }
             }
         }
-        errclose = zipClose(zf,NULL);
-        if (errclose != ZIP_OK)
-            printf("error in closing %s\n",filename_try);
+        errclose = zipClose(zf,रिक्त);
+        यदि (errclose != ZIP_OK)
+            म_लिखो("error in closing %s\n",filename_try);
     }
-    else
+    अन्यथा
     {
        do_help();
     }
 
-    free(buf);
-    return err;
+    मुक्त(buf);
+    फर्काऊ err;
 }
