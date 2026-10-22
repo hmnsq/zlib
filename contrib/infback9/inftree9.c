@@ -29,7 +29,7 @@ const char inflate9_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
+整数 inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
                    code FAR * FAR *table, unsigned FAR *bits,
                    unsigned short FAR *work) {
     unsigned len;               /* a code's length in bits */
@@ -38,7 +38,7 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     unsigned root;              /* number of index bits for root table */
     unsigned curr;              /* number of index bits for current table */
     unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
+    整数 left;                   /* number of prefix codes available */
     unsigned used;              /* code entries in table used */
     unsigned huff;              /* Huffman code */
     unsigned incr;              /* for incrementing code, index */
@@ -49,7 +49,7 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     code FAR *next;             /* next available space in table */
     const unsigned short FAR *base;     /* base value table to use */
     const unsigned short FAR *extra;    /* extra bits table to use */
-    int end;                    /* use base and extra for symbol > end */
+    整数 end;                    /* use base and extra for symbol > end */
     unsigned short count[MAXBITS+1];    /* number of codes of each length */
     unsigned short offs[MAXBITS+1];     /* offsets in table for each length */
     static const unsigned short lbase[31] = { /* Length codes 257..285 base */
@@ -101,39 +101,39 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
      */
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    for (len = 0; len <= MAXBITS; len++)
+    为 (len = 0; len <= MAXBITS; len++)
         count[len] = 0;
-    for (sym = 0; sym < codes; sym++)
+    为 (sym = 0; sym < codes; sym++)
         count[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
     root = *bits;
-    for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) return -1;            /* no codes! */
-    for (min = 1; min <= MAXBITS; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+    为 (max = MAXBITS; max >= 1; max--)
+        如果 (count[max] != 0) break;
+    如果 (root > max) root = max;
+    如果 (max == 0) 返回 -1;            /* no codes! */
+    为 (min = 1; min <= MAXBITS; min++)
+        如果 (count[min] != 0) break;
+    如果 (root < min) root = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;
-    for (len = 1; len <= MAXBITS; len++) {
+    为 (len = 1; len <= MAXBITS; len++) {
         left <<= 1;
         left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+        如果 (left < 0) 返回 -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    如果 (left > 0 && (type == CODES || max != 1))
+        返回 -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
+    为 (len = 1; len < MAXBITS; len++)
         offs[len + 1] = offs[len] + count[len];
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+    为 (sym = 0; sym < codes; sym++)
+        如果 (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -197,23 +197,23 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used >= ENOUGH_LENS) ||
+    如果 ((type == LENS && used >= ENOUGH_LENS) ||
         (type == DISTS && used >= ENOUGH_DISTS))
-        return 1;
+        返回 1;
 
     /* process all codes and make table entries */
-    for (;;) {
+    为 (;;) {
         /* create table entry */
         this.bits = (unsigned char)(len - drop);
-        if ((int)(work[sym]) < end) {
+        如果 ((整数)(work[sym]) < end) {
             this.op = (unsigned char)0;
             this.val = work[sym];
         }
-        else if ((int)(work[sym]) > end) {
+        否则 如果 ((整数)(work[sym]) > end) {
             this.op = (unsigned char)(extra[work[sym]]);
             this.val = base[work[sym]];
         }
-        else {
+        否则 {
             this.op = (unsigned char)(32 + 64);         /* end of block */
             this.val = 0;
         }
@@ -224,30 +224,30 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
         do {
             fill -= incr;
             next[(huff >> drop) + fill] = this;
-        } while (fill != 0);
+        } 当 (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        当 (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        如果 (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        否则
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        如果 (--(count[len]) == 0) {
+            如果 (len == max) break;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        如果 (len > root && (huff & mask) != low) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
+            如果 (drop == 0)
                 drop = root;
 
             /* increment past last table */
@@ -255,19 +255,19 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
+            left = (整数)(1 << curr);
+            当 (curr + drop < max) {
                 left -= count[curr + drop];
-                if (left <= 0) break;
+                如果 (left <= 0) break;
                 curr++;
                 left <<= 1;
             }
 
             /* check for enough space */
             used += 1U << curr;
-            if ((type == LENS && used >= ENOUGH_LENS) ||
+            如果 ((type == LENS && used >= ENOUGH_LENS) ||
                 (type == DISTS && used >= ENOUGH_DISTS))
-                return 1;
+                返回 1;
 
             /* point entry in root table to sub-table */
             low = huff & mask;
@@ -287,9 +287,9 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     this.op = (unsigned char)64;                /* invalid code marker */
     this.bits = (unsigned char)(len - drop);
     this.val = (unsigned short)0;
-    while (huff != 0) {
+    当 (huff != 0) {
         /* when done with sub-table, drop back to root table */
-        if (drop != 0 && (huff & mask) != low) {
+        如果 (drop != 0 && (huff & mask) != low) {
             drop = 0;
             len = root;
             next = *table;
@@ -302,18 +302,18 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        当 (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        如果 (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        否则
             huff = 0;
     }
 
     /* set return parameters */
     *table += used;
     *bits = root;
-    return 0;
+    返回 0;
 }

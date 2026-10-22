@@ -11,32 +11,32 @@ local unsigned inf(void *how, unsigned char **buf)
     static unsigned char hold[CHUNK];
 
     *buf = hold;
-    return fread(hold, 1, CHUNK, (FILE *)how);
+    返回 fread(hold, 1, CHUNK, (FILE *)how);
 }
 
-local int outf(void *how, unsigned char *buf, unsigned len)
+local 整数 outf(void *how, unsigned char *buf, unsigned len)
 {
-    return fwrite(buf, 1, len, (FILE *)how) != len;
+    返回 fwrite(buf, 1, len, (FILE *)how) != len;
 }
 
 /* Decompress a PKWare Compression Library stream from stdin to stdout */
-int main(void)
+整数 主要(void)
 {
-    int ret;
+    整数 ret;
     unsigned left;
 
     /* decompress to stdout */
     left = 0;
     ret = blast(inf, stdin, outf, stdout, &left, NULL);
-    if (ret != 0)
+    如果 (ret != 0)
         fprintf(stderr, "blast error: %d\n", ret);
 
     /* count any leftover bytes */
-    while (getchar() != EOF)
+    当 (getchar() != EOF)
         left++;
-    if (left)
+    如果 (left)
         fprintf(stderr, "blast warning: %u unused bytes of input\n", left);
 
     /* return blast() error code */
-    return ret;
+    返回 ret;
 }

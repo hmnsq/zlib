@@ -21,7 +21,7 @@
 #include <sys/auxv.h>
 
 #ifdef __clang__
-#  if ((__clang_major__ == 18) || (__clang_major__ == 19 && (__clang_minor__ < 1 || (__clang_minor__ == 1 && __clang_patchlevel__ < 2))))
+#  如果 ((__clang_major__ == 18) || (__clang_major__ == 19 && (__clang_minor__ < 1 || (__clang_minor__ == 1 && __clang_patchlevel__ < 2))))
 # error crc32_vx optimizations are broken due to compiler bug in Clang versions: 18.0.0 <= clang_version < 19.1.2. \
         Either disable the zlib crc32_vx optimization, or switch to another compiler/compiler version.
 #  endif
@@ -32,7 +32,7 @@
 #define VX_ALIGN_MASK (VX_ALIGNMENT - 1)
 
 typedef unsigned char uv16qi __attribute__((vector_size(16)));
-typedef unsigned int uv4si __attribute__((vector_size(16)));
+typedef unsigned 整数 uv4si __attribute__((vector_size(16)));
 typedef unsigned long long uv2di __attribute__((vector_size(16)));
 
 local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t len) {
@@ -88,7 +88,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     buf += 64;
     len -= 64;
 
-    while (len >= 64) {
+    当 (len >= 64) {
         /* Load the next 64-byte data chunk */
         uv16qi part1 = vec_perm(((uv16qi *)buf)[0], ((uv16qi *)buf)[0], perm_le2be);
         uv16qi part2 = vec_perm(((uv16qi *)buf)[1], ((uv16qi *)buf)[1], perm_le2be);
@@ -120,7 +120,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     v1 = (uv2di)vec_gfmsum_accum_128(r4r3, v1, (uv16qi)v3);
     v1 = (uv2di)vec_gfmsum_accum_128(r4r3, v1, (uv16qi)v4);
 
-    while (len >= 16) {
+    当 (len >= 16) {
         /* Load next data chunk */
         v2 = vec_perm(*(uv2di *)buf, *(uv2di *)buf, perm_le2be);
 
@@ -205,7 +205,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     v2 = vec_unpackl((uv4si)v2);
     v2 = (uv2di)vec_gfmsum_accum_128(crc_poly, v2, (uv16qi)v1);
 
-    return ((uv4si)v2)[2];
+    返回 ((uv4si)v2)[2];
 }
 
 
@@ -213,12 +213,12 @@ local unsigned long s390_crc32_vx(unsigned long crc, const unsigned char FAR *bu
 {
     uintptr_t prealign, aligned, remaining;
 
-    if (buf == Z_NULL) return 0UL;
+    如果 (buf == Z_NULL) 返回 0UL;
 
-    if (len < VX_MIN_LEN + VX_ALIGN_MASK)
-        return crc32_z(crc, buf, len);
+    如果 (len < VX_MIN_LEN + VX_ALIGN_MASK)
+        返回 crc32_z(crc, buf, len);
 
-    if ((uintptr_t)buf & VX_ALIGN_MASK) {
+    如果 ((uintptr_t)buf & VX_ALIGN_MASK) {
         prealign = VX_ALIGNMENT - ((uintptr_t)buf & VX_ALIGN_MASK);
         len -= prealign;
         crc = crc32_z(crc, buf, prealign);
@@ -229,26 +229,26 @@ local unsigned long s390_crc32_vx(unsigned long crc, const unsigned char FAR *bu
 
     crc = crc32_le_vgfm_16(crc ^ 0xffffffff, buf, (size_t)aligned) ^ 0xffffffff;
 
-    if (remaining)
+    如果 (remaining)
         crc = crc32_z(crc, buf + aligned, remaining);
 
-    return crc;
+    返回 crc;
 }
 
 local z_once_t s390_crc32_made = Z_ONCE_INIT;
 local void s390_crc32_setup() {
     unsigned long hwcap = getauxval(AT_HWCAP);
 
-    if (hwcap & HWCAP_S390_VX)
+    如果 (hwcap & HWCAP_S390_VX)
         crc32_z_hook = s390_crc32_vx;
-    else
+    否则
         crc32_z_hook = crc32_z;
 }
 
 local unsigned long s390_crc32_init(unsigned long crc, const unsigned char FAR *buf, z_size_t len)
 {
     z_once(&s390_crc32_made,s390_crc32_setup);
-    return crc32_z_hook(crc, buf, len);
+    返回 crc32_z_hook(crc, buf, len);
 }
 
 ZLIB_INTERNAL unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len) = s390_crc32_init;

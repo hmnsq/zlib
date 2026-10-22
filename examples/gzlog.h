@@ -74,7 +74,7 @@ gzlog *gzlog_open(char *path);
    file uncompressed, until 1 MB has been accumulated, at which time that data
    will be compressed.  The log file will be a valid gzip file upon successful
    return. */
-int gzlog_write(gzlog *log, void *data, size_t len);
+整数 gzlog_write(gzlog *log, void *data, size_t len);
 
 /* Force compression of any uncompressed data in the log.  This should be used
    sparingly, if at all.  The main application would be when a log file will
@@ -82,10 +82,10 @@ int gzlog_write(gzlog *log, void *data, size_t len);
    appending, it will both significantly increase the execution time and
    reduce the compression ratio.  The return codes are the same as for
    gzlog_write(). */
-int gzlog_compress(gzlog *log);
+整数 gzlog_compress(gzlog *log);
 
 /* Close a gzlog object.  Return zero on success, -3 if the log argument is
    invalid.  The log object is freed, and so cannot be referenced again. */
-int gzlog_close(gzlog *log);
+整数 gzlog_close(gzlog *log);
 
 #endif

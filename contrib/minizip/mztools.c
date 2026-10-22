@@ -20,92 +20,92 @@
 
 #define WRITE_8(buff, n) do { \
   *((unsigned char*)(buff)) = (unsigned char) ((n) & 0xff); \
-} while(0)
+} 当(0)
 #define WRITE_16(buff, n) do { \
   WRITE_8((unsigned char*)(buff), n); \
   WRITE_8(((unsigned char*)(buff)) + 1, (n) >> 8); \
-} while(0)
+} 当(0)
 #define WRITE_32(buff, n) do { \
   WRITE_16((unsigned char*)(buff), (n) & 0xffff); \
   WRITE_16((unsigned char*)(buff) + 2, (n) >> 16); \
-} while(0)
+} 当(0)
 
-extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
-  int err = Z_OK;
+extern 整数 ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
+  整数 err = Z_OK;
   FILE* fpZip = fopen(file, "rb");
   FILE* fpOut = fopen(fileOut, "wb");
   FILE* fpOutCD = fopen(fileOutTmp, "wb");
-  if (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
-    int entries = 0;
+  如果 (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
+    整数 entries = 0;
     uLong totalBytes = 0;
     char header[30];
     char filename[1024];
     char extra[1024];
-    int offset = 0;
-    int offsetCD = 0;
-    while ( fread(header, 1, 30, fpZip) == 30 ) {
-      int currentOffset = offset;
+    整数 offset = 0;
+    整数 offsetCD = 0;
+    当 ( fread(header, 1, 30, fpZip) == 30 ) {
+      整数 currentOffset = offset;
 
       /* File entry */
-      if (READ_32(header) == 0x04034b50) {
-        unsigned int version = READ_16(header + 4);
-        unsigned int gpflag = READ_16(header + 6);
-        unsigned int method = READ_16(header + 8);
-        unsigned int filetime = READ_16(header + 10);
-        unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+      如果 (READ_32(header) == 0x04034b50) {
+        unsigned 整数 version = READ_16(header + 4);
+        unsigned 整数 gpflag = READ_16(header + 6);
+        unsigned 整数 method = READ_16(header + 8);
+        unsigned 整数 filetime = READ_16(header + 10);
+        unsigned 整数 filedate = READ_16(header + 12);
+        unsigned 整数 crc = READ_32(header + 14); /* crc */
+        unsigned 整数 cpsize = READ_32(header + 18); /* compressed size */
+        unsigned 整数 uncpsize = READ_32(header + 22); /* uncompressed sz */
+        unsigned 整数 fnsize = READ_16(header + 26); /* file name length */
+        unsigned 整数 extsize = READ_16(header + 28); /* extra field length */
         filename[0] = extra[0] = '\0';
 
         /* Header */
-        if (fwrite(header, 1, 30, fpOut) == 30) {
+        如果 (fwrite(header, 1, 30, fpOut) == 30) {
           offset += 30;
-        } else {
+        } 否则 {
           err = Z_ERRNO;
           break;
         }
 
         /* Filename */
-        if (fnsize > 0) {
-          if (fnsize < sizeof(filename)) {
-            if (fread(filename, 1, fnsize, fpZip) == fnsize) {
-                if (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
+        如果 (fnsize > 0) {
+          如果 (fnsize < sizeof(filename)) {
+            如果 (fread(filename, 1, fnsize, fpZip) == fnsize) {
+                如果 (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
                 offset += fnsize;
-              } else {
+              } 否则 {
                 err = Z_ERRNO;
                 break;
               }
-            } else {
+            } 否则 {
               err = Z_ERRNO;
               break;
             }
-          } else {
+          } 否则 {
             err = Z_ERRNO;
             break;
           }
-        } else {
+        } 否则 {
           err = Z_STREAM_ERROR;
           break;
         }
 
         /* Extra field */
-        if (extsize > 0) {
-          if (extsize < sizeof(extra)) {
-            if (fread(extra, 1, extsize, fpZip) == extsize) {
-              if (fwrite(extra, 1, extsize, fpOut) == extsize) {
+        如果 (extsize > 0) {
+          如果 (extsize < sizeof(extra)) {
+            如果 (fread(extra, 1, extsize, fpZip) == extsize) {
+              如果 (fwrite(extra, 1, extsize, fpOut) == extsize) {
                 offset += extsize;
-                } else {
+                } 否则 {
                 err = Z_ERRNO;
                 break;
               }
-            } else {
+            } 否则 {
               err = Z_ERRNO;
               break;
             }
-          } else {
+          } 否则 {
             err = Z_ERRNO;
             break;
           }
@@ -113,28 +113,28 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
 
         /* Data */
         {
-          int dataSize = cpsize;
-          if (dataSize == 0) {
+          整数 dataSize = cpsize;
+          如果 (dataSize == 0) {
             dataSize = uncpsize;
           }
-          if (dataSize > 0) {
+          如果 (dataSize > 0) {
             char* data = malloc(dataSize);
-            if (data != NULL) {
-              if ((int)fread(data, 1, dataSize, fpZip) == dataSize) {
-                if ((int)fwrite(data, 1, dataSize, fpOut) == dataSize) {
+            如果 (data != NULL) {
+              如果 ((整数)fread(data, 1, dataSize, fpZip) == dataSize) {
+                如果 ((整数)fwrite(data, 1, dataSize, fpOut) == dataSize) {
                   offset += dataSize;
                   totalBytes += dataSize;
-                } else {
+                } 否则 {
                   err = Z_ERRNO;
                 }
-              } else {
+              } 否则 {
                 err = Z_ERRNO;
               }
               free(data);
-              if (err != Z_OK) {
+              如果 (err != Z_OK) {
                 break;
               }
-            } else {
+            } 否则 {
               err = Z_MEM_ERROR;
               break;
             }
@@ -145,7 +145,7 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
         {
           char central[46];
           char* comment = "";
-          int comsize = (int) strlen(comment);
+          整数 comsize = (整数) strlen(comment);
           WRITE_32(central, 0x02014b50);
           WRITE_16(central + 4, version);
           WRITE_16(central + 6, version);
@@ -164,44 +164,44 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
           WRITE_32(central + 38, 0);    /* ext attrb */
           WRITE_32(central + 42, currentOffset);
           /* Header */
-          if (fwrite(central, 1, 46, fpOutCD) == 46) {
+          如果 (fwrite(central, 1, 46, fpOutCD) == 46) {
             offsetCD += 46;
 
             /* Filename */
-            if (fnsize > 0) {
-              if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
+            如果 (fnsize > 0) {
+              如果 (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
                 offsetCD += fnsize;
-              } else {
+              } 否则 {
                 err = Z_ERRNO;
                 break;
               }
-            } else {
+            } 否则 {
               err = Z_STREAM_ERROR;
               break;
             }
 
             /* Extra field */
-            if (extsize > 0) {
-              if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
+            如果 (extsize > 0) {
+              如果 (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
                 offsetCD += extsize;
-              } else {
+              } 否则 {
                 err = Z_ERRNO;
                 break;
               }
             }
 
             /* Comment field */
-            if (comsize > 0) {
-              if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
+            如果 (comsize > 0) {
+              如果 ((整数)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
                 offsetCD += comsize;
-              } else {
+              } 否则 {
                 err = Z_ERRNO;
                 break;
               }
             }
 
 
-          } else {
+          } 否则 {
             err = Z_ERRNO;
             break;
           }
@@ -210,18 +210,18 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
         /* Success */
         entries++;
 
-      } else {
+      } 否则 {
         break;
       }
     }
 
     /* Final central directory  */
     {
-      int entriesZip = entries;
+      整数 entriesZip = entries;
       char end[22];
       char* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
-      int comsize = (int) strlen(comment);
-      if (entriesZip > 0xffff) {
+      整数 comsize = (整数) strlen(comment);
+      如果 (entriesZip > 0xffff) {
         entriesZip = 0xffff;
       }
       WRITE_32(end, 0x06054b50);
@@ -234,29 +234,29 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
       WRITE_16(end + 20, comsize);          /* comment */
 
       /* Header */
-      if (fwrite(end, 1, 22, fpOutCD) == 22) {
+      如果 (fwrite(end, 1, 22, fpOutCD) == 22) {
 
         /* Comment field */
-        if (comsize > 0) {
-          if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
+        如果 (comsize > 0) {
+          如果 ((整数)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
             err = Z_ERRNO;
           }
         }
 
-      } else {
+      } 否则 {
         err = Z_ERRNO;
       }
     }
 
     /* Final merge (file + central directory) */
     fclose(fpOutCD);
-    if (err == Z_OK) {
+    如果 (err == Z_OK) {
       fpOutCD = fopen(fileOutTmp, "rb");
-      if (fpOutCD != NULL) {
-        int nRead;
+      如果 (fpOutCD != NULL) {
+        整数 nRead;
         char buffer[8192];
-        while ( (nRead = (int)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
-          if ((int)fwrite(buffer, 1, nRead, fpOut) != nRead) {
+        当 ( (nRead = (整数)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
+          如果 ((整数)fwrite(buffer, 1, nRead, fpOut) != nRead) {
             err = Z_ERRNO;
             break;
           }
@@ -273,22 +273,22 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
     (void)remove(fileOutTmp);
 
     /* Number of recovered entries */
-    if (err == Z_OK) {
-      if (nRecovered != NULL) {
+    如果 (err == Z_OK) {
+      如果 (nRecovered != NULL) {
         *nRecovered = entries;
       }
-      if (bytesRecovered != NULL) {
+      如果 (bytesRecovered != NULL) {
         *bytesRecovered = totalBytes;
       }
     }
-  } else {
-    if (fpOutCD != NULL)
+  } 否则 {
+    如果 (fpOutCD != NULL)
       fclose(fpOutCD);
-    if (fpZip != NULL)
+    如果 (fpZip != NULL)
       fclose(fpZip);
-    if (fpOut != NULL)
+    如果 (fpOut != NULL)
       fclose(fpOut);
     err = Z_STREAM_ERROR;
   }
-  return err;
+  返回 err;
 }

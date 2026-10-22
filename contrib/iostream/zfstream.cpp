@@ -10,98 +10,98 @@ gzfilebuf::gzfilebuf() :
 gzfilebuf::~gzfilebuf() {
 
   sync();
-  if ( own_file_descriptor )
+  如果 ( own_file_descriptor )
     close();
 
 }
 
 gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+                            整数 io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  如果 ( is_open() )
+    返回 NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  如果 ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } 否则 如果 ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } 否则 {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  如果 ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  如果 ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  如果 ( (file = gzopen(name, char_mode)) == NULL )
+    返回 NULL;
 
   own_file_descriptor = 1;
 
-  return this;
+  返回 this;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( 整数 file_descriptor,
+                              整数 io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  如果 ( is_open() )
+    返回 NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  如果 ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } 否则 如果 ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } 否则 {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  如果 ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  如果 ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  如果 ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
+    返回 NULL;
 
   own_file_descriptor = 0;
 
-  return this;
+  返回 this;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  如果 ( is_open() ) {
 
     sync();
     gzclose( file );
@@ -109,145 +109,145 @@ gzfilebuf *gzfilebuf::close() {
 
   }
 
-  return this;
+  返回 this;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+整数 gzfilebuf::setcompressionlevel( 整数 comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  返回 gzsetparams(file, comp_level, -2);
 
 }
 
+整数 gzfilebuf::setcompressionstrategy( 整数 comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  返回 gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, 整数 which ) {
+
+  返回 streampos(EOF);
+
+}
+
+整数 gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  如果 ( !is_open() || !(mode & ios::in) )
+    返回 EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  如果 ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    如果 ( (allocate()) == EOF )
+      返回 EOF;
     setp(0,0);
 
-  } else {
+  } 否则 {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    如果 ( in_avail() )
+      返回 (unsigned char) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    如果 ( out_waiting() ) {
+      如果 ( flushbuf() == EOF )
+        返回 EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  整数 result = fillbuf();
+  如果 ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    返回 EOF;
   }
 
-  return (unsigned char) *gptr();
+  返回 (unsigned char) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+整数 gzfilebuf::overflow( 整数 c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  如果 ( !is_open() || !(mode & ios::out) )
+    返回 EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  如果 ( !base() ) {
+    如果 ( allocate() == EOF )
+      返回 EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } 否则 {
+    如果 (in_avail()) {
+        返回 EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    如果 (out_waiting()) {
+      如果 (flushbuf() == EOF)
+        返回 EOF;
     }
   }
 
-  int bl = blen();
+  整数 bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  如果 ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  返回 0;
 
 }
 
-int gzfilebuf::sync() {
+整数 gzfilebuf::sync() {
 
-  if ( !is_open() )
-    return EOF;
+  如果 ( !is_open() )
+    返回 EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  如果 ( out_waiting() )
+    返回 flushbuf();
 
-  return 0;
+  返回 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+整数 gzfilebuf::flushbuf() {
 
-  int n;
+  整数 n;
   char *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  如果 ( gzwrite( file, q, n) < n )
+    返回 EOF;
 
   setp(0,0);
 
-  return 0;
+  返回 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+整数 gzfilebuf::fillbuf() {
 
-  int required;
+  整数 required;
   char *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  整数 t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  如果 ( t <= 0) 返回 EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  返回 t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+void gzfilestream_common::attach( 整数 fd, 整数 io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  如果 ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  否则
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+void gzfilestream_common::open( const char *name, 整数 io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  如果 ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  否则
     clear();
 
 }
 
 void gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  如果 ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  返回 &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( const char *name, 整数 io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( 整数 fd, 整数 io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( const char *name, 整数 io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( 整数 fd, 整数 io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );

@@ -19,10 +19,10 @@
 #  define _POSIX_C_SOURCE 200112L
 #endif
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#如果 defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#如果 defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
@@ -40,14 +40,14 @@
 #  include <sys/stat.h>
 #endif
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#如果 defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  ifdef UNDER_CE
 #    include <stdlib.h>
 #  endif
 #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#否则
 #  define SET_BINARY_MODE(file)
 #endif
 
@@ -55,24 +55,24 @@
 #  define unlink delete
 #  define GZ_SUFFIX "-gz"
 #endif
-#if defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#如果 defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define GZ_SUFFIX "/gz"
 #  ifndef __GNUC__
 #    define unlink remove
 #    define fileno(file) file->__file
 #  endif
 #endif
-#if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
+#如果 defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
 #  include <unix.h> /* for fileno */
 #endif
 
-#if !defined(Z_HAVE_UNISTD_H) && !defined(_LARGEFILE64_SOURCE)
+#如果 !defined(Z_HAVE_UNISTD_H) && !defined(_LARGEFILE64_SOURCE)
 #ifndef WIN32 /* unlink already in stdio.h for WIN32 */
-  extern int unlink(const char *);
+  extern 整数 unlink(const char *);
 #endif
 #endif
 
-#if defined(UNDER_CE)
+#如果 defined(UNDER_CE)
 #  include <windows.h>
 #  define perror(s) pwinerror(s)
 
@@ -101,15 +101,15 @@ static char *strwinerror (error)
         (LPVOID)&msgbuf,
         0,
         NULL);
-    if (chars != 0) {
+    如果 (chars != 0) {
         /* If there is an \r\n appended, zap it.  */
-        if (chars >= 2
+        如果 (chars >= 2
             && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n') {
             chars -= 2;
             msgbuf[chars] = 0;
         }
 
-        if (chars > sizeof (buf) - 1) {
+        如果 (chars > sizeof (buf) - 1) {
             chars = sizeof (buf) - 1;
             msgbuf[chars] = 0;
         }
@@ -117,20 +117,20 @@ static char *strwinerror (error)
         wcstombs(buf, msgbuf, chars + 1);
         LocalFree(msgbuf);
     }
-    else {
+    否则 {
         sprintf(buf, "unknown win32 error (%lu)", error);
     }
 
     SetLastError(lasterr);
-    return buf;
+    返回 buf;
 }
 
 static void pwinerror (s)
     const char *s;
 {
-    if (s && *s)
+    如果 (s && *s)
         fprintf(stderr, "%s: %s\n", s, strwinerror(GetLastError ()));
-    else
+    否则
         fprintf(stderr, "%s\n", strwinerror(GetLastError ()));
 }
 
@@ -147,7 +147,7 @@ static void pwinerror (s)
 #ifdef MAXSEG_64K
 #  define local static
    /* Needed for systems with limitation on stack size. */
-#else
+#否则
 #  define local
 #endif
 
@@ -158,28 +158,28 @@ static void pwinerror (s)
  * null. If len is zero, nothing is written to *dst and NULL is returned.
  */
 static char *string_copy(char *dst, char const *src, z_size_t len) {
-    if (len == 0)
-        return NULL;
-    while (--len) {
+    如果 (len == 0)
+        返回 NULL;
+    当 (--len) {
         *dst = *src++;
-        if (*dst == 0)
-            return dst;
+        如果 (*dst == 0)
+            返回 dst;
         dst++;
     }
     *dst = 0;
-    return dst;
+    返回 dst;
 }
 
 #ifdef Z_SOLO
 /* for Z_SOLO, create simplified gz* functions using deflate and inflate */
 
-#if defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
+#如果 defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
 #  include <unistd.h>       /* for unlink() */
 #endif
 
 static void *myalloc(void *q, unsigned n, unsigned m) {
     (void)q;
-    return calloc(n, m);
+    返回 calloc(n, m);
 }
 
 static void myfree(void *q, void *p) {
@@ -189,60 +189,60 @@ static void myfree(void *q, void *p) {
 
 typedef struct gzFile_s {
     FILE *file;
-    int write;
-    int err;
+    整数 write;
+    整数 err;
     char *msg;
     z_stream strm;
 } *gzFile;
 
-static gzFile gz_open(const char *path, int fd, const char *mode) {
+static gzFile gz_open(const char *path, 整数 fd, const char *mode) {
     gzFile gz;
-    int ret;
+    整数 ret;
 
     gz = malloc(sizeof(struct gzFile_s));
-    if (gz == NULL)
-        return NULL;
+    如果 (gz == NULL)
+        返回 NULL;
     gz->write = strchr(mode, 'w') != NULL;
     gz->strm.zalloc = myalloc;
     gz->strm.zfree = myfree;
     gz->strm.opaque = Z_NULL;
-    if (gz->write)
+    如果 (gz->write)
         ret = deflateInit2(&(gz->strm), -1, 8, 15 + 16, 8, 0);
-    else {
+    否则 {
         gz->strm.next_in = 0;
         gz->strm.avail_in = Z_NULL;
         ret = inflateInit2(&(gz->strm), 15 + 16);
     }
-    if (ret != Z_OK) {
+    如果 (ret != Z_OK) {
         free(gz);
-        return NULL;
+        返回 NULL;
     }
     gz->file = path == NULL ? fdopen(fd, gz->write ? "wb" : "rb") :
                               fopen(path, gz->write ? "wb" : "rb");
-    if (gz->file == NULL) {
+    如果 (gz->file == NULL) {
         gz->write ? deflateEnd(&(gz->strm)) : inflateEnd(&(gz->strm));
         free(gz);
-        return NULL;
+        返回 NULL;
     }
     gz->err = 0;
     gz->msg = "";
-    return gz;
+    返回 gz;
 }
 
 static gzFile gzopen(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+    返回 gz_open(path, -1, mode);
 }
 
-static gzFile gzdopen(int fd, const char *mode) {
-    return gz_open(NULL, fd, mode);
+static gzFile gzdopen(整数 fd, const char *mode) {
+    返回 gz_open(NULL, fd, mode);
 }
 
-static int gzwrite(gzFile gz, const void *buf, unsigned len) {
+static 整数 gzwrite(gzFile gz, const void *buf, unsigned len) {
     z_stream *strm;
     unsigned char out[BUFLEN];
 
-    if (gz == NULL || !gz->write)
-        return 0;
+    如果 (gz == NULL || !gz->write)
+        返回 0;
     strm = &(gz->strm);
     strm->next_in = (void *)buf;
     strm->avail_in = len;
@@ -251,49 +251,49 @@ static int gzwrite(gzFile gz, const void *buf, unsigned len) {
         strm->avail_out = BUFLEN;
         (void)deflate(strm, Z_NO_FLUSH);
         fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-    } while (strm->avail_out == 0);
-    return (int)len;
+    } 当 (strm->avail_out == 0);
+    返回 (整数)len;
 }
 
-static int gzread(gzFile gz, void *buf, unsigned len) {
-    int ret;
+static 整数 gzread(gzFile gz, void *buf, unsigned len) {
+    整数 ret;
     unsigned got;
     unsigned char in[1];
     z_stream *strm;
 
-    if (gz == NULL || gz->write)
-        return 0;
-    if (gz->err)
-        return 0;
+    如果 (gz == NULL || gz->write)
+        返回 0;
+    如果 (gz->err)
+        返回 0;
     strm = &(gz->strm);
     strm->next_out = (void *)buf;
     strm->avail_out = len;
     do {
         got = (unsigned)fread(in, 1, 1, gz->file);
-        if (got == 0)
+        如果 (got == 0)
             break;
         strm->next_in = in;
         strm->avail_in = 1;
         ret = inflate(strm, Z_NO_FLUSH);
-        if (ret == Z_DATA_ERROR) {
+        如果 (ret == Z_DATA_ERROR) {
             gz->err = Z_DATA_ERROR;
             gz->msg = strm->msg;
-            return 0;
+            返回 0;
         }
-        if (ret == Z_STREAM_END)
+        如果 (ret == Z_STREAM_END)
             inflateReset(strm);
-    } while (strm->avail_out);
-    return (int)(len - strm->avail_out);
+    } 当 (strm->avail_out);
+    返回 (整数)(len - strm->avail_out);
 }
 
-static int gzclose(gzFile gz) {
+static 整数 gzclose(gzFile gz) {
     z_stream *strm;
     unsigned char out[BUFLEN];
 
-    if (gz == NULL)
-        return Z_STREAM_ERROR;
+    如果 (gz == NULL)
+        返回 Z_STREAM_ERROR;
     strm = &(gz->strm);
-    if (gz->write) {
+    如果 (gz->write) {
         strm->next_in = Z_NULL;
         strm->avail_in = 0;
         do {
@@ -301,19 +301,19 @@ static int gzclose(gzFile gz) {
             strm->avail_out = BUFLEN;
             (void)deflate(strm, Z_FINISH);
             fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-        } while (strm->avail_out == 0);
+        } 当 (strm->avail_out == 0);
         deflateEnd(strm);
     }
-    else
+    否则
         inflateEnd(strm);
     fclose(gz->file);
     free(gz);
-    return Z_OK;
+    返回 Z_OK;
 }
 
-static const char *gzerror(gzFile gz, int *err) {
+static const char *gzerror(gzFile gz, 整数 *err) {
     *err = gz->err;
-    return gz->msg;
+    返回 gz->msg;
 }
 
 #endif
@@ -333,32 +333,32 @@ static void error(const char *msg) {
 /* Try compressing the input file at once using mmap. Return Z_OK if
  * success, Z_ERRNO otherwise.
  */
-static int gz_compress_mmap(FILE *in, gzFile out) {
-    int len;
-    int err;
-    int ifd = fileno(in);
+static 整数 gz_compress_mmap(FILE *in, gzFile out) {
+    整数 len;
+    整数 err;
+    整数 ifd = fileno(in);
     caddr_t buf;    /* mmap'ed buffer for the entire input file */
     off_t buf_len;  /* length of the input file */
     struct stat sb;
 
     /* Determine the size of the file, needed for mmap: */
-    if (fstat(ifd, &sb) < 0) return Z_ERRNO;
+    如果 (fstat(ifd, &sb) < 0) 返回 Z_ERRNO;
     buf_len = sb.st_size;
-    if (buf_len <= 0) return Z_ERRNO;
+    如果 (buf_len <= 0) 返回 Z_ERRNO;
 
     /* Now do the actual mmap: */
     buf = mmap((caddr_t) 0, buf_len, PROT_READ, MAP_SHARED, ifd, (off_t)0);
-    if (buf == (caddr_t)(-1)) return Z_ERRNO;
+    如果 (buf == (caddr_t)(-1)) 返回 Z_ERRNO;
 
     /* Compress the whole file at once: */
     len = gzwrite(out, (char *)buf, (unsigned)buf_len);
 
-    if (len != (int)buf_len) error(gzerror(out, &err));
+    如果 (len != (整数)buf_len) error(gzerror(out, &err));
 
     munmap(buf, buf_len);
     fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
-    return Z_OK;
+    如果 (gzclose(out) != Z_OK) error("failed gzclose");
+    返回 Z_OK;
 }
 #endif /* USE_MMAP */
 
@@ -368,27 +368,27 @@ static int gz_compress_mmap(FILE *in, gzFile out) {
 
 static void gz_compress(FILE *in, gzFile out) {
     local char buf[BUFLEN];
-    int len;
-    int err;
+    整数 len;
+    整数 err;
 
 #ifdef USE_MMAP
     /* Try first compressing with mmap. If mmap fails (minigzip used in a
      * pipe), use the normal fread loop.
      */
-    if (gz_compress_mmap(in, out) == Z_OK) return;
+    如果 (gz_compress_mmap(in, out) == Z_OK) 返回;
 #endif
-    for (;;) {
-        len = (int)fread(buf, 1, sizeof(buf), in);
-        if (ferror(in)) {
+    为 (;;) {
+        len = (整数)fread(buf, 1, sizeof(buf), in);
+        如果 (ferror(in)) {
             perror("fread");
             exit(1);
         }
-        if (len == 0) break;
+        如果 (len == 0) break;
 
-        if (gzwrite(out, buf, (unsigned)len) != len) error(gzerror(out, &err));
+        如果 (gzwrite(out, buf, (unsigned)len) != len) error(gzerror(out, &err));
     }
     fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
+    如果 (gzclose(out) != Z_OK) error("failed gzclose");
 }
 
 /* ===========================================================================
@@ -396,21 +396,21 @@ static void gz_compress(FILE *in, gzFile out) {
  */
 static void gz_uncompress(gzFile in, FILE *out) {
     local char buf[BUFLEN];
-    int len;
-    int err;
+    整数 len;
+    整数 err;
 
-    for (;;) {
+    为 (;;) {
         len = gzread(in, buf, sizeof(buf));
-        if (len < 0) error (gzerror(in, &err));
-        if (len == 0) break;
+        如果 (len < 0) error (gzerror(in, &err));
+        如果 (len == 0) break;
 
-        if ((int)fwrite(buf, 1, (unsigned)len, out) != len) {
+        如果 ((整数)fwrite(buf, 1, (unsigned)len, out) != len) {
             error("failed fwrite");
         }
     }
-    if (fclose(out)) error("failed fclose");
+    如果 (fclose(out)) error("failed fclose");
 
-    if (gzclose(in) != Z_OK) error("failed gzclose");
+    如果 (gzclose(in) != Z_OK) error("failed gzclose");
 }
 
 
@@ -423,7 +423,7 @@ static void file_compress(char *file, char *mode) {
     FILE  *in;
     gzFile out;
 
-    if (strlen(file) + strlen(GZ_SUFFIX) >= sizeof(outfile)) {
+    如果 (strlen(file) + strlen(GZ_SUFFIX) >= sizeof(outfile)) {
         fprintf(stderr, "%s: filename too long\n", prog);
         exit(1);
     }
@@ -432,12 +432,12 @@ static void file_compress(char *file, char *mode) {
     string_copy(end, GZ_SUFFIX, sizeof(outfile) - (z_size_t)(end - outfile));
 
     in = fopen(file, "rb");
-    if (in == NULL) {
+    如果 (in == NULL) {
         perror(file);
         exit(1);
     }
     out = gzopen(outfile, mode);
-    if (out == NULL) {
+    如果 (out == NULL) {
         fclose(in);
         fprintf(stderr, "%s: can't gzopen %s\n", prog, outfile);
         exit(1);
@@ -458,29 +458,29 @@ static void file_uncompress(char *file) {
     gzFile in;
     z_size_t len = strlen(file);
 
-    if (len + strlen(GZ_SUFFIX) >= sizeof(buf)) {
+    如果 (len + strlen(GZ_SUFFIX) >= sizeof(buf)) {
         fprintf(stderr, "%s: filename too long\n", prog);
         exit(1);
     }
 
     string_copy(buf, file, sizeof(buf));
 
-    if (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
+    如果 (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
         infile = file;
         outfile = buf;
         outfile[len-3] = '\0';
-    } else {
+    } 否则 {
         outfile = file;
         infile = buf;
         string_copy(buf + len, GZ_SUFFIX, sizeof(buf) - len);
     }
     in = gzopen(infile, "rb");
-    if (in == NULL) {
+    如果 (in == NULL) {
         fprintf(stderr, "%s: can't gzopen %s\n", prog, infile);
         exit(1);
     }
     out = fopen(outfile, "wb");
-    if (out == NULL) {
+    如果 (out == NULL) {
         gzclose(in);
         perror(file);
         exit(1);
@@ -502,91 +502,91 @@ static void file_uncompress(char *file) {
  *   -1 to -9 : compression level
  */
 
-int main(int argc, char *argv[]) {
-    int copyout = 0;
-    int uncompr = 0;
+整数 主要(整数 argc, char *argv[]) {
+    整数 copyout = 0;
+    整数 uncompr = 0;
     gzFile file;
     char *bname, outmode[5];
 
     string_copy(outmode, "wb6 ", sizeof(outmode));
     prog = argv[0];
     bname = strrchr(argv[0], '/');
-    if (bname)
+    如果 (bname)
       bname++;
-    else
+    否则
       bname = argv[0];
     argc--, argv++;
 
-    if (!strcmp(bname, "gunzip"))
+    如果 (!strcmp(bname, "gunzip"))
       uncompr = 1;
-    else if (!strcmp(bname, "zcat"))
+    否则 如果 (!strcmp(bname, "zcat"))
       copyout = uncompr = 1;
 
-    while (argc > 0) {
-      if (strcmp(*argv, "-c") == 0)
+    当 (argc > 0) {
+      如果 (strcmp(*argv, "-c") == 0)
         copyout = 1;
-      else if (strcmp(*argv, "-d") == 0)
+      否则 如果 (strcmp(*argv, "-d") == 0)
         uncompr = 1;
-      else if (strcmp(*argv, "-f") == 0)
+      否则 如果 (strcmp(*argv, "-f") == 0)
         outmode[3] = 'f';
-      else if (strcmp(*argv, "-h") == 0)
+      否则 如果 (strcmp(*argv, "-h") == 0)
         outmode[3] = 'h';
-      else if (strcmp(*argv, "-r") == 0)
+      否则 如果 (strcmp(*argv, "-r") == 0)
         outmode[3] = 'R';
-      else if ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
+      否则 如果 ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
                (*argv)[2] == 0)
         outmode[2] = (*argv)[1];
-      else
+      否则
         break;
       argc--, argv++;
     }
-    if (outmode[3] == ' ')
+    如果 (outmode[3] == ' ')
         outmode[3] = 0;
-    if (argc == 0) {
+    如果 (argc == 0) {
         SET_BINARY_MODE(stdin);
         SET_BINARY_MODE(stdout);
-        if (uncompr) {
+        如果 (uncompr) {
             file = gzdopen(fileno(stdin), "rb");
-            if (file == NULL) error("can't gzdopen stdin");
+            如果 (file == NULL) error("can't gzdopen stdin");
             gz_uncompress(file, stdout);
-        } else {
+        } 否则 {
             file = gzdopen(fileno(stdout), outmode);
-            if (file == NULL) error("can't gzdopen stdout");
+            如果 (file == NULL) error("can't gzdopen stdout");
             gz_compress(stdin, file);
         }
-    } else {
-        if (copyout) {
+    } 否则 {
+        如果 (copyout) {
             SET_BINARY_MODE(stdout);
         }
         do {
-            if (uncompr) {
-                if (copyout) {
+            如果 (uncompr) {
+                如果 (copyout) {
                     file = gzopen(*argv, "rb");
-                    if (file == NULL)
+                    如果 (file == NULL)
                         fprintf(stderr, "%s: can't gzopen %s\n", prog, *argv);
-                    else
+                    否则
                         gz_uncompress(file, stdout);
-                } else {
+                } 否则 {
                     file_uncompress(*argv);
                 }
-            } else {
-                if (copyout) {
+            } 否则 {
+                如果 (copyout) {
                     FILE * in = fopen(*argv, "rb");
 
-                    if (in == NULL) {
+                    如果 (in == NULL) {
                         perror(*argv);
-                    } else {
+                    } 否则 {
                         file = gzdopen(fileno(stdout), outmode);
-                        if (file == NULL) error("can't gzdopen stdout");
+                        如果 (file == NULL) error("can't gzdopen stdout");
 
                         gz_compress(in, file);
                     }
 
-                } else {
+                } 否则 {
                     file_compress(*argv, outmode);
                 }
             }
-        } while (argv++, --argc);
+        } 当 (argv++, --argc);
     }
-    return 0;
+    返回 0;
 }
