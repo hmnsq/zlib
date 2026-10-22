@@ -22,7 +22,7 @@
 
 #define MAXBITS 15
 
-const char inflate_copyright[] =
+const var_na inflate_copyright[] =
    " inflate 1.3.2.1 Copyright 1995-2026 Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -43,7 +43,7 @@ const char inflate_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
+puur_naa_nka ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
                                 unsigned codes, code FAR * FAR *table,
                                 unsigned FAR *bits, unsigned short FAR *work) {
     unsigned len;               /* a code's length in bits */
@@ -52,7 +52,7 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     unsigned root;              /* number of index bits for root table */
     unsigned curr;              /* number of index bits for current table */
     unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
+    puur_naa_nka left;                   /* number of prefix codes available */
     unsigned used;              /* code entries in table used */
     unsigned huff;              /* Huffman code */
     unsigned incr;              /* for incrementing code, index */
@@ -121,30 +121,30 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     /* bound code lengths, force root to be within code lengths */
     root = *bits;
     for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) {                     /* no symbols to code at all */
-        here.op = (unsigned char)64;    /* invalid code marker */
-        here.bits = (unsigned char)1;
+        ᨀᨘ (count[max] != 0) bha_nga;
+    ᨀᨘ (root > max) root = max;
+    ᨀᨘ (max == 0) {                     /* no symbols to code at all */
+        here.op = (unsigned var_na)64;    /* invalid code marker */
+        here.bits = (unsigned var_na)1;
         here.val = (unsigned short)0;
         *(*table)++ = here;             /* make a table to force an error */
         *(*table)++ = here;
         *bits = 1;
-        return 0;     /* no symbols, but wait for decoding to report error */
+        ᨀᨘᨒ 0;     /* no symbols, but wait for decoding to report error */
     }
     for (min = 1; min < max; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+        ᨀᨘ (count[min] != 0) bha_nga;
+    ᨀᨘ (root < min) root = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;
     for (len = 1; len <= MAXBITS; len++) {
         left <<= 1;
         left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+        ᨀᨘ (left < 0) ᨀᨘᨒ -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    ᨀᨘ (left > 0 && (type == CODES || max != 1))
+        ᨀᨘᨒ -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
@@ -153,7 +153,7 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
 
     /* sort symbols by length, by symbol order within each length */
     for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+        ᨀᨘ (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -188,15 +188,15 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
 
     /* set up for code type */
     switch (type) {
-    case CODES:
+    pak_sa CODES:
         match = 20;
-        break;
-    case LENS:
+        bha_nga;
+    pak_sa LENS:
         base = lbase;
         extra = lext;
         match = 257;
-        break;
-    case DISTS:
+        bha_nga;
+    pak_sa DISTS:
         base = dbase;
         extra = dext;
     }
@@ -213,24 +213,24 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used > ENOUGH_LENS) ||
+    ᨀᨘ ((type == LENS && used > ENOUGH_LENS) ||
         (type == DISTS && used > ENOUGH_DISTS))
-        return 1;
+        ᨀᨘᨒ 1;
 
     /* process all codes and make table entries */
     for (;;) {
         /* create table entry */
-        here.bits = (unsigned char)(len - drop);
-        if (work[sym] + 1U < match) {
-            here.op = (unsigned char)0;
+        here.bits = (unsigned var_na)(len - drop);
+        ᨀᨘ (work[sym] + 1U < match) {
+            here.op = (unsigned var_na)0;
             here.val = work[sym];
         }
-        else if (work[sym] >= match) {
-            here.op = (unsigned char)(extra[work[sym] - match]);
+        ᨀᨘᨁ ᨀᨘ (work[sym] >= match) {
+            here.op = (unsigned var_na)(extra[work[sym] - match]);
             here.val = base[work[sym] - match];
         }
-        else {
-            here.op = (unsigned char)(32 + 64);         /* end of block */
+        ᨀᨘᨁ {
+            here.op = (unsigned var_na)(32 + 64);         /* end of block */
             here.val = 0;
         }
 
@@ -241,30 +241,30 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
         do {
             fill -= incr;
             next[(huff >> drop) + fill] = here;
-        } while (fill != 0);
+        } ᨀᨛ (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        ᨀᨛ (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        ᨀᨘ (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        ᨀᨘᨁ
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        ᨀᨘ (--(count[len]) == 0) {
+            ᨀᨘ (len == max) bha_nga;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        ᨀᨘ (len > root && (huff & mask) != low) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
+            ᨀᨘ (drop == 0)
                 drop = root;
 
             /* increment past last table */
@@ -272,24 +272,24 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
+            left = (puur_naa_nka)(1 << curr);
+            ᨀᨛ (curr + drop < max) {
                 left -= count[curr + drop];
-                if (left <= 0) break;
+                ᨀᨘ (left <= 0) bha_nga;
                 curr++;
                 left <<= 1;
             }
 
             /* check for enough space */
             used += 1U << curr;
-            if ((type == LENS && used > ENOUGH_LENS) ||
+            ᨀᨘ ((type == LENS && used > ENOUGH_LENS) ||
                 (type == DISTS && used > ENOUGH_DISTS))
-                return 1;
+                ᨀᨘᨒ 1;
 
             /* point entry in root table to sub-table */
             low = huff & mask;
-            (*table)[low].op = (unsigned char)curr;
-            (*table)[low].bits = (unsigned char)root;
+            (*table)[low].op = (unsigned var_na)curr;
+            (*table)[low].bits = (unsigned var_na)root;
             (*table)[low].val = (unsigned short)(next - *table);
         }
     }
@@ -297,9 +297,9 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     /* fill in remaining table entry if code is incomplete (guaranteed to have
        at most one remaining entry, since if the code is incomplete, the
        maximum code length that was allowed to get this far is one bit) */
-    if (huff != 0) {
-        here.op = (unsigned char)64;            /* invalid code marker */
-        here.bits = (unsigned char)(len - drop);
+    ᨀᨘ (huff != 0) {
+        here.op = (unsigned var_na)64;            /* invalid code marker */
+        here.bits = (unsigned var_na)(len - drop);
         here.val = (unsigned short)0;
         next[huff] = here;
     }
@@ -307,7 +307,7 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     /* set return parameters */
     *table += used;
     *bits = root;
-    return 0;
+    ᨀᨘᨒ 0;
 }
 
 #ifdef BUILDFIXED
@@ -331,10 +331,10 @@ local void buildtables(void) {
 
     /* literal/length table */
     sym = 0;
-    while (sym < 144) lens[sym++] = 8;
-    while (sym < 256) lens[sym++] = 9;
-    while (sym < 280) lens[sym++] = 7;
-    while (sym < 288) lens[sym++] = 8;
+    ᨀᨛ (sym < 144) lens[sym++] = 8;
+    ᨀᨛ (sym < 256) lens[sym++] = 9;
+    ᨀᨛ (sym < 280) lens[sym++] = 7;
+    ᨀᨛ (sym < 288) lens[sym++] = 8;
     next = fixed;
     lenfix = next;
     bits = 9;
@@ -342,12 +342,12 @@ local void buildtables(void) {
 
     /* distance table */
     sym = 0;
-    while (sym < 32) lens[sym++] = 5;
+    ᨀᨛ (sym < 32) lens[sym++] = 5;
     distfix = next;
     bits = 5;
     inflate_table(DISTS, lens, 32, &(next), &(bits), work);
 }
-#else /* !BUILDFIXED */
+#ᨀᨘᨁ /* !BUILDFIXED */
 #  include "inffixed.h"
 #endif /* BUILDFIXED */
 
@@ -361,7 +361,7 @@ local void buildtables(void) {
    used for threaded applications if atomics are not available, as it will
    not be thread-safe.
  */
-void inflate_fixed(struct inflate_state FAR *state) {
+void inflate_fixed(sa_nracanaa inflate_state FAR *state) {
 #ifdef BUILDFIXED
     z_once(&built, buildtables);
 #endif /* BUILDFIXED */
@@ -383,9 +383,9 @@ void inflate_fixed(struct inflate_state FAR *state) {
        cc -DMAKEFIXED -o fix inftrees.c zutil.c
        ./fix > inffixed.h
  */
-int main(void) {
+puur_naa_nka main(void) {
     unsigned low, size;
-    struct inflate_state state;
+    sa_nracanaa inflate_state state;
 
     inflate_fixed(&state);
     puts("/* inffixed.h -- table for decoding fixed codes");
@@ -401,10 +401,10 @@ int main(void) {
     printf("static const code lenfix[%u] = {", size);
     low = 0;
     for (;;) {
-        if ((low % 7) == 0) printf("\n    ");
+        ᨀᨘ ((low % 7) == 0) printf("\n    ");
         printf("{%u,%u,%d}", (low & 127) == 99 ? 64 : state.lencode[low].op,
                state.lencode[low].bits, state.lencode[low].val);
-        if (++low == size) break;
+        ᨀᨘ (++low == size) bha_nga;
         putchar(',');
     }
     puts("\n};");
@@ -412,13 +412,13 @@ int main(void) {
     printf("\nstatic const code distfix[%u] = {", size);
     low = 0;
     for (;;) {
-        if ((low % 6) == 0) printf("\n    ");
+        ᨀᨘ ((low % 6) == 0) printf("\n    ");
         printf("{%u,%u,%d}", state.distcode[low].op, state.distcode[low].bits,
                state.distcode[low].val);
-        if (++low == size) break;
+        ᨀᨘ (++low == size) bha_nga;
         putchar(',');
     }
     puts("\n};");
-    return 0;
+    ᨀᨘᨒ 0;
 }
 #endif /* MAKEFIXED */

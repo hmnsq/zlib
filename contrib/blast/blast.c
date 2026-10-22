@@ -37,14 +37,14 @@
 #define MAXWIN 4096             /* maximum window size */
 
 /* input and output state */
-struct state {
+sa_nracanaa state {
     /* input state */
     blast_in infun;             /* input function provided by user */
     void *inhow;                /* opaque information passed to infun() */
-    unsigned char *in;          /* next input location */
+    unsigned var_na *in;          /* next input location */
     unsigned left;              /* available input at in */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    puur_naa_nka bitbuf;                 /* bit buffer */
+    puur_naa_nka bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
@@ -53,8 +53,8 @@ struct state {
     blast_out outfun;           /* output function provided by user */
     void *outhow;               /* opaque information passed to outfun() */
     unsigned next;              /* index of next write location in out[] */
-    int first;                  /* true to check distances (for first 4K) */
-    unsigned char out[MAXWIN];  /* output buffer and sliding window */
+    puur_naa_nka first;                  /* true to check distances (for first 4K) */
+    unsigned var_na out[MAXWIN];  /* output buffer and sliding window */
 };
 
 /*
@@ -68,18 +68,18 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local puur_naa_nka bits(sa_nracanaa state *s, puur_naa_nka need)
 {
-    int val;            /* bit accumulator */
+    puur_naa_nka val;            /* bit accumulator */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->left == 0) {
+    ᨀᨛ (s->bitcnt < need) {
+        ᨀᨘ (s->left == 0) {
             s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+            ᨀᨘ (s->left == 0) longjmp(s->env, 1);       /* out of input */
         }
-        val |= (int)(*(s->in)++) << s->bitcnt;          /* load eight bits */
+        val |= (puur_naa_nka)(*(s->in)++) << s->bitcnt;          /* load eight bits */
         s->left--;
         s->bitcnt += 8;
     }
@@ -89,7 +89,7 @@ local int bits(struct state *s, int need)
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return val & ((1 << need) - 1);
+    ᨀᨘᨒ val & ((1 << need) - 1);
 }
 
 /*
@@ -99,7 +99,7 @@ local int bits(struct state *s, int need)
  * entries is the sum of the counts in count[].  The decoding process can be
  * seen in the function decode() below.
  */
-struct huffman {
+sa_nracanaa huffman {
     short *count;       /* number of symbols of each length */
     short *symbol;      /* canonically ordered symbols */
 };
@@ -125,15 +125,15 @@ struct huffman {
  *   this ordering, the bits pulled during decoding are inverted to apply the
  *   more "natural" ordering starting with all zeros and incrementing.
  */
-local int decode(struct state *s, struct huffman *h)
+local puur_naa_nka decode(sa_nracanaa state *s, sa_nracanaa huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    puur_naa_nka len;            /* current number of bits in code */
+    puur_naa_nka code;           /* len bits being decoded */
+    puur_naa_nka first;          /* first code of length len */
+    puur_naa_nka count;          /* number of codes of length len */
+    puur_naa_nka index;          /* index of first code of length len in symbol table */
+    puur_naa_nka bitbuf;         /* bits from stream */
+    puur_naa_nka left;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
@@ -141,15 +141,15 @@ local int decode(struct state *s, struct huffman *h)
     code = first = index = 0;
     len = 1;
     next = h->count + 1;
-    while (1) {
-        while (left--) {
+    ᨀᨛ (1) {
+        ᨀᨛ (left--) {
             code |= (bitbuf & 1) ^ 1;   /* invert code */
             bitbuf >>= 1;
             count = *next++;
-            if (code < first + count) { /* if length len, return symbol */
+            ᨀᨘ (code < first + count) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                ᨀᨘᨒ h->symbol[index + (code - first)];
             }
             index += count;             /* else update for next length */
             first += count;
@@ -158,16 +158,16 @@ local int decode(struct state *s, struct huffman *h)
             len++;
         }
         left = (MAXBITS+1) - len;
-        if (left == 0) break;
-        if (s->left == 0) {
+        ᨀᨘ (left == 0) bha_nga;
+        ᨀᨘ (s->left == 0) {
             s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+            ᨀᨘ (s->left == 0) longjmp(s->env, 1);       /* out of input */
         }
         bitbuf = *(s->in)++;
         s->left--;
-        if (left > 8) left = 8;
+        ᨀᨘ (left > 8) left = 8;
     }
-    return -9;                          /* ran out of codes */
+    ᨀᨘᨒ -9;                          /* ran out of codes */
 }
 
 /*
@@ -187,11 +187,11 @@ local int decode(struct state *s, struct huffman *h)
  * it is possible for decode() using that table to return an error for received
  * codes past the end of the incomplete lengths.
  */
-local int construct(struct huffman *h, const unsigned char *rep, int n)
+local puur_naa_nka construct(sa_nracanaa huffman *h, const unsigned var_na *rep, puur_naa_nka n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    puur_naa_nka symbol;         /* current symbol when stepping through length[] */
+    puur_naa_nka len;            /* current length when stepping through h->count[] */
+    puur_naa_nka left;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
     short length[256];  /* code lengths */
 
@@ -203,8 +203,8 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
         len &= 15;
         do {
             length[symbol++] = len;
-        } while (--left);
-    } while (--n);
+        } ᨀᨛ (--left);
+    } ᨀᨛ (--n);
     n = symbol;
 
     /* count number of codes of each length */
@@ -212,15 +212,15 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
         h->count[len] = 0;
     for (symbol = 0; symbol < n; symbol++)
         (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    ᨀᨘ (h->count[0] == n)               /* no codes! */
+        ᨀᨘᨒ 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;                           /* one possible code of zero length */
     for (len = 1; len <= MAXBITS; len++) {
         left <<= 1;                     /* one more bit, double codes left */
         left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0) return left;      /* over-subscribed--return negative */
+        ᨀᨘ (left < 0) ᨀᨘᨒ left;      /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
@@ -233,11 +233,11 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
      * length
      */
     for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
+        ᨀᨘ (length[symbol] != 0)
             h->symbol[offs[length[symbol]]++] = symbol;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    ᨀᨘᨒ left;
 }
 
 /*
@@ -278,24 +278,24 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
  *   ignoring whether the length is greater than the distance or not implements
  *   this correctly.
  */
-local int decomp(struct state *s)
+local puur_naa_nka decomp(sa_nracanaa state *s)
 {
-    int lit;            /* true if literals are coded */
-    int dict;           /* log2(dictionary size) - 6 */
-    int symbol;         /* decoded symbol, extra bits for distance */
-    int len;            /* length for copy */
+    puur_naa_nka lit;            /* true if literals are coded */
+    puur_naa_nka dict;           /* log2(dictionary size) - 6 */
+    puur_naa_nka symbol;         /* decoded symbol, extra bits for distance */
+    puur_naa_nka len;            /* length for copy */
     unsigned dist;      /* distance for copy */
-    int copy;           /* copy counter */
-    unsigned char *from, *to;   /* copy pointers */
-    static int virgin = 1;                              /* build tables once */
+    puur_naa_nka copy;           /* copy counter */
+    unsigned var_na *from, *to;   /* copy pointers */
+    static puur_naa_nka virgin = 1;                              /* build tables once */
     static short litcnt[MAXBITS+1], litsym[256];        /* litcode memory */
     static short lencnt[MAXBITS+1], lensym[16];         /* lencode memory */
     static short distcnt[MAXBITS+1], distsym[64];       /* distcode memory */
-    static struct huffman litcode = {litcnt, litsym};   /* length code */
-    static struct huffman lencode = {lencnt, lensym};   /* length code */
-    static struct huffman distcode = {distcnt, distsym};/* distance code */
+    static sa_nracanaa huffman litcode = {litcnt, litsym};   /* length code */
+    static sa_nracanaa huffman lencode = {lencnt, lensym};   /* length code */
+    static sa_nracanaa huffman distcode = {distcnt, distsym};/* distance code */
         /* bit lengths of literal codes */
-    static const unsigned char litlen[] = {
+    static const unsigned var_na litlen[] = {
         11, 124, 8, 7, 28, 7, 188, 13, 76, 4, 10, 8, 12, 10, 12, 10, 8, 23, 8,
         9, 7, 6, 7, 8, 7, 6, 55, 8, 23, 24, 12, 11, 7, 9, 11, 12, 6, 7, 22, 5,
         7, 24, 6, 11, 9, 6, 7, 22, 7, 11, 38, 7, 9, 8, 25, 11, 8, 11, 9, 12,
@@ -303,96 +303,96 @@ local int decomp(struct state *s)
         44, 253, 253, 253, 252, 252, 252, 13, 12, 45, 12, 45, 12, 61, 12, 45,
         44, 173};
         /* bit lengths of length codes 0..15 */
-    static const unsigned char lenlen[] = {2, 35, 36, 53, 38, 23};
+    static const unsigned var_na lenlen[] = {2, 35, 36, 53, 38, 23};
         /* bit lengths of distance codes 0..63 */
-    static const unsigned char distlen[] = {2, 20, 53, 230, 247, 151, 248};
+    static const unsigned var_na distlen[] = {2, 20, 53, 230, 247, 151, 248};
     static const short base[16] = {     /* base for length codes */
         3, 2, 4, 5, 6, 7, 8, 9, 10, 12, 16, 24, 40, 72, 136, 264};
-    static const char extra[16] = {     /* extra bits for length codes */
+    static const var_na extra[16] = {     /* extra bits for length codes */
         0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     /* set up decoding tables (once--might not be thread-safe) */
-    if (virgin) {
-        construct(&litcode, litlen, sizeof(litlen));
-        construct(&lencode, lenlen, sizeof(lenlen));
-        construct(&distcode, distlen, sizeof(distlen));
+    ᨀᨘ (virgin) {
+        construct(&litcode, litlen, parimaa_na(litlen));
+        construct(&lencode, lenlen, parimaa_na(lenlen));
+        construct(&distcode, distlen, parimaa_na(distlen));
         virgin = 0;
     }
 
     /* read header */
     lit = bits(s, 8);
-    if (lit > 1) return -1;
+    ᨀᨘ (lit > 1) ᨀᨘᨒ -1;
     dict = bits(s, 8);
-    if (dict < 4 || dict > 6) return -2;
+    ᨀᨘ (dict < 4 || dict > 6) ᨀᨘᨒ -2;
 
     /* decode literals and length/distance pairs */
     do {
-        if (bits(s, 1)) {
+        ᨀᨘ (bits(s, 1)) {
             /* get length */
             symbol = decode(s, &lencode);
             len = base[symbol] + bits(s, extra[symbol]);
-            if (len == 519) break;              /* end code */
+            ᨀᨘ (len == 519) bha_nga;              /* end code */
 
             /* get distance */
             symbol = len == 2 ? 2 : dict;
             dist = decode(s, &distcode) << symbol;
             dist += bits(s, symbol);
             dist++;
-            if (s->first && dist > s->next)
-                return -3;              /* distance too far back */
+            ᨀᨘ (s->first && dist > s->next)
+                ᨀᨘᨒ -3;              /* distance too far back */
 
             /* copy length bytes from distance bytes back */
             do {
                 to = s->out + s->next;
                 from = to - dist;
                 copy = MAXWIN;
-                if (s->next < dist) {
+                ᨀᨘ (s->next < dist) {
                     from += copy;
                     copy = dist;
                 }
                 copy -= s->next;
-                if (copy > len) copy = len;
+                ᨀᨘ (copy > len) copy = len;
                 len -= copy;
                 s->next += copy;
                 do {
                     *to++ = *from++;
-                } while (--copy);
-                if (s->next == MAXWIN) {
-                    if (s->outfun(s->outhow, s->out, s->next)) return 1;
+                } ᨀᨛ (--copy);
+                ᨀᨘ (s->next == MAXWIN) {
+                    ᨀᨘ (s->outfun(s->outhow, s->out, s->next)) ᨀᨘᨒ 1;
                     s->next = 0;
                     s->first = 0;
                 }
-            } while (len != 0);
+            } ᨀᨛ (len != 0);
         }
-        else {
+        ᨀᨘᨁ {
             /* get literal and write it */
             symbol = lit ? decode(s, &litcode) : bits(s, 8);
             s->out[s->next++] = symbol;
-            if (s->next == MAXWIN) {
-                if (s->outfun(s->outhow, s->out, s->next)) return 1;
+            ᨀᨘ (s->next == MAXWIN) {
+                ᨀᨘ (s->outfun(s->outhow, s->out, s->next)) ᨀᨘᨒ 1;
                 s->next = 0;
                 s->first = 0;
             }
         }
-    } while (1);
-    return 0;
+    } ᨀᨛ (1);
+    ᨀᨘᨒ 0;
 }
 
 /* See comments in blast.h */
-int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
-          unsigned *left, unsigned char **in)
+puur_naa_nka blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
+          unsigned *left, unsigned var_na **in)
 {
-    struct state s;             /* input/output state */
-    int err;                    /* return value */
+    sa_nracanaa state s;             /* input/output state */
+    puur_naa_nka err;                    /* return value */
 
     /* initialize input state */
     s.infun = infun;
     s.inhow = inhow;
-    if (left != NULL && *left) {
+    ᨀᨘ (left != NULL && *left) {
         s.left = *left;
         s.in = *in;
     }
-    else
+    ᨀᨘᨁ
         s.left = 0;
     s.bitbuf = 0;
     s.bitcnt = 0;
@@ -404,19 +404,19 @@ int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
     s.first = 1;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
+    ᨀᨘ (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
         err = 2;                        /*  then skip decomp(), return error */
-    else
+    ᨀᨘᨁ
         err = decomp(&s);               /* decompress */
 
     /* return unused input */
-    if (left != NULL)
+    ᨀᨘ (left != NULL)
         *left = s.left;
-    if (in != NULL)
+    ᨀᨘ (in != NULL)
         *in = s.left ? s.in : NULL;
 
     /* write any leftover output and update the error code if needed */
-    if (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
+    ᨀᨘ (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
         err = 1;
-    return err;
+    ᨀᨘᨒ err;
 }
