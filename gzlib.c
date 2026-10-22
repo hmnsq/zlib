@@ -3,19 +3,19 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "gzguts.h"
+#अन्तर्भाव "gzguts.h"
 
-#if defined(__DJGPP__)
+#यदि defined(__DJGPP__)
 #  define LSEEK llseek
-#elif defined(_WIN32) && !defined(__BORLANDC__) && !defined(UNDER_CE)
+#नोचेद्यदि defined(_WIN32) && !defined(__BORLANDC__) && !defined(UNDER_CE)
 #  define LSEEK _lseeki64
-#elif defined(_LARGEFILE64_SOURCE) && _LFS64_LARGEFILE-0
+#नोचेद्यदि defined(_LARGEFILE64_SOURCE) && _LFS64_LARGEFILE-0
 #  define LSEEK lseek64
-#else
+#अन्यथा
 #  define LSEEK lseek
-#endif
+#यदि_अन्तः
 
-#if defined UNDER_CE
+#यदि defined UNDER_CE
 
 /* Map the Windows error number in ERROR to a locale-dependent error message
    string and return a pointer to it.  Typically, the values for ERROR come
@@ -26,419 +26,419 @@
 
    The gz_strwinerror function does not change the current setting of
    GetLastError. */
-char ZLIB_INTERNAL *gz_strwinerror(DWORD error) {
-    static char buf[1024];
+वर्ण ZLIB_आन्तरिकम् *gz_strwinerror(DWORD error) {
+    स्थिर वर्ण buf[1024];
 
     wchar_t *msgbuf;
-    DWORD lasterr = GetLastError();
-    DWORD chars = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM
-        | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-        NULL,
+    DWORD lasterr = Get_चरमः_Error();
+    DWORD chars = Format_सन्देशः(FORMAT_सन्देशः_FROM_SYSTEM
+        | FORMAT_सन्देशः_ALLOCATE_बफर,
+        रिक्त,
         error,
         0, /* Default language */
         (LPVOID)&msgbuf,
         0,
-        NULL);
-    if (chars != 0) {
+        रिक्त);
+    यदि (chars != 0) {
         /* If there is an \r\n appended, zap it.  */
-        if (chars >= 2
+        यदि (chars >= 2
             && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n') {
             chars -= 2;
             msgbuf[chars] = 0;
         }
 
-        if (chars > sizeof (buf) - 1) {
-            chars = sizeof (buf) - 1;
+        यदि (chars > परिमाण (buf) - 1) {
+            chars = परिमाण (buf) - 1;
             msgbuf[chars] = 0;
         }
 
         wcstombs(buf, msgbuf, chars + 1);       /* assumes buf is big enough */
         LocalFree(msgbuf);
     }
-    else {
+    अन्यथा {
         sprintf(buf, "unknown win32 error (%ld)", error);
     }
 
-    SetLastError(lasterr);
-    return buf;
+    समुच्चयः_चरमः_Error(lasterr);
+    प्रत्यागम buf;
 }
 
-#endif /* UNDER_CE */
+#यदि_अन्तः /* UNDER_CE */
 
 /* Reset gzip file state */
-local void gz_reset(gz_statep state) {
+local शून्य gz_reset(gz_statep state) {
     state->x.have = 0;              /* no output data available */
     state->past = 0;                /* have not read past end yet */
-    if (state->mode == GZ_READ) {   /* for reading ... */
+    यदि (state->बहुलकम् == GZ_READ) {   /* for reading ... */
         state->eof = 0;             /* not at end of file */
         state->how = LOOK;          /* look for gzip header */
         state->junk = -1;           /* mark first member */
     }
-    else                            /* for writing ... */
+    अन्यथा                            /* for writing ... */
         state->reset = 0;           /* no deflateReset pending */
     state->again = 0;               /* no stalled i/o yet */
     state->skip = 0;                /* no seek request pending */
-    gz_error(state, Z_OK, NULL);    /* clear error */
+    gz_error(state, Z_OK, रिक्त);    /* clear error */
     state->x.pos = 0;               /* no uncompressed data yet */
-    state->strm.avail_in = 0;       /* no input data yet */
+    state->strm.avail_अन्तर् = 0;       /* no input data yet */
 }
 
 /* Open a gzip file either by name or file descriptor. */
-local gzFile gz_open(const void *path, int fd, const char *mode) {
+local gzFile gz_open(ध्रुव शून्य *मार्गः, पूर्णाङ्क fd, ध्रुव वर्ण *बहुलकम्) {
     gz_statep state;
-    z_size_t len;
-    int oflag = 0;
-#ifdef O_EXCL
-    int exclusive = 0;
-#endif
+    z_आकार_t len;
+    पूर्णाङ्क oflag = 0;
+#यदि_परिभाषितम् O_EXCL
+    पूर्णाङ्क exclusive = 0;
+#यदि_अन्तः
 
     /* check input */
-    if (path == NULL || mode == NULL)
-        return NULL;
+    यदि (मार्गः == रिक्त || बहुलकम् == रिक्त)
+        प्रत्यागम रिक्त;
 
     /* allocate gzFile structure to return */
-    state = (gz_statep)malloc(sizeof(gz_state));
-    if (state == NULL)
-        return NULL;
-    state->size = 0;            /* no buffers allocated yet */
+    state = (gz_statep)स्मृतिं_देहि(परिमाण(gz_state));
+    यदि (state == रिक्त)
+        प्रत्यागम रिक्त;
+    state->आकार = 0;            /* no buffers allocated yet */
     state->want = GZBUFSIZE;    /* requested buffer size */
     state->err = Z_OK;          /* no error yet */
-    state->msg = NULL;          /* no error message yet */
+    state->सन्देशः = रिक्त;          /* no error message yet */
 
     /* interpret mode */
-    state->mode = GZ_NONE;
+    state->बहुलकम् = GZ_NONE;
     state->level = Z_DEFAULT_COMPRESSION;
     state->strategy = Z_DEFAULT_STRATEGY;
-    state->direct = 0;
-    while (*mode) {
-        if (*mode >= '0' && *mode <= '9')
-            state->level = *mode - '0';
-        else
-            switch (*mode) {
-            case 'r':
-                state->mode = GZ_READ;
-                break;
-#ifndef NO_GZCOMPRESS
-            case 'w':
-                state->mode = GZ_WRITE;
-                break;
-            case 'a':
-                state->mode = GZ_APPEND;
-                break;
-#endif
-            case '+':       /* can't read and write at the same time */
-                free(state);
-                return NULL;
-            case 'b':       /* ignore -- will request binary anyway */
-                break;
-#ifdef O_CLOEXEC
-            case 'e':
+    state->प्रत्यक्षम् = 0;
+    यावत् (*बहुलकम्) {
+        यदि (*बहुलकम् >= '0' && *बहुलकम् <= '9')
+            state->level = *बहुलकम् - '0';
+        अन्यथा
+            विकल्प (*बहुलकम्) {
+            पक्ष 'r':
+                state->बहुलकम् = GZ_READ;
+                भङ्ग;
+#यदि_अपरिभाषितम् NO_GZCOMPRESS
+            पक्ष 'w':
+                state->बहुलकम् = GZ_WRITE;
+                भङ्ग;
+            पक्ष 'a':
+                state->बहुलकम् = GZ_APPEND;
+                भङ्ग;
+#यदि_अन्तः
+            पक्ष '+':       /* can't read and write at the same time */
+                मुक्त(state);
+                प्रत्यागम रिक्त;
+            पक्ष 'b':       /* ignore -- will request binary anyway */
+                भङ्ग;
+#यदि_परिभाषितम् O_CLOEXEC
+            पक्ष 'e':
                 oflag |= O_CLOEXEC;
-                break;
-#endif
-#ifdef O_EXCL
-            case 'x':
+                भङ्ग;
+#यदि_अन्तः
+#यदि_परिभाषितम् O_EXCL
+            पक्ष 'x':
                 exclusive = 1;
-                break;
-#endif
-            case 'f':
+                भङ्ग;
+#यदि_अन्तः
+            पक्ष 'f':
                 state->strategy = Z_FILTERED;
-                break;
-            case 'h':
+                भङ्ग;
+            पक्ष 'h':
                 state->strategy = Z_HUFFMAN_ONLY;
-                break;
-            case 'R':
+                भङ्ग;
+            पक्ष 'R':
                 state->strategy = Z_RLE;
-                break;
-            case 'F':
+                भङ्ग;
+            पक्ष 'F':
                 state->strategy = Z_FIXED;
-                break;
-            case 'G':
-                state->direct = -1;
-                break;
-#ifdef O_NONBLOCK
-            case 'N':
+                भङ्ग;
+            पक्ष 'G':
+                state->प्रत्यक्षम् = -1;
+                भङ्ग;
+#यदि_परिभाषितम् O_NONBLOCK
+            पक्ष 'N':
                 oflag |= O_NONBLOCK;
-                break;
-#endif
-            case 'T':
-                state->direct = 1;
-                break;
-            default:        /* could consider as an error, but just ignore */
+                भङ्ग;
+#यदि_अन्तः
+            पक्ष 'T':
+                state->प्रत्यक्षम् = 1;
+                भङ्ग;
+            स्वभाव:        /* could consider as an error, but just ignore */
                 ;
             }
-        mode++;
+        बहुलकम्++;
     }
 
     /* must provide an "r", "w", or "a" */
-    if (state->mode == GZ_NONE) {
-        free(state);
-        return NULL;
+    यदि (state->बहुलकम् == GZ_NONE) {
+        मुक्त(state);
+        प्रत्यागम रिक्त;
     }
 
     /* direct is 0, 1 if "T", or -1 if "G" (last "G" or "T" wins) */
-    if (state->mode == GZ_READ) {
-        if (state->direct == 1) {
+    यदि (state->बहुलकम् == GZ_READ) {
+        यदि (state->प्रत्यक्षम् == 1) {
             /* can't force a transparent read */
-            free(state);
-            return NULL;
+            मुक्त(state);
+            प्रत्यागम रिक्त;
         }
-        if (state->direct == 0)
+        यदि (state->प्रत्यक्षम् == 0)
             /* default when reading is auto-detect of gzip vs. transparent --
                start with a transparent assumption in case of an empty file */
-            state->direct = 1;
+            state->प्रत्यक्षम् = 1;
     }
-    else if (state->direct == -1) {
+    अन्यथा यदि (state->प्रत्यक्षम् == -1) {
         /* "G" has no meaning when writing -- disallow it */
-        free(state);
-        return NULL;
+        मुक्त(state);
+        प्रत्यागम रिक्त;
     }
     /* if reading, direct == 1 for auto-detect, -1 for gzip only; if writing or
        appending, direct == 0 for gzip, 1 for transparent (copy in to out) */
 
     /* save the path name for error messages */
-#ifdef WIDECHAR
-    if (fd == -2)
-        len = wcstombs(NULL, path, 0);
-    else
-#endif
-        len = strlen((const char *)path);
-    state->path = (char *)malloc(len + 1);
-    if (state->path == NULL) {
-        free(state);
-        return NULL;
+#यदि_परिभाषितम् WIDECHAR
+    यदि (fd == -2)
+        len = wcstombs(रिक्त, मार्गः, 0);
+    अन्यथा
+#यदि_अन्तः
+        len = वाक्यदैर्घ्यम्((ध्रुव वर्ण *)मार्गः);
+    state->मार्गः = (वर्ण *)स्मृतिं_देहि(len + 1);
+    यदि (state->मार्गः == रिक्त) {
+        मुक्त(state);
+        प्रत्यागम रिक्त;
     }
-#ifdef WIDECHAR
-    if (fd == -2) {
-        if (len)
-            wcstombs(state->path, path, len + 1);
-        else
-            *(state->path) = 0;
+#यदि_परिभाषितम् WIDECHAR
+    यदि (fd == -2) {
+        यदि (len)
+            wcstombs(state->मार्गः, मार्गः, len + 1);
+        अन्यथा
+            *(state->मार्गः) = 0;
     }
-    else
-#endif
+    अन्यथा
+#यदि_अन्तः
     {
-#if !defined(NO_snprintf) && !defined(NO_vsnprintf)
-        (void)snprintf(state->path, len + 1, "%s", (const char *)path);
-#else
-        strcpy(state->path, path);
-#endif
+#यदि !defined(NO_snprintf) && !defined(NO_vsnprintf)
+        (शून्य)snprintf(state->मार्गः, len + 1, "%s", (ध्रुव वर्ण *)मार्गः);
+#अन्यथा
+        वाक्यं_प्रतिलिख(state->मार्गः, मार्गः);
+#यदि_अन्तः
     }
 
     /* compute the flags for open() */
     oflag |=
-#ifdef O_LARGEFILE
+#यदि_परिभाषितम् O_LARGEFILE
         O_LARGEFILE |
-#endif
-#ifdef O_BINARY
-        O_BINARY |
-#endif
-        (state->mode == GZ_READ ?
+#यदि_अन्तः
+#यदि_परिभाषितम् O_द्विमान
+        O_द्विमान |
+#यदि_अन्तः
+        (state->बहुलकम् == GZ_READ ?
          O_RDONLY :
          (O_WRONLY | O_CREAT |
-#ifdef O_EXCL
+#यदि_परिभाषितम् O_EXCL
           (exclusive ? O_EXCL : 0) |
-#endif
-          (state->mode == GZ_WRITE ?
+#यदि_अन्तः
+          (state->बहुलकम् == GZ_WRITE ?
            O_TRUNC :
            O_APPEND)));
 
     /* open the file with the appropriate flags (or just use fd) */
-    if (fd == -1)
-        state->fd = open((const char *)path, oflag, 0666);
-#ifdef WIDECHAR
-    else if (fd == -2)
-        state->fd = _wopen(path, oflag, _S_IREAD | _S_IWRITE);
-#endif
-    else {
-#ifdef O_NONBLOCK
-        if (oflag & O_NONBLOCK)
+    यदि (fd == -1)
+        state->fd = उद्घाटय((ध्रुव वर्ण *)मार्गः, oflag, 0666);
+#यदि_परिभाषितम् WIDECHAR
+    अन्यथा यदि (fd == -2)
+        state->fd = _wopen(मार्गः, oflag, _S_IREAD | _S_IWRITE);
+#यदि_अन्तः
+    अन्यथा {
+#यदि_परिभाषितम् O_NONBLOCK
+        यदि (oflag & O_NONBLOCK)
             fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
-#endif
-#ifdef O_CLOEXEC
-        if (oflag & O_CLOEXEC)
+#यदि_अन्तः
+#यदि_परिभाषितम् O_CLOEXEC
+        यदि (oflag & O_CLOEXEC)
             fcntl(fd, F_SETFD, fcntl(fd, F_GETFD) | O_CLOEXEC);
-#endif
+#यदि_अन्तः
         state->fd = fd;
     }
-    if (state->fd == -1) {
-        free(state->path);
-        free(state);
-        return NULL;
+    यदि (state->fd == -1) {
+        मुक्त(state->मार्गः);
+        मुक्त(state);
+        प्रत्यागम रिक्त;
     }
-    if (state->mode == GZ_APPEND) {
+    यदि (state->बहुलकम् == GZ_APPEND) {
         LSEEK(state->fd, 0, SEEK_END);  /* so gzoffset() is correct */
-        state->mode = GZ_WRITE;         /* simplify later checks */
+        state->बहुलकम् = GZ_WRITE;         /* simplify later checks */
     }
 
     /* save the current position for rewinding (only if reading) */
-    if (state->mode == GZ_READ) {
+    यदि (state->बहुलकम् == GZ_READ) {
         state->start = LSEEK(state->fd, 0, SEEK_CUR);
-        if (state->start == -1) state->start = 0;
+        यदि (state->start == -1) state->start = 0;
     }
 
     /* initialize stream */
     gz_reset(state);
 
     /* return stream */
-    return (gzFile)state;
+    प्रत्यागम (gzFile)state;
 }
 
 /* -- see zlib.h -- */
-gzFile ZEXPORT gzopen(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+gzFile ZEXPORT gzopen(ध्रुव वर्ण *मार्गः, ध्रुव वर्ण *बहुलकम्) {
+    प्रत्यागम gz_open(मार्गः, -1, बहुलकम्);
 }
 
 /* -- see zlib.h -- */
-gzFile ZEXPORT gzopen64(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+gzFile ZEXPORT gzopen64(ध्रुव वर्ण *मार्गः, ध्रुव वर्ण *बहुलकम्) {
+    प्रत्यागम gz_open(मार्गः, -1, बहुलकम्);
 }
 
 /* -- see zlib.h -- */
-gzFile ZEXPORT gzdopen(int fd, const char *mode) {
-    char *path;         /* identifier for error messages */
+gzFile ZEXPORT gzdopen(पूर्णाङ्क fd, ध्रुव वर्ण *बहुलकम्) {
+    वर्ण *मार्गः;         /* identifier for error messages */
     gzFile gz;
 
-    if (fd == -1 || (path = (char *)malloc(7 + 3 * sizeof(int))) == NULL)
-        return NULL;
-#if !defined(NO_snprintf) && !defined(NO_vsnprintf)
-    (void)snprintf(path, 7 + 3 * sizeof(int), "<fd:%d>", fd);
-#else
-    sprintf(path, "<fd:%d>", fd);   /* for debugging */
-#endif
-    gz = gz_open(path, fd, mode);
-    free(path);
-    return gz;
+    यदि (fd == -1 || (मार्गः = (वर्ण *)स्मृतिं_देहि(7 + 3 * परिमाण(पूर्णाङ्क))) == रिक्त)
+        प्रत्यागम रिक्त;
+#यदि !defined(NO_snprintf) && !defined(NO_vsnprintf)
+    (शून्य)snprintf(मार्गः, 7 + 3 * परिमाण(पूर्णाङ्क), "<fd:%d>", fd);
+#अन्यथा
+    sprintf(मार्गः, "<fd:%d>", fd);   /* for debugging */
+#यदि_अन्तः
+    gz = gz_open(मार्गः, fd, बहुलकम्);
+    मुक्त(मार्गः);
+    प्रत्यागम gz;
 }
 
 /* -- see zlib.h -- */
-#ifdef WIDECHAR
-gzFile ZEXPORT gzopen_w(const wchar_t *path, const char *mode) {
-    return gz_open(path, -2, mode);
+#यदि_परिभाषितम् WIDECHAR
+gzFile ZEXPORT gzopen_w(ध्रुव wchar_t *मार्गः, ध्रुव वर्ण *बहुलकम्) {
+    प्रत्यागम gz_open(मार्गः, -2, बहुलकम्);
 }
-#endif
+#यदि_अन्तः
 
 /* -- see zlib.h -- */
-int ZEXPORT gzbuffer(gzFile file, unsigned size) {
+पूर्णाङ्क ZEXPORT gzbuffer(gzFile file, अचिह्नित आकार) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return -1;
+    यदि (file == रिक्त)
+        प्रत्यागम -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return -1;
+    यदि (state->बहुलकम् != GZ_READ && state->बहुलकम् != GZ_WRITE)
+        प्रत्यागम -1;
 
     /* make sure we haven't already allocated memory */
-    if (state->size != 0)
-        return -1;
+    यदि (state->आकार != 0)
+        प्रत्यागम -1;
 
     /* check and set requested size */
-    if ((size << 1) < size)
-        return -1;              /* need to be able to double it */
-    if (size < 8)
-        size = 8;               /* needed to behave well with flushing */
-    state->want = size;
-    return 0;
+    यदि ((आकार << 1) < आकार)
+        प्रत्यागम -1;              /* need to be able to double it */
+    यदि (आकार < 8)
+        आकार = 8;               /* needed to behave well with flushing */
+    state->want = आकार;
+    प्रत्यागम 0;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzrewind(gzFile file) {
+पूर्णाङ्क ZEXPORT gzrewind(gzFile file) {
     gz_statep state;
 
     /* get internal structure */
-    if (file == NULL)
-        return -1;
+    यदि (file == रिक्त)
+        प्रत्यागम -1;
     state = (gz_statep)file;
 
     /* check that we're reading and that there's no error */
-    if (state->mode != GZ_READ ||
+    यदि (state->बहुलकम् != GZ_READ ||
             (state->err != Z_OK && state->err != Z_BUF_ERROR))
-        return -1;
+        प्रत्यागम -1;
 
     /* back up and start over */
-    if (LSEEK(state->fd, state->start, SEEK_SET) == -1)
-        return -1;
+    यदि (LSEEK(state->fd, state->start, SEEK_SET) == -1)
+        प्रत्यागम -1;
     gz_reset(state);
-    return 0;
+    प्रत्यागम 0;
 }
 
 /* -- see zlib.h -- */
-z_off64_t ZEXPORT gzseek64(gzFile file, z_off64_t offset, int whence) {
-    unsigned n;
+z_off64_t ZEXPORT gzseek64(gzFile file, z_off64_t विस्थापनम्, पूर्णाङ्क whence) {
+    अचिह्नित n;
     z_off64_t ret, pos;
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return -1;
+    यदि (file == रिक्त)
+        प्रत्यागम -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return -1;
+    यदि (state->बहुलकम् != GZ_READ && state->बहुलकम् != GZ_WRITE)
+        प्रत्यागम -1;
 
     /* check that there's no error */
-    if (state->err != Z_OK && state->err != Z_BUF_ERROR)
-        return -1;
+    यदि (state->err != Z_OK && state->err != Z_BUF_ERROR)
+        प्रत्यागम -1;
 
     /* can only seek from start or relative to current position */
-    if (whence != SEEK_SET && whence != SEEK_CUR)
-        return -1;
+    यदि (whence != SEEK_SET && whence != SEEK_CUR)
+        प्रत्यागम -1;
 
     /* compute the absolute position */
     pos = whence == SEEK_SET ? 0 :
           state->x.pos + (state->past ? 0 : state->skip);
-    if (offset > GZ_OFF_MAX - pos)
-        return -1;                          /* would overflow z_off64_t */
-    if (offset < -pos)
-        return -1;                          /* before start of file */
-    pos += offset;
+    यदि (विस्थापनम् > GZ_OFF_MAX - pos)
+        प्रत्यागम -1;                          /* would overflow z_off64_t */
+    यदि (विस्थापनम् < -pos)
+        प्रत्यागम -1;                          /* before start of file */
+    pos += विस्थापनम्;
 
     /* if within raw area while reading, just go there */
-    if (state->mode == GZ_READ && state->how == COPY) {
+    यदि (state->बहुलकम् == GZ_READ && state->how == COPY) {
         ret = LSEEK(state->fd, pos - state->x.pos - (z_off64_t)state->x.have,
                     SEEK_CUR);
-        if (ret == -1)
-            return -1;
+        यदि (ret == -1)
+            प्रत्यागम -1;
         state->x.have = 0;
         state->eof = 0;
         state->past = 0;
         state->skip = 0;
-        gz_error(state, Z_OK, NULL);
-        state->strm.avail_in = 0;
+        gz_error(state, Z_OK, रिक्त);
+        state->strm.avail_अन्तर् = 0;
         state->x.pos = pos;
-        return pos;
+        प्रत्यागम pos;
     }
 
     /* rewind if needed for back seek when reading */
-    if (pos < state->x.pos) {
-        if (state->mode != GZ_READ)         /* writing -- can't go backwards */
-            return -1;
-        if (gzrewind(file) == -1)           /* rewind, then skip to pos */
-            return -1;
+    यदि (pos < state->x.pos) {
+        यदि (state->बहुलकम् != GZ_READ)         /* writing -- can't go backwards */
+            प्रत्यागम -1;
+        यदि (gzrewind(file) == -1)           /* rewind, then skip to pos */
+            प्रत्यागम -1;
     }
-    offset = pos - state->x.pos;
+    विस्थापनम् = pos - state->x.pos;
 
     /* if reading, skip what's in output buffer (one less gzgetc() check) */
-    if (state->mode == GZ_READ) {
-        n = GT_OFF(state->x.have) || (z_off64_t)state->x.have > offset ?
-            (unsigned)offset : state->x.have;
+    यदि (state->बहुलकम् == GZ_READ) {
+        n = GT_OFF(state->x.have) || (z_off64_t)state->x.have > विस्थापनम् ?
+            (अचिह्नित)विस्थापनम् : state->x.have;
         state->x.have -= n;
-        state->x.next += n;
+        state->x.अग्र += n;
         state->x.pos += n;
-        offset -= n;
+        विस्थापनम् -= n;
     }
 
     /* request skip (if not zero) */
-    state->skip = offset;
-    return pos;
+    state->skip = विस्थापनम्;
+    प्रत्यागम pos;
 }
 
 /* -- see zlib.h -- */
-z_off_t ZEXPORT gzseek(gzFile file, z_off_t offset, int whence) {
+z_off_t ZEXPORT gzseek(gzFile file, z_off_t विस्थापनम्, पूर्णाङ्क whence) {
     z_off64_t ret;
 
-    ret = gzseek64(file, (z_off64_t)offset, whence);
-    return ret == (z_off_t)ret ? (z_off_t)ret : -1;
+    ret = gzseek64(file, (z_off64_t)विस्थापनम्, whence);
+    प्रत्यागम ret == (z_off_t)ret ? (z_off_t)ret : -1;
 }
 
 /* -- see zlib.h -- */
@@ -446,14 +446,14 @@ z_off64_t ZEXPORT gztell64(gzFile file) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return -1;
+    यदि (file == रिक्त)
+        प्रत्यागम -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return -1;
+    यदि (state->बहुलकम् != GZ_READ && state->बहुलकम् != GZ_WRITE)
+        प्रत्यागम -1;
 
     /* return position */
-    return state->x.pos + (state->past ? 0 : state->skip);
+    प्रत्यागम state->x.pos + (state->past ? 0 : state->skip);
 }
 
 /* -- see zlib.h -- */
@@ -461,28 +461,28 @@ z_off_t ZEXPORT gztell(gzFile file) {
     z_off64_t ret;
 
     ret = gztell64(file);
-    return ret == (z_off_t)ret ? (z_off_t)ret : -1;
+    प्रत्यागम ret == (z_off_t)ret ? (z_off_t)ret : -1;
 }
 
 /* -- see zlib.h -- */
 z_off64_t ZEXPORT gzoffset64(gzFile file) {
-    z_off64_t offset;
+    z_off64_t विस्थापनम्;
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return -1;
+    यदि (file == रिक्त)
+        प्रत्यागम -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return -1;
+    यदि (state->बहुलकम् != GZ_READ && state->बहुलकम् != GZ_WRITE)
+        प्रत्यागम -1;
 
     /* compute and return effective offset in file */
-    offset = LSEEK(state->fd, 0, SEEK_CUR);
-    if (offset == -1)
-        return -1;
-    if (state->mode == GZ_READ)             /* reading */
-        offset -= state->strm.avail_in;     /* don't count buffered input */
-    return offset;
+    विस्थापनम् = LSEEK(state->fd, 0, SEEK_CUR);
+    यदि (विस्थापनम् == -1)
+        प्रत्यागम -1;
+    यदि (state->बहुलकम् == GZ_READ)             /* reading */
+        विस्थापनम् -= state->strm.avail_अन्तर्;     /* don't count buffered input */
+    प्रत्यागम विस्थापनम्;
 }
 
 /* -- see zlib.h -- */
@@ -490,59 +490,59 @@ z_off_t ZEXPORT gzoffset(gzFile file) {
     z_off64_t ret;
 
     ret = gzoffset64(file);
-    return ret == (z_off_t)ret ? (z_off_t)ret : -1;
+    प्रत्यागम ret == (z_off_t)ret ? (z_off_t)ret : -1;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzeof(gzFile file) {
+पूर्णाङ्क ZEXPORT gzeof(gzFile file) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return 0;
+    यदि (file == रिक्त)
+        प्रत्यागम 0;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return 0;
+    यदि (state->बहुलकम् != GZ_READ && state->बहुलकम् != GZ_WRITE)
+        प्रत्यागम 0;
 
     /* return end-of-file state */
-    return state->mode == GZ_READ ? state->past : 0;
+    प्रत्यागम state->बहुलकम् == GZ_READ ? state->past : 0;
 }
 
 /* -- see zlib.h -- */
-const char * ZEXPORT gzerror(gzFile file, int *errnum) {
+ध्रुव वर्ण * ZEXPORT gzerror(gzFile file, पूर्णाङ्क *errnum) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return NULL;
+    यदि (file == रिक्त)
+        प्रत्यागम रिक्त;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return NULL;
+    यदि (state->बहुलकम् != GZ_READ && state->बहुलकम् != GZ_WRITE)
+        प्रत्यागम रिक्त;
 
     /* return error information */
-    if (errnum != NULL)
+    यदि (errnum != रिक्त)
         *errnum = state->err;
-    return state->err == Z_MEM_ERROR ? "out of memory" :
-                                       (state->msg == NULL ? "" : state->msg);
+    प्रत्यागम state->err == Z_MEM_ERROR ? "out of memory" :
+                                       (state->सन्देशः == रिक्त ? "" : state->सन्देशः);
 }
 
 /* -- see zlib.h -- */
-void ZEXPORT gzclearerr(gzFile file) {
+शून्य ZEXPORT gzclearerr(gzFile file) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return;
+    यदि (file == रिक्त)
+        प्रत्यागम;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return;
+    यदि (state->बहुलकम् != GZ_READ && state->बहुलकम् != GZ_WRITE)
+        प्रत्यागम;
 
     /* clear error and end-of-file */
-    if (state->mode == GZ_READ) {
+    यदि (state->बहुलकम् == GZ_READ) {
         state->eof = 0;
         state->past = 0;
     }
-    gz_error(state, Z_OK, NULL);
+    gz_error(state, Z_OK, रिक्त);
 }
 
 /* Create an error message in allocated memory and set state->err and
@@ -551,58 +551,58 @@ void ZEXPORT gzclearerr(gzFile file) {
    memory).  Simply save the error message as a static string.  If there is an
    allocation failure constructing the error message, then convert the error to
    out of memory. */
-void ZLIB_INTERNAL gz_error(gz_statep state, int err, const char *msg) {
+शून्य ZLIB_आन्तरिकम् gz_error(gz_statep state, पूर्णाङ्क err, ध्रुव वर्ण *सन्देशः) {
     /* free previously allocated message and clear */
-    if (state->msg != NULL) {
-        if (state->err != Z_MEM_ERROR)
-            free(state->msg);
-        state->msg = NULL;
+    यदि (state->सन्देशः != रिक्त) {
+        यदि (state->err != Z_MEM_ERROR)
+            मुक्त(state->सन्देशः);
+        state->सन्देशः = रिक्त;
     }
 
     /* if fatal, set state->x.have to 0 so that the gzgetc() macro fails */
-    if (err != Z_OK && err != Z_BUF_ERROR && !state->again)
+    यदि (err != Z_OK && err != Z_BUF_ERROR && !state->again)
         state->x.have = 0;
 
     /* set error code, and if no message, then done */
     state->err = err;
-    if (msg == NULL)
-        return;
+    यदि (सन्देशः == रिक्त)
+        प्रत्यागम;
 
     /* for an out of memory error, return literal string when requested */
-    if (err == Z_MEM_ERROR)
-        return;
+    यदि (err == Z_MEM_ERROR)
+        प्रत्यागम;
 
     /* construct error message with path */
-    if ((state->msg = (char *)malloc(strlen(state->path) + strlen(msg) + 3)) ==
-            NULL) {
+    यदि ((state->सन्देशः = (वर्ण *)स्मृतिं_देहि(वाक्यदैर्घ्यम्(state->मार्गः) + वाक्यदैर्घ्यम्(सन्देशः) + 3)) ==
+            रिक्त) {
         state->err = Z_MEM_ERROR;
-        return;
+        प्रत्यागम;
     }
-#if !defined(NO_snprintf) && !defined(NO_vsnprintf)
-    (void)snprintf(state->msg, strlen(state->path) + strlen(msg) + 3,
-                   "%s%s%s", state->path, ": ", msg);
-#else
-    strcpy(state->msg, state->path);
-    strcat(state->msg, ": ");
-    strcat(state->msg, msg);
-#endif
+#यदि !defined(NO_snprintf) && !defined(NO_vsnprintf)
+    (शून्य)snprintf(state->सन्देशः, वाक्यदैर्घ्यम्(state->मार्गः) + वाक्यदैर्घ्यम्(सन्देशः) + 3,
+                   "%s%s%s", state->मार्गः, ": ", सन्देशः);
+#अन्यथा
+    वाक्यं_प्रतिलिख(state->सन्देशः, state->मार्गः);
+    वाक्यं_योजय(state->सन्देशः, ": ");
+    वाक्यं_योजय(state->सन्देशः, सन्देशः);
+#यदि_अन्तः
 }
 
 /* portably return maximum value for an int (when limits.h presumed not
    available) -- we need to do this to cover cases where 2's complement not
    used, since C standard permits 1's complement and sign-bit representations,
    otherwise we could just use ((unsigned)-1) >> 1 */
-unsigned ZLIB_INTERNAL gz_intmax(void) {
-#ifdef INT_MAX
-    return INT_MAX;
-#else
-    unsigned p = 1, q;
+अचिह्नित ZLIB_आन्तरिकम् gz_intmax(शून्य) {
+#यदि_परिभाषितम् अधिकतम_पूर्णाङ्कः
+    प्रत्यागम अधिकतम_पूर्णाङ्कः;
+#अन्यथा
+    अचिह्नित p = 1, q;
 
-    do {
+    कुरु {
         q = p;
         p <<= 1;
         p++;
-    } while (p > q);
-    return q >> 1;
-#endif
+    } यावत् (p > q);
+    प्रत्यागम q >> 1;
+#यदि_अन्तः
 }

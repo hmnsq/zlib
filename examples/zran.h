@@ -3,25 +3,25 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  * Version 1.7  16 May 2025  Mark Adler */
 
-#include <stdio.h>
-#include "zlib.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव "zlib.h"
 
 // Access point.
-typedef struct point {
-    off_t out;          // offset in uncompressed data
-    off_t in;           // offset in compressed file of first full byte
-    int bits;           // 0, or number of bits (1-7) from byte at in-1
-    unsigned dict;      // number of bytes in window to use as a dictionary
-    unsigned char *window;  // preceding 32K (or less) of uncompressed data
+प्रकारनिर्देश संरचना point {
+    off_t बहिर्गमनम्;          // offset in uncompressed data
+    off_t अन्तर्;           // offset in compressed file of first full byte
+    पूर्णाङ्क द्वयङ्काः;           // 0, or number of bits (1-7) from byte at in-1
+    अचिह्नित dict;      // number of bytes in window to use as a dictionary
+    अचिह्नित वर्ण *गवाक्षः;  // preceding 32K (or less) of uncompressed data
 } point_t;
 
 // Access point list.
-struct deflate_index {
-    int have;           // number of access points in list
-    int mode;           // -15 for raw, 15 for zlib, or 31 for gzip
-    off_t length;       // total length of uncompressed data
+संरचना deflate_सूचकांक {
+    पूर्णाङ्क have;           // number of access points in list
+    पूर्णाङ्क बहुलकम्;           // -15 for raw, 15 for zlib, or 31 for gzip
+    off_t दीर्घता;       // total length of uncompressed data
     point_t *list;      // allocated list of access points
-    z_stream strm;      // re-usable inflate engine for extraction
+    z_प्रवाहः strm;      // re-usable inflate engine for extraction
 };
 
 // Make one pass through a zlib, gzip, or raw deflate compressed stream and
@@ -33,7 +33,7 @@ struct deflate_index {
 // memory, Z_BUF_ERROR for a premature end of input, Z_DATA_ERROR for a format
 // or verification error in the input file, or Z_ERRNO for a file read error.
 // On success, *built points to the resulting index, otherwise it's NULL.
-int deflate_index_build(FILE *in, off_t span, struct deflate_index **built);
+पूर्णाङ्क deflate_सूचकांक_build(FILE *अन्तर्, off_t विस्तृतिः, संरचना deflate_सूचकांक **built);
 
 // Use the index to read len bytes from offset into buf. Return the number of
 // bytes read or a negative error code. If data is requested past the end of
@@ -46,8 +46,8 @@ int deflate_index_build(FILE *in, off_t span, struct deflate_index **built);
 // deflate compressed data is not valid, Z_MEM_ERROR if out of memory,
 // Z_STREAM_ERROR if the index is not valid, or Z_ERRNO if there is an error
 // reading or seeking on the input file.
-ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
-                                off_t offset, unsigned char *buf, size_t len);
+ptrdiff_t deflate_सूचकांक_extract(FILE *अन्तर्, संरचना deflate_सूचकांक *सूचकांक,
+                                off_t विस्थापनम्, अचिह्नित वर्ण *buf, size_t len);
 
 // Deallocate an index built by deflate_index_build().
-void deflate_index_free(struct deflate_index *index);
+शून्य deflate_सूचकांक_free(संरचना deflate_सूचकांक *सूचकांक);

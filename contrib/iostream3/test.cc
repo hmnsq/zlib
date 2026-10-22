@@ -5,46 +5,46 @@
  * original version by Kevin Ruland <kevin@rodin.wustl.edu>
  */
 
-#include "zfstream.h"
-#include <iostream>      // for cout
+#अन्तर्भाव "zfstream.h"
+#अन्तर्भाव <iostream>      // for cout
 
-int main() {
+पूर्णाङ्क मुख्यम्() {
 
   gzofstream outf;
   gzifstream inf;
-  char buf[80];
+  वर्ण buf[80];
 
-  outf.open("test1.txt.gz");
+  outf.उद्घाटय("test1.txt.gz");
   outf << "The quick brown fox sidestepped the lazy canine\n"
-       << 1.3 << "\nPlan " << 9 << std::endl;
+       << 1.3 << "\nPlan " << 9 << std::पङ्क्त्यन्तः;
   outf.close();
-  std::cout << "Wrote the following message to 'test1.txt.gz' (check with zcat or zless):\n"
+  std::निर्गमः << "Wrote the following message to 'test1.txt.gz' (check with zcat or zless):\n"
             << "The quick brown fox sidestepped the lazy canine\n"
-            << 1.3 << "\nPlan " << 9 << std::endl;
+            << 1.3 << "\nPlan " << 9 << std::पङ्क्त्यन्तः;
 
-  std::cout << "\nReading 'test1.txt.gz' (buffered) produces:\n";
-  inf.open("test1.txt.gz");
-  while (inf.getline(buf,80,'\n')) {
-    std::cout << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
+  std::निर्गमः << "\nReading 'test1.txt.gz' (buffered) produces:\n";
+  inf.उद्घाटय("test1.txt.gz");
+  यावत् (inf.getline(buf,80,'\n')) {
+    std::निर्गमः << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
   }
   inf.close();
 
   outf.rdbuf()->pubsetbuf(0,0);
-  outf.open("test2.txt.gz");
+  outf.उद्घाटय("test2.txt.gz");
   outf << setcompression(Z_NO_COMPRESSION)
        << "The quick brown fox sidestepped the lazy canine\n"
-       << 1.3 << "\nPlan " << 9 << std::endl;
+       << 1.3 << "\nPlan " << 9 << std::पङ्क्त्यन्तः;
   outf.close();
-  std::cout << "\nWrote the same message to 'test2.txt.gz' in uncompressed form";
+  std::निर्गमः << "\nWrote the same message to 'test2.txt.gz' in uncompressed form";
 
-  std::cout << "\nReading 'test2.txt.gz' (unbuffered) produces:\n";
+  std::निर्गमः << "\nReading 'test2.txt.gz' (unbuffered) produces:\n";
   inf.rdbuf()->pubsetbuf(0,0);
-  inf.open("test2.txt.gz");
-  while (inf.getline(buf,80,'\n')) {
-    std::cout << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
+  inf.उद्घाटय("test2.txt.gz");
+  यावत् (inf.getline(buf,80,'\n')) {
+    std::निर्गमः << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
   }
   inf.close();
 
-  return 0;
+  प्रत्यागम 0;
 
 }

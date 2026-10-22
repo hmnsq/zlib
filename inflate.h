@@ -12,13 +12,13 @@
    trailer decoding by inflate().  NO_GZIP would be used to avoid linking in
    the crc code when it is not needed.  For shared libraries, gzip decoding
    should be left enabled. */
-#ifndef NO_GZIP
+#यदि_अपरिभाषितम् NO_GZIP
 #  define GUNZIP
-#endif
+#यदि_अन्तः
 
 /* Possible inflate modes between inflate() calls */
-typedef enum {
-    HEAD = 16180,   /* i: waiting for magic header */
+प्रकारनिर्देश गणना {
+    शीर्ष_2 = 16180,   /* i: waiting for magic header */
     FLAGS,      /* i: waiting for method and flags (gzip) */
     TIME,       /* i: waiting for modification time (gzip) */
     OS,         /* i: waiting for extra flags and operating system (gzip) */
@@ -34,7 +34,7 @@ typedef enum {
         STORED,     /* i: waiting for stored size (length and complement) */
         COPY_,      /* i/o: same as COPY below, but only first time in */
         COPY,       /* i/o: waiting for input or output to copy stored block */
-        TABLE,      /* i: waiting for dynamic block table lengths */
+        सारणी,      /* i: waiting for dynamic block table lengths */
         LENLENS,    /* i: waiting for code length code lengths */
         CODELENS,   /* i: waiting for length/lit and distance code lengths */
             LEN_,       /* i: same as LEN below, but only first time in */
@@ -42,15 +42,15 @@ typedef enum {
             LENEXT,     /* i: waiting for length extra bits */
             DIST,       /* i: waiting for distance code */
             DISTEXT,    /* i: waiting for distance extra bits */
-            MATCH,      /* o: waiting for output space to copy string */
+            मेलनम्_2,      /* o: waiting for output space to copy string */
             LIT,        /* o: waiting for output space to write literal */
     CHECK,      /* i: waiting for 32-bit check value */
-    LENGTH,     /* i: waiting for 32-bit length (gzip) */
-    DONE,       /* finished check, done -- remain here until reset */
+    दीर्घता_2,     /* i: waiting for 32-bit length (gzip) */
+    समाप्तम्,       /* finished check, done -- remain here until reset */
     BAD,        /* got a data error -- remain here until reset */
     MEM,        /* got an inflate() memory error -- remain here until reset */
     SYNC        /* looking for synchronization bytes to restart inflate() */
-} inflate_mode;
+} inflate_बहुलकम्;
 
 /*
     State transitions between above modes -
@@ -79,48 +79,48 @@ typedef enum {
 
 /* State maintained between inflate() calls -- approximately 7K bytes, not
    including the allocated sliding window, which is up to 32K bytes. */
-struct inflate_state {
+संरचना inflate_state {
     z_streamp strm;             /* pointer back to this zlib stream */
-    inflate_mode mode;          /* current inflate mode */
-    int last;                   /* true if processing last block */
-    int wrap;                   /* bit 0 true for zlib, bit 1 true for gzip,
+    inflate_बहुलकम् बहुलकम्;          /* current inflate mode */
+    पूर्णाङ्क चरमः;                   /* true if processing last block */
+    पूर्णाङ्क wrap;                   /* bit 0 true for zlib, bit 1 true for gzip,
                                    bit 2 true to validate check value */
-    int havedict;               /* true if dictionary provided */
-    int flags;                  /* gzip header method and flags, 0 if zlib, or
+    पूर्णाङ्क havedict;               /* true if dictionary provided */
+    पूर्णाङ्क flags;                  /* gzip header method and flags, 0 if zlib, or
                                    -1 if raw or no header yet */
-    unsigned dmax;              /* zlib header max distance (INFLATE_STRICT) */
-    unsigned long check;        /* protected copy of check value */
-    unsigned long total;        /* protected copy of output count */
-    gz_headerp head;            /* where to save gzip header information */
+    अचिह्नित dmax;              /* zlib header max distance (INFLATE_STRICT) */
+    अचिह्नित दीर्घ check;        /* protected copy of check value */
+    अचिह्नित दीर्घ योग_2;        /* protected copy of output count */
+    gz_headerp शीर्ष;            /* where to save gzip header information */
         /* sliding window */
-    unsigned wbits;             /* log base 2 of requested window size */
-    unsigned wsize;             /* window size or zero if not using window */
-    unsigned whave;             /* valid bytes in the window */
-    unsigned wnext;             /* window write index */
-    unsigned char FAR *window;  /* allocated sliding window, if needed */
+    अचिह्नित wbits;             /* log base 2 of requested window size */
+    अचिह्नित wsize;             /* window size or zero if not using window */
+    अचिह्नित whave;             /* valid bytes in the window */
+    अचिह्नित wnext;             /* window write index */
+    अचिह्नित वर्ण FAR *गवाक्षः;  /* allocated sliding window, if needed */
         /* bit accumulator */
-    unsigned long hold;         /* input bit accumulator */
-    unsigned bits;              /* number of bits in hold */
+    अचिह्नित दीर्घ hold;         /* input bit accumulator */
+    अचिह्नित द्वयङ्काः;              /* number of bits in hold */
         /* for string and stored block copying */
-    unsigned length;            /* literal or length of data to copy */
-    unsigned offset;            /* distance back to copy string from */
+    अचिह्नित दीर्घता;            /* literal or length of data to copy */
+    अचिह्नित विस्थापनम्;            /* distance back to copy string from */
         /* for table and code decoding */
-    unsigned extra;             /* extra bits needed */
+    अचिह्नित extra;             /* extra bits needed */
         /* fixed and dynamic code tables */
-    code const FAR *lencode;    /* starting table for length/literal codes */
-    code const FAR *distcode;   /* starting table for distance codes */
-    unsigned lenbits;           /* index bits for lencode */
-    unsigned distbits;          /* index bits for distcode */
+    संहिता ध्रुव FAR *lencode;    /* starting table for length/literal codes */
+    संहिता ध्रुव FAR *distcode;   /* starting table for distance codes */
+    अचिह्नित lenbits;           /* index bits for lencode */
+    अचिह्नित distbits;          /* index bits for distcode */
         /* dynamic table building */
-    unsigned ncode;             /* number of code length code lengths */
-    unsigned nlen;              /* number of length code lengths */
-    unsigned ndist;             /* number of distance code lengths */
-    unsigned have;              /* number of code lengths in lens[] */
-    code FAR *next;             /* next available space in codes[] */
-    unsigned short lens[320];   /* temporary storage for code lengths */
-    unsigned short work[288];   /* work area for code table building */
-    code codes[ENOUGH];         /* space for code tables */
-    int sane;                   /* if false, allow invalid distance too far */
-    int back;                   /* bits back of last unprocessed length/lit */
-    unsigned was;               /* initial length of match */
+    अचिह्नित ncode;             /* number of code length code lengths */
+    अचिह्नित nlen;              /* number of length code lengths */
+    अचिह्नित ndist;             /* number of distance code lengths */
+    अचिह्नित have;              /* number of code lengths in lens[] */
+    संहिता FAR *अग्र;             /* next available space in codes[] */
+    अचिह्नित ह्रस्व lens[320];   /* temporary storage for code lengths */
+    अचिह्नित ह्रस्व work[288];   /* work area for code table building */
+    संहिता codes[ENOUGH];         /* space for code tables */
+    पूर्णाङ्क sane;                   /* if false, allow invalid distance too far */
+    पूर्णाङ्क पृष्ठभागः;                   /* bits back of last unprocessed length/lit */
+    अचिह्नित was;               /* initial length of match */
 };

@@ -28,25 +28,25 @@
   (zlib format), rfc1951 (deflate format) and rfc1952 (gzip format).
 */
 
-#ifndef ZLIB_H
-#define ZLIB_H
+#यदि_अपरिभाषितम् ZLIB_H
+#परिभाषय ZLIB_H
 
-#ifdef ZLIB_BUILD
+#यदि_परिभाषितम् ZLIB_BUILD
 #  include <zconf.h>
-#else
+#अन्यथा
 # include "zconf.h"
-#endif
+#यदि_अन्तः
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#यदि_परिभाषितम् __cplusplus
+बाह्य "C" {
+#यदि_अन्तः
 
-#define ZLIB_VERSION "1.3.2.1-motley"
-#define ZLIB_VERNUM 0x1321
-#define ZLIB_VER_MAJOR 1
-#define ZLIB_VER_MINOR 3
-#define ZLIB_VER_REVISION 2
-#define ZLIB_VER_SUBREVISION 1
+#परिभाषय ZLIB_संस्करणम् "1.3.2.1-motley"
+#परिभाषय ZLIB_VERNUM 0x1321
+#परिभाषय ZLIB_VER_MAJOR 1
+#परिभाषय ZLIB_VER_MINOR 3
+#परिभाषय ZLIB_VER_REVISION 2
+#परिभाषय ZLIB_VER_SUBREVISION 1
 
 /*
     The 'zlib' compression library provides in-memory compression and
@@ -82,44 +82,44 @@ extern "C" {
   even in the case of corrupted input.
 */
 
-typedef voidpf (*alloc_func)(voidpf opaque, uInt items, uInt size);
-typedef void   (*free_func)(voidpf opaque, voidpf address);
+प्रकारनिर्देश voidpf (*alloc_func)(voidpf opaque, uInt वस्तूनि_2, uInt आकार);
+प्रकारनिर्देश शून्य   (*free_func)(voidpf opaque, voidpf स्थानाङ्कः);
 
-struct internal_state;
+संरचना आन्तरिकम्_state;
 
-typedef struct z_stream_s {
-    z_const Bytef *next_in;     /* next input byte */
-    uInt     avail_in;  /* number of bytes available at next_in */
-    uLong    total_in;  /* total number of input bytes read so far */
+प्रकारनिर्देश संरचना z_प्रवाहः_s {
+    z_const Bytef *अग्र_अन्तर्;     /* next input byte */
+    uInt     avail_अन्तर्;  /* number of bytes available at next_in */
+    uLong    योग_अन्तर्;  /* total number of input bytes read so far */
 
-    Bytef    *next_out; /* next output byte will go here */
-    uInt     avail_out; /* remaining free space at next_out */
-    uLong    total_out; /* total number of bytes output so far */
+    Bytef    *अग्र_बहिर्गमनम्; /* next output byte will go here */
+    uInt     avail_बहिर्गमनम्; /* remaining free space at next_out */
+    uLong    योग_बहिर्गमनम्; /* total number of bytes output so far */
 
-    z_const char *msg;  /* last error message, NULL if no error */
-    struct internal_state FAR *state; /* not visible by applications */
+    z_const वर्ण *सन्देशः;  /* last error message, NULL if no error */
+    संरचना आन्तरिकम्_state FAR *state; /* not visible by applications */
 
     alloc_func zalloc;  /* used to allocate the internal state */
     free_func  zfree;   /* used to free the internal state */
     voidpf     opaque;  /* private data object passed to zalloc and zfree */
 
-    int     data_type;  /* best guess about the data type: binary or text
+    पूर्णाङ्क     दत्त_type;  /* best guess about the data type: binary or text
                            for deflate, or the decoding state for inflate */
     uLong   adler;      /* Adler-32 or CRC-32 value of the uncompressed data */
     uLong   reserved;   /* reserved for future use */
-} z_stream;
+} z_प्रवाहः;
 
-typedef z_stream FAR *z_streamp;
+प्रकारनिर्देश z_प्रवाहः FAR *z_streamp;
 
 /*
      gzip header information passed to and from zlib routines.  See RFC 1952
   for more details on the meanings of these fields.
 */
-typedef struct gz_header_s {
-    int     text;       /* true if compressed data believed to be text */
+प्रकारनिर्देश संरचना gz_शीर्षकम्_s {
+    पूर्णाङ्क     text;       /* true if compressed data believed to be text */
     uLong   time;       /* modification time */
-    int     xflags;     /* extra flags (not used when writing a gzip file) */
-    int     os;         /* operating system */
+    पूर्णाङ्क     xflags;     /* extra flags (not used when writing a gzip file) */
+    पूर्णाङ्क     os;         /* operating system */
     Bytef   *extra;     /* pointer to extra field or Z_NULL if none */
     uInt    extra_len;  /* extra field length (valid if extra != Z_NULL) */
     uInt    extra_max;  /* space at extra (only when reading header) */
@@ -127,12 +127,12 @@ typedef struct gz_header_s {
     uInt    name_max;   /* space at name (only when reading header) */
     Bytef   *comment;   /* pointer to zero-terminated comment or Z_NULL */
     uInt    comm_max;   /* space at comment (only when reading header) */
-    int     hcrc;       /* true if there was or will be a header crc */
-    int     done;       /* true when done reading gzip header (not used
+    पूर्णाङ्क     hcrc;       /* true if there was or will be a header crc */
+    पूर्णाङ्क     समाप्तम्_2;       /* true when done reading gzip header (not used
                            when writing a gzip file) */
-} gz_header;
+} gz_शीर्षकम्;
 
-typedef gz_header FAR *gz_headerp;
+प्रकारनिर्देश gz_शीर्षकम् FAR *gz_headerp;
 
 /*
      The application must update next_in and avail_in when avail_in has dropped
@@ -169,59 +169,59 @@ typedef gz_header FAR *gz_headerp;
 
                         /* constants */
 
-#define Z_NO_FLUSH      0
-#define Z_PARTIAL_FLUSH 1
-#define Z_SYNC_FLUSH    2
-#define Z_FULL_FLUSH    3
-#define Z_FINISH        4
-#define Z_BLOCK         5
-#define Z_TREES         6
+#परिभाषय Z_NO_FLUSH      0
+#परिभाषय Z_PARTIAL_FLUSH 1
+#परिभाषय Z_SYNC_FLUSH    2
+#परिभाषय Z_पूर्णम्_FLUSH    3
+#परिभाषय Z_FINISH        4
+#परिभाषय Z_खण्डम्         5
+#परिभाषय Z_TREES         6
 /* Allowed flush values; see deflate() and inflate() below for details */
 
-#define Z_OK            0
-#define Z_STREAM_END    1
-#define Z_NEED_DICT     2
-#define Z_ERRNO        (-1)
-#define Z_STREAM_ERROR (-2)
-#define Z_DATA_ERROR   (-3)
-#define Z_MEM_ERROR    (-4)
-#define Z_BUF_ERROR    (-5)
-#define Z_VERSION_ERROR (-6)
+#परिभाषय Z_OK            0
+#परिभाषय Z_प्रवाहः_अन्तः    1
+#परिभाषय Z_NEED_DICT     2
+#परिभाषय Z_ERRNO        (-1)
+#परिभाषय Z_प्रवाहः_ERROR (-2)
+#परिभाषय Z_दत्त_ERROR   (-3)
+#परिभाषय Z_MEM_ERROR    (-4)
+#परिभाषय Z_BUF_ERROR    (-5)
+#परिभाषय Z_संस्करणम्_ERROR (-6)
 /* Return codes for the compression/decompression functions. Negative values
  * are errors, positive values are used for special but normal events.
  */
 
-#define Z_NO_COMPRESSION         0
-#define Z_BEST_SPEED             1
-#define Z_BEST_COMPRESSION       9
-#define Z_DEFAULT_COMPRESSION  (-1)
+#परिभाषय Z_NO_COMPRESSION         0
+#परिभाषय Z_BEST_जवः             1
+#परिभाषय Z_BEST_COMPRESSION       9
+#परिभाषय Z_DEFAULT_COMPRESSION  (-1)
 /* compression levels */
 
-#define Z_FILTERED            1
-#define Z_HUFFMAN_ONLY        2
-#define Z_RLE                 3
-#define Z_FIXED               4
-#define Z_DEFAULT_STRATEGY    0
+#परिभाषय Z_FILTERED            1
+#परिभाषय Z_HUFFMAN_ONLY        2
+#परिभाषय Z_RLE                 3
+#परिभाषय Z_FIXED               4
+#परिभाषय Z_DEFAULT_STRATEGY    0
 /* compression strategy; see deflateInit2() below for details */
 
-#define Z_BINARY   0
-#define Z_TEXT     1
-#define Z_ASCII    Z_TEXT   /* for compatibility with 1.2.2 and earlier */
-#define Z_UNKNOWN  2
+#परिभाषय Z_द्विमान   0
+#परिभाषय Z_TEXT     1
+#परिभाषय Z_ASCII    Z_TEXT   /* for compatibility with 1.2.2 and earlier */
+#परिभाषय Z_UNKNOWN  2
 /* Possible values of the data_type field for deflate() */
 
-#define Z_DEFLATED   8
+#परिभाषय Z_DEFLATED   8
 /* The deflate compression method (the only one supported in this version) */
 
-#define Z_NULL  0  /* for initializing zalloc, zfree, opaque */
+#परिभाषय Z_NULL  0  /* for initializing zalloc, zfree, opaque */
 
-#define zlib_version zlibVersion()
+#परिभाषय zlib_संस्करणम्_2 zlib_संस्करणम्()
 /* for compatibility with versions < 1.0.2 */
 
 
                         /* basic functions */
 
-ZEXTERN const char * ZEXPORT zlibVersion(void);
+ZEXTERN ध्रुव वर्ण * ZEXPORT zlib_संस्करणम्(शून्य);
 /* The application can compare zlibVersion and ZLIB_VERSION for consistency.
    If the first character differs, the library code actually used is not
    compatible with the zlib.h header file used by the application.  This check
@@ -251,7 +251,7 @@ ZEXTERN int ZEXPORT deflateInit(z_streamp strm, int level);
 */
 
 
-ZEXTERN int ZEXPORT deflate(z_streamp strm, int flush);
+ZEXTERN पूर्णाङ्क ZEXPORT deflate(z_streamp strm, पूर्णाङ्क flush);
 /*
     deflate compresses as much data as possible, and stops when the input
   buffer becomes empty or the output buffer becomes full.  It may introduce
@@ -364,7 +364,7 @@ ZEXTERN int ZEXPORT deflate(z_streamp strm, int flush);
 */
 
 
-ZEXTERN int ZEXPORT deflateEnd(z_streamp strm);
+ZEXTERN पूर्णाङ्क ZEXPORT deflate_अन्तः(z_streamp strm);
 /*
      All dynamically allocated data structures for this stream are freed.
    This function discards any unprocessed input and does not flush any pending
@@ -402,7 +402,7 @@ ZEXTERN int ZEXPORT inflateInit(z_streamp strm);
 */
 
 
-ZEXTERN int ZEXPORT inflate(z_streamp strm, int flush);
+ZEXTERN पूर्णाङ्क ZEXPORT inflate(z_streamp strm, पूर्णाङ्क flush);
 /*
     inflate decompresses as much data as possible, and stops when the input
   buffer becomes empty or the output buffer becomes full.  It may introduce
@@ -522,7 +522,7 @@ ZEXTERN int ZEXPORT inflate(z_streamp strm, int flush);
 */
 
 
-ZEXTERN int ZEXPORT inflateEnd(z_streamp strm);
+ZEXTERN पूर्णाङ्क ZEXPORT inflate_अन्तः(z_streamp strm);
 /*
      All dynamically allocated data structures for this stream are freed.
    This function discards any unprocessed input and does not flush any pending
@@ -615,9 +615,9 @@ ZEXTERN int ZEXPORT deflateInit2(z_streamp strm,
    compression: this will be done by deflate().
 */
 
-ZEXTERN int ZEXPORT deflateSetDictionary(z_streamp strm,
-                                         const Bytef *dictionary,
-                                         uInt  dictLength);
+ZEXTERN पूर्णाङ्क ZEXPORT deflate_समुच्चयः_Dictionary(z_streamp strm,
+                                         ध्रुव Bytef *dictionary,
+                                         uInt  dict_दीर्घता);
 /*
      Initializes the compression dictionary from the given byte sequence
    without producing any compressed output.  When using the zlib format, this
@@ -659,9 +659,9 @@ ZEXTERN int ZEXPORT deflateSetDictionary(z_streamp strm,
    not perform any compression: this will be done by deflate().
 */
 
-ZEXTERN int ZEXPORT deflateGetDictionary(z_streamp strm,
+ZEXTERN पूर्णाङ्क ZEXPORT deflateGetDictionary(z_streamp strm,
                                          Bytef *dictionary,
-                                         uInt  *dictLength);
+                                         uInt  *dict_दीर्घता);
 /*
      Returns the sliding dictionary being maintained by deflate.  dictLength is
    set to the number of bytes in the dictionary, and that many bytes are copied
@@ -681,7 +681,7 @@ ZEXTERN int ZEXPORT deflateGetDictionary(z_streamp strm,
    stream state is inconsistent.
 */
 
-ZEXTERN int ZEXPORT deflateCopy(z_streamp dest,
+ZEXTERN पूर्णाङ्क ZEXPORT deflateCopy(z_streamp dest,
                                 z_streamp source);
 /*
      Sets the destination stream as a complete copy of the source stream.
@@ -699,7 +699,7 @@ ZEXTERN int ZEXPORT deflateCopy(z_streamp dest,
    destination.
 */
 
-ZEXTERN int ZEXPORT deflateReset(z_streamp strm);
+ZEXTERN पूर्णाङ्क ZEXPORT deflateReset(z_streamp strm);
 /*
      This function is equivalent to deflateEnd followed by deflateInit, but
    does not free and reallocate the internal compression state.  The stream
@@ -710,9 +710,9 @@ ZEXTERN int ZEXPORT deflateReset(z_streamp strm);
    stream state was inconsistent (such as zalloc or state being Z_NULL).
 */
 
-ZEXTERN int ZEXPORT deflateParams(z_streamp strm,
-                                  int level,
-                                  int strategy);
+ZEXTERN पूर्णाङ्क ZEXPORT deflateParams(z_streamp strm,
+                                  पूर्णाङ्क level,
+                                  पूर्णाङ्क strategy);
 /*
      Dynamically update the compression level and compression strategy.  The
    interpretation of level and strategy is as in deflateInit2().  This can be
@@ -748,11 +748,11 @@ ZEXTERN int ZEXPORT deflateParams(z_streamp strm,
    retried with more output space.
 */
 
-ZEXTERN int ZEXPORT deflateTune(z_streamp strm,
-                                int good_length,
-                                int max_lazy,
-                                int nice_length,
-                                int max_chain);
+ZEXTERN पूर्णाङ्क ZEXPORT deflateTune(z_streamp strm,
+                                पूर्णाङ्क good_दीर्घता,
+                                पूर्णाङ्क max_lazy,
+                                पूर्णाङ्क nice_दीर्घता,
+                                पूर्णाङ्क max_chain);
 /*
      Fine tune deflate's internal compression parameters.  This should only be
    used by someone who understands the algorithm used by zlib's deflate for
@@ -766,7 +766,7 @@ ZEXTERN int ZEXPORT deflateTune(z_streamp strm,
  */
 
 ZEXTERN uLong ZEXPORT deflateBound(z_streamp strm, uLong sourceLen);
-ZEXTERN z_size_t ZEXPORT deflateBound_z(z_streamp strm, z_size_t sourceLen);
+ZEXTERN z_आकार_t ZEXPORT deflateBound_z(z_streamp strm, z_आकार_t sourceLen);
 /*
      deflateBound() returns an upper bound on the compressed size after
    deflation of sourceLen bytes.  It must be called after deflateInit() or
@@ -783,9 +783,9 @@ ZEXTERN z_size_t ZEXPORT deflateBound_z(z_streamp strm, z_size_t sourceLen);
    that a long is 32 bits on Windows.
 */
 
-ZEXTERN int ZEXPORT deflatePending(z_streamp strm,
-                                   unsigned *pending,
-                                   int *bits);
+ZEXTERN पूर्णाङ्क ZEXPORT deflatePending(z_streamp strm,
+                                   अचिह्नित *pending,
+                                   पूर्णाङ्क *द्वयङ्काः);
 /*
      deflatePending() returns the number of bytes and bits of output that have
    been generated, but not yet provided in the available output.  The bytes not
@@ -801,8 +801,8 @@ ZEXTERN int ZEXPORT deflatePending(z_streamp strm,
    of an unsigned.
  */
 
-ZEXTERN int ZEXPORT deflateUsed(z_streamp strm,
-                                int *bits);
+ZEXTERN पूर्णाङ्क ZEXPORT deflate_प्रयुक्तम्(z_streamp strm,
+                                पूर्णाङ्क *द्वयङ्काः);
 /*
      deflateUsed() returns in *bits the most recent number of deflate bits used
    in the last byte when flushing to a byte boundary. The result is in 1..8, or
@@ -813,9 +813,9 @@ ZEXTERN int ZEXPORT deflateUsed(z_streamp strm,
    stream state was inconsistent.
  */
 
-ZEXTERN int ZEXPORT deflatePrime(z_streamp strm,
-                                 int bits,
-                                 int value);
+ZEXTERN पूर्णाङ्क ZEXPORT deflate_अविभाज्यः(z_streamp strm,
+                                 पूर्णाङ्क द्वयङ्काः,
+                                 पूर्णाङ्क मानम्);
 /*
      deflatePrime() inserts bits in the deflate output stream.  The intent
    is that this function is used to start off the deflate output with the bits
@@ -830,8 +830,8 @@ ZEXTERN int ZEXPORT deflatePrime(z_streamp strm,
    source stream state was inconsistent.
 */
 
-ZEXTERN int ZEXPORT deflateSetHeader(z_streamp strm,
-                                     gz_headerp head);
+ZEXTERN पूर्णाङ्क ZEXPORT deflate_समुच्चयः_शीर्षकम्(z_streamp strm,
+                                     gz_headerp शीर्ष);
 /*
      deflateSetHeader() provides gzip header information for when a gzip
    stream is requested by deflateInit2().  deflateSetHeader() may be called
@@ -910,9 +910,9 @@ ZEXTERN int ZEXPORT inflateInit2(z_streamp strm,
    deferred until inflate() is called.
 */
 
-ZEXTERN int ZEXPORT inflateSetDictionary(z_streamp strm,
-                                         const Bytef *dictionary,
-                                         uInt  dictLength);
+ZEXTERN पूर्णाङ्क ZEXPORT inflate_समुच्चयः_Dictionary(z_streamp strm,
+                                         ध्रुव Bytef *dictionary,
+                                         uInt  dict_दीर्घता);
 /*
      Initializes the decompression dictionary from the given uncompressed byte
    sequence.  This function must be called immediately after a call of inflate,
@@ -933,9 +933,9 @@ ZEXTERN int ZEXPORT inflateSetDictionary(z_streamp strm,
    inflate().
 */
 
-ZEXTERN int ZEXPORT inflateGetDictionary(z_streamp strm,
+ZEXTERN पूर्णाङ्क ZEXPORT inflateGetDictionary(z_streamp strm,
                                          Bytef *dictionary,
-                                         uInt  *dictLength);
+                                         uInt  *dict_दीर्घता);
 /*
      Returns the sliding dictionary being maintained by inflate.  dictLength is
    set to the number of bytes in the dictionary, and that many bytes are copied
@@ -948,7 +948,7 @@ ZEXTERN int ZEXPORT inflateGetDictionary(z_streamp strm,
    stream state is inconsistent.
 */
 
-ZEXTERN int ZEXPORT inflateSync(z_streamp strm);
+ZEXTERN पूर्णाङ्क ZEXPORT inflateSync(z_streamp strm);
 /*
      Skips invalid compressed data until a possible full flush point (see above
    for the description of deflate with Z_FULL_FLUSH) can be found, or until all
@@ -967,7 +967,7 @@ ZEXTERN int ZEXPORT inflateSync(z_streamp strm);
    time, until success or end of the input data.
 */
 
-ZEXTERN int ZEXPORT inflateCopy(z_streamp dest,
+ZEXTERN पूर्णाङ्क ZEXPORT inflateCopy(z_streamp dest,
                                 z_streamp source);
 /*
      Sets the destination stream as a complete copy of the source stream.
@@ -983,7 +983,7 @@ ZEXTERN int ZEXPORT inflateCopy(z_streamp dest,
    destination.
 */
 
-ZEXTERN int ZEXPORT inflateReset(z_streamp strm);
+ZEXTERN पूर्णाङ्क ZEXPORT inflateReset(z_streamp strm);
 /*
      This function is equivalent to inflateEnd followed by inflateInit,
    but does not free and reallocate the internal decompression state.  The
@@ -994,8 +994,8 @@ ZEXTERN int ZEXPORT inflateReset(z_streamp strm);
    stream state was inconsistent (such as zalloc or state being Z_NULL).
 */
 
-ZEXTERN int ZEXPORT inflateReset2(z_streamp strm,
-                                  int windowBits);
+ZEXTERN पूर्णाङ्क ZEXPORT inflateReset2(z_streamp strm,
+                                  पूर्णाङ्क गवाक्षः_द्वयङ्काः);
 /*
      This function is the same as inflateReset, but it also permits changing
    the wrap and window size requests.  The windowBits parameter is interpreted
@@ -1008,9 +1008,9 @@ ZEXTERN int ZEXPORT inflateReset2(z_streamp strm,
    the windowBits parameter is invalid.
 */
 
-ZEXTERN int ZEXPORT inflatePrime(z_streamp strm,
-                                 int bits,
-                                 int value);
+ZEXTERN पूर्णाङ्क ZEXPORT inflate_अविभाज्यः(z_streamp strm,
+                                 पूर्णाङ्क द्वयङ्काः,
+                                 पूर्णाङ्क मानम्);
 /*
      This function inserts bits in the inflate input stream.  The intent is to
    use inflatePrime() to start inflating at a bit position in the middle of a
@@ -1039,7 +1039,7 @@ ZEXTERN int ZEXPORT inflatePrime(z_streamp strm,
    data_type with the new number of bits in buffer.
 */
 
-ZEXTERN long ZEXPORT inflateMark(z_streamp strm);
+ZEXTERN दीर्घ ZEXPORT inflateMark(z_streamp strm);
 /*
      This function returns two values, one in the lower 16 bits of the return
    value, and the other in the remaining upper bits, obtained by shifting the
@@ -1067,8 +1067,8 @@ ZEXTERN long ZEXPORT inflateMark(z_streamp strm);
    source stream state was inconsistent.
 */
 
-ZEXTERN int ZEXPORT inflateGetHeader(z_streamp strm,
-                                     gz_headerp head);
+ZEXTERN पूर्णाङ्क ZEXPORT inflate_Get_शीर्षकम्(z_streamp strm,
+                                     gz_headerp शीर्ष);
 /*
      inflateGetHeader() requests that gzip header information be stored in the
    provided gz_header structure.  inflateGetHeader() may be called after
@@ -1131,13 +1131,13 @@ ZEXTERN int ZEXPORT inflateBackInit(z_streamp strm, int windowBits,
    the version of the header file.
 */
 
-typedef unsigned (*in_func)(void FAR *,
-                            z_const unsigned char FAR * FAR *);
-typedef int (*out_func)(void FAR *, unsigned char FAR *, unsigned);
+प्रकारनिर्देश अचिह्नित (*अन्तर्_func)(शून्य FAR *,
+                            z_const अचिह्नित वर्ण FAR * FAR *);
+प्रकारनिर्देश पूर्णाङ्क (*बहिर्गमनम्_func)(शून्य FAR *, अचिह्नित वर्ण FAR *, अचिह्नित);
 
-ZEXTERN int ZEXPORT inflateBack(z_streamp strm,
-                                in_func in, void FAR *in_desc,
-                                out_func out, void FAR *out_desc);
+ZEXTERN पूर्णाङ्क ZEXPORT inflate_पृष्ठभागः(z_streamp strm,
+                                अन्तर्_func अन्तर्, शून्य FAR *अन्तर्_desc,
+                                बहिर्गमनम्_func बहिर्गमनम्, शून्य FAR *बहिर्गमनम्_desc);
 /*
      inflateBack() does a raw inflate with a single call using a call-back
    interface for input and output.  This is potentially more efficient than
@@ -1205,7 +1205,7 @@ ZEXTERN int ZEXPORT inflateBack(z_streamp strm,
    cannot return Z_OK.
 */
 
-ZEXTERN int ZEXPORT inflateBackEnd(z_streamp strm);
+ZEXTERN पूर्णाङ्क ZEXPORT inflate_पृष्ठभागः_अन्तः(z_streamp strm);
 /*
      All memory allocated by inflateBackInit() is freed.
 
@@ -1213,7 +1213,7 @@ ZEXTERN int ZEXPORT inflateBackEnd(z_streamp strm);
    state was inconsistent.
 */
 
-ZEXTERN uLong ZEXPORT zlibCompileFlags(void);
+ZEXTERN uLong ZEXPORT zlibCompileFlags(शून्य);
 /* Return flags indicating compile-time options.
 
     Type sizes, two bits each, 00 = 16 bits, 01 = 32, 10 = 64, 11 = other:
@@ -1255,7 +1255,7 @@ ZEXTERN uLong ZEXPORT zlibCompileFlags(void);
      28-31: 0 (reserved)
  */
 
-#ifndef Z_SOLO
+#यदि_अपरिभाषितम् Z_SOLO
 
                         /* utility functions */
 
@@ -1268,10 +1268,10 @@ ZEXTERN uLong ZEXPORT zlibCompileFlags(void);
    type for lengths.  Note that a long is 32 bits on Windows.
 */
 
-ZEXTERN int ZEXPORT compress(Bytef *dest, uLongf *destLen,
-                             const Bytef *source, uLong sourceLen);
-ZEXTERN int ZEXPORT compress_z(Bytef *dest, z_size_t *destLen,
-                               const Bytef *source, z_size_t sourceLen);
+ZEXTERN पूर्णाङ्क ZEXPORT compress(Bytef *dest, uLongf *destLen,
+                             ध्रुव Bytef *source, uLong sourceLen);
+ZEXTERN पूर्णाङ्क ZEXPORT compress_z(Bytef *dest, z_आकार_t *destLen,
+                               ध्रुव Bytef *source, z_आकार_t sourceLen);
 /*
      Compresses the source buffer into the destination buffer.  sourceLen is
    the byte length of the source buffer.  Upon entry, destLen is the total size
@@ -1285,12 +1285,12 @@ ZEXTERN int ZEXPORT compress_z(Bytef *dest, z_size_t *destLen,
    buffer.
 */
 
-ZEXTERN int ZEXPORT compress2(Bytef *dest, uLongf *destLen,
-                              const Bytef *source, uLong sourceLen,
-                              int level);
-ZEXTERN int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen,
-                                const Bytef *source, z_size_t sourceLen,
-                                int level);
+ZEXTERN पूर्णाङ्क ZEXPORT compress2(Bytef *dest, uLongf *destLen,
+                              ध्रुव Bytef *source, uLong sourceLen,
+                              पूर्णाङ्क level);
+ZEXTERN पूर्णाङ्क ZEXPORT compress2_z(Bytef *dest, z_आकार_t *destLen,
+                                ध्रुव Bytef *source, z_आकार_t sourceLen,
+                                पूर्णाङ्क level);
 /*
      Compresses the source buffer into the destination buffer.  The level
    parameter has the same meaning as in deflateInit.  sourceLen is the byte
@@ -1305,17 +1305,17 @@ ZEXTERN int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen,
 */
 
 ZEXTERN uLong ZEXPORT compressBound(uLong sourceLen);
-ZEXTERN z_size_t ZEXPORT compressBound_z(z_size_t sourceLen);
+ZEXTERN z_आकार_t ZEXPORT compressBound_z(z_आकार_t sourceLen);
 /*
      compressBound() returns an upper bound on the compressed size after
    compress() or compress2() on sourceLen bytes.  It would be used before a
    compress() or compress2() call to allocate the destination buffer.
 */
 
-ZEXTERN int ZEXPORT uncompress(Bytef *dest, uLongf *destLen,
-                               const Bytef *source, uLong sourceLen);
-ZEXTERN int ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen,
-                                 const Bytef *source, z_size_t sourceLen);
+ZEXTERN पूर्णाङ्क ZEXPORT uncompress(Bytef *dest, uLongf *destLen,
+                               ध्रुव Bytef *source, uLong sourceLen);
+ZEXTERN पूर्णाङ्क ZEXPORT uncompress_z(Bytef *dest, z_आकार_t *destLen,
+                                 ध्रुव Bytef *source, z_आकार_t sourceLen);
 /*
      Decompresses the source buffer into the destination buffer.  sourceLen is
    the byte length of the source buffer.  On entry, *destLen is the total size
@@ -1332,10 +1332,10 @@ ZEXTERN int ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen,
    buffer with the uncompressed data up to that point.
 */
 
-ZEXTERN int ZEXPORT uncompress2(Bytef *dest, uLongf *destLen,
-                                const Bytef *source, uLong *sourceLen);
-ZEXTERN int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen,
-                                  const Bytef *source, z_size_t *sourceLen);
+ZEXTERN पूर्णाङ्क ZEXPORT uncompress2(Bytef *dest, uLongf *destLen,
+                                ध्रुव Bytef *source, uLong *sourceLen);
+ZEXTERN पूर्णाङ्क ZEXPORT uncompress2_z(Bytef *dest, z_आकार_t *destLen,
+                                  ध्रुव Bytef *source, z_आकार_t *sourceLen);
 /*
      Same as uncompress, except that sourceLen is a pointer, where the
    length of the source is *sourceLen.  On return, *sourceLen is the number of
@@ -1351,7 +1351,7 @@ ZEXTERN int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen,
    wrapper, documented in RFC 1952, wrapped around a deflate stream.
 */
 
-typedef struct gzFile_s *gzFile;    /* semi-opaque gzip file descriptor */
+प्रकारनिर्देश संरचना gzFile_s *gzFile;    /* semi-opaque gzip file descriptor */
 
 /*
 ZEXTERN gzFile ZEXPORT gzopen(const char *path, const char *mode);
@@ -1401,7 +1401,7 @@ ZEXTERN gzFile ZEXPORT gzopen(const char *path, const char *mode);
    blocking.
 */
 
-ZEXTERN gzFile ZEXPORT gzdopen(int fd, const char *mode);
+ZEXTERN gzFile ZEXPORT gzdopen(पूर्णाङ्क fd, ध्रुव वर्ण *बहुलकम्);
 /*
      Associate a gzFile with the file descriptor fd.  File descriptors are
    obtained from calls like open, dup, creat, pipe or fileno (if the file has
@@ -1426,7 +1426,7 @@ ZEXTERN gzFile ZEXPORT gzdopen(int fd, const char *mode);
    will not detect if fd is invalid (unless fd is -1).
 */
 
-ZEXTERN int ZEXPORT gzbuffer(gzFile file, unsigned size);
+ZEXTERN पूर्णाङ्क ZEXPORT gzbuffer(gzFile file, अचिह्नित आकार);
 /*
      Set the internal buffer size used by this library's functions for file to
    size.  The default buffer size is 8192 bytes.  This function must be called
@@ -1442,7 +1442,7 @@ ZEXTERN int ZEXPORT gzbuffer(gzFile file, unsigned size);
    too late.
 */
 
-ZEXTERN int ZEXPORT gzsetparams(gzFile file, int level, int strategy);
+ZEXTERN पूर्णाङ्क ZEXPORT gzsetparams(gzFile file, पूर्णाङ्क level, पूर्णाङ्क strategy);
 /*
      Dynamically update the compression level and strategy for file.  See the
    description of deflateInit2 for the meaning of these parameters. Previously
@@ -1453,7 +1453,7 @@ ZEXTERN int ZEXPORT gzsetparams(gzFile file, int level, int strategy);
    or Z_MEM_ERROR if there is a memory allocation error.
 */
 
-ZEXTERN int ZEXPORT gzread(gzFile file, voidp buf, unsigned len);
+ZEXTERN पूर्णाङ्क ZEXPORT gzread(gzFile file, voidp buf, अचिह्नित len);
 /*
      Read and decompress up to len uncompressed bytes from file into buf.  If
    the input file is not in gzip format, gzread copies the given number of
@@ -1489,7 +1489,7 @@ ZEXTERN int ZEXPORT gzread(gzFile file, voidp buf, unsigned len);
    returned until exhausted, after which the next call will signal the error.
 */
 
-ZEXTERN z_size_t ZEXPORT gzfread(voidp buf, z_size_t size, z_size_t nitems,
+ZEXTERN z_आकार_t ZEXPORT gzfread(voidp buf, z_आकार_t आकार, z_आकार_t nitems,
                                  gzFile file);
 /*
      Read and decompress up to nitems items of size size from file into buf,
@@ -1516,7 +1516,7 @@ ZEXTERN z_size_t ZEXPORT gzfread(voidp buf, z_size_t size, z_size_t nitems,
    instead.
 */
 
-ZEXTERN int ZEXPORT gzwrite(gzFile file, voidpc buf, unsigned len);
+ZEXTERN पूर्णाङ्क ZEXPORT gzwrite(gzFile file, voidpc buf, अचिह्नित len);
 /*
      Compress and write the len uncompressed bytes at buf to file. gzwrite
    returns the number of uncompressed bytes written, or 0 in case of error or
@@ -1526,8 +1526,8 @@ ZEXTERN int ZEXPORT gzwrite(gzFile file, voidpc buf, unsigned len);
      If len does not fit in an int, then 0 is returned and nothing is written.
 */
 
-ZEXTERN z_size_t ZEXPORT gzfwrite(voidpc buf, z_size_t size,
-                                  z_size_t nitems, gzFile file);
+ZEXTERN z_आकार_t ZEXPORT gzfwrite(voidpc buf, z_आकार_t आकार,
+                                  z_आकार_t nitems, gzFile file);
 /*
      Compress and write nitems items of size size from buf to file, duplicating
    the interface of stdio's fwrite(), with size_t request and return types.  If
@@ -1545,11 +1545,11 @@ ZEXTERN z_size_t ZEXPORT gzfwrite(voidpc buf, z_size_t size,
    gzwrite() instead.
 */
 
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
-ZEXTERN int ZEXPORTVA gzprintf(gzFile file, const char *format, ...);
-#else
-ZEXTERN int ZEXPORTVA gzprintf();
-#endif
+#यदि defined(STDC) || defined(Z_HAVE_STDARG_H)
+ZEXTERN पूर्णाङ्क ZEXPORTVA gzprintf(gzFile file, ध्रुव वर्ण *format, ...);
+#अन्यथा
+ZEXTERN पूर्णाङ्क ZEXPORTVA gzprintf();
+#यदि_अन्तः
 /*
      Convert, format, compress, and write the arguments (...) to file under
    control of the string format, as in fprintf.  gzprintf returns the number of
@@ -1572,7 +1572,7 @@ ZEXTERN int ZEXPORTVA gzprintf();
    the non-blocking write destination. The operation can be retried.
 */
 
-ZEXTERN int ZEXPORT gzputs(gzFile file, const char *s);
+ZEXTERN पूर्णाङ्क ZEXPORT gzputs(gzFile file, ध्रुव वर्ण *s);
 /*
      Compress and write the given null-terminated string s to file, excluding
    the terminating null character.
@@ -1585,7 +1585,7 @@ ZEXTERN int ZEXPORT gzputs(gzFile file, const char *s);
    and nothing is written.
 */
 
-ZEXTERN char * ZEXPORT gzgets(gzFile file, char *buf, int len);
+ZEXTERN वर्ण * ZEXPORT gzgets(gzFile file, वर्ण *buf, पूर्णाङ्क len);
 /*
      Read and decompress bytes from file into buf, until len-1 characters are
    read, or until a newline character is read and transferred to buf, or an
@@ -1604,13 +1604,13 @@ ZEXTERN char * ZEXPORT gzgets(gzFile file, char *buf, int len);
    middle, leaving it up to the application to reassemble them as needed.
 */
 
-ZEXTERN int ZEXPORT gzputc(gzFile file, int c);
+ZEXTERN पूर्णाङ्क ZEXPORT gzputc(gzFile file, पूर्णाङ्क c);
 /*
      Compress and write c, converted to an unsigned char, into file.  gzputc
    returns the value that was written, or -1 in case of error.
 */
 
-ZEXTERN int ZEXPORT gzgetc(gzFile file);
+ZEXTERN पूर्णाङ्क ZEXPORT gzgetc(gzFile file);
 /*
      Read and decompress one byte from file. gzgetc returns this byte or -1 in
    case of end of file or error. If some data was read before an error, then
@@ -1627,7 +1627,7 @@ ZEXTERN int ZEXPORT gzgetc(gzFile file);
    called again.
 */
 
-ZEXTERN int ZEXPORT gzungetc(int c, gzFile file);
+ZEXTERN पूर्णाङ्क ZEXPORT gzungetc(पूर्णाङ्क c, gzFile file);
 /*
      Push c back onto the stream for file to be read as the first character on
    the next read.  At least one character of push-back is always allowed.
@@ -1644,7 +1644,7 @@ ZEXTERN int ZEXPORT gzungetc(int c, gzFile file);
    file without having to read it into a buffer.
 */
 
-ZEXTERN int ZEXPORT gzflush(gzFile file, int flush);
+ZEXTERN पूर्णाङ्क ZEXPORT gzflush(gzFile file, पूर्णाङ्क flush);
 /*
      Flush all pending output to file.  The parameter flush is as in the
    deflate() function.  The return value is the zlib error number (see function
@@ -1682,7 +1682,7 @@ ZEXTERN z_off_t ZEXPORT gzseek(gzFile file,
    position is unchanged.
 */
 
-ZEXTERN int ZEXPORT gzrewind(gzFile file);
+ZEXTERN पूर्णाङ्क ZEXPORT gzrewind(gzFile file);
 /*
      Rewind file. This function is supported only for reading.
 
@@ -1710,7 +1710,7 @@ ZEXTERN z_off_t ZEXPORT gzoffset(gzFile file);
    be used for a progress indicator.  On error, gzoffset() returns -1.
 */
 
-ZEXTERN int ZEXPORT gzeof(gzFile file);
+ZEXTERN पूर्णाङ्क ZEXPORT gzeof(gzFile file);
 /*
      Return true (1) if the end-of-file indicator for file has been set while
    reading, false (0) otherwise.  Note that the end-of-file indicator is set
@@ -1725,7 +1725,7 @@ ZEXTERN int ZEXPORT gzeof(gzFile file);
    has grown since the previous end of file was detected.
 */
 
-ZEXTERN int ZEXPORT gzdirect(gzFile file);
+ZEXTERN पूर्णाङ्क ZEXPORT gzdirect(gzFile file);
 /*
      Return true (1) if file is being copied directly while reading, or false
    (0) if file is a gzip stream being decompressed.
@@ -1749,7 +1749,7 @@ ZEXTERN int ZEXPORT gzdirect(gzFile file);
    gzip file reading and decompression, which may not be desired.)
 */
 
-ZEXTERN int ZEXPORT gzclose(gzFile file);
+ZEXTERN पूर्णाङ्क ZEXPORT gzclose(gzFile file);
 /*
      Flush all pending output for file, if necessary, close file and
    deallocate the (de)compression state.  Note that once file is closed, you
@@ -1762,8 +1762,8 @@ ZEXTERN int ZEXPORT gzclose(gzFile file);
    last read ended in the middle of a gzip stream, or Z_OK on success.
 */
 
-ZEXTERN int ZEXPORT gzclose_r(gzFile file);
-ZEXTERN int ZEXPORT gzclose_w(gzFile file);
+ZEXTERN पूर्णाङ्क ZEXPORT gzclose_r(gzFile file);
+ZEXTERN पूर्णाङ्क ZEXPORT gzclose_w(gzFile file);
 /*
      Same as gzclose(), but gzclose_r() is only for use when reading, and
    gzclose_w() is only for use when writing or appending.  The advantage to
@@ -1774,7 +1774,7 @@ ZEXTERN int ZEXPORT gzclose_w(gzFile file);
    zlib library.
 */
 
-ZEXTERN const char * ZEXPORT gzerror(gzFile file, int *errnum);
+ZEXTERN ध्रुव वर्ण * ZEXPORT gzerror(gzFile file, पूर्णाङ्क *errnum);
 /*
      Return the error message for the last error which occurred on file.
    If errnum is not NULL, *errnum is set to zlib error number.  If an error
@@ -1791,14 +1791,14 @@ ZEXTERN const char * ZEXPORT gzerror(gzFile file, int *errnum);
    functions above that do not distinguish those cases in their return values.
 */
 
-ZEXTERN void ZEXPORT gzclearerr(gzFile file);
+ZEXTERN शून्य ZEXPORT gzclearerr(gzFile file);
 /*
      Clear the error and end-of-file flags for file.  This is analogous to the
    clearerr() function in stdio.  This is useful for continuing to read a gzip
    file that is being written concurrently.
 */
 
-#endif /* !Z_SOLO */
+#यदि_अन्तः /* !Z_SOLO */
 
                         /* checksum functions */
 
@@ -1808,7 +1808,7 @@ ZEXTERN void ZEXPORT gzclearerr(gzFile file);
    library.
 */
 
-ZEXTERN uLong ZEXPORT adler32(uLong adler, const Bytef *buf, uInt len);
+ZEXTERN uLong ZEXPORT adler32(uLong adler, ध्रुव Bytef *buf, uInt len);
 /*
      Update a running Adler-32 checksum with the bytes buf[0..len-1] and
    return the updated checksum. An Adler-32 value is in the range of a 32-bit
@@ -1828,8 +1828,8 @@ ZEXTERN uLong ZEXPORT adler32(uLong adler, const Bytef *buf, uInt len);
      if (adler != original_adler) error();
 */
 
-ZEXTERN uLong ZEXPORT adler32_z(uLong adler, const Bytef *buf,
-                                z_size_t len);
+ZEXTERN uLong ZEXPORT adler32_z(uLong adler, ध्रुव Bytef *buf,
+                                z_आकार_t len);
 /*
      Same as adler32(), but with a size_t length.  Note that a long is 32 bits
    on Windows.
@@ -1847,7 +1847,7 @@ ZEXTERN uLong ZEXPORT adler32_combine(uLong adler1, uLong adler2,
    negative, the result has no meaning or utility.
 */
 
-ZEXTERN uLong ZEXPORT crc32(uLong crc, const Bytef *buf, uInt len);
+ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_2(uLong crc, ध्रुव Bytef *buf, uInt len);
 /*
      Update a running CRC-32 with the bytes buf[0..len-1] and return the
    updated CRC-32. A CRC-32 value is in the range of a 32-bit unsigned integer.
@@ -1865,8 +1865,8 @@ ZEXTERN uLong ZEXPORT crc32(uLong crc, const Bytef *buf, uInt len);
      if (crc != original_crc) error();
 */
 
-ZEXTERN uLong ZEXPORT crc32_z(uLong crc, const Bytef *buf,
-                              z_size_t len);
+ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_z(uLong crc, ध्रुव Bytef *buf,
+                              z_आकार_t len);
 /*
      Same as crc32(), but with a size_t length.  Note that a long is 32 bits on
    Windows.
@@ -1889,7 +1889,7 @@ ZEXTERN uLong ZEXPORT crc32_combine_gen(z_off_t len2);
    crc32_combine_op(). len2 must be non-negative, otherwise zero is returned.
 */
 
-ZEXTERN uLong ZEXPORT crc32_combine_op(uLong crc1, uLong crc2, uLong op);
+ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine_op(uLong crc1, uLong crc2, uLong op);
 /*
      Give the same result as crc32_combine(), using op in place of len2. op is
    is generated from len2 by crc32_combine_gen(). This will be faster than
@@ -1902,51 +1902,51 @@ ZEXTERN uLong ZEXPORT crc32_combine_op(uLong crc1, uLong crc2, uLong op);
 /* deflateInit and inflateInit are macros to allow checking the zlib version
  * and the compiler's view of z_stream:
  */
-ZEXTERN int ZEXPORT deflateInit_(z_streamp strm, int level,
-                                 const char *version, int stream_size);
-ZEXTERN int ZEXPORT inflateInit_(z_streamp strm,
-                                 const char *version, int stream_size);
-ZEXTERN int ZEXPORT deflateInit2_(z_streamp strm, int  level, int  method,
-                                  int windowBits, int memLevel,
-                                  int strategy, const char *version,
-                                  int stream_size);
-ZEXTERN int ZEXPORT inflateInit2_(z_streamp strm, int  windowBits,
-                                  const char *version, int stream_size);
-ZEXTERN int ZEXPORT inflateBackInit_(z_streamp strm, int windowBits,
-                                     unsigned char FAR *window,
-                                     const char *version,
-                                     int stream_size);
-#ifdef Z_PREFIX_SET
+ZEXTERN पूर्णाङ्क ZEXPORT deflateInit_(z_streamp strm, पूर्णाङ्क level,
+                                 ध्रुव वर्ण *संस्करणम्, पूर्णाङ्क प्रवाहः_आकार);
+ZEXTERN पूर्णाङ्क ZEXPORT inflateInit_(z_streamp strm,
+                                 ध्रुव वर्ण *संस्करणम्, पूर्णाङ्क प्रवाहः_आकार);
+ZEXTERN पूर्णाङ्क ZEXPORT deflateInit2_(z_streamp strm, पूर्णाङ्क  level, पूर्णाङ्क  विधानम्,
+                                  पूर्णाङ्क गवाक्षः_द्वयङ्काः, पूर्णाङ्क memLevel,
+                                  पूर्णाङ्क strategy, ध्रुव वर्ण *संस्करणम्,
+                                  पूर्णाङ्क प्रवाहः_आकार);
+ZEXTERN पूर्णाङ्क ZEXPORT inflateInit2_(z_streamp strm, पूर्णाङ्क  गवाक्षः_द्वयङ्काः,
+                                  ध्रुव वर्ण *संस्करणम्, पूर्णाङ्क प्रवाहः_आकार);
+ZEXTERN पूर्णाङ्क ZEXPORT inflate_पृष्ठभागः_Init_2(z_streamp strm, पूर्णाङ्क गवाक्षः_द्वयङ्काः,
+                                     अचिह्नित वर्ण FAR *गवाक्षः,
+                                     ध्रुव वर्ण *संस्करणम्,
+                                     पूर्णाङ्क प्रवाहः_आकार);
+#यदि_परिभाषितम् Z_उपसर्गः_समुच्चयः
 #  define z_deflateInit(strm, level) \
-          deflateInit_((strm), (level), ZLIB_VERSION, (int)sizeof(z_stream))
+          deflateInit_((strm), (level), ZLIB_संस्करणम्, (पूर्णाङ्क)परिमाण(z_प्रवाहः))
 #  define z_inflateInit(strm) \
-          inflateInit_((strm), ZLIB_VERSION, (int)sizeof(z_stream))
-#  define z_deflateInit2(strm, level, method, windowBits, memLevel, strategy) \
-          deflateInit2_((strm),(level),(method),(windowBits),(memLevel),\
-                        (strategy), ZLIB_VERSION, (int)sizeof(z_stream))
-#  define z_inflateInit2(strm, windowBits) \
-          inflateInit2_((strm), (windowBits), ZLIB_VERSION, \
-                        (int)sizeof(z_stream))
-#  define z_inflateBackInit(strm, windowBits, window) \
-          inflateBackInit_((strm), (windowBits), (window), \
-                           ZLIB_VERSION, (int)sizeof(z_stream))
-#else
+          inflateInit_((strm), ZLIB_संस्करणम्, (पूर्णाङ्क)परिमाण(z_प्रवाहः))
+#  define z_deflateInit2(strm, level, विधानम्, गवाक्षः_द्वयङ्काः, memLevel, strategy) \
+          deflateInit2_((strm),(level),(विधानम्),(गवाक्षः_द्वयङ्काः),(memLevel),\
+                        (strategy), ZLIB_संस्करणम्, (पूर्णाङ्क)परिमाण(z_प्रवाहः))
+#  define z_inflateInit2(strm, गवाक्षः_द्वयङ्काः) \
+          inflateInit2_((strm), (गवाक्षः_द्वयङ्काः), ZLIB_संस्करणम्, \
+                        (पूर्णाङ्क)परिमाण(z_प्रवाहः))
+#  define z_inflate_पृष्ठभागः_Init(strm, गवाक्षः_द्वयङ्काः, गवाक्षः) \
+          inflate_पृष्ठभागः_Init_2((strm), (गवाक्षः_द्वयङ्काः), (गवाक्षः), \
+                           ZLIB_संस्करणम्, (पूर्णाङ्क)परिमाण(z_प्रवाहः))
+#अन्यथा
 #  define deflateInit(strm, level) \
-          deflateInit_((strm), (level), ZLIB_VERSION, (int)sizeof(z_stream))
+          deflateInit_((strm), (level), ZLIB_संस्करणम्, (पूर्णाङ्क)परिमाण(z_प्रवाहः))
 #  define inflateInit(strm) \
-          inflateInit_((strm), ZLIB_VERSION, (int)sizeof(z_stream))
-#  define deflateInit2(strm, level, method, windowBits, memLevel, strategy) \
-          deflateInit2_((strm),(level),(method),(windowBits),(memLevel),\
-                        (strategy), ZLIB_VERSION, (int)sizeof(z_stream))
-#  define inflateInit2(strm, windowBits) \
-          inflateInit2_((strm), (windowBits), ZLIB_VERSION, \
-                        (int)sizeof(z_stream))
-#  define inflateBackInit(strm, windowBits, window) \
-          inflateBackInit_((strm), (windowBits), (window), \
-                           ZLIB_VERSION, (int)sizeof(z_stream))
-#endif
+          inflateInit_((strm), ZLIB_संस्करणम्, (पूर्णाङ्क)परिमाण(z_प्रवाहः))
+#  define deflateInit2(strm, level, विधानम्, गवाक्षः_द्वयङ्काः, memLevel, strategy) \
+          deflateInit2_((strm),(level),(विधानम्),(गवाक्षः_द्वयङ्काः),(memLevel),\
+                        (strategy), ZLIB_संस्करणम्, (पूर्णाङ्क)परिमाण(z_प्रवाहः))
+#  define inflateInit2(strm, गवाक्षः_द्वयङ्काः) \
+          inflateInit2_((strm), (गवाक्षः_द्वयङ्काः), ZLIB_संस्करणम्, \
+                        (पूर्णाङ्क)परिमाण(z_प्रवाहः))
+#  define inflate_पृष्ठभागः_Init(strm, गवाक्षः_द्वयङ्काः, गवाक्षः) \
+          inflate_पृष्ठभागः_Init_2((strm), (गवाक्षः_द्वयङ्काः), (गवाक्षः), \
+                           ZLIB_संस्करणम्, (पूर्णाङ्क)परिमाण(z_प्रवाहः))
+#यदि_अन्तः
 
-#ifndef Z_SOLO
+#यदि_अपरिभाषितम् Z_SOLO
 
 /* gzgetc() macro and its supporting function and exposed data structure.  Note
  * that the real internal state is much larger than the exposed structure.
@@ -1955,20 +1955,20 @@ ZEXTERN int ZEXPORT inflateBackInit_(z_streamp strm, int windowBits,
  * behavior could change in the future, perhaps even capriciously.  They can
  * only be used by the gzgetc() macro.  You have been warned.
  */
-struct gzFile_s {
-    unsigned have;
-    unsigned char *next;
+संरचना gzFile_s {
+    अचिह्नित have;
+    अचिह्नित वर्ण *अग्र;
     z_off64_t pos;
 };
-ZEXTERN int ZEXPORT gzgetc_(gzFile file);       /* backward compatibility */
-#ifdef Z_PREFIX_SET
+ZEXTERN पूर्णाङ्क ZEXPORT gzgetc_(gzFile file);       /* backward compatibility */
+#यदि_परिभाषितम् Z_उपसर्गः_समुच्चयः
 #  undef z_gzgetc
 #  define z_gzgetc(g) \
-          ((g)->have ? ((g)->have--, (g)->pos++, *((g)->next)++) : (gzgetc)(g))
-#else
+          ((g)->have ? ((g)->have--, (g)->pos++, *((g)->अग्र)++) : (gzgetc)(g))
+#अन्यथा
 #  define gzgetc(g) \
-          ((g)->have ? ((g)->have--, (g)->pos++, *((g)->next)++) : (gzgetc)(g))
-#endif
+          ((g)->have ? ((g)->have--, (g)->pos++, *((g)->अग्र)++) : (gzgetc)(g))
+#यदि_अन्तः
 
 /* provide 64-bit offset functions if _LARGEFILE64_SOURCE defined, and/or
  * change the regular functions to 64 bits if _FILE_OFFSET_BITS is 64 (if
@@ -1976,84 +1976,84 @@ ZEXTERN int ZEXPORT gzgetc_(gzFile file);       /* backward compatibility */
  * functions are changed to 64 bits) -- in case these are set on systems
  * without large file support, _LFS64_LARGEFILE must also be true
  */
-#ifdef Z_LARGE64
-   ZEXTERN gzFile ZEXPORT gzopen64(const char *, const char *);
-   ZEXTERN z_off64_t ZEXPORT gzseek64(gzFile, z_off64_t, int);
+#यदि_परिभाषितम् Z_LARGE64
+   ZEXTERN gzFile ZEXPORT gzopen64(ध्रुव वर्ण *, ध्रुव वर्ण *);
+   ZEXTERN z_off64_t ZEXPORT gzseek64(gzFile, z_off64_t, पूर्णाङ्क);
    ZEXTERN z_off64_t ZEXPORT gztell64(gzFile);
    ZEXTERN z_off64_t ZEXPORT gzoffset64(gzFile);
    ZEXTERN uLong ZEXPORT adler32_combine64(uLong, uLong, z_off64_t);
-   ZEXTERN uLong ZEXPORT crc32_combine64(uLong, uLong, z_off64_t);
-   ZEXTERN uLong ZEXPORT crc32_combine_gen64(z_off64_t);
-#endif
+   ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine64(uLong, uLong, z_off64_t);
+   ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine_gen64(z_off64_t);
+#यदि_अन्तः
 
-#if !defined(ZLIB_INTERNAL) && defined(Z_WANT64)
-#  ifdef Z_PREFIX_SET
+#यदि !defined(ZLIB_आन्तरिकम्) && defined(Z_WANT64)
+#  ifdef Z_उपसर्गः_समुच्चयः
 #    define z_gzopen z_gzopen64
 #    define z_gzseek z_gzseek64
 #    define z_gztell z_gztell64
 #    define z_gzoffset z_gzoffset64
 #    define z_adler32_combine z_adler32_combine64
-#    define z_crc32_combine z_crc32_combine64
-#    define z_crc32_combine_gen z_crc32_combine_gen64
-#  else
+#    define z_चक्रीयपरीक्षा_32_combine z_चक्रीयपरीक्षा_32_combine64
+#    define z_चक्रीयपरीक्षा_32_combine_gen z_चक्रीयपरीक्षा_32_combine_gen64
+#  अन्यथा
 #    define gzopen gzopen64
 #    define gzseek gzseek64
 #    define gztell gztell64
 #    define gzoffset gzoffset64
 #    define adler32_combine adler32_combine64
-#    define crc32_combine crc32_combine64
-#    define crc32_combine_gen crc32_combine_gen64
+#    define चक्रीयपरीक्षा_32_combine चक्रीयपरीक्षा_32_combine64
+#    define चक्रीयपरीक्षा_32_combine_gen चक्रीयपरीक्षा_32_combine_gen64
 #  endif
 #  ifndef Z_LARGE64
-     ZEXTERN gzFile ZEXPORT gzopen64(const char *, const char *);
-     ZEXTERN z_off_t ZEXPORT gzseek64(gzFile, z_off_t, int);
+     ZEXTERN gzFile ZEXPORT gzopen64(ध्रुव वर्ण *, ध्रुव वर्ण *);
+     ZEXTERN z_off_t ZEXPORT gzseek64(gzFile, z_off_t, पूर्णाङ्क);
      ZEXTERN z_off_t ZEXPORT gztell64(gzFile);
      ZEXTERN z_off_t ZEXPORT gzoffset64(gzFile);
      ZEXTERN uLong ZEXPORT adler32_combine64(uLong, uLong, z_off64_t);
-     ZEXTERN uLong ZEXPORT crc32_combine64(uLong, uLong, z_off64_t);
-     ZEXTERN uLong ZEXPORT crc32_combine_gen64(z_off64_t);
+     ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine64(uLong, uLong, z_off64_t);
+     ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine_gen64(z_off64_t);
 #  endif
-#else
-   ZEXTERN gzFile ZEXPORT gzopen(const char *, const char *);
-   ZEXTERN z_off_t ZEXPORT gzseek(gzFile, z_off_t, int);
+#अन्यथा
+   ZEXTERN gzFile ZEXPORT gzopen(ध्रुव वर्ण *, ध्रुव वर्ण *);
+   ZEXTERN z_off_t ZEXPORT gzseek(gzFile, z_off_t, पूर्णाङ्क);
    ZEXTERN z_off_t ZEXPORT gztell(gzFile);
    ZEXTERN z_off_t ZEXPORT gzoffset(gzFile);
    ZEXTERN uLong ZEXPORT adler32_combine(uLong, uLong, z_off_t);
-   ZEXTERN uLong ZEXPORT crc32_combine(uLong, uLong, z_off_t);
-   ZEXTERN uLong ZEXPORT crc32_combine_gen(z_off_t);
-#endif
+   ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine(uLong, uLong, z_off_t);
+   ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine_gen(z_off_t);
+#यदि_अन्तः
 
-#else /* Z_SOLO */
+#अन्यथा /* Z_SOLO */
 
    ZEXTERN uLong ZEXPORT adler32_combine(uLong, uLong, z_off_t);
-   ZEXTERN uLong ZEXPORT crc32_combine(uLong, uLong, z_off_t);
-   ZEXTERN uLong ZEXPORT crc32_combine_gen(z_off_t);
+   ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine(uLong, uLong, z_off_t);
+   ZEXTERN uLong ZEXPORT चक्रीयपरीक्षा_32_combine_gen(z_off_t);
 
-#endif /* !Z_SOLO */
+#यदि_अन्तः /* !Z_SOLO */
 
 /* undocumented functions */
-ZEXTERN const char   * ZEXPORT zError(int);
-ZEXTERN int            ZEXPORT inflateSyncPoint(z_streamp);
-ZEXTERN const z_crc_t FAR * ZEXPORT get_crc_table(void);
-ZEXTERN int            ZEXPORT inflateUndermine(z_streamp, int);
-ZEXTERN int            ZEXPORT inflateValidate(z_streamp, int);
-ZEXTERN unsigned long  ZEXPORT inflateCodesUsed(z_streamp);
-ZEXTERN int            ZEXPORT inflateResetKeep(z_streamp);
-ZEXTERN int            ZEXPORT deflateResetKeep(z_streamp);
-#if defined(_WIN32) && !defined(Z_SOLO)
-ZEXTERN gzFile         ZEXPORT gzopen_w(const wchar_t *path,
-                                        const char *mode);
-#endif
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+ZEXTERN ध्रुव वर्ण   * ZEXPORT zError(पूर्णाङ्क);
+ZEXTERN पूर्णाङ्क            ZEXPORT inflateSyncPoint(z_streamp);
+ZEXTERN ध्रुव z_crc_t FAR * ZEXPORT get_crc_सारणी(शून्य);
+ZEXTERN पूर्णाङ्क            ZEXPORT inflateUndermine(z_streamp, पूर्णाङ्क);
+ZEXTERN पूर्णाङ्क            ZEXPORT inflateValidate(z_streamp, पूर्णाङ्क);
+ZEXTERN अचिह्नित दीर्घ  ZEXPORT inflate_Codes_प्रयुक्तम्(z_streamp);
+ZEXTERN पूर्णाङ्क            ZEXPORT inflateResetKeep(z_streamp);
+ZEXTERN पूर्णाङ्क            ZEXPORT deflateResetKeep(z_streamp);
+#यदि defined(_WIN32) && !defined(Z_SOLO)
+ZEXTERN gzFile         ZEXPORT gzopen_w(ध्रुव wchar_t *मार्गः,
+                                        ध्रुव वर्ण *बहुलकम्);
+#यदि_अन्तः
+#यदि defined(STDC) || defined(Z_HAVE_STDARG_H)
 #  ifndef Z_SOLO
-ZEXTERN int            ZEXPORTVA gzvprintf(gzFile file,
-                                           const char *format,
+ZEXTERN पूर्णाङ्क            ZEXPORTVA gzvprintf(gzFile file,
+                                           ध्रुव वर्ण *format,
                                            va_list va);
 #  endif
-#endif
+#यदि_अन्तः
 
-#ifdef __cplusplus
+#यदि_परिभाषितम् __cplusplus
 }
-#endif
+#यदि_अन्तः
 
-#endif /* ZLIB_H */
+#यदि_अन्तः /* ZLIB_H */

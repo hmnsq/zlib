@@ -4,34 +4,34 @@
   License: Same as ZLIB (www.gzip.org)
 */
 
-#ifndef _zip_tools_H
-#define _zip_tools_H
+#यदि_अपरिभाषितम् _zip_tools_H
+#परिभाषय _zip_tools_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#यदि_परिभाषितम् __cplusplus
+बाह्य "C" {
+#यदि_अन्तः
 
-#ifndef _ZLIB_H
-#include "zlib.h"
-#endif
+#यदि_अपरिभाषितम् _ZLIB_H
+#अन्तर्भाव "zlib.h"
+#यदि_अन्तः
 
-#include "unzip.h"
+#अन्तर्भाव "unzip.h"
 
 /* Repair a ZIP file (missing central directory)
    file: file to recover
    fileOut: output file after recovery
    fileOutTmp: temporary file name used for recovery
 */
-extern int ZEXPORT unzRepair(const char* file,
-                             const char* fileOut,
-                             const char* fileOutTmp,
+बाह्य पूर्णाङ्क ZEXPORT unzRepair(ध्रुव वर्ण* file,
+                             ध्रुव वर्ण* file_बहिर्गमनम्,
+                             ध्रुव वर्ण* file_बहिर्गमनम्_Tmp,
                              uLong* nRecovered,
-                             uLong* bytesRecovered);
+                             uLong* अष्टकानि_Recovered);
 
 
-#ifdef __cplusplus
+#यदि_परिभाषितम् __cplusplus
 }
-#endif
+#यदि_अन्तः
 
 
-#endif
+#यदि_अन्तः

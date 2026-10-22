@@ -21,11 +21,11 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
-    unsigned short val;         /* offset in table or code value */
-} code;
+प्रकारनिर्देश संरचना {
+    अचिह्नित वर्ण op;           /* operation, extra bits, table bits */
+    अचिह्नित वर्ण द्वयङ्काः;         /* bits in this part of the code */
+    अचिह्नित ह्रस्व val;         /* offset in table or code value */
+} संहिता;
 
 /* op values as set by inflate_table():
     00000000 - literal
@@ -46,25 +46,25 @@ typedef struct {
    inflate_table() calls in inflate.c and infback.c.  If the root table size is
    changed, then these maximum sizes would be need to be recalculated and
    updated. */
-#ifndef PKZIP_BUG_WORKAROUND
+#यदि_अपरिभाषितम् PKZIP_BUG_WORKAROUND
 #  define ENOUGH_LENS 852
 #  define ENOUGH_DISTS 592
-#else
+#अन्यथा
 /* That workaround permits 288 literal/length codes and 32 distance codes. */
 #  define ENOUGH_LENS 854
 #  define ENOUGH_DISTS 594
-#endif
-#define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
+#यदि_अन्तः
+#परिभाषय ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table() */
-typedef enum {
+प्रकारनिर्देश गणना {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
-                                unsigned codes, code FAR * FAR *table,
-                                unsigned FAR *bits, unsigned short FAR *work);
-struct inflate_state;
-void ZLIB_INTERNAL inflate_fixed(struct inflate_state FAR *state);
+पूर्णाङ्क ZLIB_आन्तरिकम् inflate_सारणी(codetype type, अचिह्नित ह्रस्व FAR *lens,
+                                अचिह्नित codes, संहिता FAR * FAR *सारणी_2,
+                                अचिह्नित FAR *द्वयङ्काः, अचिह्नित ह्रस्व FAR *work);
+संरचना inflate_state;
+शून्य ZLIB_आन्तरिकम् inflate_fixed(संरचना inflate_state FAR *state);

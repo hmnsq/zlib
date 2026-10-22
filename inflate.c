@@ -80,159 +80,159 @@
  * The history for versions after 1.2.0 are in ChangeLog in zlib distribution.
  */
 
-#include "zutil.h"
-#include "inftrees.h"
-#include "inflate.h"
-#include "inffast.h"
+#अन्तर्भाव "zutil.h"
+#अन्तर्भाव "inftrees.h"
+#अन्तर्भाव "inflate.h"
+#अन्तर्भाव "inffast.h"
 
-local int inflateStateCheck(z_streamp strm) {
-    struct inflate_state FAR *state;
-    if (strm == Z_NULL ||
+local पूर्णाङ्क inflateStateCheck(z_streamp strm) {
+    संरचना inflate_state FAR *state;
+    यदि (strm == Z_NULL ||
         strm->zalloc == (alloc_func)0 || strm->zfree == (free_func)0)
-        return 1;
-    state = (struct inflate_state FAR *)strm->state;
-    if (state == Z_NULL || state->strm != strm ||
-        state->mode < HEAD || state->mode > SYNC)
-        return 1;
-    return 0;
+        प्रत्यागम 1;
+    state = (संरचना inflate_state FAR *)strm->state;
+    यदि (state == Z_NULL || state->strm != strm ||
+        state->बहुलकम् < शीर्ष_2 || state->बहुलकम् > SYNC)
+        प्रत्यागम 1;
+    प्रत्यागम 0;
 }
 
-int ZEXPORT inflateResetKeep(z_streamp strm) {
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateResetKeep(z_streamp strm) {
+    संरचना inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
-    strm->total_in = strm->total_out = state->total = 0;
-    strm->msg = Z_NULL;
-    strm->data_type = 0;
-    if (state->wrap)        /* to support ill-conceived Java test suite */
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
+    strm->योग_अन्तर् = strm->योग_बहिर्गमनम् = state->योग_2 = 0;
+    strm->सन्देशः = Z_NULL;
+    strm->दत्त_type = 0;
+    यदि (state->wrap)        /* to support ill-conceived Java test suite */
         strm->adler = state->wrap & 1;
-    state->mode = HEAD;
-    state->last = 0;
+    state->बहुलकम् = शीर्ष_2;
+    state->चरमः = 0;
     state->havedict = 0;
     state->flags = -1;
     state->dmax = 32768U;
-    state->head = Z_NULL;
+    state->शीर्ष = Z_NULL;
     state->hold = 0;
-    state->bits = 0;
-    state->lencode = state->distcode = state->next = state->codes;
+    state->द्वयङ्काः = 0;
+    state->lencode = state->distcode = state->अग्र = state->codes;
     state->sane = 1;
-    state->back = -1;
+    state->पृष्ठभागः = -1;
     Tracev((stderr, "inflate: reset\n"));
-    return Z_OK;
+    प्रत्यागम Z_OK;
 }
 
-int ZEXPORT inflateReset(z_streamp strm) {
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateReset(z_streamp strm) {
+    संरचना inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
     state->wsize = 0;
     state->whave = 0;
     state->wnext = 0;
-    return inflateResetKeep(strm);
+    प्रत्यागम inflateResetKeep(strm);
 }
 
-int ZEXPORT inflateReset2(z_streamp strm, int windowBits) {
-    int wrap;
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateReset2(z_streamp strm, पूर्णाङ्क गवाक्षः_द्वयङ्काः) {
+    पूर्णाङ्क wrap;
+    संरचना inflate_state FAR *state;
 
     /* get the state */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
 
     /* extract wrap request from windowBits parameter */
-    if (windowBits < 0) {
-        if (windowBits < -15)
-            return Z_STREAM_ERROR;
+    यदि (गवाक्षः_द्वयङ्काः < 0) {
+        यदि (गवाक्षः_द्वयङ्काः < -15)
+            प्रत्यागम Z_प्रवाहः_ERROR;
         wrap = 0;
-        windowBits = -windowBits;
+        गवाक्षः_द्वयङ्काः = -गवाक्षः_द्वयङ्काः;
     }
-    else {
-        wrap = (windowBits >> 4) + 5;
-#ifdef GUNZIP
-        if (windowBits < 48)
-            windowBits &= 15;
-#endif
+    अन्यथा {
+        wrap = (गवाक्षः_द्वयङ्काः >> 4) + 5;
+#यदि_परिभाषितम् GUNZIP
+        यदि (गवाक्षः_द्वयङ्काः < 48)
+            गवाक्षः_द्वयङ्काः &= 15;
+#यदि_अन्तः
     }
 
     /* set number of window bits, free window if different */
-    if (windowBits && (windowBits < 8 || windowBits > 15))
-        return Z_STREAM_ERROR;
-    if (state->window != Z_NULL && state->wbits != (unsigned)windowBits) {
-        ZFREE(strm, state->window);
-        state->window = Z_NULL;
+    यदि (गवाक्षः_द्वयङ्काः && (गवाक्षः_द्वयङ्काः < 8 || गवाक्षः_द्वयङ्काः > 15))
+        प्रत्यागम Z_प्रवाहः_ERROR;
+    यदि (state->गवाक्षः != Z_NULL && state->wbits != (अचिह्नित)गवाक्षः_द्वयङ्काः) {
+        ZFREE(strm, state->गवाक्षः);
+        state->गवाक्षः = Z_NULL;
     }
 
     /* update state and reset the rest of it */
     state->wrap = wrap;
-    state->wbits = (unsigned)windowBits;
-    return inflateReset(strm);
+    state->wbits = (अचिह्नित)गवाक्षः_द्वयङ्काः;
+    प्रत्यागम inflateReset(strm);
 }
 
-int ZEXPORT inflateInit2_(z_streamp strm, int windowBits,
-                          const char *version, int stream_size) {
-    int ret;
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateInit2_(z_streamp strm, पूर्णाङ्क गवाक्षः_द्वयङ्काः,
+                          ध्रुव वर्ण *संस्करणम्, पूर्णाङ्क प्रवाहः_आकार) {
+    पूर्णाङ्क ret;
+    संरचना inflate_state FAR *state;
 
-    if (version == Z_NULL || version[0] != ZLIB_VERSION[0] ||
-        stream_size != (int)(sizeof(z_stream)))
-        return Z_VERSION_ERROR;
-    if (strm == Z_NULL) return Z_STREAM_ERROR;
-    strm->msg = Z_NULL;                 /* in case we return an error */
-    if (strm->zalloc == (alloc_func)0) {
-#ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+    यदि (संस्करणम् == Z_NULL || संस्करणम्[0] != ZLIB_संस्करणम्[0] ||
+        प्रवाहः_आकार != (पूर्णाङ्क)(परिमाण(z_प्रवाहः)))
+        प्रत्यागम Z_संस्करणम्_ERROR;
+    यदि (strm == Z_NULL) प्रत्यागम Z_प्रवाहः_ERROR;
+    strm->सन्देशः = Z_NULL;                 /* in case we return an error */
+    यदि (strm->zalloc == (alloc_func)0) {
+#यदि_परिभाषितम् Z_SOLO
+        प्रत्यागम Z_प्रवाहः_ERROR;
+#अन्यथा
         strm->zalloc = zcalloc;
         strm->opaque = (voidpf)0;
-#endif
+#यदि_अन्तः
     }
-    if (strm->zfree == (free_func)0)
-#ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+    यदि (strm->zfree == (free_func)0)
+#यदि_परिभाषितम् Z_SOLO
+        प्रत्यागम Z_प्रवाहः_ERROR;
+#अन्यथा
         strm->zfree = zcfree;
-#endif
-    state = (struct inflate_state FAR *)
-            ZALLOC(strm, 1, sizeof(struct inflate_state));
-    if (state == Z_NULL) return Z_MEM_ERROR;
-    zmemzero(state, sizeof(struct inflate_state));
+#यदि_अन्तः
+    state = (संरचना inflate_state FAR *)
+            ZALLOC(strm, 1, परिमाण(संरचना inflate_state));
+    यदि (state == Z_NULL) प्रत्यागम Z_MEM_ERROR;
+    zmemzero(state, परिमाण(संरचना inflate_state));
     Tracev((stderr, "inflate: allocated\n"));
-    strm->state = (struct internal_state FAR *)state;
+    strm->state = (संरचना आन्तरिकम्_state FAR *)state;
     state->strm = strm;
-    state->window = Z_NULL;
-    state->mode = HEAD;     /* to pass state test in inflateReset2() */
-    ret = inflateReset2(strm, windowBits);
-    if (ret != Z_OK) {
+    state->गवाक्षः = Z_NULL;
+    state->बहुलकम् = शीर्ष_2;     /* to pass state test in inflateReset2() */
+    ret = inflateReset2(strm, गवाक्षः_द्वयङ्काः);
+    यदि (ret != Z_OK) {
         ZFREE(strm, state);
         strm->state = Z_NULL;
     }
-    return ret;
+    प्रत्यागम ret;
 }
 
-int ZEXPORT inflateInit_(z_streamp strm, const char *version,
-                         int stream_size) {
-    return inflateInit2_(strm, DEF_WBITS, version, stream_size);
+पूर्णाङ्क ZEXPORT inflateInit_(z_streamp strm, ध्रुव वर्ण *संस्करणम्,
+                         पूर्णाङ्क प्रवाहः_आकार) {
+    प्रत्यागम inflateInit2_(strm, DEF_WBITS, संस्करणम्, प्रवाहः_आकार);
 }
 
-int ZEXPORT inflatePrime(z_streamp strm, int bits, int value) {
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflate_अविभाज्यः(z_streamp strm, पूर्णाङ्क द्वयङ्काः, पूर्णाङ्क मानम्) {
+    संरचना inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    if (bits == 0)
-        return Z_OK;
-    state = (struct inflate_state FAR *)strm->state;
-    if (bits < 0) {
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    यदि (द्वयङ्काः == 0)
+        प्रत्यागम Z_OK;
+    state = (संरचना inflate_state FAR *)strm->state;
+    यदि (द्वयङ्काः < 0) {
         state->hold = 0;
-        state->bits = 0;
-        return Z_OK;
+        state->द्वयङ्काः = 0;
+        प्रत्यागम Z_OK;
     }
-    if (bits > 16 || state->bits + (uInt)bits > 32) return Z_STREAM_ERROR;
-    value &= (1L << bits) - 1;
-    state->hold += (unsigned long)value << state->bits;
-    state->bits += (uInt)bits;
-    return Z_OK;
+    यदि (द्वयङ्काः > 16 || state->द्वयङ्काः + (uInt)द्वयङ्काः > 32) प्रत्यागम Z_प्रवाहः_ERROR;
+    मानम् &= (1L << द्वयङ्काः) - 1;
+    state->hold += (अचिह्नित दीर्घ)मानम् << state->द्वयङ्काः;
+    state->द्वयङ्काः += (uInt)द्वयङ्काः;
+    प्रत्यागम Z_OK;
 }
 
 /*
@@ -249,145 +249,145 @@ int ZEXPORT inflatePrime(z_streamp strm, int bits, int value) {
    output will fall in the output data, making match copies simpler and faster.
    The advantage may be dependent on the size of the processor's data caches.
  */
-local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
-    struct inflate_state FAR *state;
-    unsigned dist;
+local पूर्णाङ्क updatewindow(z_streamp strm, ध्रुव Bytef *अन्तः_2, अचिह्नित copy) {
+    संरचना inflate_state FAR *state;
+    अचिह्नित dist;
 
-    state = (struct inflate_state FAR *)strm->state;
+    state = (संरचना inflate_state FAR *)strm->state;
 
     /* if it hasn't been done already, allocate space for the window */
-    if (state->window == Z_NULL) {
-        state->window = (unsigned char FAR *)
+    यदि (state->गवाक्षः == Z_NULL) {
+        state->गवाक्षः = (अचिह्नित वर्ण FAR *)
                         ZALLOC(strm, 1U << state->wbits,
-                               sizeof(unsigned char));
-        if (state->window == Z_NULL) return 1;
+                               परिमाण(अचिह्नित वर्ण));
+        यदि (state->गवाक्षः == Z_NULL) प्रत्यागम 1;
     }
 
     /* if window not in use yet, initialize */
-    if (state->wsize == 0) {
+    यदि (state->wsize == 0) {
         state->wsize = 1U << state->wbits;
         state->wnext = 0;
         state->whave = 0;
     }
 
     /* copy state->wsize or less output bytes into the circular window */
-    if (copy >= state->wsize) {
-        zmemcpy(state->window, end - state->wsize, state->wsize);
+    यदि (copy >= state->wsize) {
+        zmemcpy(state->गवाक्षः, अन्तः_2 - state->wsize, state->wsize);
         state->wnext = 0;
         state->whave = state->wsize;
     }
-    else {
+    अन्यथा {
         dist = state->wsize - state->wnext;
-        if (dist > copy) dist = copy;
-        zmemcpy(state->window + state->wnext, end - copy, dist);
+        यदि (dist > copy) dist = copy;
+        zmemcpy(state->गवाक्षः + state->wnext, अन्तः_2 - copy, dist);
         copy -= dist;
-        if (copy) {
-            zmemcpy(state->window, end - copy, copy);
+        यदि (copy) {
+            zmemcpy(state->गवाक्षः, अन्तः_2 - copy, copy);
             state->wnext = copy;
             state->whave = state->wsize;
         }
-        else {
+        अन्यथा {
             state->wnext += dist;
-            if (state->wnext == state->wsize) state->wnext = 0;
-            if (state->whave < state->wsize) state->whave += dist;
+            यदि (state->wnext == state->wsize) state->wnext = 0;
+            यदि (state->whave < state->wsize) state->whave += dist;
         }
     }
-    return 0;
+    प्रत्यागम 0;
 }
 
 /* Macros for inflate(): */
 
 /* check function to use adler32() for zlib or crc32() for gzip */
-#ifdef GUNZIP
+#यदि_परिभाषितम् GUNZIP
 #  define UPDATE_CHECK(check, buf, len) \
-    (state->flags ? crc32(check, buf, len) : adler32(check, buf, len))
-#else
+    (state->flags ? चक्रीयपरीक्षा_32_2(check, buf, len) : adler32(check, buf, len))
+#अन्यथा
 #  define UPDATE_CHECK(check, buf, len) adler32(check, buf, len)
-#endif
+#यदि_अन्तः
 
 /* check macros for header crc */
-#ifdef GUNZIP
+#यदि_परिभाषितम् GUNZIP
 #  define CRC2(check, word) \
-    do { \
-        hbuf[0] = (unsigned char)(word); \
-        hbuf[1] = (unsigned char)((word) >> 8); \
-        check = crc32(check, hbuf, 2); \
-    } while (0)
+    कुरु { \
+        hbuf[0] = (अचिह्नित वर्ण)(word); \
+        hbuf[1] = (अचिह्नित वर्ण)((word) >> 8); \
+        check = चक्रीयपरीक्षा_32_2(check, hbuf, 2); \
+    } यावत् (0)
 
 #  define CRC4(check, word) \
-    do { \
-        hbuf[0] = (unsigned char)(word); \
-        hbuf[1] = (unsigned char)((word) >> 8); \
-        hbuf[2] = (unsigned char)((word) >> 16); \
-        hbuf[3] = (unsigned char)((word) >> 24); \
-        check = crc32(check, hbuf, 4); \
-    } while (0)
-#endif
+    कुरु { \
+        hbuf[0] = (अचिह्नित वर्ण)(word); \
+        hbuf[1] = (अचिह्नित वर्ण)((word) >> 8); \
+        hbuf[2] = (अचिह्नित वर्ण)((word) >> 16); \
+        hbuf[3] = (अचिह्नित वर्ण)((word) >> 24); \
+        check = चक्रीयपरीक्षा_32_2(check, hbuf, 4); \
+    } यावत् (0)
+#यदि_अन्तः
 
 /* Load registers with state in inflate() for speed */
-#define LOAD() \
-    do { \
-        put = strm->next_out; \
-        left = strm->avail_out; \
-        next = strm->next_in; \
-        have = strm->avail_in; \
+#परिभाषय आरोपय_2() \
+    कुरु { \
+        put = strm->अग्र_बहिर्गमनम्; \
+        वामः = strm->avail_बहिर्गमनम्; \
+        अग्र = strm->अग्र_अन्तर्; \
+        have = strm->avail_अन्तर्; \
         hold = state->hold; \
-        bits = state->bits; \
-    } while (0)
+        द्वयङ्काः = state->द्वयङ्काः; \
+    } यावत् (0)
 
 /* Restore state from registers in inflate() */
-#define RESTORE() \
-    do { \
-        strm->next_out = put; \
-        strm->avail_out = left; \
-        strm->next_in = next; \
-        strm->avail_in = have; \
+#परिभाषय RESTORE() \
+    कुरु { \
+        strm->अग्र_बहिर्गमनम् = put; \
+        strm->avail_बहिर्गमनम् = वामः; \
+        strm->अग्र_अन्तर् = अग्र; \
+        strm->avail_अन्तर् = have; \
         state->hold = hold; \
-        state->bits = bits; \
-    } while (0)
+        state->द्वयङ्काः = द्वयङ्काः; \
+    } यावत् (0)
 
 /* Clear the input bit accumulator */
-#define INITBITS() \
-    do { \
+#परिभाषय INITBITS() \
+    कुरु { \
         hold = 0; \
-        bits = 0; \
-    } while (0)
+        द्वयङ्काः = 0; \
+    } यावत् (0)
 
 /* Get a byte of input into the bit accumulator, or return from inflate()
    if there is no input available. */
-#define PULLBYTE() \
-    do { \
-        if (have == 0) goto inf_leave; \
+#परिभाषय PULLBYTE() \
+    कुरु { \
+        यदि (have == 0) गच्छ inf_leave; \
         have--; \
-        hold += (unsigned long)(*next++) << bits; \
-        bits += 8; \
-    } while (0)
+        hold += (अचिह्नित दीर्घ)(*अग्र++) << द्वयङ्काः; \
+        द्वयङ्काः += 8; \
+    } यावत् (0)
 
 /* Assure that there are at least n bits in the bit accumulator.  If there is
    not enough available input to do that, then return from inflate(). */
-#define NEEDBITS(n) \
-    do { \
-        while (bits < (unsigned)(n)) \
+#परिभाषय NEEDBITS(n) \
+    कुरु { \
+        यावत् (द्वयङ्काः < (अचिह्नित)(n)) \
             PULLBYTE(); \
-    } while (0)
+    } यावत् (0)
 
 /* Return the low n bits of the bit accumulator (n < 16) */
-#define BITS(n) \
-    ((unsigned)hold & ((1U << (n)) - 1))
+#परिभाषय द्वयङ्काः_2(n) \
+    ((अचिह्नित)hold & ((1U << (n)) - 1))
 
 /* Remove n bits from the bit accumulator */
-#define DROPBITS(n) \
-    do { \
+#परिभाषय DROPBITS(n) \
+    कुरु { \
         hold >>= (n); \
-        bits -= (unsigned)(n); \
-    } while (0)
+        द्वयङ्काः -= (अचिह्नित)(n); \
+    } यावत् (0)
 
 /* Remove zero to seven bits as needed to go to a byte boundary */
-#define BYTEBITS() \
-    do { \
-        hold >>= bits & 7; \
-        bits -= bits & 7; \
-    } while (0)
+#परिभाषय BYTEBITS() \
+    कुरु { \
+        hold >>= द्वयङ्काः & 7; \
+        द्वयङ्काः -= द्वयङ्काः & 7; \
+    } यावत् (0)
 
 /*
    inflate() uses a state machine to process as much input data and generate as
@@ -471,655 +471,655 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
    will return Z_BUF_ERROR if it has not reached the end of the stream.
  */
 
-int ZEXPORT inflate(z_streamp strm, int flush) {
-    struct inflate_state FAR *state;
-    z_const unsigned char FAR *next;    /* next input */
-    unsigned char FAR *put;     /* next output */
-    unsigned have, left;        /* available input and output */
-    unsigned long hold;         /* bit buffer */
-    unsigned bits;              /* bits in bit buffer */
-    unsigned in, out;           /* save starting available input and output */
-    unsigned copy;              /* number of stored or match bytes to copy */
-    unsigned char FAR *from;    /* where to copy match bytes from */
-    code here;                  /* current decoding table entry */
-    code last;                  /* parent table entry */
-    unsigned len;               /* length to copy for repeats, bits to drop */
-    int ret;                    /* return code */
-#ifdef GUNZIP
-    unsigned char hbuf[4];      /* buffer for gzip header crc calculation */
-#endif
-    static const unsigned short order[19] = /* permutation of code lengths */
+पूर्णाङ्क ZEXPORT inflate(z_streamp strm, पूर्णाङ्क flush) {
+    संरचना inflate_state FAR *state;
+    z_const अचिह्नित वर्ण FAR *अग्र;    /* next input */
+    अचिह्नित वर्ण FAR *put;     /* next output */
+    अचिह्नित have, वामः;        /* available input and output */
+    अचिह्नित दीर्घ hold;         /* bit buffer */
+    अचिह्नित द्वयङ्काः;              /* bits in bit buffer */
+    अचिह्नित अन्तर्, बहिर्गमनम्;           /* save starting available input and output */
+    अचिह्नित copy;              /* number of stored or match bytes to copy */
+    अचिह्नित वर्ण FAR *from;    /* where to copy match bytes from */
+    संहिता अत्र;                  /* current decoding table entry */
+    संहिता चरमः;                  /* parent table entry */
+    अचिह्नित len;               /* length to copy for repeats, bits to drop */
+    पूर्णाङ्क ret;                    /* return code */
+#यदि_परिभाषितम् GUNZIP
+    अचिह्नित वर्ण hbuf[4];      /* buffer for gzip header crc calculation */
+#यदि_अन्तः
+    स्थिर ध्रुव अचिह्नित ह्रस्व क्रमः[19] = /* permutation of code lengths */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
-    if (inflateStateCheck(strm) || strm->next_out == Z_NULL ||
-        (strm->next_in == Z_NULL && strm->avail_in != 0))
-        return Z_STREAM_ERROR;
+    यदि (inflateStateCheck(strm) || strm->अग्र_बहिर्गमनम् == Z_NULL ||
+        (strm->अग्र_अन्तर् == Z_NULL && strm->avail_अन्तर् != 0))
+        प्रत्यागम Z_प्रवाहः_ERROR;
 
-    state = (struct inflate_state FAR *)strm->state;
-    if (state->mode == TYPE) state->mode = TYPEDO;      /* skip check */
-    LOAD();
-    in = have;
-    out = left;
+    state = (संरचना inflate_state FAR *)strm->state;
+    यदि (state->बहुलकम् == TYPE) state->बहुलकम् = TYPEDO;      /* skip check */
+    आरोपय_2();
+    अन्तर् = have;
+    बहिर्गमनम् = वामः;
     ret = Z_OK;
-    for (;;)
-        switch (state->mode) {
-        case HEAD:
-            if (state->wrap == 0) {
-                state->mode = TYPEDO;
-                break;
+    प्रति (;;)
+        विकल्प (state->बहुलकम्) {
+        पक्ष शीर्ष_2:
+            यदि (state->wrap == 0) {
+                state->बहुलकम् = TYPEDO;
+                भङ्ग;
             }
             NEEDBITS(16);
-#ifdef GUNZIP
-            if ((state->wrap & 2) && hold == 0x8b1f) {  /* gzip header */
-                if (state->wbits == 0)
+#यदि_परिभाषितम् GUNZIP
+            यदि ((state->wrap & 2) && hold == 0x8b1f) {  /* gzip header */
+                यदि (state->wbits == 0)
                     state->wbits = 15;
-                state->check = crc32(0L, Z_NULL, 0);
+                state->check = चक्रीयपरीक्षा_32_2(0L, Z_NULL, 0);
                 CRC2(state->check, hold);
                 INITBITS();
-                state->mode = FLAGS;
-                break;
+                state->बहुलकम् = FLAGS;
+                भङ्ग;
             }
-            if (state->head != Z_NULL)
-                state->head->done = -1;
-            if (!(state->wrap & 1) ||   /* check if zlib header allowed */
-#else
-            if (
-#endif
-                ((BITS(8) << 8) + (hold >> 8)) % 31) {
-                strm->msg = (z_const char *)"incorrect header check";
-                state->mode = BAD;
-                break;
+            यदि (state->शीर्ष != Z_NULL)
+                state->शीर्ष->समाप्तम्_2 = -1;
+            यदि (!(state->wrap & 1) ||   /* check if zlib header allowed */
+#अन्यथा
+            यदि (
+#यदि_अन्तः
+                ((द्वयङ्काः_2(8) << 8) + (hold >> 8)) % 31) {
+                strm->सन्देशः = (z_const वर्ण *)"incorrect header check";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-            if (BITS(4) != Z_DEFLATED) {
-                strm->msg = (z_const char *)"unknown compression method";
-                state->mode = BAD;
-                break;
+            यदि (द्वयङ्काः_2(4) != Z_DEFLATED) {
+                strm->सन्देशः = (z_const वर्ण *)"unknown compression method";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
             DROPBITS(4);
-            len = BITS(4) + 8;
-            if (state->wbits == 0)
+            len = द्वयङ्काः_2(4) + 8;
+            यदि (state->wbits == 0)
                 state->wbits = len;
-            if (len > 15 || len > state->wbits) {
-                strm->msg = (z_const char *)"invalid window size";
-                state->mode = BAD;
-                break;
+            यदि (len > 15 || len > state->wbits) {
+                strm->सन्देशः = (z_const वर्ण *)"invalid window size";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
             state->dmax = 1U << len;
             state->flags = 0;               /* indicate zlib header */
             Tracev((stderr, "inflate:   zlib header ok\n"));
             strm->adler = state->check = adler32(0L, Z_NULL, 0);
-            state->mode = hold & 0x200 ? DICTID : TYPE;
+            state->बहुलकम् = hold & 0x200 ? DICTID : TYPE;
             INITBITS();
-            break;
-#ifdef GUNZIP
-        case FLAGS:
+            भङ्ग;
+#यदि_परिभाषितम् GUNZIP
+        पक्ष FLAGS:
             NEEDBITS(16);
-            state->flags = (int)(hold);
-            if ((state->flags & 0xff) != Z_DEFLATED) {
-                strm->msg = (z_const char *)"unknown compression method";
-                state->mode = BAD;
-                break;
+            state->flags = (पूर्णाङ्क)(hold);
+            यदि ((state->flags & 0xff) != Z_DEFLATED) {
+                strm->सन्देशः = (z_const वर्ण *)"unknown compression method";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-            if (state->flags & 0xe000) {
-                strm->msg = (z_const char *)"unknown header flags set";
-                state->mode = BAD;
-                break;
+            यदि (state->flags & 0xe000) {
+                strm->सन्देशः = (z_const वर्ण *)"unknown header flags set";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-            if (state->head != Z_NULL)
-                state->head->text = (int)((hold >> 8) & 1);
-            if ((state->flags & 0x0200) && (state->wrap & 4))
+            यदि (state->शीर्ष != Z_NULL)
+                state->शीर्ष->text = (पूर्णाङ्क)((hold >> 8) & 1);
+            यदि ((state->flags & 0x0200) && (state->wrap & 4))
                 CRC2(state->check, hold);
             INITBITS();
-            state->mode = TIME;
+            state->बहुलकम् = TIME;
                 /* fallthrough */
-        case TIME:
+        पक्ष TIME:
             NEEDBITS(32);
-            if (state->head != Z_NULL)
-                state->head->time = hold;
-            if ((state->flags & 0x0200) && (state->wrap & 4))
+            यदि (state->शीर्ष != Z_NULL)
+                state->शीर्ष->time = hold;
+            यदि ((state->flags & 0x0200) && (state->wrap & 4))
                 CRC4(state->check, hold);
             INITBITS();
-            state->mode = OS;
+            state->बहुलकम् = OS;
                 /* fallthrough */
-        case OS:
+        पक्ष OS:
             NEEDBITS(16);
-            if (state->head != Z_NULL) {
-                state->head->xflags = (int)(hold & 0xff);
-                state->head->os = (int)(hold >> 8);
+            यदि (state->शीर्ष != Z_NULL) {
+                state->शीर्ष->xflags = (पूर्णाङ्क)(hold & 0xff);
+                state->शीर्ष->os = (पूर्णाङ्क)(hold >> 8);
             }
-            if ((state->flags & 0x0200) && (state->wrap & 4))
+            यदि ((state->flags & 0x0200) && (state->wrap & 4))
                 CRC2(state->check, hold);
             INITBITS();
-            state->mode = EXLEN;
+            state->बहुलकम् = EXLEN;
                 /* fallthrough */
-        case EXLEN:
-            if (state->flags & 0x0400) {
+        पक्ष EXLEN:
+            यदि (state->flags & 0x0400) {
                 NEEDBITS(16);
-                state->length = (unsigned)(hold);
-                if (state->head != Z_NULL)
-                    state->head->extra_len = (unsigned)hold;
-                if ((state->flags & 0x0200) && (state->wrap & 4))
+                state->दीर्घता = (अचिह्नित)(hold);
+                यदि (state->शीर्ष != Z_NULL)
+                    state->शीर्ष->extra_len = (अचिह्नित)hold;
+                यदि ((state->flags & 0x0200) && (state->wrap & 4))
                     CRC2(state->check, hold);
                 INITBITS();
             }
-            else if (state->head != Z_NULL)
-                state->head->extra = Z_NULL;
-            state->mode = EXTRA;
+            अन्यथा यदि (state->शीर्ष != Z_NULL)
+                state->शीर्ष->extra = Z_NULL;
+            state->बहुलकम् = EXTRA;
                 /* fallthrough */
-        case EXTRA:
-            if (state->flags & 0x0400) {
-                copy = state->length;
-                if (copy > have) copy = have;
-                if (copy) {
-                    if (state->head != Z_NULL &&
-                        state->head->extra != Z_NULL &&
-                        (len = state->head->extra_len - state->length) <
-                            state->head->extra_max) {
-                        zmemcpy(state->head->extra + len, next,
-                                len + copy > state->head->extra_max ?
-                                state->head->extra_max - len : copy);
+        पक्ष EXTRA:
+            यदि (state->flags & 0x0400) {
+                copy = state->दीर्घता;
+                यदि (copy > have) copy = have;
+                यदि (copy) {
+                    यदि (state->शीर्ष != Z_NULL &&
+                        state->शीर्ष->extra != Z_NULL &&
+                        (len = state->शीर्ष->extra_len - state->दीर्घता) <
+                            state->शीर्ष->extra_max) {
+                        zmemcpy(state->शीर्ष->extra + len, अग्र,
+                                len + copy > state->शीर्ष->extra_max ?
+                                state->शीर्ष->extra_max - len : copy);
                     }
-                    if ((state->flags & 0x0200) && (state->wrap & 4))
-                        state->check = crc32(state->check, next, copy);
+                    यदि ((state->flags & 0x0200) && (state->wrap & 4))
+                        state->check = चक्रीयपरीक्षा_32_2(state->check, अग्र, copy);
                     have -= copy;
-                    next += copy;
-                    state->length -= copy;
+                    अग्र += copy;
+                    state->दीर्घता -= copy;
                 }
-                if (state->length) goto inf_leave;
+                यदि (state->दीर्घता) गच्छ inf_leave;
             }
-            state->length = 0;
-            state->mode = NAME;
+            state->दीर्घता = 0;
+            state->बहुलकम् = NAME;
                 /* fallthrough */
-        case NAME:
-            if (state->flags & 0x0800) {
-                if (have == 0) goto inf_leave;
+        पक्ष NAME:
+            यदि (state->flags & 0x0800) {
+                यदि (have == 0) गच्छ inf_leave;
                 copy = 0;
-                do {
-                    len = (unsigned)(next[copy++]);
-                    if (state->head != Z_NULL &&
-                            state->head->name != Z_NULL &&
-                            state->length < state->head->name_max)
-                        state->head->name[state->length++] = (Bytef)len;
-                } while (len && copy < have);
-                if ((state->flags & 0x0200) && (state->wrap & 4))
-                    state->check = crc32(state->check, next, copy);
+                कुरु {
+                    len = (अचिह्नित)(अग्र[copy++]);
+                    यदि (state->शीर्ष != Z_NULL &&
+                            state->शीर्ष->name != Z_NULL &&
+                            state->दीर्घता < state->शीर्ष->name_max)
+                        state->शीर्ष->name[state->दीर्घता++] = (Bytef)len;
+                } यावत् (len && copy < have);
+                यदि ((state->flags & 0x0200) && (state->wrap & 4))
+                    state->check = चक्रीयपरीक्षा_32_2(state->check, अग्र, copy);
                 have -= copy;
-                next += copy;
-                if (len) goto inf_leave;
+                अग्र += copy;
+                यदि (len) गच्छ inf_leave;
             }
-            else if (state->head != Z_NULL)
-                state->head->name = Z_NULL;
-            state->length = 0;
-            state->mode = COMMENT;
+            अन्यथा यदि (state->शीर्ष != Z_NULL)
+                state->शीर्ष->name = Z_NULL;
+            state->दीर्घता = 0;
+            state->बहुलकम् = COMMENT;
                 /* fallthrough */
-        case COMMENT:
-            if (state->flags & 0x1000) {
-                if (have == 0) goto inf_leave;
+        पक्ष COMMENT:
+            यदि (state->flags & 0x1000) {
+                यदि (have == 0) गच्छ inf_leave;
                 copy = 0;
-                do {
-                    len = (unsigned)(next[copy++]);
-                    if (state->head != Z_NULL &&
-                            state->head->comment != Z_NULL &&
-                            state->length < state->head->comm_max)
-                        state->head->comment[state->length++] = (Bytef)len;
-                } while (len && copy < have);
-                if ((state->flags & 0x0200) && (state->wrap & 4))
-                    state->check = crc32(state->check, next, copy);
+                कुरु {
+                    len = (अचिह्नित)(अग्र[copy++]);
+                    यदि (state->शीर्ष != Z_NULL &&
+                            state->शीर्ष->comment != Z_NULL &&
+                            state->दीर्घता < state->शीर्ष->comm_max)
+                        state->शीर्ष->comment[state->दीर्घता++] = (Bytef)len;
+                } यावत् (len && copy < have);
+                यदि ((state->flags & 0x0200) && (state->wrap & 4))
+                    state->check = चक्रीयपरीक्षा_32_2(state->check, अग्र, copy);
                 have -= copy;
-                next += copy;
-                if (len) goto inf_leave;
+                अग्र += copy;
+                यदि (len) गच्छ inf_leave;
             }
-            else if (state->head != Z_NULL)
-                state->head->comment = Z_NULL;
-            state->mode = HCRC;
+            अन्यथा यदि (state->शीर्ष != Z_NULL)
+                state->शीर्ष->comment = Z_NULL;
+            state->बहुलकम् = HCRC;
                 /* fallthrough */
-        case HCRC:
-            if (state->flags & 0x0200) {
+        पक्ष HCRC:
+            यदि (state->flags & 0x0200) {
                 NEEDBITS(16);
-                if ((state->wrap & 4) && hold != (state->check & 0xffff)) {
-                    strm->msg = (z_const char *)"header crc mismatch";
-                    state->mode = BAD;
-                    break;
+                यदि ((state->wrap & 4) && hold != (state->check & 0xffff)) {
+                    strm->सन्देशः = (z_const वर्ण *)"header crc mismatch";
+                    state->बहुलकम् = BAD;
+                    भङ्ग;
                 }
                 INITBITS();
             }
-            if (state->head != Z_NULL) {
-                state->head->hcrc = (int)((state->flags >> 9) & 1);
-                state->head->done = 1;
+            यदि (state->शीर्ष != Z_NULL) {
+                state->शीर्ष->hcrc = (पूर्णाङ्क)((state->flags >> 9) & 1);
+                state->शीर्ष->समाप्तम्_2 = 1;
             }
-            strm->adler = state->check = crc32(0L, Z_NULL, 0);
-            state->mode = TYPE;
-            break;
-#endif
-        case DICTID:
+            strm->adler = state->check = चक्रीयपरीक्षा_32_2(0L, Z_NULL, 0);
+            state->बहुलकम् = TYPE;
+            भङ्ग;
+#यदि_अन्तः
+        पक्ष DICTID:
             NEEDBITS(32);
             strm->adler = state->check = ZSWAP32(hold);
             INITBITS();
-            state->mode = DICT;
+            state->बहुलकम् = DICT;
                 /* fallthrough */
-        case DICT:
-            if (state->havedict == 0) {
+        पक्ष DICT:
+            यदि (state->havedict == 0) {
                 RESTORE();
-                return Z_NEED_DICT;
+                प्रत्यागम Z_NEED_DICT;
             }
             strm->adler = state->check = adler32(0L, Z_NULL, 0);
-            state->mode = TYPE;
+            state->बहुलकम् = TYPE;
                 /* fallthrough */
-        case TYPE:
-            if (flush == Z_BLOCK || flush == Z_TREES) goto inf_leave;
+        पक्ष TYPE:
+            यदि (flush == Z_खण्डम् || flush == Z_TREES) गच्छ inf_leave;
                 /* fallthrough */
-        case TYPEDO:
-            if (state->last) {
+        पक्ष TYPEDO:
+            यदि (state->चरमः) {
                 BYTEBITS();
-                state->mode = CHECK;
-                break;
+                state->बहुलकम् = CHECK;
+                भङ्ग;
             }
             NEEDBITS(3);
-            state->last = BITS(1);
+            state->चरमः = द्वयङ्काः_2(1);
             DROPBITS(1);
-            switch (BITS(2)) {
-            case 0:                             /* stored block */
+            विकल्प (द्वयङ्काः_2(2)) {
+            पक्ष 0:                             /* stored block */
                 Tracev((stderr, "inflate:     stored block%s\n",
-                        state->last ? " (last)" : ""));
-                state->mode = STORED;
-                break;
-            case 1:                             /* fixed block */
+                        state->चरमः ? " (last)" : ""));
+                state->बहुलकम् = STORED;
+                भङ्ग;
+            पक्ष 1:                             /* fixed block */
                 inflate_fixed(state);
                 Tracev((stderr, "inflate:     fixed codes block%s\n",
-                        state->last ? " (last)" : ""));
-                state->mode = LEN_;             /* decode codes */
-                if (flush == Z_TREES) {
+                        state->चरमः ? " (last)" : ""));
+                state->बहुलकम् = LEN_;             /* decode codes */
+                यदि (flush == Z_TREES) {
                     DROPBITS(2);
-                    goto inf_leave;
+                    गच्छ inf_leave;
                 }
-                break;
-            case 2:                             /* dynamic block */
+                भङ्ग;
+            पक्ष 2:                             /* dynamic block */
                 Tracev((stderr, "inflate:     dynamic codes block%s\n",
-                        state->last ? " (last)" : ""));
-                state->mode = TABLE;
-                break;
-            default:
-                strm->msg = (z_const char *)"invalid block type";
-                state->mode = BAD;
+                        state->चरमः ? " (last)" : ""));
+                state->बहुलकम् = सारणी;
+                भङ्ग;
+            स्वभाव:
+                strm->सन्देशः = (z_const वर्ण *)"invalid block type";
+                state->बहुलकम् = BAD;
             }
             DROPBITS(2);
-            break;
-        case STORED:
+            भङ्ग;
+        पक्ष STORED:
             BYTEBITS();                         /* go to byte boundary */
             NEEDBITS(32);
-            if ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
-                strm->msg = (z_const char *)"invalid stored block lengths";
-                state->mode = BAD;
-                break;
+            यदि ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
+                strm->सन्देशः = (z_const वर्ण *)"invalid stored block lengths";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-            state->length = (unsigned)hold & 0xffff;
+            state->दीर्घता = (अचिह्नित)hold & 0xffff;
             Tracev((stderr, "inflate:       stored length %u\n",
-                    state->length));
+                    state->दीर्घता));
             INITBITS();
-            state->mode = COPY_;
-            if (flush == Z_TREES) goto inf_leave;
+            state->बहुलकम् = COPY_;
+            यदि (flush == Z_TREES) गच्छ inf_leave;
                 /* fallthrough */
-        case COPY_:
-            state->mode = COPY;
+        पक्ष COPY_:
+            state->बहुलकम् = COPY;
                 /* fallthrough */
-        case COPY:
-            copy = state->length;
-            if (copy) {
-                if (copy > have) copy = have;
-                if (copy > left) copy = left;
-                if (copy == 0) goto inf_leave;
-                zmemcpy(put, next, copy);
+        पक्ष COPY:
+            copy = state->दीर्घता;
+            यदि (copy) {
+                यदि (copy > have) copy = have;
+                यदि (copy > वामः) copy = वामः;
+                यदि (copy == 0) गच्छ inf_leave;
+                zmemcpy(put, अग्र, copy);
                 have -= copy;
-                next += copy;
-                left -= copy;
+                अग्र += copy;
+                वामः -= copy;
                 put += copy;
-                state->length -= copy;
-                break;
+                state->दीर्घता -= copy;
+                भङ्ग;
             }
             Tracev((stderr, "inflate:       stored end\n"));
-            state->mode = TYPE;
-            break;
-        case TABLE:
+            state->बहुलकम् = TYPE;
+            भङ्ग;
+        पक्ष सारणी:
             NEEDBITS(14);
-            state->nlen = BITS(5) + 257;
+            state->nlen = द्वयङ्काः_2(5) + 257;
             DROPBITS(5);
-            state->ndist = BITS(5) + 1;
+            state->ndist = द्वयङ्काः_2(5) + 1;
             DROPBITS(5);
-            state->ncode = BITS(4) + 4;
+            state->ncode = द्वयङ्काः_2(4) + 4;
             DROPBITS(4);
-#ifndef PKZIP_BUG_WORKAROUND
-            if (state->nlen > 286 || state->ndist > 30) {
-                strm->msg = (z_const char *)
+#यदि_अपरिभाषितम् PKZIP_BUG_WORKAROUND
+            यदि (state->nlen > 286 || state->ndist > 30) {
+                strm->सन्देशः = (z_const वर्ण *)
                     "too many length or distance symbols";
-                state->mode = BAD;
-                break;
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-#endif
+#यदि_अन्तः
             Tracev((stderr, "inflate:       table sizes ok\n"));
             state->have = 0;
-            state->mode = LENLENS;
+            state->बहुलकम् = LENLENS;
                 /* fallthrough */
-        case LENLENS:
-            while (state->have < state->ncode) {
+        पक्ष LENLENS:
+            यावत् (state->have < state->ncode) {
                 NEEDBITS(3);
-                state->lens[order[state->have++]] = (unsigned short)BITS(3);
+                state->lens[क्रमः[state->have++]] = (अचिह्नित ह्रस्व)द्वयङ्काः_2(3);
                 DROPBITS(3);
             }
-            while (state->have < 19)
-                state->lens[order[state->have++]] = 0;
-            state->next = state->codes;
-            state->lencode = state->distcode = (const code FAR *)(state->next);
+            यावत् (state->have < 19)
+                state->lens[क्रमः[state->have++]] = 0;
+            state->अग्र = state->codes;
+            state->lencode = state->distcode = (ध्रुव संहिता FAR *)(state->अग्र);
             state->lenbits = 7;
-            ret = inflate_table(CODES, state->lens, 19, &(state->next),
+            ret = inflate_सारणी(CODES, state->lens, 19, &(state->अग्र),
                                 &(state->lenbits), state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid code lengths set";
-                state->mode = BAD;
-                break;
+            यदि (ret) {
+                strm->सन्देशः = (z_const वर्ण *)"invalid code lengths set";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
             Tracev((stderr, "inflate:       code lengths ok\n"));
             state->have = 0;
-            state->mode = CODELENS;
+            state->बहुलकम् = CODELENS;
                 /* fallthrough */
-        case CODELENS:
-            while (state->have < state->nlen + state->ndist) {
-                for (;;) {
-                    here = state->lencode[BITS(state->lenbits)];
-                    if ((unsigned)(here.bits) <= bits) break;
+        पक्ष CODELENS:
+            यावत् (state->have < state->nlen + state->ndist) {
+                प्रति (;;) {
+                    अत्र = state->lencode[द्वयङ्काः_2(state->lenbits)];
+                    यदि ((अचिह्नित)(अत्र.द्वयङ्काः) <= द्वयङ्काः) भङ्ग;
                     PULLBYTE();
                 }
-                if (here.val < 16) {
-                    DROPBITS(here.bits);
-                    state->lens[state->have++] = here.val;
+                यदि (अत्र.val < 16) {
+                    DROPBITS(अत्र.द्वयङ्काः);
+                    state->lens[state->have++] = अत्र.val;
                 }
-                else {
-                    if (here.val == 16) {
-                        NEEDBITS(here.bits + 2);
-                        DROPBITS(here.bits);
-                        if (state->have == 0) {
-                            strm->msg = (z_const char *)
+                अन्यथा {
+                    यदि (अत्र.val == 16) {
+                        NEEDBITS(अत्र.द्वयङ्काः + 2);
+                        DROPBITS(अत्र.द्वयङ्काः);
+                        यदि (state->have == 0) {
+                            strm->सन्देशः = (z_const वर्ण *)
                                 "invalid bit length repeat";
-                            state->mode = BAD;
-                            break;
+                            state->बहुलकम् = BAD;
+                            भङ्ग;
                         }
                         len = state->lens[state->have - 1];
-                        copy = 3 + BITS(2);
+                        copy = 3 + द्वयङ्काः_2(2);
                         DROPBITS(2);
                     }
-                    else if (here.val == 17) {
-                        NEEDBITS(here.bits + 3);
-                        DROPBITS(here.bits);
+                    अन्यथा यदि (अत्र.val == 17) {
+                        NEEDBITS(अत्र.द्वयङ्काः + 3);
+                        DROPBITS(अत्र.द्वयङ्काः);
                         len = 0;
-                        copy = 3 + BITS(3);
+                        copy = 3 + द्वयङ्काः_2(3);
                         DROPBITS(3);
                     }
-                    else {
-                        NEEDBITS(here.bits + 7);
-                        DROPBITS(here.bits);
+                    अन्यथा {
+                        NEEDBITS(अत्र.द्वयङ्काः + 7);
+                        DROPBITS(अत्र.द्वयङ्काः);
                         len = 0;
-                        copy = 11 + BITS(7);
+                        copy = 11 + द्वयङ्काः_2(7);
                         DROPBITS(7);
                     }
-                    if (state->have + copy > state->nlen + state->ndist) {
-                        strm->msg = (z_const char *)
+                    यदि (state->have + copy > state->nlen + state->ndist) {
+                        strm->सन्देशः = (z_const वर्ण *)
                             "invalid bit length repeat";
-                        state->mode = BAD;
-                        break;
+                        state->बहुलकम् = BAD;
+                        भङ्ग;
                     }
-                    while (copy--)
-                        state->lens[state->have++] = (unsigned short)len;
+                    यावत् (copy--)
+                        state->lens[state->have++] = (अचिह्नित ह्रस्व)len;
                 }
             }
 
             /* handle error breaks in while */
-            if (state->mode == BAD) break;
+            यदि (state->बहुलकम् == BAD) भङ्ग;
 
             /* check for end-of-block code (better have one) */
-            if (state->lens[256] == 0) {
-                strm->msg = (z_const char *)
+            यदि (state->lens[256] == 0) {
+                strm->सन्देशः = (z_const वर्ण *)
                     "invalid code -- missing end-of-block";
-                state->mode = BAD;
-                break;
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
 
             /* build code tables -- note: do not change the lenbits or distbits
                values here (9 and 6) without reading the comments in inftrees.h
                concerning the ENOUGH constants, which depend on those values */
-            state->next = state->codes;
-            state->lencode = (const code FAR *)(state->next);
+            state->अग्र = state->codes;
+            state->lencode = (ध्रुव संहिता FAR *)(state->अग्र);
             state->lenbits = 9;
-            ret = inflate_table(LENS, state->lens, state->nlen, &(state->next),
+            ret = inflate_सारणी(LENS, state->lens, state->nlen, &(state->अग्र),
                                 &(state->lenbits), state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid literal/lengths set";
-                state->mode = BAD;
-                break;
+            यदि (ret) {
+                strm->सन्देशः = (z_const वर्ण *)"invalid literal/lengths set";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-            state->distcode = (const code FAR *)(state->next);
+            state->distcode = (ध्रुव संहिता FAR *)(state->अग्र);
             state->distbits = 6;
-            ret = inflate_table(DISTS, state->lens + state->nlen, state->ndist,
-                            &(state->next), &(state->distbits), state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid distances set";
-                state->mode = BAD;
-                break;
+            ret = inflate_सारणी(DISTS, state->lens + state->nlen, state->ndist,
+                            &(state->अग्र), &(state->distbits), state->work);
+            यदि (ret) {
+                strm->सन्देशः = (z_const वर्ण *)"invalid distances set";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
             Tracev((stderr, "inflate:       codes ok\n"));
-            state->mode = LEN_;
-            if (flush == Z_TREES) goto inf_leave;
+            state->बहुलकम् = LEN_;
+            यदि (flush == Z_TREES) गच्छ inf_leave;
                 /* fallthrough */
-        case LEN_:
-            state->mode = LEN;
+        पक्ष LEN_:
+            state->बहुलकम् = LEN;
                 /* fallthrough */
-        case LEN:
-            if (have >= 6 && left >= 258) {
+        पक्ष LEN:
+            यदि (have >= 6 && वामः >= 258) {
                 RESTORE();
-                inflate_fast(strm, out);
-                LOAD();
-                if (state->mode == TYPE)
-                    state->back = -1;
-                break;
+                inflate_fast(strm, बहिर्गमनम्);
+                आरोपय_2();
+                यदि (state->बहुलकम् == TYPE)
+                    state->पृष्ठभागः = -1;
+                भङ्ग;
             }
-            state->back = 0;
-            for (;;) {
-                here = state->lencode[BITS(state->lenbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+            state->पृष्ठभागः = 0;
+            प्रति (;;) {
+                अत्र = state->lencode[द्वयङ्काः_2(state->lenbits)];
+                यदि ((अचिह्नित)(अत्र.द्वयङ्काः) <= द्वयङ्काः) भङ्ग;
                 PULLBYTE();
             }
-            if (here.op && (here.op & 0xf0) == 0) {
-                last = here;
-                for (;;) {
-                    here = state->lencode[last.val +
-                            (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+            यदि (अत्र.op && (अत्र.op & 0xf0) == 0) {
+                चरमः = अत्र;
+                प्रति (;;) {
+                    अत्र = state->lencode[चरमः.val +
+                            (द्वयङ्काः_2(चरमः.द्वयङ्काः + चरमः.op) >> चरमः.द्वयङ्काः)];
+                    यदि ((अचिह्नित)(चरमः.द्वयङ्काः + अत्र.द्वयङ्काः) <= द्वयङ्काः) भङ्ग;
                     PULLBYTE();
                 }
-                DROPBITS(last.bits);
-                state->back += last.bits;
+                DROPBITS(चरमः.द्वयङ्काः);
+                state->पृष्ठभागः += चरमः.द्वयङ्काः;
             }
-            DROPBITS(here.bits);
-            state->back += here.bits;
-            state->length = (unsigned)here.val;
-            if ((int)(here.op) == 0) {
-                Tracevv((stderr, here.val >= 0x20 && here.val < 0x7f ?
+            DROPBITS(अत्र.द्वयङ्काः);
+            state->पृष्ठभागः += अत्र.द्वयङ्काः;
+            state->दीर्घता = (अचिह्नित)अत्र.val;
+            यदि ((पूर्णाङ्क)(अत्र.op) == 0) {
+                Tracevv((stderr, अत्र.val >= 0x20 && अत्र.val < 0x7f ?
                         "inflate:         literal '%c'\n" :
-                        "inflate:         literal 0x%02x\n", here.val));
-                state->mode = LIT;
-                break;
+                        "inflate:         literal 0x%02x\n", अत्र.val));
+                state->बहुलकम् = LIT;
+                भङ्ग;
             }
-            if (here.op & 32) {
+            यदि (अत्र.op & 32) {
                 Tracevv((stderr, "inflate:         end of block\n"));
-                state->back = -1;
-                state->mode = TYPE;
-                break;
+                state->पृष्ठभागः = -1;
+                state->बहुलकम् = TYPE;
+                भङ्ग;
             }
-            if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid literal/length code";
-                state->mode = BAD;
-                break;
+            यदि (अत्र.op & 64) {
+                strm->सन्देशः = (z_const वर्ण *)"invalid literal/length code";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-            state->extra = (unsigned)(here.op) & 15;
-            state->mode = LENEXT;
+            state->extra = (अचिह्नित)(अत्र.op) & 15;
+            state->बहुलकम् = LENEXT;
                 /* fallthrough */
-        case LENEXT:
-            if (state->extra) {
+        पक्ष LENEXT:
+            यदि (state->extra) {
                 NEEDBITS(state->extra);
-                state->length += BITS(state->extra);
+                state->दीर्घता += द्वयङ्काः_2(state->extra);
                 DROPBITS(state->extra);
-                state->back += state->extra;
+                state->पृष्ठभागः += state->extra;
             }
-            Tracevv((stderr, "inflate:         length %u\n", state->length));
-            state->was = state->length;
-            state->mode = DIST;
+            Tracevv((stderr, "inflate:         length %u\n", state->दीर्घता));
+            state->was = state->दीर्घता;
+            state->बहुलकम् = DIST;
                 /* fallthrough */
-        case DIST:
-            for (;;) {
-                here = state->distcode[BITS(state->distbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+        पक्ष DIST:
+            प्रति (;;) {
+                अत्र = state->distcode[द्वयङ्काः_2(state->distbits)];
+                यदि ((अचिह्नित)(अत्र.द्वयङ्काः) <= द्वयङ्काः) भङ्ग;
                 PULLBYTE();
             }
-            if ((here.op & 0xf0) == 0) {
-                last = here;
-                for (;;) {
-                    here = state->distcode[last.val +
-                            (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+            यदि ((अत्र.op & 0xf0) == 0) {
+                चरमः = अत्र;
+                प्रति (;;) {
+                    अत्र = state->distcode[चरमः.val +
+                            (द्वयङ्काः_2(चरमः.द्वयङ्काः + चरमः.op) >> चरमः.द्वयङ्काः)];
+                    यदि ((अचिह्नित)(चरमः.द्वयङ्काः + अत्र.द्वयङ्काः) <= द्वयङ्काः) भङ्ग;
                     PULLBYTE();
                 }
-                DROPBITS(last.bits);
-                state->back += last.bits;
+                DROPBITS(चरमः.द्वयङ्काः);
+                state->पृष्ठभागः += चरमः.द्वयङ्काः;
             }
-            DROPBITS(here.bits);
-            state->back += here.bits;
-            if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid distance code";
-                state->mode = BAD;
-                break;
+            DROPBITS(अत्र.द्वयङ्काः);
+            state->पृष्ठभागः += अत्र.द्वयङ्काः;
+            यदि (अत्र.op & 64) {
+                strm->सन्देशः = (z_const वर्ण *)"invalid distance code";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-            state->offset = (unsigned)here.val;
-            state->extra = (unsigned)(here.op) & 15;
-            state->mode = DISTEXT;
+            state->विस्थापनम् = (अचिह्नित)अत्र.val;
+            state->extra = (अचिह्नित)(अत्र.op) & 15;
+            state->बहुलकम् = DISTEXT;
                 /* fallthrough */
-        case DISTEXT:
-            if (state->extra) {
+        पक्ष DISTEXT:
+            यदि (state->extra) {
                 NEEDBITS(state->extra);
-                state->offset += BITS(state->extra);
+                state->विस्थापनम् += द्वयङ्काः_2(state->extra);
                 DROPBITS(state->extra);
-                state->back += state->extra;
+                state->पृष्ठभागः += state->extra;
             }
-#ifdef INFLATE_STRICT
-            if (state->offset > state->dmax) {
-                strm->msg = (z_const char *)"invalid distance too far back";
-                state->mode = BAD;
-                break;
+#यदि_परिभाषितम् INFLATE_STRICT
+            यदि (state->विस्थापनम् > state->dmax) {
+                strm->सन्देशः = (z_const वर्ण *)"invalid distance too far back";
+                state->बहुलकम् = BAD;
+                भङ्ग;
             }
-#endif
-            Tracevv((stderr, "inflate:         distance %u\n", state->offset));
-            state->mode = MATCH;
+#यदि_अन्तः
+            Tracevv((stderr, "inflate:         distance %u\n", state->विस्थापनम्));
+            state->बहुलकम् = मेलनम्_2;
                 /* fallthrough */
-        case MATCH:
-            if (left == 0) goto inf_leave;
-            copy = out - left;
-            if (state->offset > copy) {         /* copy from window */
-                copy = state->offset - copy;
-                if (copy > state->whave) {
-                    if (state->sane) {
-                        strm->msg = (z_const char *)
+        पक्ष मेलनम्_2:
+            यदि (वामः == 0) गच्छ inf_leave;
+            copy = बहिर्गमनम् - वामः;
+            यदि (state->विस्थापनम् > copy) {         /* copy from window */
+                copy = state->विस्थापनम् - copy;
+                यदि (copy > state->whave) {
+                    यदि (state->sane) {
+                        strm->सन्देशः = (z_const वर्ण *)
                             "invalid distance too far back";
-                        state->mode = BAD;
-                        break;
+                        state->बहुलकम् = BAD;
+                        भङ्ग;
                     }
-#ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
+#यदि_परिभाषितम् INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
                     Trace((stderr, "inflate.c too far\n"));
                     copy -= state->whave;
-                    if (copy > state->length) copy = state->length;
-                    if (copy > left) copy = left;
-                    left -= copy;
-                    state->length -= copy;
-                    do {
+                    यदि (copy > state->दीर्घता) copy = state->दीर्घता;
+                    यदि (copy > वामः) copy = वामः;
+                    वामः -= copy;
+                    state->दीर्घता -= copy;
+                    कुरु {
                         *put++ = 0;
-                    } while (--copy);
-                    if (state->length == 0) state->mode = LEN;
-                    break;
-#endif
+                    } यावत् (--copy);
+                    यदि (state->दीर्घता == 0) state->बहुलकम् = LEN;
+                    भङ्ग;
+#यदि_अन्तः
                 }
-                if (copy > state->wnext) {
+                यदि (copy > state->wnext) {
                     copy -= state->wnext;
-                    from = state->window + (state->wsize - copy);
+                    from = state->गवाक्षः + (state->wsize - copy);
                 }
-                else
-                    from = state->window + (state->wnext - copy);
-                if (copy > state->length) copy = state->length;
+                अन्यथा
+                    from = state->गवाक्षः + (state->wnext - copy);
+                यदि (copy > state->दीर्घता) copy = state->दीर्घता;
             }
-            else {                              /* copy from output */
-                from = put - state->offset;
-                copy = state->length;
+            अन्यथा {                              /* copy from output */
+                from = put - state->विस्थापनम्;
+                copy = state->दीर्घता;
             }
-            if (copy > left) copy = left;
-            left -= copy;
-            state->length -= copy;
-            do {
+            यदि (copy > वामः) copy = वामः;
+            वामः -= copy;
+            state->दीर्घता -= copy;
+            कुरु {
                 *put++ = *from++;
-            } while (--copy);
-            if (state->length == 0) state->mode = LEN;
-            break;
-        case LIT:
-            if (left == 0) goto inf_leave;
-            *put++ = (unsigned char)(state->length);
-            left--;
-            state->mode = LEN;
-            break;
-        case CHECK:
-            if (state->wrap) {
+            } यावत् (--copy);
+            यदि (state->दीर्घता == 0) state->बहुलकम् = LEN;
+            भङ्ग;
+        पक्ष LIT:
+            यदि (वामः == 0) गच्छ inf_leave;
+            *put++ = (अचिह्नित वर्ण)(state->दीर्घता);
+            वामः--;
+            state->बहुलकम् = LEN;
+            भङ्ग;
+        पक्ष CHECK:
+            यदि (state->wrap) {
                 NEEDBITS(32);
-                out -= left;
-                strm->total_out += out;
-                state->total += out;
-                if ((state->wrap & 4) && out)
+                बहिर्गमनम् -= वामः;
+                strm->योग_बहिर्गमनम् += बहिर्गमनम्;
+                state->योग_2 += बहिर्गमनम्;
+                यदि ((state->wrap & 4) && बहिर्गमनम्)
                     strm->adler = state->check =
-                        UPDATE_CHECK(state->check, put - out, out);
-                out = left;
-                if ((state->wrap & 4) && (
-#ifdef GUNZIP
+                        UPDATE_CHECK(state->check, put - बहिर्गमनम्, बहिर्गमनम्);
+                बहिर्गमनम् = वामः;
+                यदि ((state->wrap & 4) && (
+#यदि_परिभाषितम् GUNZIP
                      state->flags ? hold :
-#endif
+#यदि_अन्तः
                      ZSWAP32(hold)) != state->check) {
-                    strm->msg = (z_const char *)"incorrect data check";
-                    state->mode = BAD;
-                    break;
+                    strm->सन्देशः = (z_const वर्ण *)"incorrect data check";
+                    state->बहुलकम् = BAD;
+                    भङ्ग;
                 }
                 INITBITS();
                 Tracev((stderr, "inflate:   check matches trailer\n"));
             }
-#ifdef GUNZIP
-            state->mode = LENGTH;
+#यदि_परिभाषितम् GUNZIP
+            state->बहुलकम् = दीर्घता_2;
                 /* fallthrough */
-        case LENGTH:
-            if (state->wrap && state->flags) {
+        पक्ष दीर्घता_2:
+            यदि (state->wrap && state->flags) {
                 NEEDBITS(32);
-                if ((state->wrap & 4) && hold != (state->total & 0xffffffff)) {
-                    strm->msg = (z_const char *)"incorrect length check";
-                    state->mode = BAD;
-                    break;
+                यदि ((state->wrap & 4) && hold != (state->योग_2 & 0xffffffff)) {
+                    strm->सन्देशः = (z_const वर्ण *)"incorrect length check";
+                    state->बहुलकम् = BAD;
+                    भङ्ग;
                 }
                 INITBITS();
                 Tracev((stderr, "inflate:   length matches trailer\n"));
             }
-#endif
-            state->mode = DONE;
+#यदि_अन्तः
+            state->बहुलकम् = समाप्तम्;
                 /* fallthrough */
-        case DONE:
-            ret = Z_STREAM_END;
-            goto inf_leave;
-        case BAD:
-            ret = Z_DATA_ERROR;
-            goto inf_leave;
-        case MEM:
-            return Z_MEM_ERROR;
-        case SYNC:
+        पक्ष समाप्तम्:
+            ret = Z_प्रवाहः_अन्तः;
+            गच्छ inf_leave;
+        पक्ष BAD:
+            ret = Z_दत्त_ERROR;
+            गच्छ inf_leave;
+        पक्ष MEM:
+            प्रत्यागम Z_MEM_ERROR;
+        पक्ष SYNC:
                 /* fallthrough */
-        default:
-            return Z_STREAM_ERROR;
+        स्वभाव:
+            प्रत्यागम Z_प्रवाहः_ERROR;
         }
 
     /*
@@ -1130,104 +1130,104 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
      */
   inf_leave:
     RESTORE();
-    if (state->wsize || (out != strm->avail_out && state->mode < BAD &&
-            (state->mode < CHECK || flush != Z_FINISH)))
-        if (updatewindow(strm, strm->next_out, out - strm->avail_out)) {
-            state->mode = MEM;
-            return Z_MEM_ERROR;
+    यदि (state->wsize || (बहिर्गमनम् != strm->avail_बहिर्गमनम् && state->बहुलकम् < BAD &&
+            (state->बहुलकम् < CHECK || flush != Z_FINISH)))
+        यदि (updatewindow(strm, strm->अग्र_बहिर्गमनम्, बहिर्गमनम् - strm->avail_बहिर्गमनम्)) {
+            state->बहुलकम् = MEM;
+            प्रत्यागम Z_MEM_ERROR;
         }
-    in -= strm->avail_in;
-    out -= strm->avail_out;
-    strm->total_in += in;
-    strm->total_out += out;
-    state->total += out;
-    if ((state->wrap & 4) && out)
+    अन्तर् -= strm->avail_अन्तर्;
+    बहिर्गमनम् -= strm->avail_बहिर्गमनम्;
+    strm->योग_अन्तर् += अन्तर्;
+    strm->योग_बहिर्गमनम् += बहिर्गमनम्;
+    state->योग_2 += बहिर्गमनम्;
+    यदि ((state->wrap & 4) && बहिर्गमनम्)
         strm->adler = state->check =
-            UPDATE_CHECK(state->check, strm->next_out - out, out);
-    strm->data_type = (int)state->bits + (state->last ? 64 : 0) +
-                      (state->mode == TYPE ? 128 : 0) +
-                      (state->mode == LEN_ || state->mode == COPY_ ? 256 : 0);
-    if (((in == 0 && out == 0) || flush == Z_FINISH) && ret == Z_OK)
+            UPDATE_CHECK(state->check, strm->अग्र_बहिर्गमनम् - बहिर्गमनम्, बहिर्गमनम्);
+    strm->दत्त_type = (पूर्णाङ्क)state->द्वयङ्काः + (state->चरमः ? 64 : 0) +
+                      (state->बहुलकम् == TYPE ? 128 : 0) +
+                      (state->बहुलकम् == LEN_ || state->बहुलकम् == COPY_ ? 256 : 0);
+    यदि (((अन्तर् == 0 && बहिर्गमनम् == 0) || flush == Z_FINISH) && ret == Z_OK)
         ret = Z_BUF_ERROR;
-    return ret;
+    प्रत्यागम ret;
 }
 
-int ZEXPORT inflateEnd(z_streamp strm) {
-    struct inflate_state FAR *state;
-    if (inflateStateCheck(strm))
-        return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
-    if (state->window != Z_NULL) ZFREE(strm, state->window);
+पूर्णाङ्क ZEXPORT inflate_अन्तः(z_streamp strm) {
+    संरचना inflate_state FAR *state;
+    यदि (inflateStateCheck(strm))
+        प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
+    यदि (state->गवाक्षः != Z_NULL) ZFREE(strm, state->गवाक्षः);
     ZFREE(strm, strm->state);
     strm->state = Z_NULL;
     Tracev((stderr, "inflate: end\n"));
-    return Z_OK;
+    प्रत्यागम Z_OK;
 }
 
-int ZEXPORT inflateGetDictionary(z_streamp strm, Bytef *dictionary,
-                                 uInt *dictLength) {
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateGetDictionary(z_streamp strm, Bytef *dictionary,
+                                 uInt *dict_दीर्घता) {
+    संरचना inflate_state FAR *state;
 
     /* check state */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
 
     /* copy dictionary */
-    if (state->whave && dictionary != Z_NULL) {
-        zmemcpy(dictionary, state->window + state->wnext,
+    यदि (state->whave && dictionary != Z_NULL) {
+        zmemcpy(dictionary, state->गवाक्षः + state->wnext,
                 state->whave - state->wnext);
         zmemcpy(dictionary + state->whave - state->wnext,
-                state->window, state->wnext);
+                state->गवाक्षः, state->wnext);
     }
-    if (dictLength != Z_NULL)
-        *dictLength = state->whave;
-    return Z_OK;
+    यदि (dict_दीर्घता != Z_NULL)
+        *dict_दीर्घता = state->whave;
+    प्रत्यागम Z_OK;
 }
 
-int ZEXPORT inflateSetDictionary(z_streamp strm, const Bytef *dictionary,
-                                 uInt dictLength) {
-    struct inflate_state FAR *state;
-    unsigned long dictid;
-    int ret;
+पूर्णाङ्क ZEXPORT inflate_समुच्चयः_Dictionary(z_streamp strm, ध्रुव Bytef *dictionary,
+                                 uInt dict_दीर्घता) {
+    संरचना inflate_state FAR *state;
+    अचिह्नित दीर्घ dictid;
+    पूर्णाङ्क ret;
 
     /* check state */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
-    if (state->wrap != 0 && state->mode != DICT)
-        return Z_STREAM_ERROR;
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
+    यदि (state->wrap != 0 && state->बहुलकम् != DICT)
+        प्रत्यागम Z_प्रवाहः_ERROR;
 
     /* check for correct dictionary identifier */
-    if (state->mode == DICT) {
+    यदि (state->बहुलकम् == DICT) {
         dictid = adler32(0L, Z_NULL, 0);
-        dictid = adler32(dictid, dictionary, dictLength);
-        if (dictid != state->check)
-            return Z_DATA_ERROR;
+        dictid = adler32(dictid, dictionary, dict_दीर्घता);
+        यदि (dictid != state->check)
+            प्रत्यागम Z_दत्त_ERROR;
     }
 
     /* copy dictionary to window using updatewindow(), which will amend the
        existing dictionary if appropriate */
-    ret = updatewindow(strm, dictionary + dictLength, dictLength);
-    if (ret) {
-        state->mode = MEM;
-        return Z_MEM_ERROR;
+    ret = updatewindow(strm, dictionary + dict_दीर्घता, dict_दीर्घता);
+    यदि (ret) {
+        state->बहुलकम् = MEM;
+        प्रत्यागम Z_MEM_ERROR;
     }
     state->havedict = 1;
     Tracev((stderr, "inflate:   dictionary set\n"));
-    return Z_OK;
+    प्रत्यागम Z_OK;
 }
 
-int ZEXPORT inflateGetHeader(z_streamp strm, gz_headerp head) {
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflate_Get_शीर्षकम्(z_streamp strm, gz_headerp शीर्ष) {
+    संरचना inflate_state FAR *state;
 
     /* check state */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
-    if ((state->wrap & 2) == 0) return Z_STREAM_ERROR;
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
+    यदि ((state->wrap & 2) == 0) प्रत्यागम Z_प्रवाहः_ERROR;
 
     /* save header structure */
-    state->head = head;
-    head->done = 0;
-    return Z_OK;
+    state->शीर्ष = शीर्ष;
+    शीर्ष->समाप्तम्_2 = 0;
+    प्रत्यागम Z_OK;
 }
 
 /*
@@ -1241,72 +1241,72 @@ int ZEXPORT inflateGetHeader(z_streamp strm, gz_headerp head) {
    called again with more data and the *have state.  *have is initialized to
    zero for the first call.
  */
-local unsigned syncsearch(unsigned FAR *have, const unsigned char FAR *buf,
-                          unsigned len) {
-    unsigned got;
-    unsigned next;
+local अचिह्नित syncsearch(अचिह्नित FAR *have, ध्रुव अचिह्नित वर्ण FAR *buf,
+                          अचिह्नित len) {
+    अचिह्नित got;
+    अचिह्नित अग्र;
 
     got = *have;
-    next = 0;
-    while (next < len && got < 4) {
-        if ((int)(buf[next]) == (got < 2 ? 0 : 0xff))
+    अग्र = 0;
+    यावत् (अग्र < len && got < 4) {
+        यदि ((पूर्णाङ्क)(buf[अग्र]) == (got < 2 ? 0 : 0xff))
             got++;
-        else if (buf[next])
+        अन्यथा यदि (buf[अग्र])
             got = 0;
-        else
+        अन्यथा
             got = 4 - got;
-        next++;
+        अग्र++;
     }
     *have = got;
-    return next;
+    प्रत्यागम अग्र;
 }
 
-int ZEXPORT inflateSync(z_streamp strm) {
-    unsigned len;               /* number of bytes to look at or looked at */
-    int flags;                  /* temporary to save header status */
-    unsigned long in, out;      /* temporary to save total_in and total_out */
-    unsigned char buf[4];       /* to restore bit buffer to byte string */
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateSync(z_streamp strm) {
+    अचिह्नित len;               /* number of bytes to look at or looked at */
+    पूर्णाङ्क flags;                  /* temporary to save header status */
+    अचिह्नित दीर्घ अन्तर्, बहिर्गमनम्;      /* temporary to save total_in and total_out */
+    अचिह्नित वर्ण buf[4];       /* to restore bit buffer to byte string */
+    संरचना inflate_state FAR *state;
 
     /* check parameters */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
-    if (strm->avail_in == 0 && state->bits < 8) return Z_BUF_ERROR;
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
+    यदि (strm->avail_अन्तर् == 0 && state->द्वयङ्काः < 8) प्रत्यागम Z_BUF_ERROR;
 
     /* if first time, start search in bit buffer */
-    if (state->mode != SYNC) {
-        state->mode = SYNC;
-        state->hold >>= state->bits & 7;
-        state->bits -= state->bits & 7;
+    यदि (state->बहुलकम् != SYNC) {
+        state->बहुलकम् = SYNC;
+        state->hold >>= state->द्वयङ्काः & 7;
+        state->द्वयङ्काः -= state->द्वयङ्काः & 7;
         len = 0;
-        while (state->bits >= 8) {
-            buf[len++] = (unsigned char)(state->hold);
+        यावत् (state->द्वयङ्काः >= 8) {
+            buf[len++] = (अचिह्नित वर्ण)(state->hold);
             state->hold >>= 8;
-            state->bits -= 8;
+            state->द्वयङ्काः -= 8;
         }
         state->have = 0;
         syncsearch(&(state->have), buf, len);
     }
 
     /* search available input */
-    len = syncsearch(&(state->have), strm->next_in, strm->avail_in);
-    strm->avail_in -= len;
-    strm->next_in += len;
-    strm->total_in += len;
+    len = syncsearch(&(state->have), strm->अग्र_अन्तर्, strm->avail_अन्तर्);
+    strm->avail_अन्तर् -= len;
+    strm->अग्र_अन्तर् += len;
+    strm->योग_अन्तर् += len;
 
     /* return no joy or set up to restart inflate() on a new block */
-    if (state->have != 4) return Z_DATA_ERROR;
-    if (state->flags == -1)
+    यदि (state->have != 4) प्रत्यागम Z_दत्त_ERROR;
+    यदि (state->flags == -1)
         state->wrap = 0;    /* if no header yet, treat as raw */
-    else
+    अन्यथा
         state->wrap &= ~4;  /* no point in computing a check value now */
     flags = state->flags;
-    in = strm->total_in;  out = strm->total_out;
+    अन्तर् = strm->योग_अन्तर्;  बहिर्गमनम् = strm->योग_बहिर्गमनम्;
     inflateReset(strm);
-    strm->total_in = in;  strm->total_out = out;
+    strm->योग_अन्तर् = अन्तर्;  strm->योग_बहिर्गमनम् = बहिर्गमनम्;
     state->flags = flags;
-    state->mode = TYPE;
-    return Z_OK;
+    state->बहुलकम् = TYPE;
+    प्रत्यागम Z_OK;
 }
 
 /*
@@ -1317,97 +1317,97 @@ int ZEXPORT inflateSync(z_streamp strm) {
    block. When decompressing, PPP checks that at the end of input packet,
    inflate is waiting for these length bytes.
  */
-int ZEXPORT inflateSyncPoint(z_streamp strm) {
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateSyncPoint(z_streamp strm) {
+    संरचना inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
-    return state->mode == STORED && state->bits == 0;
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
+    प्रत्यागम state->बहुलकम् == STORED && state->द्वयङ्काः == 0;
 }
 
-int ZEXPORT inflateCopy(z_streamp dest, z_streamp source) {
-    struct inflate_state FAR *state;
-    struct inflate_state FAR *copy;
-    unsigned char FAR *window;
+पूर्णाङ्क ZEXPORT inflateCopy(z_streamp dest, z_streamp source) {
+    संरचना inflate_state FAR *state;
+    संरचना inflate_state FAR *copy;
+    अचिह्नित वर्ण FAR *गवाक्षः;
 
     /* check input */
-    if (inflateStateCheck(source) || dest == Z_NULL)
-        return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)source->state;
+    यदि (inflateStateCheck(source) || dest == Z_NULL)
+        प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)source->state;
 
     /* allocate space */
-    copy = (struct inflate_state FAR *)
-           ZALLOC(source, 1, sizeof(struct inflate_state));
-    if (copy == Z_NULL) return Z_MEM_ERROR;
-    zmemzero(copy, sizeof(struct inflate_state));
-    window = Z_NULL;
-    if (state->window != Z_NULL) {
-        window = (unsigned char FAR *)
-                 ZALLOC(source, 1U << state->wbits, sizeof(unsigned char));
-        if (window == Z_NULL) {
+    copy = (संरचना inflate_state FAR *)
+           ZALLOC(source, 1, परिमाण(संरचना inflate_state));
+    यदि (copy == Z_NULL) प्रत्यागम Z_MEM_ERROR;
+    zmemzero(copy, परिमाण(संरचना inflate_state));
+    गवाक्षः = Z_NULL;
+    यदि (state->गवाक्षः != Z_NULL) {
+        गवाक्षः = (अचिह्नित वर्ण FAR *)
+                 ZALLOC(source, 1U << state->wbits, परिमाण(अचिह्नित वर्ण));
+        यदि (गवाक्षः == Z_NULL) {
             ZFREE(source, copy);
-            return Z_MEM_ERROR;
+            प्रत्यागम Z_MEM_ERROR;
         }
     }
 
     /* copy state */
-    zmemcpy(dest, source, sizeof(z_stream));
-    zmemcpy(copy, state, sizeof(struct inflate_state));
+    zmemcpy(dest, source, परिमाण(z_प्रवाहः));
+    zmemcpy(copy, state, परिमाण(संरचना inflate_state));
     copy->strm = dest;
-    if (state->lencode >= state->codes &&
+    यदि (state->lencode >= state->codes &&
         state->lencode <= state->codes + ENOUGH - 1) {
         copy->lencode = copy->codes + (state->lencode - state->codes);
         copy->distcode = copy->codes + (state->distcode - state->codes);
     }
-    copy->next = copy->codes + (state->next - state->codes);
-    if (window != Z_NULL)
-        zmemcpy(window, state->window, state->whave);
-    copy->window = window;
-    dest->state = (struct internal_state FAR *)copy;
-    return Z_OK;
+    copy->अग्र = copy->codes + (state->अग्र - state->codes);
+    यदि (गवाक्षः != Z_NULL)
+        zmemcpy(गवाक्षः, state->गवाक्षः, state->whave);
+    copy->गवाक्षः = गवाक्षः;
+    dest->state = (संरचना आन्तरिकम्_state FAR *)copy;
+    प्रत्यागम Z_OK;
 }
 
-int ZEXPORT inflateUndermine(z_streamp strm, int subvert) {
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateUndermine(z_streamp strm, पूर्णाङ्क subvert) {
+    संरचना inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
-#ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
+#यदि_परिभाषितम् INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
     state->sane = !subvert;
-    return Z_OK;
-#else
-    (void)subvert;
+    प्रत्यागम Z_OK;
+#अन्यथा
+    (शून्य)subvert;
     state->sane = 1;
-    return Z_DATA_ERROR;
-#endif
+    प्रत्यागम Z_दत्त_ERROR;
+#यदि_अन्तः
 }
 
-int ZEXPORT inflateValidate(z_streamp strm, int check) {
-    struct inflate_state FAR *state;
+पूर्णाङ्क ZEXPORT inflateValidate(z_streamp strm, पूर्णाङ्क check) {
+    संरचना inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
-    if (check && state->wrap)
+    यदि (inflateStateCheck(strm)) प्रत्यागम Z_प्रवाहः_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
+    यदि (check && state->wrap)
         state->wrap |= 4;
-    else
+    अन्यथा
         state->wrap &= ~4;
-    return Z_OK;
+    प्रत्यागम Z_OK;
 }
 
-long ZEXPORT inflateMark(z_streamp strm) {
-    struct inflate_state FAR *state;
+दीर्घ ZEXPORT inflateMark(z_streamp strm) {
+    संरचना inflate_state FAR *state;
 
-    if (inflateStateCheck(strm))
-        return -(1L << 16);
-    state = (struct inflate_state FAR *)strm->state;
-    return (long)(((unsigned long)((long)state->back)) << 16) +
-        (state->mode == COPY ? state->length :
-            (state->mode == MATCH ? state->was - state->length : 0));
+    यदि (inflateStateCheck(strm))
+        प्रत्यागम -(1L << 16);
+    state = (संरचना inflate_state FAR *)strm->state;
+    प्रत्यागम (दीर्घ)(((अचिह्नित दीर्घ)((दीर्घ)state->पृष्ठभागः)) << 16) +
+        (state->बहुलकम् == COPY ? state->दीर्घता :
+            (state->बहुलकम् == मेलनम्_2 ? state->was - state->दीर्घता : 0));
 }
 
-unsigned long ZEXPORT inflateCodesUsed(z_streamp strm) {
-    struct inflate_state FAR *state;
-    if (inflateStateCheck(strm)) return (unsigned long)-1;
-    state = (struct inflate_state FAR *)strm->state;
-    return (unsigned long)(state->next - state->codes);
+अचिह्नित दीर्घ ZEXPORT inflate_Codes_प्रयुक्तम्(z_streamp strm) {
+    संरचना inflate_state FAR *state;
+    यदि (inflateStateCheck(strm)) प्रत्यागम (अचिह्नित दीर्घ)-1;
+    state = (संरचना inflate_state FAR *)strm->state;
+    प्रत्यागम (अचिह्नित दीर्घ)(state->अग्र - state->codes);
 }

@@ -190,19 +190,19 @@ printf("#define dsNiceMatch     %u\n",(int)(((char*)&(s->nice_match))-((char*)s)
 ; mac: param 1 in rdi, param 2 rsi
 ; this clear high 32 bits of r8, which can be garbage in both r8 and rdx
 */
-        mov [save_rbx],rbx
-        mov [save_rbp],rbp
+        चालय [save_rbx],rbx
+        चालय [save_rbp],rbp
 
 
-        mov rcx,rdi
+        चालय rcx,rdi
 
-        mov r8d,esi
+        चालय r8d,esi
 
 
-        mov [save_r12],r12
-        mov [save_r13],r13
-        mov [save_r14],r14
-        mov [save_r15],r15
+        चालय [save_r12],r12
+        चालय [save_r13],r13
+        चालय [save_r14],r14
+        चालय [save_r15],r15
 
 
 //;;; uInt wmask = s->w_mask;
@@ -212,14 +212,14 @@ printf("#define dsNiceMatch     %u\n",(int)(((char*)&(s->nice_match))-((char*)s)
 //;;; }
 
 
-        mov edi, prev_length
-        mov esi, good_match
-        mov eax, WMask
-        mov ebx, max_chain_length
-        cmp edi, esi
-        jl  LastMatchGood
+        चालय edi, prev_length
+        चालय esi, good_match
+        चालय eax, WMask
+        चालय ebx, max_chain_length
+        तुलय edi, esi
+        jl  चरमः_मेलनम्_Good
         shr ebx, 2
-LastMatchGood:
+चरमः_मेलनम्_Good:
 
 //;;; chainlen is decremented once beforehand so that the function can
 //;;; use the sign flag instead of the zero flag for the exit test.
@@ -235,24 +235,24 @@ LastMatchGood:
 
 
 
-        mov eax, nice_match
-        mov [chainlenwmask], ebx
-        mov r10d, Lookahead
-        cmp r10d, eax
+        चालय eax, nice_match
+        चालय [chainlenwmask], ebx
+        चालय r10d, Lookahead
+        तुलय r10d, eax
         cmovnl r10d, eax
-        mov [nicematch],r10d
+        चालय [nicematch],r10d
 
 
 
 //;;; register Bytef *scan = s->window + s->strstart;
-        mov r10, window_ad
-        mov ebp, strstart
+        चालय r10, window_ad
+        चालय ebp, strstart
         lea r13, [r10 + rbp]
 
 //;;; Determine how many bytes the scan ptr is off from being
 //;;; dword-aligned.
 
-         mov r9,r13
+         चालय r9,r13
          neg r13
          and r13,3
 
@@ -260,14 +260,14 @@ LastMatchGood:
 //;;;     s->strstart - (IPos)MAX_DIST(s) : NIL;
 
 
-        mov eax, window_size
-        sub eax, MIN_LOOKAHEAD
+        चालय eax, window_size
+        वियोजय eax, MIN_LOOKAHEAD
 
 
         xor edi,edi
-        sub ebp, eax
+        वियोजय ebp, eax
 
-        mov r11d, prev_length
+        चालय r11d, prev_length
 
         cmovng ebp,edi
 
@@ -285,13 +285,13 @@ LastMatchGood:
         movzx r12d,word ptr [r9]
         movzx ebx, word ptr [r9 + r11 - 1]
 
-        mov rdi, prev_ad
+        चालय rdi, prev_ad
 
 //;;; Jump into the main loop.
 
-        mov edx, [chainlenwmask]
+        चालय edx, [chainlenwmask]
 
-        cmp bx,word ptr [rsi + r8 - 1]
+        तुलय bx,word ptr [rsi + r8 - 1]
         jz  LookupLoopIsZero
 				
 						
@@ -300,18 +300,18 @@ LookupLoop1:
         and r8d, edx
 
         movzx   r8d, word ptr [rdi + r8*2]
-        cmp r8d, ebp
+        तुलय r8d, ebp
         jbe LeaveNow
 		
 		
 		
-        sub edx, 0x00010000
+        वियोजय edx, 0x00010000
 		BEFORE_JMP
         js  LeaveNow
 		AFTER_JMP
 
 LoopEntry1:
-        cmp bx,word ptr [rsi + r8 - 1]
+        तुलय bx,word ptr [rsi + r8 - 1]
 		BEFORE_JMP
         jz  LookupLoopIsZero
 		AFTER_JMP
@@ -320,17 +320,17 @@ LookupLoop2:
         and r8d, edx
 
         movzx   r8d, word ptr [rdi + r8*2]
-        cmp r8d, ebp
+        तुलय r8d, ebp
 		BEFORE_JMP
         jbe LeaveNow
 		AFTER_JMP
-        sub edx, 0x00010000
+        वियोजय edx, 0x00010000
 		BEFORE_JMP
         js  LeaveNow
 		AFTER_JMP
 
 LoopEntry2:
-        cmp bx,word ptr [rsi + r8 - 1]
+        तुलय bx,word ptr [rsi + r8 - 1]
 		BEFORE_JMP
         jz  LookupLoopIsZero
 		AFTER_JMP
@@ -339,21 +339,21 @@ LookupLoop4:
         and r8d, edx
 
         movzx   r8d, word ptr [rdi + r8*2]
-        cmp r8d, ebp
+        तुलय r8d, ebp
 		BEFORE_JMP
         jbe LeaveNow
 		AFTER_JMP
-        sub edx, 0x00010000
+        वियोजय edx, 0x00010000
 		BEFORE_JMP
         js  LeaveNow
 		AFTER_JMP
 
 LoopEntry4:
 
-        cmp bx,word ptr [rsi + r8 - 1]
+        तुलय bx,word ptr [rsi + r8 - 1]
 		BEFORE_JMP
         jnz LookupLoop1
-        jmp LookupLoopIsZero
+        कूर्द LookupLoopIsZero
 		AFTER_JMP
 /*
 ;;; do {
@@ -381,30 +381,30 @@ LookupLoop:
         and r8d, edx
 
         movzx   r8d, word ptr [rdi + r8*2]
-        cmp r8d, ebp
+        तुलय r8d, ebp
 		BEFORE_JMP
         jbe LeaveNow
 		AFTER_JMP
-        sub edx, 0x00010000
+        वियोजय edx, 0x00010000
 		BEFORE_JMP
         js  LeaveNow
 		AFTER_JMP
 
-LoopEntry:
+Loop_प्रविष्टिः:
 
-        cmp bx,word ptr [rsi + r8 - 1]
+        तुलय bx,word ptr [rsi + r8 - 1]
 		BEFORE_JMP
         jnz LookupLoop1
 		AFTER_JMP
 LookupLoopIsZero:
-        cmp     r12w, word ptr [r10 + r8]
+        तुलय     r12w, word ptr [r10 + r8]
 		BEFORE_JMP
         jnz LookupLoop1
 		AFTER_JMP
 
 
 //;;; Store the current value of chainlen.
-        mov [chainlenwmask], edx
+        चालय [chainlenwmask], edx
 /*
 ;;; Point edi to the string under scrutiny, and esi to the string we
 ;;; are hoping to match it up with. In actuality, esi and edi are
@@ -412,7 +412,7 @@ LookupLoopIsZero:
 ;;; initialized to -(MAX_MATCH_8 - scanalign).
 */
         lea rsi,[r8+r10]
-        mov rdx, 0xfffffffffffffef8 //; -(MAX_MATCH_8)
+        चालय rdx, 0xfffffffffffffef8 //; -(MAX_MATCH_8)
         lea rsi, [rsi + r13 + 0x0108] //;MAX_MATCH_8]
         lea rdi, [r9 + r13 + 0x0108] //;MAX_MATCH_8]
 
@@ -436,74 +436,74 @@ LookupLoopIsZero:
 */
 
 LoopCmps:
-        mov rax, [rsi + rdx]
+        चालय rax, [rsi + rdx]
         xor rax, [rdi + rdx]
         jnz LeaveLoopCmps
 
-        mov rax, [rsi + rdx + 8]
+        चालय rax, [rsi + rdx + 8]
         xor rax, [rdi + rdx + 8]
         jnz LeaveLoopCmps8
 
 
-        mov rax, [rsi + rdx + 8+8]
+        चालय rax, [rsi + rdx + 8+8]
         xor rax, [rdi + rdx + 8+8]
         jnz LeaveLoopCmps16
 
-        add rdx,8+8+8
+        योजय rdx,8+8+8
 
 		BEFORE_JMP
         jnz  LoopCmps
-        jmp  LenMaximum
+        कूर्द  Len_अधिकतमम्
 		AFTER_JMP
 		
-LeaveLoopCmps16: add rdx,8
-LeaveLoopCmps8: add rdx,8
+LeaveLoopCmps16: योजय rdx,8
+LeaveLoopCmps8: योजय rdx,8
 LeaveLoopCmps:
 
         test    eax, 0x0000FFFF
-        jnz LenLower
+        jnz Len_अधस्तनम्
 
         test eax,0xffffffff
 
         jnz LenLower32
 
-        add rdx,4
+        योजय rdx,4
         shr rax,32
         or ax,ax
 		BEFORE_JMP
-        jnz LenLower
+        jnz Len_अधस्तनम्
 		AFTER_JMP
 
 LenLower32:
         shr eax,16
-        add rdx,2
+        योजय rdx,2
 		
-LenLower:		
-        sub al, 1
+Len_अधस्तनम्:		
+        वियोजय al, 1
         adc rdx, 0
 //;;; Calculate the length of the match. If it is longer than MAX_MATCH,
 //;;; then automatically accept it as the best possible match and leave.
 
         lea rax, [rdi + rdx]
-        sub rax, r9
-        cmp eax, MAX_MATCH
+        वियोजय rax, r9
+        तुलय eax, MAX_MATCH
 		BEFORE_JMP
-        jge LenMaximum
+        jge Len_अधिकतमम्
 		AFTER_JMP
 /*
 ;;; If the length of the match is not longer than the best match we
 ;;; have so far, then forget it and return to the lookup loop.
 ;///////////////////////////////////
 */
-        cmp eax, r11d
-        jg  LongerMatch
+        तुलय eax, r11d
+        jg  Longer_मेलनम्
 
         lea rsi,[r10+r11]
 
-        mov rdi, prev_ad
-        mov edx, [chainlenwmask]
+        चालय rdi, prev_ad
+        चालय edx, [chainlenwmask]
 		BEFORE_JMP
-        jmp LookupLoop
+        कूर्द LookupLoop
 		AFTER_JMP
 /*
 ;;;         s->match_start = cur_match;
@@ -511,10 +511,10 @@ LenLower:
 ;;;         if (len >= nice_match) break;
 ;;;         scan_end = *(ushf*)(scan+best_len-1);
 */
-LongerMatch:
-        mov r11d, eax
-        mov match_start, r8d
-        cmp eax, [nicematch]
+Longer_मेलनम्:
+        चालय r11d, eax
+        चालय match_start, r8d
+        तुलय eax, [nicematch]
 		BEFORE_JMP
         jge LeaveNow
 		AFTER_JMP
@@ -522,24 +522,24 @@ LongerMatch:
         lea rsi,[r10+rax]
 
         movzx   ebx, word ptr [r9 + rax - 1]
-        mov rdi, prev_ad
-        mov edx, [chainlenwmask]
+        चालय rdi, prev_ad
+        चालय edx, [chainlenwmask]
 		BEFORE_JMP
-        jmp LookupLoop
+        कूर्द LookupLoop
 		AFTER_JMP
 
 //;;; Accept the current string, with the maximum possible length.
 
-LenMaximum:
-        mov r11d,MAX_MATCH
-        mov match_start, r8d
+Len_अधिकतमम्:
+        चालय r11d,MAX_MATCH
+        चालय match_start, r8d
 
 //;;; if ((uInt)best_len <= s->lookahead) return (uInt)best_len;
 //;;; return s->lookahead;
 
 LeaveNow:
-        mov eax, Lookahead
-        cmp r11d, eax
+        चालय eax, Lookahead
+        तुलय r11d, eax
         cmovng eax, r11d
 
 
@@ -547,17 +547,17 @@ LeaveNow:
 //;;; Restore the stack and return from whence we came.
 
 
-//        mov rsi,[save_rsi]
-//        mov rdi,[save_rdi]
-        mov rbx,[save_rbx]
-        mov rbp,[save_rbp]
-        mov r12,[save_r12]
-        mov r13,[save_r13]
-        mov r14,[save_r14]
-        mov r15,[save_r15]
+//        चालय rsi,[save_rsi]
+//        चालय rdi,[save_rdi]
+        चालय rbx,[save_rbx]
+        चालय rbp,[save_rbp]
+        चालय r12,[save_r12]
+        चालय r13,[save_r13]
+        चालय r14,[save_r14]
+        चालय r15,[save_r15]
 
 
-        ret 0
+        प्रत्यागच्छ 0
 //; please don't remove this string !
 //; Your can freely use gvmat64 in any free or commercial app
 //; but it is far better don't remove the string in the binary!
@@ -565,6 +565,6 @@ LeaveNow:
 
 
 match_init:
-  ret 0
+  प्रत्यागच्छ 0
 
 
