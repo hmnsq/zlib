@@ -5,19 +5,19 @@
 
 /* to use, do: ./configure --cover && make cover */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include "zlib.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব "zlib.h"
 
 /* get definition of internal structure so we can mess with it (see pull()),
    and so we can call inflate_trees() (see cover5()) */
 #define ZLIB_INTERNAL
-#include "inftrees.h"
-#include "inflate.h"
+#অন্তর্ভাব "inftrees.h"
+#অন্তর্ভাব "inflate.h"
 
-#define local static
+#define local স্থির
 
 /* -- memory tracking routines -- */
 
@@ -53,44 +53,44 @@
  */
 
 /* these items are strung together in a linked list, one for each allocation */
-struct mem_item {
-    void *ptr;                  /* pointer to allocated memory */
+সংরচনা mem_item {
+    শূন্য *ptr;                  /* pointer to allocated memory */
     size_t size;                /* requested size of allocation */
-    struct mem_item *next;      /* pointer to next item in list, or NULL */
+    সংরচনা mem_item *next;      /* pointer to next item in list, or NULL */
 };
 
 /* this structure is at the root of the linked list, and tracks statistics */
-struct mem_zone {
-    struct mem_item *first;     /* pointer to first item in list, or NULL */
+সংরচনা mem_zone {
+    সংরচনা mem_item *first;     /* pointer to first item in list, or NULL */
     size_t total, highwater;    /* total allocations, and largest total */
     size_t limit;               /* memory allocation limit, or 0 if no limit */
-    int notlifo, rogue;         /* counts of non-LIFO frees and rogue frees */
+    পূর্ণাঙ্ক notlifo, rogue;         /* counts of non-LIFO frees and rogue frees */
 };
 
 /* memory allocation routine to pass to zlib */
-local void *mem_alloc(void *mem, unsigned count, unsigned size)
+local শূন্য *mem_alloc(শূন্য *mem, unsigned গুনতি, unsigned size)
 {
-    void *ptr;
-    struct mem_item *item;
-    struct mem_zone *zone = mem;
-    size_t len = count * (size_t)size;
+    শূন্য *ptr;
+    সংরচনা mem_item *item;
+    সংরচনা mem_zone *zone = mem;
+    size_t len = গুনতি * (size_t)size;
 
     /* induced allocation failure */
-    if (zone == NULL || (zone->limit && zone->total + len > zone->limit))
-        return NULL;
+    যদি (zone == রিক্ত || (zone->limit && zone->total + len > zone->limit))
+        প্রত্যাগম রিক্ত;
 
     /* perform allocation using the standard library, fill memory with a
        non-zero value to make sure that the code isn't depending on zeros */
     ptr = malloc(len);
-    if (ptr == NULL)
-        return NULL;
+    যদি (ptr == রিক্ত)
+        প্রত্যাগম রিক্ত;
     memset(ptr, 0xa5, len);
 
     /* create a new item for the list */
-    item = malloc(sizeof(struct mem_item));
-    if (item == NULL) {
-        free(ptr);
-        return NULL;
+    item = malloc(পরিমাণ(সংরচনা mem_item));
+    যদি (item == রিক্ত) {
+        মুক্ত(ptr);
+        প্রত্যাগম রিক্ত;
     }
     item->ptr = ptr;
     item->size = len;
@@ -101,37 +101,37 @@ local void *mem_alloc(void *mem, unsigned count, unsigned size)
 
     /* update the statistics */
     zone->total += item->size;
-    if (zone->total > zone->highwater)
+    যদি (zone->total > zone->highwater)
         zone->highwater = zone->total;
 
     /* return the allocated memory */
-    return ptr;
+    প্রত্যাগম ptr;
 }
 
 /* memory free routine to pass to zlib */
-local void mem_free(void *mem, void *ptr)
+local শূন্য mem_free(শূন্য *mem, শূন্য *ptr)
 {
-    struct mem_item *item, *next;
-    struct mem_zone *zone = mem;
+    সংরচনা mem_item *item, *next;
+    সংরচনা mem_zone *zone = mem;
 
     /* if no zone, just do a free */
-    if (zone == NULL) {
-        free(ptr);
-        return;
+    যদি (zone == রিক্ত) {
+        মুক্ত(ptr);
+        প্রত্যাগম;
     }
 
     /* point next to the item that matches ptr, or NULL if not found -- remove
        the item from the linked list if found */
     next = zone->first;
-    if (next) {
-        if (next->ptr == ptr)
+    যদি (next) {
+        যদি (next->ptr == ptr)
             zone->first = next->next;   /* first one is it, remove from list */
-        else {
-            do {                        /* search the linked list */
+        অন্যথা {
+            কুরু {                        /* search the linked list */
                 item = next;
                 next = item->next;
-            } while (next != NULL && next->ptr != ptr);
-            if (next) {                 /* if found, remove from linked list */
+            } যাবত্ (next != রিক্ত && next->ptr != ptr);
+            যদি (next) {                 /* if found, remove from linked list */
                 item->next = next->next;
                 zone->notlifo++;        /* not a LIFO free */
             }
@@ -140,28 +140,28 @@ local void mem_free(void *mem, void *ptr)
     }
 
     /* if found, update the statistics and free the item */
-    if (next) {
+    যদি (next) {
         zone->total -= next->size;
-        free(next);
+        মুক্ত(next);
     }
 
     /* if not found, update the rogue count */
-    else
+    অন্যথা
         zone->rogue++;
 
     /* in any case, do the requested free with the standard library function */
-    free(ptr);
+    মুক্ত(ptr);
 }
 
 /* set up a controlled memory allocation space for monitoring, set the stream
    parameters to the controlled routines, with opaque pointing to the space */
-local void mem_setup(z_stream *strm)
+local শূন্য mem_setup(z_stream *strm)
 {
-    struct mem_zone *zone;
+    সংরচনা mem_zone *zone;
 
-    zone = malloc(sizeof(struct mem_zone));
-    assert(zone != NULL);
-    zone->first = NULL;
+    zone = malloc(পরিমাণ(সংরচনা mem_zone));
+    প্রতিজ্ঞা(zone != রিক্ত);
+    zone->first = রিক্ত;
     zone->total = 0;
     zone->highwater = 0;
     zone->limit = 0;
@@ -173,61 +173,61 @@ local void mem_setup(z_stream *strm)
 }
 
 /* set a limit on the total memory allocation, or 0 to remove the limit */
-local void mem_limit(z_stream *strm, size_t limit)
+local শূন্য mem_limit(z_stream *strm, size_t limit)
 {
-    struct mem_zone *zone = strm->opaque;
+    সংরচনা mem_zone *zone = strm->opaque;
 
     zone->limit = limit;
 }
 
 /* show the current total requested allocations in bytes */
-local void mem_used(z_stream *strm, char *prefix)
+local শূন্য mem_used(z_stream *strm, বর্ণ *prefix)
 {
-    struct mem_zone *zone = strm->opaque;
+    সংরচনা mem_zone *zone = strm->opaque;
 
     fprintf(stderr, "%s: %zu allocated\n", prefix, zone->total);
 }
 
 /* show the high water allocation in bytes */
-local void mem_high(z_stream *strm, char *prefix)
+local শূন্য mem_উপরের(z_stream *strm, বর্ণ *prefix)
 {
-    struct mem_zone *zone = strm->opaque;
+    সংরচনা mem_zone *zone = strm->opaque;
 
     fprintf(stderr, "%s: %zu high water mark\n", prefix, zone->highwater);
 }
 
 /* release the memory allocation zone -- if there are any surprises, notify */
-local void mem_done(z_stream *strm, char *prefix)
+local শূন্য mem_done(z_stream *strm, বর্ণ *prefix)
 {
-    int count = 0;
-    struct mem_item *item, *next;
-    struct mem_zone *zone = strm->opaque;
+    পূর্ণাঙ্ক গুনতি = 0;
+    সংরচনা mem_item *item, *next;
+    সংরচনা mem_zone *zone = strm->opaque;
 
     /* show high water mark */
-    mem_high(strm, prefix);
+    mem_উপরের(strm, prefix);
 
     /* free leftover allocations and item structures, if any */
     item = zone->first;
-    while (item != NULL) {
-        free(item->ptr);
+    যাবত্ (item != রিক্ত) {
+        মুক্ত(item->ptr);
         next = item->next;
-        free(item);
+        মুক্ত(item);
         item = next;
-        count++;
+        গুনতি++;
     }
 
     /* issue alerts about anything unexpected */
-    if (count || zone->total)
+    যদি (গুনতি || zone->total)
         fprintf(stderr, "** %s: %zu bytes in %d blocks not freed\n",
-                prefix, zone->total, count);
-    if (zone->notlifo)
+                prefix, zone->total, গুনতি);
+    যদি (zone->notlifo)
         fprintf(stderr, "** %s: %d frees not LIFO\n", prefix, zone->notlifo);
-    if (zone->rogue)
+    যদি (zone->rogue)
         fprintf(stderr, "** %s: %d frees not recognized\n",
                 prefix, zone->rogue);
 
     /* free the zone and delete from the stream */
-    free(zone);
+    মুক্ত(zone);
     strm->opaque = Z_NULL;
     strm->zalloc = Z_NULL;
     strm->zfree = Z_NULL;
@@ -242,34 +242,34 @@ local void mem_done(z_stream *strm, char *prefix)
    by a delimiter, where that single digit writes a byte.  The returned data is
    allocated and must eventually be freed.  NULL is returned if out of memory.
    If the length is not needed, then len can be NULL. */
-local unsigned char *h2b(const char *hex, unsigned *len)
+local unsigned বর্ণ *h2b(ধ্রুব বর্ণ *hex, unsigned *len)
 {
-    unsigned char *in, *re;
+    unsigned বর্ণ *in, *re;
     unsigned next, val;
 
     in = malloc((strlen(hex) + 1) >> 1);
-    if (in == NULL)
-        return NULL;
+    যদি (in == রিক্ত)
+        প্রত্যাগম রিক্ত;
     next = 0;
     val = 1;
-    do {
-        if (*hex >= '0' && *hex <= '9')
+    কুরু {
+        যদি (*hex >= '0' && *hex <= '9')
             val = (val << 4) + *hex - '0';
-        else if (*hex >= 'A' && *hex <= 'F')
+        অন্যথা যদি (*hex >= 'A' && *hex <= 'F')
             val = (val << 4) + *hex - 'A' + 10;
-        else if (*hex >= 'a' && *hex <= 'f')
+        অন্যথা যদি (*hex >= 'a' && *hex <= 'f')
             val = (val << 4) + *hex - 'a' + 10;
-        else if (val != 1 && val < 32)  /* one digit followed by delimiter */
+        অন্যথা যদি (val != 1 && val < 32)  /* one digit followed by delimiter */
             val += 240;                 /* make it look like two digits */
-        if (val > 255) {                /* have two digits */
+        যদি (val > 255) {                /* have two digits */
             in[next++] = val & 0xff;    /* save the decoded byte */
             val = 1;                    /* start over */
         }
-    } while (*hex++);       /* go through the loop with the terminating null */
-    if (len != NULL)
+    } যাবত্ (*hex++);       /* go through the loop with the terminating null */
+    যদি (len != রিক্ত)
         *len = next;
     re = realloc(in, next);
-    return re == NULL ? in : re;
+    প্রত্যাগম re == রিক্ত ? in : re;
 }
 
 /* generic inflate() run, where hex is the hexadecimal input data, what is the
@@ -281,12 +281,12 @@ local unsigned char *h2b(const char *hex, unsigned *len)
    header information is collected with inflateGetHeader().  If a zlib stream
    is looking for a dictionary, then an empty dictionary is provided.
    inflate() is run until all of the input data is consumed. */
-local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
-               int err)
+local শূন্য inf(বর্ণ *hex, বর্ণ *what, unsigned step, পূর্ণাঙ্ক win, unsigned len,
+               পূর্ণাঙ্ক err)
 {
-    int ret;
+    পূর্ণাঙ্ক ret;
     unsigned have;
-    unsigned char *in, *out;
+    unsigned বর্ণ *in, *out;
     z_stream strm, copy;
     gz_header head;
 
@@ -294,74 +294,74 @@ local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
     ret = inflateInit2(&strm, win);
-    if (ret != Z_OK) {
+    যদি (ret != Z_OK) {
         mem_done(&strm, what);
-        return;
+        প্রত্যাগম;
     }
-    out = malloc(len);                          assert(out != NULL);
-    if (win == 47) {
+    out = malloc(len);                          প্রতিজ্ঞা(out != রিক্ত);
+    যদি (win == 47) {
         head.extra = out;
         head.extra_max = len;
         head.name = out;
         head.name_max = len;
         head.comment = out;
         head.comm_max = len;
-        ret = inflateGetHeader(&strm, &head);   assert(ret == Z_OK);
+        ret = inflateGetHeader(&strm, &head);   প্রতিজ্ঞা(ret == Z_OK);
     }
-    in = h2b(hex, &have);                       assert(in != NULL);
-    if (step == 0 || step > have)
+    in = h2b(hex, &have);                       প্রতিজ্ঞা(in != রিক্ত);
+    যদি (step == 0 || step > have)
         step = have;
     strm.avail_in = step;
     have -= step;
     strm.next_in = in;
-    do {
+    কুরু {
         strm.avail_out = len;
         strm.next_out = out;
-        ret = inflate(&strm, Z_NO_FLUSH);       assert(err == 9 || ret == err);
-        if (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_NEED_DICT)
-            break;
-        if (ret == Z_NEED_DICT) {
+        ret = inflate(&strm, Z_NO_FLUSH);       প্রতিজ্ঞা(err == 9 || ret == err);
+        যদি (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_NEED_DICT)
+            ভঙ্গ;
+        যদি (ret == Z_NEED_DICT) {
             ret = inflateSetDictionary(&strm, in, 1);
-                                                assert(ret == Z_DATA_ERROR);
+                                                প্রতিজ্ঞা(ret == Z_DATA_ERROR);
             mem_limit(&strm, 1);
             ret = inflateSetDictionary(&strm, out, 0);
-                                                assert(ret == Z_MEM_ERROR);
+                                                প্রতিজ্ঞা(ret == Z_MEM_ERROR);
             mem_limit(&strm, 0);
-            ((struct inflate_state *)strm.state)->mode = DICT;
+            ((সংরচনা inflate_state *)strm.state)->mode = DICT;
             ret = inflateSetDictionary(&strm, out, 0);
-                                                assert(ret == Z_OK);
-            ret = inflate(&strm, Z_NO_FLUSH);   assert(ret == Z_BUF_ERROR);
+                                                প্রতিজ্ঞা(ret == Z_OK);
+            ret = inflate(&strm, Z_NO_FLUSH);   প্রতিজ্ঞা(ret == Z_BUF_ERROR);
         }
-        ret = inflateCopy(&copy, &strm);        assert(ret == Z_OK);
-        ret = inflateEnd(&copy);                assert(ret == Z_OK);
+        ret = inflateCopy(&copy, &strm);        প্রতিজ্ঞা(ret == Z_OK);
+        ret = inflateEnd(&copy);                প্রতিজ্ঞা(ret == Z_OK);
         err = 9;                        /* don't care next time around */
         have += strm.avail_in;
         strm.avail_in = step > have ? have : step;
         have -= strm.avail_in;
-    } while (strm.avail_in);
-    free(in);
-    free(out);
-    ret = inflateReset2(&strm, -8);             assert(ret == Z_OK);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+    } যাবত্ (strm.avail_in);
+    মুক্ত(in);
+    মুক্ত(out);
+    ret = inflateReset2(&strm, -8);             প্রতিজ্ঞা(ret == Z_OK);
+    ret = inflateEnd(&strm);                    প্রতিজ্ঞা(ret == Z_OK);
     mem_done(&strm, what);
 }
 
 /* cover all of the lines in inflate.c up to inflate() */
-local void cover_support(void)
+local শূন্য cover_support(শূন্য)
 {
-    int ret;
+    পূর্ণাঙ্ক ret;
     z_stream strm;
 
     mem_setup(&strm);
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
-    ret = inflateInit(&strm);                   assert(ret == Z_OK);
+    ret = inflateInit(&strm);                   প্রতিজ্ঞা(ret == Z_OK);
     mem_used(&strm, "inflate init");
-    ret = inflatePrime(&strm, 5, 31);           assert(ret == Z_OK);
-    ret = inflatePrime(&strm, -1, 0);           assert(ret == Z_OK);
+    ret = inflate_মৌলিক(&strm, 5, 31);           প্রতিজ্ঞা(ret == Z_OK);
+    ret = inflate_মৌলিক(&strm, -1, 0);           প্রতিজ্ঞা(ret == Z_OK);
     ret = inflateSetDictionary(&strm, Z_NULL, 0);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+                                                প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
+    ret = inflateEnd(&strm);                    প্রতিজ্ঞা(ret == Z_OK);
     mem_done(&strm, "prime");
 
     inf("63 0", "force window allocation", 0, -15, 1, Z_OK);
@@ -373,27 +373,27 @@ local void cover_support(void)
     mem_setup(&strm);
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
-    ret = inflateInit_(&strm, "!", (int)sizeof(z_stream));
-                                                assert(ret == Z_VERSION_ERROR);
+    ret = inflateInit_(&strm, "!", (পূর্ণাঙ্ক)পরিমাণ(z_stream));
+                                                প্রতিজ্ঞা(ret == Z_VERSION_ERROR);
     mem_done(&strm, "wrong version");
 
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
-    ret = inflateInit(&strm);                   assert(ret == Z_OK);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+    ret = inflateInit(&strm);                   প্রতিজ্ঞা(ret == Z_OK);
+    ret = inflateEnd(&strm);                    প্রতিজ্ঞা(ret == Z_OK);
     fputs("inflate built-in memory routines\n", stderr);
 }
 
 /* cover all inflate() header and trailer cases and code after inflate() */
-local void cover_wrap(void)
+local শূন্য cover_wrap(শূন্য)
 {
-    int ret;
+    পূর্ণাঙ্ক ret;
     z_stream strm, copy;
-    unsigned char dict[257];
+    unsigned বর্ণ dict[257];
 
-    ret = inflate(Z_NULL, 0);                   assert(ret == Z_STREAM_ERROR);
-    ret = inflateEnd(Z_NULL);                   assert(ret == Z_STREAM_ERROR);
-    ret = inflateCopy(Z_NULL, Z_NULL);          assert(ret == Z_STREAM_ERROR);
+    ret = inflate(Z_NULL, 0);                   প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
+    ret = inflateEnd(Z_NULL);                   প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
+    ret = inflateCopy(Z_NULL, Z_NULL);          প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
     fputs("inflate bad parameters\n", stderr);
 
     inf("1f 8b 0 0", "bad gzip method", 0, 31, 0, Z_DATA_ERROR);
@@ -415,116 +415,116 @@ local void cover_wrap(void)
     strm.next_in = Z_NULL;
     ret = inflateInit2(&strm, -8);
     strm.avail_in = 2;
-    strm.next_in = (void *)"\x63";
+    strm.next_in = (শূন্য *)"\x63";
     strm.avail_out = 1;
-    strm.next_out = (void *)&ret;
+    strm.next_out = (শূন্য *)&ret;
     mem_limit(&strm, 1);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_MEM_ERROR);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_MEM_ERROR);
+    ret = inflate(&strm, Z_NO_FLUSH);           প্রতিজ্ঞা(ret == Z_MEM_ERROR);
+    ret = inflate(&strm, Z_NO_FLUSH);           প্রতিজ্ঞা(ret == Z_MEM_ERROR);
     mem_limit(&strm, 0);
     memset(dict, 0, 257);
     ret = inflateSetDictionary(&strm, dict, 257);
-                                                assert(ret == Z_OK);
-    mem_limit(&strm, (sizeof(struct inflate_state) << 1) + 256);
-    ret = inflatePrime(&strm, 16, 0);           assert(ret == Z_OK);
+                                                প্রতিজ্ঞা(ret == Z_OK);
+    mem_limit(&strm, (পরিমাণ(সংরচনা inflate_state) << 1) + 256);
+    ret = inflate_মৌলিক(&strm, 16, 0);           প্রতিজ্ঞা(ret == Z_OK);
     strm.avail_in = 2;
-    strm.next_in = (void *)"\x80";
-    ret = inflateSync(&strm);                   assert(ret == Z_DATA_ERROR);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_STREAM_ERROR);
+    strm.next_in = (শূন্য *)"\x80";
+    ret = inflateSync(&strm);                   প্রতিজ্ঞা(ret == Z_DATA_ERROR);
+    ret = inflate(&strm, Z_NO_FLUSH);           প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
     strm.avail_in = 4;
-    strm.next_in = (void *)"\0\0\xff\xff";
-    ret = inflateSync(&strm);                   assert(ret == Z_OK);
-    (void)inflateSyncPoint(&strm);
-    ret = inflateCopy(&copy, &strm);            assert(ret == Z_MEM_ERROR);
+    strm.next_in = (শূন্য *)"\0\0\xff\xff";
+    ret = inflateSync(&strm);                   প্রতিজ্ঞা(ret == Z_OK);
+    (শূন্য)inflateSyncPoint(&strm);
+    ret = inflateCopy(&copy, &strm);            প্রতিজ্ঞা(ret == Z_MEM_ERROR);
     mem_limit(&strm, 0);
-    ret = inflateUndermine(&strm, 1);           assert(ret == Z_DATA_ERROR);
-    (void)inflateMark(&strm);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+    ret = inflateUndermine(&strm, 1);           প্রতিজ্ঞা(ret == Z_DATA_ERROR);
+    (শূন্য)inflateMark(&strm);
+    ret = inflateEnd(&strm);                    প্রতিজ্ঞা(ret == Z_OK);
     mem_done(&strm, "miscellaneous, force memory errors");
 }
 
 /* input and output functions for inflateBack() */
-local unsigned pull(void *desc, unsigned char z_const **buf)
+local unsigned pull(শূন্য *desc, unsigned বর্ণ z_const **buf)
 {
-    static unsigned int next = 0;
-    static unsigned char dat[] = {0x63, 0, 2, 0};
-    struct inflate_state *state;
+    স্থির unsigned পূর্ণাঙ্ক next = 0;
+    স্থির unsigned বর্ণ dat[] = {0x63, 0, 2, 0};
+    সংরচনা inflate_state *state;
 
-    if (desc == Z_NULL) {
+    যদি (desc == Z_NULL) {
         next = 0;
-        return 0;   /* no input (already provided at next_in) */
+        প্রত্যাগম 0;   /* no input (already provided at next_in) */
     }
-    state = (void *)((z_stream *)desc)->state;
-    if (state != Z_NULL)
+    state = (শূন্য *)((z_stream *)desc)->state;
+    যদি (state != Z_NULL)
         state->mode = SYNC;     /* force an otherwise impossible situation */
-    return next < sizeof(dat) ? (*buf = dat + next++, 1) : 0;
+    প্রত্যাগম next < পরিমাণ(dat) ? (*buf = dat + next++, 1) : 0;
 }
 
-local int push(void *desc, unsigned char *buf, unsigned len)
+local পূর্ণাঙ্ক ঠেলো(শূন্য *desc, unsigned বর্ণ *buf, unsigned len)
 {
-    (void)buf;
-    (void)len;
-    return desc != Z_NULL;      /* force error if desc not null */
+    (শূন্য)buf;
+    (শূন্য)len;
+    প্রত্যাগম desc != Z_NULL;      /* force error if desc not null */
 }
 
 /* cover inflateBack() up to common deflate data cases and after those */
-local void cover_back(void)
+local শূন্য cover_back(শূন্য)
 {
-    int ret;
+    পূর্ণাঙ্ক ret;
     z_stream strm;
-    unsigned char win[32768];
+    unsigned বর্ণ win[32768];
 
     ret = inflateBackInit_(Z_NULL, 0, win, 0, 0);
-                                                assert(ret == Z_VERSION_ERROR);
-    ret = inflateBackInit(Z_NULL, 0, win);      assert(ret == Z_STREAM_ERROR);
+                                                প্রতিজ্ঞা(ret == Z_VERSION_ERROR);
+    ret = inflateBackInit(Z_NULL, 0, win);      প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
     ret = inflateBack(Z_NULL, Z_NULL, Z_NULL, Z_NULL, Z_NULL);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateBackEnd(Z_NULL);               assert(ret == Z_STREAM_ERROR);
+                                                প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
+    ret = inflateBackEnd(Z_NULL);               প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
     fputs("inflateBack bad parameters\n", stderr);
 
     mem_setup(&strm);
-    ret = inflateBackInit(&strm, 15, win);      assert(ret == Z_OK);
+    ret = inflateBackInit(&strm, 15, win);      প্রতিজ্ঞা(ret == Z_OK);
     strm.avail_in = 2;
-    strm.next_in = (void *)"\x03";
-    ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
-                                                assert(ret == Z_STREAM_END);
+    strm.next_in = (শূন্য *)"\x03";
+    ret = inflateBack(&strm, pull, Z_NULL, ঠেলো, Z_NULL);
+                                                প্রতিজ্ঞা(ret == Z_STREAM_END);
         /* force output error */
     strm.avail_in = 3;
-    strm.next_in = (void *)"\x63\x00";
-    ret = inflateBack(&strm, pull, Z_NULL, push, &strm);
-                                                assert(ret == Z_BUF_ERROR);
+    strm.next_in = (শূন্য *)"\x63\x00";
+    ret = inflateBack(&strm, pull, Z_NULL, ঠেলো, &strm);
+                                                প্রতিজ্ঞা(ret == Z_BUF_ERROR);
         /* force mode error by mucking with state */
-    ret = inflateBack(&strm, pull, &strm, push, Z_NULL);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateBackEnd(&strm);                assert(ret == Z_OK);
+    ret = inflateBack(&strm, pull, &strm, ঠেলো, Z_NULL);
+                                                প্রতিজ্ঞা(ret == Z_STREAM_ERROR);
+    ret = inflateBackEnd(&strm);                প্রতিজ্ঞা(ret == Z_OK);
     mem_done(&strm, "inflateBack bad state");
 
-    ret = inflateBackInit(&strm, 15, win);      assert(ret == Z_OK);
-    ret = inflateBackEnd(&strm);                assert(ret == Z_OK);
+    ret = inflateBackInit(&strm, 15, win);      প্রতিজ্ঞা(ret == Z_OK);
+    ret = inflateBackEnd(&strm);                প্রতিজ্ঞা(ret == Z_OK);
     fputs("inflateBack built-in memory routines\n", stderr);
 }
 
 /* do a raw inflate of data in hexadecimal with both inflate and inflateBack */
-local int try(char *hex, char *id, int err)
+local পূর্ণাঙ্ক try(বর্ণ *hex, বর্ণ *id, পূর্ণাঙ্ক err)
 {
-    int ret;
+    পূর্ণাঙ্ক ret;
     unsigned len, size;
-    unsigned char *in, *out, *win;
-    char *prefix;
+    unsigned বর্ণ *in, *out, *win;
+    বর্ণ *prefix;
     z_stream strm;
 
     /* convert to hex */
     in = h2b(hex, &len);
-    assert(in != NULL);
+    প্রতিজ্ঞা(in != রিক্ত);
 
     /* allocate work areas */
     size = len << 3;
     out = malloc(size);
-    assert(out != NULL);
+    প্রতিজ্ঞা(out != রিক্ত);
     win = malloc(32768);
-    assert(win != NULL);
+    প্রতিজ্ঞা(win != রিক্ত);
     prefix = malloc(strlen(id) + 6);
-    assert(prefix != NULL);
+    প্রতিজ্ঞা(prefix != রিক্ত);
 
     /* first with inflate */
     strcpy(prefix, id);
@@ -533,53 +533,53 @@ local int try(char *hex, char *id, int err)
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
     ret = inflateInit2(&strm, err < 0 ? 47 : -15);
-    assert(ret == Z_OK);
+    প্রতিজ্ঞা(ret == Z_OK);
     strm.avail_in = len;
     strm.next_in = in;
-    do {
+    কুরু {
         strm.avail_out = size;
         strm.next_out = out;
         ret = inflate(&strm, Z_TREES);
-        assert(ret != Z_STREAM_ERROR && ret != Z_MEM_ERROR);
-        if (ret == Z_DATA_ERROR || ret == Z_NEED_DICT)
-            break;
-    } while (strm.avail_in || strm.avail_out == 0);
-    if (err) {
-        assert(ret == Z_DATA_ERROR);
-        assert(strcmp(id, strm.msg) == 0);
+        প্রতিজ্ঞা(ret != Z_STREAM_ERROR && ret != Z_MEM_ERROR);
+        যদি (ret == Z_DATA_ERROR || ret == Z_NEED_DICT)
+            ভঙ্গ;
+    } যাবত্ (strm.avail_in || strm.avail_out == 0);
+    যদি (err) {
+        প্রতিজ্ঞা(ret == Z_DATA_ERROR);
+        প্রতিজ্ঞা(strcmp(id, strm.বার্তা) == 0);
     }
     inflateEnd(&strm);
     mem_done(&strm, prefix);
 
     /* then with inflateBack */
-    if (err >= 0) {
+    যদি (err >= 0) {
         strcpy(prefix, id);
         strcat(prefix, "-back");
         mem_setup(&strm);
         ret = inflateBackInit(&strm, 15, win);
-        assert(ret == Z_OK);
+        প্রতিজ্ঞা(ret == Z_OK);
         strm.avail_in = len;
         strm.next_in = in;
-        ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
-        assert(ret != Z_STREAM_ERROR);
-        if (err) {
-            assert(ret == Z_DATA_ERROR);
-            assert(strcmp(id, strm.msg) == 0);
+        ret = inflateBack(&strm, pull, Z_NULL, ঠেলো, Z_NULL);
+        প্রতিজ্ঞা(ret != Z_STREAM_ERROR);
+        যদি (err) {
+            প্রতিজ্ঞা(ret == Z_DATA_ERROR);
+            প্রতিজ্ঞা(strcmp(id, strm.বার্তা) == 0);
         }
         inflateBackEnd(&strm);
         mem_done(&strm, prefix);
     }
 
     /* clean up */
-    free(prefix);
-    free(win);
-    free(out);
-    free(in);
-    return ret;
+    মুক্ত(prefix);
+    মুক্ত(win);
+    মুক্ত(out);
+    মুক্ত(in);
+    প্রত্যাগম ret;
 }
 
 /* cover deflate data cases in both inflate() and inflateBack() */
-local void cover_inflate(void)
+local শূন্য cover_inflate(শূন্য)
 {
     try("0 0 0 0 0", "invalid stored block lengths", 1);
     try("3 0", "fixed", 0);
@@ -615,31 +615,31 @@ local void cover_inflate(void)
 }
 
 /* cover remaining lines in inftrees.c */
-local void cover_trees(void)
+local শূন্য cover_trees(শূন্য)
 {
-    int ret;
+    পূর্ণাঙ্ক ret;
     unsigned bits;
     unsigned short lens[16], work[16];
     code *next, table[ENOUGH_DISTS];
 
     /* we need to call inflate_table() directly in order to manifest not-
        enough errors, since zlib insures that enough is always enough */
-    for (bits = 0; bits < 15; bits++)
+    প্রতি (bits = 0; bits < 15; bits++)
         lens[bits] = (unsigned short)(bits + 1);
     lens[15] = 15;
     next = table;
     bits = 15;
     ret = inflate_table(DISTS, lens, 16, &next, &bits, work);
-                                                assert(ret == 1);
+                                                প্রতিজ্ঞা(ret == 1);
     next = table;
     bits = 1;
     ret = inflate_table(DISTS, lens, 16, &next, &bits, work);
-                                                assert(ret == 1);
+                                                প্রতিজ্ঞা(ret == 1);
     fputs("inflate_table not enough errors\n", stderr);
 }
 
 /* cover remaining inffast.c decoding and window copying */
-local void cover_fast(void)
+local শূন্য cover_fast(শূন্য)
 {
     inf("e5 e0 81 ad 6d cb b2 2c c9 01 1e 59 63 ae 7d ee fb 4d fd b5 35 41 68"
         " ff 7f 0f 0 0 0", "fast length extra bits", 0, -8, 258, Z_DATA_ERROR);
@@ -659,7 +659,7 @@ local void cover_fast(void)
         Z_STREAM_END);
 }
 
-int main(void)
+পূর্ণাঙ্ক main(শূন্য)
 {
     fprintf(stderr, "%s\n", zlibVersion());
     cover_support();
@@ -668,5 +668,5 @@ int main(void)
     cover_inflate();
     cover_trees();
     cover_fast();
-    return 0;
+    প্রত্যাগম 0;
 }

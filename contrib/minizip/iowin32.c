@@ -10,14 +10,14 @@
 
 */
 
-#include <stdlib.h>
+#অন্তর্ভাব <stdlib.h>
 
-#include "zlib.h"
-#include "ioapi.h"
-#include "iowin32.h"
+#অন্তর্ভাব "zlib.h"
+#অন্তর্ভাব "ioapi.h"
+#অন্তর্ভাব "iowin32.h"
 
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE (0xFFFFFFFF)
+#ifndef INVALID_HANDLE_মান
+#define INVALID_HANDLE_মান (0xFFFFFFFF)
 #endif
 
 #ifndef INVALID_SET_FILE_POINTER
@@ -26,381 +26,381 @@
 
 
 /* see Include/shared/winapifamily.h in the Windows Kit */
-#if defined(WINAPI_FAMILY_PARTITION) && (!(defined(IOWIN32_USING_WINRT_API)))
+#যদি defined(WINAPI_FAMILY_PARTITION) && (!(defined(IOWIN32_USING_WINRT_API)))
 
-#if !defined(WINAPI_FAMILY_ONE_PARTITION)
+#যদি !defined(WINAPI_FAMILY_ONE_PARTITION)
 #define WINAPI_FAMILY_ONE_PARTITION(PartitionSet, Partition) ((WINAPI_FAMILY & PartitionSet) == Partition)
 #endif
 
-#if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
+#যদি WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
 #define IOWIN32_USING_WINRT_API 1
 #endif
 #endif
 
-typedef struct
+প্রকারনির্দেশ সংরচনা
 {
     HANDLE hf;
-    int error;
+    পূর্ণাঙ্ক error;
 } WIN32FILE_IOWIN;
 
 
-static void win32_translate_open_mode(int mode,
+স্থির শূন্য win32_translate_open_mode(পূর্ণাঙ্ক mode,
                                       DWORD* lpdwDesiredAccess,
                                       DWORD* lpdwCreationDisposition,
                                       DWORD* lpdwShareMode,
                                       DWORD* lpdwFlagsAndAttributes) {
     *lpdwDesiredAccess = *lpdwShareMode = *lpdwFlagsAndAttributes = *lpdwCreationDisposition = 0;
 
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+    যদি ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
     {
         *lpdwDesiredAccess = GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
         *lpdwShareMode = FILE_SHARE_READ;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+    অন্যথা যদি (mode & ZLIB_FILEFUNC_MODE_EXISTING)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+    অন্যথা যদি (mode & ZLIB_FILEFUNC_MODE_CREATE)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = CREATE_ALWAYS;
     }
 }
 
-static voidpf win32_build_iowin(HANDLE hFile) {
-    voidpf ret=NULL;
+স্থির voidpf win32_build_iowin(HANDLE hFile) {
+    voidpf ret=রিক্ত;
 
-    if ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE))
+    যদি ((hFile != রিক্ত) && (hFile != INVALID_HANDLE_মান))
     {
         WIN32FILE_IOWIN w32fiow;
         w32fiow.hf = hFile;
         w32fiow.error = 0;
-        ret = malloc(sizeof(WIN32FILE_IOWIN));
+        ret = malloc(পরিমাণ(WIN32FILE_IOWIN));
 
-        if (ret==NULL)
+        যদি (ret==রিক্ত)
             CloseHandle(hFile);
-        else
+        অন্যথা
             *((WIN32FILE_IOWIN*)ret) = w32fiow;
     }
-    return ret;
+    প্রত্যাগম ret;
 }
 
-voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
+voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, ধ্রুব শূন্য* filename, পূর্ণাঙ্ক mode) {
+    (শূন্য)opaque;
     DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+    HANDLE hFile = রিক্ত;
 
     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
 
 #ifdef IOWIN32_USING_WINRT_API
 #ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, রিক্ত);
+#অন্যথা
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        MultiByteToWideChar(CP_ACP,0,(ধ্রুব বর্ণ*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, রিক্ত);
     }
 #endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
+#অন্যথা
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
+        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, রিক্ত, dwCreationDisposition, dwFlagsAndAttributes, রিক্ত);
 #endif
 
-    return win32_build_iowin(hFile);
+    প্রত্যাগম win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
+voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, ধ্রুব শূন্য* filename, পূর্ণাঙ্ক mode) {
+    (শূন্য)opaque;
     DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+    HANDLE hFile = রিক্ত;
 
     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
 
 #ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        MultiByteToWideChar(CP_ACP,0,(ধ্রুব বর্ণ*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, রিক্ত);
     }
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
+#অন্যথা
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
+        hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dwShareMode, রিক্ত, dwCreationDisposition, dwFlagsAndAttributes, রিক্ত);
 #endif
 
-    return win32_build_iowin(hFile);
+    প্রত্যাগম win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
+voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, ধ্রুব শূন্য* filename, পূর্ণাঙ্ক mode) {
+    (শূন্য)opaque;
     DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+    HANDLE hFile = রিক্ত;
 
     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
 
 #ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition,NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition,রিক্ত);
+#অন্যথা
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
+        hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dwShareMode, রিক্ত, dwCreationDisposition, dwFlagsAndAttributes, রিক্ত);
 #endif
 
-    return win32_build_iowin(hFile);
+    প্রত্যাগম win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open_file_func(voidpf opaque, const char* filename, int mode) {
-    (void)opaque;
+voidpf ZCALLBACK win32_open_file_func(voidpf opaque, ধ্রুব বর্ণ* filename, পূর্ণাঙ্ক mode) {
+    (শূন্য)opaque;
     DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+    HANDLE hFile = রিক্ত;
 
     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
 
 #ifdef IOWIN32_USING_WINRT_API
 #ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, রিক্ত);
+#অন্যথা
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        MultiByteToWideChar(CP_ACP,0,(ধ্রুব বর্ণ*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, রিক্ত);
     }
 #endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
+#অন্যথা
+    যদি ((filename!=রিক্ত) && (dwDesiredAccess != 0))
+        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, রিক্ত, dwCreationDisposition, dwFlagsAndAttributes, রিক্ত);
 #endif
 
-    return win32_build_iowin(hFile);
+    প্রত্যাগম win32_build_iowin(hFile);
 }
 
 
-uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf stream, void* buf,uLong size) {
-    (void)opaque;
+uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf stream, শূন্য* buf,uLong size) {
+    (শূন্য)opaque;
     uLong ret=0;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
+    HANDLE hFile = রিক্ত;
+    যদি (stream!=রিক্ত)
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
 
-    if (hFile != NULL)
+    যদি (hFile != রিক্ত)
     {
-        if (!ReadFile(hFile, buf, size, &ret, NULL))
+        যদি (!ReadFile(hFile, buf, size, &ret, রিক্ত))
         {
             DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            যদি (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(পূর্ণাঙ্ক)dwErr;
         }
     }
 
-    return ret;
+    প্রত্যাগম ret;
 }
 
 
-uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf stream, const void* buf, uLong size) {
-    (void)opaque;
+uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf stream, ধ্রুব শূন্য* buf, uLong size) {
+    (শূন্য)opaque;
     uLong ret=0;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
+    HANDLE hFile = রিক্ত;
+    যদি (stream!=রিক্ত)
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
 
-    if (hFile != NULL)
+    যদি (hFile != রিক্ত)
     {
-        if (!WriteFile(hFile, buf, size, &ret, NULL))
+        যদি (!WriteFile(hFile, buf, size, &ret, রিক্ত))
         {
             DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            যদি (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(পূর্ণাঙ্ক)dwErr;
         }
     }
 
-    return ret;
+    প্রত্যাগম ret;
 }
 
-static BOOL MySetFilePointerEx(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dwMoveMethod) {
+স্থির BOOL MySetFilePointerEx(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dwMoveMethod) {
 #ifdef IOWIN32_USING_WINRT_API
-    return SetFilePointerEx(hFile, pos, newPos, dwMoveMethod);
-#else
-    LONG lHigh = pos.HighPart;
-    DWORD dwNewPos = SetFilePointer(hFile, pos.LowPart, &lHigh, dwMoveMethod);
+    প্রত্যাগম SetFilePointerEx(hFile, pos, newPos, dwMoveMethod);
+#অন্যথা
+    LONG l_উপরের = pos.উপরের_Part;
+    DWORD dwNewPos = SetFilePointer(hFile, pos.নিচের_Part, &l_উপরের, dwMoveMethod);
     BOOL fOk = TRUE;
-    if (dwNewPos == 0xFFFFFFFF)
-        if (GetLastError() != NO_ERROR)
+    যদি (dwNewPos == 0xFFFFFFFF)
+        যদি (GetLastError() != NO_ERROR)
             fOk = FALSE;
-    if ((newPos != NULL) && (fOk))
+    যদি ((newPos != রিক্ত) && (fOk))
     {
-        newPos->LowPart = dwNewPos;
-        newPos->HighPart = lHigh;
+        newPos->নিচের_Part = dwNewPos;
+        newPos->উপরের_Part = l_উপরের;
     }
-    return fOk;
+    প্রত্যাগম fOk;
 #endif
 }
 
 long ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
+    (শূন্য)opaque;
     long ret=-1;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
+    HANDLE hFile = রিক্ত;
+    যদি (stream!=রিক্ত)
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    if (hFile != NULL)
+    যদি (hFile != রিক্ত)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        যদি (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
         {
             DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(পূর্ণাঙ্ক)dwErr;
             ret = -1;
         }
-        else
-            ret=(long)pos.LowPart;
+        অন্যথা
+            ret=(long)pos.নিচের_Part;
     }
-    return ret;
+    প্রত্যাগম ret;
 }
 
 ZPOS64_T ZCALLBACK win32_tell64_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
+    (শূন্য)opaque;
     ZPOS64_T ret= (ZPOS64_T)-1;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
+    HANDLE hFile = রিক্ত;
+    যদি (stream!=রিক্ত)
         hFile = ((WIN32FILE_IOWIN*)stream)->hf;
 
-    if (hFile)
+    যদি (hFile)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        যদি (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
         {
             DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(পূর্ণাঙ্ক)dwErr;
             ret = (ZPOS64_T)-1;
         }
-        else
+        অন্যথা
             ret=pos.QuadPart;
     }
-    return ret;
+    প্রত্যাগম ret;
 }
 
 
-long ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf stream, uLong offset, int origin) {
-    (void)opaque;
+long ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf stream, uLong offset, পূর্ণাঙ্ক origin) {
+    (শূন্য)opaque;
     DWORD dwMoveMethod=0xFFFFFFFF;
-    HANDLE hFile = NULL;
+    HANDLE hFile = রিক্ত;
 
     long ret=-1;
-    if (stream!=NULL)
+    যদি (stream!=রিক্ত)
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    switch (origin)
+    বিকল্প (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
+    পক্ষ ZLIB_FILEFUNC_SEEK_CUR :
         dwMoveMethod = FILE_CURRENT;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
+        ভঙ্গ;
+    পক্ষ ZLIB_FILEFUNC_SEEK_END :
         dwMoveMethod = FILE_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
+        ভঙ্গ;
+    পক্ষ ZLIB_FILEFUNC_SEEK_SET :
         dwMoveMethod = FILE_BEGIN;
-        break;
-    default: return -1;
+        ভঙ্গ;
+    স্বভাব: প্রত্যাগম -1;
     }
 
-    if (hFile != NULL)
+    যদি (hFile != রিক্ত)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        যদি (!MySetFilePointerEx(hFile, pos, রিক্ত, dwMoveMethod))
         {
             DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(পূর্ণাঙ্ক)dwErr;
             ret = -1;
         }
-        else
+        অন্যথা
             ret=0;
     }
-    return ret;
+    প্রত্যাগম ret;
 }
 
-long ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, int origin) {
-    (void)opaque;
+long ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, পূর্ণাঙ্ক origin) {
+    (শূন্য)opaque;
     DWORD dwMoveMethod=0xFFFFFFFF;
-    HANDLE hFile = NULL;
+    HANDLE hFile = রিক্ত;
     long ret=-1;
 
-    if (stream!=NULL)
+    যদি (stream!=রিক্ত)
         hFile = ((WIN32FILE_IOWIN*)stream)->hf;
 
-    switch (origin)
+    বিকল্প (origin)
     {
-        case ZLIB_FILEFUNC_SEEK_CUR :
+        পক্ষ ZLIB_FILEFUNC_SEEK_CUR :
             dwMoveMethod = FILE_CURRENT;
-            break;
-        case ZLIB_FILEFUNC_SEEK_END :
+            ভঙ্গ;
+        পক্ষ ZLIB_FILEFUNC_SEEK_END :
             dwMoveMethod = FILE_END;
-            break;
-        case ZLIB_FILEFUNC_SEEK_SET :
+            ভঙ্গ;
+        পক্ষ ZLIB_FILEFUNC_SEEK_SET :
             dwMoveMethod = FILE_BEGIN;
-            break;
-        default: return -1;
+            ভঙ্গ;
+        স্বভাব: প্রত্যাগম -1;
     }
 
-    if (hFile)
+    যদি (hFile)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        যদি (!MySetFilePointerEx(hFile, pos, রিক্ত, dwMoveMethod))
         {
             DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(পূর্ণাঙ্ক)dwErr;
             ret = -1;
         }
-        else
+        অন্যথা
             ret=0;
     }
-    return ret;
+    প্রত্যাগম ret;
 }
 
-int ZCALLBACK win32_close_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    int ret=-1;
+পূর্ণাঙ্ক ZCALLBACK win32_close_file_func(voidpf opaque, voidpf stream) {
+    (শূন্য)opaque;
+    পূর্ণাঙ্ক ret=-1;
 
-    if (stream!=NULL)
+    যদি (stream!=রিক্ত)
     {
         HANDLE hFile;
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-        if (hFile != NULL)
+        যদি (hFile != রিক্ত)
         {
             CloseHandle(hFile);
             ret=0;
         }
-        free(stream);
+        মুক্ত(stream);
     }
-    return ret;
+    প্রত্যাগম ret;
 }
 
-int ZCALLBACK win32_error_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    int ret=-1;
-    if (stream!=NULL)
+পূর্ণাঙ্ক ZCALLBACK win32_error_file_func(voidpf opaque, voidpf stream) {
+    (শূন্য)opaque;
+    পূর্ণাঙ্ক ret=-1;
+    যদি (stream!=রিক্ত)
     {
         ret = ((WIN32FILE_IOWIN*)stream) -> error;
     }
-    return ret;
+    প্রত্যাগম ret;
 }
 
-void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
+শূন্য fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen_file = win32_open_file_func;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -408,10 +408,10 @@ void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek_file = win32_seek_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = রিক্ত;
 }
 
-void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
+শূন্য fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_func;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -419,11 +419,11 @@ void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = রিক্ত;
 }
 
 
-void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
+শূন্য fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_funcA;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -431,11 +431,11 @@ void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = রিক্ত;
 }
 
 
-void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
+শূন্য fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_funcW;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -443,5 +443,5 @@ void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = রিক্ত;
 }

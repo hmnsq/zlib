@@ -29,32 +29,32 @@
  *                      - Enable the provision of initial input to blast()
  */
 
-#include <stddef.h>             /* for NULL */
-#include <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
-#include "blast.h"              /* prototype for blast() */
+#অন্তর্ভাব <stddef.h>             /* for NULL */
+#অন্তর্ভাব <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
+#অন্তর্ভাব "blast.h"              /* prototype for blast() */
 
 #define MAXBITS 13              /* maximum code length */
 #define MAXWIN 4096             /* maximum window size */
 
 /* input and output state */
-struct state {
+সংরচনা state {
     /* input state */
     blast_in infun;             /* input function provided by user */
-    void *inhow;                /* opaque information passed to infun() */
-    unsigned char *in;          /* next input location */
-    unsigned left;              /* available input at in */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    শূন্য *inhow;                /* opaque information passed to infun() */
+    unsigned বর্ণ *in;          /* next input location */
+    unsigned বাম;              /* available input at in */
+    পূর্ণাঙ্ক bitbuf;                 /* bit buffer */
+    পূর্ণাঙ্ক bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
 
     /* output state */
     blast_out outfun;           /* output function provided by user */
-    void *outhow;               /* opaque information passed to outfun() */
+    শূন্য *outhow;               /* opaque information passed to outfun() */
     unsigned next;              /* index of next write location in out[] */
-    int first;                  /* true to check distances (for first 4K) */
-    unsigned char out[MAXWIN];  /* output buffer and sliding window */
+    পূর্ণাঙ্ক first;                  /* true to check distances (for first 4K) */
+    unsigned বর্ণ out[MAXWIN];  /* output buffer and sliding window */
 };
 
 /*
@@ -68,19 +68,19 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local পূর্ণাঙ্ক bits(সংরচনা state *s, পূর্ণাঙ্ক need)
 {
-    int val;            /* bit accumulator */
+    পূর্ণাঙ্ক val;            /* bit accumulator */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->left == 0) {
-            s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+    যাবত্ (s->bitcnt < need) {
+        যদি (s->বাম == 0) {
+            s->বাম = s->infun(s->inhow, &(s->in));
+            যদি (s->বাম == 0) longjmp(s->env, 1);       /* out of input */
         }
-        val |= (int)(*(s->in)++) << s->bitcnt;          /* load eight bits */
-        s->left--;
+        val |= (পূর্ণাঙ্ক)(*(s->in)++) << s->bitcnt;          /* load eight bits */
+        s->বাম--;
         s->bitcnt += 8;
     }
 
@@ -89,7 +89,7 @@ local int bits(struct state *s, int need)
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return val & ((1 << need) - 1);
+    প্রত্যাগম val & ((1 << need) - 1);
 }
 
 /*
@@ -99,9 +99,9 @@ local int bits(struct state *s, int need)
  * entries is the sum of the counts in count[].  The decoding process can be
  * seen in the function decode() below.
  */
-struct huffman {
-    short *count;       /* number of symbols of each length */
-    short *symbol;      /* canonically ordered symbols */
+সংরচনা huffman {
+    short *গুনতি;       /* number of symbols of each length */
+    short *প্রতীক;      /* canonically ordered symbols */
 };
 
 /*
@@ -125,49 +125,49 @@ struct huffman {
  *   this ordering, the bits pulled during decoding are inverted to apply the
  *   more "natural" ordering starting with all zeros and incrementing.
  */
-local int decode(struct state *s, struct huffman *h)
+local পূর্ণাঙ্ক decode(সংরচনা state *s, সংরচনা huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    পূর্ণাঙ্ক len;            /* current number of bits in code */
+    পূর্ণাঙ্ক code;           /* len bits being decoded */
+    পূর্ণাঙ্ক first;          /* first code of length len */
+    পূর্ণাঙ্ক গুনতি;          /* number of codes of length len */
+    পূর্ণাঙ্ক index;          /* index of first code of length len in symbol table */
+    পূর্ণাঙ্ক bitbuf;         /* bits from stream */
+    পূর্ণাঙ্ক বাম;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
-    left = s->bitcnt;
+    বাম = s->bitcnt;
     code = first = index = 0;
     len = 1;
-    next = h->count + 1;
-    while (1) {
-        while (left--) {
+    next = h->গুনতি + 1;
+    যাবত্ (1) {
+        যাবত্ (বাম--) {
             code |= (bitbuf & 1) ^ 1;   /* invert code */
             bitbuf >>= 1;
-            count = *next++;
-            if (code < first + count) { /* if length len, return symbol */
+            গুনতি = *next++;
+            যদি (code < first + গুনতি) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                প্রত্যাগম h->প্রতীক[index + (code - first)];
             }
-            index += count;             /* else update for next length */
-            first += count;
+            index += গুনতি;             /* else update for next length */
+            first += গুনতি;
             first <<= 1;
             code <<= 1;
             len++;
         }
-        left = (MAXBITS+1) - len;
-        if (left == 0) break;
-        if (s->left == 0) {
-            s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+        বাম = (MAXBITS+1) - len;
+        যদি (বাম == 0) ভঙ্গ;
+        যদি (s->বাম == 0) {
+            s->বাম = s->infun(s->inhow, &(s->in));
+            যদি (s->বাম == 0) longjmp(s->env, 1);       /* out of input */
         }
         bitbuf = *(s->in)++;
-        s->left--;
-        if (left > 8) left = 8;
+        s->বাম--;
+        যদি (বাম > 8) বাম = 8;
     }
-    return -9;                          /* ran out of codes */
+    প্রত্যাগম -9;                          /* ran out of codes */
 }
 
 /*
@@ -187,57 +187,57 @@ local int decode(struct state *s, struct huffman *h)
  * it is possible for decode() using that table to return an error for received
  * codes past the end of the incomplete lengths.
  */
-local int construct(struct huffman *h, const unsigned char *rep, int n)
+local পূর্ণাঙ্ক construct(সংরচনা huffman *h, ধ্রুব unsigned বর্ণ *rep, পূর্ণাঙ্ক n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    পূর্ণাঙ্ক প্রতীক;         /* current symbol when stepping through length[] */
+    পূর্ণাঙ্ক len;            /* current length when stepping through h->count[] */
+    পূর্ণাঙ্ক বাম;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
     short length[256];  /* code lengths */
 
     /* convert compact repeat counts into symbol bit length list */
-    symbol = 0;
-    do {
+    প্রতীক = 0;
+    কুরু {
         len = *rep++;
-        left = (len >> 4) + 1;
+        বাম = (len >> 4) + 1;
         len &= 15;
-        do {
-            length[symbol++] = len;
-        } while (--left);
-    } while (--n);
-    n = symbol;
+        কুরু {
+            length[প্রতীক++] = len;
+        } যাবত্ (--বাম);
+    } যাবত্ (--n);
+    n = প্রতীক;
 
     /* count number of codes of each length */
-    for (len = 0; len <= MAXBITS; len++)
-        h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
-        (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    প্রতি (len = 0; len <= MAXBITS; len++)
+        h->গুনতি[len] = 0;
+    প্রতি (প্রতীক = 0; প্রতীক < n; প্রতীক++)
+        (h->গুনতি[length[প্রতীক]])++;   /* assumes lengths are within bounds */
+    যদি (h->গুনতি[0] == n)               /* no codes! */
+        প্রত্যাগম 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;                           /* one possible code of zero length */
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;                     /* one more bit, double codes left */
-        left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0) return left;      /* over-subscribed--return negative */
+    বাম = 1;                           /* one possible code of zero length */
+    প্রতি (len = 1; len <= MAXBITS; len++) {
+        বাম <<= 1;                     /* one more bit, double codes left */
+        বাম -= h->গুনতি[len];          /* deduct count from possible codes */
+        যদি (বাম < 0) প্রত্যাগম বাম;      /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + h->count[len];
+    প্রতি (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + h->গুনতি[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
-            h->symbol[offs[length[symbol]]++] = symbol;
+    প্রতি (প্রতীক = 0; প্রতীক < n; প্রতীক++)
+        যদি (length[প্রতীক] != 0)
+            h->প্রতীক[offs[length[প্রতীক]]++] = প্রতীক;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    প্রত্যাগম বাম;
 }
 
 /*
@@ -278,24 +278,24 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
  *   ignoring whether the length is greater than the distance or not implements
  *   this correctly.
  */
-local int decomp(struct state *s)
+local পূর্ণাঙ্ক decomp(সংরচনা state *s)
 {
-    int lit;            /* true if literals are coded */
-    int dict;           /* log2(dictionary size) - 6 */
-    int symbol;         /* decoded symbol, extra bits for distance */
-    int len;            /* length for copy */
+    পূর্ণাঙ্ক lit;            /* true if literals are coded */
+    পূর্ণাঙ্ক dict;           /* log2(dictionary size) - 6 */
+    পূর্ণাঙ্ক প্রতীক;         /* decoded symbol, extra bits for distance */
+    পূর্ণাঙ্ক len;            /* length for copy */
     unsigned dist;      /* distance for copy */
-    int copy;           /* copy counter */
-    unsigned char *from, *to;   /* copy pointers */
-    static int virgin = 1;                              /* build tables once */
-    static short litcnt[MAXBITS+1], litsym[256];        /* litcode memory */
-    static short lencnt[MAXBITS+1], lensym[16];         /* lencode memory */
-    static short distcnt[MAXBITS+1], distsym[64];       /* distcode memory */
-    static struct huffman litcode = {litcnt, litsym};   /* length code */
-    static struct huffman lencode = {lencnt, lensym};   /* length code */
-    static struct huffman distcode = {distcnt, distsym};/* distance code */
+    পূর্ণাঙ্ক copy;           /* copy counter */
+    unsigned বর্ণ *from, *to;   /* copy pointers */
+    স্থির পূর্ণাঙ্ক virgin = 1;                              /* build tables once */
+    স্থির short litcnt[MAXBITS+1], litsym[256];        /* litcode memory */
+    স্থির short lencnt[MAXBITS+1], lensym[16];         /* lencode memory */
+    স্থির short distcnt[MAXBITS+1], distsym[64];       /* distcode memory */
+    স্থির সংরচনা huffman litcode = {litcnt, litsym};   /* length code */
+    স্থির সংরচনা huffman lencode = {lencnt, lensym};   /* length code */
+    স্থির সংরচনা huffman distcode = {distcnt, distsym};/* distance code */
         /* bit lengths of literal codes */
-    static const unsigned char litlen[] = {
+    স্থির ধ্রুব unsigned বর্ণ litlen[] = {
         11, 124, 8, 7, 28, 7, 188, 13, 76, 4, 10, 8, 12, 10, 12, 10, 8, 23, 8,
         9, 7, 6, 7, 8, 7, 6, 55, 8, 23, 24, 12, 11, 7, 9, 11, 12, 6, 7, 22, 5,
         7, 24, 6, 11, 9, 6, 7, 22, 7, 11, 38, 7, 9, 8, 25, 11, 8, 11, 9, 12,
@@ -303,97 +303,97 @@ local int decomp(struct state *s)
         44, 253, 253, 253, 252, 252, 252, 13, 12, 45, 12, 45, 12, 61, 12, 45,
         44, 173};
         /* bit lengths of length codes 0..15 */
-    static const unsigned char lenlen[] = {2, 35, 36, 53, 38, 23};
+    স্থির ধ্রুব unsigned বর্ণ lenlen[] = {2, 35, 36, 53, 38, 23};
         /* bit lengths of distance codes 0..63 */
-    static const unsigned char distlen[] = {2, 20, 53, 230, 247, 151, 248};
-    static const short base[16] = {     /* base for length codes */
+    স্থির ধ্রুব unsigned বর্ণ distlen[] = {2, 20, 53, 230, 247, 151, 248};
+    স্থির ধ্রুব short base[16] = {     /* base for length codes */
         3, 2, 4, 5, 6, 7, 8, 9, 10, 12, 16, 24, 40, 72, 136, 264};
-    static const char extra[16] = {     /* extra bits for length codes */
+    স্থির ধ্রুব বর্ণ extra[16] = {     /* extra bits for length codes */
         0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     /* set up decoding tables (once--might not be thread-safe) */
-    if (virgin) {
-        construct(&litcode, litlen, sizeof(litlen));
-        construct(&lencode, lenlen, sizeof(lenlen));
-        construct(&distcode, distlen, sizeof(distlen));
+    যদি (virgin) {
+        construct(&litcode, litlen, পরিমাণ(litlen));
+        construct(&lencode, lenlen, পরিমাণ(lenlen));
+        construct(&distcode, distlen, পরিমাণ(distlen));
         virgin = 0;
     }
 
     /* read header */
     lit = bits(s, 8);
-    if (lit > 1) return -1;
+    যদি (lit > 1) প্রত্যাগম -1;
     dict = bits(s, 8);
-    if (dict < 4 || dict > 6) return -2;
+    যদি (dict < 4 || dict > 6) প্রত্যাগম -2;
 
     /* decode literals and length/distance pairs */
-    do {
-        if (bits(s, 1)) {
+    কুরু {
+        যদি (bits(s, 1)) {
             /* get length */
-            symbol = decode(s, &lencode);
-            len = base[symbol] + bits(s, extra[symbol]);
-            if (len == 519) break;              /* end code */
+            প্রতীক = decode(s, &lencode);
+            len = base[প্রতীক] + bits(s, extra[প্রতীক]);
+            যদি (len == 519) ভঙ্গ;              /* end code */
 
             /* get distance */
-            symbol = len == 2 ? 2 : dict;
-            dist = decode(s, &distcode) << symbol;
-            dist += bits(s, symbol);
+            প্রতীক = len == 2 ? 2 : dict;
+            dist = decode(s, &distcode) << প্রতীক;
+            dist += bits(s, প্রতীক);
             dist++;
-            if (s->first && dist > s->next)
-                return -3;              /* distance too far back */
+            যদি (s->first && dist > s->next)
+                প্রত্যাগম -3;              /* distance too far back */
 
             /* copy length bytes from distance bytes back */
-            do {
+            কুরু {
                 to = s->out + s->next;
                 from = to - dist;
                 copy = MAXWIN;
-                if (s->next < dist) {
+                যদি (s->next < dist) {
                     from += copy;
                     copy = dist;
                 }
                 copy -= s->next;
-                if (copy > len) copy = len;
+                যদি (copy > len) copy = len;
                 len -= copy;
                 s->next += copy;
-                do {
+                কুরু {
                     *to++ = *from++;
-                } while (--copy);
-                if (s->next == MAXWIN) {
-                    if (s->outfun(s->outhow, s->out, s->next)) return 1;
+                } যাবত্ (--copy);
+                যদি (s->next == MAXWIN) {
+                    যদি (s->outfun(s->outhow, s->out, s->next)) প্রত্যাগম 1;
                     s->next = 0;
                     s->first = 0;
                 }
-            } while (len != 0);
+            } যাবত্ (len != 0);
         }
-        else {
+        অন্যথা {
             /* get literal and write it */
-            symbol = lit ? decode(s, &litcode) : bits(s, 8);
-            s->out[s->next++] = symbol;
-            if (s->next == MAXWIN) {
-                if (s->outfun(s->outhow, s->out, s->next)) return 1;
+            প্রতীক = lit ? decode(s, &litcode) : bits(s, 8);
+            s->out[s->next++] = প্রতীক;
+            যদি (s->next == MAXWIN) {
+                যদি (s->outfun(s->outhow, s->out, s->next)) প্রত্যাগম 1;
                 s->next = 0;
                 s->first = 0;
             }
         }
-    } while (1);
-    return 0;
+    } যাবত্ (1);
+    প্রত্যাগম 0;
 }
 
 /* See comments in blast.h */
-int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
-          unsigned *left, unsigned char **in)
+পূর্ণাঙ্ক blast(blast_in infun, শূন্য *inhow, blast_out outfun, শূন্য *outhow,
+          unsigned *বাম, unsigned বর্ণ **in)
 {
-    struct state s;             /* input/output state */
-    int err;                    /* return value */
+    সংরচনা state s;             /* input/output state */
+    পূর্ণাঙ্ক err;                    /* return value */
 
     /* initialize input state */
     s.infun = infun;
     s.inhow = inhow;
-    if (left != NULL && *left) {
-        s.left = *left;
+    যদি (বাম != রিক্ত && *বাম) {
+        s.বাম = *বাম;
         s.in = *in;
     }
-    else
-        s.left = 0;
+    অন্যথা
+        s.বাম = 0;
     s.bitbuf = 0;
     s.bitcnt = 0;
 
@@ -404,19 +404,19 @@ int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
     s.first = 1;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
+    যদি (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
         err = 2;                        /*  then skip decomp(), return error */
-    else
+    অন্যথা
         err = decomp(&s);               /* decompress */
 
     /* return unused input */
-    if (left != NULL)
-        *left = s.left;
-    if (in != NULL)
-        *in = s.left ? s.in : NULL;
+    যদি (বাম != রিক্ত)
+        *বাম = s.বাম;
+    যদি (in != রিক্ত)
+        *in = s.বাম ? s.in : রিক্ত;
 
     /* write any leftover output and update the error code if needed */
-    if (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
+    যদি (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
         err = 1;
-    return err;
+    প্রত্যাগম err;
 }

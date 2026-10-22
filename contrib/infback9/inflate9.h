@@ -9,7 +9,7 @@
  */
 
 /* Possible inflate modes between inflate() calls */
-typedef enum {
+প্রকারনির্দেশ গণনা {
         TYPE,       /* i: waiting for type bits, including last-flag bit */
         STORED,     /* i: waiting for stored size (length and complement) */
         TABLE,      /* i: waiting for dynamic block table lengths */
@@ -32,9 +32,9 @@ typedef enum {
  */
 
 /* state maintained between inflate() calls.  Approximately 7K bytes. */
-struct inflate_state {
+সংরচনা inflate_state {
         /* sliding window */
-    unsigned char FAR *window;  /* allocated sliding window, if needed */
+    unsigned বর্ণ FAR *window;  /* allocated sliding window, if needed */
         /* dynamic table building */
     unsigned ncode;             /* number of code length code lengths */
     unsigned nlen;              /* number of length code lengths */

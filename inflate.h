@@ -17,7 +17,7 @@
 #endif
 
 /* Possible inflate modes between inflate() calls */
-typedef enum {
+প্রকারনির্দেশ গণনা {
     HEAD = 16180,   /* i: waiting for magic header */
     FLAGS,      /* i: waiting for method and flags (gzip) */
     TIME,       /* i: waiting for modification time (gzip) */
@@ -79,14 +79,14 @@ typedef enum {
 
 /* State maintained between inflate() calls -- approximately 7K bytes, not
    including the allocated sliding window, which is up to 32K bytes. */
-struct inflate_state {
+সংরচনা inflate_state {
     z_streamp strm;             /* pointer back to this zlib stream */
     inflate_mode mode;          /* current inflate mode */
-    int last;                   /* true if processing last block */
-    int wrap;                   /* bit 0 true for zlib, bit 1 true for gzip,
+    পূর্ণাঙ্ক last;                   /* true if processing last block */
+    পূর্ণাঙ্ক wrap;                   /* bit 0 true for zlib, bit 1 true for gzip,
                                    bit 2 true to validate check value */
-    int havedict;               /* true if dictionary provided */
-    int flags;                  /* gzip header method and flags, 0 if zlib, or
+    পূর্ণাঙ্ক havedict;               /* true if dictionary provided */
+    পূর্ণাঙ্ক flags;                  /* gzip header method and flags, 0 if zlib, or
                                    -1 if raw or no header yet */
     unsigned dmax;              /* zlib header max distance (INFLATE_STRICT) */
     unsigned long check;        /* protected copy of check value */
@@ -97,7 +97,7 @@ struct inflate_state {
     unsigned wsize;             /* window size or zero if not using window */
     unsigned whave;             /* valid bytes in the window */
     unsigned wnext;             /* window write index */
-    unsigned char FAR *window;  /* allocated sliding window, if needed */
+    unsigned বর্ণ FAR *window;  /* allocated sliding window, if needed */
         /* bit accumulator */
     unsigned long hold;         /* input bit accumulator */
     unsigned bits;              /* number of bits in hold */
@@ -107,8 +107,8 @@ struct inflate_state {
         /* for table and code decoding */
     unsigned extra;             /* extra bits needed */
         /* fixed and dynamic code tables */
-    code const FAR *lencode;    /* starting table for length/literal codes */
-    code const FAR *distcode;   /* starting table for distance codes */
+    code ধ্রুব FAR *lencode;    /* starting table for length/literal codes */
+    code ধ্রুব FAR *distcode;   /* starting table for distance codes */
     unsigned lenbits;           /* index bits for lencode */
     unsigned distbits;          /* index bits for distcode */
         /* dynamic table building */
@@ -120,7 +120,7 @@ struct inflate_state {
     unsigned short lens[320];   /* temporary storage for code lengths */
     unsigned short work[288];   /* work area for code table building */
     code codes[ENOUGH];         /* space for code tables */
-    int sane;                   /* if false, allow invalid distance too far */
-    int back;                   /* bits back of last unprocessed length/lit */
+    পূর্ণাঙ্ক sane;                   /* if false, allow invalid distance too far */
+    পূর্ণাঙ্ক back;                   /* bits back of last unprocessed length/lit */
     unsigned was;               /* initial length of match */
 };
