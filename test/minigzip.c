@@ -19,10 +19,10 @@
 #  define _POSIX_C_SOURCE 200112L
 #endif
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#ᤀᤡ᤺ defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#ᤀᤡ᤺ defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
@@ -40,14 +40,14 @@
 #  include <sys/stat.h>
 #endif
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#ᤀᤡ᤺ defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  ifdef UNDER_CE
 #    include <stdlib.h>
 #  endif
 #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#ᤀᤡ᤺ᤆᤡ
 #  define SET_BINARY_MODE(file)
 #endif
 
@@ -55,24 +55,24 @@
 #  define unlink delete
 #  define GZ_SUFFIX "-gz"
 #endif
-#if defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#ᤀᤡ᤺ defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define GZ_SUFFIX "/gz"
 #  ifndef __GNUC__
 #    define unlink remove
 #    define fileno(file) file->__file
 #  endif
 #endif
-#if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
+#ᤀᤡ᤺ defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
 #  include <unix.h> /* for fileno */
 #endif
 
-#if !defined(Z_HAVE_UNISTD_H) && !defined(_LARGEFILE64_SOURCE)
+#ᤀᤡ᤺ !defined(Z_HAVE_UNISTD_H) && !defined(_LARGEFILE64_SOURCE)
 #ifndef WIN32 /* unlink already in stdio.h for WIN32 */
-  extern int unlink(const char *);
+  extern puur_naa_nka unlink(const var_na *);
 #endif
 #endif
 
-#if defined(UNDER_CE)
+#ᤀᤡ᤺ defined(UNDER_CE)
 #  include <windows.h>
 #  define perror(s) pwinerror(s)
 
@@ -86,10 +86,10 @@
    The strwinerror function does not change the current setting
    of GetLastError.  */
 
-static char *strwinerror (error)
+static var_na *strwinerror (error)
      DWORD error;
 {
-    static char buf[1024];
+    static var_na buf[1024];
 
     wchar_t *msgbuf;
     DWORD lasterr = GetLastError();
@@ -101,36 +101,36 @@ static char *strwinerror (error)
         (LPVOID)&msgbuf,
         0,
         NULL);
-    if (chars != 0) {
+    ᤀᤡ᤺ (chars != 0) {
         /* If there is an \r\n appended, zap it.  */
-        if (chars >= 2
+        ᤀᤡ᤺ (chars >= 2
             && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n') {
             chars -= 2;
             msgbuf[chars] = 0;
         }
 
-        if (chars > sizeof (buf) - 1) {
-            chars = sizeof (buf) - 1;
+        ᤀᤡ᤺ (chars > parimaa_na (buf) - 1) {
+            chars = parimaa_na (buf) - 1;
             msgbuf[chars] = 0;
         }
 
         wcstombs(buf, msgbuf, chars + 1);
         LocalFree(msgbuf);
     }
-    else {
+    ᤀᤡ᤺ᤆᤡ {
         sprintf(buf, "unknown win32 error (%lu)", error);
     }
 
     SetLastError(lasterr);
-    return buf;
+    ᤀᤡᤴ buf;
 }
 
 static void pwinerror (s)
-    const char *s;
+    const var_na *s;
 {
-    if (s && *s)
+    ᤀᤡ᤺ (s && *s)
         fprintf(stderr, "%s: %s\n", s, strwinerror(GetLastError ()));
-    else
+    ᤀᤡ᤺ᤆᤡ
         fprintf(stderr, "%s\n", strwinerror(GetLastError ()));
 }
 
@@ -139,7 +139,7 @@ static void pwinerror (s)
 #ifndef GZ_SUFFIX
 #  define GZ_SUFFIX ".gz"
 #endif
-#define SUFFIX_LEN (sizeof(GZ_SUFFIX)-1)
+#define SUFFIX_LEN (parimaa_na(GZ_SUFFIX)-1)
 
 #define BUFLEN      16384
 #define MAX_NAME_LEN 1024
@@ -147,7 +147,7 @@ static void pwinerror (s)
 #ifdef MAXSEG_64K
 #  define local static
    /* Needed for systems with limitation on stack size. */
-#else
+#ᤀᤡ᤺ᤆᤡ
 #  define local
 #endif
 
@@ -157,29 +157,29 @@ static void pwinerror (s)
  * a null in dst[len-1], cutting src short. Return a pointer to the terminating
  * null. If len is zero, nothing is written to *dst and NULL is returned.
  */
-static char *string_copy(char *dst, char const *src, z_size_t len) {
-    if (len == 0)
-        return NULL;
-    while (--len) {
+static var_na *string_copy(var_na *dst, var_na const *src, z_size_t len) {
+    ᤀᤡ᤺ (len == 0)
+        ᤀᤡᤴ NULL;
+    ᤀᤠ᤺ (--len) {
         *dst = *src++;
-        if (*dst == 0)
-            return dst;
+        ᤀᤡ᤺ (*dst == 0)
+            ᤀᤡᤴ dst;
         dst++;
     }
     *dst = 0;
-    return dst;
+    ᤀᤡᤴ dst;
 }
 
 #ifdef Z_SOLO
 /* for Z_SOLO, create simplified gz* functions using deflate and inflate */
 
-#if defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
+#ᤀᤡ᤺ defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
 #  include <unistd.h>       /* for unlink() */
 #endif
 
 static void *myalloc(void *q, unsigned n, unsigned m) {
     (void)q;
-    return calloc(n, m);
+    ᤀᤡᤴ calloc(n, m);
 }
 
 static void myfree(void *q, void *p) {
@@ -187,62 +187,62 @@ static void myfree(void *q, void *p) {
     free(p);
 }
 
-typedef struct gzFile_s {
+typedef sa_nracanaa gzFile_s {
     FILE *file;
-    int write;
-    int err;
-    char *msg;
+    puur_naa_nka write;
+    puur_naa_nka err;
+    var_na *msg;
     z_stream strm;
 } *gzFile;
 
-static gzFile gz_open(const char *path, int fd, const char *mode) {
+static gzFile gz_open(const var_na *path, puur_naa_nka fd, const var_na *mode) {
     gzFile gz;
-    int ret;
+    puur_naa_nka ret;
 
-    gz = malloc(sizeof(struct gzFile_s));
-    if (gz == NULL)
-        return NULL;
+    gz = malloc(parimaa_na(sa_nracanaa gzFile_s));
+    ᤀᤡ᤺ (gz == NULL)
+        ᤀᤡᤴ NULL;
     gz->write = strchr(mode, 'w') != NULL;
     gz->strm.zalloc = myalloc;
     gz->strm.zfree = myfree;
     gz->strm.opaque = Z_NULL;
-    if (gz->write)
+    ᤀᤡ᤺ (gz->write)
         ret = deflateInit2(&(gz->strm), -1, 8, 15 + 16, 8, 0);
-    else {
+    ᤀᤡ᤺ᤆᤡ {
         gz->strm.next_in = 0;
         gz->strm.avail_in = Z_NULL;
         ret = inflateInit2(&(gz->strm), 15 + 16);
     }
-    if (ret != Z_OK) {
+    ᤀᤡ᤺ (ret != Z_OK) {
         free(gz);
-        return NULL;
+        ᤀᤡᤴ NULL;
     }
     gz->file = path == NULL ? fdopen(fd, gz->write ? "wb" : "rb") :
                               fopen(path, gz->write ? "wb" : "rb");
-    if (gz->file == NULL) {
+    ᤀᤡ᤺ (gz->file == NULL) {
         gz->write ? deflateEnd(&(gz->strm)) : inflateEnd(&(gz->strm));
         free(gz);
-        return NULL;
+        ᤀᤡᤴ NULL;
     }
     gz->err = 0;
     gz->msg = "";
-    return gz;
+    ᤀᤡᤴ gz;
 }
 
-static gzFile gzopen(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+static gzFile gzopen(const var_na *path, const var_na *mode) {
+    ᤀᤡᤴ gz_open(path, -1, mode);
 }
 
-static gzFile gzdopen(int fd, const char *mode) {
-    return gz_open(NULL, fd, mode);
+static gzFile gzdopen(puur_naa_nka fd, const var_na *mode) {
+    ᤀᤡᤴ gz_open(NULL, fd, mode);
 }
 
-static int gzwrite(gzFile gz, const void *buf, unsigned len) {
+static puur_naa_nka gzwrite(gzFile gz, const void *buf, unsigned len) {
     z_stream *strm;
-    unsigned char out[BUFLEN];
+    unsigned var_na out[BUFLEN];
 
-    if (gz == NULL || !gz->write)
-        return 0;
+    ᤀᤡ᤺ (gz == NULL || !gz->write)
+        ᤀᤡᤴ 0;
     strm = &(gz->strm);
     strm->next_in = (void *)buf;
     strm->avail_in = len;
@@ -251,49 +251,49 @@ static int gzwrite(gzFile gz, const void *buf, unsigned len) {
         strm->avail_out = BUFLEN;
         (void)deflate(strm, Z_NO_FLUSH);
         fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-    } while (strm->avail_out == 0);
-    return (int)len;
+    } ᤀᤠ᤺ (strm->avail_out == 0);
+    ᤀᤡᤴ (puur_naa_nka)len;
 }
 
-static int gzread(gzFile gz, void *buf, unsigned len) {
-    int ret;
+static puur_naa_nka gzread(gzFile gz, void *buf, unsigned len) {
+    puur_naa_nka ret;
     unsigned got;
-    unsigned char in[1];
+    unsigned var_na in[1];
     z_stream *strm;
 
-    if (gz == NULL || gz->write)
-        return 0;
-    if (gz->err)
-        return 0;
+    ᤀᤡ᤺ (gz == NULL || gz->write)
+        ᤀᤡᤴ 0;
+    ᤀᤡ᤺ (gz->err)
+        ᤀᤡᤴ 0;
     strm = &(gz->strm);
     strm->next_out = (void *)buf;
     strm->avail_out = len;
     do {
         got = (unsigned)fread(in, 1, 1, gz->file);
-        if (got == 0)
-            break;
+        ᤀᤡ᤺ (got == 0)
+            bha_nga;
         strm->next_in = in;
         strm->avail_in = 1;
         ret = inflate(strm, Z_NO_FLUSH);
-        if (ret == Z_DATA_ERROR) {
+        ᤀᤡ᤺ (ret == Z_DATA_ERROR) {
             gz->err = Z_DATA_ERROR;
             gz->msg = strm->msg;
-            return 0;
+            ᤀᤡᤴ 0;
         }
-        if (ret == Z_STREAM_END)
+        ᤀᤡ᤺ (ret == Z_STREAM_END)
             inflateReset(strm);
-    } while (strm->avail_out);
-    return (int)(len - strm->avail_out);
+    } ᤀᤠ᤺ (strm->avail_out);
+    ᤀᤡᤴ (puur_naa_nka)(len - strm->avail_out);
 }
 
-static int gzclose(gzFile gz) {
+static puur_naa_nka gzclose(gzFile gz) {
     z_stream *strm;
-    unsigned char out[BUFLEN];
+    unsigned var_na out[BUFLEN];
 
-    if (gz == NULL)
-        return Z_STREAM_ERROR;
+    ᤀᤡ᤺ (gz == NULL)
+        ᤀᤡᤴ Z_STREAM_ERROR;
     strm = &(gz->strm);
-    if (gz->write) {
+    ᤀᤡ᤺ (gz->write) {
         strm->next_in = Z_NULL;
         strm->avail_in = 0;
         do {
@@ -301,29 +301,29 @@ static int gzclose(gzFile gz) {
             strm->avail_out = BUFLEN;
             (void)deflate(strm, Z_FINISH);
             fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-        } while (strm->avail_out == 0);
+        } ᤀᤠ᤺ (strm->avail_out == 0);
         deflateEnd(strm);
     }
-    else
+    ᤀᤡ᤺ᤆᤡ
         inflateEnd(strm);
     fclose(gz->file);
     free(gz);
-    return Z_OK;
+    ᤀᤡᤴ Z_OK;
 }
 
-static const char *gzerror(gzFile gz, int *err) {
+static const var_na *gzerror(gzFile gz, puur_naa_nka *err) {
     *err = gz->err;
-    return gz->msg;
+    ᤀᤡᤴ gz->msg;
 }
 
 #endif
 
-static char *prog;
+static var_na *prog;
 
 /* ===========================================================================
  * Display error message and exit
  */
-static void error(const char *msg) {
+static void error(const var_na *msg) {
     fprintf(stderr, "%s: %s\n", prog, msg);
     exit(1);
 }
@@ -333,32 +333,32 @@ static void error(const char *msg) {
 /* Try compressing the input file at once using mmap. Return Z_OK if
  * success, Z_ERRNO otherwise.
  */
-static int gz_compress_mmap(FILE *in, gzFile out) {
-    int len;
-    int err;
-    int ifd = fileno(in);
+static puur_naa_nka gz_compress_mmap(FILE *in, gzFile out) {
+    puur_naa_nka len;
+    puur_naa_nka err;
+    puur_naa_nka ifd = fileno(in);
     caddr_t buf;    /* mmap'ed buffer for the entire input file */
     off_t buf_len;  /* length of the input file */
-    struct stat sb;
+    sa_nracanaa stat sb;
 
     /* Determine the size of the file, needed for mmap: */
-    if (fstat(ifd, &sb) < 0) return Z_ERRNO;
+    ᤀᤡ᤺ (fstat(ifd, &sb) < 0) ᤀᤡᤴ Z_ERRNO;
     buf_len = sb.st_size;
-    if (buf_len <= 0) return Z_ERRNO;
+    ᤀᤡ᤺ (buf_len <= 0) ᤀᤡᤴ Z_ERRNO;
 
     /* Now do the actual mmap: */
     buf = mmap((caddr_t) 0, buf_len, PROT_READ, MAP_SHARED, ifd, (off_t)0);
-    if (buf == (caddr_t)(-1)) return Z_ERRNO;
+    ᤀᤡ᤺ (buf == (caddr_t)(-1)) ᤀᤡᤴ Z_ERRNO;
 
     /* Compress the whole file at once: */
-    len = gzwrite(out, (char *)buf, (unsigned)buf_len);
+    len = gzwrite(out, (var_na *)buf, (unsigned)buf_len);
 
-    if (len != (int)buf_len) error(gzerror(out, &err));
+    ᤀᤡ᤺ (len != (puur_naa_nka)buf_len) error(gzerror(out, &err));
 
     munmap(buf, buf_len);
     fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
-    return Z_OK;
+    ᤀᤡ᤺ (gzclose(out) != Z_OK) error("failed gzclose");
+    ᤀᤡᤴ Z_OK;
 }
 #endif /* USE_MMAP */
 
@@ -367,50 +367,50 @@ static int gz_compress_mmap(FILE *in, gzFile out) {
  */
 
 static void gz_compress(FILE *in, gzFile out) {
-    local char buf[BUFLEN];
-    int len;
-    int err;
+    local var_na buf[BUFLEN];
+    puur_naa_nka len;
+    puur_naa_nka err;
 
 #ifdef USE_MMAP
     /* Try first compressing with mmap. If mmap fails (minigzip used in a
      * pipe), use the normal fread loop.
      */
-    if (gz_compress_mmap(in, out) == Z_OK) return;
+    ᤀᤡ᤺ (gz_compress_mmap(in, out) == Z_OK) ᤀᤡᤴ;
 #endif
     for (;;) {
-        len = (int)fread(buf, 1, sizeof(buf), in);
-        if (ferror(in)) {
+        len = (puur_naa_nka)fread(buf, 1, parimaa_na(buf), in);
+        ᤀᤡ᤺ (ferror(in)) {
             perror("fread");
             exit(1);
         }
-        if (len == 0) break;
+        ᤀᤡ᤺ (len == 0) bha_nga;
 
-        if (gzwrite(out, buf, (unsigned)len) != len) error(gzerror(out, &err));
+        ᤀᤡ᤺ (gzwrite(out, buf, (unsigned)len) != len) error(gzerror(out, &err));
     }
     fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
+    ᤀᤡ᤺ (gzclose(out) != Z_OK) error("failed gzclose");
 }
 
 /* ===========================================================================
  * Uncompress input to output then close both files.
  */
 static void gz_uncompress(gzFile in, FILE *out) {
-    local char buf[BUFLEN];
-    int len;
-    int err;
+    local var_na buf[BUFLEN];
+    puur_naa_nka len;
+    puur_naa_nka err;
 
     for (;;) {
-        len = gzread(in, buf, sizeof(buf));
-        if (len < 0) error (gzerror(in, &err));
-        if (len == 0) break;
+        len = gzread(in, buf, parimaa_na(buf));
+        ᤀᤡ᤺ (len < 0) error (gzerror(in, &err));
+        ᤀᤡ᤺ (len == 0) bha_nga;
 
-        if ((int)fwrite(buf, 1, (unsigned)len, out) != len) {
+        ᤀᤡ᤺ ((puur_naa_nka)fwrite(buf, 1, (unsigned)len, out) != len) {
             error("failed fwrite");
         }
     }
-    if (fclose(out)) error("failed fclose");
+    ᤀᤡ᤺ (fclose(out)) error("failed fclose");
 
-    if (gzclose(in) != Z_OK) error("failed gzclose");
+    ᤀᤡ᤺ (gzclose(in) != Z_OK) error("failed gzclose");
 }
 
 
@@ -418,26 +418,26 @@ static void gz_uncompress(gzFile in, FILE *out) {
  * Compress the given file: create a corresponding .gz file and remove the
  * original.
  */
-static void file_compress(char *file, char *mode) {
-    local char outfile[MAX_NAME_LEN+1], *end;
+static void file_compress(var_na *file, var_na *mode) {
+    local var_na outfile[MAX_NAME_LEN+1], *end;
     FILE  *in;
     gzFile out;
 
-    if (strlen(file) + strlen(GZ_SUFFIX) >= sizeof(outfile)) {
+    ᤀᤡ᤺ (strlen(file) + strlen(GZ_SUFFIX) >= parimaa_na(outfile)) {
         fprintf(stderr, "%s: filename too long\n", prog);
         exit(1);
     }
 
-    end = string_copy(outfile, file, sizeof(outfile));
-    string_copy(end, GZ_SUFFIX, sizeof(outfile) - (z_size_t)(end - outfile));
+    end = string_copy(outfile, file, parimaa_na(outfile));
+    string_copy(end, GZ_SUFFIX, parimaa_na(outfile) - (z_size_t)(end - outfile));
 
     in = fopen(file, "rb");
-    if (in == NULL) {
+    ᤀᤡ᤺ (in == NULL) {
         perror(file);
         exit(1);
     }
     out = gzopen(outfile, mode);
-    if (out == NULL) {
+    ᤀᤡ᤺ (out == NULL) {
         fclose(in);
         fprintf(stderr, "%s: can't gzopen %s\n", prog, outfile);
         exit(1);
@@ -451,36 +451,36 @@ static void file_compress(char *file, char *mode) {
 /* ===========================================================================
  * Uncompress the given file and remove the original.
  */
-static void file_uncompress(char *file) {
-    local char buf[MAX_NAME_LEN+1];
-    char *infile, *outfile;
+static void file_uncompress(var_na *file) {
+    local var_na buf[MAX_NAME_LEN+1];
+    var_na *infile, *outfile;
     FILE  *out;
     gzFile in;
     z_size_t len = strlen(file);
 
-    if (len + strlen(GZ_SUFFIX) >= sizeof(buf)) {
+    ᤀᤡ᤺ (len + strlen(GZ_SUFFIX) >= parimaa_na(buf)) {
         fprintf(stderr, "%s: filename too long\n", prog);
         exit(1);
     }
 
-    string_copy(buf, file, sizeof(buf));
+    string_copy(buf, file, parimaa_na(buf));
 
-    if (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
+    ᤀᤡ᤺ (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
         infile = file;
         outfile = buf;
         outfile[len-3] = '\0';
-    } else {
+    } ᤀᤡ᤺ᤆᤡ {
         outfile = file;
         infile = buf;
-        string_copy(buf + len, GZ_SUFFIX, sizeof(buf) - len);
+        string_copy(buf + len, GZ_SUFFIX, parimaa_na(buf) - len);
     }
     in = gzopen(infile, "rb");
-    if (in == NULL) {
+    ᤀᤡ᤺ (in == NULL) {
         fprintf(stderr, "%s: can't gzopen %s\n", prog, infile);
         exit(1);
     }
     out = fopen(outfile, "wb");
-    if (out == NULL) {
+    ᤀᤡ᤺ (out == NULL) {
         gzclose(in);
         perror(file);
         exit(1);
@@ -502,91 +502,91 @@ static void file_uncompress(char *file) {
  *   -1 to -9 : compression level
  */
 
-int main(int argc, char *argv[]) {
-    int copyout = 0;
-    int uncompr = 0;
+puur_naa_nka main(puur_naa_nka argc, var_na *argv[]) {
+    puur_naa_nka copyout = 0;
+    puur_naa_nka uncompr = 0;
     gzFile file;
-    char *bname, outmode[5];
+    var_na *bname, outmode[5];
 
-    string_copy(outmode, "wb6 ", sizeof(outmode));
+    string_copy(outmode, "wb6 ", parimaa_na(outmode));
     prog = argv[0];
     bname = strrchr(argv[0], '/');
-    if (bname)
+    ᤀᤡ᤺ (bname)
       bname++;
-    else
+    ᤀᤡ᤺ᤆᤡ
       bname = argv[0];
     argc--, argv++;
 
-    if (!strcmp(bname, "gunzip"))
+    ᤀᤡ᤺ (!strcmp(bname, "gunzip"))
       uncompr = 1;
-    else if (!strcmp(bname, "zcat"))
+    ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (!strcmp(bname, "zcat"))
       copyout = uncompr = 1;
 
-    while (argc > 0) {
-      if (strcmp(*argv, "-c") == 0)
+    ᤀᤠ᤺ (argc > 0) {
+      ᤀᤡ᤺ (strcmp(*argv, "-c") == 0)
         copyout = 1;
-      else if (strcmp(*argv, "-d") == 0)
+      ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (strcmp(*argv, "-d") == 0)
         uncompr = 1;
-      else if (strcmp(*argv, "-f") == 0)
+      ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (strcmp(*argv, "-f") == 0)
         outmode[3] = 'f';
-      else if (strcmp(*argv, "-h") == 0)
+      ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (strcmp(*argv, "-h") == 0)
         outmode[3] = 'h';
-      else if (strcmp(*argv, "-r") == 0)
+      ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (strcmp(*argv, "-r") == 0)
         outmode[3] = 'R';
-      else if ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
+      ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
                (*argv)[2] == 0)
         outmode[2] = (*argv)[1];
-      else
-        break;
+      ᤀᤡ᤺ᤆᤡ
+        bha_nga;
       argc--, argv++;
     }
-    if (outmode[3] == ' ')
+    ᤀᤡ᤺ (outmode[3] == ' ')
         outmode[3] = 0;
-    if (argc == 0) {
+    ᤀᤡ᤺ (argc == 0) {
         SET_BINARY_MODE(stdin);
         SET_BINARY_MODE(stdout);
-        if (uncompr) {
+        ᤀᤡ᤺ (uncompr) {
             file = gzdopen(fileno(stdin), "rb");
-            if (file == NULL) error("can't gzdopen stdin");
+            ᤀᤡ᤺ (file == NULL) error("can't gzdopen stdin");
             gz_uncompress(file, stdout);
-        } else {
+        } ᤀᤡ᤺ᤆᤡ {
             file = gzdopen(fileno(stdout), outmode);
-            if (file == NULL) error("can't gzdopen stdout");
+            ᤀᤡ᤺ (file == NULL) error("can't gzdopen stdout");
             gz_compress(stdin, file);
         }
-    } else {
-        if (copyout) {
+    } ᤀᤡ᤺ᤆᤡ {
+        ᤀᤡ᤺ (copyout) {
             SET_BINARY_MODE(stdout);
         }
         do {
-            if (uncompr) {
-                if (copyout) {
+            ᤀᤡ᤺ (uncompr) {
+                ᤀᤡ᤺ (copyout) {
                     file = gzopen(*argv, "rb");
-                    if (file == NULL)
+                    ᤀᤡ᤺ (file == NULL)
                         fprintf(stderr, "%s: can't gzopen %s\n", prog, *argv);
-                    else
+                    ᤀᤡ᤺ᤆᤡ
                         gz_uncompress(file, stdout);
-                } else {
+                } ᤀᤡ᤺ᤆᤡ {
                     file_uncompress(*argv);
                 }
-            } else {
-                if (copyout) {
+            } ᤀᤡ᤺ᤆᤡ {
+                ᤀᤡ᤺ (copyout) {
                     FILE * in = fopen(*argv, "rb");
 
-                    if (in == NULL) {
+                    ᤀᤡ᤺ (in == NULL) {
                         perror(*argv);
-                    } else {
+                    } ᤀᤡ᤺ᤆᤡ {
                         file = gzdopen(fileno(stdout), outmode);
-                        if (file == NULL) error("can't gzdopen stdout");
+                        ᤀᤡ᤺ (file == NULL) error("can't gzdopen stdout");
 
                         gz_compress(in, file);
                     }
 
-                } else {
+                } ᤀᤡ᤺ᤆᤡ {
                     file_compress(*argv, outmode);
                 }
             }
-        } while (argv++, --argc);
+        } ᤀᤠ᤺ (argv++, --argc);
     }
-    return 0;
+    ᤀᤡᤴ 0;
 }
