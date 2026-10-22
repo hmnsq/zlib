@@ -15,64 +15,64 @@
 
 /* @(#) $Id$ */
 
-#ifndef _POSIX_C_SOURCE
+#جيڪڏهن_وصف_نه_ٿيل _POSIX_C_SOURCE
 #  define _POSIX_C_SOURCE 200112L
-#endif
+#جيڪڏهن_پورو
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#إذا defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
-#endif
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#جيڪڏهن_پورو
+#إذا defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
-#endif
+#جيڪڏهن_پورو
 
-#include "zlib.h"
-#include <stdio.h>
+#ضمن "zlib.h"
+#ضمن <stdio.h>
 
-#ifdef STDC
+#جيڪڏهن_وصف_ٿيل STDC
 #  include <string.h>
 #  include <stdlib.h>
-#endif
+#جيڪڏهن_پورو
 
-#ifdef USE_MMAP
+#جيڪڏهن_وصف_ٿيل USE_MMAP
 #  include <sys/types.h>
 #  include <sys/mman.h>
 #  include <sys/stat.h>
-#endif
+#جيڪڏهن_پورو
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#إذا defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  ifdef UNDER_CE
 #    include <stdlib.h>
 #  endif
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define سيٽ_ٻٽو_گهڻائي(file) setmode(fileno(file), O_ٻٽو)
+#وإلا
+#  define سيٽ_ٻٽو_گهڻائي(file)
+#جيڪڏهن_پورو
 
-#ifdef VMS
+#جيڪڏهن_وصف_ٿيل VMS
 #  define unlink delete
 #  define GZ_SUFFIX "-gz"
-#endif
-#if defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#جيڪڏهن_پورو
+#إذا defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define GZ_SUFFIX "/gz"
 #  ifndef __GNUC__
 #    define unlink remove
 #    define fileno(file) file->__file
 #  endif
-#endif
-#if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
+#جيڪڏهن_پورو
+#إذا defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
 #  include <unix.h> /* for fileno */
-#endif
+#جيڪڏهن_پورو
 
-#if !defined(Z_HAVE_UNISTD_H) && !defined(_LARGEFILE64_SOURCE)
-#ifndef WIN32 /* unlink already in stdio.h for WIN32 */
-  extern int unlink(const char *);
-#endif
-#endif
+#إذا !defined(Z_HAVE_UNISTD_H) && !defined(LARGEFILE64_ذريعو)
+#جيڪڏهن_وصف_نه_ٿيل WIN32 /* unlink already in stdio.h for WIN32 */
+  خارجي صحيح unlink(ثابت حرف *);
+#جيڪڏهن_پورو
+#جيڪڏهن_پورو
 
-#if defined(UNDER_CE)
+#إذا defined(UNDER_CE)
 #  include <windows.h>
 #  define perror(s) pwinerror(s)
 
@@ -86,70 +86,70 @@
    The strwinerror function does not change the current setting
    of GetLastError.  */
 
-static char *strwinerror (error)
+ساكن حرف *strwinerror (error)
      DWORD error;
 {
-    static char buf[1024];
+    ساكن حرف buf[1024];
 
     wchar_t *msgbuf;
-    DWORD lasterr = GetLastError();
-    DWORD chars = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM
-        | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-        NULL,
+    DWORD lasterr = Get_آخري_Error();
+    DWORD chars = Format_پيغام(FORMAT_پيغام_FROM_SYSTEM
+        | FORMAT_پيغام_ALLOCATE_بفر,
+        عدم,
         error,
         0, /* Default language */
         (LPVOID)&msgbuf,
         0,
-        NULL);
-    if (chars != 0) {
+        عدم);
+    إذا (chars != 0) {
         /* If there is an \r\n appended, zap it.  */
-        if (chars >= 2
+        إذا (chars >= 2
             && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n') {
             chars -= 2;
             msgbuf[chars] = 0;
         }
 
-        if (chars > sizeof (buf) - 1) {
-            chars = sizeof (buf) - 1;
+        إذا (chars > حجم (buf) - 1) {
+            chars = حجم (buf) - 1;
             msgbuf[chars] = 0;
         }
 
         wcstombs(buf, msgbuf, chars + 1);
         LocalFree(msgbuf);
     }
-    else {
+    وإلا {
         sprintf(buf, "unknown win32 error (%lu)", error);
     }
 
-    SetLastError(lasterr);
-    return buf;
+    سيٽ_آخري_Error(lasterr);
+    أرجع buf;
 }
 
-static void pwinerror (s)
-    const char *s;
+ساكن فراغ pwinerror (s)
+    ثابت حرف *s;
 {
-    if (s && *s)
-        fprintf(stderr, "%s: %s\n", s, strwinerror(GetLastError ()));
-    else
-        fprintf(stderr, "%s\n", strwinerror(GetLastError ()));
+    إذا (s && *s)
+        fprintf(stderr, "%s: %s\n", s, strwinerror(Get_آخري_Error ()));
+    وإلا
+        fprintf(stderr, "%s\n", strwinerror(Get_آخري_Error ()));
 }
 
-#endif /* UNDER_CE */
+#جيڪڏهن_پورو /* UNDER_CE */
 
-#ifndef GZ_SUFFIX
+#جيڪڏهن_وصف_نه_ٿيل GZ_SUFFIX
 #  define GZ_SUFFIX ".gz"
-#endif
-#define SUFFIX_LEN (sizeof(GZ_SUFFIX)-1)
+#جيڪڏهن_پورو
+#وصف_ڪريو SUFFIX_LEN (حجم(GZ_SUFFIX)-1)
 
-#define BUFLEN      16384
-#define MAX_NAME_LEN 1024
+#وصف_ڪريو BUFLEN      16384
+#وصف_ڪريو MAX_NAME_LEN 1024
 
-#ifdef MAXSEG_64K
-#  define local static
+#جيڪڏهن_وصف_ٿيل MAXSEG_64K
+#  define local ساكن
    /* Needed for systems with limitation on stack size. */
-#else
+#وإلا
 #  define local
-#endif
+#جيڪڏهن_پورو
 
 /* ===========================================================================
  * Safe string copy. Copy up to len bytes from src to dst, if src terminates
@@ -157,260 +157,260 @@ static void pwinerror (s)
  * a null in dst[len-1], cutting src short. Return a pointer to the terminating
  * null. If len is zero, nothing is written to *dst and NULL is returned.
  */
-static char *string_copy(char *dst, char const *src, z_size_t len) {
-    if (len == 0)
-        return NULL;
-    while (--len) {
+ساكن حرف *string_copy(حرف *dst, حرف ثابت *src, z_سائيز_t len) {
+    إذا (len == 0)
+        أرجع عدم;
+    طالما (--len) {
         *dst = *src++;
-        if (*dst == 0)
-            return dst;
+        إذا (*dst == 0)
+            أرجع dst;
         dst++;
     }
     *dst = 0;
-    return dst;
+    أرجع dst;
 }
 
-#ifdef Z_SOLO
+#جيڪڏهن_وصف_ٿيل Z_SOLO
 /* for Z_SOLO, create simplified gz* functions using deflate and inflate */
 
-#if defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
+#إذا defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
 #  include <unistd.h>       /* for unlink() */
-#endif
+#جيڪڏهن_پورو
 
-static void *myalloc(void *q, unsigned n, unsigned m) {
-    (void)q;
-    return calloc(n, m);
+ساكن فراغ *myalloc(فراغ *q, بنانشان n, بنانشان m) {
+    (فراغ)q;
+    أرجع صفر_يادگيري_ڏيو(n, m);
 }
 
-static void myfree(void *q, void *p) {
-    (void)q;
-    free(p);
+ساكن فراغ myfree(فراغ *q, فراغ *p) {
+    (فراغ)q;
+    حرر(p);
 }
 
-typedef struct gzFile_s {
+تعريفنوع بنية gzFile_s {
     FILE *file;
-    int write;
-    int err;
-    char *msg;
-    z_stream strm;
+    صحيح اكتب;
+    صحيح err;
+    حرف *نياپو;
+    z_وهڪرو strm;
 } *gzFile;
 
-static gzFile gz_open(const char *path, int fd, const char *mode) {
+ساكن gzFile gz_open(ثابت حرف *رستو, صحيح fd, ثابت حرف *گهڻائي) {
     gzFile gz;
-    int ret;
+    صحيح ret;
 
-    gz = malloc(sizeof(struct gzFile_s));
-    if (gz == NULL)
-        return NULL;
-    gz->write = strchr(mode, 'w') != NULL;
+    gz = يادگيري_ڏيو(حجم(بنية gzFile_s));
+    إذا (gz == عدم)
+        أرجع عدم;
+    gz->اكتب = strchr(گهڻائي, 'w') != عدم;
     gz->strm.zalloc = myalloc;
     gz->strm.zfree = myfree;
     gz->strm.opaque = Z_NULL;
-    if (gz->write)
+    إذا (gz->اكتب)
         ret = deflateInit2(&(gz->strm), -1, 8, 15 + 16, 8, 0);
-    else {
-        gz->strm.next_in = 0;
-        gz->strm.avail_in = Z_NULL;
+    وإلا {
+        gz->strm.ايندڙ_اندريون = 0;
+        gz->strm.avail_اندريون = Z_NULL;
         ret = inflateInit2(&(gz->strm), 15 + 16);
     }
-    if (ret != Z_OK) {
-        free(gz);
-        return NULL;
+    إذا (ret != Z_OK) {
+        حرر(gz);
+        أرجع عدم;
     }
-    gz->file = path == NULL ? fdopen(fd, gz->write ? "wb" : "rb") :
-                              fopen(path, gz->write ? "wb" : "rb");
-    if (gz->file == NULL) {
-        gz->write ? deflateEnd(&(gz->strm)) : inflateEnd(&(gz->strm));
-        free(gz);
-        return NULL;
+    gz->file = رستو == عدم ? fdopen(fd, gz->اكتب ? "wb" : "rb") :
+                              fopen(رستو, gz->اكتب ? "wb" : "rb");
+    إذا (gz->file == عدم) {
+        gz->اكتب ? deflate_پڇاڙي(&(gz->strm)) : inflate_پڇاڙي(&(gz->strm));
+        حرر(gz);
+        أرجع عدم;
     }
     gz->err = 0;
-    gz->msg = "";
-    return gz;
+    gz->نياپو = "";
+    أرجع gz;
 }
 
-static gzFile gzopen(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+ساكن gzFile gzopen(ثابت حرف *رستو, ثابت حرف *گهڻائي) {
+    أرجع gz_open(رستو, -1, گهڻائي);
 }
 
-static gzFile gzdopen(int fd, const char *mode) {
-    return gz_open(NULL, fd, mode);
+ساكن gzFile gzdopen(صحيح fd, ثابت حرف *گهڻائي) {
+    أرجع gz_open(عدم, fd, گهڻائي);
 }
 
-static int gzwrite(gzFile gz, const void *buf, unsigned len) {
-    z_stream *strm;
-    unsigned char out[BUFLEN];
+ساكن صحيح gzwrite(gzFile gz, ثابت فراغ *buf, بنانشان len) {
+    z_وهڪرو *strm;
+    بنانشان حرف ٻاهريون[BUFLEN];
 
-    if (gz == NULL || !gz->write)
-        return 0;
+    إذا (gz == عدم || !gz->اكتب)
+        أرجع 0;
     strm = &(gz->strm);
-    strm->next_in = (void *)buf;
-    strm->avail_in = len;
-    do {
-        strm->next_out = out;
-        strm->avail_out = BUFLEN;
-        (void)deflate(strm, Z_NO_FLUSH);
-        fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-    } while (strm->avail_out == 0);
-    return (int)len;
+    strm->ايندڙ_اندريون = (فراغ *)buf;
+    strm->avail_اندريون = len;
+    افعل {
+        strm->ايندڙ_ٻاهريون = ٻاهريون;
+        strm->avail_ٻاهريون = BUFLEN;
+        (فراغ)deflate(strm, Z_NO_FLUSH);
+        fwrite(ٻاهريون, 1, BUFLEN - strm->avail_ٻاهريون, gz->file);
+    } طالما (strm->avail_ٻاهريون == 0);
+    أرجع (صحيح)len;
 }
 
-static int gzread(gzFile gz, void *buf, unsigned len) {
-    int ret;
-    unsigned got;
-    unsigned char in[1];
-    z_stream *strm;
+ساكن صحيح gzread(gzFile gz, فراغ *buf, بنانشان len) {
+    صحيح ret;
+    بنانشان got;
+    بنانشان حرف اندريون[1];
+    z_وهڪرو *strm;
 
-    if (gz == NULL || gz->write)
-        return 0;
-    if (gz->err)
-        return 0;
+    إذا (gz == عدم || gz->اكتب)
+        أرجع 0;
+    إذا (gz->err)
+        أرجع 0;
     strm = &(gz->strm);
-    strm->next_out = (void *)buf;
-    strm->avail_out = len;
-    do {
-        got = (unsigned)fread(in, 1, 1, gz->file);
-        if (got == 0)
-            break;
-        strm->next_in = in;
-        strm->avail_in = 1;
+    strm->ايندڙ_ٻاهريون = (فراغ *)buf;
+    strm->avail_ٻاهريون = len;
+    افعل {
+        got = (بنانشان)fread(اندريون, 1, 1, gz->file);
+        إذا (got == 0)
+            اكسر;
+        strm->ايندڙ_اندريون = اندريون;
+        strm->avail_اندريون = 1;
         ret = inflate(strm, Z_NO_FLUSH);
-        if (ret == Z_DATA_ERROR) {
-            gz->err = Z_DATA_ERROR;
-            gz->msg = strm->msg;
-            return 0;
+        إذا (ret == Z_معلومات_ERROR) {
+            gz->err = Z_معلومات_ERROR;
+            gz->نياپو = strm->نياپو;
+            أرجع 0;
         }
-        if (ret == Z_STREAM_END)
+        إذا (ret == Z_وهڪرو_پڇاڙي)
             inflateReset(strm);
-    } while (strm->avail_out);
-    return (int)(len - strm->avail_out);
+    } طالما (strm->avail_ٻاهريون);
+    أرجع (صحيح)(len - strm->avail_ٻاهريون);
 }
 
-static int gzclose(gzFile gz) {
-    z_stream *strm;
-    unsigned char out[BUFLEN];
+ساكن صحيح gzclose(gzFile gz) {
+    z_وهڪرو *strm;
+    بنانشان حرف ٻاهريون[BUFLEN];
 
-    if (gz == NULL)
-        return Z_STREAM_ERROR;
+    إذا (gz == عدم)
+        أرجع Z_وهڪرو_ERROR;
     strm = &(gz->strm);
-    if (gz->write) {
-        strm->next_in = Z_NULL;
-        strm->avail_in = 0;
-        do {
-            strm->next_out = out;
-            strm->avail_out = BUFLEN;
-            (void)deflate(strm, Z_FINISH);
-            fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-        } while (strm->avail_out == 0);
-        deflateEnd(strm);
+    إذا (gz->اكتب) {
+        strm->ايندڙ_اندريون = Z_NULL;
+        strm->avail_اندريون = 0;
+        افعل {
+            strm->ايندڙ_ٻاهريون = ٻاهريون;
+            strm->avail_ٻاهريون = BUFLEN;
+            (فراغ)deflate(strm, Z_پڄاڻي);
+            fwrite(ٻاهريون, 1, BUFLEN - strm->avail_ٻاهريون, gz->file);
+        } طالما (strm->avail_ٻاهريون == 0);
+        deflate_پڇاڙي(strm);
     }
-    else
-        inflateEnd(strm);
+    وإلا
+        inflate_پڇاڙي(strm);
     fclose(gz->file);
-    free(gz);
-    return Z_OK;
+    حرر(gz);
+    أرجع Z_OK;
 }
 
-static const char *gzerror(gzFile gz, int *err) {
+ساكن ثابت حرف *gzerror(gzFile gz, صحيح *err) {
     *err = gz->err;
-    return gz->msg;
+    أرجع gz->نياپو;
 }
 
-#endif
+#جيڪڏهن_پورو
 
-static char *prog;
+ساكن حرف *prog;
 
 /* ===========================================================================
  * Display error message and exit
  */
-static void error(const char *msg) {
-    fprintf(stderr, "%s: %s\n", prog, msg);
-    exit(1);
+ساكن فراغ error(ثابت حرف *نياپو) {
+    fprintf(stderr, "%s: %s\n", prog, نياپو);
+    ٻاهر_نڪرو(1);
 }
 
-#ifdef USE_MMAP /* MMAP version, Miguel Albrecht <malbrech@eso.org> */
+#جيڪڏهن_وصف_ٿيل USE_MMAP /* MMAP version, Miguel Albrecht <malbrech@eso.org> */
 
 /* Try compressing the input file at once using mmap. Return Z_OK if
  * success, Z_ERRNO otherwise.
  */
-static int gz_compress_mmap(FILE *in, gzFile out) {
-    int len;
-    int err;
-    int ifd = fileno(in);
+ساكن صحيح gz_compress_mmap(FILE *اندريون, gzFile ٻاهريون) {
+    صحيح len;
+    صحيح err;
+    صحيح ifd = fileno(اندريون);
     caddr_t buf;    /* mmap'ed buffer for the entire input file */
     off_t buf_len;  /* length of the input file */
-    struct stat sb;
+    بنية stat sb;
 
     /* Determine the size of the file, needed for mmap: */
-    if (fstat(ifd, &sb) < 0) return Z_ERRNO;
+    إذا (fstat(ifd, &sb) < 0) أرجع Z_ERRNO;
     buf_len = sb.st_size;
-    if (buf_len <= 0) return Z_ERRNO;
+    إذا (buf_len <= 0) أرجع Z_ERRNO;
 
     /* Now do the actual mmap: */
     buf = mmap((caddr_t) 0, buf_len, PROT_READ, MAP_SHARED, ifd, (off_t)0);
-    if (buf == (caddr_t)(-1)) return Z_ERRNO;
+    إذا (buf == (caddr_t)(-1)) أرجع Z_ERRNO;
 
     /* Compress the whole file at once: */
-    len = gzwrite(out, (char *)buf, (unsigned)buf_len);
+    len = gzwrite(ٻاهريون, (حرف *)buf, (بنانشان)buf_len);
 
-    if (len != (int)buf_len) error(gzerror(out, &err));
+    إذا (len != (صحيح)buf_len) error(gzerror(ٻاهريون, &err));
 
     munmap(buf, buf_len);
-    fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
-    return Z_OK;
+    fclose(اندريون);
+    إذا (gzclose(ٻاهريون) != Z_OK) error("failed gzclose");
+    أرجع Z_OK;
 }
-#endif /* USE_MMAP */
+#جيڪڏهن_پورو /* USE_MMAP */
 
 /* ===========================================================================
  * Compress input to output then close both files.
  */
 
-static void gz_compress(FILE *in, gzFile out) {
-    local char buf[BUFLEN];
-    int len;
-    int err;
+ساكن فراغ gz_compress(FILE *اندريون, gzFile ٻاهريون) {
+    local حرف buf[BUFLEN];
+    صحيح len;
+    صحيح err;
 
-#ifdef USE_MMAP
+#جيڪڏهن_وصف_ٿيل USE_MMAP
     /* Try first compressing with mmap. If mmap fails (minigzip used in a
      * pipe), use the normal fread loop.
      */
-    if (gz_compress_mmap(in, out) == Z_OK) return;
-#endif
-    for (;;) {
-        len = (int)fread(buf, 1, sizeof(buf), in);
-        if (ferror(in)) {
+    إذا (gz_compress_mmap(اندريون, ٻاهريون) == Z_OK) أرجع;
+#جيڪڏهن_پورو
+    لكل (;;) {
+        len = (صحيح)fread(buf, 1, حجم(buf), اندريون);
+        إذا (ferror(اندريون)) {
             perror("fread");
-            exit(1);
+            ٻاهر_نڪرو(1);
         }
-        if (len == 0) break;
+        إذا (len == 0) اكسر;
 
-        if (gzwrite(out, buf, (unsigned)len) != len) error(gzerror(out, &err));
+        إذا (gzwrite(ٻاهريون, buf, (بنانشان)len) != len) error(gzerror(ٻاهريون, &err));
     }
-    fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
+    fclose(اندريون);
+    إذا (gzclose(ٻاهريون) != Z_OK) error("failed gzclose");
 }
 
 /* ===========================================================================
  * Uncompress input to output then close both files.
  */
-static void gz_uncompress(gzFile in, FILE *out) {
-    local char buf[BUFLEN];
-    int len;
-    int err;
+ساكن فراغ gz_uncompress(gzFile اندريون, FILE *ٻاهريون) {
+    local حرف buf[BUFLEN];
+    صحيح len;
+    صحيح err;
 
-    for (;;) {
-        len = gzread(in, buf, sizeof(buf));
-        if (len < 0) error (gzerror(in, &err));
-        if (len == 0) break;
+    لكل (;;) {
+        len = gzread(اندريون, buf, حجم(buf));
+        إذا (len < 0) error (gzerror(اندريون, &err));
+        إذا (len == 0) اكسر;
 
-        if ((int)fwrite(buf, 1, (unsigned)len, out) != len) {
+        إذا ((صحيح)fwrite(buf, 1, (بنانشان)len, ٻاهريون) != len) {
             error("failed fwrite");
         }
     }
-    if (fclose(out)) error("failed fclose");
+    إذا (fclose(ٻاهريون)) error("failed fclose");
 
-    if (gzclose(in) != Z_OK) error("failed gzclose");
+    إذا (gzclose(اندريون) != Z_OK) error("failed gzclose");
 }
 
 
@@ -418,31 +418,31 @@ static void gz_uncompress(gzFile in, FILE *out) {
  * Compress the given file: create a corresponding .gz file and remove the
  * original.
  */
-static void file_compress(char *file, char *mode) {
-    local char outfile[MAX_NAME_LEN+1], *end;
-    FILE  *in;
-    gzFile out;
+ساكن فراغ file_compress(حرف *file, حرف *گهڻائي) {
+    local حرف outfile[MAX_NAME_LEN+1], *پڇاڙي;
+    FILE  *اندريون;
+    gzFile ٻاهريون;
 
-    if (strlen(file) + strlen(GZ_SUFFIX) >= sizeof(outfile)) {
+    إذا (لڙي_ڊيگهه(file) + لڙي_ڊيگهه(GZ_SUFFIX) >= حجم(outfile)) {
         fprintf(stderr, "%s: filename too long\n", prog);
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
 
-    end = string_copy(outfile, file, sizeof(outfile));
-    string_copy(end, GZ_SUFFIX, sizeof(outfile) - (z_size_t)(end - outfile));
+    پڇاڙي = string_copy(outfile, file, حجم(outfile));
+    string_copy(پڇاڙي, GZ_SUFFIX, حجم(outfile) - (z_سائيز_t)(پڇاڙي - outfile));
 
-    in = fopen(file, "rb");
-    if (in == NULL) {
+    اندريون = fopen(file, "rb");
+    إذا (اندريون == عدم) {
         perror(file);
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    out = gzopen(outfile, mode);
-    if (out == NULL) {
-        fclose(in);
+    ٻاهريون = gzopen(outfile, گهڻائي);
+    إذا (ٻاهريون == عدم) {
+        fclose(اندريون);
         fprintf(stderr, "%s: can't gzopen %s\n", prog, outfile);
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    gz_compress(in, out);
+    gz_compress(اندريون, ٻاهريون);
 
     unlink(file);
 }
@@ -451,42 +451,42 @@ static void file_compress(char *file, char *mode) {
 /* ===========================================================================
  * Uncompress the given file and remove the original.
  */
-static void file_uncompress(char *file) {
-    local char buf[MAX_NAME_LEN+1];
-    char *infile, *outfile;
-    FILE  *out;
-    gzFile in;
-    z_size_t len = strlen(file);
+ساكن فراغ file_uncompress(حرف *file) {
+    local حرف buf[MAX_NAME_LEN+1];
+    حرف *infile, *outfile;
+    FILE  *ٻاهريون;
+    gzFile اندريون;
+    z_سائيز_t len = لڙي_ڊيگهه(file);
 
-    if (len + strlen(GZ_SUFFIX) >= sizeof(buf)) {
+    إذا (len + لڙي_ڊيگهه(GZ_SUFFIX) >= حجم(buf)) {
         fprintf(stderr, "%s: filename too long\n", prog);
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
 
-    string_copy(buf, file, sizeof(buf));
+    string_copy(buf, file, حجم(buf));
 
-    if (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
+    إذا (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
         infile = file;
         outfile = buf;
         outfile[len-3] = '\0';
-    } else {
+    } وإلا {
         outfile = file;
         infile = buf;
-        string_copy(buf + len, GZ_SUFFIX, sizeof(buf) - len);
+        string_copy(buf + len, GZ_SUFFIX, حجم(buf) - len);
     }
-    in = gzopen(infile, "rb");
-    if (in == NULL) {
+    اندريون = gzopen(infile, "rb");
+    إذا (اندريون == عدم) {
         fprintf(stderr, "%s: can't gzopen %s\n", prog, infile);
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    out = fopen(outfile, "wb");
-    if (out == NULL) {
-        gzclose(in);
+    ٻاهريون = fopen(outfile, "wb");
+    إذا (ٻاهريون == عدم) {
+        gzclose(اندريون);
         perror(file);
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
 
-    gz_uncompress(in, out);
+    gz_uncompress(اندريون, ٻاهريون);
 
     unlink(infile);
 }
@@ -502,91 +502,91 @@ static void file_uncompress(char *file) {
  *   -1 to -9 : compression level
  */
 
-int main(int argc, char *argv[]) {
-    int copyout = 0;
-    int uncompr = 0;
+صحيح مکيه(صحيح argc, حرف *argv[]) {
+    صحيح copyout = 0;
+    صحيح uncompr = 0;
     gzFile file;
-    char *bname, outmode[5];
+    حرف *bname, outmode[5];
 
-    string_copy(outmode, "wb6 ", sizeof(outmode));
+    string_copy(outmode, "wb6 ", حجم(outmode));
     prog = argv[0];
     bname = strrchr(argv[0], '/');
-    if (bname)
+    إذا (bname)
       bname++;
-    else
+    وإلا
       bname = argv[0];
     argc--, argv++;
 
-    if (!strcmp(bname, "gunzip"))
+    إذا (!strcmp(bname, "gunzip"))
       uncompr = 1;
-    else if (!strcmp(bname, "zcat"))
+    وإلا إذا (!strcmp(bname, "zcat"))
       copyout = uncompr = 1;
 
-    while (argc > 0) {
-      if (strcmp(*argv, "-c") == 0)
+    طالما (argc > 0) {
+      إذا (strcmp(*argv, "-c") == 0)
         copyout = 1;
-      else if (strcmp(*argv, "-d") == 0)
+      وإلا إذا (strcmp(*argv, "-d") == 0)
         uncompr = 1;
-      else if (strcmp(*argv, "-f") == 0)
+      وإلا إذا (strcmp(*argv, "-f") == 0)
         outmode[3] = 'f';
-      else if (strcmp(*argv, "-h") == 0)
+      وإلا إذا (strcmp(*argv, "-h") == 0)
         outmode[3] = 'h';
-      else if (strcmp(*argv, "-r") == 0)
+      وإلا إذا (strcmp(*argv, "-r") == 0)
         outmode[3] = 'R';
-      else if ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
+      وإلا إذا ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
                (*argv)[2] == 0)
         outmode[2] = (*argv)[1];
-      else
-        break;
+      وإلا
+        اكسر;
       argc--, argv++;
     }
-    if (outmode[3] == ' ')
+    إذا (outmode[3] == ' ')
         outmode[3] = 0;
-    if (argc == 0) {
-        SET_BINARY_MODE(stdin);
-        SET_BINARY_MODE(stdout);
-        if (uncompr) {
+    إذا (argc == 0) {
+        سيٽ_ٻٽو_گهڻائي(stdin);
+        سيٽ_ٻٽو_گهڻائي(stdout);
+        إذا (uncompr) {
             file = gzdopen(fileno(stdin), "rb");
-            if (file == NULL) error("can't gzdopen stdin");
+            إذا (file == عدم) error("can't gzdopen stdin");
             gz_uncompress(file, stdout);
-        } else {
+        } وإلا {
             file = gzdopen(fileno(stdout), outmode);
-            if (file == NULL) error("can't gzdopen stdout");
+            إذا (file == عدم) error("can't gzdopen stdout");
             gz_compress(stdin, file);
         }
-    } else {
-        if (copyout) {
-            SET_BINARY_MODE(stdout);
+    } وإلا {
+        إذا (copyout) {
+            سيٽ_ٻٽو_گهڻائي(stdout);
         }
-        do {
-            if (uncompr) {
-                if (copyout) {
+        افعل {
+            إذا (uncompr) {
+                إذا (copyout) {
                     file = gzopen(*argv, "rb");
-                    if (file == NULL)
+                    إذا (file == عدم)
                         fprintf(stderr, "%s: can't gzopen %s\n", prog, *argv);
-                    else
+                    وإلا
                         gz_uncompress(file, stdout);
-                } else {
+                } وإلا {
                     file_uncompress(*argv);
                 }
-            } else {
-                if (copyout) {
-                    FILE * in = fopen(*argv, "rb");
+            } وإلا {
+                إذا (copyout) {
+                    FILE * اندريون = fopen(*argv, "rb");
 
-                    if (in == NULL) {
+                    إذا (اندريون == عدم) {
                         perror(*argv);
-                    } else {
+                    } وإلا {
                         file = gzdopen(fileno(stdout), outmode);
-                        if (file == NULL) error("can't gzdopen stdout");
+                        إذا (file == عدم) error("can't gzdopen stdout");
 
-                        gz_compress(in, file);
+                        gz_compress(اندريون, file);
                     }
 
-                } else {
+                } وإلا {
                     file_compress(*argv, outmode);
                 }
             }
-        } while (argv++, --argc);
+        } طالما (argv++, --argc);
     }
-    return 0;
+    أرجع 0;
 }

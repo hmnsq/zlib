@@ -5,488 +5,488 @@
 
 /* @(#) $Id$ */
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#إذا defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
-#endif
+#جيڪڏهن_پورو
 
-#include "zlib.h"
-#include <stdio.h>
+#ضمن "zlib.h"
+#ضمن <stdio.h>
 
-#ifdef STDC
+#جيڪڏهن_وصف_ٿيل STDC
 #  include <string.h>
 #  include <stdlib.h>
-#endif
+#جيڪڏهن_پورو
 
-#if defined(VMS)
+#إذا defined(VMS)
 #  define TESTFILE "foo-gz"
-#elif defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#وإلاإذا defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define TESTFILE "foo/gz"
-#else
+#وإلا
 #  define TESTFILE "foo.gz"
-#endif
+#جيڪڏهن_پورو
 
-#define CHECK_ERR(err, msg) { \
-    if (err != Z_OK) { \
-        fprintf(stderr, "%s error: %d\n", msg, err); \
-        exit(1); \
+#وصف_ڪريو CHECK_ERR(err, نياپو) { \
+    إذا (err != Z_OK) { \
+        fprintf(stderr, "%s error: %d\n", نياپو, err); \
+        ٻاهر_نڪرو(1); \
     } \
 }
 
-static z_const char hello[] = "hello, hello!";
+ساكن z_const حرف hello[] = "hello, hello!";
 /* "hello world" would be more standard, but the repeated "hello"
  * stresses the compression code better, sorry...
  */
 
-static const char dictionary[] = "hello";
-static uLong dictId;    /* Adler32 value of the dictionary */
+ساكن ثابت حرف dictionary[] = "hello";
+ساكن uLong dictId;    /* Adler32 value of the dictionary */
 
-#ifdef Z_SOLO
+#جيڪڏهن_وصف_ٿيل Z_SOLO
 
-static void *myalloc(void *q, unsigned n, unsigned m) {
-    (void)q;
-    return calloc(n, m);
+ساكن فراغ *myalloc(فراغ *q, بنانشان n, بنانشان m) {
+    (فراغ)q;
+    أرجع صفر_يادگيري_ڏيو(n, m);
 }
 
-static void myfree(void *q, void *p) {
-    (void)q;
-    free(p);
+ساكن فراغ myfree(فراغ *q, فراغ *p) {
+    (فراغ)q;
+    حرر(p);
 }
 
-static alloc_func zalloc = myalloc;
-static free_func zfree = myfree;
+ساكن alloc_func zalloc = myalloc;
+ساكن free_func zfree = myfree;
 
-#else /* !Z_SOLO */
+#وإلا /* !Z_SOLO */
 
-static alloc_func zalloc = (alloc_func)0;
-static free_func zfree = (free_func)0;
+ساكن alloc_func zalloc = (alloc_func)0;
+ساكن free_func zfree = (free_func)0;
 
 /* ===========================================================================
  * Test compress() and uncompress()
  */
-static void test_compress(Byte *compr, uLong comprLen, Byte *uncompr,
+ساكن فراغ test_compress(Byte *compr, uLong comprLen, Byte *uncompr,
                    uLong uncomprLen) {
-    int err;
-    uLong len = (uLong)strlen(hello)+1;
+    صحيح err;
+    uLong len = (uLong)لڙي_ڊيگهه(hello)+1;
 
-    err = compress(compr, &comprLen, (const Bytef*)hello, len);
+    err = compress(compr, &comprLen, (ثابت Bytef*)hello, len);
     CHECK_ERR(err, "compress");
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((حرف*)uncompr, "garbage");
 
     err = uncompress(uncompr, &uncomprLen, compr, comprLen);
     CHECK_ERR(err, "uncompress");
 
-    if (strcmp((char*)uncompr, hello)) {
+    إذا (strcmp((حرف*)uncompr, hello)) {
         fprintf(stderr, "bad uncompress\n");
-        exit(1);
-    } else {
-        printf("uncompress(): %s\n", (char *)uncompr);
+        ٻاهر_نڪرو(1);
+    } وإلا {
+        لکو("uncompress(): %s\n", (حرف *)uncompr);
     }
 }
 
 /* ===========================================================================
  * Test read/write of .gz files
  */
-static void test_gzio(const char *fname, Byte *uncompr, uLong uncomprLen) {
-#ifdef NO_GZCOMPRESS
+ساكن فراغ test_gzio(ثابت حرف *fname, Byte *uncompr, uLong uncomprLen) {
+#جيڪڏهن_وصف_ٿيل NO_GZCOMPRESS
     fprintf(stderr, "NO_GZCOMPRESS -- gz* functions cannot compress\n");
-#else
-    int err;
-    int len = (int)strlen(hello)+1;
+#وإلا
+    صحيح err;
+    صحيح len = (صحيح)لڙي_ڊيگهه(hello)+1;
     gzFile file;
     z_off_t pos;
 
     file = gzopen(fname, "wb");
-    if (file == NULL) {
+    إذا (file == عدم) {
         fprintf(stderr, "gzopen error\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
     gzputc(file, 'h');
-    if (gzputs(file, "ello") != 4) {
+    إذا (gzputs(file, "ello") != 4) {
         fprintf(stderr, "gzputs err: %s\n", gzerror(file, &err));
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    if (gzprintf(file, ", %s!", "hello") != 8) {
+    إذا (gzprintf(file, ", %s!", "hello") != 8) {
         fprintf(stderr, "gzprintf err: %s\n", gzerror(file, &err));
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
     gzseek(file, 1L, SEEK_CUR); /* add one zero byte */
     gzclose(file);
 
     file = gzopen(fname, "rb");
-    if (file == NULL) {
+    إذا (file == عدم) {
         fprintf(stderr, "gzopen error\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    strcpy((char*)uncompr, "garbage");
+    strcpy((حرف*)uncompr, "garbage");
 
-    if (gzread(file, uncompr, (unsigned)uncomprLen) != len) {
+    إذا (gzread(file, uncompr, (بنانشان)uncomprLen) != len) {
         fprintf(stderr, "gzread err: %s\n", gzerror(file, &err));
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    if (strcmp((char*)uncompr, hello)) {
-        fprintf(stderr, "bad gzread: %s\n", (char*)uncompr);
-        exit(1);
-    } else {
-        printf("gzread(): %s\n", (char*)uncompr);
+    إذا (strcmp((حرف*)uncompr, hello)) {
+        fprintf(stderr, "bad gzread: %s\n", (حرف*)uncompr);
+        ٻاهر_نڪرو(1);
+    } وإلا {
+        لکو("gzread(): %s\n", (حرف*)uncompr);
     }
 
     pos = gzseek(file, -8L, SEEK_CUR);
-    if (pos != 6 || gztell(file) != pos) {
+    إذا (pos != 6 || gztell(file) != pos) {
         fprintf(stderr, "gzseek error, pos=%ld, gztell=%ld\n",
-                (long)pos, (long)gztell(file));
-        exit(1);
+                (ڊگهو)pos, (ڊگهو)gztell(file));
+        ٻاهر_نڪرو(1);
     }
 
-    if (gzgetc(file) != ' ') {
+    إذا (gzgetc(file) != ' ') {
         fprintf(stderr, "gzgetc error\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
 
-    if (gzungetc(' ', file) != ' ') {
+    إذا (gzungetc(' ', file) != ' ') {
         fprintf(stderr, "gzungetc error\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
 
-    gzgets(file, (char*)uncompr, (int)uncomprLen);
-    if (strlen((char*)uncompr) != 7) { /* " hello!" */
+    gzgets(file, (حرف*)uncompr, (صحيح)uncomprLen);
+    إذا (لڙي_ڊيگهه((حرف*)uncompr) != 7) { /* " hello!" */
         fprintf(stderr, "gzgets err after gzseek: %s\n", gzerror(file, &err));
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    if (strcmp((char*)uncompr, hello + 6)) {
+    إذا (strcmp((حرف*)uncompr, hello + 6)) {
         fprintf(stderr, "bad gzgets after gzseek\n");
-        exit(1);
-    } else {
-        printf("gzgets() after gzseek: %s\n", (char*)uncompr);
+        ٻاهر_نڪرو(1);
+    } وإلا {
+        لکو("gzgets() after gzseek: %s\n", (حرف*)uncompr);
     }
 
     gzclose(file);
-#endif
+#جيڪڏهن_پورو
 }
 
-#endif /* Z_SOLO */
+#جيڪڏهن_پورو /* Z_SOLO */
 
 /* ===========================================================================
  * Test deflate() with small buffers
  */
-static void test_deflate(Byte *compr, uLong comprLen) {
-    z_stream c_stream; /* compression stream */
-    int err;
-    uLong len = (uLong)strlen(hello)+1;
+ساكن فراغ test_deflate(Byte *compr, uLong comprLen) {
+    z_وهڪرو c_وهڪرو; /* compression stream */
+    صحيح err;
+    uLong len = (uLong)لڙي_ڊيگهه(hello)+1;
 
-    c_stream.zalloc = zalloc;
-    c_stream.zfree = zfree;
-    c_stream.opaque = (voidpf)0;
+    c_وهڪرو.zalloc = zalloc;
+    c_وهڪرو.zfree = zfree;
+    c_وهڪرو.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
+    err = deflateInit(&c_وهڪرو, Z_DEFAULT_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_in  = (z_const unsigned char *)hello;
-    c_stream.next_out = compr;
+    c_وهڪرو.ايندڙ_اندريون  = (z_const بنانشان حرف *)hello;
+    c_وهڪرو.ايندڙ_ٻاهريون = compr;
 
-    while (c_stream.total_in != len && c_stream.total_out < comprLen) {
-        c_stream.avail_in = c_stream.avail_out = 1; /* force small buffers */
-        err = deflate(&c_stream, Z_NO_FLUSH);
+    طالما (c_وهڪرو.ڪل_اندريون != len && c_وهڪرو.ڪل_ٻاهريون < comprLen) {
+        c_وهڪرو.avail_اندريون = c_وهڪرو.avail_ٻاهريون = 1; /* force small buffers */
+        err = deflate(&c_وهڪرو, Z_NO_FLUSH);
         CHECK_ERR(err, "deflate");
     }
     /* Finish the stream, still forcing small buffers: */
-    for (;;) {
-        c_stream.avail_out = 1;
-        err = deflate(&c_stream, Z_FINISH);
-        if (err == Z_STREAM_END) break;
+    لكل (;;) {
+        c_وهڪرو.avail_ٻاهريون = 1;
+        err = deflate(&c_وهڪرو, Z_پڄاڻي);
+        إذا (err == Z_وهڪرو_پڇاڙي) اكسر;
         CHECK_ERR(err, "deflate");
     }
 
-    err = deflateEnd(&c_stream);
+    err = deflate_پڇاڙي(&c_وهڪرو);
     CHECK_ERR(err, "deflateEnd");
 }
 
 /* ===========================================================================
  * Test inflate() with small buffers
  */
-static void test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+ساكن فراغ test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                   uLong uncomprLen) {
-    int err;
-    z_stream d_stream; /* decompression stream */
+    صحيح err;
+    z_وهڪرو d_وهڪرو; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((حرف*)uncompr, "garbage");
 
-    d_stream.zalloc = zalloc;
-    d_stream.zfree = zfree;
-    d_stream.opaque = (voidpf)0;
+    d_وهڪرو.zalloc = zalloc;
+    d_وهڪرو.zfree = zfree;
+    d_وهڪرو.opaque = (voidpf)0;
 
-    d_stream.next_in  = compr;
-    d_stream.avail_in = 0;
-    d_stream.next_out = uncompr;
+    d_وهڪرو.ايندڙ_اندريون  = compr;
+    d_وهڪرو.avail_اندريون = 0;
+    d_وهڪرو.ايندڙ_ٻاهريون = uncompr;
 
-    err = inflateInit(&d_stream);
+    err = inflateInit(&d_وهڪرو);
     CHECK_ERR(err, "inflateInit");
 
-    while (d_stream.total_out < uncomprLen && d_stream.total_in < comprLen) {
-        d_stream.avail_in = d_stream.avail_out = 1; /* force small buffers */
-        err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
+    طالما (d_وهڪرو.ڪل_ٻاهريون < uncomprLen && d_وهڪرو.ڪل_اندريون < comprLen) {
+        d_وهڪرو.avail_اندريون = d_وهڪرو.avail_ٻاهريون = 1; /* force small buffers */
+        err = inflate(&d_وهڪرو, Z_NO_FLUSH);
+        إذا (err == Z_وهڪرو_پڇاڙي) اكسر;
         CHECK_ERR(err, "inflate");
     }
 
-    err = inflateEnd(&d_stream);
+    err = inflate_پڇاڙي(&d_وهڪرو);
     CHECK_ERR(err, "inflateEnd");
 
-    if (strcmp((char*)uncompr, hello)) {
+    إذا (strcmp((حرف*)uncompr, hello)) {
         fprintf(stderr, "bad inflate\n");
-        exit(1);
-    } else {
-        printf("inflate(): %s\n", (char *)uncompr);
+        ٻاهر_نڪرو(1);
+    } وإلا {
+        لکو("inflate(): %s\n", (حرف *)uncompr);
     }
 }
 
 /* ===========================================================================
  * Test deflate() with large buffers and dynamic change of compression level
  */
-static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
+ساكن فراغ test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
                         uLong uncomprLen) {
-    z_stream c_stream; /* compression stream */
-    int err;
+    z_وهڪرو c_وهڪرو; /* compression stream */
+    صحيح err;
 
-    c_stream.zalloc = zalloc;
-    c_stream.zfree = zfree;
-    c_stream.opaque = (voidpf)0;
+    c_وهڪرو.zalloc = zalloc;
+    c_وهڪرو.zfree = zfree;
+    c_وهڪرو.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_BEST_SPEED);
+    err = deflateInit(&c_وهڪرو, Z_بهترين_رفتار);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_out = compr;
-    c_stream.avail_out = (uInt)comprLen;
+    c_وهڪرو.ايندڙ_ٻاهريون = compr;
+    c_وهڪرو.avail_ٻاهريون = (uInt)comprLen;
 
     /* At this point, uncompr is still mostly zeroes, so it should compress
      * very well:
      */
-    c_stream.next_in = uncompr;
-    c_stream.avail_in = (uInt)uncomprLen;
-    err = deflate(&c_stream, Z_NO_FLUSH);
+    c_وهڪرو.ايندڙ_اندريون = uncompr;
+    c_وهڪرو.avail_اندريون = (uInt)uncomprLen;
+    err = deflate(&c_وهڪرو, Z_NO_FLUSH);
     CHECK_ERR(err, "deflate");
-    if (c_stream.avail_in != 0) {
+    إذا (c_وهڪرو.avail_اندريون != 0) {
         fprintf(stderr, "deflate not greedy\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
 
     /* Feed in already compressed data and switch to no compression: */
-    deflateParams(&c_stream, Z_NO_COMPRESSION, Z_DEFAULT_STRATEGY);
-    c_stream.next_in = compr;
-    c_stream.avail_in = (uInt)uncomprLen/2;
-    err = deflate(&c_stream, Z_NO_FLUSH);
+    deflateParams(&c_وهڪرو, Z_NO_COMPRESSION, Z_DEFAULT_STRATEGY);
+    c_وهڪرو.ايندڙ_اندريون = compr;
+    c_وهڪرو.avail_اندريون = (uInt)uncomprLen/2;
+    err = deflate(&c_وهڪرو, Z_NO_FLUSH);
     CHECK_ERR(err, "deflate");
 
     /* Switch back to compressing mode: */
-    deflateParams(&c_stream, Z_BEST_COMPRESSION, Z_FILTERED);
-    c_stream.next_in = uncompr;
-    c_stream.avail_in = (uInt)uncomprLen;
-    err = deflate(&c_stream, Z_NO_FLUSH);
+    deflateParams(&c_وهڪرو, Z_بهترين_COMPRESSION, Z_FILTERED);
+    c_وهڪرو.ايندڙ_اندريون = uncompr;
+    c_وهڪرو.avail_اندريون = (uInt)uncomprLen;
+    err = deflate(&c_وهڪرو, Z_NO_FLUSH);
     CHECK_ERR(err, "deflate");
 
-    err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    err = deflate(&c_وهڪرو, Z_پڄاڻي);
+    إذا (err != Z_وهڪرو_پڇاڙي) {
         fprintf(stderr, "deflate should report Z_STREAM_END\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    err = deflateEnd(&c_stream);
+    err = deflate_پڇاڙي(&c_وهڪرو);
     CHECK_ERR(err, "deflateEnd");
 }
 
 /* ===========================================================================
  * Test inflate() with large buffers
  */
-static void test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+ساكن فراغ test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                         uLong uncomprLen) {
-    int err;
-    z_stream d_stream; /* decompression stream */
+    صحيح err;
+    z_وهڪرو d_وهڪرو; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((حرف*)uncompr, "garbage");
 
-    d_stream.zalloc = zalloc;
-    d_stream.zfree = zfree;
-    d_stream.opaque = (voidpf)0;
+    d_وهڪرو.zalloc = zalloc;
+    d_وهڪرو.zfree = zfree;
+    d_وهڪرو.opaque = (voidpf)0;
 
-    d_stream.next_in  = compr;
-    d_stream.avail_in = (uInt)comprLen;
+    d_وهڪرو.ايندڙ_اندريون  = compr;
+    d_وهڪرو.avail_اندريون = (uInt)comprLen;
 
-    err = inflateInit(&d_stream);
+    err = inflateInit(&d_وهڪرو);
     CHECK_ERR(err, "inflateInit");
 
-    for (;;) {
-        d_stream.next_out = uncompr;            /* discard the output */
-        d_stream.avail_out = (uInt)uncomprLen;
-        err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
+    لكل (;;) {
+        d_وهڪرو.ايندڙ_ٻاهريون = uncompr;            /* discard the output */
+        d_وهڪرو.avail_ٻاهريون = (uInt)uncomprLen;
+        err = inflate(&d_وهڪرو, Z_NO_FLUSH);
+        إذا (err == Z_وهڪرو_پڇاڙي) اكسر;
         CHECK_ERR(err, "large inflate");
     }
 
-    err = inflateEnd(&d_stream);
+    err = inflate_پڇاڙي(&d_وهڪرو);
     CHECK_ERR(err, "inflateEnd");
 
-    if (d_stream.total_out != 2*uncomprLen + uncomprLen/2) {
-        fprintf(stderr, "bad large inflate: %lu\n", d_stream.total_out);
-        exit(1);
-    } else {
-        printf("large_inflate(): OK\n");
+    إذا (d_وهڪرو.ڪل_ٻاهريون != 2*uncomprLen + uncomprLen/2) {
+        fprintf(stderr, "bad large inflate: %lu\n", d_وهڪرو.ڪل_ٻاهريون);
+        ٻاهر_نڪرو(1);
+    } وإلا {
+        لکو("large_inflate(): OK\n");
     }
 }
 
 /* ===========================================================================
  * Test deflate() with full flush
  */
-static void test_flush(Byte *compr, uLong *comprLen) {
-    z_stream c_stream; /* compression stream */
-    int err;
-    uInt len = (uInt)strlen(hello)+1;
+ساكن فراغ test_flush(Byte *compr, uLong *comprLen) {
+    z_وهڪرو c_وهڪرو; /* compression stream */
+    صحيح err;
+    uInt len = (uInt)لڙي_ڊيگهه(hello)+1;
 
-    c_stream.zalloc = zalloc;
-    c_stream.zfree = zfree;
-    c_stream.opaque = (voidpf)0;
+    c_وهڪرو.zalloc = zalloc;
+    c_وهڪرو.zfree = zfree;
+    c_وهڪرو.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
+    err = deflateInit(&c_وهڪرو, Z_DEFAULT_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_in  = (z_const unsigned char *)hello;
-    c_stream.next_out = compr;
-    c_stream.avail_in = 3;
-    c_stream.avail_out = (uInt)*comprLen;
-    err = deflate(&c_stream, Z_FULL_FLUSH);
+    c_وهڪرو.ايندڙ_اندريون  = (z_const بنانشان حرف *)hello;
+    c_وهڪرو.ايندڙ_ٻاهريون = compr;
+    c_وهڪرو.avail_اندريون = 3;
+    c_وهڪرو.avail_ٻاهريون = (uInt)*comprLen;
+    err = deflate(&c_وهڪرو, Z_ڀريل_FLUSH);
     CHECK_ERR(err, "deflate");
 
     compr[3]++; /* force an error in first compressed block */
-    c_stream.avail_in = len - 3;
+    c_وهڪرو.avail_اندريون = len - 3;
 
-    err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    err = deflate(&c_وهڪرو, Z_پڄاڻي);
+    إذا (err != Z_وهڪرو_پڇاڙي) {
         CHECK_ERR(err, "deflate");
     }
-    err = deflateEnd(&c_stream);
+    err = deflate_پڇاڙي(&c_وهڪرو);
     CHECK_ERR(err, "deflateEnd");
 
-    *comprLen = c_stream.total_out;
+    *comprLen = c_وهڪرو.ڪل_ٻاهريون;
 }
 
 /* ===========================================================================
  * Test inflateSync()
  */
-static void test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
+ساكن فراغ test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
                       uLong uncomprLen) {
-    int err;
-    z_stream d_stream; /* decompression stream */
+    صحيح err;
+    z_وهڪرو d_وهڪرو; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((حرف*)uncompr, "garbage");
 
-    d_stream.zalloc = zalloc;
-    d_stream.zfree = zfree;
-    d_stream.opaque = (voidpf)0;
+    d_وهڪرو.zalloc = zalloc;
+    d_وهڪرو.zfree = zfree;
+    d_وهڪرو.opaque = (voidpf)0;
 
-    d_stream.next_in  = compr;
-    d_stream.avail_in = 2; /* just read the zlib header */
+    d_وهڪرو.ايندڙ_اندريون  = compr;
+    d_وهڪرو.avail_اندريون = 2; /* just read the zlib header */
 
-    err = inflateInit(&d_stream);
+    err = inflateInit(&d_وهڪرو);
     CHECK_ERR(err, "inflateInit");
 
-    d_stream.next_out = uncompr;
-    d_stream.avail_out = (uInt)uncomprLen;
+    d_وهڪرو.ايندڙ_ٻاهريون = uncompr;
+    d_وهڪرو.avail_ٻاهريون = (uInt)uncomprLen;
 
-    err = inflate(&d_stream, Z_NO_FLUSH);
+    err = inflate(&d_وهڪرو, Z_NO_FLUSH);
     CHECK_ERR(err, "inflate");
 
-    d_stream.avail_in = (uInt)comprLen-2;   /* read all compressed data */
-    err = inflateSync(&d_stream);           /* but skip the damaged part */
+    d_وهڪرو.avail_اندريون = (uInt)comprLen-2;   /* read all compressed data */
+    err = inflateSync(&d_وهڪرو);           /* but skip the damaged part */
     CHECK_ERR(err, "inflateSync");
 
-    err = inflate(&d_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    err = inflate(&d_وهڪرو, Z_پڄاڻي);
+    إذا (err != Z_وهڪرو_پڇاڙي) {
         fprintf(stderr, "inflate should report Z_STREAM_END\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    err = inflateEnd(&d_stream);
+    err = inflate_پڇاڙي(&d_وهڪرو);
     CHECK_ERR(err, "inflateEnd");
 
-    printf("after inflateSync(): hel%s\n", (char *)uncompr);
+    لکو("after inflateSync(): hel%s\n", (حرف *)uncompr);
 }
 
 /* ===========================================================================
  * Test deflate() with preset dictionary
  */
-static void test_dict_deflate(Byte *compr, uLong comprLen) {
-    z_stream c_stream; /* compression stream */
-    int err;
+ساكن فراغ test_dict_deflate(Byte *compr, uLong comprLen) {
+    z_وهڪرو c_وهڪرو; /* compression stream */
+    صحيح err;
 
-    c_stream.zalloc = zalloc;
-    c_stream.zfree = zfree;
-    c_stream.opaque = (voidpf)0;
+    c_وهڪرو.zalloc = zalloc;
+    c_وهڪرو.zfree = zfree;
+    c_وهڪرو.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_BEST_COMPRESSION);
+    err = deflateInit(&c_وهڪرو, Z_بهترين_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    err = deflateSetDictionary(&c_stream,
-                (const Bytef*)dictionary, (int)sizeof(dictionary));
+    err = deflate_سيٽ_Dictionary(&c_وهڪرو,
+                (ثابت Bytef*)dictionary, (صحيح)حجم(dictionary));
     CHECK_ERR(err, "deflateSetDictionary");
 
-    dictId = c_stream.adler;
-    c_stream.next_out = compr;
-    c_stream.avail_out = (uInt)comprLen;
+    dictId = c_وهڪرو.adler;
+    c_وهڪرو.ايندڙ_ٻاهريون = compr;
+    c_وهڪرو.avail_ٻاهريون = (uInt)comprLen;
 
-    c_stream.next_in = (z_const unsigned char *)hello;
-    c_stream.avail_in = (uInt)strlen(hello)+1;
+    c_وهڪرو.ايندڙ_اندريون = (z_const بنانشان حرف *)hello;
+    c_وهڪرو.avail_اندريون = (uInt)لڙي_ڊيگهه(hello)+1;
 
-    err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    err = deflate(&c_وهڪرو, Z_پڄاڻي);
+    إذا (err != Z_وهڪرو_پڇاڙي) {
         fprintf(stderr, "deflate should report Z_STREAM_END\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
     }
-    err = deflateEnd(&c_stream);
+    err = deflate_پڇاڙي(&c_وهڪرو);
     CHECK_ERR(err, "deflateEnd");
 }
 
 /* ===========================================================================
  * Test inflate() with a preset dictionary
  */
-static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+ساكن فراغ test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                        uLong uncomprLen) {
-    int err;
-    z_stream d_stream; /* decompression stream */
+    صحيح err;
+    z_وهڪرو d_وهڪرو; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((حرف*)uncompr, "garbage");
 
-    d_stream.zalloc = zalloc;
-    d_stream.zfree = zfree;
-    d_stream.opaque = (voidpf)0;
+    d_وهڪرو.zalloc = zalloc;
+    d_وهڪرو.zfree = zfree;
+    d_وهڪرو.opaque = (voidpf)0;
 
-    d_stream.next_in  = compr;
-    d_stream.avail_in = (uInt)comprLen;
+    d_وهڪرو.ايندڙ_اندريون  = compr;
+    d_وهڪرو.avail_اندريون = (uInt)comprLen;
 
-    err = inflateInit(&d_stream);
+    err = inflateInit(&d_وهڪرو);
     CHECK_ERR(err, "inflateInit");
 
-    d_stream.next_out = uncompr;
-    d_stream.avail_out = (uInt)uncomprLen;
+    d_وهڪرو.ايندڙ_ٻاهريون = uncompr;
+    d_وهڪرو.avail_ٻاهريون = (uInt)uncomprLen;
 
-    for (;;) {
-        err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
-        if (err == Z_NEED_DICT) {
-            if (d_stream.adler != dictId) {
+    لكل (;;) {
+        err = inflate(&d_وهڪرو, Z_NO_FLUSH);
+        إذا (err == Z_وهڪرو_پڇاڙي) اكسر;
+        إذا (err == Z_NEED_DICT) {
+            إذا (d_وهڪرو.adler != dictId) {
                 fprintf(stderr, "unexpected dictionary");
-                exit(1);
+                ٻاهر_نڪرو(1);
             }
-            err = inflateSetDictionary(&d_stream, (const Bytef*)dictionary,
-                                       (int)sizeof(dictionary));
+            err = inflate_سيٽ_Dictionary(&d_وهڪرو, (ثابت Bytef*)dictionary,
+                                       (صحيح)حجم(dictionary));
         }
         CHECK_ERR(err, "inflate with dict");
     }
 
-    err = inflateEnd(&d_stream);
+    err = inflate_پڇاڙي(&d_وهڪرو);
     CHECK_ERR(err, "inflateEnd");
 
-    if (strcmp((char*)uncompr, hello)) {
+    إذا (strcmp((حرف*)uncompr, hello)) {
         fprintf(stderr, "bad inflate with dict\n");
-        exit(1);
-    } else {
-        printf("inflate with dictionary: %s\n", (char *)uncompr);
+        ٻاهر_نڪرو(1);
+    } وإلا {
+        لکو("inflate with dictionary: %s\n", (حرف *)uncompr);
     }
 }
 
@@ -494,43 +494,43 @@ static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
  * Usage:  example [output.gz  [input.gz]]
  */
 
-int main(int argc, char *argv[]) {
+صحيح مکيه(صحيح argc, حرف *argv[]) {
     Byte *compr, *uncompr;
     uLong uncomprLen = 20000;
     uLong comprLen = 3 * uncomprLen;
-    static const char* myVersion = ZLIB_VERSION;
+    ساكن ثابت حرف* my_نسخو_2 = ZLIB_نسخو;
 
-    if (zlibVersion()[0] != myVersion[0]) {
+    إذا (zlib_نسخو()[0] != my_نسخو_2[0]) {
         fprintf(stderr, "incompatible zlib version\n");
-        exit(1);
+        ٻاهر_نڪرو(1);
 
-    } else if (strcmp(zlibVersion(), ZLIB_VERSION) != 0) {
+    } وإلا إذا (strcmp(zlib_نسخو(), ZLIB_نسخو) != 0) {
         fprintf(stderr, "warning: different zlib version linked: %s\n",
-                zlibVersion());
+                zlib_نسخو());
     }
 
-    printf("zlib version %s = 0x%04x, compile flags = 0x%lx\n",
-            ZLIB_VERSION, (unsigned)ZLIB_VERNUM, zlibCompileFlags());
+    لکو("zlib version %s = 0x%04x, compile flags = 0x%lx\n",
+            ZLIB_نسخو, (بنانشان)ZLIB_VERNUM, zlibCompileFlags());
 
-    compr    = (Byte*)calloc((uInt)comprLen, 1);
-    uncompr  = (Byte*)calloc((uInt)uncomprLen, 1);
+    compr    = (Byte*)صفر_يادگيري_ڏيو((uInt)comprLen, 1);
+    uncompr  = (Byte*)صفر_يادگيري_ڏيو((uInt)uncomprLen, 1);
     /* compr and uncompr are cleared to avoid reading uninitialized
      * data and to ensure that uncompr compresses well.
      */
-    if (compr == Z_NULL || uncompr == Z_NULL) {
-        printf("out of memory\n");
-        exit(1);
+    إذا (compr == Z_NULL || uncompr == Z_NULL) {
+        لکو("out of memory\n");
+        ٻاهر_نڪرو(1);
     }
 
-#ifdef Z_SOLO
-    (void)argc;
-    (void)argv;
-#else
+#جيڪڏهن_وصف_ٿيل Z_SOLO
+    (فراغ)argc;
+    (فراغ)argv;
+#وإلا
     test_compress(compr, comprLen, uncompr, uncomprLen);
 
     test_gzio((argc > 1 ? argv[1] : TESTFILE),
               uncompr, uncomprLen);
-#endif
+#جيڪڏهن_پورو
 
     test_deflate(compr, comprLen);
     test_inflate(compr, comprLen, uncompr, uncomprLen);
@@ -545,8 +545,8 @@ int main(int argc, char *argv[]) {
     test_dict_deflate(compr, comprLen);
     test_dict_inflate(compr, comprLen, uncompr, uncomprLen);
 
-    free(compr);
-    free(uncompr);
+    حرر(compr);
+    حرر(uncompr);
 
-    return 0;
+    أرجع 0;
 }

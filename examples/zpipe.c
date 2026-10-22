@@ -13,20 +13,20 @@
    1.5  11 Feb 2026  Use underscores for Windows POSIX names
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include "zlib.h"
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <assert.h>
+#ضمن "zlib.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#إذا defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) _setmode(_fileno(file), _O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define سيٽ_ٻٽو_گهڻائي(file) _setmode(_fileno(file), O_ٻٽو_2)
+#وإلا
+#  define سيٽ_ٻٽو_گهڻائي(file)
+#جيڪڏهن_پورو
 
-#define CHUNK 16384
+#وصف_ڪريو CHUNK 16384
 
 /* Compress from file source to file dest until EOF on source.
    def() returns Z_OK on success, Z_MEM_ERROR if memory could not be
@@ -34,54 +34,54 @@
    level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
    version of the library linked do not match, or Z_ERRNO if there is
    an error reading or writing the files. */
-int def(FILE *source, FILE *dest, int level)
+صحيح def(FILE *ذريعو, FILE *dest, صحيح level)
 {
-    int ret, flush;
-    unsigned have;
-    z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    صحيح ret, flush;
+    بنانشان have;
+    z_وهڪرو strm;
+    بنانشان حرف اندريون[CHUNK];
+    بنانشان حرف ٻاهريون[CHUNK];
 
     /* allocate deflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
     ret = deflateInit(&strm, level);
-    if (ret != Z_OK)
-        return ret;
+    إذا (ret != Z_OK)
+        أرجع ret;
 
     /* compress until end of file */
-    do {
-        strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
-            (void)deflateEnd(&strm);
-            return Z_ERRNO;
+    افعل {
+        strm.avail_اندريون = fread(اندريون, 1, CHUNK, ذريعو);
+        إذا (ferror(ذريعو)) {
+            (فراغ)deflate_پڇاڙي(&strm);
+            أرجع Z_ERRNO;
         }
-        flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
-        strm.next_in = in;
+        flush = feof(ذريعو) ? Z_پڄاڻي : Z_NO_FLUSH;
+        strm.ايندڙ_اندريون = اندريون;
 
         /* run deflate() on input until output buffer not full, finish
            compression if all of source has been read in */
-        do {
-            strm.avail_out = CHUNK;
-            strm.next_out = out;
+        افعل {
+            strm.avail_ٻاهريون = CHUNK;
+            strm.ايندڙ_ٻاهريون = ٻاهريون;
             ret = deflate(&strm, flush);    /* no bad return value */
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)deflateEnd(&strm);
-                return Z_ERRNO;
+            أكد(ret != Z_وهڪرو_ERROR);  /* state not clobbered */
+            have = CHUNK - strm.avail_ٻاهريون;
+            إذا (fwrite(ٻاهريون, 1, have, dest) != have || ferror(dest)) {
+                (فراغ)deflate_پڇاڙي(&strm);
+                أرجع Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
-        assert(strm.avail_in == 0);     /* all input will be used */
+        } طالما (strm.avail_ٻاهريون == 0);
+        أكد(strm.avail_اندريون == 0);     /* all input will be used */
 
         /* done when last data in file processed */
-    } while (flush != Z_FINISH);
-    assert(ret == Z_STREAM_END);        /* stream will be complete */
+    } طالما (flush != Z_پڄاڻي);
+    أكد(ret == Z_وهڪرو_پڇاڙي);        /* stream will be complete */
 
     /* clean up and return */
-    (void)deflateEnd(&strm);
-    return Z_OK;
+    (فراغ)deflate_پڇاڙي(&strm);
+    أرجع Z_OK;
 }
 
 /* Decompress from file source to file dest until stream ends or EOF.
@@ -90,117 +90,117 @@ int def(FILE *source, FILE *dest, int level)
    invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
    the version of the library linked do not match, or Z_ERRNO if there
    is an error reading or writing the files. */
-int inf(FILE *source, FILE *dest)
+صحيح inf(FILE *ذريعو, FILE *dest)
 {
-    int ret;
-    unsigned have;
-    z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    صحيح ret;
+    بنانشان have;
+    z_وهڪرو strm;
+    بنانشان حرف اندريون[CHUNK];
+    بنانشان حرف ٻاهريون[CHUNK];
 
     /* allocate inflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
+    strm.avail_اندريون = 0;
+    strm.ايندڙ_اندريون = Z_NULL;
     ret = inflateInit(&strm);
-    if (ret != Z_OK)
-        return ret;
+    إذا (ret != Z_OK)
+        أرجع ret;
 
     /* decompress until deflate stream ends or end of file */
-    do {
-        strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
-            (void)inflateEnd(&strm);
-            return Z_ERRNO;
+    افعل {
+        strm.avail_اندريون = fread(اندريون, 1, CHUNK, ذريعو);
+        إذا (ferror(ذريعو)) {
+            (فراغ)inflate_پڇاڙي(&strm);
+            أرجع Z_ERRNO;
         }
-        if (strm.avail_in == 0)
-            break;
-        strm.next_in = in;
+        إذا (strm.avail_اندريون == 0)
+            اكسر;
+        strm.ايندڙ_اندريون = اندريون;
 
         /* run inflate() on input until output buffer not full */
-        do {
-            strm.avail_out = CHUNK;
-            strm.next_out = out;
+        افعل {
+            strm.avail_ٻاهريون = CHUNK;
+            strm.ايندڙ_ٻاهريون = ٻاهريون;
             ret = inflate(&strm, Z_NO_FLUSH);
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            switch (ret) {
-            case Z_NEED_DICT:
-                ret = Z_DATA_ERROR;     /* and fall through */
-            case Z_DATA_ERROR:
-            case Z_MEM_ERROR:
-                (void)inflateEnd(&strm);
-                return ret;
+            أكد(ret != Z_وهڪرو_ERROR);  /* state not clobbered */
+            بدل (ret) {
+            حالة Z_NEED_DICT:
+                ret = Z_معلومات_ERROR;     /* and fall through */
+            حالة Z_معلومات_ERROR:
+            حالة Z_MEM_ERROR:
+                (فراغ)inflate_پڇاڙي(&strm);
+                أرجع ret;
             }
-            have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)inflateEnd(&strm);
-                return Z_ERRNO;
+            have = CHUNK - strm.avail_ٻاهريون;
+            إذا (fwrite(ٻاهريون, 1, have, dest) != have || ferror(dest)) {
+                (فراغ)inflate_پڇاڙي(&strm);
+                أرجع Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
+        } طالما (strm.avail_ٻاهريون == 0);
 
         /* done when inflate() says it's done */
-    } while (ret != Z_STREAM_END);
+    } طالما (ret != Z_وهڪرو_پڇاڙي);
 
     /* clean up and return */
-    (void)inflateEnd(&strm);
-    return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+    (فراغ)inflate_پڇاڙي(&strm);
+    أرجع ret == Z_وهڪرو_پڇاڙي ? Z_OK : Z_معلومات_ERROR;
 }
 
 /* report a zlib or i/o error */
-void zerr(int ret)
+فراغ zerr(صحيح ret)
 {
     fputs("zpipe: ", stderr);
-    switch (ret) {
-    case Z_ERRNO:
-        if (ferror(stdin))
+    بدل (ret) {
+    حالة Z_ERRNO:
+        إذا (ferror(stdin))
             fputs("error reading stdin\n", stderr);
-        if (ferror(stdout))
+        إذا (ferror(stdout))
             fputs("error writing stdout\n", stderr);
-        break;
-    case Z_STREAM_ERROR:
+        اكسر;
+    حالة Z_وهڪرو_ERROR:
         fputs("invalid compression level\n", stderr);
-        break;
-    case Z_DATA_ERROR:
+        اكسر;
+    حالة Z_معلومات_ERROR:
         fputs("invalid or incomplete deflate data\n", stderr);
-        break;
-    case Z_MEM_ERROR:
+        اكسر;
+    حالة Z_MEM_ERROR:
         fputs("out of memory\n", stderr);
-        break;
-    case Z_VERSION_ERROR:
+        اكسر;
+    حالة Z_نسخو_ERROR:
         fputs("zlib version mismatch!\n", stderr);
     }
 }
 
 /* compress or decompress from stdin to stdout */
-int main(int argc, char **argv)
+صحيح مکيه(صحيح argc, حرف **argv)
 {
-    int ret;
+    صحيح ret;
 
     /* avoid end-of-line conversions */
-    SET_BINARY_MODE(stdin);
-    SET_BINARY_MODE(stdout);
+    سيٽ_ٻٽو_گهڻائي(stdin);
+    سيٽ_ٻٽو_گهڻائي(stdout);
 
     /* do compression if no arguments */
-    if (argc == 1) {
+    إذا (argc == 1) {
         ret = def(stdin, stdout, Z_DEFAULT_COMPRESSION);
-        if (ret != Z_OK)
+        إذا (ret != Z_OK)
             zerr(ret);
-        return ret;
+        أرجع ret;
     }
 
     /* do decompression if -d specified */
-    else if (argc == 2 && strcmp(argv[1], "-d") == 0) {
+    وإلا إذا (argc == 2 && strcmp(argv[1], "-d") == 0) {
         ret = inf(stdin, stdout);
-        if (ret != Z_OK)
+        إذا (ret != Z_OK)
             zerr(ret);
-        return ret;
+        أرجع ret;
     }
 
     /* otherwise, report usage */
-    else {
+    وإلا {
         fputs("zpipe usage: zpipe [-d] < source > dest\n", stderr);
-        return 1;
+        أرجع 1;
     }
 }

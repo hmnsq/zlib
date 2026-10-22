@@ -3,14 +3,14 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "zutil.h"
-#include "inftrees.h"
-#include "inflate.h"
-#include "inffast.h"
+#ضمن "zutil.h"
+#ضمن "inftrees.h"
+#ضمن "inflate.h"
+#ضمن "inffast.h"
 
-#ifdef ASMINF
-#  pragma message("Assembler code may have bugs -- use at your own risk")
-#else
+#جيڪڏهن_وصف_ٿيل ASMINF
+#  pragma پيغام("Assembler code may have bugs -- use at your own risk")
+#وإلا
 
 /*
    Decode literal, length, and distance codes and write out the resulting
@@ -47,49 +47,49 @@
       requires strm->avail_out >= 258 for each loop to avoid checking for
       output space.
  */
-void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
-    struct inflate_state FAR *state;
-    z_const unsigned char FAR *in;      /* local strm->next_in */
-    z_const unsigned char FAR *last;    /* have enough input while in < last */
-    unsigned char FAR *out;     /* local strm->next_out */
-    unsigned char FAR *beg;     /* inflate()'s initial strm->next_out */
-    unsigned char FAR *end;     /* while out < end, enough space available */
-#ifdef INFLATE_STRICT
-    unsigned dmax;              /* maximum distance from zlib header */
-#endif
-    unsigned wsize;             /* window size or zero if not using window */
-    unsigned whave;             /* valid bytes in the window */
-    unsigned wnext;             /* window write index */
-    unsigned char FAR *window;  /* allocated sliding window, if wsize != 0 */
-    unsigned long hold;         /* local strm->hold */
-    unsigned bits;              /* local strm->bits */
-    code const FAR *lcode;      /* local strm->lencode */
-    code const FAR *dcode;      /* local strm->distcode */
-    unsigned lmask;             /* mask for first level of length codes */
-    unsigned dmask;             /* mask for first level of distance codes */
-    code const *here;           /* retrieved table entry */
-    unsigned op;                /* code bits, operation, extra bits, or */
+فراغ ZLIB_اندروني inflate_fast(z_streamp strm, بنانشان شروعات) {
+    بنية inflate_state FAR *state;
+    z_const بنانشان حرف FAR *اندريون;      /* local strm->next_in */
+    z_const بنانشان حرف FAR *آخري;    /* have enough input while in < last */
+    بنانشان حرف FAR *ٻاهريون;     /* local strm->next_out */
+    بنانشان حرف FAR *beg;     /* inflate()'s initial strm->next_out */
+    بنانشان حرف FAR *پڇاڙي;     /* while out < end, enough space available */
+#جيڪڏهن_وصف_ٿيل INFLATE_STRICT
+    بنانشان dmax;              /* maximum distance from zlib header */
+#جيڪڏهن_پورو
+    بنانشان wsize;             /* window size or zero if not using window */
+    بنانشان whave;             /* valid bytes in the window */
+    بنانشان wnext;             /* window write index */
+    بنانشان حرف FAR *دري;  /* allocated sliding window, if wsize != 0 */
+    بنانشان ڊگهو hold;         /* local strm->hold */
+    بنانشان بٽ;              /* local strm->bits */
+    ڪوڊ ثابت FAR *lcode;      /* local strm->lencode */
+    ڪوڊ ثابت FAR *dcode;      /* local strm->distcode */
+    بنانشان lmask;             /* mask for first level of length codes */
+    بنانشان dmask;             /* mask for first level of distance codes */
+    ڪوڊ ثابت *هتي;           /* retrieved table entry */
+    بنانشان op;                /* code bits, operation, extra bits, or */
                                 /*  window position, window bytes to copy */
-    unsigned len;               /* match length, unused bytes */
-    unsigned dist;              /* match distance */
-    unsigned char FAR *from;    /* where to copy match from */
+    بنانشان len;               /* match length, unused bytes */
+    بنانشان dist;              /* match distance */
+    بنانشان حرف FAR *from;    /* where to copy match from */
 
     /* copy state to local variables */
-    state = (struct inflate_state FAR *)strm->state;
-    in = strm->next_in;
-    last = in + (strm->avail_in - 5);
-    out = strm->next_out;
-    beg = out - (start - strm->avail_out);
-    end = out + (strm->avail_out - 257);
-#ifdef INFLATE_STRICT
+    state = (بنية inflate_state FAR *)strm->state;
+    اندريون = strm->ايندڙ_اندريون;
+    آخري = اندريون + (strm->avail_اندريون - 5);
+    ٻاهريون = strm->ايندڙ_ٻاهريون;
+    beg = ٻاهريون - (شروعات - strm->avail_ٻاهريون);
+    پڇاڙي = ٻاهريون + (strm->avail_ٻاهريون - 257);
+#جيڪڏهن_وصف_ٿيل INFLATE_STRICT
     dmax = state->dmax;
-#endif
+#جيڪڏهن_پورو
     wsize = state->wsize;
     whave = state->whave;
     wnext = state->wnext;
-    window = state->window;
+    دري = state->دري;
     hold = state->hold;
-    bits = state->bits;
+    بٽ = state->بٽ;
     lcode = state->lencode;
     dcode = state->distcode;
     lmask = (1U << state->lenbits) - 1;
@@ -97,211 +97,211 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
 
     /* decode literals and length/distances until end-of-block or not enough
        input data or output space */
-    do {
-        if (bits < 15) {
-            hold += (unsigned long)(*in++) << bits;
-            bits += 8;
-            hold += (unsigned long)(*in++) << bits;
-            bits += 8;
+    افعل {
+        إذا (بٽ < 15) {
+            hold += (بنانشان ڊگهو)(*اندريون++) << بٽ;
+            بٽ += 8;
+            hold += (بنانشان ڊگهو)(*اندريون++) << بٽ;
+            بٽ += 8;
         }
-        here = lcode + (hold & lmask);
+        هتي = lcode + (hold & lmask);
       dolen:
-        op = (unsigned)(here->bits);
+        op = (بنانشان)(هتي->بٽ);
         hold >>= op;
-        bits -= op;
-        op = (unsigned)(here->op);
-        if (op == 0) {                          /* literal */
-            Tracevv((stderr, here->val >= 0x20 && here->val < 0x7f ?
+        بٽ -= op;
+        op = (بنانشان)(هتي->op);
+        إذا (op == 0) {                          /* literal */
+            Tracevv((stderr, هتي->val >= 0x20 && هتي->val < 0x7f ?
                     "inflate:         literal '%c'\n" :
-                    "inflate:         literal 0x%02x\n", here->val));
-            *out++ = (unsigned char)(here->val);
+                    "inflate:         literal 0x%02x\n", هتي->val));
+            *ٻاهريون++ = (بنانشان حرف)(هتي->val);
         }
-        else if (op & 16) {                     /* length base */
-            len = (unsigned)(here->val);
+        وإلا إذا (op & 16) {                     /* length base */
+            len = (بنانشان)(هتي->val);
             op &= 15;                           /* number of extra bits */
-            if (op) {
-                if (bits < op) {
-                    hold += (unsigned long)(*in++) << bits;
-                    bits += 8;
+            إذا (op) {
+                إذا (بٽ < op) {
+                    hold += (بنانشان ڊگهو)(*اندريون++) << بٽ;
+                    بٽ += 8;
                 }
-                len += (unsigned)hold & ((1U << op) - 1);
+                len += (بنانشان)hold & ((1U << op) - 1);
                 hold >>= op;
-                bits -= op;
+                بٽ -= op;
             }
             Tracevv((stderr, "inflate:         length %u\n", len));
-            if (bits < 15) {
-                hold += (unsigned long)(*in++) << bits;
-                bits += 8;
-                hold += (unsigned long)(*in++) << bits;
-                bits += 8;
+            إذا (بٽ < 15) {
+                hold += (بنانشان ڊگهو)(*اندريون++) << بٽ;
+                بٽ += 8;
+                hold += (بنانشان ڊگهو)(*اندريون++) << بٽ;
+                بٽ += 8;
             }
-            here = dcode + (hold & dmask);
+            هتي = dcode + (hold & dmask);
           dodist:
-            op = (unsigned)(here->bits);
+            op = (بنانشان)(هتي->بٽ);
             hold >>= op;
-            bits -= op;
-            op = (unsigned)(here->op);
-            if (op & 16) {                      /* distance base */
-                dist = (unsigned)(here->val);
+            بٽ -= op;
+            op = (بنانشان)(هتي->op);
+            إذا (op & 16) {                      /* distance base */
+                dist = (بنانشان)(هتي->val);
                 op &= 15;                       /* number of extra bits */
-                if (bits < op) {
-                    hold += (unsigned long)(*in++) << bits;
-                    bits += 8;
-                    if (bits < op) {
-                        hold += (unsigned long)(*in++) << bits;
-                        bits += 8;
+                إذا (بٽ < op) {
+                    hold += (بنانشان ڊگهو)(*اندريون++) << بٽ;
+                    بٽ += 8;
+                    إذا (بٽ < op) {
+                        hold += (بنانشان ڊگهو)(*اندريون++) << بٽ;
+                        بٽ += 8;
                     }
                 }
-                dist += (unsigned)hold & ((1U << op) - 1);
-#ifdef INFLATE_STRICT
-                if (dist > dmax) {
-                    strm->msg = (z_const char *)
+                dist += (بنانشان)hold & ((1U << op) - 1);
+#جيڪڏهن_وصف_ٿيل INFLATE_STRICT
+                إذا (dist > dmax) {
+                    strm->نياپو = (z_const حرف *)
                         "invalid distance too far back";
-                    state->mode = BAD;
-                    break;
+                    state->گهڻائي = BAD;
+                    اكسر;
                 }
-#endif
+#جيڪڏهن_پورو
                 hold >>= op;
-                bits -= op;
+                بٽ -= op;
                 Tracevv((stderr, "inflate:         distance %u\n", dist));
-                op = (unsigned)(out - beg);     /* max distance in output */
-                if (dist > op) {                /* see if copy from window */
+                op = (بنانشان)(ٻاهريون - beg);     /* max distance in output */
+                إذا (dist > op) {                /* see if copy from window */
                     op = dist - op;             /* distance back in window */
-                    if (op > whave) {
-                        if (state->sane) {
-                            strm->msg = (z_const char *)
+                    إذا (op > whave) {
+                        إذا (state->sane) {
+                            strm->نياپو = (z_const حرف *)
                                 "invalid distance too far back";
-                            state->mode = BAD;
-                            break;
+                            state->گهڻائي = BAD;
+                            اكسر;
                         }
-#ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-                        if (len <= op - whave) {
-                            do {
-                                *out++ = 0;
-                            } while (--len);
-                            continue;
+#جيڪڏهن_وصف_ٿيل INFLATE_ALLOW_INVALID_مفاصلو_TOOFAR_ARRR
+                        إذا (len <= op - whave) {
+                            افعل {
+                                *ٻاهريون++ = 0;
+                            } طالما (--len);
+                            استمر;
                         }
                         len -= op - whave;
-                        do {
-                            *out++ = 0;
-                        } while (--op > whave);
-                        if (op == 0) {
-                            from = out - dist;
-                            do {
-                                *out++ = *from++;
-                            } while (--len);
-                            continue;
+                        افعل {
+                            *ٻاهريون++ = 0;
+                        } طالما (--op > whave);
+                        إذا (op == 0) {
+                            from = ٻاهريون - dist;
+                            افعل {
+                                *ٻاهريون++ = *from++;
+                            } طالما (--len);
+                            استمر;
                         }
-#endif
+#جيڪڏهن_پورو
                     }
-                    from = window;
-                    if (wnext == 0) {           /* very common case */
+                    from = دري;
+                    إذا (wnext == 0) {           /* very common case */
                         from += wsize - op;
-                        if (op < len) {         /* some from window */
+                        إذا (op < len) {         /* some from window */
                             len -= op;
-                            do {
-                                *out++ = *from++;
-                            } while (--op);
-                            from = out - dist;  /* rest from output */
+                            افعل {
+                                *ٻاهريون++ = *from++;
+                            } طالما (--op);
+                            from = ٻاهريون - dist;  /* rest from output */
                         }
                     }
-                    else if (wnext < op) {      /* wrap around window */
+                    وإلا إذا (wnext < op) {      /* wrap around window */
                         from += wsize + wnext - op;
                         op -= wnext;
-                        if (op < len) {         /* some from end of window */
+                        إذا (op < len) {         /* some from end of window */
                             len -= op;
-                            do {
-                                *out++ = *from++;
-                            } while (--op);
-                            from = window;
-                            if (wnext < len) {  /* some from start of window */
+                            افعل {
+                                *ٻاهريون++ = *from++;
+                            } طالما (--op);
+                            from = دري;
+                            إذا (wnext < len) {  /* some from start of window */
                                 op = wnext;
                                 len -= op;
-                                do {
-                                    *out++ = *from++;
-                                } while (--op);
-                                from = out - dist;      /* rest from output */
+                                افعل {
+                                    *ٻاهريون++ = *from++;
+                                } طالما (--op);
+                                from = ٻاهريون - dist;      /* rest from output */
                             }
                         }
                     }
-                    else {                      /* contiguous in window */
+                    وإلا {                      /* contiguous in window */
                         from += wnext - op;
-                        if (op < len) {         /* some from window */
+                        إذا (op < len) {         /* some from window */
                             len -= op;
-                            do {
-                                *out++ = *from++;
-                            } while (--op);
-                            from = out - dist;  /* rest from output */
+                            افعل {
+                                *ٻاهريون++ = *from++;
+                            } طالما (--op);
+                            from = ٻاهريون - dist;  /* rest from output */
                         }
                     }
-                    while (len > 2) {
-                        *out++ = *from++;
-                        *out++ = *from++;
-                        *out++ = *from++;
+                    طالما (len > 2) {
+                        *ٻاهريون++ = *from++;
+                        *ٻاهريون++ = *from++;
+                        *ٻاهريون++ = *from++;
                         len -= 3;
                     }
-                    if (len) {
-                        *out++ = *from++;
-                        if (len > 1)
-                            *out++ = *from++;
+                    إذا (len) {
+                        *ٻاهريون++ = *from++;
+                        إذا (len > 1)
+                            *ٻاهريون++ = *from++;
                     }
                 }
-                else {
-                    from = out - dist;          /* copy direct from output */
-                    do {                        /* minimum length is three */
-                        *out++ = *from++;
-                        *out++ = *from++;
-                        *out++ = *from++;
+                وإلا {
+                    from = ٻاهريون - dist;          /* copy direct from output */
+                    افعل {                        /* minimum length is three */
+                        *ٻاهريون++ = *from++;
+                        *ٻاهريون++ = *from++;
+                        *ٻاهريون++ = *from++;
                         len -= 3;
-                    } while (len > 2);
-                    if (len) {
-                        *out++ = *from++;
-                        if (len > 1)
-                            *out++ = *from++;
+                    } طالما (len > 2);
+                    إذا (len) {
+                        *ٻاهريون++ = *from++;
+                        إذا (len > 1)
+                            *ٻاهريون++ = *from++;
                     }
                 }
             }
-            else if ((op & 64) == 0) {          /* 2nd level distance code */
-                here = dcode + here->val + (hold & ((1U << op) - 1));
-                goto dodist;
+            وإلا إذا ((op & 64) == 0) {          /* 2nd level distance code */
+                هتي = dcode + هتي->val + (hold & ((1U << op) - 1));
+                اذهب dodist;
             }
-            else {
-                strm->msg = (z_const char *)"invalid distance code";
-                state->mode = BAD;
-                break;
+            وإلا {
+                strm->نياپو = (z_const حرف *)"invalid distance code";
+                state->گهڻائي = BAD;
+                اكسر;
             }
         }
-        else if ((op & 64) == 0) {              /* 2nd level length code */
-            here = lcode + here->val + (hold & ((1U << op) - 1));
-            goto dolen;
+        وإلا إذا ((op & 64) == 0) {              /* 2nd level length code */
+            هتي = lcode + هتي->val + (hold & ((1U << op) - 1));
+            اذهب dolen;
         }
-        else if (op & 32) {                     /* end-of-block */
+        وإلا إذا (op & 32) {                     /* end-of-block */
             Tracevv((stderr, "inflate:         end of block\n"));
-            state->mode = TYPE;
-            break;
+            state->گهڻائي = TYPE;
+            اكسر;
         }
-        else {
-            strm->msg = (z_const char *)"invalid literal/length code";
-            state->mode = BAD;
-            break;
+        وإلا {
+            strm->نياپو = (z_const حرف *)"invalid literal/length code";
+            state->گهڻائي = BAD;
+            اكسر;
         }
-    } while (in < last && out < end);
+    } طالما (اندريون < آخري && ٻاهريون < پڇاڙي);
 
     /* return unused bytes (on entry, bits < 8, so in won't go too far back) */
-    len = bits >> 3;
-    in -= len;
-    bits -= len << 3;
-    hold &= (1U << bits) - 1;
+    len = بٽ >> 3;
+    اندريون -= len;
+    بٽ -= len << 3;
+    hold &= (1U << بٽ) - 1;
 
     /* update state and return */
-    strm->next_in = in;
-    strm->next_out = out;
-    strm->avail_in = (unsigned)(in < last ? 5 + (last - in) : 5 - (in - last));
-    strm->avail_out = (unsigned)(out < end ?
-                                 257 + (end - out) : 257 - (out - end));
+    strm->ايندڙ_اندريون = اندريون;
+    strm->ايندڙ_ٻاهريون = ٻاهريون;
+    strm->avail_اندريون = (بنانشان)(اندريون < آخري ? 5 + (آخري - اندريون) : 5 - (اندريون - آخري));
+    strm->avail_ٻاهريون = (بنانشان)(ٻاهريون < پڇاڙي ?
+                                 257 + (پڇاڙي - ٻاهريون) : 257 - (ٻاهريون - پڇاڙي));
     state->hold = hold;
-    state->bits = bits;
-    return;
+    state->بٽ = بٽ;
+    أرجع;
 }
 
 /*
@@ -318,4 +318,4 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
    - Moving len -= 3 statement into middle of loop
  */
 
-#endif /* !ASMINF */
+#جيڪڏهن_پورو /* !ASMINF */

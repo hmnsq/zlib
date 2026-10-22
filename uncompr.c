@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#define ZLIB_INTERNAL
-#include "zlib.h"
+#وصف_ڪريو ZLIB_اندروني
+#ضمن "zlib.h"
 
 /* ===========================================================================
      Decompresses the source buffer into the destination buffer.  *sourceLen is
@@ -26,76 +26,76 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                          z_size_t *sourceLen) {
-    z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t len, left;
+صحيح ZEXPORT uncompress2_z(Bytef *dest, z_سائيز_t *destLen, ثابت Bytef *ذريعو,
+                          z_سائيز_t *ذريعو_Len) {
+    z_وهڪرو وهڪرو;
+    صحيح err;
+    ثابت uInt max = (uInt)-1;
+    z_سائيز_t len, کاٻو;
 
-    if (sourceLen == NULL || (*sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    إذا (ذريعو_Len == عدم || (*ذريعو_Len > 0 && ذريعو == عدم) ||
+        destLen == عدم || (*destLen > 0 && dest == عدم))
+        أرجع Z_وهڪرو_ERROR;
 
-    len = *sourceLen;
-    left = *destLen;
-    if (left == 0 && dest == Z_NULL)
-        dest = (Bytef *)&stream.reserved;       /* next_out cannot be NULL */
+    len = *ذريعو_Len;
+    کاٻو = *destLen;
+    إذا (کاٻو == 0 && dest == Z_NULL)
+        dest = (Bytef *)&وهڪرو.reserved;       /* next_out cannot be NULL */
 
-    stream.next_in = (z_const Bytef *)source;
-    stream.avail_in = 0;
-    stream.zalloc = (alloc_func)0;
-    stream.zfree = (free_func)0;
-    stream.opaque = (voidpf)0;
+    وهڪرو.ايندڙ_اندريون = (z_const Bytef *)ذريعو;
+    وهڪرو.avail_اندريون = 0;
+    وهڪرو.zalloc = (alloc_func)0;
+    وهڪرو.zfree = (free_func)0;
+    وهڪرو.opaque = (voidpf)0;
 
-    err = inflateInit(&stream);
-    if (err != Z_OK) return err;
+    err = inflateInit(&وهڪرو);
+    إذا (err != Z_OK) أرجع err;
 
-    stream.next_out = dest;
-    stream.avail_out = 0;
+    وهڪرو.ايندڙ_ٻاهريون = dest;
+    وهڪرو.avail_ٻاهريون = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    افعل {
+        إذا (وهڪرو.avail_ٻاهريون == 0) {
+            وهڪرو.avail_ٻاهريون = کاٻو > (z_سائيز_t)max ? max : (uInt)کاٻو;
+            کاٻو -= وهڪرو.avail_ٻاهريون;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = len > (z_size_t)max ? max : (uInt)len;
-            len -= stream.avail_in;
+        إذا (وهڪرو.avail_اندريون == 0) {
+            وهڪرو.avail_اندريون = len > (z_سائيز_t)max ? max : (uInt)len;
+            len -= وهڪرو.avail_اندريون;
         }
-        err = inflate(&stream, Z_NO_FLUSH);
-    } while (err == Z_OK);
+        err = inflate(&وهڪرو, Z_NO_FLUSH);
+    } طالما (err == Z_OK);
 
     /* Set len and left to the unused input data and unused output space. Set
        *sourceLen to the amount of input consumed. Set *destLen to the amount
        of data produced. */
-    len += stream.avail_in;
-    left += stream.avail_out;
-    *sourceLen -= len;
-    *destLen -= left;
+    len += وهڪرو.avail_اندريون;
+    کاٻو += وهڪرو.avail_ٻاهريون;
+    *ذريعو_Len -= len;
+    *destLen -= کاٻو;
 
-    inflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK :
-           err == Z_NEED_DICT ? Z_DATA_ERROR  :
-           err == Z_BUF_ERROR && len == 0 ? Z_DATA_ERROR :
+    inflate_پڇاڙي(&وهڪرو);
+    أرجع err == Z_وهڪرو_پڇاڙي ? Z_OK :
+           err == Z_NEED_DICT ? Z_معلومات_ERROR  :
+           err == Z_BUF_ERROR && len == 0 ? Z_معلومات_ERROR :
            err;
 }
-int ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                        uLong *sourceLen) {
-    int ret;
-    z_size_t got = *destLen, used = *sourceLen;
-    ret = uncompress2_z(dest, &got, source, &used);
-    *sourceLen = (uLong)used;
+صحيح ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, ثابت Bytef *ذريعو,
+                        uLong *ذريعو_Len) {
+    صحيح ret;
+    z_سائيز_t got = *destLen, استعمال_ٿيل = *ذريعو_Len;
+    ret = uncompress2_z(dest, &got, ذريعو, &استعمال_ٿيل);
+    *ذريعو_Len = (uLong)استعمال_ٿيل;
     *destLen = (uLong)got;
-    return ret;
+    أرجع ret;
 }
-int ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                         z_size_t sourceLen) {
-    z_size_t used = sourceLen;
-    return uncompress2_z(dest, destLen, source, &used);
+صحيح ZEXPORT uncompress_z(Bytef *dest, z_سائيز_t *destLen, ثابت Bytef *ذريعو,
+                         z_سائيز_t ذريعو_Len) {
+    z_سائيز_t استعمال_ٿيل = ذريعو_Len;
+    أرجع uncompress2_z(dest, destLen, ذريعو, &استعمال_ٿيل);
 }
-int ZEXPORT uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                       uLong sourceLen) {
-    uLong used = sourceLen;
-    return uncompress2(dest, destLen, source, &used);
+صحيح ZEXPORT uncompress(Bytef *dest, uLongf *destLen, ثابت Bytef *ذريعو,
+                       uLong ذريعو_Len) {
+    uLong استعمال_ٿيل = ذريعو_Len;
+    أرجع uncompress2(dest, destLen, ذريعو, &استعمال_ٿيل);
 }

@@ -1,42 +1,42 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <windows.h>
 
-#include "zlib.h"
+#ضمن "zlib.h"
 
 
-void MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
+فراغ MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
 {
-    R->HighPart = A.HighPart - B.HighPart;
-    if (A.LowPart >= B.LowPart)
-        R->LowPart = A.LowPart - B.LowPart;
-    else
+    R->مٿاهون_Part = A.مٿاهون_Part - B.مٿاهون_Part;
+    إذا (A.هيٺيون_Part >= B.هيٺيون_Part)
+        R->هيٺيون_Part = A.هيٺيون_Part - B.هيٺيون_Part;
+    وإلا
     {
-        R->LowPart = A.LowPart - B.LowPart;
-        R->HighPart --;
+        R->هيٺيون_Part = A.هيٺيون_Part - B.هيٺيون_Part;
+        R->مٿاهون_Part --;
     }
 }
 
-#ifdef _M_X64
+#جيڪڏهن_وصف_ٿيل _M_X64
 // see https://learn.microsoft.com/en-us/cpp/intrinsics/rdtsc?view=msvc-170 for __rdtsc
-unsigned __int64 __rdtsc(void);
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+بنانشان __int64 __rdtsc(فراغ);
+فراغ Begin_ڳڻپ_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
  //   printf("rdtsc = %I64x\n",__rdtsc());
    pbeginTime64->QuadPart=__rdtsc();
 }
 
-LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
+LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL f_Compute_وقت_Query_Perf)
 {
     LARGE_INTEGER LIres;
-    unsigned _int64 res=__rdtsc()-((unsigned _int64)(beginTime64.QuadPart));
+    بنانشان _int64 res=__rdtsc()-((بنانشان _int64)(beginTime64.QuadPart));
     LIres.QuadPart=res;
    // printf("rdtsc = %I64x\n",__rdtsc());
-    return LIres;
+    أرجع LIres;
 }
-#else
-#ifdef _M_IX86
-void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
+#وإلا
+#جيڪڏهن_وصف_ٿيل _M_IX86
+فراغ myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
     DWORD dwEdx,dwEax;
     _asm
@@ -45,231 +45,231 @@ void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
         mov dwEax,eax
         mov dwEdx,edx
     }
-    pbeginTime64->LowPart=dwEax;
-    pbeginTime64->HighPart=dwEdx;
+    pbeginTime64->هيٺيون_Part=dwEax;
+    pbeginTime64->مٿاهون_Part=dwEdx;
 }
 
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+فراغ Begin_ڳڻپ_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
     myGetRDTSC32(pbeginTime64);
 }
 
-LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
+LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL f_Compute_وقت_Query_Perf)
 {
-    LARGE_INTEGER LIres,endTime64;
-    myGetRDTSC32(&endTime64);
+    LARGE_INTEGER LIres,پڇاڙي_Time64;
+    myGetRDTSC32(&پڇاڙي_Time64);
 
-    LIres.LowPart=LIres.HighPart=0;
-    MyDoMinus64(&LIres,endTime64,beginTime64);
-    return LIres;
+    LIres.هيٺيون_Part=LIres.مٿاهون_Part=0;
+    MyDoMinus64(&LIres,پڇاڙي_Time64,beginTime64);
+    أرجع LIres;
 }
-#else
-void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
-{
-}
-
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+#وإلا
+فراغ myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
 }
 
-LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
+فراغ Begin_ڳڻپ_Rdtsc(LARGE_INTEGER * pbeginTime64)
+{
+}
+
+LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL f_Compute_وقت_Query_Perf)
 {
     LARGE_INTEGER lr;
     lr.QuadPart=0;
-    return lr;
+    أرجع lr;
 }
-#endif
-#endif
+#جيڪڏهن_پورو
+#جيڪڏهن_پورو
 
-void BeginCountPerfCounter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
+فراغ Begin_ڳڻپ_Perf_Counter(LARGE_INTEGER * pbeginTime64,BOOL f_Compute_وقت_Query_Perf)
 {
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
+    إذا ((!f_Compute_وقت_Query_Perf) || (!QueryPerformanceCounter(pbeginTime64)))
     {
-        pbeginTime64->LowPart = GetTickCount();
-        pbeginTime64->HighPart = 0;
+        pbeginTime64->هيٺيون_Part = Get_Tick_ڳڻپ();
+        pbeginTime64->مٿاهون_Part = 0;
     }
 }
 
-DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
+DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL f_Compute_وقت_Query_Perf)
 {
-    LARGE_INTEGER endTime64,ticksPerSecond,ticks;
+    LARGE_INTEGER پڇاڙي_Time64,ticks_في_ٻيو,ticks;
     DWORDLONG ticksShifted,tickSecShifted;
     DWORD dwLog=16+0;
     DWORD dwRet;
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
-        dwRet = (GetTickCount() - beginTime64.LowPart)*1;
-    else
+    إذا ((!f_Compute_وقت_Query_Perf) || (!QueryPerformanceCounter(&پڇاڙي_Time64)))
+        dwRet = (Get_Tick_ڳڻپ() - beginTime64.هيٺيون_Part)*1;
+    وإلا
     {
-        MyDoMinus64(&ticks,endTime64,beginTime64);
-        QueryPerformanceFrequency(&ticksPerSecond);
+        MyDoMinus64(&ticks,پڇاڙي_Time64,beginTime64);
+        QueryPerformanceFrequency(&ticks_في_ٻيو);
 
 
         {
             ticksShifted = Int64ShrlMod32(*(DWORDLONG*)&ticks,dwLog);
-            tickSecShifted = Int64ShrlMod32(*(DWORDLONG*)&ticksPerSecond,dwLog);
+            tickSecShifted = Int64ShrlMod32(*(DWORDLONG*)&ticks_في_ٻيو,dwLog);
 
         }
 
         dwRet = (DWORD)((((DWORD)ticksShifted)*1000)/(DWORD)(tickSecShifted));
         dwRet *=1;
     }
-    return dwRet;
+    أرجع dwRet;
 }
 
-int ReadFileMemory(const char* filename,long* plFileSize,unsigned char** pFilePtr)
+صحيح Read_File_يادگيري(ثابت حرف* filename,ڊگهو* pl_File_سائيز,بنانشان حرف** pFilePtr)
 {
-    FILE* stream;
-    unsigned char* ptr;
-    int retVal=1;
-    stream=fopen(filename, "rb");
-    if (stream==NULL)
-        return 0;
+    FILE* وهڪرو;
+    بنانشان حرف* ptr;
+    صحيح retVal=1;
+    وهڪرو=fopen(filename, "rb");
+    إذا (وهڪرو==عدم)
+        أرجع 0;
 
-    fseek(stream,0,SEEK_END);
+    fseek(وهڪرو,0,SEEK_END);
 
-    *plFileSize=ftell(stream);
-    fseek(stream,0,SEEK_SET);
-    ptr=malloc((*plFileSize)+1);
-    if (ptr==NULL)
+    *pl_File_سائيز=ftell(وهڪرو);
+    fseek(وهڪرو,0,SEEK_SET);
+    ptr=يادگيري_ڏيو((*pl_File_سائيز)+1);
+    إذا (ptr==عدم)
         retVal=0;
-    else
+    وإلا
     {
-        if (fread(ptr, 1, *plFileSize,stream) != (*plFileSize))
+        إذا (fread(ptr, 1, *pl_File_سائيز,وهڪرو) != (*pl_File_سائيز))
             retVal=0;
     }
-    fclose(stream);
+    fclose(وهڪرو);
     *pFilePtr=ptr;
-    return retVal;
+    أرجع retVal;
 }
 
-int main(int argc, char *argv[])
+صحيح مکيه(صحيح argc, حرف *argv[])
 {
-    int BlockSizeCompress=0x8000;
-    int BlockSizeUncompress=0x8000;
-    int cprLevel=Z_DEFAULT_COMPRESSION ;
-    long lFileSize;
-    unsigned char* FilePtr;
-    long lBufferSizeCpr;
-    long lBufferSizeUncpr;
-    long lCompressedSize=0;
-    unsigned char* CprPtr;
-    unsigned char* UncprPtr;
-    long lSizeCpr,lSizeUncpr;
+    صحيح بلاڪ_سائيز_Compress=0x8000;
+    صحيح بلاڪ_سائيز_Uncompress=0x8000;
+    صحيح cprLevel=Z_DEFAULT_COMPRESSION ;
+    ڊگهو l_File_سائيز;
+    بنانشان حرف* FilePtr;
+    ڊگهو l_بفر_سائيز_Cpr;
+    ڊگهو l_بفر_سائيز_Uncpr;
+    ڊگهو l_Compressed_سائيز=0;
+    بنانشان حرف* CprPtr;
+    بنانشان حرف* UncprPtr;
+    ڊگهو l_سائيز_Cpr,l_سائيز_Uncpr;
     DWORD dwGetTick,dwMsecQP;
     LARGE_INTEGER li_qp,li_rdtsc,dwResRdtsc;
 
-    if (argc<=1)
+    إذا (argc<=1)
     {
-        printf("run TestZlib <File> [BlockSizeCompress] [BlockSizeUncompress] [compres. level]\n");
-        return 0;
+        لکو("run TestZlib <File> [BlockSizeCompress] [BlockSizeUncompress] [compres. level]\n");
+        أرجع 0;
     }
 
-    if (ReadFileMemory(argv[1],&lFileSize,&FilePtr)==0)
+    إذا (Read_File_يادگيري(argv[1],&l_File_سائيز,&FilePtr)==0)
     {
-        printf("error reading %s\n",argv[1]);
-        return 1;
+        لکو("error reading %s\n",argv[1]);
+        أرجع 1;
     }
-    else printf("file %s read, %ld bytes\n",argv[1],lFileSize);
+    وإلا لکو("file %s read, %ld bytes\n",argv[1],l_File_سائيز);
 
-    if (argc>=3)
-        BlockSizeCompress=atol(argv[2]);
+    إذا (argc>=3)
+        بلاڪ_سائيز_Compress=atol(argv[2]);
 
-    if (argc>=4)
-        BlockSizeUncompress=atol(argv[3]);
+    إذا (argc>=4)
+        بلاڪ_سائيز_Uncompress=atol(argv[3]);
 
-    if (argc>=5)
-        cprLevel=(int)atol(argv[4]);
+    إذا (argc>=5)
+        cprLevel=(صحيح)atol(argv[4]);
 
-    lBufferSizeCpr = lFileSize + (lFileSize/0x10) + 0x200;
-    lBufferSizeUncpr = lBufferSizeCpr;
+    l_بفر_سائيز_Cpr = l_File_سائيز + (l_File_سائيز/0x10) + 0x200;
+    l_بفر_سائيز_Uncpr = l_بفر_سائيز_Cpr;
 
-    CprPtr=(unsigned char*)malloc(lBufferSizeCpr + BlockSizeCompress);
+    CprPtr=(بنانشان حرف*)يادگيري_ڏيو(l_بفر_سائيز_Cpr + بلاڪ_سائيز_Compress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_ڳڻپ_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_ڳڻپ();
+    Begin_ڳڻپ_Rdtsc(&li_rdtsc);
     {
-        z_stream zcpr;
-        int ret=Z_OK;
-        long lOrigToDo = lFileSize;
-        long lOrigDone = 0;
-        int step=0;
-        memset(&zcpr,0,sizeof(z_stream));
+        z_وهڪرو zcpr;
+        صحيح ret=Z_OK;
+        ڊگهو l_Orig_منزل_Do = l_File_سائيز;
+        ڊگهو l_Orig_پورو = 0;
+        صحيح قدم=0;
+        memset(&zcpr,0,حجم(z_وهڪرو));
         deflateInit(&zcpr,cprLevel);
 
-        zcpr.next_in = FilePtr;
-        zcpr.next_out = CprPtr;
+        zcpr.ايندڙ_اندريون = FilePtr;
+        zcpr.ايندڙ_ٻاهريون = CprPtr;
 
 
-        do
+        افعل
         {
-            long all_read_before = zcpr.total_in;
-            zcpr.avail_in = min(lOrigToDo,BlockSizeCompress);
-            zcpr.avail_out = BlockSizeCompress;
-            ret=deflate(&zcpr,(zcpr.avail_in==lOrigToDo) ? Z_FINISH : Z_SYNC_FLUSH);
-            lOrigDone += (zcpr.total_in-all_read_before);
-            lOrigToDo -= (zcpr.total_in-all_read_before);
-            step++;
-        } while (ret==Z_OK);
+            ڊگهو all_read_before = zcpr.ڪل_اندريون;
+            zcpr.avail_اندريون = min(l_Orig_منزل_Do,بلاڪ_سائيز_Compress);
+            zcpr.avail_ٻاهريون = بلاڪ_سائيز_Compress;
+            ret=deflate(&zcpr,(zcpr.avail_اندريون==l_Orig_منزل_Do) ? Z_پڄاڻي : Z_SYNC_FLUSH);
+            l_Orig_پورو += (zcpr.ڪل_اندريون-all_read_before);
+            l_Orig_منزل_Do -= (zcpr.ڪل_اندريون-all_read_before);
+            قدم++;
+        } طالما (ret==Z_OK);
 
-        lSizeCpr=zcpr.total_out;
-        deflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        l_سائيز_Cpr=zcpr.ڪل_ٻاهريون;
+        deflate_پڇاڙي(&zcpr);
+        dwGetTick=Get_Tick_ڳڻپ()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
-        printf("total compress size = %u, in %u step\n",lSizeCpr,step);
-        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(double)1000.);
-        printf("defcpr time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(double)1000.);
-        printf("defcpr result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
+        لکو("total compress size = %u, in %u step\n",l_سائيز_Cpr,قدم);
+        لکو("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(مزدوج)1000.);
+        لکو("defcpr time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(مزدوج)1000.);
+        لکو("defcpr result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    CprPtr=(unsigned char*)realloc(CprPtr,lSizeCpr);
-    UncprPtr=(unsigned char*)malloc(lBufferSizeUncpr + BlockSizeUncompress);
+    CprPtr=(بنانشان حرف*)realloc(CprPtr,l_سائيز_Cpr);
+    UncprPtr=(بنانشان حرف*)يادگيري_ڏيو(l_بفر_سائيز_Uncpr + بلاڪ_سائيز_Uncompress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_ڳڻپ_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_ڳڻپ();
+    Begin_ڳڻپ_Rdtsc(&li_rdtsc);
     {
-        z_stream zcpr;
-        int ret=Z_OK;
-        long lOrigToDo = lSizeCpr;
-        long lOrigDone = 0;
-        int step=0;
-        memset(&zcpr,0,sizeof(z_stream));
+        z_وهڪرو zcpr;
+        صحيح ret=Z_OK;
+        ڊگهو l_Orig_منزل_Do = l_سائيز_Cpr;
+        ڊگهو l_Orig_پورو = 0;
+        صحيح قدم=0;
+        memset(&zcpr,0,حجم(z_وهڪرو));
         inflateInit(&zcpr);
 
-        zcpr.next_in = CprPtr;
-        zcpr.next_out = UncprPtr;
+        zcpr.ايندڙ_اندريون = CprPtr;
+        zcpr.ايندڙ_ٻاهريون = UncprPtr;
 
 
-        do
+        افعل
         {
-            long all_read_before = zcpr.total_in;
-            zcpr.avail_in = min(lOrigToDo,BlockSizeUncompress);
-            zcpr.avail_out = BlockSizeUncompress;
+            ڊگهو all_read_before = zcpr.ڪل_اندريون;
+            zcpr.avail_اندريون = min(l_Orig_منزل_Do,بلاڪ_سائيز_Uncompress);
+            zcpr.avail_ٻاهريون = بلاڪ_سائيز_Uncompress;
             ret=inflate(&zcpr,Z_SYNC_FLUSH);
-            lOrigDone += (zcpr.total_in-all_read_before);
-            lOrigToDo -= (zcpr.total_in-all_read_before);
-            step++;
-        } while (ret==Z_OK);
+            l_Orig_پورو += (zcpr.ڪل_اندريون-all_read_before);
+            l_Orig_منزل_Do -= (zcpr.ڪل_اندريون-all_read_before);
+            قدم++;
+        } طالما (ret==Z_OK);
 
-        lSizeUncpr=zcpr.total_out;
-        inflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        l_سائيز_Uncpr=zcpr.ڪل_ٻاهريون;
+        inflate_پڇاڙي(&zcpr);
+        dwGetTick=Get_Tick_ڳڻپ()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
-        printf("total uncompress size = %u, in %u step\n",lSizeUncpr,step);
-        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(double)1000.);
-        printf("uncpr  time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(double)1000.);
-        printf("uncpr  result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
+        لکو("total uncompress size = %u, in %u step\n",l_سائيز_Uncpr,قدم);
+        لکو("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(مزدوج)1000.);
+        لکو("uncpr  time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(مزدوج)1000.);
+        لکو("uncpr  result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    if (lSizeUncpr==lFileSize)
+    إذا (l_سائيز_Uncpr==l_File_سائيز)
     {
-        if (memcmp(FilePtr,UncprPtr,lFileSize)==0)
-            printf("compare ok\n");
+        إذا (memcmp(FilePtr,UncprPtr,l_File_سائيز)==0)
+            لکو("compare ok\n");
 
     }
 
-    return 0;
+    أرجع 0;
 }

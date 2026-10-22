@@ -12,114 +12,114 @@
 */
 
 
-#if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
-        #ifndef __USE_FILE_OFFSET64
-                #define __USE_FILE_OFFSET64
-        #endif
-        #ifndef __USE_LARGEFILE64
-                #define __USE_LARGEFILE64
-        #endif
-        #ifndef _LARGEFILE64_SOURCE
-                #define _LARGEFILE64_SOURCE
-        #endif
-        #ifndef _FILE_OFFSET_BIT
-                #define _FILE_OFFSET_BIT 64
-        #endif
-#endif
+#إذا (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
+        #جيڪڏهن_وصف_نه_ٿيل __USE_FILE_OFFSET64
+                #وصف_ڪريو __USE_FILE_OFFSET64
+        #جيڪڏهن_پورو
+        #جيڪڏهن_وصف_نه_ٿيل __USE_LARGEFILE64
+                #وصف_ڪريو __USE_LARGEFILE64
+        #جيڪڏهن_پورو
+        #جيڪڏهن_وصف_نه_ٿيل LARGEFILE64_ذريعو
+                #وصف_ڪريو LARGEFILE64_ذريعو
+        #جيڪڏهن_پورو
+        #جيڪڏهن_وصف_نه_ٿيل FILE_وٿي_ٻٽو_انگ
+                #وصف_ڪريو FILE_وٿي_ٻٽو_انگ 64
+        #جيڪڏهن_پورو
+#جيڪڏهن_پورو
 
-#if defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
+#إذا defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
 // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
-#define FOPEN_FUNC(filename, mode) fopen(filename, mode)
-#define FTELLO_FUNC(stream) ftello(stream)
-#define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
-#else
-#define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
-#define FTELLO_FUNC(stream) ftello64(stream)
-#define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
-#endif
+#وصف_ڪريو FOPEN_FUNC(filename, گهڻائي) fopen(filename, گهڻائي)
+#وصف_ڪريو FTELLO_FUNC(وهڪرو) ftello(وهڪرو)
+#وصف_ڪريو FSEEKO_FUNC(وهڪرو, وٿي, origin) fseeko(وهڪرو, وٿي, origin)
+#وإلا
+#وصف_ڪريو FOPEN_FUNC(filename, گهڻائي) fopen64(filename, گهڻائي)
+#وصف_ڪريو FTELLO_FUNC(وهڪرو) ftello64(وهڪرو)
+#وصف_ڪريو FSEEKO_FUNC(وهڪرو, وٿي, origin) fseeko64(وهڪرو, وٿي, origin)
+#جيڪڏهن_پورو
 
 
 
-#ifndef _CRT_SECURE_NO_WARNINGS
+#جيڪڏهن_وصف_نه_ٿيل _CRT_SECURE_NO_WARNINGS
 #  define _CRT_SECURE_NO_WARNINGS
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <errno.h>
-#include <fcntl.h>
+#جيڪڏهن_پورو
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <time.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
 
-#ifdef _WIN32
+#جيڪڏهن_وصف_ٿيل _WIN32
 # include <direct.h>
 # include <io.h>
-#else
+#وإلا
 # include <unistd.h>
 # include <utime.h>
 # include <sys/types.h>
 # include <sys/stat.h>
-#endif
+#جيڪڏهن_پورو
 
-#include "zip.h"
-#include "ints.h"
+#ضمن "zip.h"
+#ضمن "ints.h"
 
-#ifdef _WIN32
-        #define USEWIN32IOAPI
-        #include "iowin32.h"
-#endif
+#جيڪڏهن_وصف_ٿيل _WIN32
+        #وصف_ڪريو USEWIN32IOAPI
+        #ضمن "iowin32.h"
+#جيڪڏهن_پورو
 
 
 
-#define WRITEBUFFERSIZE (16384)
-#define MAXFILENAME (256)
+#وصف_ڪريو WRITEBUFFERSIZE (16384)
+#وصف_ڪريو MAXFILENAME (256)
 
-#ifdef _WIN32
+#جيڪڏهن_وصف_ٿيل _WIN32
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
-  (void)tmzip;
-  int ret = 0;
+ساكن صحيح filetime(ثابت حرف *f, tm_zip *tmzip, uLong *dt) {
+  (فراغ)tmzip;
+  صحيح ret = 0;
   {
       FILETIME ftLocal;
-      HANDLE hFind;
-      WIN32_FIND_DATAA ff32;
+      HANDLE h_ڳوليو;
+      WIN32_ڳوليو_DATAA ff32;
 
-      hFind = FindFirstFileA(f,&ff32);
-      if (hFind != INVALID_HANDLE_VALUE)
+      h_ڳوليو = ڳوليو_پهريون_File_A(f,&ff32);
+      إذا (h_ڳوليو != INVALID_HANDLE_قدر)
       {
-        FileTimeToLocalFileTime(&(ff32.ftLastWriteTime),&ftLocal);
-        FileTimeToDosDateTime(&ftLocal,((LPWORD)dt)+1,((LPWORD)dt)+0);
-        FindClose(hFind);
+        File_وقت_منزل_Local_File_وقت(&(ff32.ft_آخري_Write_وقت),&ftLocal);
+        File_وقت_منزل_Dos_Date_وقت(&ftLocal,((LPWORD)dt)+1,((LPWORD)dt)+0);
+        ڳوليو_Close(h_ڳوليو);
         ret = 1;
       }
   }
-  return ret;
+  أرجع ret;
 }
-#elif defined(__unix__) || defined(__unix) || defined(__APPLE__)
+#وإلاإذا defined(__unix__) || defined(__unix) || defined(__APPLE__)
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
-  (void)dt;
-  int ret=0;
-  struct stat s;        /* results of stat() */
-  struct tm* filedate;
+ساكن صحيح filetime(ثابت حرف *f, tm_zip *tmzip, uLong *dt) {
+  (فراغ)dt;
+  صحيح ret=0;
+  بنية stat s;        /* results of stat() */
+  بنية tm* filedate;
   time_t tm_t=0;
 
-  if (strcmp(f,"-")!=0)
+  إذا (strcmp(f,"-")!=0)
   {
-    char name[MAXFILENAME+1];
-    size_t len = strlen(f);
-    if (len > MAXFILENAME)
+    حرف name[MAXFILENAME+1];
+    size_t len = لڙي_ڊيگهه(f);
+    إذا (len > MAXFILENAME)
       len = MAXFILENAME;
 
     strncpy(name, f,MAXFILENAME-1);
     /* strncpy doesn't append the trailing NULL, of the string is too long. */
     name[ MAXFILENAME ] = '\0';
 
-    if (name[len - 1] == '/')
+    إذا (name[len - 1] == '/')
       name[len - 1] = '\0';
     /* not all systems allow stat'ing a file with / appended */
-    if (stat(name,&s)==0)
+    إذا (stat(name,&s)==0)
     {
       tm_t = s.st_mtime;
       ret = 1;
@@ -134,40 +134,40 @@ static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
   tmzip->tm_mon  = filedate->tm_mon ;
   tmzip->tm_year = filedate->tm_year;
 
-  return ret;
+  أرجع ret;
 }
-#else
+#وإلا
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
-    (void)f;
-    (void)tmzip;
-    (void)dt;
-    return 0;
+ساكن صحيح filetime(ثابت حرف *f, tm_zip *tmzip, uLong *dt) {
+    (فراغ)f;
+    (فراغ)tmzip;
+    (فراغ)dt;
+    أرجع 0;
 }
-#endif
+#جيڪڏهن_پورو
 
 
 
 
-static int check_exist_file(const char* filename) {
+ساكن صحيح check_exist_file(ثابت حرف* filename) {
     FILE* ftestexist;
-    int ret = 1;
+    صحيح ret = 1;
     ftestexist = FOPEN_FUNC(filename,"rb");
-    if (ftestexist==NULL)
+    إذا (ftestexist==عدم)
         ret = 0;
-    else
+    وإلا
         fclose(ftestexist);
-    return ret;
+    أرجع ret;
 }
 
-static void do_banner(void) {
-    printf("MiniZip 1.1, demo of zLib + MiniZip64 package, written by Gilles Vollant\n");
-    printf("more info on MiniZip at https://www.winimage.com/zLibDll/minizip.html\n\n");
+ساكن فراغ do_banner(فراغ) {
+    لکو("MiniZip 1.1, demo of zLib + MiniZip64 package, written by Gilles Vollant\n");
+    لکو("more info on MiniZip at https://www.winimage.com/zLibDll/minizip.html\n\n");
 }
 
-static void do_help(void) {
-    printf("Usage : minizip [-o] [-a] [-0 to -9] [-p password] [-j] file.zip [files_to_add]\n\n" \
+ساكن فراغ do_help(فراغ) {
+    لکو("Usage : minizip [-o] [-a] [-0 to -9] [-p password] [-j] file.zip [files_to_add]\n\n" \
            "  -o  Overwrite existing file.zip\n" \
            "  -a  Append to existing file.zip\n" \
            "  -0  Store only\n" \
@@ -178,115 +178,115 @@ static void do_help(void) {
 
 /* calculate the CRC32 of a file,
    because to encrypt a file, we need known the CRC32 of the file before */
-static int getFileCrc(const char* filenameinzip, void* buf, unsigned long size_buf, unsigned long* result_crc) {
-   unsigned long calculate_crc=0;
-   int err=ZIP_OK;
+ساكن صحيح get_File_چڪري_جاچ(ثابت حرف* filenameinzip, فراغ* buf, بنانشان ڊگهو سائيز_buf, بنانشان ڊگهو* نتيجو_چڪري_جاچ) {
+   بنانشان ڊگهو calculate_چڪري_جاچ=0;
+   صحيح err=ZIP_OK;
    FILE * fin = FOPEN_FUNC(filenameinzip,"rb");
 
-   unsigned long size_read = 0;
+   بنانشان ڊگهو سائيز_read = 0;
    /* unsigned long total_read = 0; */
-   if (fin==NULL)
+   إذا (fin==عدم)
    {
        err = ZIP_ERRNO;
    }
 
-    if (err == ZIP_OK)
-        do
+    إذا (err == ZIP_OK)
+        افعل
         {
             err = ZIP_OK;
-            size_read = (unsigned long)fread(buf,1,size_buf,fin);
-            if (size_read < size_buf)
-                if (feof(fin)==0)
+            سائيز_read = (بنانشان ڊگهو)fread(buf,1,سائيز_buf,fin);
+            إذا (سائيز_read < سائيز_buf)
+                إذا (feof(fin)==0)
             {
-                printf("error in reading %s\n",filenameinzip);
+                لکو("error in reading %s\n",filenameinzip);
                 err = ZIP_ERRNO;
             }
 
-            if (size_read>0)
-                calculate_crc = crc32_z(calculate_crc,buf,size_read);
+            إذا (سائيز_read>0)
+                calculate_چڪري_جاچ = چڪري_جاچ_32_z(calculate_چڪري_جاچ,buf,سائيز_read);
             /* total_read += size_read; */
 
-        } while ((err == ZIP_OK) && (size_read>0));
+        } طالما ((err == ZIP_OK) && (سائيز_read>0));
 
-    if (fin)
+    إذا (fin)
         fclose(fin);
 
-    *result_crc=calculate_crc;
-    printf("file %s crc %lx\n", filenameinzip, calculate_crc);
-    return err;
+    *نتيجو_چڪري_جاچ=calculate_چڪري_جاچ;
+    لکو("file %s crc %lx\n", filenameinzip, calculate_چڪري_جاچ);
+    أرجع err;
 }
 
-static int isLargeFile(const char* filename) {
-  int largeFile = 0;
+ساكن صحيح isLargeFile(ثابت حرف* filename) {
+  صحيح largeFile = 0;
   ZPOS64_T pos = 0;
   FILE* pFile = FOPEN_FUNC(filename, "rb");
 
-  if(pFile != NULL)
+  إذا(pFile != عدم)
   {
     FSEEKO_FUNC(pFile, 0, SEEK_END);
     pos = (ZPOS64_T)FTELLO_FUNC(pFile);
 
-                printf("File : %s is %"PUI64" bytes\n", filename, pos);
+                لکو("File : %s is %"PUI64" bytes\n", filename, pos);
 
-    if(pos >= 0xffffffff)
+    إذا(pos >= 0xffffffff)
      largeFile = 1;
 
                 fclose(pFile);
   }
 
- return largeFile;
+ أرجع largeFile;
 }
 
-int main(int argc, char *argv[]) {
-    int i;
-    int opt_overwrite=0;
-    int opt_compress_level=Z_DEFAULT_COMPRESSION;
-    int opt_exclude_path=0;
-    int zipfilenamearg = 0;
-    char filename_try[MAXFILENAME+16];
-    int zipok;
-    int err=0;
-    unsigned long size_buf=0;
-    void* buf=NULL;
-    const char* password=NULL;
+صحيح مکيه(صحيح argc, حرف *argv[]) {
+    صحيح i;
+    صحيح opt_overwrite=0;
+    صحيح opt_compress_level=Z_DEFAULT_COMPRESSION;
+    صحيح opt_exclude_رستو=0;
+    صحيح zipfilenamearg = 0;
+    حرف filename_try[MAXFILENAME+16];
+    صحيح zipok;
+    صحيح err=0;
+    بنانشان ڊگهو سائيز_buf=0;
+    فراغ* buf=عدم;
+    ثابت حرف* password=عدم;
 
 
     do_banner();
-    if (argc==1)
+    إذا (argc==1)
     {
         do_help();
-        return 0;
+        أرجع 0;
     }
-    else
+    وإلا
     {
-        for (i=1;i<argc;i++)
+        لكل (i=1;i<argc;i++)
         {
-            if ((*argv[i])=='-')
+            إذا ((*argv[i])=='-')
             {
-                const char *p=argv[i]+1;
+                ثابت حرف *p=argv[i]+1;
 
-                while ((*p)!='\0')
+                طالما ((*p)!='\0')
                 {
-                    char c=*(p++);
-                    if ((c=='o') || (c=='O'))
+                    حرف c=*(p++);
+                    إذا ((c=='o') || (c=='O'))
                         opt_overwrite = 1;
-                    if ((c=='a') || (c=='A'))
+                    إذا ((c=='a') || (c=='A'))
                         opt_overwrite = 2;
-                    if ((c>='0') && (c<='9'))
+                    إذا ((c>='0') && (c<='9'))
                         opt_compress_level = c-'0';
-                    if ((c=='j') || (c=='J'))
-                        opt_exclude_path = 1;
+                    إذا ((c=='j') || (c=='J'))
+                        opt_exclude_رستو = 1;
 
-                    if (((c=='p') || (c=='P')) && (i+1<argc))
+                    إذا (((c=='p') || (c=='P')) && (i+1<argc))
                     {
                         password=argv[i+1];
                         i++;
                     }
                 }
             }
-            else
+            وإلا
             {
-                if (zipfilenamearg == 0)
+                إذا (zipfilenamearg == 0)
                 {
                     zipfilenamearg = i ;
                 }
@@ -294,110 +294,110 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    size_buf = WRITEBUFFERSIZE;
-    buf = (void*)malloc(size_buf);
-    if (buf==NULL)
+    سائيز_buf = WRITEBUFFERSIZE;
+    buf = (فراغ*)يادگيري_ڏيو(سائيز_buf);
+    إذا (buf==عدم)
     {
-        printf("Error allocating memory\n");
-        return ZIP_INTERNALERROR;
+        لکو("Error allocating memory\n");
+        أرجع ZIP_INTERNALERROR;
     }
 
-    if (zipfilenamearg==0)
+    إذا (zipfilenamearg==0)
     {
         zipok=0;
     }
-    else
+    وإلا
     {
-        int len;
-        int dot_found=0;
+        صحيح len;
+        صحيح dot_مليو=0;
 
         zipok = 1 ;
         strncpy(filename_try, argv[zipfilenamearg],MAXFILENAME-1);
         /* strncpy doesn't append the trailing NULL, of the string is too long. */
         filename_try[ MAXFILENAME ] = '\0';
 
-        len=(int)strlen(filename_try);
-        for (i=0;i<len;i++)
-            if (filename_try[i]=='.')
-                dot_found=1;
+        len=(صحيح)لڙي_ڊيگهه(filename_try);
+        لكل (i=0;i<len;i++)
+            إذا (filename_try[i]=='.')
+                dot_مليو=1;
 
-        if (dot_found==0)
+        إذا (dot_مليو==0)
             strcat(filename_try,".zip");
 
-        if (opt_overwrite==2)
+        إذا (opt_overwrite==2)
         {
             /* if the file don't exist, we not append file */
-            if (check_exist_file(filename_try)==0)
+            إذا (check_exist_file(filename_try)==0)
                 opt_overwrite=1;
         }
-        else
-        if (opt_overwrite==0)
-            if (check_exist_file(filename_try)!=0)
+        وإلا
+        إذا (opt_overwrite==0)
+            إذا (check_exist_file(filename_try)!=0)
             {
-                char rep=0;
-                do
+                حرف rep=0;
+                افعل
                 {
-                    char answer[128];
-                    int ret;
-                    printf("The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ",filename_try);
+                    حرف answer[128];
+                    صحيح ret;
+                    لکو("The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ",filename_try);
                     ret = scanf("%1s",answer);
-                    if (ret != 1)
+                    إذا (ret != 1)
                     {
-                       exit(EXIT_FAILURE);
+                       ٻاهر_نڪرو(EXIT_FAILURE);
                     }
                     rep = answer[0] ;
-                    if ((rep>='a') && (rep<='z'))
+                    إذا ((rep>='a') && (rep<='z'))
                         rep -= 0x20;
                 }
-                while ((rep!='Y') && (rep!='N') && (rep!='A'));
-                if (rep=='N')
+                طالما ((rep!='Y') && (rep!='N') && (rep!='A'));
+                إذا (rep=='N')
                     zipok = 0;
-                if (rep=='A')
+                إذا (rep=='A')
                     opt_overwrite = 2;
             }
     }
 
-    if (zipok==1)
+    إذا (zipok==1)
     {
         zipFile zf;
-        int errclose;
+        صحيح errclose;
 #        ifdef USEWIN32IOAPI
         zlib_filefunc64_def ffunc;
         fill_win32_filefunc64A(&ffunc);
-        zf = zipOpen2_64(filename_try,(opt_overwrite==2) ? 2 : 0,NULL,&ffunc);
-#        else
+        zf = zipOpen2_64(filename_try,(opt_overwrite==2) ? 2 : 0,عدم,&ffunc);
+#        وإلا
         zf = zipOpen64(filename_try,(opt_overwrite==2) ? 2 : 0);
 #        endif
 
-        if (zf == NULL)
+        إذا (zf == عدم)
         {
-            printf("error opening %s\n",filename_try);
+            لکو("error opening %s\n",filename_try);
             err= ZIP_ERRNO;
         }
-        else
-            printf("creating %s\n",filename_try);
+        وإلا
+            لکو("creating %s\n",filename_try);
 
-        for (i=zipfilenamearg+1;(i<argc) && (err==ZIP_OK);i++)
+        لكل (i=zipfilenamearg+1;(i<argc) && (err==ZIP_OK);i++)
         {
-            if (!((((*(argv[i]))=='-') || ((*(argv[i]))=='/')) &&
+            إذا (!((((*(argv[i]))=='-') || ((*(argv[i]))=='/')) &&
                   ((argv[i][1]=='o') || (argv[i][1]=='O') ||
                    (argv[i][1]=='a') || (argv[i][1]=='A') ||
                    (argv[i][1]=='p') || (argv[i][1]=='P') ||
                    ((argv[i][1]>='0') && (argv[i][1]<='9'))) &&
-                  (strlen(argv[i]) == 2)))
+                  (لڙي_ڊيگهه(argv[i]) == 2)))
             {
-                FILE * fin = NULL;
-                size_t size_read;
-                const char* filenameinzip = argv[i];
-                const char *savefilenameinzip;
+                FILE * fin = عدم;
+                size_t سائيز_read;
+                ثابت حرف* filenameinzip = argv[i];
+                ثابت حرف *savefilenameinzip;
                 zip_fileinfo zi;
-                unsigned long crcFile=0;
-                int zip64 = 0;
+                بنانشان ڊگهو چڪري_جاچ_File=0;
+                صحيح zip64 = 0;
 
                 zi.tmz_date.tm_sec = zi.tmz_date.tm_min = zi.tmz_date.tm_hour =
                 zi.tmz_date.tm_mday = zi.tmz_date.tm_mon = zi.tmz_date.tm_year = 0;
                 zi.dosDate = 0;
-                zi.internal_fa = 0;
+                zi.اندروني_fa = 0;
                 zi.external_fa = 0;
                 filetime(filenameinzip,&zi.tmz_date,&zi.dosDate);
 
@@ -407,105 +407,105 @@ int main(int argc, char *argv[]) {
                                  (opt_compress_level != 0) ? Z_DEFLATED : 0,
                                  opt_compress_level);
 */
-                if ((password != NULL) && (err==ZIP_OK))
-                    err = getFileCrc(filenameinzip,buf,size_buf,&crcFile);
+                إذا ((password != عدم) && (err==ZIP_OK))
+                    err = get_File_چڪري_جاچ(filenameinzip,buf,سائيز_buf,&چڪري_جاچ_File);
 
                 zip64 = isLargeFile(filenameinzip);
 
                                                          /* The path name saved, should not include a leading slash. */
                /*if it did, windows/xp and dynazip couldn't read the zip file. */
                  savefilenameinzip = filenameinzip;
-                 while( savefilenameinzip[0] == '\\' || savefilenameinzip[0] == '/' )
+                 طالما( savefilenameinzip[0] == '\\' || savefilenameinzip[0] == '/' )
                  {
                      savefilenameinzip++;
                  }
 
                  /*should the zip file contain any path at all?*/
-                 if( opt_exclude_path )
+                 إذا( opt_exclude_رستو )
                  {
-                     const char *tmpptr;
-                     const char *lastslash = 0;
-                     for( tmpptr = savefilenameinzip; *tmpptr; tmpptr++)
+                     ثابت حرف *tmpptr;
+                     ثابت حرف *lastslash = 0;
+                     لكل( tmpptr = savefilenameinzip; *tmpptr; tmpptr++)
                      {
-                         if( *tmpptr == '\\' || *tmpptr == '/')
+                         إذا( *tmpptr == '\\' || *tmpptr == '/')
                          {
                              lastslash = tmpptr;
                          }
                      }
-                     if( lastslash != NULL )
+                     إذا( lastslash != عدم )
                      {
                          savefilenameinzip = lastslash+1; /* base filename follows last slash. */
                      }
                  }
 
                  /**/
-                err = zipOpenNewFileInZip3_64(zf,savefilenameinzip,&zi,
-                                 NULL,0,NULL,0,NULL /* comment*/,
+                err = zip_Open_New_File_اندريون_Zip3_64(zf,savefilenameinzip,&zi,
+                                 عدم,0,عدم,0,عدم /* comment*/,
                                  (opt_compress_level != 0) ? Z_DEFLATED : 0,
                                  opt_compress_level,0,
                                  /* -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY, */
                                  -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                 password,crcFile, zip64);
+                                 password,چڪري_جاچ_File, zip64);
 
-                if (err != ZIP_OK)
-                    printf("error in opening %s in zipfile\n",filenameinzip);
-                else
+                إذا (err != ZIP_OK)
+                    لکو("error in opening %s in zipfile\n",filenameinzip);
+                وإلا
                 {
                     fin = FOPEN_FUNC(filenameinzip,"rb");
-                    if (fin==NULL)
+                    إذا (fin==عدم)
                     {
                         err=ZIP_ERRNO;
-                        printf("error in opening %s for reading\n",filenameinzip);
+                        لکو("error in opening %s for reading\n",filenameinzip);
                     }
                 }
 
-                if (err == ZIP_OK)
-                    do
+                إذا (err == ZIP_OK)
+                    افعل
                     {
                         err = ZIP_OK;
-                        size_read = fread(buf,1,size_buf,fin);
-                        if (size_read < size_buf)
-                            if (feof(fin)==0)
+                        سائيز_read = fread(buf,1,سائيز_buf,fin);
+                        إذا (سائيز_read < سائيز_buf)
+                            إذا (feof(fin)==0)
                         {
-                            printf("error in reading %s\n",filenameinzip);
+                            لکو("error in reading %s\n",filenameinzip);
                             err = ZIP_ERRNO;
                         }
 
-                        if (size_read>0)
+                        إذا (سائيز_read>0)
                         {
-                            err = zipWriteInFileInZip (zf,buf,(unsigned)size_read);
-                            if (err<0)
+                            err = zip_Write_اندريون_File_اندريون_Zip (zf,buf,(بنانشان)سائيز_read);
+                            إذا (err<0)
                             {
-                                printf("error in writing %s in the zipfile\n",
+                                لکو("error in writing %s in the zipfile\n",
                                                  filenameinzip);
                             }
 
                         }
-                    } while ((err == ZIP_OK) && (size_read>0));
+                    } طالما ((err == ZIP_OK) && (سائيز_read>0));
 
-                if (fin)
+                إذا (fin)
                     fclose(fin);
 
-                if (err<0)
+                إذا (err<0)
                     err=ZIP_ERRNO;
-                else
+                وإلا
                 {
-                    err = zipCloseFileInZip(zf);
-                    if (err!=ZIP_OK)
-                        printf("error in closing %s in the zipfile\n",
+                    err = zip_Close_File_اندريون_Zip(zf);
+                    إذا (err!=ZIP_OK)
+                        لکو("error in closing %s in the zipfile\n",
                                     filenameinzip);
                 }
             }
         }
-        errclose = zipClose(zf,NULL);
-        if (errclose != ZIP_OK)
-            printf("error in closing %s\n",filename_try);
+        errclose = zipClose(zf,عدم);
+        إذا (errclose != ZIP_OK)
+            لکو("error in closing %s\n",filename_try);
     }
-    else
+    وإلا
     {
        do_help();
     }
 
-    free(buf);
-    return err;
+    حرر(buf);
+    أرجع err;
 }

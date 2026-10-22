@@ -10,322 +10,322 @@
 
 /* @(#) $Id$ */
 
-#ifndef ZUTIL_H
-#define ZUTIL_H
+#جيڪڏهن_وصف_نه_ٿيل ZUTIL_H
+#وصف_ڪريو ZUTIL_H
 
-#ifdef HAVE_HIDDEN
-#  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
-#else
-#  define ZLIB_INTERNAL
-#endif
+#جيڪڏهن_وصف_ٿيل HAVE_HIDDEN
+#  define ZLIB_اندروني __attribute__((visibility ("hidden")))
+#وإلا
+#  define ZLIB_اندروني
+#جيڪڏهن_پورو
 
-#include "zlib.h"
+#ضمن "zlib.h"
 
-#if defined(STDC) && !defined(Z_SOLO)
-#  if !(defined(_WIN32_WCE) && defined(_MSC_VER))
+#إذا defined(STDC) && !defined(Z_SOLO)
+#  إذا !(defined(_WIN32_WCE) && defined(_MSC_VER))
 #    include <stddef.h>
 #  endif
 #  include <string.h>
 #  include <stdlib.h>
-#endif
+#جيڪڏهن_پورو
 
-#ifndef local
-#  define local static
-#endif
+#جيڪڏهن_وصف_نه_ٿيل local
+#  define local ساكن
+#جيڪڏهن_پورو
 /* since "static" is used to mean two completely different things in C, we
    define "local" for the non-static meaning of "static", for readability
    (compile with -Dlocal if your debugger can't find static symbols) */
 
-extern const char deflate_copyright[];
-extern const char inflate_copyright[];
-extern const char inflate9_copyright[];
+خارجي ثابت حرف deflate_copyright[];
+خارجي ثابت حرف inflate_copyright[];
+خارجي ثابت حرف inflate9_copyright[];
 
-typedef unsigned char  uch;
-typedef uch FAR uchf;
-typedef unsigned short ush;
-typedef ush FAR ushf;
-typedef unsigned long  ulg;
+تعريفنوع بنانشان حرف  uch;
+تعريفنوع uch FAR uchf;
+تعريفنوع بنانشان ننڍو ush;
+تعريفنوع ush FAR ushf;
+تعريفنوع بنانشان ڊگهو  ulg;
 
-#if !defined(Z_U8) && !defined(Z_SOLO) && defined(STDC)
+#إذا !defined(Z_U8) && !defined(Z_SOLO) && defined(STDC)
 #  include <limits.h>
-#  if (ULONG_MAX == 0xffffffffffffffff)
-#    define Z_U8 unsigned long
+#  إذا (ULONG_MAX == 0xffffffffffffffff)
+#    define Z_U8 بنانشان ڊگهو
 #  elif (ULLONG_MAX == 0xffffffffffffffff)
-#    define Z_U8 unsigned long long
+#    define Z_U8 بنانشان ڊگهو ڊگهو
 #  elif (ULONG_LONG_MAX == 0xffffffffffffffff)
-#    define Z_U8 unsigned long long
+#    define Z_U8 بنانشان ڊگهو ڊگهو
 #  elif (UINT_MAX == 0xffffffffffffffff)
-#    define Z_U8 unsigned
+#    define Z_U8 بنانشان
 #  endif
-#endif
+#جيڪڏهن_پورو
 
-extern z_const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
+خارجي z_const حرف * ثابت z_errmsg[10]; /* indexed by 2-zlib_error */
 /* (size given to avoid silly warnings with Visual C++) */
 
-#define ERR_MSG(err) z_errmsg[(err) < -6 || (err) > 2 ? 9 : 2 - (err)]
+#وصف_ڪريو ERR_نياپو(err) z_errmsg[(err) < -6 || (err) > 2 ? 9 : 2 - (err)]
 
-#define ERR_RETURN(strm,err) \
-  return (strm->msg = ERR_MSG(err), (err))
+#وصف_ڪريو ERR_RETURN(strm,err) \
+  أرجع (strm->نياپو = ERR_نياپو(err), (err))
 /* To be used only when the state is known to be valid */
 
         /* common constants */
-#if MAX_WBITS < 9 || MAX_WBITS > 15
-#  error MAX_WBITS must be in 9..15
-#endif
-#ifndef DEF_WBITS
+#إذا MAX_WBITS < 9 || MAX_WBITS > 15
+#  error MAX_WBITS must be اندريون 9..15
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_نه_ٿيل DEF_WBITS
 #  define DEF_WBITS MAX_WBITS
-#endif
+#جيڪڏهن_پورو
 /* default windowBits for decompression. MAX_WBITS is for compression only */
 
-#if MAX_MEM_LEVEL >= 8
+#إذا MAX_MEM_LEVEL >= 8
 #  define DEF_MEM_LEVEL 8
-#else
+#وإلا
 #  define DEF_MEM_LEVEL  MAX_MEM_LEVEL
-#endif
+#جيڪڏهن_پورو
 /* default memLevel */
 
-#define STORED_BLOCK 0
-#define STATIC_TREES 1
-#define DYN_TREES    2
+#وصف_ڪريو STORED_بلاڪ 0
+#وصف_ڪريو STATIC_TREES 1
+#وصف_ڪريو DYN_TREES    2
 /* The three kinds of block type */
 
-#define MIN_MATCH  3
-#define MAX_MATCH  258
+#وصف_ڪريو MIN_ميلاپ  3
+#وصف_ڪريو MAX_ميلاپ  258
 /* The minimum and maximum match lengths */
 
-#define PRESET_DICT 0x20 /* preset dictionary flag in zlib header */
+#وصف_ڪريو PRESET_DICT 0x20 /* preset dictionary flag in zlib header */
 
         /* target dependencies */
 
-#if defined(MSDOS) || (defined(WINDOWS) && !defined(WIN32))
-#  define OS_CODE  0x00
+#إذا defined(MSDOS) || (defined(WINDOWS) && !defined(WIN32))
+#  define OS_ڪوڊ  0x00
 #  ifndef Z_SOLO
-#    if defined(__TURBOC__) || defined(__BORLANDC__)
-#      if (__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
+#    إذا defined(__TURBOC__) || defined(__BORLANDC__)
+#      إذا (__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
          /* Allow compilation with ANSI keywords only enabled */
-         void _Cdecl farfree( void *block );
-         void *_Cdecl farmalloc( unsigned long nbytes );
-#      else
+         فراغ _Cdecl farfree( فراغ *بلاڪ );
+         فراغ *_Cdecl farmalloc( بنانشان ڊگهو nbytes );
+#      وإلا
 #        include <alloc.h>
 #      endif
-#    else /* MSC or DJGPP */
+#    وإلا /* MSC or DJGPP */
 #      include <malloc.h>
 #    endif
 #  endif
-#endif
+#جيڪڏهن_پورو
 
-#ifdef AMIGA
-#  define OS_CODE  1
-#endif
+#جيڪڏهن_وصف_ٿيل AMIGA
+#  define OS_ڪوڊ  1
+#جيڪڏهن_پورو
 
-#if defined(VAXC) || defined(VMS)
-#  define OS_CODE  2
-#  define F_OPEN(name, mode) \
-     fopen((name), (mode), "mbc=60", "ctx=stm", "rfm=fix", "mrs=512")
-#endif
+#إذا defined(VAXC) || defined(VMS)
+#  define OS_ڪوڊ  2
+#  define F_OPEN(name, گهڻائي) \
+     fopen((name), (گهڻائي), "mbc=60", "ctx=stm", "rfm=fix", "mrs=512")
+#جيڪڏهن_پورو
 
-#ifdef __370__
-#  if __TARGET_LIB__ < 0x20000000
-#    define OS_CODE 4
+#جيڪڏهن_وصف_ٿيل __370__
+#  إذا __TARGET_LIB__ < 0x20000000
+#    define OS_ڪوڊ 4
 #  elif __TARGET_LIB__ < 0x40000000
-#    define OS_CODE 11
-#  else
-#    define OS_CODE 8
+#    define OS_ڪوڊ 11
+#  وإلا
+#    define OS_ڪوڊ 8
 #  endif
-#endif
+#جيڪڏهن_پورو
 
-#if defined(ATARI) || defined(atarist)
-#  define OS_CODE  5
-#endif
+#إذا defined(ATARI) || defined(atarist)
+#  define OS_ڪوڊ  5
+#جيڪڏهن_پورو
 
-#ifdef OS2
-#  define OS_CODE  6
-#  if defined(M_I86) && !defined(Z_SOLO)
+#جيڪڏهن_وصف_ٿيل OS2
+#  define OS_ڪوڊ  6
+#  إذا defined(M_I86) && !defined(Z_SOLO)
 #    include <malloc.h>
 #  endif
-#endif
+#جيڪڏهن_پورو
 
-#if defined(MACOS)
-#  define OS_CODE  7
-#endif
+#إذا defined(MACOS)
+#  define OS_ڪوڊ  7
+#جيڪڏهن_پورو
 
-#if defined(__acorn) || defined(__riscos)
-#  define OS_CODE 13
-#endif
+#إذا defined(__acorn) || defined(__riscos)
+#  define OS_ڪوڊ 13
+#جيڪڏهن_پورو
 
-#if defined(WIN32) && !defined(__CYGWIN__)
-#  define OS_CODE  10
-#endif
+#إذا defined(WIN32) && !defined(__CYGWIN__)
+#  define OS_ڪوڊ  10
+#جيڪڏهن_پورو
 
-#ifdef _BEOS_
-#  define OS_CODE  16
-#endif
+#جيڪڏهن_وصف_ٿيل _BEOS_
+#  define OS_ڪوڊ  16
+#جيڪڏهن_پورو
 
-#ifdef __TOS_OS400__
-#  define OS_CODE 18
-#endif
+#جيڪڏهن_وصف_ٿيل __TOS_OS400__
+#  define OS_ڪوڊ 18
+#جيڪڏهن_پورو
 
-#ifdef __APPLE__
-#  define OS_CODE 19
-#endif
+#جيڪڏهن_وصف_ٿيل __APPLE__
+#  define OS_ڪوڊ 19
+#جيڪڏهن_پورو
 
-#if defined(__BORLANDC__) && !defined(MSDOS)
-  #pragma warn -8004
-  #pragma warn -8008
-  #pragma warn -8066
-#endif
+#إذا defined(__BORLANDC__) && !defined(MSDOS)
+  #هدايت warn -8004
+  #هدايت warn -8008
+  #هدايت warn -8066
+#جيڪڏهن_پورو
 
 /* provide prototypes for these when building zlib without LFS */
-#ifndef Z_LARGE64
+#جيڪڏهن_وصف_نه_ٿيل Z_LARGE64
    ZEXTERN uLong ZEXPORT adler32_combine64(uLong, uLong, z_off64_t);
-   ZEXTERN uLong ZEXPORT crc32_combine64(uLong, uLong, z_off64_t);
-   ZEXTERN uLong ZEXPORT crc32_combine_gen64(z_off64_t);
-#endif
+   ZEXTERN uLong ZEXPORT چڪري_جاچ_32_combine64(uLong, uLong, z_off64_t);
+   ZEXTERN uLong ZEXPORT چڪري_جاچ_32_combine_gen64(z_off64_t);
+#جيڪڏهن_پورو
 
         /* common defaults */
 
-#ifndef OS_CODE
-#  define OS_CODE  3     /* assume Unix */
-#endif
+#جيڪڏهن_وصف_نه_ٿيل OS_ڪوڊ
+#  define OS_ڪوڊ  3     /* assume Unix */
+#جيڪڏهن_پورو
 
-#ifndef F_OPEN
-#  define F_OPEN(name, mode) fopen((name), (mode))
-#endif
+#جيڪڏهن_وصف_نه_ٿيل F_OPEN
+#  define F_OPEN(name, گهڻائي) fopen((name), (گهڻائي))
+#جيڪڏهن_پورو
 
          /* functions */
 
-#if defined(pyr) || defined(Z_SOLO)
+#إذا defined(pyr) || defined(Z_SOLO)
 #  define NO_MEMCPY
-#endif
-#if defined(SMALL_MEDIUM) && !defined(_MSC_VER) && !defined(__SC__)
+#جيڪڏهن_پورو
+#إذا defined(SMALL_MEDIUM) && !defined(_MSC_VER) && !defined(__SC__)
  /* Use our own functions for small and medium model with MSC <= 5.0.
   * You may have to use the same strategy for Borland C (untested).
   * The __SC__ check is for Symantec.
   */
 #  define NO_MEMCPY
-#endif
-#if defined(STDC) && !defined(HAVE_MEMCPY) && !defined(NO_MEMCPY)
+#جيڪڏهن_پورو
+#إذا defined(STDC) && !defined(HAVE_MEMCPY) && !defined(NO_MEMCPY)
 #  define HAVE_MEMCPY
-#endif
-#ifdef HAVE_MEMCPY
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_MEMCPY
 #  ifdef SMALL_MEDIUM /* MSDOS small or medium model */
 #    define zmemcpy _fmemcpy
 #    define zmemcmp _fmemcmp
 #    define zmemzero(dest, len) _fmemset(dest, 0, len)
-#  else
-#    define zmemcpy memcpy
+#  وإلا
+#    define zmemcpy يادگيري_نقل
 #    define zmemcmp memcmp
 #    define zmemzero(dest, len) memset(dest, 0, len)
 #  endif
-#else
-   void ZLIB_INTERNAL zmemcpy(void FAR *, const void FAR *, z_size_t);
-   int ZLIB_INTERNAL zmemcmp(const void FAR *, const void FAR *, z_size_t);
-   void ZLIB_INTERNAL zmemzero(void FAR *, z_size_t);
-#endif
+#وإلا
+   فراغ ZLIB_اندروني zmemcpy(فراغ FAR *, ثابت فراغ FAR *, z_سائيز_t);
+   صحيح ZLIB_اندروني zmemcmp(ثابت فراغ FAR *, ثابت فراغ FAR *, z_سائيز_t);
+   فراغ ZLIB_اندروني zmemzero(فراغ FAR *, z_سائيز_t);
+#جيڪڏهن_پورو
 
 /* Diagnostic functions */
-#ifdef ZLIB_DEBUG
+#جيڪڏهن_وصف_ٿيل ZLIB_DEBUG
 #  include <stdio.h>
-   extern int ZLIB_INTERNAL z_verbose;
-   extern void ZLIB_INTERNAL z_error(char *m);
-#  define Assert(cond,msg) {if(!(cond)) z_error(msg);}
-#  define Trace(x) {if (z_verbose>=0) fprintf x ;}
-#  define Tracev(x) {if (z_verbose>0) fprintf x ;}
-#  define Tracevv(x) {if (z_verbose>1) fprintf x ;}
-#  define Tracec(c,x) {if (z_verbose>0 && (c)) fprintf x ;}
-#  define Tracecv(c,x) {if (z_verbose>1 && (c)) fprintf x ;}
-#else
-#  define Assert(cond,msg)
+   خارجي صحيح ZLIB_اندروني z_verbose;
+   خارجي فراغ ZLIB_اندروني z_error(حرف *m);
+#  define Assert(cond,نياپو) {إذا(!(cond)) z_error(نياپو);}
+#  define Trace(x) {إذا (z_verbose>=0) fprintf x ;}
+#  define Tracev(x) {إذا (z_verbose>0) fprintf x ;}
+#  define Tracevv(x) {إذا (z_verbose>1) fprintf x ;}
+#  define Tracec(c,x) {إذا (z_verbose>0 && (c)) fprintf x ;}
+#  define Tracecv(c,x) {إذا (z_verbose>1 && (c)) fprintf x ;}
+#وإلا
+#  define Assert(cond,نياپو)
 #  define Trace(x)
 #  define Tracev(x)
 #  define Tracevv(x)
 #  define Tracec(c,x)
 #  define Tracecv(c,x)
-#endif
+#جيڪڏهن_پورو
 
-#ifndef Z_SOLO
-   voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items,
-                                unsigned size);
-   void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل Z_SOLO
+   voidpf ZLIB_اندروني zcalloc(voidpf opaque, بنانشان شيون_2,
+                                بنانشان سائيز);
+   فراغ ZLIB_اندروني zcfree(voidpf opaque, voidpf ptr);
+#جيڪڏهن_پورو
 
-#define ZALLOC(strm, items, size) \
-           (*((strm)->zalloc))((strm)->opaque, (items), (size))
-#define ZFREE(strm, addr)  (*((strm)->zfree))((strm)->opaque, (voidpf)(addr))
-#define TRY_FREE(s, p) {if (p) ZFREE(s, p);}
+#وصف_ڪريو ZALLOC(strm, شيون_2, سائيز) \
+           (*((strm)->zalloc))((strm)->opaque, (شيون_2), (سائيز))
+#وصف_ڪريو ZFREE(strm, addr)  (*((strm)->zfree))((strm)->opaque, (voidpf)(addr))
+#وصف_ڪريو TRY_FREE(s, p) {إذا (p) ZFREE(s, p);}
 
 /* Reverse the bytes in a 32-bit value */
-#define ZSWAP32(q) ((((q) >> 24) & 0xff) + (((q) >> 8) & 0xff00) + \
+#وصف_ڪريو ZSWAP32(q) ((((q) >> 24) & 0xff) + (((q) >> 8) & 0xff00) + \
                     (((q) & 0xff00) << 8) + (((q) & 0xff) << 24))
 
-#ifdef Z_ONCE
+#جيڪڏهن_وصف_ٿيل Z_ONCE
 /*
   Create a local z_once() function depending on the availability of atomics.
  */
 
 /* Check for the availability of atomics. */
-#if defined(__STDC__) && __STDC_VERSION__ >= 201112L && \
+#إذا defined(__STDC__) && __STDC_VERSION__ >= 201112L && \
     !defined(__STDC_NO_ATOMICS__)
 
-#include <stdatomic.h>
-typedef struct {
+#ضمن <stdatomic.h>
+تعريفنوع بنية {
     atomic_flag begun;
-    atomic_int done;
+    atomic_int پورو_2;
 } z_once_t;
-#define Z_ONCE_INIT {ATOMIC_FLAG_INIT, 0}
+#وصف_ڪريو Z_ONCE_INIT {ATOMIC_FLAG_INIT, 0}
 
 /*
   Run the provided init() function exactly once, even if multiple threads
   invoke once() at the same time. The state must be a once_t initialized with
   Z_ONCE_INIT.
  */
-local void z_once(z_once_t *state, void (*init)(void)) {
-    if (!atomic_load(&state->done)) {
-        if (atomic_flag_test_and_set(&state->begun))
-            while (!atomic_load(&state->done))
+local فراغ z_once(z_once_t *state, فراغ (*init)(فراغ)) {
+    إذا (!atomic_ڀريو(&state->پورو_2)) {
+        إذا (atomic_flag_test_and_set(&state->begun))
+            طالما (!atomic_ڀريو(&state->پورو_2))
                 ;
-        else {
+        وإلا {
             init();
-            atomic_store(&state->done, 1);
+            atomic_store(&state->پورو_2, 1);
         }
     }
 }
 
-#else   /* no atomics */
+#وإلا   /* no atomics */
 
-#warning zlib not thread-safe
+#warning zlib not thread-محفوظ
 
-typedef struct z_once_s {
-    volatile int begun;
-    volatile int done;
+تعريفنوع بنية z_once_s {
+    متطاير صحيح begun;
+    متطاير صحيح پورو_2;
 } z_once_t;
-#define Z_ONCE_INIT {0, 0}
+#وصف_ڪريو Z_ONCE_INIT {0, 0}
 
 /* Test and set. Alas, not atomic, but tries to limit the period of
    vulnerability. */
-local int test_and_set(int volatile *flag) {
-    int was;
+local صحيح test_and_سيٽ(صحيح متطاير *flag) {
+    صحيح was;
 
     was = *flag;
     *flag = 1;
-    return was;
+    أرجع was;
 }
 
 /* Run the provided init() function once. This is not thread-safe. */
-local void z_once(z_once_t *state, void (*init)(void)) {
-    if (!state->done) {
-        if (test_and_set(&state->begun))
-            while (!state->done)
+local فراغ z_once(z_once_t *state, فراغ (*init)(فراغ)) {
+    إذا (!state->پورو_2) {
+        إذا (test_and_سيٽ(&state->begun))
+            طالما (!state->پورو_2)
                 ;
-        else {
+        وإلا {
             init();
-            state->done = 1;
+            state->پورو_2 = 1;
         }
     }
 }
 
-#endif /* ?atomics */
+#جيڪڏهن_پورو /* ?atomics */
 
-#endif /* Z_ONCE */
+#جيڪڏهن_پورو /* Z_ONCE */
 
-#endif /* ZUTIL_H */
+#جيڪڏهن_پورو /* ZUTIL_H */
