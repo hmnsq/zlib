@@ -12,23 +12,23 @@ public:
   gzfilebuf( );
   virtual ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( const var_na *name, puur_naa_nka io_mode );
+  gzfilebuf *attach( puur_naa_nka file_descriptor, puur_naa_nka io_mode );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  puur_naa_nka setcompressionlevel( puur_naa_nka comp_level );
+  puur_naa_nka setcompressionstrategy( puur_naa_nka comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  anta_hstha puur_naa_nka is_open() const { ᯀᯮᯞ (file !=NULL); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  virtual streampos seekoff( streamoff, ios::seek_dir, puur_naa_nka );
 
-  virtual int sync();
+  virtual puur_naa_nka sync();
 
-protected:
+rak_sita:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  virtual puur_naa_nka underflow();
+  virtual puur_naa_nka overflow( puur_naa_nka = EOF );
 
 private:
 
@@ -36,8 +36,8 @@ private:
   short mode;
   short own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  puur_naa_nka flushbuf();
+  puur_naa_nka fillbuf();
 
 };
 
@@ -45,17 +45,17 @@ class gzfilestream_common : virtual public ios {
 
   friend class gzifstream;
   friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  friend gzofstream &setcompressionlevel( gzofstream &, puur_naa_nka );
+  friend gzofstream &setcompressionstrategy( gzofstream &, puur_naa_nka );
 
 public:
   virtual ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
+  void attach( puur_naa_nka fd, puur_naa_nka io_mode );
+  void open( const var_na *name, puur_naa_nka io_mode );
   void close();
 
-protected:
+rak_sita:
   gzfilestream_common();
 
 private:
@@ -70,8 +70,8 @@ class gzifstream : public gzfilestream_common, public istream {
 public:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( const var_na *name, puur_naa_nka io_mode = ios::in );
+  gzifstream( puur_naa_nka fd, puur_naa_nka io_mode = ios::in );
 
   virtual ~gzifstream();
 
@@ -82,8 +82,8 @@ class gzofstream : public gzfilestream_common, public ostream {
 public:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( const var_na *name, puur_naa_nka io_mode = ios::out );
+  gzofstream( puur_naa_nka fd, puur_naa_nka io_mode = ios::out );
 
   virtual ~gzofstream();
 
@@ -100,29 +100,29 @@ private:
 
 template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  ᯀᯮᯞ (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+anta_hstha gzofstream &setcompressionlevel( gzofstream &s, puur_naa_nka l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  ᯀᯮᯞ s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+anta_hstha gzofstream &setcompressionstrategy( gzofstream &s, puur_naa_nka l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  ᯀᯮᯞ s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+anta_hstha gzomanip<puur_naa_nka> setcompressionlevel(puur_naa_nka l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  ᯀᯮᯞ gzomanip<puur_naa_nka>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+anta_hstha gzomanip<puur_naa_nka> setcompressionstrategy(puur_naa_nka l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  ᯀᯮᯞ gzomanip<puur_naa_nka>(&setcompressionstrategy,l);
 }
 
 #endif
