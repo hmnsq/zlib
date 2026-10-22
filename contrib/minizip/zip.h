@@ -40,35 +40,35 @@
 #define _zip12_H
 
 #ifdef __cplusplus
-extern "C" {
+ബാഹ്യ "C" {
 #endif
 
 /* #define HAVE_BZIP2 */
 
 #ifndef _ZLIB_H
-#include "zlib.h"
+#അന്തര്ഭാവ "zlib.h"
 #endif
 
 #ifndef _ZLIBIOAPI_H
-#include "ioapi.h"
+#അന്തര്ഭാവ "ioapi.h"
 #endif
 
 #ifdef HAVE_BZIP2
-#include "bzlib.h"
+#അന്തര്ഭാവ "bzlib.h"
 #endif
 
 #define Z_BZIP2ED 12
 
-#if defined(STRICTZIP) || defined(STRICTZIPUNZIP)
+#എങ്കിൽ defined(STRICTZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
-typedef struct TagzipFile__ { int unused; } zipFile__;
-typedef zipFile__ *zipFile;
-#else
-typedef voidp zipFile;
+തരനിർവചനം ഘടന TagzipFile__ { പൂർണ്ണസംഖ്യ unused; } zipFile__;
+തരനിർവചനം zipFile__ *zipFile;
+#അല്ലെങ്കിൽ
+തരനിർവചനം voidp zipFile;
 #endif
 
-extern const char zip_copyright[];
+ബാഹ്യ സ്ഥിരം അക്ഷരം zip_copyright[];
 
 #define ZIP_OK                          (0)
 #define ZIP_EOF                         (0)
@@ -78,26 +78,26 @@ extern const char zip_copyright[];
 #define ZIP_INTERNALERROR               (-104)
 
 #ifndef DEF_MEM_LEVEL
-#  if MAX_MEM_LEVEL >= 8
+#  എങ്കിൽ MAX_MEM_LEVEL >= 8
 #    define DEF_MEM_LEVEL 8
-#  else
+#  അല്ലെങ്കിൽ
 #    define DEF_MEM_LEVEL  MAX_MEM_LEVEL
 #  endif
 #endif
 /* default memLevel */
 
 /* tm_zip contain date/time info */
-typedef struct tm_zip_s
+തരനിർവചനം ഘടന tm_zip_s
 {
-    int tm_sec;             /* seconds after the minute - [0,59] */
-    int tm_min;             /* minutes after the hour - [0,59] */
-    int tm_hour;            /* hours since midnight - [0,23] */
-    int tm_mday;            /* day of the month - [1,31] */
-    int tm_mon;             /* months since January - [0,11] */
-    int tm_year;            /* years - [1980..2044] */
+    പൂർണ്ണസംഖ്യ tm_sec;             /* seconds after the minute - [0,59] */
+    പൂർണ്ണസംഖ്യ tm_min;             /* minutes after the hour - [0,59] */
+    പൂർണ്ണസംഖ്യ tm_hour;            /* hours since midnight - [0,23] */
+    പൂർണ്ണസംഖ്യ tm_mday;            /* day of the month - [1,31] */
+    പൂർണ്ണസംഖ്യ tm_mon;             /* months since January - [0,11] */
+    പൂർണ്ണസംഖ്യ tm_year;            /* years - [1980..2044] */
 } tm_zip;
 
-typedef struct
+തരനിർവചനം ഘടന
 {
     tm_zip      tmz_date;       /* date in understandable format           */
     uLong       dosDate;       /* if dos_date == 0, tmu_date is used      */
@@ -107,15 +107,15 @@ typedef struct
     uLong       external_fa;    /* external file attributes        4 bytes */
 } zip_fileinfo;
 
-typedef const char* zipcharpc;
+തരനിർവചനം സ്ഥിരം അക്ഷരം* zipcharpc;
 
 
 #define APPEND_STATUS_CREATE        (0)
 #define APPEND_STATUS_CREATEAFTER   (1)
 #define APPEND_STATUS_ADDINZIP      (2)
 
-extern zipFile ZEXPORT zipOpen(const char *pathname, int append);
-extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
+ബാഹ്യ zipFile ZEXPORT zipOpen(സ്ഥിരം അക്ഷരം *pathname, പൂർണ്ണസംഖ്യ append);
+ബാഹ്യ zipFile ZEXPORT zipOpen64(സ്ഥിരം ശൂന്യം *pathname, പൂർണ്ണസംഖ്യ append);
 /*
   Create a zipfile.
      pathname contain on Windows XP a filename like "c:\\zlib\\zlib113.zip" or on
@@ -135,43 +135,43 @@ extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
    Of course, you can use RAW reading and writing to copy the file you did not want delete
  */
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname,
-                                int append,
+ബാഹ്യ zipFile ZEXPORT zipOpen2(സ്ഥിരം അക്ഷരം *pathname,
+                                പൂർണ്ണസംഖ്യ append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname,
-                                   int append,
+ബാഹ്യ zipFile ZEXPORT zipOpen2_64(സ്ഥിരം ശൂന്യം *pathname,
+                                   പൂർണ്ണസംഖ്യ append,
                                    zipcharpc* globalcomment,
                                    zlib_filefunc64_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen3(const void *pathname,
-                                int append,
+ബാഹ്യ zipFile ZEXPORT zipOpen3(സ്ഥിരം ശൂന്യം *pathname,
+                                പൂർണ്ണസംഖ്യ append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc64_32_def* pzlib_filefunc64_32_def);
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file,
-                                       const char* filename,
-                                       const zip_fileinfo* zipfi,
-                                       const void* extrafield_local,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipOpenNewFileInZip(zipFile file,
+                                       സ്ഥിരം അക്ഷരം* filename,
+                                       സ്ഥിരം zip_fileinfo* zipfi,
+                                       സ്ഥിരം ശൂന്യം* extrafield_local,
                                        uInt size_extrafield_local,
-                                       const void* extrafield_global,
+                                       സ്ഥിരം ശൂന്യം* extrafield_global,
                                        uInt size_extrafield_global,
-                                       const char* comment,
-                                       int method,
-                                       int level);
+                                       സ്ഥിരം അക്ഷരം* comment,
+                                       പൂർണ്ണസംഖ്യ method,
+                                       പൂർണ്ണസംഖ്യ level);
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
-                                         const char* filename,
-                                         const zip_fileinfo* zipfi,
-                                         const void* extrafield_local,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipOpenNewFileInZip64(zipFile file,
+                                         സ്ഥിരം അക്ഷരം* filename,
+                                         സ്ഥിരം zip_fileinfo* zipfi,
+                                         സ്ഥിരം ശൂന്യം* extrafield_local,
                                          uInt size_extrafield_local,
-                                         const void* extrafield_global,
+                                         സ്ഥിരം ശൂന്യം* extrafield_global,
                                          uInt size_extrafield_global,
-                                         const char* comment,
-                                         int method,
-                                         int level,
-                                         int zip64);
+                                         സ്ഥിരം അക്ഷരം* comment,
+                                         പൂർണ്ണസംഖ്യ method,
+                                         പൂർണ്ണസംഖ്യ level,
+                                         പൂർണ്ണസംഖ്യ zip64);
 
 /*
   Open a file in the ZIP for writing.
@@ -190,69 +190,69 @@ extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
  */
 
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipOpenNewFileInZip2(zipFile file,
+                                        സ്ഥിരം അക്ഷരം* filename,
+                                        സ്ഥിരം zip_fileinfo* zipfi,
+                                        സ്ഥിരം ശൂന്യം* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        സ്ഥിരം ശൂന്യം* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw);
+                                        സ്ഥിരം അക്ഷരം* comment,
+                                        പൂർണ്ണസംഖ്യ method,
+                                        പൂർണ്ണസംഖ്യ level,
+                                        പൂർണ്ണസംഖ്യ raw);
 
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
+                                           സ്ഥിരം അക്ഷരം* filename,
+                                           സ്ഥിരം zip_fileinfo* zipfi,
+                                           സ്ഥിരം ശൂന്യം* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           സ്ഥിരം ശൂന്യം* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int zip64);
+                                           സ്ഥിരം അക്ഷരം* comment,
+                                           പൂർണ്ണസംഖ്യ method,
+                                           പൂർണ്ണസംഖ്യ level,
+                                           പൂർണ്ണസംഖ്യ raw,
+                                           പൂർണ്ണസംഖ്യ zip64);
 /*
   Same than zipOpenNewFileInZip, except if raw=1, we write raw file
  */
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipOpenNewFileInZip3(zipFile file,
+                                        സ്ഥിരം അക്ഷരം* filename,
+                                        സ്ഥിരം zip_fileinfo* zipfi,
+                                        സ്ഥിരം ശൂന്യം* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        സ്ഥിരം ശൂന്യം* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
+                                        സ്ഥിരം അക്ഷരം* comment,
+                                        പൂർണ്ണസംഖ്യ method,
+                                        പൂർണ്ണസംഖ്യ level,
+                                        പൂർണ്ണസംഖ്യ raw,
+                                        പൂർണ്ണസംഖ്യ windowBits,
+                                        പൂർണ്ണസംഖ്യ memLevel,
+                                        പൂർണ്ണസംഖ്യ strategy,
+                                        സ്ഥിരം അക്ഷരം* password,
                                         uLong crcForCrypting);
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
+                                           സ്ഥിരം അക്ഷരം* filename,
+                                           സ്ഥിരം zip_fileinfo* zipfi,
+                                           സ്ഥിരം ശൂന്യം* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           സ്ഥിരം ശൂന്യം* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
+                                           സ്ഥിരം അക്ഷരം* comment,
+                                           പൂർണ്ണസംഖ്യ method,
+                                           പൂർണ്ണസംഖ്യ level,
+                                           പൂർണ്ണസംഖ്യ raw,
+                                           പൂർണ്ണസംഖ്യ windowBits,
+                                           പൂർണ്ണസംഖ്യ memLevel,
+                                           പൂർണ്ണസംഖ്യ strategy,
+                                           സ്ഥിരം അക്ഷരം* password,
                                            uLong crcForCrypting,
-                                           int zip64);
+                                           പൂർണ്ണസംഖ്യ zip64);
 
 /*
   Same than zipOpenNewFileInZip2, except
@@ -261,45 +261,45 @@ extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
     crcForCrypting : crc of file to compress (needed for crypting)
  */
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipOpenNewFileInZip4(zipFile file,
+                                        സ്ഥിരം അക്ഷരം* filename,
+                                        സ്ഥിരം zip_fileinfo* zipfi,
+                                        സ്ഥിരം ശൂന്യം* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        സ്ഥിരം ശൂന്യം* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
+                                        സ്ഥിരം അക്ഷരം* comment,
+                                        പൂർണ്ണസംഖ്യ method,
+                                        പൂർണ്ണസംഖ്യ level,
+                                        പൂർണ്ണസംഖ്യ raw,
+                                        പൂർണ്ണസംഖ്യ windowBits,
+                                        പൂർണ്ണസംഖ്യ memLevel,
+                                        പൂർണ്ണസംഖ്യ strategy,
+                                        സ്ഥിരം അക്ഷരം* password,
                                         uLong crcForCrypting,
                                         uLong versionMadeBy,
                                         uLong flagBase);
 
 
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
+                                           സ്ഥിരം അക്ഷരം* filename,
+                                           സ്ഥിരം zip_fileinfo* zipfi,
+                                           സ്ഥിരം ശൂന്യം* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           സ്ഥിരം ശൂന്യം* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
+                                           സ്ഥിരം അക്ഷരം* comment,
+                                           പൂർണ്ണസംഖ്യ method,
+                                           പൂർണ്ണസംഖ്യ level,
+                                           പൂർണ്ണസംഖ്യ raw,
+                                           പൂർണ്ണസംഖ്യ windowBits,
+                                           പൂർണ്ണസംഖ്യ memLevel,
+                                           പൂർണ്ണസംഖ്യ strategy,
+                                           സ്ഥിരം അക്ഷരം* password,
                                            uLong crcForCrypting,
                                            uLong versionMadeBy,
                                            uLong flagBase,
-                                           int zip64);
+                                           പൂർണ്ണസംഖ്യ zip64);
 /*
   Same than zipOpenNewFileInZip4, except
     versionMadeBy : value for Version made by field
@@ -307,28 +307,28 @@ extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
  */
 
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file,
-                                       const void* buf,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipWriteInFileInZip(zipFile file,
+                                       സ്ഥിരം ശൂന്യം* buf,
                                        unsigned len);
 /*
   Write data in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file);
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipCloseFileInZip(zipFile file);
 /*
   Close the current file in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipCloseFileInZipRaw(zipFile file,
                                         uLong uncompressed_size,
                                         uLong crc32);
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file,
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipCloseFileInZipRaw64(zipFile file,
                                           ZPOS64_T uncompressed_size,
                                           uLong crc32);
 
-extern int ZEXPORT zipAlreadyThere(zipFile file,
-                                   char const* name);
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipAlreadyThere(zipFile file,
+                                   അക്ഷരം സ്ഥിരം* name);
 /*
   See if name is already in file's central directory.
  */
@@ -339,14 +339,14 @@ extern int ZEXPORT zipAlreadyThere(zipFile file,
   uncompressed_size and crc32 are value for the uncompressed size
  */
 
-extern int ZEXPORT zipClose(zipFile file,
-                            const char* global_comment);
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipClose(zipFile file,
+                            സ്ഥിരം അക്ഷരം* global_comment);
 /*
   Close the zipfile
  */
 
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader);
+ബാഹ്യ പൂർണ്ണസംഖ്യ ZEXPORT zipRemoveExtraInfoBlock(അക്ഷരം* pData, പൂർണ്ണസംഖ്യ* dataLen, short sHeader);
 /*
   zipRemoveExtraInfoBlock -  Added by Mathias Svensson
 

@@ -12,17 +12,17 @@
 #  define Z_ONCE
 #endif
 
-#include "zutil.h"
-#include "inftrees.h"
-#include "inflate.h"
+#അന്തര്ഭാവ "zutil.h"
+#അന്തര്ഭാവ "inftrees.h"
+#അന്തര്ഭാവ "inflate.h"
 
-#ifndef NULL
-#  define NULL 0
+#ifndef ശൂന്യ
+#  define ശൂന്യ 0
 #endif
 
 #define MAXBITS 15
 
-const char inflate_copyright[] =
+സ്ഥിരം അക്ഷരം inflate_copyright[] =
    " inflate 1.3.2.1 Copyright 1995-2026 Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -43,40 +43,40 @@ const char inflate_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
+പൂർണ്ണസംഖ്യ ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
                                 unsigned codes, code FAR * FAR *table,
                                 unsigned FAR *bits, unsigned short FAR *work) {
     unsigned len;               /* a code's length in bits */
     unsigned sym;               /* index of code symbols */
     unsigned min, max;          /* minimum and maximum code lengths */
-    unsigned root;              /* number of index bits for root table */
+    unsigned വേര്;              /* number of index bits for root table */
     unsigned curr;              /* number of index bits for current table */
     unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
+    പൂർണ്ണസംഖ്യ ഇടത്;                   /* number of prefix codes available */
     unsigned used;              /* code entries in table used */
     unsigned huff;              /* Huffman code */
     unsigned incr;              /* for incrementing code, index */
     unsigned fill;              /* index for replicating entries */
-    unsigned low;               /* low bits for current root entry */
+    unsigned താഴെയുള്ള;               /* low bits for current root entry */
     unsigned mask;              /* mask for low root bits */
     code here;                  /* table entry for duplication */
     code FAR *next;             /* next available space in table */
-    const unsigned short FAR *base = NULL;  /* base value table to use */
-    const unsigned short FAR *extra = NULL; /* extra bits table to use */
+    സ്ഥിരം unsigned short FAR *base = ശൂന്യ;  /* base value table to use */
+    സ്ഥിരം unsigned short FAR *extra = ശൂന്യ; /* extra bits table to use */
     unsigned match = 0;         /* use base and extra for symbol >= match */
-    unsigned short count[MAXBITS+1];    /* number of codes of each length */
+    unsigned short എണ്ണം[MAXBITS+1];    /* number of codes of each length */
     unsigned short offs[MAXBITS+1];     /* offsets in table for each length */
-    static const unsigned short lbase[31] = { /* Length codes 257..285 base */
+    സ്ഥിതം സ്ഥിരം unsigned short lbase[31] = { /* Length codes 257..285 base */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
         35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0};
-    static const unsigned short lext[31] = { /* Length codes 257..285 extra */
+    സ്ഥിതം സ്ഥിരം unsigned short lext[31] = { /* Length codes 257..285 extra */
         16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18,
         19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 68, 193};
-    static const unsigned short dbase[32] = { /* Distance codes 0..29 base */
+    സ്ഥിതം സ്ഥിരം unsigned short dbase[32] = { /* Distance codes 0..29 base */
         1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
         257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
         8193, 12289, 16385, 24577, 0, 0};
-    static const unsigned short dext[32] = { /* Distance codes 0..29 extra */
+    സ്ഥിതം സ്ഥിരം unsigned short dext[32] = { /* Distance codes 0..29 extra */
         16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22,
         23, 23, 24, 24, 25, 25, 26, 26, 27, 27,
         28, 28, 29, 29, 64, 64};
@@ -113,47 +113,47 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
      */
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    for (len = 0; len <= MAXBITS; len++)
-        count[len] = 0;
-    for (sym = 0; sym < codes; sym++)
-        count[lens[sym]]++;
+    വേണ്ടി (len = 0; len <= MAXBITS; len++)
+        എണ്ണം[len] = 0;
+    വേണ്ടി (sym = 0; sym < codes; sym++)
+        എണ്ണം[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
-    root = *bits;
-    for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) {                     /* no symbols to code at all */
-        here.op = (unsigned char)64;    /* invalid code marker */
-        here.bits = (unsigned char)1;
+    വേര് = *bits;
+    വേണ്ടി (max = MAXBITS; max >= 1; max--)
+        എങ്കിൽ (എണ്ണം[max] != 0) നിർത്തുക;
+    എങ്കിൽ (വേര് > max) വേര് = max;
+    എങ്കിൽ (max == 0) {                     /* no symbols to code at all */
+        here.op = (unsigned അക്ഷരം)64;    /* invalid code marker */
+        here.bits = (unsigned അക്ഷരം)1;
         here.val = (unsigned short)0;
         *(*table)++ = here;             /* make a table to force an error */
         *(*table)++ = here;
         *bits = 1;
-        return 0;     /* no symbols, but wait for decoding to report error */
+        തിരികെ 0;     /* no symbols, but wait for decoding to report error */
     }
-    for (min = 1; min < max; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+    വേണ്ടി (min = 1; min < max; min++)
+        എങ്കിൽ (എണ്ണം[min] != 0) നിർത്തുക;
+    എങ്കിൽ (വേര് < min) വേര് = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;
-        left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+    ഇടത് = 1;
+    വേണ്ടി (len = 1; len <= MAXBITS; len++) {
+        ഇടത് <<= 1;
+        ഇടത് -= എണ്ണം[len];
+        എങ്കിൽ (ഇടത് < 0) തിരികെ -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    എങ്കിൽ (ഇടത് > 0 && (type == CODES || max != 1))
+        തിരികെ -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + count[len];
+    വേണ്ടി (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + എണ്ണം[len];
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+    വേണ്ടി (sym = 0; sym < codes; sym++)
+        എങ്കിൽ (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -187,16 +187,16 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
      */
 
     /* set up for code type */
-    switch (type) {
-    case CODES:
+    തിരഞ്ഞെടുപ്പ് (type) {
+    അവസ്ഥ CODES:
         match = 20;
-        break;
-    case LENS:
+        നിർത്തുക;
+    അവസ്ഥ LENS:
         base = lbase;
         extra = lext;
         match = 257;
-        break;
-    case DISTS:
+        നിർത്തുക;
+    അവസ്ഥ DISTS:
         base = dbase;
         extra = dext;
     }
@@ -206,31 +206,31 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     sym = 0;                    /* starting code symbol */
     len = min;                  /* starting code length */
     next = *table;              /* current table to fill in */
-    curr = root;                /* current table index bits */
+    curr = വേര്;                /* current table index bits */
     drop = 0;                   /* current bits to drop from code for index */
-    low = (unsigned)(-1);       /* trigger new sub-table when len > root */
-    used = 1U << root;          /* use root table entries */
+    താഴെയുള്ള = (unsigned)(-1);       /* trigger new sub-table when len > root */
+    used = 1U << വേര്;          /* use root table entries */
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used > ENOUGH_LENS) ||
+    എങ്കിൽ ((type == LENS && used > ENOUGH_LENS) ||
         (type == DISTS && used > ENOUGH_DISTS))
-        return 1;
+        തിരികെ 1;
 
     /* process all codes and make table entries */
-    for (;;) {
+    വേണ്ടി (;;) {
         /* create table entry */
-        here.bits = (unsigned char)(len - drop);
-        if (work[sym] + 1U < match) {
-            here.op = (unsigned char)0;
+        here.bits = (unsigned അക്ഷരം)(len - drop);
+        എങ്കിൽ (work[sym] + 1U < match) {
+            here.op = (unsigned അക്ഷരം)0;
             here.val = work[sym];
         }
-        else if (work[sym] >= match) {
-            here.op = (unsigned char)(extra[work[sym] - match]);
+        അല്ലെങ്കിൽ എങ്കിൽ (work[sym] >= match) {
+            here.op = (unsigned അക്ഷരം)(extra[work[sym] - match]);
             here.val = base[work[sym] - match];
         }
-        else {
-            here.op = (unsigned char)(32 + 64);         /* end of block */
+        അല്ലെങ്കിൽ {
+            here.op = (unsigned അക്ഷരം)(32 + 64);         /* end of block */
             here.val = 0;
         }
 
@@ -238,76 +238,76 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
         incr = 1U << (len - drop);
         fill = 1U << curr;
         min = fill;                 /* save offset to next table */
-        do {
+        ചെയ്യുക {
             fill -= incr;
             next[(huff >> drop) + fill] = here;
-        } while (fill != 0);
+        } ആകുമ്പോൾ (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        ആകുമ്പോൾ (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        എങ്കിൽ (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        അല്ലെങ്കിൽ
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        എങ്കിൽ (--(എണ്ണം[len]) == 0) {
+            എങ്കിൽ (len == max) നിർത്തുക;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        എങ്കിൽ (len > വേര് && (huff & mask) != താഴെയുള്ള) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
-                drop = root;
+            എങ്കിൽ (drop == 0)
+                drop = വേര്;
 
             /* increment past last table */
             next += min;            /* here min is 1 << curr */
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
-                left -= count[curr + drop];
-                if (left <= 0) break;
+            ഇടത് = (പൂർണ്ണസംഖ്യ)(1 << curr);
+            ആകുമ്പോൾ (curr + drop < max) {
+                ഇടത് -= എണ്ണം[curr + drop];
+                എങ്കിൽ (ഇടത് <= 0) നിർത്തുക;
                 curr++;
-                left <<= 1;
+                ഇടത് <<= 1;
             }
 
             /* check for enough space */
             used += 1U << curr;
-            if ((type == LENS && used > ENOUGH_LENS) ||
+            എങ്കിൽ ((type == LENS && used > ENOUGH_LENS) ||
                 (type == DISTS && used > ENOUGH_DISTS))
-                return 1;
+                തിരികെ 1;
 
             /* point entry in root table to sub-table */
-            low = huff & mask;
-            (*table)[low].op = (unsigned char)curr;
-            (*table)[low].bits = (unsigned char)root;
-            (*table)[low].val = (unsigned short)(next - *table);
+            താഴെയുള്ള = huff & mask;
+            (*table)[താഴെയുള്ള].op = (unsigned അക്ഷരം)curr;
+            (*table)[താഴെയുള്ള].bits = (unsigned അക്ഷരം)വേര്;
+            (*table)[താഴെയുള്ള].val = (unsigned short)(next - *table);
         }
     }
 
     /* fill in remaining table entry if code is incomplete (guaranteed to have
        at most one remaining entry, since if the code is incomplete, the
        maximum code length that was allowed to get this far is one bit) */
-    if (huff != 0) {
-        here.op = (unsigned char)64;            /* invalid code marker */
-        here.bits = (unsigned char)(len - drop);
+    എങ്കിൽ (huff != 0) {
+        here.op = (unsigned അക്ഷരം)64;            /* invalid code marker */
+        here.bits = (unsigned അക്ഷരം)(len - drop);
         here.val = (unsigned short)0;
         next[huff] = here;
     }
 
     /* set return parameters */
     *table += used;
-    *bits = root;
-    return 0;
+    *bits = വേര്;
+    തിരികെ 0;
 }
 
 #ifdef BUILDFIXED
@@ -318,23 +318,23 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
   return before any other threads are allowed to call inflate.
  */
 
-static code *lenfix, *distfix;
-static code fixed[544];
+സ്ഥിതം code *lenfix, *distfix;
+സ്ഥിതം code fixed[544];
 
 /* State for z_once(). */
 local z_once_t built = Z_ONCE_INIT;
 
-local void buildtables(void) {
+local ശൂന്യം buildtables(ശൂന്യം) {
     unsigned sym, bits;
-    static code *next;
+    സ്ഥിതം code *next;
     unsigned short lens[288], work[288];
 
     /* literal/length table */
     sym = 0;
-    while (sym < 144) lens[sym++] = 8;
-    while (sym < 256) lens[sym++] = 9;
-    while (sym < 280) lens[sym++] = 7;
-    while (sym < 288) lens[sym++] = 8;
+    ആകുമ്പോൾ (sym < 144) lens[sym++] = 8;
+    ആകുമ്പോൾ (sym < 256) lens[sym++] = 9;
+    ആകുമ്പോൾ (sym < 280) lens[sym++] = 7;
+    ആകുമ്പോൾ (sym < 288) lens[sym++] = 8;
     next = fixed;
     lenfix = next;
     bits = 9;
@@ -342,12 +342,12 @@ local void buildtables(void) {
 
     /* distance table */
     sym = 0;
-    while (sym < 32) lens[sym++] = 5;
+    ആകുമ്പോൾ (sym < 32) lens[sym++] = 5;
     distfix = next;
     bits = 5;
     inflate_table(DISTS, lens, 32, &(next), &(bits), work);
 }
-#else /* !BUILDFIXED */
+#അല്ലെങ്കിൽ /* !BUILDFIXED */
 #  include "inffixed.h"
 #endif /* BUILDFIXED */
 
@@ -361,7 +361,7 @@ local void buildtables(void) {
    used for threaded applications if atomics are not available, as it will
    not be thread-safe.
  */
-void inflate_fixed(struct inflate_state FAR *state) {
+ശൂന്യം inflate_fixed(ഘടന inflate_state FAR *state) {
 #ifdef BUILDFIXED
     z_once(&built, buildtables);
 #endif /* BUILDFIXED */
@@ -372,7 +372,7 @@ void inflate_fixed(struct inflate_state FAR *state) {
 }
 
 #ifdef MAKEFIXED
-#include <stdio.h>
+#അന്തര്ഭാവ <stdio.h>
 
 /*
    Write out the inffixed.h that will be #include'd above.  Defining MAKEFIXED
@@ -383,9 +383,9 @@ void inflate_fixed(struct inflate_state FAR *state) {
        cc -DMAKEFIXED -o fix inftrees.c zutil.c
        ./fix > inffixed.h
  */
-int main(void) {
-    unsigned low, size;
-    struct inflate_state state;
+പൂർണ്ണസംഖ്യ പ്രധാന(ശൂന്യം) {
+    unsigned താഴെയുള്ള, size;
+    ഘടന inflate_state state;
 
     inflate_fixed(&state);
     puts("/* inffixed.h -- table for decoding fixed codes");
@@ -399,26 +399,26 @@ int main(void) {
     puts("");
     size = 1U << 9;
     printf("static const code lenfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 7) == 0) printf("\n    ");
-        printf("{%u,%u,%d}", (low & 127) == 99 ? 64 : state.lencode[low].op,
-               state.lencode[low].bits, state.lencode[low].val);
-        if (++low == size) break;
+    താഴെയുള്ള = 0;
+    വേണ്ടി (;;) {
+        എങ്കിൽ ((താഴെയുള്ള % 7) == 0) printf("\n    ");
+        printf("{%u,%u,%d}", (താഴെയുള്ള & 127) == 99 ? 64 : state.lencode[താഴെയുള്ള].op,
+               state.lencode[താഴെയുള്ള].bits, state.lencode[താഴെയുള്ള].val);
+        എങ്കിൽ (++താഴെയുള്ള == size) നിർത്തുക;
         putchar(',');
     }
     puts("\n};");
     size = 1U << 5;
     printf("\nstatic const code distfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 6) == 0) printf("\n    ");
-        printf("{%u,%u,%d}", state.distcode[low].op, state.distcode[low].bits,
-               state.distcode[low].val);
-        if (++low == size) break;
+    താഴെയുള്ള = 0;
+    വേണ്ടി (;;) {
+        എങ്കിൽ ((താഴെയുള്ള % 6) == 0) printf("\n    ");
+        printf("{%u,%u,%d}", state.distcode[താഴെയുള്ള].op, state.distcode[താഴെയുള്ള].bits,
+               state.distcode[താഴെയുള്ള].val);
+        എങ്കിൽ (++താഴെയുള്ള == size) നിർത്തുക;
         putchar(',');
     }
     puts("\n};");
-    return 0;
+    തിരികെ 0;
 }
 #endif /* MAKEFIXED */

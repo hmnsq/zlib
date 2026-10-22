@@ -1,17 +1,17 @@
-#include "zstream.h"
-#include <math.h>
-#include <stdlib.h>
-#include <iomanip.h>
+#അന്തര്ഭാവ "zstream.h"
+#അന്തര്ഭാവ <math.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <iomanip.h>
 
-void main() {
-    char h[256] = "Hello";
-    char* g = "Goodbye";
+ശൂന്യം പ്രധാന() {
+    അക്ഷരം h[256] = "Hello";
+    അക്ഷരം* g = "Goodbye";
     ozstream out("temp.gz");
     out < "This works well" < h < g;
     out.close();
 
     izstream in("temp.gz"); // read it back
-    char *x = read_string(in), *y = new char[256], z[256];
+    അക്ഷരം *x = read_string(in), *y = പുതിയ അക്ഷരം[256], z[256];
     in > y > z;
     in.close();
     cout << x << endl << y << endl << z << endl;

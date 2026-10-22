@@ -7,9 +7,9 @@
  * This version is standard-compliant and compatible with gcc 3.x.
  */
 
-#include "zfstream.h"
-#include <cstring>          // for strcpy, strcat, strlen (mode strings)
-#include <cstdio>           // for BUFSIZ
+#അന്തര്ഭാവ "zfstream.h"
+#അന്തര്ഭാവ <cstring>          // for strcpy, strcat, strlen (mode strings)
+#അന്തര്ഭാവ <cstdio>           // for BUFSIZ
 
 // Internal buffer sizes (default and "unbuffered" versions)
 #define BIGBUFSIZE BUFSIZ
@@ -19,11 +19,11 @@
 
 // Default constructor
 gzfilebuf::gzfilebuf()
-: file(NULL), io_mode(std::ios_base::openmode(0)), own_fd(false),
-  buffer(NULL), buffer_size(BIGBUFSIZE), own_buffer(true)
+: file(ശൂന്യ), io_mode(std::ios_base::openmode(0)), own_fd(അസത്യം),
+  buffer(ശൂന്യ), buffer_size(BIGBUFSIZE), own_buffer(സത്യം)
 {
   // No buffers to start with
-  this->disable_buffer();
+  ഇത്->disable_buffer();
 }
 
 // Destructor
@@ -31,75 +31,75 @@ gzfilebuf::~gzfilebuf()
 {
   // Sync output buffer and close only if responsible for file
   // (i.e. attached streams should be left open at this stage)
-  this->sync();
-  if (own_fd)
-    this->close();
+  ഇത്->സമന്വയം();
+  എങ്കിൽ (own_fd)
+    ഇത്->close();
   // Make sure internal buffer is deallocated
-  this->disable_buffer();
+  ഇത്->disable_buffer();
 }
 
 // Set compression level and strategy
-int
-gzfilebuf::setcompression(int comp_level,
-                          int comp_strategy)
+പൂർണ്ണസംഖ്യ
+gzfilebuf::setcompression(പൂർണ്ണസംഖ്യ comp_level,
+                          പൂർണ്ണസംഖ്യ comp_strategy)
 {
-  return gzsetparams(file, comp_level, comp_strategy);
+  തിരികെ gzsetparams(file, comp_level, comp_strategy);
 }
 
 // Open gzipped file
 gzfilebuf*
-gzfilebuf::open(const char *name,
+gzfilebuf::open(സ്ഥിരം അക്ഷരം *name,
                 std::ios_base::openmode mode)
 {
   // Fail if file already open
-  if (this->is_open())
-    return NULL;
+  എങ്കിൽ (ഇത്->is_open())
+    തിരികെ ശൂന്യ;
   // Don't support simultaneous read/write access (yet)
-  if ((mode & std::ios_base::in) && (mode & std::ios_base::out))
-    return NULL;
+  എങ്കിൽ ((mode & std::ios_base::in) && (mode & std::ios_base::out))
+    തിരികെ ശൂന്യ;
 
   // Build mode string for gzopen and check it [27.8.1.3.2]
-  char char_mode[6] = "\0\0\0\0\0";
-  if (!this->open_mode(mode, char_mode))
-    return NULL;
+  അക്ഷരം char_mode[6] = "\0\0\0\0\0";
+  എങ്കിൽ (!ഇത്->open_mode(mode, char_mode))
+    തിരികെ ശൂന്യ;
 
   // Attempt to open file
-  if ((file = gzopen(name, char_mode)) == NULL)
-    return NULL;
+  എങ്കിൽ ((file = gzopen(name, char_mode)) == ശൂന്യ)
+    തിരികെ ശൂന്യ;
 
   // On success, allocate internal buffer and set flags
-  this->enable_buffer();
+  ഇത്->enable_buffer();
   io_mode = mode;
-  own_fd = true;
-  return this;
+  own_fd = സത്യം;
+  തിരികെ ഇത്;
 }
 
 // Attach to gzipped file
 gzfilebuf*
-gzfilebuf::attach(int fd,
+gzfilebuf::attach(പൂർണ്ണസംഖ്യ fd,
                   std::ios_base::openmode mode)
 {
   // Fail if file already open
-  if (this->is_open())
-    return NULL;
+  എങ്കിൽ (ഇത്->is_open())
+    തിരികെ ശൂന്യ;
   // Don't support simultaneous read/write access (yet)
-  if ((mode & std::ios_base::in) && (mode & std::ios_base::out))
-    return NULL;
+  എങ്കിൽ ((mode & std::ios_base::in) && (mode & std::ios_base::out))
+    തിരികെ ശൂന്യ;
 
   // Build mode string for gzdopen and check it [27.8.1.3.2]
-  char char_mode[6] = "\0\0\0\0\0";
-  if (!this->open_mode(mode, char_mode))
-    return NULL;
+  അക്ഷരം char_mode[6] = "\0\0\0\0\0";
+  എങ്കിൽ (!ഇത്->open_mode(mode, char_mode))
+    തിരികെ ശൂന്യ;
 
   // Attempt to attach to file
-  if ((file = gzdopen(fd, char_mode)) == NULL)
-    return NULL;
+  എങ്കിൽ ((file = gzdopen(fd, char_mode)) == ശൂന്യ)
+    തിരികെ ശൂന്യ;
 
   // On success, allocate internal buffer and set flags
-  this->enable_buffer();
+  ഇത്->enable_buffer();
   io_mode = mode;
-  own_fd = false;
-  return this;
+  own_fd = അസത്യം;
+  തിരികെ ഇത്;
 }
 
 // Close gzipped file
@@ -107,48 +107,48 @@ gzfilebuf*
 gzfilebuf::close()
 {
   // Fail immediately if no file is open
-  if (!this->is_open())
-    return NULL;
+  എങ്കിൽ (!ഇത്->is_open())
+    തിരികെ ശൂന്യ;
   // Assume success
-  gzfilebuf* retval = this;
+  gzfilebuf* retval = ഇത്;
   // Attempt to sync and close gzipped file
-  if (this->sync() == -1)
-    retval = NULL;
-  if (gzclose(file) < 0)
-    retval = NULL;
+  എങ്കിൽ (ഇത്->സമന്വയം() == -1)
+    retval = ശൂന്യ;
+  എങ്കിൽ (gzclose(file) < 0)
+    retval = ശൂന്യ;
   // File is now gone anyway (postcondition [27.8.1.3.8])
-  file = NULL;
-  own_fd = false;
+  file = ശൂന്യ;
+  own_fd = അസത്യം;
   // Destroy internal buffer if it exists
-  this->disable_buffer();
-  return retval;
+  ഇത്->disable_buffer();
+  തിരികെ retval;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // Convert int open mode to mode string
-bool
+തർക്കം
 gzfilebuf::open_mode(std::ios_base::openmode mode,
-                     char* c_mode) const
+                     അക്ഷരം* c_mode) സ്ഥിരം
 {
-  bool testb = mode & std::ios_base::binary;
-  bool testi = mode & std::ios_base::in;
-  bool testo = mode & std::ios_base::out;
-  bool testt = mode & std::ios_base::trunc;
-  bool testa = mode & std::ios_base::app;
+  തർക്കം testb = mode & std::ios_base::binary;
+  തർക്കം testi = mode & std::ios_base::in;
+  തർക്കം testo = mode & std::ios_base::out;
+  തർക്കം testt = mode & std::ios_base::trunc;
+  തർക്കം testa = mode & std::ios_base::app;
 
   // Check for valid flag combinations - see [27.8.1.3.2] (Table 92)
   // Original zfstream hardcoded the compression level to maximum here...
   // Double the time for less than 1% size improvement seems
   // excessive though - keeping it at the default level
   // To change back, just append "9" to the next three mode strings
-  if (!testi && testo && !testt && !testa)
+  എങ്കിൽ (!testi && testo && !testt && !testa)
     strcpy(c_mode, "w");
-  if (!testi && testo && !testt && testa)
+  എങ്കിൽ (!testi && testo && !testt && testa)
     strcpy(c_mode, "a");
-  if (!testi && testo && testt && !testa)
+  എങ്കിൽ (!testi && testo && testt && !testa)
     strcpy(c_mode, "w");
-  if (testi && !testo && !testt && !testa)
+  എങ്കിൽ (testi && !testo && !testt && !testa)
     strcpy(c_mode, "r");
   // No read/write mode yet
 //  if (testi && testo && !testt && !testa)
@@ -157,11 +157,11 @@ gzfilebuf::open_mode(std::ios_base::openmode mode,
 //    strcpy(c_mode, "w+");
 
   // Mode string should be empty for invalid combination of flags
-  if (strlen(c_mode) == 0)
-    return false;
-  if (testb)
+  എങ്കിൽ (strlen(c_mode) == 0)
+    തിരികെ അസത്യം;
+  എങ്കിൽ (testb)
     strcat(c_mode, "b");
-  return true;
+  തിരികെ സത്യം;
 }
 
 // Determine number of characters in internal get buffer
@@ -169,13 +169,13 @@ std::streamsize
 gzfilebuf::showmanyc()
 {
   // Calls to underflow will fail if file not opened for reading
-  if (!this->is_open() || !(io_mode & std::ios_base::in))
-    return -1;
+  എങ്കിൽ (!ഇത്->is_open() || !(io_mode & std::ios_base::in))
+    തിരികെ -1;
   // Make sure get area is in use
-  if (this->gptr() && (this->gptr() < this->egptr()))
-    return std::streamsize(this->egptr() - this->gptr());
-  else
-    return 0;
+  എങ്കിൽ (ഇത്->gptr() && (ഇത്->gptr() < ഇത്->egptr()))
+    തിരികെ std::streamsize(ഇത്->egptr() - ഇത്->gptr());
+  അല്ലെങ്കിൽ
+    തിരികെ 0;
 }
 
 // Fill get area from gzipped file
@@ -185,28 +185,28 @@ gzfilebuf::underflow()
   // If something is left in the get area by chance, return it
   // (this shouldn't normally happen, as underflow is only supposed
   // to be called when gptr >= egptr, but it serves as error check)
-  if (this->gptr() && (this->gptr() < this->egptr()))
-    return traits_type::to_int_type(*(this->gptr()));
+  എങ്കിൽ (ഇത്->gptr() && (ഇത്->gptr() < ഇത്->egptr()))
+    തിരികെ traits_type::to_int_type(*(ഇത്->gptr()));
 
   // If the file hasn't been opened for reading, produce error
-  if (!this->is_open() || !(io_mode & std::ios_base::in))
-    return traits_type::eof();
+  എങ്കിൽ (!ഇത്->is_open() || !(io_mode & std::ios_base::in))
+    തിരികെ traits_type::eof();
 
   // Attempt to fill internal buffer from gzipped file
   // (buffer must be guaranteed to exist...)
-  int bytes_read = gzread(file, buffer, buffer_size);
+  പൂർണ്ണസംഖ്യ bytes_read = gzread(file, buffer, buffer_size);
   // Indicates error or EOF
-  if (bytes_read <= 0)
+  എങ്കിൽ (bytes_read <= 0)
   {
     // Reset get area
-    this->setg(buffer, buffer, buffer);
-    return traits_type::eof();
+    ഇത്->setg(buffer, buffer, buffer);
+    തിരികെ traits_type::eof();
   }
   // Make all bytes read from file available as get area
-  this->setg(buffer, buffer, buffer + bytes_read);
+  ഇത്->setg(buffer, buffer, buffer + bytes_read);
 
   // Return next character in get area
-  return traits_type::to_int_type(*(this->gptr()));
+  തിരികെ traits_type::to_int_type(*(ഇത്->gptr()));
 }
 
 // Write put area to gzipped file
@@ -214,51 +214,51 @@ gzfilebuf::int_type
 gzfilebuf::overflow(int_type c)
 {
   // Determine whether put area is in use
-  if (this->pbase())
+  എങ്കിൽ (ഇത്->pbase())
   {
     // Double-check pointer range
-    if (this->pptr() > this->epptr() || this->pptr() < this->pbase())
-      return traits_type::eof();
+    എങ്കിൽ (ഇത്->pptr() > ഇത്->epptr() || ഇത്->pptr() < ഇത്->pbase())
+      തിരികെ traits_type::eof();
     // Add extra character to buffer if not EOF
-    if (!traits_type::eq_int_type(c, traits_type::eof()))
+    എങ്കിൽ (!traits_type::eq_int_type(c, traits_type::eof()))
     {
-      *(this->pptr()) = traits_type::to_char_type(c);
-      this->pbump(1);
+      *(ഇത്->pptr()) = traits_type::to_char_type(c);
+      ഇത്->pbump(1);
     }
     // Number of characters to write to file
-    int bytes_to_write = this->pptr() - this->pbase();
+    പൂർണ്ണസംഖ്യ bytes_to_write = ഇത്->pptr() - ഇത്->pbase();
     // Overflow doesn't fail if nothing is to be written
-    if (bytes_to_write > 0)
+    എങ്കിൽ (bytes_to_write > 0)
     {
       // If the file hasn't been opened for writing, produce error
-      if (!this->is_open() || !(io_mode & std::ios_base::out))
-        return traits_type::eof();
+      എങ്കിൽ (!ഇത്->is_open() || !(io_mode & std::ios_base::out))
+        തിരികെ traits_type::eof();
       // If gzipped file won't accept all bytes written to it, fail
-      if (gzwrite(file, this->pbase(), bytes_to_write) != bytes_to_write)
-        return traits_type::eof();
+      എങ്കിൽ (gzwrite(file, ഇത്->pbase(), bytes_to_write) != bytes_to_write)
+        തിരികെ traits_type::eof();
       // Reset next pointer to point to pbase on success
-      this->pbump(-bytes_to_write);
+      ഇത്->pbump(-bytes_to_write);
     }
   }
   // Write extra character to file if not EOF
-  else if (!traits_type::eq_int_type(c, traits_type::eof()))
+  അല്ലെങ്കിൽ എങ്കിൽ (!traits_type::eq_int_type(c, traits_type::eof()))
   {
     // If the file hasn't been opened for writing, produce error
-    if (!this->is_open() || !(io_mode & std::ios_base::out))
-      return traits_type::eof();
+    എങ്കിൽ (!ഇത്->is_open() || !(io_mode & std::ios_base::out))
+      തിരികെ traits_type::eof();
     // Impromptu char buffer (allows "unbuffered" output)
     char_type last_char = traits_type::to_char_type(c);
     // If gzipped file won't accept this character, fail
-    if (gzwrite(file, &last_char, 1) != 1)
-      return traits_type::eof();
+    എങ്കിൽ (gzwrite(file, &last_char, 1) != 1)
+      തിരികെ traits_type::eof();
   }
 
   // If you got here, you have succeeded (even if c was EOF)
   // The return value should therefore be non-EOF
-  if (traits_type::eq_int_type(c, traits_type::eof()))
-    return traits_type::not_eof(c);
-  else
-    return c;
+  എങ്കിൽ (traits_type::eq_int_type(c, traits_type::eof()))
+    തിരികെ traits_type::not_eof(c);
+  അല്ലെങ്കിൽ
+    തിരികെ c;
 }
 
 // Assign new buffer
@@ -267,104 +267,104 @@ gzfilebuf::setbuf(char_type* p,
                   std::streamsize n)
 {
   // First make sure stuff is sync'ed, for safety
-  if (this->sync() == -1)
-    return NULL;
+  എങ്കിൽ (ഇത്->സമന്വയം() == -1)
+    തിരികെ ശൂന്യ;
   // If buffering is turned off on purpose via setbuf(0,0), still allocate one...
   // "Unbuffered" only really refers to put [27.8.1.4.10], while get needs at
   // least a buffer of size 1 (very inefficient though, therefore make it bigger?)
   // This follows from [27.5.2.4.3]/12 (gptr needs to point at something, it seems)
-  if (!p || !n)
+  എങ്കിൽ (!p || !n)
   {
     // Replace existing buffer (if any) with small internal buffer
-    this->disable_buffer();
-    buffer = NULL;
+    ഇത്->disable_buffer();
+    buffer = ശൂന്യ;
     buffer_size = 0;
-    own_buffer = true;
-    this->enable_buffer();
+    own_buffer = സത്യം;
+    ഇത്->enable_buffer();
   }
-  else
+  അല്ലെങ്കിൽ
   {
     // Replace existing buffer (if any) with external buffer
-    this->disable_buffer();
+    ഇത്->disable_buffer();
     buffer = p;
     buffer_size = n;
-    own_buffer = false;
-    this->enable_buffer();
+    own_buffer = അസത്യം;
+    ഇത്->enable_buffer();
   }
-  return this;
+  തിരികെ ഇത്;
 }
 
 // Write put area to gzipped file (i.e. ensures that put area is empty)
-int
-gzfilebuf::sync()
+പൂർണ്ണസംഖ്യ
+gzfilebuf::സമന്വയം()
 {
-  return traits_type::eq_int_type(this->overflow(), traits_type::eof()) ? -1 : 0;
+  തിരികെ traits_type::eq_int_type(ഇത്->overflow(), traits_type::eof()) ? -1 : 0;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // Allocate internal buffer
-void
+ശൂന്യം
 gzfilebuf::enable_buffer()
 {
   // If internal buffer required, allocate one
-  if (own_buffer && !buffer)
+  എങ്കിൽ (own_buffer && !buffer)
   {
     // Check for buffered vs. "unbuffered"
-    if (buffer_size > 0)
+    എങ്കിൽ (buffer_size > 0)
     {
       // Allocate internal buffer
-      buffer = new char_type[buffer_size];
+      buffer = പുതിയ char_type[buffer_size];
       // Get area starts empty and will be expanded by underflow as need arises
-      this->setg(buffer, buffer, buffer);
+      ഇത്->setg(buffer, buffer, buffer);
       // Setup entire internal buffer as put area.
       // The one-past-end pointer actually points to the last element of the buffer,
       // so that overflow(c) can safely add the extra character c to the sequence.
       // These pointers remain in place for the duration of the buffer
-      this->setp(buffer, buffer + buffer_size - 1);
+      ഇത്->setp(buffer, buffer + buffer_size - 1);
     }
-    else
+    അല്ലെങ്കിൽ
     {
       // Even in "unbuffered" case, (small?) get buffer is still required
       buffer_size = SMALLBUFSIZE;
-      buffer = new char_type[buffer_size];
-      this->setg(buffer, buffer, buffer);
+      buffer = പുതിയ char_type[buffer_size];
+      ഇത്->setg(buffer, buffer, buffer);
       // "Unbuffered" means no put buffer
-      this->setp(0, 0);
+      ഇത്->setp(0, 0);
     }
   }
-  else
+  അല്ലെങ്കിൽ
   {
     // If buffer already allocated, reset buffer pointers just to make sure no
     // stale chars are lying around
-    this->setg(buffer, buffer, buffer);
-    this->setp(buffer, buffer + buffer_size - 1);
+    ഇത്->setg(buffer, buffer, buffer);
+    ഇത്->setp(buffer, buffer + buffer_size - 1);
   }
 }
 
 // Destroy internal buffer
-void
+ശൂന്യം
 gzfilebuf::disable_buffer()
 {
   // If internal buffer exists, deallocate it
-  if (own_buffer && buffer)
+  എങ്കിൽ (own_buffer && buffer)
   {
     // Preserve unbuffered status by zeroing size
-    if (!this->pbase())
+    എങ്കിൽ (!ഇത്->pbase())
       buffer_size = 0;
     delete[] buffer;
-    buffer = NULL;
-    this->setg(0, 0, 0);
-    this->setp(0, 0);
+    buffer = ശൂന്യ;
+    ഇത്->setg(0, 0, 0);
+    ഇത്->setp(0, 0);
   }
-  else
+  അല്ലെങ്കിൽ
   {
     // Reset buffer pointers to initial state if external buffer exists
-    this->setg(buffer, buffer, buffer);
-    if (buffer)
-      this->setp(buffer, buffer + buffer_size - 1);
-    else
-      this->setp(0, 0);
+    ഇത്->setg(buffer, buffer, buffer);
+    എങ്കിൽ (buffer)
+      ഇത്->setp(buffer, buffer + buffer_size - 1);
+    അല്ലെങ്കിൽ
+      ഇത്->setp(0, 0);
   }
 }
 
@@ -372,108 +372,108 @@ gzfilebuf::disable_buffer()
 
 // Default constructor initializes stream buffer
 gzifstream::gzifstream()
-: std::istream(NULL), sb()
-{ this->init(&sb); }
+: std::istream(ശൂന്യ), sb()
+{ ഇത്->init(&sb); }
 
 // Initialize stream buffer and open file
-gzifstream::gzifstream(const char* name,
+gzifstream::gzifstream(സ്ഥിരം അക്ഷരം* name,
                        std::ios_base::openmode mode)
-: std::istream(NULL), sb()
+: std::istream(ശൂന്യ), sb()
 {
-  this->init(&sb);
-  this->open(name, mode);
+  ഇത്->init(&sb);
+  ഇത്->open(name, mode);
 }
 
 // Initialize stream buffer and attach to file
-gzifstream::gzifstream(int fd,
+gzifstream::gzifstream(പൂർണ്ണസംഖ്യ fd,
                        std::ios_base::openmode mode)
-: std::istream(NULL), sb()
+: std::istream(ശൂന്യ), sb()
 {
-  this->init(&sb);
-  this->attach(fd, mode);
+  ഇത്->init(&sb);
+  ഇത്->attach(fd, mode);
 }
 
 // Open file and go into fail() state if unsuccessful
-void
-gzifstream::open(const char* name,
+ശൂന്യം
+gzifstream::open(സ്ഥിരം അക്ഷരം* name,
                  std::ios_base::openmode mode)
 {
-  if (!sb.open(name, mode | std::ios_base::in))
-    this->setstate(std::ios_base::failbit);
-  else
-    this->clear();
+  എങ്കിൽ (!sb.open(name, mode | std::ios_base::in))
+    ഇത്->setstate(std::ios_base::failbit);
+  അല്ലെങ്കിൽ
+    ഇത്->clear();
 }
 
 // Attach to file and go into fail() state if unsuccessful
-void
-gzifstream::attach(int fd,
+ശൂന്യം
+gzifstream::attach(പൂർണ്ണസംഖ്യ fd,
                    std::ios_base::openmode mode)
 {
-  if (!sb.attach(fd, mode | std::ios_base::in))
-    this->setstate(std::ios_base::failbit);
-  else
-    this->clear();
+  എങ്കിൽ (!sb.attach(fd, mode | std::ios_base::in))
+    ഇത്->setstate(std::ios_base::failbit);
+  അല്ലെങ്കിൽ
+    ഇത്->clear();
 }
 
 // Close file
-void
+ശൂന്യം
 gzifstream::close()
 {
-  if (!sb.close())
-    this->setstate(std::ios_base::failbit);
+  എങ്കിൽ (!sb.close())
+    ഇത്->setstate(std::ios_base::failbit);
 }
 
 /*****************************************************************************/
 
 // Default constructor initializes stream buffer
 gzofstream::gzofstream()
-: std::ostream(NULL), sb()
-{ this->init(&sb); }
+: std::ostream(ശൂന്യ), sb()
+{ ഇത്->init(&sb); }
 
 // Initialize stream buffer and open file
-gzofstream::gzofstream(const char* name,
+gzofstream::gzofstream(സ്ഥിരം അക്ഷരം* name,
                        std::ios_base::openmode mode)
-: std::ostream(NULL), sb()
+: std::ostream(ശൂന്യ), sb()
 {
-  this->init(&sb);
-  this->open(name, mode);
+  ഇത്->init(&sb);
+  ഇത്->open(name, mode);
 }
 
 // Initialize stream buffer and attach to file
-gzofstream::gzofstream(int fd,
+gzofstream::gzofstream(പൂർണ്ണസംഖ്യ fd,
                        std::ios_base::openmode mode)
-: std::ostream(NULL), sb()
+: std::ostream(ശൂന്യ), sb()
 {
-  this->init(&sb);
-  this->attach(fd, mode);
+  ഇത്->init(&sb);
+  ഇത്->attach(fd, mode);
 }
 
 // Open file and go into fail() state if unsuccessful
-void
-gzofstream::open(const char* name,
+ശൂന്യം
+gzofstream::open(സ്ഥിരം അക്ഷരം* name,
                  std::ios_base::openmode mode)
 {
-  if (!sb.open(name, mode | std::ios_base::out))
-    this->setstate(std::ios_base::failbit);
-  else
-    this->clear();
+  എങ്കിൽ (!sb.open(name, mode | std::ios_base::out))
+    ഇത്->setstate(std::ios_base::failbit);
+  അല്ലെങ്കിൽ
+    ഇത്->clear();
 }
 
 // Attach to file and go into fail() state if unsuccessful
-void
-gzofstream::attach(int fd,
+ശൂന്യം
+gzofstream::attach(പൂർണ്ണസംഖ്യ fd,
                    std::ios_base::openmode mode)
 {
-  if (!sb.attach(fd, mode | std::ios_base::out))
-    this->setstate(std::ios_base::failbit);
-  else
-    this->clear();
+  എങ്കിൽ (!sb.attach(fd, mode | std::ios_base::out))
+    ഇത്->setstate(std::ios_base::failbit);
+  അല്ലെങ്കിൽ
+    ഇത്->clear();
 }
 
 // Close file
-void
+ശൂന്യം
 gzofstream::close()
 {
-  if (!sb.close())
-    this->setstate(std::ios_base::failbit);
+  എങ്കിൽ (!sb.close())
+    ഇത്->setstate(std::ios_base::failbit);
 }

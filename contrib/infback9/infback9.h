@@ -17,20 +17,20 @@
  */
 
 #ifdef __cplusplus
-extern "C" {
+ബാഹ്യ "C" {
 #endif
 
-ZEXTERN int ZEXPORT inflateBack9(z_stream FAR *strm,
-                                 in_func in, void FAR *in_desc,
-                                 out_func out, void FAR *out_desc);
-ZEXTERN int ZEXPORT inflateBack9End(z_stream FAR *strm);
-ZEXTERN int ZEXPORT inflateBack9Init_(z_stream FAR *strm,
-                                      unsigned char FAR *window,
-                                      const char *version,
-                                      int stream_size);
+ZEXTERN പൂർണ്ണസംഖ്യ ZEXPORT inflateBack9(z_stream FAR *strm,
+                                 in_func in, ശൂന്യം FAR *in_desc,
+                                 out_func out, ശൂന്യം FAR *out_desc);
+ZEXTERN പൂർണ്ണസംഖ്യ ZEXPORT inflateBack9End(z_stream FAR *strm);
+ZEXTERN പൂർണ്ണസംഖ്യ ZEXPORT inflateBack9Init_(z_stream FAR *strm,
+                                      unsigned അക്ഷരം FAR *window,
+                                      സ്ഥിരം അക്ഷരം *version,
+                                      പൂർണ്ണസംഖ്യ stream_size);
 #define inflateBack9Init(strm, window) \
         inflateBack9Init_((strm), (window), \
-        ZLIB_VERSION, sizeof(z_stream))
+        ZLIB_VERSION, വലുപ്പം(z_stream))
 
 #ifdef __cplusplus
 }

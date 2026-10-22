@@ -1,26 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <windows.h>
 
-#include "zlib.h"
+#അന്തര്ഭാവ "zlib.h"
 
 
-void MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
+ശൂന്യം MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
 {
-    R->HighPart = A.HighPart - B.HighPart;
-    if (A.LowPart >= B.LowPart)
-        R->LowPart = A.LowPart - B.LowPart;
-    else
+    R->മുകളിലെ_Part = A.മുകളിലെ_Part - B.മുകളിലെ_Part;
+    എങ്കിൽ (A.താഴെയുള്ള_Part >= B.താഴെയുള്ള_Part)
+        R->താഴെയുള്ള_Part = A.താഴെയുള്ള_Part - B.താഴെയുള്ള_Part;
+    അല്ലെങ്കിൽ
     {
-        R->LowPart = A.LowPart - B.LowPart;
-        R->HighPart --;
+        R->താഴെയുള്ള_Part = A.താഴെയുള്ള_Part - B.താഴെയുള്ള_Part;
+        R->മുകളിലെ_Part --;
     }
 }
 
 #ifdef _M_X64
 // see https://learn.microsoft.com/en-us/cpp/intrinsics/rdtsc?view=msvc-170 for __rdtsc
-unsigned __int64 __rdtsc(void);
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+unsigned __int64 __rdtsc(ശൂന്യം);
+ശൂന്യം Begin_എണ്ണം_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
  //   printf("rdtsc = %I64x\n",__rdtsc());
    pbeginTime64->QuadPart=__rdtsc();
@@ -32,11 +32,11 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
     unsigned _int64 res=__rdtsc()-((unsigned _int64)(beginTime64.QuadPart));
     LIres.QuadPart=res;
    // printf("rdtsc = %I64x\n",__rdtsc());
-    return LIres;
+    തിരികെ LIres;
 }
-#else
+#അല്ലെങ്കിൽ
 #ifdef _M_IX86
-void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
+ശൂന്യം myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
     DWORD dwEdx,dwEax;
     _asm
@@ -45,11 +45,11 @@ void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
         mov dwEax,eax
         mov dwEdx,edx
     }
-    pbeginTime64->LowPart=dwEax;
-    pbeginTime64->HighPart=dwEdx;
+    pbeginTime64->താഴെയുള്ള_Part=dwEax;
+    pbeginTime64->മുകളിലെ_Part=dwEdx;
 }
 
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+ശൂന്യം Begin_എണ്ണം_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
     myGetRDTSC32(pbeginTime64);
 }
@@ -59,16 +59,16 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
     LARGE_INTEGER LIres,endTime64;
     myGetRDTSC32(&endTime64);
 
-    LIres.LowPart=LIres.HighPart=0;
+    LIres.താഴെയുള്ള_Part=LIres.മുകളിലെ_Part=0;
     MyDoMinus64(&LIres,endTime64,beginTime64);
-    return LIres;
+    തിരികെ LIres;
 }
-#else
-void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
+#അല്ലെങ്കിൽ
+ശൂന്യം myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
 }
 
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+ശൂന്യം Begin_എണ്ണം_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
 }
 
@@ -76,17 +76,17 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
 {
     LARGE_INTEGER lr;
     lr.QuadPart=0;
-    return lr;
+    തിരികെ lr;
 }
 #endif
 #endif
 
-void BeginCountPerfCounter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
+ശൂന്യം Begin_എണ്ണം_Perf_Counter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
 {
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
+    എങ്കിൽ ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
     {
-        pbeginTime64->LowPart = GetTickCount();
-        pbeginTime64->HighPart = 0;
+        pbeginTime64->താഴെയുള്ള_Part = Get_Tick_എണ്ണം();
+        pbeginTime64->മുകളിലെ_Part = 0;
     }
 }
 
@@ -96,9 +96,9 @@ DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPe
     DWORDLONG ticksShifted,tickSecShifted;
     DWORD dwLog=16+0;
     DWORD dwRet;
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
-        dwRet = (GetTickCount() - beginTime64.LowPart)*1;
-    else
+    എങ്കിൽ ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
+        dwRet = (Get_Tick_എണ്ണം() - beginTime64.താഴെയുള്ള_Part)*1;
+    അല്ലെങ്കിൽ
     {
         MyDoMinus64(&ticks,endTime64,beginTime64);
         QueryPerformanceFrequency(&ticksPerSecond);
@@ -113,95 +113,95 @@ DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPe
         dwRet = (DWORD)((((DWORD)ticksShifted)*1000)/(DWORD)(tickSecShifted));
         dwRet *=1;
     }
-    return dwRet;
+    തിരികെ dwRet;
 }
 
-int ReadFileMemory(const char* filename,long* plFileSize,unsigned char** pFilePtr)
+പൂർണ്ണസംഖ്യ ReadFileMemory(സ്ഥിരം അക്ഷരം* filename,long* plFileSize,unsigned അക്ഷരം** pFilePtr)
 {
     FILE* stream;
-    unsigned char* ptr;
-    int retVal=1;
+    unsigned അക്ഷരം* ptr;
+    പൂർണ്ണസംഖ്യ retVal=1;
     stream=fopen(filename, "rb");
-    if (stream==NULL)
-        return 0;
+    എങ്കിൽ (stream==ശൂന്യ)
+        തിരികെ 0;
 
     fseek(stream,0,SEEK_END);
 
     *plFileSize=ftell(stream);
     fseek(stream,0,SEEK_SET);
     ptr=malloc((*plFileSize)+1);
-    if (ptr==NULL)
+    എങ്കിൽ (ptr==ശൂന്യ)
         retVal=0;
-    else
+    അല്ലെങ്കിൽ
     {
-        if (fread(ptr, 1, *plFileSize,stream) != (*plFileSize))
+        എങ്കിൽ (fread(ptr, 1, *plFileSize,stream) != (*plFileSize))
             retVal=0;
     }
     fclose(stream);
     *pFilePtr=ptr;
-    return retVal;
+    തിരികെ retVal;
 }
 
-int main(int argc, char *argv[])
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം *argv[])
 {
-    int BlockSizeCompress=0x8000;
-    int BlockSizeUncompress=0x8000;
-    int cprLevel=Z_DEFAULT_COMPRESSION ;
+    പൂർണ്ണസംഖ്യ BlockSizeCompress=0x8000;
+    പൂർണ്ണസംഖ്യ BlockSizeUncompress=0x8000;
+    പൂർണ്ണസംഖ്യ cprLevel=Z_DEFAULT_COMPRESSION ;
     long lFileSize;
-    unsigned char* FilePtr;
+    unsigned അക്ഷരം* FilePtr;
     long lBufferSizeCpr;
     long lBufferSizeUncpr;
     long lCompressedSize=0;
-    unsigned char* CprPtr;
-    unsigned char* UncprPtr;
+    unsigned അക്ഷരം* CprPtr;
+    unsigned അക്ഷരം* UncprPtr;
     long lSizeCpr,lSizeUncpr;
     DWORD dwGetTick,dwMsecQP;
     LARGE_INTEGER li_qp,li_rdtsc,dwResRdtsc;
 
-    if (argc<=1)
+    എങ്കിൽ (argc<=1)
     {
         printf("run TestZlib <File> [BlockSizeCompress] [BlockSizeUncompress] [compres. level]\n");
-        return 0;
+        തിരികെ 0;
     }
 
-    if (ReadFileMemory(argv[1],&lFileSize,&FilePtr)==0)
+    എങ്കിൽ (ReadFileMemory(argv[1],&lFileSize,&FilePtr)==0)
     {
         printf("error reading %s\n",argv[1]);
-        return 1;
+        തിരികെ 1;
     }
-    else printf("file %s read, %ld bytes\n",argv[1],lFileSize);
+    അല്ലെങ്കിൽ printf("file %s read, %ld bytes\n",argv[1],lFileSize);
 
-    if (argc>=3)
+    എങ്കിൽ (argc>=3)
         BlockSizeCompress=atol(argv[2]);
 
-    if (argc>=4)
+    എങ്കിൽ (argc>=4)
         BlockSizeUncompress=atol(argv[3]);
 
-    if (argc>=5)
-        cprLevel=(int)atol(argv[4]);
+    എങ്കിൽ (argc>=5)
+        cprLevel=(പൂർണ്ണസംഖ്യ)atol(argv[4]);
 
     lBufferSizeCpr = lFileSize + (lFileSize/0x10) + 0x200;
     lBufferSizeUncpr = lBufferSizeCpr;
 
-    CprPtr=(unsigned char*)malloc(lBufferSizeCpr + BlockSizeCompress);
+    CprPtr=(unsigned അക്ഷരം*)malloc(lBufferSizeCpr + BlockSizeCompress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_എണ്ണം_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_എണ്ണം();
+    Begin_എണ്ണം_Rdtsc(&li_rdtsc);
     {
         z_stream zcpr;
-        int ret=Z_OK;
+        പൂർണ്ണസംഖ്യ ret=Z_OK;
         long lOrigToDo = lFileSize;
         long lOrigDone = 0;
-        int step=0;
-        memset(&zcpr,0,sizeof(z_stream));
+        പൂർണ്ണസംഖ്യ step=0;
+        memset(&zcpr,0,വലുപ്പം(z_stream));
         deflateInit(&zcpr,cprLevel);
 
         zcpr.next_in = FilePtr;
         zcpr.next_out = CprPtr;
 
 
-        do
+        ചെയ്യുക
         {
             long all_read_before = zcpr.total_in;
             zcpr.avail_in = min(lOrigToDo,BlockSizeCompress);
@@ -210,39 +210,39 @@ int main(int argc, char *argv[])
             lOrigDone += (zcpr.total_in-all_read_before);
             lOrigToDo -= (zcpr.total_in-all_read_before);
             step++;
-        } while (ret==Z_OK);
+        } ആകുമ്പോൾ (ret==Z_OK);
 
         lSizeCpr=zcpr.total_out;
         deflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        dwGetTick=Get_Tick_എണ്ണം()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
         printf("total compress size = %u, in %u step\n",lSizeCpr,step);
-        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(double)1000.);
-        printf("defcpr time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(double)1000.);
+        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(ഇരട്ട)1000.);
+        printf("defcpr time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(ഇരട്ട)1000.);
         printf("defcpr result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    CprPtr=(unsigned char*)realloc(CprPtr,lSizeCpr);
-    UncprPtr=(unsigned char*)malloc(lBufferSizeUncpr + BlockSizeUncompress);
+    CprPtr=(unsigned അക്ഷരം*)realloc(CprPtr,lSizeCpr);
+    UncprPtr=(unsigned അക്ഷരം*)malloc(lBufferSizeUncpr + BlockSizeUncompress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_എണ്ണം_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_എണ്ണം();
+    Begin_എണ്ണം_Rdtsc(&li_rdtsc);
     {
         z_stream zcpr;
-        int ret=Z_OK;
+        പൂർണ്ണസംഖ്യ ret=Z_OK;
         long lOrigToDo = lSizeCpr;
         long lOrigDone = 0;
-        int step=0;
-        memset(&zcpr,0,sizeof(z_stream));
+        പൂർണ്ണസംഖ്യ step=0;
+        memset(&zcpr,0,വലുപ്പം(z_stream));
         inflateInit(&zcpr);
 
         zcpr.next_in = CprPtr;
         zcpr.next_out = UncprPtr;
 
 
-        do
+        ചെയ്യുക
         {
             long all_read_before = zcpr.total_in;
             zcpr.avail_in = min(lOrigToDo,BlockSizeUncompress);
@@ -251,25 +251,25 @@ int main(int argc, char *argv[])
             lOrigDone += (zcpr.total_in-all_read_before);
             lOrigToDo -= (zcpr.total_in-all_read_before);
             step++;
-        } while (ret==Z_OK);
+        } ആകുമ്പോൾ (ret==Z_OK);
 
         lSizeUncpr=zcpr.total_out;
         inflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        dwGetTick=Get_Tick_എണ്ണം()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
         printf("total uncompress size = %u, in %u step\n",lSizeUncpr,step);
-        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(double)1000.);
-        printf("uncpr  time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(double)1000.);
+        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(ഇരട്ട)1000.);
+        printf("uncpr  time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(ഇരട്ട)1000.);
         printf("uncpr  result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    if (lSizeUncpr==lFileSize)
+    എങ്കിൽ (lSizeUncpr==lFileSize)
     {
-        if (memcmp(FilePtr,UncprPtr,lFileSize)==0)
+        എങ്കിൽ (memcmp(FilePtr,UncprPtr,lFileSize)==0)
             printf("compare ok\n");
 
     }
 
-    return 0;
+    തിരികെ 0;
 }

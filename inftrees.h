@@ -21,9 +21,9 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
+തരനിർവചനം ഘടന {
+    unsigned അക്ഷരം op;           /* operation, extra bits, table bits */
+    unsigned അക്ഷരം bits;         /* bits in this part of the code */
     unsigned short val;         /* offset in table or code value */
 } code;
 
@@ -49,7 +49,7 @@ typedef struct {
 #ifndef PKZIP_BUG_WORKAROUND
 #  define ENOUGH_LENS 852
 #  define ENOUGH_DISTS 592
-#else
+#അല്ലെങ്കിൽ
 /* That workaround permits 288 literal/length codes and 32 distance codes. */
 #  define ENOUGH_LENS 854
 #  define ENOUGH_DISTS 594
@@ -57,14 +57,14 @@ typedef struct {
 #define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table() */
-typedef enum {
+തരനിർവചനം എണ്ണൽ {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
+പൂർണ്ണസംഖ്യ ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
                                 unsigned codes, code FAR * FAR *table,
                                 unsigned FAR *bits, unsigned short FAR *work);
-struct inflate_state;
-void ZLIB_INTERNAL inflate_fixed(struct inflate_state FAR *state);
+ഘടന inflate_state;
+ശൂന്യം ZLIB_INTERNAL inflate_fixed(ഘടന inflate_state FAR *state);

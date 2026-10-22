@@ -2,127 +2,127 @@
 #ifndef zfstream_h
 #define zfstream_h
 
-#include <fstream.h>
-#include "zlib.h"
+#അന്തര്ഭാവ <fstream.h>
+#അന്തര്ഭാവ "zlib.h"
 
-class gzfilebuf : public streambuf {
+class gzfilebuf : പൊതു streambuf {
 
-public:
+പൊതു:
 
   gzfilebuf( );
-  virtual ~gzfilebuf();
+  മായാ ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ io_mode );
+  gzfilebuf *attach( പൂർണ്ണസംഖ്യ file_descriptor, പൂർണ്ണസംഖ്യ io_mode );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  പൂർണ്ണസംഖ്യ setcompressionlevel( പൂർണ്ണസംഖ്യ comp_level );
+  പൂർണ്ണസംഖ്യ setcompressionstrategy( പൂർണ്ണസംഖ്യ comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  വരിയിൽ പൂർണ്ണസംഖ്യ is_open() സ്ഥിരം { തിരികെ (file !=ശൂന്യ); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  മായാ streampos seekoff( streamoff, ios::seek_dir, പൂർണ്ണസംഖ്യ );
 
-  virtual int sync();
+  മായാ പൂർണ്ണസംഖ്യ sync();
 
-protected:
+സംരക്ഷിത:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  മായാ പൂർണ്ണസംഖ്യ underflow();
+  മായാ പൂർണ്ണസംഖ്യ overflow( പൂർണ്ണസംഖ്യ = EOF );
 
-private:
+സ്വകാര്യ:
 
   gzFile file;
   short mode;
   short own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  പൂർണ്ണസംഖ്യ flushbuf();
+  പൂർണ്ണസംഖ്യ fillbuf();
 
 };
 
-class gzfilestream_common : virtual public ios {
+class gzfilestream_common : മായാ പൊതു ios {
 
   friend class gzifstream;
   friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  friend gzofstream &setcompressionlevel( gzofstream &, പൂർണ്ണസംഖ്യ );
+  friend gzofstream &setcompressionstrategy( gzofstream &, പൂർണ്ണസംഖ്യ );
 
-public:
-  virtual ~gzfilestream_common();
+പൊതു:
+  മായാ ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
-  void close();
+  ശൂന്യം attach( പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ io_mode );
+  ശൂന്യം open( സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ io_mode );
+  ശൂന്യം close();
 
-protected:
+സംരക്ഷിത:
   gzfilestream_common();
 
-private:
+സ്വകാര്യ:
   gzfilebuf *rdbuf();
 
   gzfilebuf buffer;
 
 };
 
-class gzifstream : public gzfilestream_common, public istream {
+class gzifstream : പൊതു gzfilestream_common, പൊതു istream {
 
-public:
+പൊതു:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ io_mode = ios::in );
+  gzifstream( പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ io_mode = ios::in );
 
-  virtual ~gzifstream();
+  മായാ ~gzifstream();
 
 };
 
-class gzofstream : public gzfilestream_common, public ostream {
+class gzofstream : പൊതു gzfilestream_common, പൊതു ostream {
 
-public:
+പൊതു:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ io_mode = ios::out );
+  gzofstream( പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ io_mode = ios::out );
 
-  virtual ~gzofstream();
+  മായാ ~gzofstream();
 
 };
 
 template<class T> class gzomanip {
-  friend gzofstream &operator<<(gzofstream &, const gzomanip<T> &);
-public:
+  friend gzofstream &operator<<(gzofstream &, സ്ഥിരം gzomanip<T> &);
+പൊതു:
   gzomanip(gzofstream &(*f)(gzofstream &, T), T v) : func(f), val(v) { }
-private:
+സ്വകാര്യ:
   gzofstream &(*func)(gzofstream &, T);
   T val;
 };
 
-template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
+template<class T> gzofstream &operator<<(gzofstream &s, സ്ഥിരം gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  തിരികെ (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+വരിയിൽ gzofstream &setcompressionlevel( gzofstream &s, പൂർണ്ണസംഖ്യ l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  തിരികെ s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+വരിയിൽ gzofstream &setcompressionstrategy( gzofstream &s, പൂർണ്ണസംഖ്യ l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  തിരികെ s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+വരിയിൽ gzomanip<പൂർണ്ണസംഖ്യ> setcompressionlevel(പൂർണ്ണസംഖ്യ l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  തിരികെ gzomanip<പൂർണ്ണസംഖ്യ>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+വരിയിൽ gzomanip<പൂർണ്ണസംഖ്യ> setcompressionstrategy(പൂർണ്ണസംഖ്യ l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  തിരികെ gzomanip<പൂർണ്ണസംഖ്യ>(&setcompressionstrategy,l);
 }
 
 #endif

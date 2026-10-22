@@ -15,23 +15,23 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#എങ്കിൽ defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "puff.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#എങ്കിൽ defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
+#  define SET_ദ്വിമാന_MODE(file) setmode(fileno(file), O_ദ്വിമാന)
+#അല്ലെങ്കിൽ
+#  define SET_ദ്വിമാന_MODE(file)
 #endif
 
-#define local static
+#define local സ്ഥിതം
 
 /* Return size times approximately the cube root of 2, keeping the result as 1,
    3, or 5 times a power of 2 -- the result is always > size, until the result
@@ -39,19 +39,19 @@
    to keep reallocations less than ~33% over the actual data. */
 local size_t bythirds(size_t size)
 {
-    int n;
+    പൂർണ്ണസംഖ്യ n;
     size_t m;
 
     m = size;
-    for (n = 0; m; n++)
+    വേണ്ടി (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    എങ്കിൽ (n < 3)
+        തിരികെ size + 1;
     n -= 3;
     m = size >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    തിരികെ m > size ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,109 +60,109 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local ശൂന്യം *load(സ്ഥിരം അക്ഷരം *name, size_t *len)
 {
     size_t size;
-    void *buf, *swap;
+    ശൂന്യം *buf, *swap;
     FILE *in;
 
     *len = 0;
     buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
-    in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
+    എങ്കിൽ (buf == ശൂന്യ)
+        തിരികെ ശൂന്യ;
+    in = name == ശൂന്യ ? stdin : fopen(name, "rb");
+    എങ്കിൽ (in != ശൂന്യ) {
+        വേണ്ടി (;;) {
+            *len += fread((അക്ഷരം *)buf + *len, 1, size - *len, in);
+            എങ്കിൽ (*len < size) നിർത്തുക;
             size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
-                free(buf);
-                buf = NULL;
-                break;
+            എങ്കിൽ (size == *len || (swap = realloc(buf, size)) == ശൂന്യ) {
+                സ്വതന്ത്രം(buf);
+                buf = ശൂന്യ;
+                നിർത്തുക;
             }
             buf = swap;
         }
         fclose(in);
     }
-    return buf;
+    തിരികെ buf;
 }
 
-int main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-    int ret, put = 0, fail = 0;
+    പൂർണ്ണസംഖ്യ ret, put = 0, fail = 0;
     unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
+    അക്ഷരം *arg, *name = ശൂന്യ;
+    unsigned അക്ഷരം *source = ശൂന്യ, *dest;
     size_t len = 0;
     unsigned long sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    ആകുമ്പോൾ (arg = *++argv, --argc)
+        എങ്കിൽ (arg[0] == '-') {
+            എങ്കിൽ (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            അല്ലെങ്കിൽ എങ്കിൽ (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
+            അല്ലെങ്കിൽ എങ്കിൽ (arg[1] >= '0' && arg[1] <= '9')
                 skip = (unsigned)atoi(arg + 1);
-            else {
+            അല്ലെങ്കിൽ {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                തിരികെ 3;
             }
         }
-        else if (name != NULL) {
+        അല്ലെങ്കിൽ എങ്കിൽ (name != ശൂന്യ) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            തിരികെ 3;
         }
-        else
+        അല്ലെങ്കിൽ
             name = arg;
     source = load(name, &len);
-    if (source == NULL) {
+    എങ്കിൽ (source == ശൂന്യ) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        തിരികെ 4;
     }
-    if (len == 0) {
+    എങ്കിൽ (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
-                name == NULL ? "<stdin>" : name);
-        free(source);
-        return 3;
+                name == ശൂന്യ ? "<stdin>" : name);
+        സ്വതന്ത്രം(source);
+        തിരികെ 3;
     }
-    if (skip >= len) {
+    എങ്കിൽ (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
-        free(source);
-        return 3;
+        സ്വതന്ത്രം(source);
+        തിരികെ 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
     sourcelen = (unsigned long)len;
     ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    എങ്കിൽ (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    അല്ലെങ്കിൽ {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        എങ്കിൽ (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    എങ്കിൽ (put && ret == 0) {
+        എങ്കിൽ (fail)
             destlen >>= 1;
         dest = malloc(destlen);
-        if (dest == NULL) {
+        എങ്കിൽ (dest == ശൂന്യ) {
             fprintf(stderr, "memory allocation failure\n");
-            free(source);
-            return 4;
+            സ്വതന്ത്രം(source);
+            തിരികെ 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
-        SET_BINARY_MODE(stdout);
+        SET_ദ്വിമാന_MODE(stdout);
         fwrite(dest, 1, destlen, stdout);
-        free(dest);
+        സ്വതന്ത്രം(dest);
     }
 
     /* clean up */
-    free(source);
-    return ret;
+    സ്വതന്ത്രം(source);
+    തിരികെ ret;
 }

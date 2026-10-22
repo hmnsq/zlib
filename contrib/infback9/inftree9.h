@@ -21,9 +21,9 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
+തരനിർവചനം ഘടന {
+    unsigned അക്ഷരം op;           /* operation, extra bits, table bits */
+    unsigned അക്ഷരം bits;         /* bits in this part of the code */
     unsigned short val;         /* offset in table or code value */
 } code;
 
@@ -50,12 +50,12 @@ typedef struct {
 #define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table9() */
-typedef enum {
+തരനിർവചനം എണ്ണൽ {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-extern int inflate_table9(codetype type, unsigned short FAR *lens,
+ബാഹ്യ പൂർണ്ണസംഖ്യ inflate_table9(codetype type, unsigned short FAR *lens,
                           unsigned codes, code FAR * FAR *table,
                           unsigned FAR *bits, unsigned short FAR *work);

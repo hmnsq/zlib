@@ -58,13 +58,13 @@
 #ifndef SKIPSET_H
 #define SKIPSET_H
 
-#include <stdlib.h>     /* realloc(), free(), NULL, size_t */
-#include <stddef.h>     /* ptrdiff_t */
-#include <setjmp.h>     /* jmp_buf, longjmp() */
-#include <errno.h>      /* ENOMEM */
-#include <time.h>       /* time(), clock() */
-#include <assert.h>     /* assert.h */
-#include "ints.h"       /* i16_t, ui32_t, ui64_t */
+#അന്തര്ഭാവ <stdlib.h>     /* realloc(), free(), NULL, size_t */
+#അന്തര്ഭാവ <stddef.h>     /* ptrdiff_t */
+#അന്തര്ഭാവ <setjmp.h>     /* jmp_buf, longjmp() */
+#അന്തര്ഭാവ <errno.h>      /* ENOMEM */
+#അന്തര്ഭാവ <time.h>       /* time(), clock() */
+#അന്തര്ഭാവ <assert.h>     /* assert.h */
+#അന്തര്ഭാവ "ints.h"       /* i16_t, ui32_t, ui64_t */
 
 /*
   Structures and functions below noted as "--private--" should not be used by
@@ -81,48 +81,48 @@
   Licensed under Apache License 2.0 (NO WARRANTY, etc. see website)
   --private-- Random number generator state.
  */
-typedef struct {
+തരനിർവചനം ഘടന {
     ui64_t state;       /* 64-bit generator state */
     ui64_t inc;         /* 63-bit sequence id */
 } set_rand_t;
 /* --private-- Initialize the state *gen using seed and seq. seed seeds the
    advancing 64-bit state. seq is a sequence selection constant. */
-static void set_seed(set_rand_t *gen, ui64_t seed, ui64_t seq) {
+സ്ഥിതം ശൂന്യം set_seed(set_rand_t *gen, ui64_t seed, ui64_t seq) {
     gen->inc = (seq << 1) | 1;
     gen->state = (seed + gen->inc) * 6364136223846793005ULL + gen->inc;
 }
 /* Start a unique random number sequence using bits from noise sources. */
-static void set_uniq(set_rand_t *gen, const void *ptr) {
+സ്ഥിതം ശൂന്യം set_uniq(set_rand_t *gen, സ്ഥിരം ശൂന്യം *ptr) {
     set_seed(gen, ((ui64_t)(ptrdiff_t)ptr << 32) ^
-                  ((ui64_t)time(NULL) << 12) ^ clock(), 0);
+                  ((ui64_t)time(ശൂന്യ) << 12) ^ clock(), 0);
 }
 /* Return 32 random bits, advancing the state *gen. */
-static ui32_t set_rand(set_rand_t *gen) {
+സ്ഥിതം ui32_t set_rand(set_rand_t *gen) {
     ui32_t mix;
-    int rot;
+    പൂർണ്ണസംഖ്യ rot;
     ui64_t state = gen->state;
     gen->state = state * 6364136223846793005ULL + gen->inc;
     mix = (ui32_t)(((state >> 18) ^ state) >> 27);
     rot = state >> 59;
-    return (mix >> rot) | (mix << ((-rot) & 31));
+    തിരികെ (mix >> rot) | (mix << ((-rot) & 31));
 }
 /* End of PCG32 code. */
 
 /* --private-- Linked-list node. */
-typedef struct set_node_s set_node_t;
-struct set_node_s {
-    set_key_t key;          /* the key (not used for head or path) */
+തരനിർവചനം ഘടന set_കണ്ണി_s set_കണ്ണി_t;
+ഘടന set_കണ്ണി_s {
+    set_താക്കോൽ_t താക്കോൽ;          /* the key (not used for head or path) */
     i16_t size;             /* number of allocated pointers in right[] */
     i16_t fill;             /* number of pointers in right[] filled in */
-    set_node_t **right;     /* pointer for each level, each to the right */
+    set_കണ്ണി_t **വലത്;     /* pointer for each level, each to the right */
 };
 
 /* A set. The application sets env, may use gen with set_rand(), and may read
    allocs and memory. The remaining variables are --private-- . */
-typedef struct set_s {
-    set_node_t *head;       /* skiplist head -- no key, just links */
-    set_node_t *path;       /* right[] is path to key from set_found() */
-    set_node_t *node;       /* node under construction, in case of longjmp() */
+തരനിർവചനം ഘടന set_s {
+    set_കണ്ണി_t *head;       /* skiplist head -- no key, just links */
+    set_കണ്ണി_t *path;       /* right[] is path to key from set_found() */
+    set_കണ്ണി_t *കണ്ണി;       /* node under construction, in case of longjmp() */
     i16_t depth;            /* maximum depth of the skiplist */
     ui64_t ran;             /* a precious trove of random bits */
     set_rand_t gen;         /* random number generator state */
@@ -140,7 +140,7 @@ typedef struct set_s {
    used by the application. e.g. if allocation tracking is desired. */
 #ifdef SET_TRACK
 /* Track the number of allocations and the total backing memory size. */
-#  if defined(_WIN32)
+#  എങ്കിൽ defined(_WIN32)
 #    include <malloc.h>
 #    define SET_ALLOC_SIZE(ptr) _msize(ptr)
 #  elif defined(__MACH__)
@@ -155,37 +155,37 @@ typedef struct set_s {
 #  elif defined(__NetBSD__)
 #    include <jemalloc/jemalloc.h>
 #    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
-#  else     /* e.g. OpenBSD */
+#  അല്ലെങ്കിൽ     /* e.g. OpenBSD */
 #    define SET_ALLOC_SIZE(ptr) 0
 #  endif
 /* With tracking. */
-static void *set_alloc(set_t *set, void *ptr, size_t size) {
-    size_t had = ptr == NULL ? 0 : SET_ALLOC_SIZE(ptr);
-    void *mem = realloc(ptr, size);
-    if (mem == NULL)
+സ്ഥിതം ശൂന്യം *set_alloc(set_t *set, ശൂന്യം *ptr, size_t size) {
+    size_t had = ptr == ശൂന്യ ? 0 : SET_ALLOC_SIZE(ptr);
+    ശൂന്യം *mem = realloc(ptr, size);
+    എങ്കിൽ (mem == ശൂന്യ)
         longjmp(set->env, ENOMEM);
-    set->allocs += ptr == NULL;
+    set->allocs += ptr == ശൂന്യ;
     set->memory += SET_ALLOC_SIZE(mem) - had;
-    return mem;
+    തിരികെ mem;
 }
-static void set_free(set_t *set, void *ptr) {
-    if (ptr != NULL) {
+സ്ഥിതം ശൂന്യം set_free(set_t *set, ശൂന്യം *ptr) {
+    എങ്കിൽ (ptr != ശൂന്യ) {
         set->allocs--;
         set->memory -= SET_ALLOC_SIZE(ptr);
-        free(ptr);
+        സ്വതന്ത്രം(ptr);
     }
 }
-#else
+#അല്ലെങ്കിൽ
 /* Without tracking. */
-static void *set_alloc(set_t *set, void *ptr, size_t size) {
-    void *mem = realloc(ptr, size);
-    if (mem == NULL)
+സ്ഥിതം ശൂന്യം *set_alloc(set_t *set, ശൂന്യം *ptr, size_t size) {
+    ശൂന്യം *mem = realloc(ptr, size);
+    എങ്കിൽ (mem == ശൂന്യ)
         longjmp(set->env, ENOMEM);
-    return mem;
+    തിരികെ mem;
 }
-static void set_free(set_t *set, void *ptr) {
-    (void)set;
-    free(ptr);
+സ്ഥിതം ശൂന്യം set_free(set_t *set, ശൂന്യം *ptr) {
+    (ശൂന്യം)set;
+    സ്വതന്ത്രം(ptr);
 }
 #endif
 
@@ -193,38 +193,38 @@ static void set_free(set_t *set, void *ptr) {
    want links. If fill is true, assure that the first want links are filled in,
    setting them to set->head if not previously filled in. Otherwise it is
    assumed that the first want links are about to be filled in. */
-static void set_grow(set_t *set, set_node_t *node, int want, int fill) {
-    int i;
-    if (node->size < want) {
-        int more = node->size ? node->size : 1;
-        while (more < want)
+സ്ഥിതം ശൂന്യം set_grow(set_t *set, set_കണ്ണി_t *കണ്ണി, പൂർണ്ണസംഖ്യ want, പൂർണ്ണസംഖ്യ fill) {
+    പൂർണ്ണസംഖ്യ i;
+    എങ്കിൽ (കണ്ണി->size < want) {
+        പൂർണ്ണസംഖ്യ more = കണ്ണി->size ? കണ്ണി->size : 1;
+        ആകുമ്പോൾ (more < want)
             more <<= 1;
-        node->right = set_alloc(set, node->right,
-                                (size_t)more * sizeof(set_node_t *));
-        node->size = (i16_t)more;
+        കണ്ണി->വലത് = set_alloc(set, കണ്ണി->വലത്,
+                                (size_t)more * വലുപ്പം(set_കണ്ണി_t *));
+        കണ്ണി->size = (i16_t)more;
     }
-    if (fill)
-        for (i = node->fill; i < want; i++)
-            node->right[i] = set->head;
-    node->fill = (i16_t)want;
+    എങ്കിൽ (fill)
+        വേണ്ടി (i = കണ്ണി->fill; i < want; i++)
+            കണ്ണി->വലത്[i] = set->head;
+    കണ്ണി->fill = (i16_t)want;
 }
 
 /* --private-- Return a new node. key is left uninitialized. */
-static set_node_t *set_node(set_t *set) {
-    set_node_t *node = set_alloc(set, NULL, sizeof(set_node_t));
-    node->size = 0;
-    node->fill = 0;
-    node->right = NULL;
-    return node;
+സ്ഥിതം set_കണ്ണി_t *set_കണ്ണി(set_t *set) {
+    set_കണ്ണി_t *കണ്ണി = set_alloc(set, ശൂന്യ, വലുപ്പം(set_കണ്ണി_t));
+    കണ്ണി->size = 0;
+    കണ്ണി->fill = 0;
+    കണ്ണി->വലത് = ശൂന്യ;
+    തിരികെ കണ്ണി;
 }
 
 /* --private-- Free the list linked from head, along with the keys. */
-static void set_sweep(set_t *set) {
-    set_node_t *step = set->head->right[0];
-    while (step != set->head) {
-        set_node_t *next = step->right[0];      /* save link to next node */
-        set_drop(set, step->key);
-        set_free(set, step->right);
+സ്ഥിതം ശൂന്യം set_sweep(set_t *set) {
+    set_കണ്ണി_t *step = set->head->വലത്[0];
+    ആകുമ്പോൾ (step != set->head) {
+        set_കണ്ണി_t *next = step->വലത്[0];      /* save link to next node */
+        set_drop(set, step->താക്കോൽ);
+        set_free(set, step->വലത്);
         set_free(set, step);
         step = next;
     }
@@ -236,16 +236,16 @@ static void set_sweep(set_t *set) {
    errno.h.) The set can still be used if this happens, assuming that it didn't
    happen during set_start(). Whether set_start() completed or not, set_end()
    can be used to free the set's memory after a longjmp(). */
-SKIPSET_EXPORT void set_start(set_t *set) {
+SKIPSET_EXPORT ശൂന്യം set_start(set_t *set) {
 #ifdef SET_TRACK
     set->allocs = 0;
     set->memory = 0;
 #endif
-    set->head = set->path = set->node = NULL;   /* in case set_node() fails */
-    set->path = set_node(set);
-    set->head = set_node(set);
+    set->head = set->path = set->കണ്ണി = ശൂന്യ;   /* in case set_node() fails */
+    set->path = set_കണ്ണി(set);
+    set->head = set_കണ്ണി(set);
     set_grow(set, set->head, 1, 1); /* one link back to head for empty set */
-    *(unsigned char *)&set->head->key = 137;    /* set id */
+    *(unsigned അക്ഷരം *)&set->head->താക്കോൽ = 137;    /* set id */
     set->depth = 0;
     set_uniq(&set->gen, set);
     set->ran = 1;
@@ -253,24 +253,24 @@ SKIPSET_EXPORT void set_start(set_t *set) {
 
 /* Return true if *set appears to be in a usable state. If *set has been zeroed
    out, then set_ok(set) will be false and set_end(set) will be safe. */
-SKIPSET_EXPORT int set_ok(set_t *set) {
-    return set->head != NULL &&
-           set->head->right != NULL &&
-           *(unsigned char *)&set->head->key == 137;
+SKIPSET_EXPORT പൂർണ്ണസംഖ്യ set_ok(set_t *set) {
+    തിരികെ set->head != ശൂന്യ &&
+           set->head->വലത് != ശൂന്യ &&
+           *(unsigned അക്ഷരം *)&set->head->താക്കോൽ == 137;
 }
 
-#if 0       /* not used in minizip */
+#എങ്കിൽ 0       /* not used in minizip */
 /* Empty the set. This frees the memory used for the previous set contents.
    After set_clear(), *set is ready for use, as if after a set_start(). */
-SKIPSET_EXPORT void set_clear(set_t *set) {
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT ശൂന്യം set_clear(set_t *set) {
+    പ്രതിജ്ഞാ(set_ok(set) && "improper use");
 
     /* Free all the keys and their nodes. */
     set_sweep(set);
 
     /* Leave the head and path allocations as is. Clear their contents, with
        head pointing to itself and setting depth to zero, for an empty set. */
-    set->head->right[0] = set->head;
+    set->head->വലത്[0] = set->head;
     set->head->fill = 1;
     set->path->fill = 0;
     set->depth = 0;
@@ -281,81 +281,81 @@ SKIPSET_EXPORT void set_clear(set_t *set) {
    permitted after this is set_start(). Though another set_end() would do no
    harm. This can be done at any time after a set_start(), or after a longjmp()
    on any allocation failure, including during a set_start(). */
-SKIPSET_EXPORT void set_end(set_t *set) {
-    if (set->head != NULL) {
+SKIPSET_EXPORT ശൂന്യം set_end(set_t *set) {
+    എങ്കിൽ (set->head != ശൂന്യ) {
         /* Empty the set and free the head node. */
-        if (set->head->right != NULL) {
+        എങ്കിൽ (set->head->വലത് != ശൂന്യ) {
             set_sweep(set);
-            set_free(set, set->head->right);
+            set_free(set, set->head->വലത്);
         }
         set_free(set, set->head);
-        set->head = NULL;
+        set->head = ശൂന്യ;
     }
-    if (set->path != NULL) {
+    എങ്കിൽ (set->path != ശൂന്യ) {
         /* Free the path work area. */
-        set_free(set, set->path->right);
+        set_free(set, set->path->വലത്);
         set_free(set, set->path);
-        set->path = NULL;
+        set->path = ശൂന്യ;
     }
-    if (set->node != NULL) {
+    എങ്കിൽ (set->കണ്ണി != ശൂന്യ) {
         /* Free the node that was under construction when longjmp() hit. */
-        set_drop(set, set->node->key);
-        set_free(set, set->node->right);
-        set_free(set, set->node);
-        set->node = NULL;
+        set_drop(set, set->കണ്ണി->താക്കോൽ);
+        set_free(set, set->കണ്ണി->വലത്);
+        set_free(set, set->കണ്ണി);
+        set->കണ്ണി = ശൂന്യ;
     }
 }
 
 /* Look for key. Return 1 if found or 0 if not. This also puts the path to get
    there in set->path, for use by set_insert(). */
-SKIPSET_EXPORT int set_found(set_t *set, set_key_t key) {
-    set_node_t *head, *here;
-    int i;
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT പൂർണ്ണസംഖ്യ set_found(set_t *set, set_താക്കോൽ_t താക്കോൽ) {
+    set_കണ്ണി_t *head, *here;
+    പൂർണ്ണസംഖ്യ i;
+    പ്രതിജ്ഞാ(set_ok(set) && "improper use");
 
     /* Start at depth. Work down and right as determined by key comparisons. */
     head = set->head;
     here = head;
     i = set->depth;
     set_grow(set, set->path, i + 1, 0);
-    do {
-        while (here->right[i] != head &&
-               set_cmp(here->right[i]->key, key) < 0)
-            here = here->right[i];
-        set->path->right[i] = here;
-    } while (i--);
+    ചെയ്യുക {
+        ആകുമ്പോൾ (here->വലത്[i] != head &&
+               set_cmp(here->വലത്[i]->താക്കോൽ, താക്കോൽ) < 0)
+            here = here->വലത്[i];
+        set->path->വലത്[i] = here;
+    } ആകുമ്പോൾ (i--);
 
     /* See if the key matches. */
-    here = here->right[0];
-    return here != head && set_cmp(here->key, key) == 0;
+    here = here->വലത്[0];
+    തിരികെ here != head && set_cmp(here->താക്കോൽ, താക്കോൽ) == 0;
 }
 
 /* Insert the key key. Return 0 on success, or 1 if it's already in the set. */
-SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
-    int level = 0;
-    int bit;
-    int i;
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT പൂർണ്ണസംഖ്യ set_തിരുകുക(set_t *set, set_താക്കോൽ_t താക്കോൽ) {
+    പൂർണ്ണസംഖ്യ level = 0;
+    പൂർണ്ണസംഖ്യ bit;
+    പൂർണ്ണസംഖ്യ i;
+    പ്രതിജ്ഞാ(set_ok(set) && "improper use");
 
-    if (set_found(set, key))
+    എങ്കിൽ (set_found(set, താക്കോൽ))
         /* That key is already in the set. */
-        return 1;
+        തിരികെ 1;
 
     /* Randomly generate a new level-- level 0 with probability 1/2, 1 with
        probability 1/4, 2 with probability 1/8, etc. */
-    for (;;) {
-        if (set->ran == 1)
+    വേണ്ടി (;;) {
+        എങ്കിൽ (set->ran == 1)
             /* Ran out. Get another 32 random bits. */
             set->ran = set_rand(&set->gen) | (1ULL << 32);
         bit = set->ran & 1;
         set->ran >>= 1;
-        if (bit)
-            break;
-        assert(level < 32767 &&
+        എങ്കിൽ (bit)
+            നിർത്തുക;
+        പ്രതിജ്ഞാ(level < 32767 &&
                "Overhead, without any fuss, the stars were going out.");
         level++;
     }
-    if (level > set->depth) {
+    എങ്കിൽ (level > set->depth) {
         /* The maximum depth is now deeper. Update the structures. */
         set_grow(set, set->path, level + 1, 1);
         set_grow(set, set->head, level + 1, 1);
@@ -364,18 +364,18 @@ SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
 
     /* Make a new node for the provided key, and insert it in the lists up to
        and including level. */
-    set->node = set_node(set);
-    set->node->key = key;
-    set_grow(set, set->node, level + 1, 0);
-    for (i = 0; i <= level; i++) {
-        set->node->right[i] = set->path->right[i]->right[i];
-        set->path->right[i]->right[i] = set->node;
+    set->കണ്ണി = set_കണ്ണി(set);
+    set->കണ്ണി->താക്കോൽ = താക്കോൽ;
+    set_grow(set, set->കണ്ണി, level + 1, 0);
+    വേണ്ടി (i = 0; i <= level; i++) {
+        set->കണ്ണി->വലത്[i] = set->path->വലത്[i]->വലത്[i];
+        set->path->വലത്[i]->വലത്[i] = set->കണ്ണി;
     }
-    set->node = NULL;
-    return 0;
+    set->കണ്ണി = ശൂന്യ;
+    തിരികെ 0;
 }
 
-#else
+#അല്ലെങ്കിൽ
 #error ** another skiplist set already created here
 /* Would need to implement a prefix in order to support multiple sets. */
 #endif

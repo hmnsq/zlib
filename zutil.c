@@ -5,56 +5,56 @@
 
 /* @(#) $Id$ */
 
-#include "zutil.h"
+#അന്തര്ഭാവ "zutil.h"
 #ifndef Z_SOLO
 #  include "gzguts.h"
 #endif
 
-z_const char * const z_errmsg[10] = {
-    (z_const char *)"need dictionary",     /* Z_NEED_DICT       2  */
-    (z_const char *)"stream end",          /* Z_STREAM_END      1  */
-    (z_const char *)"",                    /* Z_OK              0  */
-    (z_const char *)"file error",          /* Z_ERRNO         (-1) */
-    (z_const char *)"stream error",        /* Z_STREAM_ERROR  (-2) */
-    (z_const char *)"data error",          /* Z_DATA_ERROR    (-3) */
-    (z_const char *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
-    (z_const char *)"buffer error",        /* Z_BUF_ERROR     (-5) */
-    (z_const char *)"incompatible version",/* Z_VERSION_ERROR (-6) */
-    (z_const char *)""
+z_const അക്ഷരം * സ്ഥിരം z_errmsg[10] = {
+    (z_const അക്ഷരം *)"need dictionary",     /* Z_NEED_DICT       2  */
+    (z_const അക്ഷരം *)"stream end",          /* Z_STREAM_END      1  */
+    (z_const അക്ഷരം *)"",                    /* Z_OK              0  */
+    (z_const അക്ഷരം *)"file error",          /* Z_ERRNO         (-1) */
+    (z_const അക്ഷരം *)"stream error",        /* Z_STREAM_ERROR  (-2) */
+    (z_const അക്ഷരം *)"data error",          /* Z_DATA_ERROR    (-3) */
+    (z_const അക്ഷരം *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
+    (z_const അക്ഷരം *)"buffer error",        /* Z_BUF_ERROR     (-5) */
+    (z_const അക്ഷരം *)"incompatible version",/* Z_VERSION_ERROR (-6) */
+    (z_const അക്ഷരം *)""
 };
 
 
-const char * ZEXPORT zlibVersion(void) {
-    return ZLIB_VERSION;
+സ്ഥിരം അക്ഷരം * ZEXPORT zlibVersion(ശൂന്യം) {
+    തിരികെ ZLIB_VERSION;
 }
 
-uLong ZEXPORT zlibCompileFlags(void) {
+uLong ZEXPORT zlibCompileFlags(ശൂന്യം) {
     uLong flags;
 
     flags = 0;
-    switch ((int)(sizeof(uInt))) {
-    case 2:     break;
-    case 4:     flags += 1;     break;
-    case 8:     flags += 2;     break;
-    default:    flags += 3;
+    തിരഞ്ഞെടുപ്പ് ((പൂർണ്ണസംഖ്യ)(വലുപ്പം(uInt))) {
+    അവസ്ഥ 2:     നിർത്തുക;
+    അവസ്ഥ 4:     flags += 1;     നിർത്തുക;
+    അവസ്ഥ 8:     flags += 2;     നിർത്തുക;
+    സ്ഥിരസ്ഥിതി:    flags += 3;
     }
-    switch ((int)(sizeof(uLong))) {
-    case 2:     break;
-    case 4:     flags += 1 << 2;        break;
-    case 8:     flags += 2 << 2;        break;
-    default:    flags += 3 << 2;
+    തിരഞ്ഞെടുപ്പ് ((പൂർണ്ണസംഖ്യ)(വലുപ്പം(uLong))) {
+    അവസ്ഥ 2:     നിർത്തുക;
+    അവസ്ഥ 4:     flags += 1 << 2;        നിർത്തുക;
+    അവസ്ഥ 8:     flags += 2 << 2;        നിർത്തുക;
+    സ്ഥിരസ്ഥിതി:    flags += 3 << 2;
     }
-    switch ((int)(sizeof(voidpf))) {
-    case 2:     break;
-    case 4:     flags += 1 << 4;        break;
-    case 8:     flags += 2 << 4;        break;
-    default:    flags += 3 << 4;
+    തിരഞ്ഞെടുപ്പ് ((പൂർണ്ണസംഖ്യ)(വലുപ്പം(voidpf))) {
+    അവസ്ഥ 2:     നിർത്തുക;
+    അവസ്ഥ 4:     flags += 1 << 4;        നിർത്തുക;
+    അവസ്ഥ 8:     flags += 2 << 4;        നിർത്തുക;
+    സ്ഥിരസ്ഥിതി:    flags += 3 << 4;
     }
-    switch ((int)(sizeof(z_off_t))) {
-    case 2:     break;
-    case 4:     flags += 1 << 6;        break;
-    case 8:     flags += 2 << 6;        break;
-    default:    flags += 3 << 6;
+    തിരഞ്ഞെടുപ്പ് ((പൂർണ്ണസംഖ്യ)(വലുപ്പം(z_off_t))) {
+    അവസ്ഥ 2:     നിർത്തുക;
+    അവസ്ഥ 4:     flags += 1 << 6;        നിർത്തുക;
+    അവസ്ഥ 8:     flags += 2 << 6;        നിർത്തുക;
+    സ്ഥിരസ്ഥിതി:    flags += 3 << 6;
     }
 #ifdef ZLIB_DEBUG
     flags += 1 << 8;
@@ -85,49 +85,49 @@ uLong ZEXPORT zlibCompileFlags(void) {
 #ifdef FASTEST
     flags += 1L << 21;
 #endif
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+#എങ്കിൽ defined(STDC) || defined(Z_HAVE_STDARG_H)
 #   ifdef NO_vsnprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       അല്ലെങ്കിൽ
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_vsprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   അല്ലെങ്കിൽ
 #       ifdef HAS_vsnprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
-#else
+#അല്ലെങ്കിൽ
     flags += 1L << 24;
 #   ifdef NO_snprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       അല്ലെങ്കിൽ
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_sprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   അല്ലെങ്കിൽ
 #       ifdef HAS_snprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
 #endif
-    return flags;
+    തിരികെ flags;
 }
 
 #ifdef ZLIB_DEBUG
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdlib.h>
 #  ifndef verbose
 #    define verbose 0
 #  endif
-int ZLIB_INTERNAL z_verbose = verbose;
+പൂർണ്ണസംഖ്യ ZLIB_INTERNAL z_verbose = verbose;
 
-void ZLIB_INTERNAL z_error(char *m) {
+ശൂന്യം ZLIB_INTERNAL z_error(അക്ഷരം *m) {
     fprintf(stderr, "%s\n", m);
     exit(1);
 }
@@ -136,42 +136,42 @@ void ZLIB_INTERNAL z_error(char *m) {
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(int err) {
-    return ERR_MSG(err);
+സ്ഥിരം അക്ഷരം * ZEXPORT zError(പൂർണ്ണസംഖ്യ err) {
+    തിരികെ ERR_സന്ദേശം(err);
 }
 
-#if defined(_WIN32_WCE) && _WIN32_WCE < 0x800
+#എങ്കിൽ defined(_WIN32_WCE) && _WIN32_WCE < 0x800
     /* The older Microsoft C Run-Time Library for Windows CE doesn't have
      * errno.  We define it as a global variable to simplify porting.
      * Its value is always 0 and should not be used.
      */
-    int errno = 0;
+    പൂർണ്ണസംഖ്യ errno = 0;
 #endif
 
 #ifndef HAVE_MEMCPY
 
-void ZLIB_INTERNAL zmemcpy(void FAR *dst, const void FAR *src, z_size_t n) {
+ശൂന്യം ZLIB_INTERNAL zmemcpy(ശൂന്യം FAR *dst, സ്ഥിരം ശൂന്യം FAR *src, z_size_t n) {
     uchf *p = dst;
-    const uchf *q = src;
-    while (n) {
+    സ്ഥിരം uchf *q = src;
+    ആകുമ്പോൾ (n) {
         *p++ = *q++;
         n--;
     }
 }
 
-int ZLIB_INTERNAL zmemcmp(const void FAR *s1, const void FAR *s2, z_size_t n) {
-    const uchf *p = s1, *q = s2;
-    while (n) {
-        if (*p++ != *q++)
-            return (int)p[-1] - (int)q[-1];
+പൂർണ്ണസംഖ്യ ZLIB_INTERNAL zmemcmp(സ്ഥിരം ശൂന്യം FAR *s1, സ്ഥിരം ശൂന്യം FAR *s2, z_size_t n) {
+    സ്ഥിരം uchf *p = s1, *q = s2;
+    ആകുമ്പോൾ (n) {
+        എങ്കിൽ (*p++ != *q++)
+            തിരികെ (പൂർണ്ണസംഖ്യ)p[-1] - (പൂർണ്ണസംഖ്യ)q[-1];
         n--;
     }
-    return 0;
+    തിരികെ 0;
 }
 
-void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
+ശൂന്യം ZLIB_INTERNAL zmemzero(ശൂന്യം FAR *b, z_size_t len) {
     uchf *p = b;
-    while (len) {
+    ആകുമ്പോൾ (len) {
         *p++ = 0;
         len--;
     }
@@ -197,9 +197,9 @@ void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
 #define MAX_PTR 10
 /* 10*64K = 640K */
 
-local int next_ptr = 0;
+local പൂർണ്ണസംഖ്യ next_ptr = 0;
 
-typedef struct ptr_table_s {
+തരനിർവചനം ഘടന ptr_table_s {
     voidpf org_ptr;
     voidpf new_ptr;
 } ptr_table;
@@ -212,50 +212,50 @@ local ptr_table table[MAX_PTR];
  * a protected system like OS/2. Use Microsoft C instead.
  */
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
+voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned ഇനങ്ങൾ_2, unsigned size) {
     voidpf buf;
-    ulg bsize = (ulg)items*size;
+    ulg bsize = (ulg)ഇനങ്ങൾ_2*size;
 
-    (void)opaque;
+    (ശൂന്യം)opaque;
 
     /* If we allocate less than 65520 bytes, we assume that farmalloc
      * will return a usable pointer which doesn't have to be normalized.
      */
-    if (bsize < 65520L) {
+    എങ്കിൽ (bsize < 65520L) {
         buf = farmalloc(bsize);
-        if (*(ush*)&buf != 0) return buf;
-    } else {
+        എങ്കിൽ (*(ush*)&buf != 0) തിരികെ buf;
+    } അല്ലെങ്കിൽ {
         buf = farmalloc(bsize + 16L);
     }
-    if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
+    എങ്കിൽ (buf == ശൂന്യ || next_ptr >= MAX_PTR) തിരികെ ശൂന്യ;
     table[next_ptr].org_ptr = buf;
 
     /* Normalize the pointer to seg:0 */
     *((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
     *(ush*)&buf = 0;
     table[next_ptr++].new_ptr = buf;
-    return buf;
+    തിരികെ buf;
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    int n;
+ശൂന്യം ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
+    പൂർണ്ണസംഖ്യ n;
 
-    (void)opaque;
+    (ശൂന്യം)opaque;
 
-    if (*(ush*)&ptr != 0) { /* object < 64K */
+    എങ്കിൽ (*(ush*)&ptr != 0) { /* object < 64K */
         farfree(ptr);
-        return;
+        തിരികെ;
     }
     /* Find the original pointer */
-    for (n = 0; n < next_ptr; n++) {
-        if (ptr != table[n].new_ptr) continue;
+    വേണ്ടി (n = 0; n < next_ptr; n++) {
+        എങ്കിൽ (ptr != table[n].new_ptr) തുടരുക;
 
         farfree(table[n].org_ptr);
-        while (++n < next_ptr) {
+        ആകുമ്പോൾ (++n < next_ptr) {
             table[n-1] = table[n];
         }
         next_ptr--;
-        return;
+        തിരികെ;
     }
     Assert(0, "zcfree: ptr not found");
 }
@@ -268,18 +268,18 @@ void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
 
 #  define MY_ZCALLOC
 
-#if (!defined(_MSC_VER) || (_MSC_VER <= 600))
+#എങ്കിൽ (!defined(_MSC_VER) || (_MSC_VER <= 600))
 #  define _halloc  halloc
 #  define _hfree   hfree
 #endif
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, uInt items, uInt size) {
-    (void)opaque;
-    return _halloc((long)items, size);
+voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, uInt ഇനങ്ങൾ_2, uInt size) {
+    (ശൂന്യം)opaque;
+    തിരികെ _halloc((long)ഇനങ്ങൾ_2, size);
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    (void)opaque;
+ശൂന്യം ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
+    (ശൂന്യം)opaque;
     _hfree(ptr);
 }
 
@@ -291,20 +291,20 @@ void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
 #ifndef MY_ZCALLOC /* Any system without a special alloc function */
 
 #ifndef STDC
-extern voidp malloc(uInt size);
-extern voidp calloc(uInt items, uInt size);
-extern void free(voidpf ptr);
+ബാഹ്യ voidp malloc(uInt size);
+ബാഹ്യ voidp calloc(uInt ഇനങ്ങൾ_2, uInt size);
+ബാഹ്യ ശൂന്യം സ്വതന്ത്രം(voidpf ptr);
 #endif
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
-    (void)opaque;
-    return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
-                              (voidpf)calloc(items, size);
+voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned ഇനങ്ങൾ_2, unsigned size) {
+    (ശൂന്യം)opaque;
+    തിരികെ വലുപ്പം(uInt) > 2 ? (voidpf)malloc(ഇനങ്ങൾ_2 * size) :
+                              (voidpf)calloc(ഇനങ്ങൾ_2, size);
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    (void)opaque;
-    free(ptr);
+ശൂന്യം ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
+    (ശൂന്യം)opaque;
+    സ്വതന്ത്രം(ptr);
 }
 
 #endif /* MY_ZCALLOC */

@@ -1,253 +1,253 @@
 
-#include "zfstream.h"
+#അന്തര്ഭാവ "zfstream.h"
 
 gzfilebuf::gzfilebuf() :
-  file(NULL),
+  file(ശൂന്യ),
   mode(0),
   own_file_descriptor(0)
 { }
 
 gzfilebuf::~gzfilebuf() {
 
-  sync();
-  if ( own_file_descriptor )
+  സമന്വയം();
+  എങ്കിൽ ( own_file_descriptor )
     close();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::open( സ്ഥിരം അക്ഷരം *name,
+                            പൂർണ്ണസംഖ്യ io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  എങ്കിൽ ( is_open() )
+    തിരികെ ശൂന്യ;
 
-  char char_mode[10];
-  char *p = char_mode;
+  അക്ഷരം char_mode[10];
+  അക്ഷരം *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  എങ്കിൽ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } അല്ലെങ്കിൽ എങ്കിൽ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } അല്ലെങ്കിൽ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  എങ്കിൽ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  എങ്കിൽ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  എങ്കിൽ ( (file = gzopen(name, char_mode)) == ശൂന്യ )
+    തിരികെ ശൂന്യ;
 
   own_file_descriptor = 1;
 
-  return this;
+  തിരികെ ഇത്;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( പൂർണ്ണസംഖ്യ file_descriptor,
+                              പൂർണ്ണസംഖ്യ io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  എങ്കിൽ ( is_open() )
+    തിരികെ ശൂന്യ;
 
-  char char_mode[10];
-  char *p = char_mode;
+  അക്ഷരം char_mode[10];
+  അക്ഷരം *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  എങ്കിൽ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } അല്ലെങ്കിൽ എങ്കിൽ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } അല്ലെങ്കിൽ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  എങ്കിൽ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  എങ്കിൽ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  എങ്കിൽ ( (file = gzdopen(file_descriptor, char_mode)) == ശൂന്യ )
+    തിരികെ ശൂന്യ;
 
   own_file_descriptor = 0;
 
-  return this;
+  തിരികെ ഇത്;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  എങ്കിൽ ( is_open() ) {
 
-    sync();
+    സമന്വയം();
     gzclose( file );
-    file = NULL;
+    file = ശൂന്യ;
 
   }
 
-  return this;
+  തിരികെ ഇത്;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+പൂർണ്ണസംഖ്യ gzfilebuf::setcompressionlevel( പൂർണ്ണസംഖ്യ comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  തിരികെ gzsetparams(file, comp_level, -2);
 
 }
 
+പൂർണ്ണസംഖ്യ gzfilebuf::setcompressionstrategy( പൂർണ്ണസംഖ്യ comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  തിരികെ gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, പൂർണ്ണസംഖ്യ which ) {
+
+  തിരികെ streampos(EOF);
+
+}
+
+പൂർണ്ണസംഖ്യ gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  എങ്കിൽ ( !is_open() || !(mode & ios::in) )
+    തിരികെ EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  എങ്കിൽ ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    എങ്കിൽ ( (allocate()) == EOF )
+      തിരികെ EOF;
     setp(0,0);
 
-  } else {
+  } അല്ലെങ്കിൽ {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    എങ്കിൽ ( in_avail() )
+      തിരികെ (unsigned അക്ഷരം) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    എങ്കിൽ ( out_waiting() ) {
+      എങ്കിൽ ( flushbuf() == EOF )
+        തിരികെ EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  പൂർണ്ണസംഖ്യ result = fillbuf();
+  എങ്കിൽ ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    തിരികെ EOF;
   }
 
-  return (unsigned char) *gptr();
+  തിരികെ (unsigned അക്ഷരം) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+പൂർണ്ണസംഖ്യ gzfilebuf::overflow( പൂർണ്ണസംഖ്യ c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  എങ്കിൽ ( !is_open() || !(mode & ios::out) )
+    തിരികെ EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  എങ്കിൽ ( !base() ) {
+    എങ്കിൽ ( allocate() == EOF )
+      തിരികെ EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } അല്ലെങ്കിൽ {
+    എങ്കിൽ (in_avail()) {
+        തിരികെ EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    എങ്കിൽ (out_waiting()) {
+      എങ്കിൽ (flushbuf() == EOF)
+        തിരികെ EOF;
     }
   }
 
-  int bl = blen();
+  പൂർണ്ണസംഖ്യ bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  എങ്കിൽ ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  തിരികെ 0;
 
 }
 
-int gzfilebuf::sync() {
+പൂർണ്ണസംഖ്യ gzfilebuf::സമന്വയം() {
 
-  if ( !is_open() )
-    return EOF;
+  എങ്കിൽ ( !is_open() )
+    തിരികെ EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  എങ്കിൽ ( out_waiting() )
+    തിരികെ flushbuf();
 
-  return 0;
+  തിരികെ 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+പൂർണ്ണസംഖ്യ gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  പൂർണ്ണസംഖ്യ n;
+  അക്ഷരം *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  എങ്കിൽ ( gzwrite( file, q, n) < n )
+    തിരികെ EOF;
 
   setp(0,0);
 
-  return 0;
+  തിരികെ 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+പൂർണ്ണസംഖ്യ gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  പൂർണ്ണസംഖ്യ required;
+  അക്ഷരം *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  പൂർണ്ണസംഖ്യ t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  എങ്കിൽ ( t <= 0) തിരികെ EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  തിരികെ t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+ശൂന്യം gzfilestream_common::attach( പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  എങ്കിൽ ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  അല്ലെങ്കിൽ
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+ശൂന്യം gzfilestream_common::open( സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  എങ്കിൽ ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  അല്ലെങ്കിൽ
     clear();
 
 }
 
-void gzfilestream_common::close() {
+ശൂന്യം gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  എങ്കിൽ ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  തിരികെ &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( സ്ഥിരം അക്ഷരം *name, പൂർണ്ണസംഖ്യ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
