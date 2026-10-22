@@ -3,14 +3,14 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "zutil.h"
-#include "inftrees.h"
-#include "inflate.h"
-#include "inffast.h"
+#समावेश "zutil.h"
+#समावेश "inftrees.h"
+#समावेश "inflate.h"
+#समावेश "inffast.h"
 
-#ifdef ASMINF
+#अगर_घोषित ASMINF
 #  pragma message("Assembler code may have bugs -- use at your own risk")
-#else
+#अन्यथा
 
 /*
    Decode literal, length, and distance codes and write out the resulting
@@ -47,43 +47,43 @@
       requires strm->avail_out >= 258 for each loop to avoid checking for
       output space.
  */
-void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
-    struct inflate_state FAR *state;
-    z_const unsigned char FAR *in;      /* local strm->next_in */
-    z_const unsigned char FAR *last;    /* have enough input while in < last */
-    unsigned char FAR *out;     /* local strm->next_out */
-    unsigned char FAR *beg;     /* inflate()'s initial strm->next_out */
-    unsigned char FAR *end;     /* while out < end, enough space available */
-#ifdef INFLATE_STRICT
-    unsigned dmax;              /* maximum distance from zlib header */
-#endif
-    unsigned wsize;             /* window size or zero if not using window */
-    unsigned whave;             /* valid bytes in the window */
-    unsigned wnext;             /* window write index */
-    unsigned char FAR *window;  /* allocated sliding window, if wsize != 0 */
-    unsigned long hold;         /* local strm->hold */
-    unsigned bits;              /* local strm->bits */
-    code const FAR *lcode;      /* local strm->lencode */
-    code const FAR *dcode;      /* local strm->distcode */
-    unsigned lmask;             /* mask for first level of length codes */
-    unsigned dmask;             /* mask for first level of distance codes */
-    code const *here;           /* retrieved table entry */
-    unsigned op;                /* code bits, operation, extra bits, or */
+व्योम ZLIB_INTERNAL inflate_fast(z_streamp strm, अचिन्हित start) {
+    काष्ठा inflate_state FAR *state;
+    z_const अचिन्हित अक्षर FAR *in;      /* local strm->next_in */
+    z_const अचिन्हित अक्षर FAR *last;    /* have enough input while in < last */
+    अचिन्हित अक्षर FAR *out;     /* local strm->next_out */
+    अचिन्हित अक्षर FAR *beg;     /* inflate()'s initial strm->next_out */
+    अचिन्हित अक्षर FAR *end;     /* while out < end, enough space available */
+#अगर_घोषित INFLATE_STRICT
+    अचिन्हित dmax;              /* maximum distance from zlib header */
+#पूर्ण_अगर
+    अचिन्हित wsize;             /* window size or zero if not using window */
+    अचिन्हित whave;             /* valid bytes in the window */
+    अचिन्हित wnext;             /* window write index */
+    अचिन्हित अक्षर FAR *window;  /* allocated sliding window, if wsize != 0 */
+    अचिन्हित दीर्घ hold;         /* local strm->hold */
+    अचिन्हित bits;              /* local strm->bits */
+    code स्थिर FAR *lcode;      /* local strm->lencode */
+    code स्थिर FAR *dcode;      /* local strm->distcode */
+    अचिन्हित lmask;             /* mask for first level of length codes */
+    अचिन्हित dmask;             /* mask for first level of distance codes */
+    code स्थिर *here;           /* retrieved table entry */
+    अचिन्हित op;                /* code bits, operation, extra bits, or */
                                 /*  window position, window bytes to copy */
-    unsigned len;               /* match length, unused bytes */
-    unsigned dist;              /* match distance */
-    unsigned char FAR *from;    /* where to copy match from */
+    अचिन्हित len;               /* match length, unused bytes */
+    अचिन्हित dist;              /* match distance */
+    अचिन्हित अक्षर FAR *from;    /* where to copy match from */
 
     /* copy state to local variables */
-    state = (struct inflate_state FAR *)strm->state;
-    in = strm->next_in;
+    state = (काष्ठा inflate_state FAR *)strm->state;
+    in = strm->अग्र_in;
     last = in + (strm->avail_in - 5);
-    out = strm->next_out;
+    out = strm->अग्र_out;
     beg = out - (start - strm->avail_out);
     end = out + (strm->avail_out - 257);
-#ifdef INFLATE_STRICT
+#अगर_घोषित INFLATE_STRICT
     dmax = state->dmax;
-#endif
+#पूर्ण_अगर
     wsize = state->wsize;
     whave = state->whave;
     wnext = state->wnext;
@@ -97,195 +97,195 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
 
     /* decode literals and length/distances until end-of-block or not enough
        input data or output space */
-    do {
-        if (bits < 15) {
-            hold += (unsigned long)(*in++) << bits;
+    करो {
+        अगर (bits < 15) {
+            hold += (अचिन्हित दीर्घ)(*in++) << bits;
             bits += 8;
-            hold += (unsigned long)(*in++) << bits;
+            hold += (अचिन्हित दीर्घ)(*in++) << bits;
             bits += 8;
         }
         here = lcode + (hold & lmask);
       dolen:
-        op = (unsigned)(here->bits);
+        op = (अचिन्हित)(here->bits);
         hold >>= op;
         bits -= op;
-        op = (unsigned)(here->op);
-        if (op == 0) {                          /* literal */
-            Tracevv((stderr, here->val >= 0x20 && here->val < 0x7f ?
+        op = (अचिन्हित)(here->op);
+        अगर (op == 0) {                          /* literal */
+            Tracevv((मानक_त्रुटि, here->val >= 0x20 && here->val < 0x7f ?
                     "inflate:         literal '%c'\n" :
                     "inflate:         literal 0x%02x\n", here->val));
-            *out++ = (unsigned char)(here->val);
+            *out++ = (अचिन्हित अक्षर)(here->val);
         }
-        else if (op & 16) {                     /* length base */
-            len = (unsigned)(here->val);
+        अन्यथा अगर (op & 16) {                     /* length base */
+            len = (अचिन्हित)(here->val);
             op &= 15;                           /* number of extra bits */
-            if (op) {
-                if (bits < op) {
-                    hold += (unsigned long)(*in++) << bits;
+            अगर (op) {
+                अगर (bits < op) {
+                    hold += (अचिन्हित दीर्घ)(*in++) << bits;
                     bits += 8;
                 }
-                len += (unsigned)hold & ((1U << op) - 1);
+                len += (अचिन्हित)hold & ((1U << op) - 1);
                 hold >>= op;
                 bits -= op;
             }
-            Tracevv((stderr, "inflate:         length %u\n", len));
-            if (bits < 15) {
-                hold += (unsigned long)(*in++) << bits;
+            Tracevv((मानक_त्रुटि, "inflate:         length %u\n", len));
+            अगर (bits < 15) {
+                hold += (अचिन्हित दीर्घ)(*in++) << bits;
                 bits += 8;
-                hold += (unsigned long)(*in++) << bits;
+                hold += (अचिन्हित दीर्घ)(*in++) << bits;
                 bits += 8;
             }
             here = dcode + (hold & dmask);
           dodist:
-            op = (unsigned)(here->bits);
+            op = (अचिन्हित)(here->bits);
             hold >>= op;
             bits -= op;
-            op = (unsigned)(here->op);
-            if (op & 16) {                      /* distance base */
-                dist = (unsigned)(here->val);
+            op = (अचिन्हित)(here->op);
+            अगर (op & 16) {                      /* distance base */
+                dist = (अचिन्हित)(here->val);
                 op &= 15;                       /* number of extra bits */
-                if (bits < op) {
-                    hold += (unsigned long)(*in++) << bits;
+                अगर (bits < op) {
+                    hold += (अचिन्हित दीर्घ)(*in++) << bits;
                     bits += 8;
-                    if (bits < op) {
-                        hold += (unsigned long)(*in++) << bits;
+                    अगर (bits < op) {
+                        hold += (अचिन्हित दीर्घ)(*in++) << bits;
                         bits += 8;
                     }
                 }
-                dist += (unsigned)hold & ((1U << op) - 1);
-#ifdef INFLATE_STRICT
-                if (dist > dmax) {
-                    strm->msg = (z_const char *)
+                dist += (अचिन्हित)hold & ((1U << op) - 1);
+#अगर_घोषित INFLATE_STRICT
+                अगर (dist > dmax) {
+                    strm->संदेश = (z_const अक्षर *)
                         "invalid distance too far back";
                     state->mode = BAD;
-                    break;
+                    अवरोध;
                 }
-#endif
+#पूर्ण_अगर
                 hold >>= op;
                 bits -= op;
-                Tracevv((stderr, "inflate:         distance %u\n", dist));
-                op = (unsigned)(out - beg);     /* max distance in output */
-                if (dist > op) {                /* see if copy from window */
+                Tracevv((मानक_त्रुटि, "inflate:         distance %u\n", dist));
+                op = (अचिन्हित)(out - beg);     /* max distance in output */
+                अगर (dist > op) {                /* see if copy from window */
                     op = dist - op;             /* distance back in window */
-                    if (op > whave) {
-                        if (state->sane) {
-                            strm->msg = (z_const char *)
+                    अगर (op > whave) {
+                        अगर (state->sane) {
+                            strm->संदेश = (z_const अक्षर *)
                                 "invalid distance too far back";
                             state->mode = BAD;
-                            break;
+                            अवरोध;
                         }
-#ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-                        if (len <= op - whave) {
-                            do {
+#अगर_घोषित INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
+                        अगर (len <= op - whave) {
+                            करो {
                                 *out++ = 0;
-                            } while (--len);
-                            continue;
+                            } जबतक (--len);
+                            जारी;
                         }
                         len -= op - whave;
-                        do {
+                        करो {
                             *out++ = 0;
-                        } while (--op > whave);
-                        if (op == 0) {
+                        } जबतक (--op > whave);
+                        अगर (op == 0) {
                             from = out - dist;
-                            do {
+                            करो {
                                 *out++ = *from++;
-                            } while (--len);
-                            continue;
+                            } जबतक (--len);
+                            जारी;
                         }
-#endif
+#पूर्ण_अगर
                     }
                     from = window;
-                    if (wnext == 0) {           /* very common case */
+                    अगर (wnext == 0) {           /* very common case */
                         from += wsize - op;
-                        if (op < len) {         /* some from window */
+                        अगर (op < len) {         /* some from window */
                             len -= op;
-                            do {
+                            करो {
                                 *out++ = *from++;
-                            } while (--op);
+                            } जबतक (--op);
                             from = out - dist;  /* rest from output */
                         }
                     }
-                    else if (wnext < op) {      /* wrap around window */
+                    अन्यथा अगर (wnext < op) {      /* wrap around window */
                         from += wsize + wnext - op;
                         op -= wnext;
-                        if (op < len) {         /* some from end of window */
+                        अगर (op < len) {         /* some from end of window */
                             len -= op;
-                            do {
+                            करो {
                                 *out++ = *from++;
-                            } while (--op);
+                            } जबतक (--op);
                             from = window;
-                            if (wnext < len) {  /* some from start of window */
+                            अगर (wnext < len) {  /* some from start of window */
                                 op = wnext;
                                 len -= op;
-                                do {
+                                करो {
                                     *out++ = *from++;
-                                } while (--op);
+                                } जबतक (--op);
                                 from = out - dist;      /* rest from output */
                             }
                         }
                     }
-                    else {                      /* contiguous in window */
+                    अन्यथा {                      /* contiguous in window */
                         from += wnext - op;
-                        if (op < len) {         /* some from window */
+                        अगर (op < len) {         /* some from window */
                             len -= op;
-                            do {
+                            करो {
                                 *out++ = *from++;
-                            } while (--op);
+                            } जबतक (--op);
                             from = out - dist;  /* rest from output */
                         }
                     }
-                    while (len > 2) {
+                    जबतक (len > 2) {
                         *out++ = *from++;
                         *out++ = *from++;
                         *out++ = *from++;
                         len -= 3;
                     }
-                    if (len) {
+                    अगर (len) {
                         *out++ = *from++;
-                        if (len > 1)
+                        अगर (len > 1)
                             *out++ = *from++;
                     }
                 }
-                else {
+                अन्यथा {
                     from = out - dist;          /* copy direct from output */
-                    do {                        /* minimum length is three */
+                    करो {                        /* minimum length is three */
                         *out++ = *from++;
                         *out++ = *from++;
                         *out++ = *from++;
                         len -= 3;
-                    } while (len > 2);
-                    if (len) {
+                    } जबतक (len > 2);
+                    अगर (len) {
                         *out++ = *from++;
-                        if (len > 1)
+                        अगर (len > 1)
                             *out++ = *from++;
                     }
                 }
             }
-            else if ((op & 64) == 0) {          /* 2nd level distance code */
+            अन्यथा अगर ((op & 64) == 0) {          /* 2nd level distance code */
                 here = dcode + here->val + (hold & ((1U << op) - 1));
-                goto dodist;
+                जाओ dodist;
             }
-            else {
-                strm->msg = (z_const char *)"invalid distance code";
+            अन्यथा {
+                strm->संदेश = (z_const अक्षर *)"invalid distance code";
                 state->mode = BAD;
-                break;
+                अवरोध;
             }
         }
-        else if ((op & 64) == 0) {              /* 2nd level length code */
+        अन्यथा अगर ((op & 64) == 0) {              /* 2nd level length code */
             here = lcode + here->val + (hold & ((1U << op) - 1));
-            goto dolen;
+            जाओ dolen;
         }
-        else if (op & 32) {                     /* end-of-block */
-            Tracevv((stderr, "inflate:         end of block\n"));
+        अन्यथा अगर (op & 32) {                     /* end-of-block */
+            Tracevv((मानक_त्रुटि, "inflate:         end of block\n"));
             state->mode = TYPE;
-            break;
+            अवरोध;
         }
-        else {
-            strm->msg = (z_const char *)"invalid literal/length code";
+        अन्यथा {
+            strm->संदेश = (z_const अक्षर *)"invalid literal/length code";
             state->mode = BAD;
-            break;
+            अवरोध;
         }
-    } while (in < last && out < end);
+    } जबतक (in < last && out < end);
 
     /* return unused bytes (on entry, bits < 8, so in won't go too far back) */
     len = bits >> 3;
@@ -294,14 +294,14 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
     hold &= (1U << bits) - 1;
 
     /* update state and return */
-    strm->next_in = in;
-    strm->next_out = out;
-    strm->avail_in = (unsigned)(in < last ? 5 + (last - in) : 5 - (in - last));
-    strm->avail_out = (unsigned)(out < end ?
+    strm->अग्र_in = in;
+    strm->अग्र_out = out;
+    strm->avail_in = (अचिन्हित)(in < last ? 5 + (last - in) : 5 - (in - last));
+    strm->avail_out = (अचिन्हित)(out < end ?
                                  257 + (end - out) : 257 - (out - end));
     state->hold = hold;
     state->bits = bits;
-    return;
+    वापस;
 }
 
 /*
@@ -318,4 +318,4 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
    - Moving len -= 3 statement into middle of loop
  */
 
-#endif /* !ASMINF */
+#पूर्ण_अगर /* !ASMINF */

@@ -7,23 +7,23 @@
  * This version is standard-compliant and compatible with gcc 3.x.
  */
 
-#include "zfstream.h"
-#include <cstring>          // for strcpy, strcat, strlen (mode strings)
-#include <cstdio>           // for BUFSIZ
+#समावेश "zfstream.h"
+#समावेश <cstring>          // for strcpy, strcat, strlen (mode strings)
+#समावेश <cstdio>           // for BUFSIZ
 
 // Internal buffer sizes (default and "unbuffered" versions)
-#define BIGBUFSIZE BUFSIZ
-#define SMALLBUFSIZE 1
+#घोषणा BIGBUFSIZE बफ_मान
+#घोषणा SMALLBUFSIZE 1
 
 /*****************************************************************************/
 
 // Default constructor
 gzfilebuf::gzfilebuf()
-: file(NULL), io_mode(std::ios_base::openmode(0)), own_fd(false),
-  buffer(NULL), buffer_size(BIGBUFSIZE), own_buffer(true)
+: file(शून्य), io_mode(std::ios_base::openmode(0)), own_fd(false),
+  बफर(शून्य), बफर_आकार(BIGBUFSIZE), own_बफर(true)
 {
   // No buffers to start with
-  this->disable_buffer();
+  यह->disable_बफर();
 }
 
 // Destructor
@@ -31,97 +31,97 @@ gzfilebuf::~gzfilebuf()
 {
   // Sync output buffer and close only if responsible for file
   // (i.e. attached streams should be left open at this stage)
-  this->sync();
-  if (own_fd)
-    this->close();
+  यह->sync();
+  अगर (own_fd)
+    यह->बंद();
   // Make sure internal buffer is deallocated
-  this->disable_buffer();
+  यह->disable_बफर();
 }
 
 // Set compression level and strategy
-int
-gzfilebuf::setcompression(int comp_level,
-                          int comp_strategy)
+पूर्णांक
+gzfilebuf::setcompression(पूर्णांक comp_level,
+                          पूर्णांक comp_strategy)
 {
-  return gzsetparams(file, comp_level, comp_strategy);
+  वापस gzsetparams(file, comp_level, comp_strategy);
 }
 
 // Open gzipped file
 gzfilebuf*
-gzfilebuf::open(const char *name,
+gzfilebuf::खोलो(स्थिर अक्षर *name,
                 std::ios_base::openmode mode)
 {
   // Fail if file already open
-  if (this->is_open())
-    return NULL;
+  अगर (यह->is_open())
+    वापस शून्य;
   // Don't support simultaneous read/write access (yet)
-  if ((mode & std::ios_base::in) && (mode & std::ios_base::out))
-    return NULL;
+  अगर ((mode & std::ios_base::in) && (mode & std::ios_base::out))
+    वापस शून्य;
 
   // Build mode string for gzopen and check it [27.8.1.3.2]
-  char char_mode[6] = "\0\0\0\0\0";
-  if (!this->open_mode(mode, char_mode))
-    return NULL;
+  अक्षर char_mode[6] = "\0\0\0\0\0";
+  अगर (!यह->open_mode(mode, char_mode))
+    वापस शून्य;
 
   // Attempt to open file
-  if ((file = gzopen(name, char_mode)) == NULL)
-    return NULL;
+  अगर ((file = gzopen(name, char_mode)) == शून्य)
+    वापस शून्य;
 
   // On success, allocate internal buffer and set flags
-  this->enable_buffer();
+  यह->enable_बफर();
   io_mode = mode;
   own_fd = true;
-  return this;
+  वापस यह;
 }
 
 // Attach to gzipped file
 gzfilebuf*
-gzfilebuf::attach(int fd,
+gzfilebuf::attach(पूर्णांक fd,
                   std::ios_base::openmode mode)
 {
   // Fail if file already open
-  if (this->is_open())
-    return NULL;
+  अगर (यह->is_open())
+    वापस शून्य;
   // Don't support simultaneous read/write access (yet)
-  if ((mode & std::ios_base::in) && (mode & std::ios_base::out))
-    return NULL;
+  अगर ((mode & std::ios_base::in) && (mode & std::ios_base::out))
+    वापस शून्य;
 
   // Build mode string for gzdopen and check it [27.8.1.3.2]
-  char char_mode[6] = "\0\0\0\0\0";
-  if (!this->open_mode(mode, char_mode))
-    return NULL;
+  अक्षर char_mode[6] = "\0\0\0\0\0";
+  अगर (!यह->open_mode(mode, char_mode))
+    वापस शून्य;
 
   // Attempt to attach to file
-  if ((file = gzdopen(fd, char_mode)) == NULL)
-    return NULL;
+  अगर ((file = gzdopen(fd, char_mode)) == शून्य)
+    वापस शून्य;
 
   // On success, allocate internal buffer and set flags
-  this->enable_buffer();
+  यह->enable_बफर();
   io_mode = mode;
   own_fd = false;
-  return this;
+  वापस यह;
 }
 
 // Close gzipped file
 gzfilebuf*
-gzfilebuf::close()
+gzfilebuf::बंद()
 {
   // Fail immediately if no file is open
-  if (!this->is_open())
-    return NULL;
+  अगर (!यह->is_open())
+    वापस शून्य;
   // Assume success
-  gzfilebuf* retval = this;
+  gzfilebuf* retval = यह;
   // Attempt to sync and close gzipped file
-  if (this->sync() == -1)
-    retval = NULL;
-  if (gzclose(file) < 0)
-    retval = NULL;
+  अगर (यह->sync() == -1)
+    retval = शून्य;
+  अगर (gzclose(file) < 0)
+    retval = शून्य;
   // File is now gone anyway (postcondition [27.8.1.3.8])
-  file = NULL;
+  file = शून्य;
   own_fd = false;
   // Destroy internal buffer if it exists
-  this->disable_buffer();
-  return retval;
+  यह->disable_बफर();
+  वापस retval;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -129,27 +129,27 @@ gzfilebuf::close()
 // Convert int open mode to mode string
 bool
 gzfilebuf::open_mode(std::ios_base::openmode mode,
-                     char* c_mode) const
+                     अक्षर* c_mode) स्थिर
 {
-  bool testb = mode & std::ios_base::binary;
+  bool testb = mode & std::ios_base::द्विग;
   bool testi = mode & std::ios_base::in;
   bool testo = mode & std::ios_base::out;
-  bool testt = mode & std::ios_base::trunc;
-  bool testa = mode & std::ios_base::app;
+  bool testt = mode & std::ios_base::छाँटो;
+  bool testa = mode & std::ios_base::नत्थी;
 
   // Check for valid flag combinations - see [27.8.1.3.2] (Table 92)
   // Original zfstream hardcoded the compression level to maximum here...
   // Double the time for less than 1% size improvement seems
   // excessive though - keeping it at the default level
   // To change back, just append "9" to the next three mode strings
-  if (!testi && testo && !testt && !testa)
-    strcpy(c_mode, "w");
-  if (!testi && testo && !testt && testa)
-    strcpy(c_mode, "a");
-  if (!testi && testo && testt && !testa)
-    strcpy(c_mode, "w");
-  if (testi && !testo && !testt && !testa)
-    strcpy(c_mode, "r");
+  अगर (!testi && testo && !testt && !testa)
+    म_नकल(c_mode, "w");
+  अगर (!testi && testo && !testt && testa)
+    म_नकल(c_mode, "a");
+  अगर (!testi && testo && testt && !testa)
+    म_नकल(c_mode, "w");
+  अगर (testi && !testo && !testt && !testa)
+    म_नकल(c_mode, "r");
   // No read/write mode yet
 //  if (testi && testo && !testt && !testa)
 //    strcpy(c_mode, "r+");
@@ -157,11 +157,11 @@ gzfilebuf::open_mode(std::ios_base::openmode mode,
 //    strcpy(c_mode, "w+");
 
   // Mode string should be empty for invalid combination of flags
-  if (strlen(c_mode) == 0)
-    return false;
-  if (testb)
-    strcat(c_mode, "b");
-  return true;
+  अगर (म_माप(c_mode) == 0)
+    वापस false;
+  अगर (testb)
+    म_जोड़ो(c_mode, "b");
+  वापस true;
 }
 
 // Determine number of characters in internal get buffer
@@ -169,13 +169,13 @@ std::streamsize
 gzfilebuf::showmanyc()
 {
   // Calls to underflow will fail if file not opened for reading
-  if (!this->is_open() || !(io_mode & std::ios_base::in))
-    return -1;
+  अगर (!यह->is_open() || !(io_mode & std::ios_base::in))
+    वापस -1;
   // Make sure get area is in use
-  if (this->gptr() && (this->gptr() < this->egptr()))
-    return std::streamsize(this->egptr() - this->gptr());
-  else
-    return 0;
+  अगर (यह->gptr() && (यह->gptr() < यह->egptr()))
+    वापस std::streamsize(यह->egptr() - यह->gptr());
+  अन्यथा
+    वापस 0;
 }
 
 // Fill get area from gzipped file
@@ -185,28 +185,28 @@ gzfilebuf::underflow()
   // If something is left in the get area by chance, return it
   // (this shouldn't normally happen, as underflow is only supposed
   // to be called when gptr >= egptr, but it serves as error check)
-  if (this->gptr() && (this->gptr() < this->egptr()))
-    return traits_type::to_int_type(*(this->gptr()));
+  अगर (यह->gptr() && (यह->gptr() < यह->egptr()))
+    वापस traits_type::to_int_type(*(यह->gptr()));
 
   // If the file hasn't been opened for reading, produce error
-  if (!this->is_open() || !(io_mode & std::ios_base::in))
-    return traits_type::eof();
+  अगर (!यह->is_open() || !(io_mode & std::ios_base::in))
+    वापस traits_type::खप();
 
   // Attempt to fill internal buffer from gzipped file
   // (buffer must be guaranteed to exist...)
-  int bytes_read = gzread(file, buffer, buffer_size);
+  पूर्णांक bytes_read = gzread(file, बफर, बफर_आकार);
   // Indicates error or EOF
-  if (bytes_read <= 0)
+  अगर (bytes_read <= 0)
   {
     // Reset get area
-    this->setg(buffer, buffer, buffer);
-    return traits_type::eof();
+    यह->setg(बफर, बफर, बफर);
+    वापस traits_type::खप();
   }
   // Make all bytes read from file available as get area
-  this->setg(buffer, buffer, buffer + bytes_read);
+  यह->setg(बफर, बफर, बफर + bytes_read);
 
   // Return next character in get area
-  return traits_type::to_int_type(*(this->gptr()));
+  वापस traits_type::to_int_type(*(यह->gptr()));
 }
 
 // Write put area to gzipped file
@@ -214,157 +214,157 @@ gzfilebuf::int_type
 gzfilebuf::overflow(int_type c)
 {
   // Determine whether put area is in use
-  if (this->pbase())
+  अगर (यह->pbase())
   {
     // Double-check pointer range
-    if (this->pptr() > this->epptr() || this->pptr() < this->pbase())
-      return traits_type::eof();
+    अगर (यह->pptr() > यह->epptr() || यह->pptr() < यह->pbase())
+      वापस traits_type::खप();
     // Add extra character to buffer if not EOF
-    if (!traits_type::eq_int_type(c, traits_type::eof()))
+    अगर (!traits_type::eq_int_type(c, traits_type::खप()))
     {
-      *(this->pptr()) = traits_type::to_char_type(c);
-      this->pbump(1);
+      *(यह->pptr()) = traits_type::to_char_type(c);
+      यह->pbump(1);
     }
     // Number of characters to write to file
-    int bytes_to_write = this->pptr() - this->pbase();
+    पूर्णांक bytes_to_write = यह->pptr() - यह->pbase();
     // Overflow doesn't fail if nothing is to be written
-    if (bytes_to_write > 0)
+    अगर (bytes_to_write > 0)
     {
       // If the file hasn't been opened for writing, produce error
-      if (!this->is_open() || !(io_mode & std::ios_base::out))
-        return traits_type::eof();
+      अगर (!यह->is_open() || !(io_mode & std::ios_base::out))
+        वापस traits_type::खप();
       // If gzipped file won't accept all bytes written to it, fail
-      if (gzwrite(file, this->pbase(), bytes_to_write) != bytes_to_write)
-        return traits_type::eof();
+      अगर (gzwrite(file, यह->pbase(), bytes_to_write) != bytes_to_write)
+        वापस traits_type::खप();
       // Reset next pointer to point to pbase on success
-      this->pbump(-bytes_to_write);
+      यह->pbump(-bytes_to_write);
     }
   }
   // Write extra character to file if not EOF
-  else if (!traits_type::eq_int_type(c, traits_type::eof()))
+  अन्यथा अगर (!traits_type::eq_int_type(c, traits_type::खप()))
   {
     // If the file hasn't been opened for writing, produce error
-    if (!this->is_open() || !(io_mode & std::ios_base::out))
-      return traits_type::eof();
+    अगर (!यह->is_open() || !(io_mode & std::ios_base::out))
+      वापस traits_type::खप();
     // Impromptu char buffer (allows "unbuffered" output)
     char_type last_char = traits_type::to_char_type(c);
     // If gzipped file won't accept this character, fail
-    if (gzwrite(file, &last_char, 1) != 1)
-      return traits_type::eof();
+    अगर (gzwrite(file, &last_char, 1) != 1)
+      वापस traits_type::खप();
   }
 
   // If you got here, you have succeeded (even if c was EOF)
   // The return value should therefore be non-EOF
-  if (traits_type::eq_int_type(c, traits_type::eof()))
-    return traits_type::not_eof(c);
-  else
-    return c;
+  अगर (traits_type::eq_int_type(c, traits_type::खप()))
+    वापस traits_type::not_eof(c);
+  अन्यथा
+    वापस c;
 }
 
 // Assign new buffer
 std::streambuf*
-gzfilebuf::setbuf(char_type* p,
+gzfilebuf::रखो_बफ(char_type* p,
                   std::streamsize n)
 {
   // First make sure stuff is sync'ed, for safety
-  if (this->sync() == -1)
-    return NULL;
+  अगर (यह->sync() == -1)
+    वापस शून्य;
   // If buffering is turned off on purpose via setbuf(0,0), still allocate one...
   // "Unbuffered" only really refers to put [27.8.1.4.10], while get needs at
   // least a buffer of size 1 (very inefficient though, therefore make it bigger?)
   // This follows from [27.5.2.4.3]/12 (gptr needs to point at something, it seems)
-  if (!p || !n)
+  अगर (!p || !n)
   {
     // Replace existing buffer (if any) with small internal buffer
-    this->disable_buffer();
-    buffer = NULL;
-    buffer_size = 0;
-    own_buffer = true;
-    this->enable_buffer();
+    यह->disable_बफर();
+    बफर = शून्य;
+    बफर_आकार = 0;
+    own_बफर = true;
+    यह->enable_बफर();
   }
-  else
+  अन्यथा
   {
     // Replace existing buffer (if any) with external buffer
-    this->disable_buffer();
-    buffer = p;
-    buffer_size = n;
-    own_buffer = false;
-    this->enable_buffer();
+    यह->disable_बफर();
+    बफर = p;
+    बफर_आकार = n;
+    own_बफर = false;
+    यह->enable_बफर();
   }
-  return this;
+  वापस यह;
 }
 
 // Write put area to gzipped file (i.e. ensures that put area is empty)
-int
+पूर्णांक
 gzfilebuf::sync()
 {
-  return traits_type::eq_int_type(this->overflow(), traits_type::eof()) ? -1 : 0;
+  वापस traits_type::eq_int_type(यह->overflow(), traits_type::खप()) ? -1 : 0;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // Allocate internal buffer
-void
-gzfilebuf::enable_buffer()
+व्योम
+gzfilebuf::enable_बफर()
 {
   // If internal buffer required, allocate one
-  if (own_buffer && !buffer)
+  अगर (own_बफर && !बफर)
   {
     // Check for buffered vs. "unbuffered"
-    if (buffer_size > 0)
+    अगर (बफर_आकार > 0)
     {
       // Allocate internal buffer
-      buffer = new char_type[buffer_size];
+      बफर = नया char_type[बफर_आकार];
       // Get area starts empty and will be expanded by underflow as need arises
-      this->setg(buffer, buffer, buffer);
+      यह->setg(बफर, बफर, बफर);
       // Setup entire internal buffer as put area.
       // The one-past-end pointer actually points to the last element of the buffer,
       // so that overflow(c) can safely add the extra character c to the sequence.
       // These pointers remain in place for the duration of the buffer
-      this->setp(buffer, buffer + buffer_size - 1);
+      यह->setp(बफर, बफर + बफर_आकार - 1);
     }
-    else
+    अन्यथा
     {
       // Even in "unbuffered" case, (small?) get buffer is still required
-      buffer_size = SMALLBUFSIZE;
-      buffer = new char_type[buffer_size];
-      this->setg(buffer, buffer, buffer);
+      बफर_आकार = SMALLBUFSIZE;
+      बफर = नया char_type[बफर_आकार];
+      यह->setg(बफर, बफर, बफर);
       // "Unbuffered" means no put buffer
-      this->setp(0, 0);
+      यह->setp(0, 0);
     }
   }
-  else
+  अन्यथा
   {
     // If buffer already allocated, reset buffer pointers just to make sure no
     // stale chars are lying around
-    this->setg(buffer, buffer, buffer);
-    this->setp(buffer, buffer + buffer_size - 1);
+    यह->setg(बफर, बफर, बफर);
+    यह->setp(बफर, बफर + बफर_आकार - 1);
   }
 }
 
 // Destroy internal buffer
-void
-gzfilebuf::disable_buffer()
+व्योम
+gzfilebuf::disable_बफर()
 {
   // If internal buffer exists, deallocate it
-  if (own_buffer && buffer)
+  अगर (own_बफर && बफर)
   {
     // Preserve unbuffered status by zeroing size
-    if (!this->pbase())
-      buffer_size = 0;
-    delete[] buffer;
-    buffer = NULL;
-    this->setg(0, 0, 0);
-    this->setp(0, 0);
+    अगर (!यह->pbase())
+      बफर_आकार = 0;
+    मिटाओ[] बफर;
+    बफर = शून्य;
+    यह->setg(0, 0, 0);
+    यह->setp(0, 0);
   }
-  else
+  अन्यथा
   {
     // Reset buffer pointers to initial state if external buffer exists
-    this->setg(buffer, buffer, buffer);
-    if (buffer)
-      this->setp(buffer, buffer + buffer_size - 1);
-    else
-      this->setp(0, 0);
+    यह->setg(बफर, बफर, बफर);
+    अगर (बफर)
+      यह->setp(बफर, बफर + बफर_आकार - 1);
+    अन्यथा
+      यह->setp(0, 0);
   }
 }
 
@@ -372,108 +372,108 @@ gzfilebuf::disable_buffer()
 
 // Default constructor initializes stream buffer
 gzifstream::gzifstream()
-: std::istream(NULL), sb()
-{ this->init(&sb); }
+: std::अ_प्रवाह(शून्य), sb()
+{ यह->init(&sb); }
 
 // Initialize stream buffer and open file
-gzifstream::gzifstream(const char* name,
+gzifstream::gzifstream(स्थिर अक्षर* name,
                        std::ios_base::openmode mode)
-: std::istream(NULL), sb()
+: std::अ_प्रवाह(शून्य), sb()
 {
-  this->init(&sb);
-  this->open(name, mode);
+  यह->init(&sb);
+  यह->खोलो(name, mode);
 }
 
 // Initialize stream buffer and attach to file
-gzifstream::gzifstream(int fd,
+gzifstream::gzifstream(पूर्णांक fd,
                        std::ios_base::openmode mode)
-: std::istream(NULL), sb()
+: std::अ_प्रवाह(शून्य), sb()
 {
-  this->init(&sb);
-  this->attach(fd, mode);
+  यह->init(&sb);
+  यह->attach(fd, mode);
 }
 
 // Open file and go into fail() state if unsuccessful
-void
-gzifstream::open(const char* name,
+व्योम
+gzifstream::खोलो(स्थिर अक्षर* name,
                  std::ios_base::openmode mode)
 {
-  if (!sb.open(name, mode | std::ios_base::in))
-    this->setstate(std::ios_base::failbit);
-  else
-    this->clear();
+  अगर (!sb.खोलो(name, mode | std::ios_base::in))
+    यह->setstate(std::ios_base::failbit);
+  अन्यथा
+    यह->सफा();
 }
 
 // Attach to file and go into fail() state if unsuccessful
-void
-gzifstream::attach(int fd,
+व्योम
+gzifstream::attach(पूर्णांक fd,
                    std::ios_base::openmode mode)
 {
-  if (!sb.attach(fd, mode | std::ios_base::in))
-    this->setstate(std::ios_base::failbit);
-  else
-    this->clear();
+  अगर (!sb.attach(fd, mode | std::ios_base::in))
+    यह->setstate(std::ios_base::failbit);
+  अन्यथा
+    यह->सफा();
 }
 
 // Close file
-void
-gzifstream::close()
+व्योम
+gzifstream::बंद()
 {
-  if (!sb.close())
-    this->setstate(std::ios_base::failbit);
+  अगर (!sb.बंद())
+    यह->setstate(std::ios_base::failbit);
 }
 
 /*****************************************************************************/
 
 // Default constructor initializes stream buffer
 gzofstream::gzofstream()
-: std::ostream(NULL), sb()
-{ this->init(&sb); }
+: std::ब_प्रवाह(शून्य), sb()
+{ यह->init(&sb); }
 
 // Initialize stream buffer and open file
-gzofstream::gzofstream(const char* name,
+gzofstream::gzofstream(स्थिर अक्षर* name,
                        std::ios_base::openmode mode)
-: std::ostream(NULL), sb()
+: std::ब_प्रवाह(शून्य), sb()
 {
-  this->init(&sb);
-  this->open(name, mode);
+  यह->init(&sb);
+  यह->खोलो(name, mode);
 }
 
 // Initialize stream buffer and attach to file
-gzofstream::gzofstream(int fd,
+gzofstream::gzofstream(पूर्णांक fd,
                        std::ios_base::openmode mode)
-: std::ostream(NULL), sb()
+: std::ब_प्रवाह(शून्य), sb()
 {
-  this->init(&sb);
-  this->attach(fd, mode);
+  यह->init(&sb);
+  यह->attach(fd, mode);
 }
 
 // Open file and go into fail() state if unsuccessful
-void
-gzofstream::open(const char* name,
+व्योम
+gzofstream::खोलो(स्थिर अक्षर* name,
                  std::ios_base::openmode mode)
 {
-  if (!sb.open(name, mode | std::ios_base::out))
-    this->setstate(std::ios_base::failbit);
-  else
-    this->clear();
+  अगर (!sb.खोलो(name, mode | std::ios_base::out))
+    यह->setstate(std::ios_base::failbit);
+  अन्यथा
+    यह->सफा();
 }
 
 // Attach to file and go into fail() state if unsuccessful
-void
-gzofstream::attach(int fd,
+व्योम
+gzofstream::attach(पूर्णांक fd,
                    std::ios_base::openmode mode)
 {
-  if (!sb.attach(fd, mode | std::ios_base::out))
-    this->setstate(std::ios_base::failbit);
-  else
-    this->clear();
+  अगर (!sb.attach(fd, mode | std::ios_base::out))
+    यह->setstate(std::ios_base::failbit);
+  अन्यथा
+    यह->सफा();
 }
 
 // Close file
-void
-gzofstream::close()
+व्योम
+gzofstream::बंद()
 {
-  if (!sb.close())
-    this->setstate(std::ios_base::failbit);
+  अगर (!sb.बंद())
+    यह->setstate(std::ios_base::failbit);
 }

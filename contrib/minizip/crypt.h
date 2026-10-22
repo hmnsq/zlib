@@ -24,33 +24,33 @@
    Encryption is not supported.
 */
 
-#define CRC32(c, b) ((*(pcrc_32_tab+(((int)(c) ^ (b)) & 0xff))) ^ ((c) >> 8))
+#घोषणा CRC32(c, b) ((*(pcrc_32_tab+(((पूर्णांक)(c) ^ (b)) & 0xff))) ^ ((c) >> 8))
 
 /***********************************************************************
  * Return the next byte in the pseudo-random sequence
  */
-static int decrypt_byte(unsigned long* pkeys, const z_crc_t* pcrc_32_tab) {
-    unsigned temp;  /* POTENTIAL BUG:  temp*(temp^1) may overflow in an
+अटल पूर्णांक decrypt_byte(अचिन्हित दीर्घ* pkeys, स्थिर z_crc_t* pcrc_32_tab) {
+    अचिन्हित अस्थायी;  /* POTENTIAL BUG:  temp*(temp^1) may overflow in an
                      * unpredictable manner on 16-bit systems; not a problem
                      * with any known compiler so far, though */
 
-    (void)pcrc_32_tab;
-    temp = ((unsigned)(*(pkeys+2)) & 0xffff) | 2;
-    return (int)(((temp * (temp ^ 1)) >> 8) & 0xff);
+    (व्योम)pcrc_32_tab;
+    अस्थायी = ((अचिन्हित)(*(pkeys+2)) & 0xffff) | 2;
+    वापस (पूर्णांक)(((अस्थायी * (अस्थायी ^ 1)) >> 8) & 0xff);
 }
 
 /***********************************************************************
  * Update the encryption keys with the next byte of plain text
  */
-static int update_keys(unsigned long* pkeys, const z_crc_t* pcrc_32_tab, int c) {
+अटल पूर्णांक update_कुंजियाँ(अचिन्हित दीर्घ* pkeys, स्थिर z_crc_t* pcrc_32_tab, पूर्णांक c) {
     (*(pkeys+0)) = CRC32((*(pkeys+0)), c);
     (*(pkeys+1)) += (*(pkeys+0)) & 0xff;
     (*(pkeys+1)) = (*(pkeys+1)) * 134775813L + 1;
     {
-      int keyshift = (int)((*(pkeys+1)) >> 24);
+      पूर्णांक keyshift = (पूर्णांक)((*(pkeys+1)) >> 24);
       (*(pkeys+2)) = CRC32((*(pkeys+2)), keyshift);
     }
-    return c;
+    वापस c;
 }
 
 
@@ -58,68 +58,68 @@ static int update_keys(unsigned long* pkeys, const z_crc_t* pcrc_32_tab, int c) 
  * Initialize the encryption keys and the random header according to
  * the given password.
  */
-static void init_keys(const char* passwd, unsigned long* pkeys, const z_crc_t* pcrc_32_tab) {
+अटल व्योम init_कुंजियाँ(स्थिर अक्षर* passwd, अचिन्हित दीर्घ* pkeys, स्थिर z_crc_t* pcrc_32_tab) {
     *(pkeys+0) = 305419896L;
     *(pkeys+1) = 591751049L;
     *(pkeys+2) = 878082192L;
-    while (*passwd != '\0') {
-        update_keys(pkeys,pcrc_32_tab,(int)*passwd);
+    जबतक (*passwd != '\0') {
+        update_कुंजियाँ(pkeys,pcrc_32_tab,(पूर्णांक)*passwd);
         passwd++;
     }
 }
 
-#define zdecode(pkeys,pcrc_32_tab,c) \
-    (update_keys(pkeys,pcrc_32_tab,c ^= decrypt_byte(pkeys,pcrc_32_tab)))
+#घोषणा zdecode(pkeys,pcrc_32_tab,c) \
+    (update_कुंजियाँ(pkeys,pcrc_32_tab,c ^= decrypt_byte(pkeys,pcrc_32_tab)))
 
-#define zencode(pkeys,pcrc_32_tab,c,t) \
-    (t=decrypt_byte(pkeys,pcrc_32_tab), update_keys(pkeys,pcrc_32_tab,c), (Byte)t^(c))
+#घोषणा zencode(pkeys,pcrc_32_tab,c,t) \
+    (t=decrypt_byte(pkeys,pcrc_32_tab), update_कुंजियाँ(pkeys,pcrc_32_tab,c), (Byte)t^(c))
 
-#ifdef INCLUDECRYPTINGCODE_IFCRYPTALLOWED
+#अगर_घोषित INCLUDECRYPTINGCODE_IFCRYPTALLOWED
 
-#define RAND_HEAD_LEN  12
+#घोषणा RAND_शीर्ष_LEN  12
    /* "last resort" source for second part of crypt seed pattern */
 #  ifndef ZCR_SEED2
 #    define ZCR_SEED2 3141592654UL      /* use PI as default pattern */
 #  endif
 
-static unsigned crypthead(const char* passwd,       /* password string */
-                          unsigned char* buf,       /* where to write header */
-                          int bufSize,
-                          unsigned long* pkeys,
-                          const z_crc_t* pcrc_32_tab,
-                          unsigned long crcForCrypting) {
-    unsigned n;                  /* index in random header */
-    int t;                       /* temporary */
-    int c;                       /* random byte */
-    unsigned char header[RAND_HEAD_LEN-2]; /* random header */
-    static unsigned calls = 0;   /* ensure different random header each time */
+अटल अचिन्हित crypthead(स्थिर अक्षर* passwd,       /* password string */
+                          अचिन्हित अक्षर* buf,       /* where to write header */
+                          पूर्णांक buf_आकार,
+                          अचिन्हित दीर्घ* pkeys,
+                          स्थिर z_crc_t* pcrc_32_tab,
+                          अचिन्हित दीर्घ crcForCrypting) {
+    अचिन्हित n;                  /* index in random header */
+    पूर्णांक t;                       /* temporary */
+    पूर्णांक c;                       /* random byte */
+    अचिन्हित अक्षर header[RAND_शीर्ष_LEN-2]; /* random header */
+    अटल अचिन्हित calls = 0;   /* ensure different random header each time */
 
-    if (bufSize<RAND_HEAD_LEN)
-      return 0;
+    अगर (buf_आकार<RAND_शीर्ष_LEN)
+      वापस 0;
 
     /* First generate RAND_HEAD_LEN-2 random bytes. We encrypt the
      * output of rand() to get less predictability, since rand() is
      * often poorly implemented.
      */
-    if (++calls == 1)
+    अगर (++calls == 1)
     {
-        srand((unsigned)time(NULL) ^ ZCR_SEED2);
+        बेक्रम((अचिन्हित)समय(शून्य) ^ ZCR_SEED2);
     }
-    init_keys(passwd, pkeys, pcrc_32_tab);
-    for (n = 0; n < RAND_HEAD_LEN-2; n++)
+    init_कुंजियाँ(passwd, pkeys, pcrc_32_tab);
+    क्रम (n = 0; n < RAND_शीर्ष_LEN-2; n++)
     {
-        c = (rand() >> 7) & 0xff;
-        header[n] = (unsigned char)zencode(pkeys, pcrc_32_tab, c, t);
+        c = (अक्रम() >> 7) & 0xff;
+        header[n] = (अचिन्हित अक्षर)zencode(pkeys, pcrc_32_tab, c, t);
     }
     /* Encrypt random header (last two bytes is high word of crc) */
-    init_keys(passwd, pkeys, pcrc_32_tab);
-    for (n = 0; n < RAND_HEAD_LEN-2; n++)
+    init_कुंजियाँ(passwd, pkeys, pcrc_32_tab);
+    क्रम (n = 0; n < RAND_शीर्ष_LEN-2; n++)
     {
-        buf[n] = (unsigned char)zencode(pkeys, pcrc_32_tab, header[n], t);
+        buf[n] = (अचिन्हित अक्षर)zencode(pkeys, pcrc_32_tab, header[n], t);
     }
-    buf[n++] = (unsigned char)zencode(pkeys, pcrc_32_tab, (int)(crcForCrypting >> 16) & 0xff, t);
-    buf[n++] = (unsigned char)zencode(pkeys, pcrc_32_tab, (int)(crcForCrypting >> 24) & 0xff, t);
-    return n;
+    buf[n++] = (अचिन्हित अक्षर)zencode(pkeys, pcrc_32_tab, (पूर्णांक)(crcForCrypting >> 16) & 0xff, t);
+    buf[n++] = (अचिन्हित अक्षर)zencode(pkeys, pcrc_32_tab, (पूर्णांक)(crcForCrypting >> 24) & 0xff, t);
+    वापस n;
 }
 
-#endif
+#पूर्ण_अगर

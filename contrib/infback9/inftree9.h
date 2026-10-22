@@ -21,10 +21,10 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
-    unsigned short val;         /* offset in table or code value */
+प्रकार काष्ठा {
+    अचिन्हित अक्षर op;           /* operation, extra bits, table bits */
+    अचिन्हित अक्षर bits;         /* bits in this part of the code */
+    अचिन्हित लघु val;         /* offset in table or code value */
 } code;
 
 /* op values as set by inflate_table():
@@ -45,17 +45,17 @@ typedef struct {
    initial root table size (9 or 6) is found in the fifth argument of the
    inflate_table() calls in infback9.c.  If the root table size is changed,
    then these maximum sizes would be need to be recalculated and updated. */
-#define ENOUGH_LENS 852
-#define ENOUGH_DISTS 594
-#define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
+#घोषणा ENOUGH_LENS 852
+#घोषणा ENOUGH_DISTS 594
+#घोषणा ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table9() */
-typedef enum {
+प्रकार क्रमागत {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-extern int inflate_table9(codetype type, unsigned short FAR *lens,
-                          unsigned codes, code FAR * FAR *table,
-                          unsigned FAR *bits, unsigned short FAR *work);
+बाह्य पूर्णांक inflate_table9(codetype type, अचिन्हित लघु FAR *lens,
+                          अचिन्हित codes, code FAR * FAR *table,
+                          अचिन्हित FAR *bits, अचिन्हित लघु FAR *work);

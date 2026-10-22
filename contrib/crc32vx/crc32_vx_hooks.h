@@ -1,9 +1,9 @@
-#ifndef CRC32_VX_HOOKS_H
-#define CRC32_VX_HOOKS_H
+#अगर_अघोषित CRC32_VX_HOOKS_H
+#घोषणा CRC32_VX_HOOKS_H
 
 /**
  * CRC HOOKS
  */
-ZLIB_INTERNAL extern unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len);
+ZLIB_INTERNAL बाह्य अचिन्हित दीर्घ (*crc32_z_hook)(अचिन्हित दीर्घ crc, स्थिर अचिन्हित अक्षर FAR *buf, z_आकार_t len);
 
-#endif /* CRC32_VX_HOOKS_H */
+#पूर्ण_अगर /* CRC32_VX_HOOKS_H */

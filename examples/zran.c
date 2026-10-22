@@ -61,24 +61,24 @@
 // use of pointers in the state. The approach here allows for storage of the
 // index in a file.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "zlib.h"
-#include "zran.h"
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश "zlib.h"
+#समावेश "zran.h"
 
-#define WINSIZE 32768U      // sliding window size
-#define CHUNK 16384         // file input buffer size
+#घोषणा WINSIZE 32768U      // sliding window size
+#घोषणा CHUNK 16384         // file input buffer size
 
 // See comments in zran.h.
-void deflate_index_free(struct deflate_index *index) {
-    if (index != NULL) {
-        while (index->have)
-            free(index->list[--index->have].window);
-        free(index->list);
-        index->list = NULL;
-        inflateEnd(&index->strm);
-        free(index);
+व्योम deflate_सूचकांक_free(काष्ठा deflate_सूचकांक *सूचकांक) {
+    अगर (सूचकांक != शून्य) {
+        जबतक (सूचकांक->have)
+            मुक्त(सूचकांक->list[--सूचकांक->have].window);
+        मुक्त(सूचकांक->list);
+        सूचकांक->list = शून्य;
+        inflateEnd(&सूचकांक->strm);
+        मुक्त(सूचकांक);
     }
 }
 
@@ -86,166 +86,166 @@ void deflate_index_free(struct deflate_index *index) {
 // is temporarily the allocated number of access points, until it is time for
 // deflate_index_build() to return. Then index->mode is set to the mode of
 // inflation.
-static struct deflate_index *add_point(struct deflate_index *index, off_t in,
+अटल काष्ठा deflate_सूचकांक *add_point(काष्ठा deflate_सूचकांक *सूचकांक, off_t in,
                                        off_t out, off_t beg,
-                                       unsigned char *window) {
-    if (index->have == index->mode) {
+                                       अचिन्हित अक्षर *window) {
+    अगर (सूचकांक->have == सूचकांक->mode) {
         // The list is full. Make it bigger.
-        index->mode = index->mode ? index->mode << 1 : 8;
-        point_t *next = realloc(index->list, sizeof(point_t) * index->mode);
-        if (next == NULL)
-            return NULL;
-        index->list = next;
+        सूचकांक->mode = सूचकांक->mode ? सूचकांक->mode << 1 : 8;
+        point_t *अग्र = पुनः_स्मृति(सूचकांक->list, माप(point_t) * सूचकांक->mode);
+        अगर (अग्र == शून्य)
+            वापस शून्य;
+        सूचकांक->list = अग्र;
     }
 
     // Fill in the access point and increment how many we have.
-    point_t *next = (point_t *)(index->list) + index->have++;
-    if (index->have < 0)
+    point_t *अग्र = (point_t *)(सूचकांक->list) + सूचकांक->have++;
+    अगर (सूचकांक->have < 0)
         // Overflowed the int!
-        return NULL;
-    next->out = out;
-    next->in = in;
-    next->bits = index->strm.data_type & 7;
-    next->dict = out - beg > WINSIZE ? WINSIZE : (unsigned)(out - beg);
-    next->window = malloc(next->dict);
-    if (next->window == NULL)
-        return NULL;
-    unsigned recent = WINSIZE - index->strm.avail_out;
-    unsigned copy = recent > next->dict ? next->dict : recent;
-    memcpy(next->window + next->dict - copy, window + recent - copy, copy);
-    copy = next->dict - copy;
-    memcpy(next->window, window + WINSIZE - copy, copy);
+        वापस शून्य;
+    अग्र->out = out;
+    अग्र->in = in;
+    अग्र->bits = सूचकांक->strm.तथ्य_type & 7;
+    अग्र->dict = out - beg > WINSIZE ? WINSIZE : (अचिन्हित)(out - beg);
+    अग्र->window = दो_स्मृति(अग्र->dict);
+    अगर (अग्र->window == शून्य)
+        वापस शून्य;
+    अचिन्हित recent = WINSIZE - सूचकांक->strm.avail_out;
+    अचिन्हित copy = recent > अग्र->dict ? अग्र->dict : recent;
+    स_नकल(अग्र->window + अग्र->dict - copy, window + recent - copy, copy);
+    copy = अग्र->dict - copy;
+    स_नकल(अग्र->window, window + WINSIZE - copy, copy);
 
     // Return the index, which may have been newly allocated or destroyed.
-    return index;
+    वापस सूचकांक;
 }
 
 // Decompression modes. These are the inflateInit2() windowBits parameter.
-#define RAW -15
-#define ZLIB 15
-#define GZIP 31
+#घोषणा RAW -15
+#घोषणा ZLIB 15
+#घोषणा GZIP 31
 
 // See comments in zran.h.
-int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
+पूर्णांक deflate_सूचकांक_build(खाता *in, off_t span, काष्ठा deflate_सूचकांक **built) {
     // If this returns with an error, any attempt to use the index will cleanly
     // return an error.
-    *built = NULL;
+    *built = शून्य;
 
     // Create and initialize the index list.
-    struct deflate_index *index = malloc(sizeof(struct deflate_index));
-    if (index == NULL)
-        return Z_MEM_ERROR;
-    index->have = 0;
-    index->mode = 0;            // entries in index->list allocation
-    index->list = NULL;
-    index->strm.state = Z_NULL; // so inflateEnd() can work
+    काष्ठा deflate_सूचकांक *सूचकांक = दो_स्मृति(माप(काष्ठा deflate_सूचकांक));
+    अगर (सूचकांक == शून्य)
+        वापस Z_MEM_ERROR;
+    सूचकांक->have = 0;
+    सूचकांक->mode = 0;            // entries in index->list allocation
+    सूचकांक->list = शून्य;
+    सूचकांक->strm.state = Z_NULL; // so inflateEnd() can work
 
     // Set up the inflation state.
-    index->strm.avail_in = 0;
-    index->strm.avail_out = 0;
-    unsigned char buf[CHUNK];   // input buffer
-    unsigned char win[WINSIZE] = {0};   // output sliding window
+    सूचकांक->strm.avail_in = 0;
+    सूचकांक->strm.avail_out = 0;
+    अचिन्हित अक्षर buf[CHUNK];   // input buffer
+    अचिन्हित अक्षर win[WINSIZE] = {0};   // output sliding window
     off_t totin = 0;            // total bytes read from input
     off_t totout = 0;           // total bytes uncompressed
     off_t beg = 0;              // starting offset of last history reset
-    int mode = 0;               // mode: RAW, ZLIB, or GZIP (0 => not set yet)
+    पूर्णांक mode = 0;               // mode: RAW, ZLIB, or GZIP (0 => not set yet)
 
     // Decompress from in, generating access points along the way.
-    int ret;                    // the return value from zlib, or Z_ERRNO
+    पूर्णांक ret;                    // the return value from zlib, or Z_ERRNO
     off_t last;                 // last access point uncompressed offset
-    do {
+    करो {
         // Assure available input, at least until reaching EOF.
-        if (index->strm.avail_in == 0) {
-            index->strm.avail_in = fread(buf, 1, sizeof(buf), in);
-            totin += index->strm.avail_in;
-            index->strm.next_in = buf;
-            if (index->strm.avail_in < sizeof(buf) && ferror(in)) {
+        अगर (सूचकांक->strm.avail_in == 0) {
+            सूचकांक->strm.avail_in = ख_पढ़ो(buf, 1, माप(buf), in);
+            totin += सूचकांक->strm.avail_in;
+            सूचकांक->strm.अग्र_in = buf;
+            अगर (सूचकांक->strm.avail_in < माप(buf) && ख_त्रुटि(in)) {
                 ret = Z_ERRNO;
-                break;
+                अवरोध;
             }
 
-            if (mode == 0) {
+            अगर (mode == 0) {
                 // At the start of the input -- determine the type. Assume raw
                 // if it is neither zlib nor gzip. This could in theory result
                 // in a false positive for zlib, but in practice the fill bits
                 // after a stored block are always zeros, so a raw stream won't
                 // start with an 8 in the low nybble.
-                mode = index->strm.avail_in == 0 ? RAW :    // will fail
-                       (index->strm.next_in[0] & 0xf) == 8 ? ZLIB :
-                       index->strm.next_in[0] == 0x1f ? GZIP :
+                mode = सूचकांक->strm.avail_in == 0 ? RAW :    // will fail
+                       (सूचकांक->strm.अग्र_in[0] & 0xf) == 8 ? ZLIB :
+                       सूचकांक->strm.अग्र_in[0] == 0x1f ? GZIP :
                        /* else */ RAW;
-                index->strm.zalloc = Z_NULL;
-                index->strm.zfree = Z_NULL;
-                index->strm.opaque = Z_NULL;
-                ret = inflateInit2(&index->strm, mode);
-                if (ret != Z_OK)
-                    break;
+                सूचकांक->strm.zalloc = Z_NULL;
+                सूचकांक->strm.zfree = Z_NULL;
+                सूचकांक->strm.opaque = Z_NULL;
+                ret = inflateInit2(&सूचकांक->strm, mode);
+                अगर (ret != Z_OK)
+                    अवरोध;
             }
         }
 
         // Assure available output. This rotates the output through, for use as
         // a sliding window on the uncompressed data.
-        if (index->strm.avail_out == 0) {
-            index->strm.avail_out = sizeof(win);
-            index->strm.next_out = win;
+        अगर (सूचकांक->strm.avail_out == 0) {
+            सूचकांक->strm.avail_out = माप(win);
+            सूचकांक->strm.अग्र_out = win;
         }
 
-        if (mode == RAW && index->have == 0)
+        अगर (mode == RAW && सूचकांक->have == 0)
             // We skip the inflate() call at the start of raw deflate data in
             // order generate an access point there. Set data_type to imitate
             // the end of a header.
-            index->strm.data_type = 0x80;
-        else {
+            सूचकांक->strm.तथ्य_type = 0x80;
+        अन्यथा {
             // Inflate and update the number of uncompressed bytes.
-            unsigned before = index->strm.avail_out;
-            ret = inflate(&index->strm, Z_BLOCK);
-            totout += before - index->strm.avail_out;
+            अचिन्हित before = सूचकांक->strm.avail_out;
+            ret = inflate(&सूचकांक->strm, Z_BLOCK);
+            totout += before - सूचकांक->strm.avail_out;
         }
 
-        if ((index->strm.data_type & 0xc0) == 0x80 &&
-            (index->have == 0 || totout - last >= span)) {
+        अगर ((सूचकांक->strm.तथ्य_type & 0xc0) == 0x80 &&
+            (सूचकांक->have == 0 || totout - last >= span)) {
             // We are at the end of a header or a non-last deflate block, so we
             // can add an access point here. Furthermore, we are either at the
             // very start for the first access point, or there has been span or
             // more uncompressed bytes since the last access point, so we want
             // to add an access point here.
-            index = add_point(index, totin - index->strm.avail_in, totout, beg,
+            सूचकांक = add_point(सूचकांक, totin - सूचकांक->strm.avail_in, totout, beg,
                               win);
-            if (index == NULL) {
+            अगर (सूचकांक == शून्य) {
                 ret = Z_MEM_ERROR;
-                break;
+                अवरोध;
             }
             last = totout;
         }
 
-        if (ret == Z_STREAM_END && mode == GZIP &&
-            (index->strm.avail_in || ungetc(getc(in), in) != EOF)) {
+        अगर (ret == Z_STREAM_END && mode == GZIP &&
+            (सूचकांक->strm.avail_in || अक्षर_वापस(अ_लो(in), in) != खातापूर्ण)) {
             // There is more input after the end of a gzip member. Reset the
             // inflate state to read another gzip member. On success, this will
             // set ret to Z_OK to continue decompressing.
-            ret = inflateReset2(&index->strm, GZIP);
+            ret = inflateReset2(&सूचकांक->strm, GZIP);
             beg = totout;           // reset history
         }
 
         // Keep going until Z_STREAM_END or error. If the compressed data ends
         // prematurely without a file read error, Z_BUF_ERROR is returned.
-    } while (ret == Z_OK);
+    } जबतक (ret == Z_OK);
 
-    if (ret != Z_STREAM_END) {
+    अगर (ret != Z_STREAM_END) {
         // An error was encountered. Discard the index and return a negative
         // error code.
-        deflate_index_free(index);
-        return ret == Z_NEED_DICT ? Z_DATA_ERROR : ret;
+        deflate_सूचकांक_free(सूचकांक);
+        वापस ret == Z_NEED_DICT ? Z_तथ्य_ERROR : ret;
     }
 
     // Return the index.
-    index->mode = mode;
-    index->length = totout;
-    *built = index;
-    return index->have;
+    सूचकांक->mode = mode;
+    सूचकांक->लंबाई = totout;
+    *built = सूचकांक;
+    वापस सूचकांक->have;
 }
 
-#ifdef NOPRIME
+#अगर_घोषित NOPRIME
 // Support zlib versions before 1.2.3 (July 2005), or incomplete zlib clones
 // that do not have inflatePrime().
 
@@ -256,21 +256,21 @@ int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
 // This assumes that any bits above the *have bits in the last byte are zeros.
 // That assumption is preserved on return, as any bits above *have + bits in
 // the last byte written will be set to zeros.
-static inline void append_bits(unsigned value, int bits,
-                               unsigned char *in, int *have) {
+अटल अंतरभूत व्योम append_bits(अचिन्हित मूल्य, पूर्णांक bits,
+                               अचिन्हित अक्षर *in, पूर्णांक *have) {
     in += *have >> 3;           // where the first bits from value will go
-    int k = *have & 7;          // the number of bits already there
+    पूर्णांक k = *have & 7;          // the number of bits already there
     *have += bits;
-    if (k)
-        *in |= value << k;      // write value above the low k bits
-    else
-        *in = value;
+    अगर (k)
+        *in |= मूल्य << k;      // write value above the low k bits
+    अन्यथा
+        *in = मूल्य;
     k = 8 - k;                  // the number of bits just appended
-    while (bits > k) {
-        value >>= k;            // drop the bits appended
+    जबतक (bits > k) {
+        मूल्य >>= k;            // drop the bits appended
         bits -= k;
         k = 8;                  // now at a byte boundary
-        *++in = value;
+        *++in = मूल्य;
     }
 }
 
@@ -280,39 +280,39 @@ static inline void append_bits(unsigned value, int bits,
 // a negative value of bits is not supported. bits must be in 0..16. If the
 // arguments are invalid, Z_STREAM_ERROR is returned. Otherwise the return
 // value from inflate() is returned.
-static int inflatePreface(z_stream *strm, int bits, int value) {
+अटल पूर्णांक inflatePreface(z_stream *strm, पूर्णांक bits, पूर्णांक मूल्य) {
     // Check input.
-    if (strm == Z_NULL || bits < 0 || bits > 16)
-        return Z_STREAM_ERROR;
-    if (bits == 0)
-        return Z_OK;
-    value &= (2 << (bits - 1)) - 1;
+    अगर (strm == Z_NULL || bits < 0 || bits > 16)
+        वापस Z_STREAM_ERROR;
+    अगर (bits == 0)
+        वापस Z_OK;
+    मूल्य &= (2 << (bits - 1)) - 1;
 
     // An empty dynamic block with an odd number of bits (95). The high bit of
     // the last byte is unused.
-    static const unsigned char dyn[] = {
+    अटल स्थिर अचिन्हित अक्षर dyn[] = {
         4, 0xe0, 0x81, 8, 0, 0, 0, 0, 0x20, 0xa8, 0xab, 0x1f
     };
-    const int dynlen = 95;          // number of bits in the block
+    स्थिर पूर्णांक dynlen = 95;          // number of bits in the block
 
     // Build an input buffer for inflate that is a multiple of eight bits in
     // length, and that ends with the low bits bits of value.
-    unsigned char in[(dynlen + 3 * 10 + 16 + 7) / 8];
-    int have = 0;
-    if (bits & 1) {
+    अचिन्हित अक्षर in[(dynlen + 3 * 10 + 16 + 7) / 8];
+    पूर्णांक have = 0;
+    अगर (bits & 1) {
         // Insert an empty dynamic block to get to an odd number of bits, so
         // when bits bits from value are appended, we are at an even number of
         // bits.
-        memcpy(in, dyn, sizeof(dyn));
+        स_नकल(in, dyn, माप(dyn));
         have = dynlen;
     }
-    while ((have + bits) & 7)
+    जबतक ((have + bits) & 7)
         // Insert empty fixed blocks until appending bits bits would put us on
         // a byte boundary. This will insert at most three fixed blocks.
         append_bits(2, 10, in, &have);
 
     // Append the bits bits from value, which takes us to a byte boundary.
-    append_bits(value, bits, in, &have);
+    append_bits(मूल्य, bits, in, &have);
 
     // Deliver the input to inflate(). There is no output space provided, but
     // inflate() can't get stuck waiting on output not ingesting all of the
@@ -323,224 +323,224 @@ static int inflatePreface(z_stream *strm, int bits, int value) {
     // be ingested in order to get ten bits, which is the most that value can
     // occupy.
     strm->avail_in = have >> 3;
-    strm->next_in = in;
+    strm->अग्र_in = in;
     strm->avail_out = 0;
-    strm->next_out = in;                // not used, but can't be NULL
-    return inflate(strm, Z_NO_FLUSH);
+    strm->अग्र_out = in;                // not used, but can't be NULL
+    वापस inflate(strm, Z_NO_FLUSH);
 }
 
-#else
-#  define INFLATEPRIME inflatePrime
-#endif
+#अन्यथा
+#  define INFLATEPRIME inflate_अभाज्य
+#पूर्ण_अगर
 
 // See comments in zran.h.
-ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
-                                off_t offset, unsigned char *buf, size_t len) {
+सूचक_भेद_प्रकार deflate_सूचकांक_extract(खाता *in, काष्ठा deflate_सूचकांक *सूचकांक,
+                                off_t offset, अचिन्हित अक्षर *buf, माप_प्रकार len) {
     // Do a quick sanity check on the index.
-    if (index == NULL || index->have < 1 || index->list[0].out != 0 ||
-        index->strm.state == Z_NULL)
-        return Z_STREAM_ERROR;
+    अगर (सूचकांक == शून्य || सूचकांक->have < 1 || सूचकांक->list[0].out != 0 ||
+        सूचकांक->strm.state == Z_NULL)
+        वापस Z_STREAM_ERROR;
 
     // If nothing to extract, return zero bytes extracted.
-    if (len == 0 || offset < 0 || offset >= index->length)
-        return 0;
+    अगर (len == 0 || offset < 0 || offset >= सूचकांक->लंबाई)
+        वापस 0;
 
     // Find the access point closest to but not after offset.
-    int lo = -1, hi = index->have;
-    point_t *point = index->list;
-    while (hi - lo > 1) {
-        int mid = (lo + hi) >> 1;
-        if (offset < point[mid].out)
+    पूर्णांक lo = -1, hi = सूचकांक->have;
+    point_t *point = सूचकांक->list;
+    जबतक (hi - lo > 1) {
+        पूर्णांक mid = (lo + hi) >> 1;
+        अगर (offset < point[mid].out)
             hi = mid;
-        else
+        अन्यथा
             lo = mid;
     }
     point += lo;
 
     // Initialize the input file and prime the inflate engine to start there.
-    int ret = fseeko(in, point->in - (point->bits ? 1 : 0), SEEK_SET);
-    if (ret == -1)
-        return Z_ERRNO;
-    int ch = 0;
-    if (point->bits && (ch = getc(in)) == EOF)
-        return ferror(in) ? Z_ERRNO : Z_BUF_ERROR;
-    index->strm.avail_in = 0;
-    ret = inflateReset2(&index->strm, RAW);
-    if (ret != Z_OK)
-        return ret;
-    if (point->bits)
-        INFLATEPRIME(&index->strm, point->bits, ch >> (8 - point->bits));
-    inflateSetDictionary(&index->strm, point->window, point->dict);
+    पूर्णांक ret = fseeko(in, point->in - (point->bits ? 1 : 0), शुरू_से);
+    अगर (ret == -1)
+        वापस Z_ERRNO;
+    पूर्णांक ch = 0;
+    अगर (point->bits && (ch = अ_लो(in)) == खातापूर्ण)
+        वापस ख_त्रुटि(in) ? Z_ERRNO : Z_BUF_ERROR;
+    सूचकांक->strm.avail_in = 0;
+    ret = inflateReset2(&सूचकांक->strm, RAW);
+    अगर (ret != Z_OK)
+        वापस ret;
+    अगर (point->bits)
+        INFLATEPRIME(&सूचकांक->strm, point->bits, ch >> (8 - point->bits));
+    inflateSetDictionary(&सूचकांक->strm, point->window, point->dict);
 
     // Skip uncompressed bytes until offset reached, then satisfy request.
-    unsigned char input[CHUNK];
-    unsigned char discard[WINSIZE];
+    अचिन्हित अक्षर निवेश[CHUNK];
+    अचिन्हित अक्षर discard[WINSIZE];
     offset -= point->out;       // number of bytes to skip to get to offset
-    size_t left = len;          // number of bytes left to read after offset
-    do {
-        if (offset) {
+    माप_प्रकार बायाँ = len;          // number of bytes left to read after offset
+    करो {
+        अगर (offset) {
             // Discard up to offset uncompressed bytes.
-            index->strm.avail_out = offset < WINSIZE ? (unsigned)offset :
+            सूचकांक->strm.avail_out = offset < WINSIZE ? (अचिन्हित)offset :
                                                        WINSIZE;
-            index->strm.next_out = discard;
+            सूचकांक->strm.अग्र_out = discard;
         }
-        else {
+        अन्यथा {
             // Uncompress up to left bytes into buf.
-            index->strm.avail_out = left < (unsigned)-1 ? (unsigned)left :
-                                                          (unsigned)-1;
-            index->strm.next_out = buf + len - left;
+            सूचकांक->strm.avail_out = बायाँ < (अचिन्हित)-1 ? (अचिन्हित)बायाँ :
+                                                          (अचिन्हित)-1;
+            सूचकांक->strm.अग्र_out = buf + len - बायाँ;
         }
 
         // Uncompress, setting got to the number of bytes uncompressed.
-        if (index->strm.avail_in == 0) {
+        अगर (सूचकांक->strm.avail_in == 0) {
             // Assure available input.
-            index->strm.avail_in = fread(input, 1, CHUNK, in);
-            if (index->strm.avail_in < CHUNK && ferror(in)) {
+            सूचकांक->strm.avail_in = ख_पढ़ो(निवेश, 1, CHUNK, in);
+            अगर (सूचकांक->strm.avail_in < CHUNK && ख_त्रुटि(in)) {
                 ret = Z_ERRNO;
-                break;
+                अवरोध;
             }
-            index->strm.next_in = input;
+            सूचकांक->strm.अग्र_in = निवेश;
         }
-        unsigned got = index->strm.avail_out;
-        ret = inflate(&index->strm, Z_NO_FLUSH);
-        got -= index->strm.avail_out;
+        अचिन्हित got = सूचकांक->strm.avail_out;
+        ret = inflate(&सूचकांक->strm, Z_NO_FLUSH);
+        got -= सूचकांक->strm.avail_out;
 
         // Update the appropriate count.
-        if (offset)
+        अगर (offset)
             offset -= got;
-        else {
-            left -= got;
-            if (left == 0)
+        अन्यथा {
+            बायाँ -= got;
+            अगर (बायाँ == 0)
                 // Request satisfied.
-                break;
+                अवरोध;
         }
 
         // If we're at the end of a gzip member and there's more to read,
         // continue to the next gzip member.
-        if (ret == Z_STREAM_END && index->mode == GZIP) {
+        अगर (ret == Z_STREAM_END && सूचकांक->mode == GZIP) {
             // Discard the gzip trailer.
-            unsigned drop = 8;              // length of gzip trailer
-            if (index->strm.avail_in >= drop) {
-                index->strm.avail_in -= drop;
-                index->strm.next_in += drop;
+            अचिन्हित drop = 8;              // length of gzip trailer
+            अगर (सूचकांक->strm.avail_in >= drop) {
+                सूचकांक->strm.avail_in -= drop;
+                सूचकांक->strm.अग्र_in += drop;
             }
-            else {
+            अन्यथा {
                 // Read and discard the remainder of the gzip trailer.
-                drop -= index->strm.avail_in;
-                index->strm.avail_in = 0;
-                do {
-                    if (getc(in) == EOF)
+                drop -= सूचकांक->strm.avail_in;
+                सूचकांक->strm.avail_in = 0;
+                करो {
+                    अगर (अ_लो(in) == खातापूर्ण)
                         // The input does not have a complete trailer.
-                        return ferror(in) ? Z_ERRNO : Z_BUF_ERROR;
-                } while (--drop);
+                        वापस ख_त्रुटि(in) ? Z_ERRNO : Z_BUF_ERROR;
+                } जबतक (--drop);
             }
 
-            if (index->strm.avail_in || ungetc(getc(in), in) != EOF) {
+            अगर (सूचकांक->strm.avail_in || अक्षर_वापस(अ_लो(in), in) != खातापूर्ण) {
                 // There's more after the gzip trailer. Use inflate to skip the
                 // gzip header and resume the raw inflate there.
-                inflateReset2(&index->strm, GZIP);
-                do {
-                    if (index->strm.avail_in == 0) {
-                        index->strm.avail_in = fread(input, 1, CHUNK, in);
-                        if (index->strm.avail_in < CHUNK && ferror(in)) {
+                inflateReset2(&सूचकांक->strm, GZIP);
+                करो {
+                    अगर (सूचकांक->strm.avail_in == 0) {
+                        सूचकांक->strm.avail_in = ख_पढ़ो(निवेश, 1, CHUNK, in);
+                        अगर (सूचकांक->strm.avail_in < CHUNK && ख_त्रुटि(in)) {
                             ret = Z_ERRNO;
-                            break;
+                            अवरोध;
                         }
-                        index->strm.next_in = input;
+                        सूचकांक->strm.अग्र_in = निवेश;
                     }
-                    index->strm.avail_out = WINSIZE;
-                    index->strm.next_out = discard;
-                    ret = inflate(&index->strm, Z_BLOCK);  // stop after header
-                } while (ret == Z_OK && (index->strm.data_type & 0x80) == 0);
-                if (ret != Z_OK)
-                    break;
-                inflateReset2(&index->strm, RAW);
+                    सूचकांक->strm.avail_out = WINSIZE;
+                    सूचकांक->strm.अग्र_out = discard;
+                    ret = inflate(&सूचकांक->strm, Z_BLOCK);  // stop after header
+                } जबतक (ret == Z_OK && (सूचकांक->strm.तथ्य_type & 0x80) == 0);
+                अगर (ret != Z_OK)
+                    अवरोध;
+                inflateReset2(&सूचकांक->strm, RAW);
             }
         }
 
         // Continue until we have the requested data, the deflate data has
         // ended, or an error is encountered.
-    } while (ret == Z_OK);
+    } जबतक (ret == Z_OK);
 
     // Return the number of uncompressed bytes read into buf, or the error.
-    return ret == Z_OK || ret == Z_STREAM_END ? len - left : ret;
+    वापस ret == Z_OK || ret == Z_STREAM_END ? len - बायाँ : ret;
 }
 
-#ifdef TEST
+#अगर_घोषित TEST
 
-#define SPAN 1048576L       // desired distance between access points
-#define LEN 16384           // number of bytes to extract
+#घोषणा SPAN 1048576L       // desired distance between access points
+#घोषणा LEN 16384           // number of bytes to extract
 
 // Demonstrate the use of deflate_index_build() and deflate_index_extract() by
 // processing the file provided on the command line, and extracting LEN bytes
 // from 2/3rds of the way through the uncompressed output, writing that to
 // stdout. An offset can be provided as the second argument, in which case the
 // data is extracted from there instead.
-int main(int argc, char **argv) {
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर **argv) {
     // Open the input file.
-    if (argc < 2 || argc > 3) {
-        fprintf(stderr, "usage: zran file.raw [offset]\n");
-        return 1;
+    अगर (argc < 2 || argc > 3) {
+        ख_लिखो(मानक_त्रुटि, "usage: zran file.raw [offset]\n");
+        वापस 1;
     }
-    FILE *in = fopen(argv[1], "rb");
-    if (in == NULL) {
-        fprintf(stderr, "zran: could not open %s for reading\n", argv[1]);
-        return 1;
+    खाता *in = ख_खोलो(argv[1], "rb");
+    अगर (in == शून्य) {
+        ख_लिखो(मानक_त्रुटि, "zran: could not open %s for reading\n", argv[1]);
+        वापस 1;
     }
 
     // Get optional offset.
     off_t offset = -1;
-    if (argc == 3) {
-        char *end;
+    अगर (argc == 3) {
+        अक्षर *end;
         offset = strtoll(argv[2], &end, 10);
-        if (*end || offset < 0) {
-            fprintf(stderr, "zran: %s is not a valid offset\n", argv[2]);
-            return 1;
+        अगर (*end || offset < 0) {
+            ख_लिखो(मानक_त्रुटि, "zran: %s is not a valid offset\n", argv[2]);
+            वापस 1;
         }
     }
 
     // Build index.
-    struct deflate_index *index = NULL;
-    int len = deflate_index_build(in, SPAN, &index);
-    if (len < 0) {
-        fclose(in);
-        switch (len) {
-        case Z_MEM_ERROR:
-            fprintf(stderr, "zran: out of memory\n");
-            break;
-        case Z_BUF_ERROR:
-            fprintf(stderr, "zran: %s ended prematurely\n", argv[1]);
-            break;
-        case Z_DATA_ERROR:
-            fprintf(stderr, "zran: compressed data error in %s\n", argv[1]);
-            break;
-        case Z_ERRNO:
-            fprintf(stderr, "zran: read error on %s\n", argv[1]);
-            break;
-        default:
-            fprintf(stderr, "zran: error %d while building index\n", len);
+    काष्ठा deflate_सूचकांक *सूचकांक = शून्य;
+    पूर्णांक len = deflate_सूचकांक_build(in, SPAN, &सूचकांक);
+    अगर (len < 0) {
+        ख_बंद(in);
+        चयन (len) {
+        हाल Z_MEM_ERROR:
+            ख_लिखो(मानक_त्रुटि, "zran: out of memory\n");
+            अवरोध;
+        हाल Z_BUF_ERROR:
+            ख_लिखो(मानक_त्रुटि, "zran: %s ended prematurely\n", argv[1]);
+            अवरोध;
+        हाल Z_तथ्य_ERROR:
+            ख_लिखो(मानक_त्रुटि, "zran: compressed data error in %s\n", argv[1]);
+            अवरोध;
+        हाल Z_ERRNO:
+            ख_लिखो(मानक_त्रुटि, "zran: read error on %s\n", argv[1]);
+            अवरोध;
+        शेष:
+            ख_लिखो(मानक_त्रुटि, "zran: error %d while building index\n", len);
         }
-        return 1;
+        वापस 1;
     }
-    fprintf(stderr, "zran: built index with %d access points\n", len);
+    ख_लिखो(मानक_त्रुटि, "zran: built index with %d access points\n", len);
 
     // Use index by reading some bytes from an arbitrary offset.
-    unsigned char buf[LEN];
-    if (offset == -1)
-        offset = ((index->length + 1) << 1) / 3;
-    ptrdiff_t got = deflate_index_extract(in, index, offset, buf, LEN);
-    if (got < 0)
-        fprintf(stderr, "zran: extraction failed: %s error\n",
+    अचिन्हित अक्षर buf[LEN];
+    अगर (offset == -1)
+        offset = ((सूचकांक->लंबाई + 1) << 1) / 3;
+    सूचक_भेद_प्रकार got = deflate_सूचकांक_extract(in, सूचकांक, offset, buf, LEN);
+    अगर (got < 0)
+        ख_लिखो(मानक_त्रुटि, "zran: extraction failed: %s error\n",
                 got == Z_MEM_ERROR ? "out of memory" : "input corrupted");
-    else {
-        fwrite(buf, 1, got, stdout);
-        fprintf(stderr, "zran: extracted %ld bytes at %lld\n", got, offset);
+    अन्यथा {
+        ख_डालो(buf, 1, got, मानक_निकास);
+        ख_लिखो(मानक_त्रुटि, "zran: extracted %ld bytes at %lld\n", got, offset);
     }
 
     // Clean up and exit.
-    deflate_index_free(index);
-    fclose(in);
-    return 0;
+    deflate_सूचकांक_free(सूचकांक);
+    ख_बंद(in);
+    वापस 0;
 }
 
-#endif
+#पूर्ण_अगर

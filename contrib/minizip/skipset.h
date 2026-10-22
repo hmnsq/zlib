@@ -55,16 +55,16 @@
   - set_rand() returns 32 random bits (seeded by set_start())
  */
 
-#ifndef SKIPSET_H
-#define SKIPSET_H
+#अगर_अघोषित SKIPSET_H
+#घोषणा SKIPSET_H
 
-#include <stdlib.h>     /* realloc(), free(), NULL, size_t */
-#include <stddef.h>     /* ptrdiff_t */
-#include <setjmp.h>     /* jmp_buf, longjmp() */
-#include <errno.h>      /* ENOMEM */
-#include <time.h>       /* time(), clock() */
-#include <assert.h>     /* assert.h */
-#include "ints.h"       /* i16_t, ui32_t, ui64_t */
+#समावेश <stdlib.h>     /* realloc(), free(), NULL, size_t */
+#समावेश <stddef.h>     /* ptrdiff_t */
+#समावेश <setjmp.h>     /* jmp_buf, longjmp() */
+#समावेश <errno.h>      /* ENOMEM */
+#समावेश <time.h>       /* time(), clock() */
+#समावेश <assert.h>     /* assert.h */
+#समावेश "ints.h"       /* i16_t, ui32_t, ui64_t */
 
 /*
   Structures and functions below noted as "--private--" should not be used by
@@ -81,56 +81,56 @@
   Licensed under Apache License 2.0 (NO WARRANTY, etc. see website)
   --private-- Random number generator state.
  */
-typedef struct {
+प्रकार काष्ठा {
     ui64_t state;       /* 64-bit generator state */
     ui64_t inc;         /* 63-bit sequence id */
 } set_rand_t;
 /* --private-- Initialize the state *gen using seed and seq. seed seeds the
    advancing 64-bit state. seq is a sequence selection constant. */
-static void set_seed(set_rand_t *gen, ui64_t seed, ui64_t seq) {
+अटल व्योम set_seed(set_rand_t *gen, ui64_t seed, ui64_t seq) {
     gen->inc = (seq << 1) | 1;
     gen->state = (seed + gen->inc) * 6364136223846793005ULL + gen->inc;
 }
 /* Start a unique random number sequence using bits from noise sources. */
-static void set_uniq(set_rand_t *gen, const void *ptr) {
-    set_seed(gen, ((ui64_t)(ptrdiff_t)ptr << 32) ^
-                  ((ui64_t)time(NULL) << 12) ^ clock(), 0);
+अटल व्योम set_uniq(set_rand_t *gen, स्थिर व्योम *ptr) {
+    set_seed(gen, ((ui64_t)(सूचक_भेद_प्रकार)ptr << 32) ^
+                  ((ui64_t)समय(शून्य) << 12) ^ घड़ी(), 0);
 }
 /* Return 32 random bits, advancing the state *gen. */
-static ui32_t set_rand(set_rand_t *gen) {
+अटल ui32_t set_rand(set_rand_t *gen) {
     ui32_t mix;
-    int rot;
+    पूर्णांक rot;
     ui64_t state = gen->state;
     gen->state = state * 6364136223846793005ULL + gen->inc;
     mix = (ui32_t)(((state >> 18) ^ state) >> 27);
     rot = state >> 59;
-    return (mix >> rot) | (mix << ((-rot) & 31));
+    वापस (mix >> rot) | (mix << ((-rot) & 31));
 }
 /* End of PCG32 code. */
 
 /* --private-- Linked-list node. */
-typedef struct set_node_s set_node_t;
-struct set_node_s {
-    set_key_t key;          /* the key (not used for head or path) */
-    i16_t size;             /* number of allocated pointers in right[] */
+प्रकार काष्ठा set_गाँठ_s set_गाँठ_t;
+काष्ठा set_गाँठ_s {
+    set_कुंजी_t कुंजी;          /* the key (not used for head or path) */
+    i16_t आकार;             /* number of allocated pointers in right[] */
     i16_t fill;             /* number of pointers in right[] filled in */
-    set_node_t **right;     /* pointer for each level, each to the right */
+    set_गाँठ_t **दायाँ;     /* pointer for each level, each to the right */
 };
 
 /* A set. The application sets env, may use gen with set_rand(), and may read
    allocs and memory. The remaining variables are --private-- . */
-typedef struct set_s {
-    set_node_t *head;       /* skiplist head -- no key, just links */
-    set_node_t *path;       /* right[] is path to key from set_found() */
-    set_node_t *node;       /* node under construction, in case of longjmp() */
+प्रकार काष्ठा set_s {
+    set_गाँठ_t *शीर्ष;       /* skiplist head -- no key, just links */
+    set_गाँठ_t *path;       /* right[] is path to key from set_found() */
+    set_गाँठ_t *गाँठ;       /* node under construction, in case of longjmp() */
     i16_t depth;            /* maximum depth of the skiplist */
     ui64_t ran;             /* a precious trove of random bits */
     set_rand_t gen;         /* random number generator state */
-    jmp_buf env;            /* setjmp() environment for allocation errors */
-#ifdef SET_TRACK
-    size_t allocs;          /* number of allocations */
-    size_t memory;          /* total size of allocated memory (>= requests) */
-#endif
+    लाँघ_बफ env;            /* setjmp() environment for allocation errors */
+#अगर_घोषित SET_TRACK
+    माप_प्रकार allocs;          /* number of allocations */
+    माप_प्रकार memory;          /* total size of allocated memory (>= requests) */
+#पूर्ण_अगर
 } set_t;
 
 /* Memory allocation and deallocation. set_alloc(set, ptr, size) returns a
@@ -138,95 +138,95 @@ typedef struct set_s {
    allocation ptr resized to size bytes. set_alloc() will never return NULL.
    set_free(set, ptr) frees an allocation created by set_alloc(). These may be
    used by the application. e.g. if allocation tracking is desired. */
-#ifdef SET_TRACK
+#अगर_घोषित SET_TRACK
 /* Track the number of allocations and the total backing memory size. */
-#  if defined(_WIN32)
+#  अगर defined(_WIN32)
 #    include <malloc.h>
-#    define SET_ALLOC_SIZE(ptr) _msize(ptr)
+#    define SET_ALLOC_आकार(ptr) _msize(ptr)
 #  elif defined(__MACH__)
 #    include <malloc/malloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_size(ptr)
+#    define SET_ALLOC_आकार(ptr) malloc_आकार(ptr)
 #  elif defined(__linux__)
 #    include <malloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
+#    define SET_ALLOC_आकार(ptr) malloc_usable_आकार(ptr)
 #  elif defined(__FreeBSD__)
 #    include <malloc_np.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
+#    define SET_ALLOC_आकार(ptr) malloc_usable_आकार(ptr)
 #  elif defined(__NetBSD__)
 #    include <jemalloc/jemalloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
-#  else     /* e.g. OpenBSD */
-#    define SET_ALLOC_SIZE(ptr) 0
+#    define SET_ALLOC_आकार(ptr) malloc_usable_आकार(ptr)
+#  अन्यथा     /* e.g. OpenBSD */
+#    define SET_ALLOC_आकार(ptr) 0
 #  endif
 /* With tracking. */
-static void *set_alloc(set_t *set, void *ptr, size_t size) {
-    size_t had = ptr == NULL ? 0 : SET_ALLOC_SIZE(ptr);
-    void *mem = realloc(ptr, size);
-    if (mem == NULL)
-        longjmp(set->env, ENOMEM);
-    set->allocs += ptr == NULL;
-    set->memory += SET_ALLOC_SIZE(mem) - had;
-    return mem;
+अटल व्योम *set_alloc(set_t *set, व्योम *ptr, माप_प्रकार आकार) {
+    माप_प्रकार had = ptr == शून्य ? 0 : SET_ALLOC_आकार(ptr);
+    व्योम *mem = पुनः_स्मृति(ptr, आकार);
+    अगर (mem == शून्य)
+        दीर्घ_लाँघ(set->env, ENOMEM);
+    set->allocs += ptr == शून्य;
+    set->memory += SET_ALLOC_आकार(mem) - had;
+    वापस mem;
 }
-static void set_free(set_t *set, void *ptr) {
-    if (ptr != NULL) {
+अटल व्योम set_free(set_t *set, व्योम *ptr) {
+    अगर (ptr != शून्य) {
         set->allocs--;
-        set->memory -= SET_ALLOC_SIZE(ptr);
-        free(ptr);
+        set->memory -= SET_ALLOC_आकार(ptr);
+        मुक्त(ptr);
     }
 }
-#else
+#अन्यथा
 /* Without tracking. */
-static void *set_alloc(set_t *set, void *ptr, size_t size) {
-    void *mem = realloc(ptr, size);
-    if (mem == NULL)
-        longjmp(set->env, ENOMEM);
-    return mem;
+अटल व्योम *set_alloc(set_t *set, व्योम *ptr, माप_प्रकार आकार) {
+    व्योम *mem = पुनः_स्मृति(ptr, आकार);
+    अगर (mem == शून्य)
+        दीर्घ_लाँघ(set->env, ENOMEM);
+    वापस mem;
 }
-static void set_free(set_t *set, void *ptr) {
-    (void)set;
-    free(ptr);
+अटल व्योम set_free(set_t *set, व्योम *ptr) {
+    (व्योम)set;
+    मुक्त(ptr);
 }
-#endif
+#पूर्ण_अगर
 
 /* --private-- Grow node's array right[] as needed to be able to hold at least
    want links. If fill is true, assure that the first want links are filled in,
    setting them to set->head if not previously filled in. Otherwise it is
    assumed that the first want links are about to be filled in. */
-static void set_grow(set_t *set, set_node_t *node, int want, int fill) {
-    int i;
-    if (node->size < want) {
-        int more = node->size ? node->size : 1;
-        while (more < want)
+अटल व्योम set_grow(set_t *set, set_गाँठ_t *गाँठ, पूर्णांक want, पूर्णांक fill) {
+    पूर्णांक i;
+    अगर (गाँठ->आकार < want) {
+        पूर्णांक more = गाँठ->आकार ? गाँठ->आकार : 1;
+        जबतक (more < want)
             more <<= 1;
-        node->right = set_alloc(set, node->right,
-                                (size_t)more * sizeof(set_node_t *));
-        node->size = (i16_t)more;
+        गाँठ->दायाँ = set_alloc(set, गाँठ->दायाँ,
+                                (माप_प्रकार)more * माप(set_गाँठ_t *));
+        गाँठ->आकार = (i16_t)more;
     }
-    if (fill)
-        for (i = node->fill; i < want; i++)
-            node->right[i] = set->head;
-    node->fill = (i16_t)want;
+    अगर (fill)
+        क्रम (i = गाँठ->fill; i < want; i++)
+            गाँठ->दायाँ[i] = set->शीर्ष;
+    गाँठ->fill = (i16_t)want;
 }
 
 /* --private-- Return a new node. key is left uninitialized. */
-static set_node_t *set_node(set_t *set) {
-    set_node_t *node = set_alloc(set, NULL, sizeof(set_node_t));
-    node->size = 0;
-    node->fill = 0;
-    node->right = NULL;
-    return node;
+अटल set_गाँठ_t *set_गाँठ(set_t *set) {
+    set_गाँठ_t *गाँठ = set_alloc(set, शून्य, माप(set_गाँठ_t));
+    गाँठ->आकार = 0;
+    गाँठ->fill = 0;
+    गाँठ->दायाँ = शून्य;
+    वापस गाँठ;
 }
 
 /* --private-- Free the list linked from head, along with the keys. */
-static void set_sweep(set_t *set) {
-    set_node_t *step = set->head->right[0];
-    while (step != set->head) {
-        set_node_t *next = step->right[0];      /* save link to next node */
-        set_drop(set, step->key);
-        set_free(set, step->right);
+अटल व्योम set_sweep(set_t *set) {
+    set_गाँठ_t *step = set->शीर्ष->दायाँ[0];
+    जबतक (step != set->शीर्ष) {
+        set_गाँठ_t *अग्र = step->दायाँ[0];      /* save link to next node */
+        set_drop(set, step->कुंजी);
+        set_free(set, step->दायाँ);
         set_free(set, step);
-        step = next;
+        step = अग्र;
     }
 }
 
@@ -236,16 +236,16 @@ static void set_sweep(set_t *set) {
    errno.h.) The set can still be used if this happens, assuming that it didn't
    happen during set_start(). Whether set_start() completed or not, set_end()
    can be used to free the set's memory after a longjmp(). */
-SKIPSET_EXPORT void set_start(set_t *set) {
-#ifdef SET_TRACK
+SKIPSET_EXPORT व्योम set_start(set_t *set) {
+#अगर_घोषित SET_TRACK
     set->allocs = 0;
     set->memory = 0;
-#endif
-    set->head = set->path = set->node = NULL;   /* in case set_node() fails */
-    set->path = set_node(set);
-    set->head = set_node(set);
-    set_grow(set, set->head, 1, 1); /* one link back to head for empty set */
-    *(unsigned char *)&set->head->key = 137;    /* set id */
+#पूर्ण_अगर
+    set->शीर्ष = set->path = set->गाँठ = शून्य;   /* in case set_node() fails */
+    set->path = set_गाँठ(set);
+    set->शीर्ष = set_गाँठ(set);
+    set_grow(set, set->शीर्ष, 1, 1); /* one link back to head for empty set */
+    *(अचिन्हित अक्षर *)&set->शीर्ष->कुंजी = 137;    /* set id */
     set->depth = 0;
     set_uniq(&set->gen, set);
     set->ran = 1;
@@ -253,129 +253,129 @@ SKIPSET_EXPORT void set_start(set_t *set) {
 
 /* Return true if *set appears to be in a usable state. If *set has been zeroed
    out, then set_ok(set) will be false and set_end(set) will be safe. */
-SKIPSET_EXPORT int set_ok(set_t *set) {
-    return set->head != NULL &&
-           set->head->right != NULL &&
-           *(unsigned char *)&set->head->key == 137;
+SKIPSET_EXPORT पूर्णांक set_ok(set_t *set) {
+    वापस set->शीर्ष != शून्य &&
+           set->शीर्ष->दायाँ != शून्य &&
+           *(अचिन्हित अक्षर *)&set->शीर्ष->कुंजी == 137;
 }
 
-#if 0       /* not used in minizip */
+#अगर 0       /* not used in minizip */
 /* Empty the set. This frees the memory used for the previous set contents.
    After set_clear(), *set is ready for use, as if after a set_start(). */
-SKIPSET_EXPORT void set_clear(set_t *set) {
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT व्योम set_clear(set_t *set) {
+    निश्चित(set_ok(set) && "improper use");
 
     /* Free all the keys and their nodes. */
     set_sweep(set);
 
     /* Leave the head and path allocations as is. Clear their contents, with
        head pointing to itself and setting depth to zero, for an empty set. */
-    set->head->right[0] = set->head;
-    set->head->fill = 1;
+    set->शीर्ष->दायाँ[0] = set->शीर्ष;
+    set->शीर्ष->fill = 1;
     set->path->fill = 0;
     set->depth = 0;
 }
-#endif
+#पूर्ण_अगर
 
 /* Done using the set -- free all allocations. The only operation on *set
    permitted after this is set_start(). Though another set_end() would do no
    harm. This can be done at any time after a set_start(), or after a longjmp()
    on any allocation failure, including during a set_start(). */
-SKIPSET_EXPORT void set_end(set_t *set) {
-    if (set->head != NULL) {
+SKIPSET_EXPORT व्योम set_end(set_t *set) {
+    अगर (set->शीर्ष != शून्य) {
         /* Empty the set and free the head node. */
-        if (set->head->right != NULL) {
+        अगर (set->शीर्ष->दायाँ != शून्य) {
             set_sweep(set);
-            set_free(set, set->head->right);
+            set_free(set, set->शीर्ष->दायाँ);
         }
-        set_free(set, set->head);
-        set->head = NULL;
+        set_free(set, set->शीर्ष);
+        set->शीर्ष = शून्य;
     }
-    if (set->path != NULL) {
+    अगर (set->path != शून्य) {
         /* Free the path work area. */
-        set_free(set, set->path->right);
+        set_free(set, set->path->दायाँ);
         set_free(set, set->path);
-        set->path = NULL;
+        set->path = शून्य;
     }
-    if (set->node != NULL) {
+    अगर (set->गाँठ != शून्य) {
         /* Free the node that was under construction when longjmp() hit. */
-        set_drop(set, set->node->key);
-        set_free(set, set->node->right);
-        set_free(set, set->node);
-        set->node = NULL;
+        set_drop(set, set->गाँठ->कुंजी);
+        set_free(set, set->गाँठ->दायाँ);
+        set_free(set, set->गाँठ);
+        set->गाँठ = शून्य;
     }
 }
 
 /* Look for key. Return 1 if found or 0 if not. This also puts the path to get
    there in set->path, for use by set_insert(). */
-SKIPSET_EXPORT int set_found(set_t *set, set_key_t key) {
-    set_node_t *head, *here;
-    int i;
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT पूर्णांक set_found(set_t *set, set_कुंजी_t कुंजी) {
+    set_गाँठ_t *शीर्ष, *here;
+    पूर्णांक i;
+    निश्चित(set_ok(set) && "improper use");
 
     /* Start at depth. Work down and right as determined by key comparisons. */
-    head = set->head;
-    here = head;
+    शीर्ष = set->शीर्ष;
+    here = शीर्ष;
     i = set->depth;
     set_grow(set, set->path, i + 1, 0);
-    do {
-        while (here->right[i] != head &&
-               set_cmp(here->right[i]->key, key) < 0)
-            here = here->right[i];
-        set->path->right[i] = here;
-    } while (i--);
+    करो {
+        जबतक (here->दायाँ[i] != शीर्ष &&
+               set_cmp(here->दायाँ[i]->कुंजी, कुंजी) < 0)
+            here = here->दायाँ[i];
+        set->path->दायाँ[i] = here;
+    } जबतक (i--);
 
     /* See if the key matches. */
-    here = here->right[0];
-    return here != head && set_cmp(here->key, key) == 0;
+    here = here->दायाँ[0];
+    वापस here != शीर्ष && set_cmp(here->कुंजी, कुंजी) == 0;
 }
 
 /* Insert the key key. Return 0 on success, or 1 if it's already in the set. */
-SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
-    int level = 0;
-    int bit;
-    int i;
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT पूर्णांक set_जोड़ो(set_t *set, set_कुंजी_t कुंजी) {
+    पूर्णांक level = 0;
+    पूर्णांक bit;
+    पूर्णांक i;
+    निश्चित(set_ok(set) && "improper use");
 
-    if (set_found(set, key))
+    अगर (set_found(set, कुंजी))
         /* That key is already in the set. */
-        return 1;
+        वापस 1;
 
     /* Randomly generate a new level-- level 0 with probability 1/2, 1 with
        probability 1/4, 2 with probability 1/8, etc. */
-    for (;;) {
-        if (set->ran == 1)
+    क्रम (;;) {
+        अगर (set->ran == 1)
             /* Ran out. Get another 32 random bits. */
             set->ran = set_rand(&set->gen) | (1ULL << 32);
         bit = set->ran & 1;
         set->ran >>= 1;
-        if (bit)
-            break;
-        assert(level < 32767 &&
+        अगर (bit)
+            अवरोध;
+        निश्चित(level < 32767 &&
                "Overhead, without any fuss, the stars were going out.");
         level++;
     }
-    if (level > set->depth) {
+    अगर (level > set->depth) {
         /* The maximum depth is now deeper. Update the structures. */
         set_grow(set, set->path, level + 1, 1);
-        set_grow(set, set->head, level + 1, 1);
+        set_grow(set, set->शीर्ष, level + 1, 1);
         set->depth = (i16_t)level;
     }
 
     /* Make a new node for the provided key, and insert it in the lists up to
        and including level. */
-    set->node = set_node(set);
-    set->node->key = key;
-    set_grow(set, set->node, level + 1, 0);
-    for (i = 0; i <= level; i++) {
-        set->node->right[i] = set->path->right[i]->right[i];
-        set->path->right[i]->right[i] = set->node;
+    set->गाँठ = set_गाँठ(set);
+    set->गाँठ->कुंजी = कुंजी;
+    set_grow(set, set->गाँठ, level + 1, 0);
+    क्रम (i = 0; i <= level; i++) {
+        set->गाँठ->दायाँ[i] = set->path->दायाँ[i]->दायाँ[i];
+        set->path->दायाँ[i]->दायाँ[i] = set->गाँठ;
     }
-    set->node = NULL;
-    return 0;
+    set->गाँठ = शून्य;
+    वापस 0;
 }
 
-#else
-#error ** another skiplist set already created here
+#अन्यथा
+#त्रुटि ** another skiplist set already created here
 /* Would need to implement a prefix in order to support multiple sets. */
-#endif
+#पूर्ण_अगर

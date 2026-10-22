@@ -1,8 +1,8 @@
 
-#include "zfstream.h"
+#समावेश "zfstream.h"
 
 gzfilebuf::gzfilebuf() :
-  file(NULL),
+  file(शून्य),
   mode(0),
   own_file_descriptor(0)
 { }
@@ -10,298 +10,298 @@ gzfilebuf::gzfilebuf() :
 gzfilebuf::~gzfilebuf() {
 
   sync();
-  if ( own_file_descriptor )
-    close();
+  अगर ( own_file_descriptor )
+    बंद();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::खोलो( स्थिर अक्षर *name,
+                            पूर्णांक io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  अगर ( is_open() )
+    वापस शून्य;
 
-  char char_mode[10];
-  char *p = char_mode;
+  अक्षर char_mode[10];
+  अक्षर *p = char_mode;
 
-  if ( io_mode & ios::in ) {
-    mode = ios::in;
+  अगर ( io_mode & पनप::in ) {
+    mode = पनप::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
-    mode = ios::app;
+  } अन्यथा अगर ( io_mode & पनप::नत्थी ) {
+    mode = पनप::नत्थी;
     *p++ = 'a';
-  } else {
-    mode = ios::out;
+  } अन्यथा {
+    mode = पनप::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
-    mode |= ios::binary;
+  अगर ( io_mode & पनप::द्विग ) {
+    mode |= पनप::द्विग;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  अगर ( io_mode & (पनप::out|पनप::नत्थी )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  अगर ( (file = gzopen(name, char_mode)) == शून्य )
+    वापस शून्य;
 
   own_file_descriptor = 1;
 
-  return this;
+  वापस यह;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( पूर्णांक file_descriptor,
+                              पूर्णांक io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  अगर ( is_open() )
+    वापस शून्य;
 
-  char char_mode[10];
-  char *p = char_mode;
+  अक्षर char_mode[10];
+  अक्षर *p = char_mode;
 
-  if ( io_mode & ios::in ) {
-    mode = ios::in;
+  अगर ( io_mode & पनप::in ) {
+    mode = पनप::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
-    mode = ios::app;
+  } अन्यथा अगर ( io_mode & पनप::नत्थी ) {
+    mode = पनप::नत्थी;
     *p++ = 'a';
-  } else {
-    mode = ios::out;
+  } अन्यथा {
+    mode = पनप::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
-    mode |= ios::binary;
+  अगर ( io_mode & पनप::द्विग ) {
+    mode |= पनप::द्विग;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  अगर ( io_mode & (पनप::out|पनप::नत्थी )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  अगर ( (file = gzdopen(file_descriptor, char_mode)) == शून्य )
+    वापस शून्य;
 
   own_file_descriptor = 0;
 
-  return this;
+  वापस यह;
 
 }
 
-gzfilebuf *gzfilebuf::close() {
+gzfilebuf *gzfilebuf::बंद() {
 
-  if ( is_open() ) {
+  अगर ( is_open() ) {
 
     sync();
     gzclose( file );
-    file = NULL;
+    file = शून्य;
 
   }
 
-  return this;
+  वापस यह;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+पूर्णांक gzfilebuf::setcompressionlevel( पूर्णांक comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  वापस gzsetparams(file, comp_level, -2);
 
 }
 
+पूर्णांक gzfilebuf::setcompressionstrategy( पूर्णांक comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  वापस gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, पनप::seek_dir dir, पूर्णांक which ) {
+
+  वापस streampos(खातापूर्ण);
+
+}
+
+पूर्णांक gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  अगर ( !is_open() || !(mode & पनप::in) )
+    वापस खातापूर्ण;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  अगर ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    अगर ( (allocate()) == खातापूर्ण )
+      वापस खातापूर्ण;
     setp(0,0);
 
-  } else {
+  } अन्यथा {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    अगर ( in_avail() )
+      वापस (अचिन्हित अक्षर) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    अगर ( out_waiting() ) {
+      अगर ( flushbuf() == खातापूर्ण )
+        वापस खातापूर्ण;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  पूर्णांक परिणाम = fillbuf();
+  अगर ( परिणाम == खातापूर्ण ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    वापस खातापूर्ण;
   }
 
-  return (unsigned char) *gptr();
+  वापस (अचिन्हित अक्षर) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+पूर्णांक gzfilebuf::overflow( पूर्णांक c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  अगर ( !is_open() || !(mode & पनप::out) )
+    वापस खातापूर्ण;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  अगर ( !base() ) {
+    अगर ( allocate() == खातापूर्ण )
+      वापस खातापूर्ण;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } अन्यथा {
+    अगर (in_avail()) {
+        वापस खातापूर्ण;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    अगर (out_waiting()) {
+      अगर (flushbuf() == खातापूर्ण)
+        वापस खातापूर्ण;
     }
   }
 
-  int bl = blen();
+  पूर्णांक bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  अगर ( c != खातापूर्ण ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  वापस 0;
 
 }
 
-int gzfilebuf::sync() {
+पूर्णांक gzfilebuf::sync() {
 
-  if ( !is_open() )
-    return EOF;
+  अगर ( !is_open() )
+    वापस खातापूर्ण;
 
-  if ( out_waiting() )
-    return flushbuf();
+  अगर ( out_waiting() )
+    वापस flushbuf();
 
-  return 0;
+  वापस 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+पूर्णांक gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  पूर्णांक n;
+  अक्षर *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  अगर ( gzwrite( file, q, n) < n )
+    वापस खातापूर्ण;
 
   setp(0,0);
 
-  return 0;
+  वापस 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+पूर्णांक gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  पूर्णांक required;
+  अक्षर *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  पूर्णांक t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  अगर ( t <= 0) वापस खातापूर्ण;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  वापस t;
 
 }
 
 gzfilestream_common::gzfilestream_common() :
-  ios( gzfilestream_common::rdbuf() )
+  पनप( gzfilestream_common::rdbuf() )
 { }
 
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+व्योम gzfilestream_common::attach( पूर्णांक fd, पूर्णांक io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
-    clear( ios::failbit | ios::badbit );
-  else
-    clear();
-
-}
-
-void gzfilestream_common::open( const char *name, int io_mode ) {
-
-  if ( !buffer.open( name, io_mode ) )
-    clear( ios::failbit | ios::badbit );
-  else
-    clear();
+  अगर ( !बफर.attach( fd, io_mode) )
+    सफा( पनप::failbit | पनप::badbit );
+  अन्यथा
+    सफा();
 
 }
 
-void gzfilestream_common::close() {
+व्योम gzfilestream_common::खोलो( स्थिर अक्षर *name, पूर्णांक io_mode ) {
 
-  if ( !buffer.close() )
-    clear( ios::failbit | ios::badbit );
+  अगर ( !बफर.खोलो( name, io_mode ) )
+    सफा( पनप::failbit | पनप::badbit );
+  अन्यथा
+    सफा();
+
+}
+
+व्योम gzfilestream_common::बंद() {
+
+  अगर ( !बफर.बंद() )
+    सफा( पनप::failbit | पनप::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  वापस &बफर;
 }
 
 gzifstream::gzifstream() :
-  ios( gzfilestream_common::rdbuf() )
+  पनप( gzfilestream_common::rdbuf() )
 {
-  clear( ios::badbit );
+  सफा( पनप::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
-  ios( gzfilestream_common::rdbuf() )
+gzifstream::gzifstream( स्थिर अक्षर *name, पूर्णांक io_mode ) :
+  पनप( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::open( name, io_mode );
+  gzfilestream_common::खोलो( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
-  ios( gzfilestream_common::rdbuf() )
+gzifstream::gzifstream( पूर्णांक fd, पूर्णांक io_mode ) :
+  पनप( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
 }
@@ -309,19 +309,19 @@ gzifstream::gzifstream( int fd, int io_mode ) :
 gzifstream::~gzifstream() { }
 
 gzofstream::gzofstream() :
-  ios( gzfilestream_common::rdbuf() )
+  पनप( gzfilestream_common::rdbuf() )
 {
-  clear( ios::badbit );
+  सफा( पनप::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
-  ios( gzfilestream_common::rdbuf() )
+gzofstream::gzofstream( स्थिर अक्षर *name, पूर्णांक io_mode ) :
+  पनप( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::open( name, io_mode );
+  gzfilestream_common::खोलो( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
-  ios( gzfilestream_common::rdbuf() )
+gzofstream::gzofstream( पूर्णांक fd, पूर्णांक io_mode ) :
+  पनप( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
 }

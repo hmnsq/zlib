@@ -21,49 +21,49 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#ifndef ZLIB_CONST
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <time.h>
+#अगर_अघोषित ZLIB_CONST
 #  define ZLIB_CONST
-#endif
-#ifdef ZLIB_DLL
+#पूर्ण_अगर
+#अगर_घोषित ZLIB_DLL
 #  undef ZLIB_DLL
-#endif
-#include "zlib.h"
-#include "zip.h"
+#पूर्ण_अगर
+#समावेश "zlib.h"
+#समावेश "zip.h"
 
-#ifdef STDC
+#अगर_घोषित STDC
 #  include <stddef.h>
-#endif
-#ifdef NO_ERRNO_H
-    extern int errno;
-#else
+#पूर्ण_अगर
+#अगर_घोषित NO_ERRNO_H
+    बाह्य पूर्णांक त्रुटि_सं;
+#अन्यथा
 #   include <errno.h>
-#endif
+#पूर्ण_अगर
 
 
-#ifndef local
-#  define local static
-#endif
+#अगर_अघोषित local
+#  define local अटल
+#पूर्ण_अगर
 /* compile with -Dlocal if your debugger can't find static symbols */
 
-#ifndef VERSIONMADEBY
+#अगर_अघोषित VERSIONMADEBY
 # define VERSIONMADEBY   (0x0) /* platform dependent */
-#endif
+#पूर्ण_अगर
 
-#ifndef Z_BUFSIZE
-#define Z_BUFSIZE (64*1024) /* (16384) */
-#endif
+#अगर_अघोषित Z_BUFSIZE
+#घोषणा Z_BUFSIZE (64*1024) /* (16384) */
+#पूर्ण_अगर
 
-#ifndef Z_MAXFILENAMEINZIP
-#define Z_MAXFILENAMEINZIP (256)
-#endif
+#अगर_अघोषित Z_MAXFILENAMEINZIP
+#घोषणा Z_MAXFILENAMEINZIP (256)
+#पूर्ण_अगर
 
-#ifndef ALLOC
-# define ALLOC(size) (malloc(size))
-#endif
+#अगर_अघोषित ALLOC
+# define ALLOC(आकार) (दो_स्मृति(आकार))
+#पूर्ण_अगर
 
 /*
 #define SIZECENTRALDIRITEM (0x2e)
@@ -74,123 +74,123 @@
 
 
 /* NOT sure that this work on ALL platform */
-#define MAKEULONG64(a, b) ((ZPOS64_T)(((unsigned long)(a)) | ((ZPOS64_T)((unsigned long)(b))) << 32))
+#घोषणा MAKEULONG64(a, b) ((ZPOS64_T)(((अचिन्हित दीर्घ)(a)) | ((ZPOS64_T)((अचिन्हित दीर्घ)(b))) << 32))
 
-#ifndef SEEK_CUR
-#define SEEK_CUR    1
-#endif
+#अगर_अघोषित प्रस्तुत_से
+#घोषणा प्रस्तुत_से    1
+#पूर्ण_अगर
 
-#ifndef SEEK_END
-#define SEEK_END    2
-#endif
+#अगर_अघोषित अंत_से
+#घोषणा अंत_से    2
+#पूर्ण_अगर
 
-#ifndef SEEK_SET
-#define SEEK_SET    0
-#endif
+#अगर_अघोषित शुरू_से
+#घोषणा शुरू_से    0
+#पूर्ण_अगर
 
-#ifndef DEF_MEM_LEVEL
-#if MAX_MEM_LEVEL >= 8
+#अगर_अघोषित DEF_MEM_LEVEL
+#अगर MAX_MEM_LEVEL >= 8
 #  define DEF_MEM_LEVEL 8
-#else
+#अन्यथा
 #  define DEF_MEM_LEVEL  MAX_MEM_LEVEL
-#endif
-#endif
-const char zip_copyright[] =" zip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
+#पूर्ण_अगर
+#पूर्ण_अगर
+स्थिर अक्षर zip_copyright[] =" zip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
 
 
-#define SIZEDATA_INDATABLOCK (4096-(4*4))
+#घोषणा SIZEDATA_INDATABLOCK (4096-(4*4))
 
-#define LOCALHEADERMAGIC    (0x04034b50)
-#define CENTRALHEADERMAGIC  (0x02014b50)
-#define ENDHEADERMAGIC      (0x06054b50)
-#define ZIP64ENDHEADERMAGIC      (0x6064b50)
-#define ZIP64ENDLOCHEADERMAGIC   (0x7064b50)
+#घोषणा LOCALHEADERMAGIC    (0x04034b50)
+#घोषणा CENTRALHEADERMAGIC  (0x02014b50)
+#घोषणा ENDHEADERMAGIC      (0x06054b50)
+#घोषणा ZIP64ENDHEADERMAGIC      (0x6064b50)
+#घोषणा ZIP64ENDLOCHEADERMAGIC   (0x7064b50)
 
-#define FLAG_LOCALHEADER_OFFSET (0x06)
-#define CRC_LOCALHEADER_OFFSET  (0x0e)
+#घोषणा FLAG_LOCALHEADER_OFFSET (0x06)
+#घोषणा CRC_LOCALHEADER_OFFSET  (0x0e)
 
-#define SIZECENTRALHEADER (0x2e) /* 46 */
+#घोषणा SIZECENTRALHEADER (0x2e) /* 46 */
 
-typedef struct linkedlist_datablock_internal_s
+प्रकार काष्ठा linkedlist_datablock_internal_s
 {
-  struct linkedlist_datablock_internal_s* next_datablock;
+  काष्ठा linkedlist_datablock_internal_s* अग्र_datablock;
   uLong  avail_in_this_block;
   uLong  filled_in_this_block;
   uLong  unused; /* for future use and alignment */
-  unsigned char data[SIZEDATA_INDATABLOCK];
+  अचिन्हित अक्षर तथ्य[SIZEDATA_INDATABLOCK];
 } linkedlist_datablock_internal;
 
-typedef struct linkedlist_data_s
+प्रकार काष्ठा linkedlist_तथ्य_s
 {
     linkedlist_datablock_internal* first_block;
     linkedlist_datablock_internal* last_block;
-} linkedlist_data;
+} linkedlist_तथ्य;
 
 
 /* zipAlreadyThere() set functions for a set of zero-terminated strings, and
    a block_t type for reading the central directory datablocks. */
-#define SKIPSET_EXPORT static
-typedef char *set_key_t;
-#define set_cmp(a, b) strcmp(a, b)
-#define set_drop(s, k) set_free(s, k)
-#include "skipset.h"
-typedef struct {
-    unsigned char *next;        /* next byte in datablock data */
-    size_t left;                /* number of bytes left in data (at least) */
-    linkedlist_datablock_internal *node;    /* current datablock */
+#घोषणा SKIPSET_EXPORT अटल
+प्रकार अक्षर *set_कुंजी_t;
+#घोषणा set_cmp(a, b) म_भेद(a, b)
+#घोषणा set_drop(s, k) set_free(s, k)
+#समावेश "skipset.h"
+प्रकार काष्ठा {
+    अचिन्हित अक्षर *अग्र;        /* next byte in datablock data */
+    माप_प्रकार बायाँ;                /* number of bytes left in data (at least) */
+    linkedlist_datablock_internal *गाँठ;    /* current datablock */
 } block_t;
 
 
-typedef struct
+प्रकार काष्ठा
 {
     z_stream stream;            /* zLib stream structure for inflate */
-#ifdef HAVE_BZIP2
+#अगर_घोषित HAVE_BZIP2
     bz_stream bstream;          /* bzLib stream structure for bziped */
-#endif
+#पूर्ण_अगर
 
-    int  stream_initialised;    /* 1 is stream is initialised */
-    uInt pos_in_buffered_data;  /* last written byte in buffered_data */
+    पूर्णांक  stream_initialised;    /* 1 is stream is initialised */
+    uInt pos_in_buffered_तथ्य;  /* last written byte in buffered_data */
 
     ZPOS64_T pos_local_header;     /* offset of the local header of the file
                                      currently writing */
-    char* central_header;       /* central header data for the current file */
-    uLong size_centralExtra;
-    uLong size_centralheader;   /* size of the central header for cur file */
-    uLong size_centralExtraFree; /* Extra bytes allocated to the centralheader but that are not used */
+    अक्षर* central_header;       /* central header data for the current file */
+    uLong आकार_central_Extra;
+    uLong आकार_centralheader;   /* size of the central header for cur file */
+    uLong आकार_central_Extra_Free; /* Extra bytes allocated to the centralheader but that are not used */
     uLong flag;                 /* flag of the file currently writing */
 
-    int  method;                /* compression method of file currently wr.*/
-    int  raw;                   /* 1 for directly writing raw data */
-    Byte buffered_data[Z_BUFSIZE];/* buffer contain compressed data to be writ*/
+    पूर्णांक  method;                /* compression method of file currently wr.*/
+    पूर्णांक  raw;                   /* 1 for directly writing raw data */
+    Byte buffered_तथ्य[Z_BUFSIZE];/* buffer contain compressed data to be writ*/
     uLong dosDate;
     uLong crc32;
-    int  encrypt;
-    int  zip64;               /* Add ZIP64 extended information in the extra field */
+    पूर्णांक  encrypt;
+    पूर्णांक  zip64;               /* Add ZIP64 extended information in the extra field */
     ZPOS64_T pos_zip64extrainfo;
-    ZPOS64_T totalCompressedData;
-    ZPOS64_T totalUncompressedData;
-#ifndef NOCRYPT
-    unsigned long keys[3];     /* keys defining the pseudo-random sequence */
-    const z_crc_t* pcrc_32_tab;
-    unsigned crypt_header_size;
-#endif
+    ZPOS64_T योग_Compressed_तथ्य;
+    ZPOS64_T योग_Uncompressed_तथ्य;
+#अगर_अघोषित NOCRYPT
+    अचिन्हित दीर्घ कुंजियाँ[3];     /* keys defining the pseudo-random sequence */
+    स्थिर z_crc_t* pcrc_32_tab;
+    अचिन्हित crypt_header_आकार;
+#पूर्ण_अगर
 } curfile64_info;
 
-typedef struct
+प्रकार काष्ठा
 {
     zlib_filefunc64_32_def z_filefunc;
     voidpf filestream;        /* io structure of the zipfile */
-    linkedlist_data central_dir;/* datablock with central dir in construction*/
-    int  in_opened_file_inzip;  /* 1 if a file in the zip is currently writ.*/
+    linkedlist_तथ्य central_dir;/* datablock with central dir in construction*/
+    पूर्णांक  in_opened_file_inzip;  /* 1 if a file in the zip is currently writ.*/
     curfile64_info ci;            /* info on the file currently writing */
 
     ZPOS64_T begin_pos;            /* position of the beginning of the zipfile */
     ZPOS64_T add_position_when_writing_offset;
-    ZPOS64_T number_entry;
+    ZPOS64_T संख्या_entry;
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    char *globalcomment;
-#endif
+#अगर_अघोषित NO_ADDFILEINEXISTINGZIP
+    अक्षर *globalcomment;
+#पूर्ण_अगर
 
     /* Support for zipAlreadyThere(). */
     set_t set;              /* set for detecting name collisions */
@@ -199,83 +199,83 @@ typedef struct
 } zip64_internal;
 
 
-#ifndef NOCRYPT
-#define INCLUDECRYPTINGCODE_IFCRYPTALLOWED
-#include "crypt.h"
-#endif
+#अगर_अघोषित NOCRYPT
+#घोषणा INCLUDECRYPTINGCODE_IFCRYPTALLOWED
+#समावेश "crypt.h"
+#पूर्ण_अगर
 
-local linkedlist_datablock_internal* allocate_new_datablock(void) {
+local linkedlist_datablock_internal* allocate_new_datablock(व्योम) {
     linkedlist_datablock_internal* ldi;
     ldi = (linkedlist_datablock_internal*)
-                 ALLOC(sizeof(linkedlist_datablock_internal));
-    if (ldi!=NULL)
+                 ALLOC(माप(linkedlist_datablock_internal));
+    अगर (ldi!=शून्य)
     {
-        ldi->next_datablock = NULL ;
+        ldi->अग्र_datablock = शून्य ;
         ldi->filled_in_this_block = 0 ;
         ldi->avail_in_this_block = SIZEDATA_INDATABLOCK ;
     }
-    return ldi;
+    वापस ldi;
 }
 
-local void free_datablock(linkedlist_datablock_internal* ldi) {
-    while (ldi!=NULL)
+local व्योम free_datablock(linkedlist_datablock_internal* ldi) {
+    जबतक (ldi!=शून्य)
     {
-        linkedlist_datablock_internal* ldinext = ldi->next_datablock;
-        free(ldi);
+        linkedlist_datablock_internal* ldinext = ldi->अग्र_datablock;
+        मुक्त(ldi);
         ldi = ldinext;
     }
 }
 
-local void init_linkedlist(linkedlist_data* ll) {
-    ll->first_block = ll->last_block = NULL;
+local व्योम init_linkedlist(linkedlist_तथ्य* ll) {
+    ll->first_block = ll->last_block = शून्य;
 }
 
-local void free_linkedlist(linkedlist_data* ll) {
+local व्योम free_linkedlist(linkedlist_तथ्य* ll) {
     free_datablock(ll->first_block);
-    ll->first_block = ll->last_block = NULL;
+    ll->first_block = ll->last_block = शून्य;
 }
 
 
-local int add_data_in_datablock(linkedlist_data* ll, const void* buf, uLong len) {
+local पूर्णांक add_तथ्य_in_datablock(linkedlist_तथ्य* ll, स्थिर व्योम* buf, uLong len) {
     linkedlist_datablock_internal* ldi;
-    const unsigned char* from_copy;
+    स्थिर अचिन्हित अक्षर* from_copy;
 
-    if (ll==NULL)
-        return ZIP_INTERNALERROR;
+    अगर (ll==शून्य)
+        वापस ZIP_INTERNALERROR;
 
-    if (ll->last_block == NULL)
+    अगर (ll->last_block == शून्य)
     {
         ll->first_block = ll->last_block = allocate_new_datablock();
-        if (ll->first_block == NULL)
-            return ZIP_INTERNALERROR;
+        अगर (ll->first_block == शून्य)
+            वापस ZIP_INTERNALERROR;
     }
 
     ldi = ll->last_block;
-    from_copy = (const unsigned char*)buf;
+    from_copy = (स्थिर अचिन्हित अक्षर*)buf;
 
-    while (len>0)
+    जबतक (len>0)
     {
         uInt copy_this;
         uInt i;
-        unsigned char* to_copy;
+        अचिन्हित अक्षर* to_copy;
 
-        if (ldi->avail_in_this_block==0)
+        अगर (ldi->avail_in_this_block==0)
         {
-            ldi->next_datablock = allocate_new_datablock();
-            if (ldi->next_datablock == NULL)
-                return ZIP_INTERNALERROR;
-            ldi = ldi->next_datablock ;
+            ldi->अग्र_datablock = allocate_new_datablock();
+            अगर (ldi->अग्र_datablock == शून्य)
+                वापस ZIP_INTERNALERROR;
+            ldi = ldi->अग्र_datablock ;
             ll->last_block = ldi;
         }
 
-        if (ldi->avail_in_this_block < len)
+        अगर (ldi->avail_in_this_block < len)
             copy_this = (uInt)ldi->avail_in_this_block;
-        else
+        अन्यथा
             copy_this = (uInt)len;
 
-        to_copy = &(ldi->data[ldi->filled_in_this_block]);
+        to_copy = &(ldi->तथ्य[ldi->filled_in_this_block]);
 
-        for (i=0;i<copy_this;i++)
+        क्रम (i=0;i<copy_this;i++)
             *(to_copy+i)=*(from_copy+i);
 
         ldi->filled_in_this_block += copy_this;
@@ -283,7 +283,7 @@ local int add_data_in_datablock(linkedlist_data* ll, const void* buf, uLong len)
         from_copy += copy_this ;
         len -= copy_this;
     }
-    return ZIP_OK;
+    वापस ZIP_OK;
 }
 
 /* zipAlreadyThere() operations. "set" in the zip internal structure keeps the
@@ -299,188 +299,188 @@ local int add_data_in_datablock(linkedlist_data* ll, const void* buf, uLong len)
 
    Initialize *block to the head of list. This should only be called once the
    list has at least some data in it, i.e. list->first_block is not NULL. */
-local void block_init(block_t *block, linkedlist_data *list) {
-    block->node = list->first_block;
-    block->next = block->node->data;
-    block->left = block->node->filled_in_this_block;
+local व्योम block_init(block_t *block, linkedlist_तथ्य *list) {
+    block->गाँठ = list->first_block;
+    block->अग्र = block->गाँठ->तथ्य;
+    block->बायाँ = block->गाँठ->filled_in_this_block;
 }
 
 /* Mark *block as bad, with all subsequent reads returning end, even if more
    data is added to the datablocks. This is invoked if the central directory is
    invalid, so there is no longer any point in attempting to interpret it. */
-local void block_stop(block_t *block) {
-    block->left = 0;
-    block->next = NULL;
+local व्योम block_stop(block_t *block) {
+    block->बायाँ = 0;
+    block->अग्र = शून्य;
 }
 
 /* Return true if *block has reached the end of the data in the datablocks. */
-local int block_end(block_t *block) {
-    linkedlist_datablock_internal *node = block->node;
-    if (node == NULL)
+local पूर्णांक block_end(block_t *block) {
+    linkedlist_datablock_internal *गाँठ = block->गाँठ;
+    अगर (गाँठ == शून्य)
         /* This block was previously terminated with extreme prejudice. */
-        return 1;
-    if (block->next < node->data + node->filled_in_this_block)
+        वापस 1;
+    अगर (block->अग्र < गाँठ->तथ्य + गाँठ->filled_in_this_block)
         /* There are more bytes to read in the current datablock. */
-        return 0;
-    while (node->next_datablock != NULL) {
-        if (node->filled_in_this_block != 0)
+        वापस 0;
+    जबतक (गाँठ->अग्र_datablock != शून्य) {
+        अगर (गाँठ->filled_in_this_block != 0)
             /* There are some bytes in a later datablock. */
-            return 0;
-        node = node->next_datablock;
+            वापस 0;
+        गाँठ = गाँठ->अग्र_datablock;
     }
     /* Reached the end of the list of datablocks. There's nothing. */
-    return 1;
+    वापस 1;
 }
 
 /* Return one byte from *block, or -1 if the end is reached. */
-local int block_get(block_t *block) {
-    while (block->left == 0) {
-        if (block->node == NULL)
+local पूर्णांक block_get(block_t *block) {
+    जबतक (block->बायाँ == 0) {
+        अगर (block->गाँठ == शून्य)
             /* We've been marked bad. Return end. */
-            return -1;
+            वापस -1;
         /* Update left in case more was filled in since we were last here. */
-        block->left = block->node->filled_in_this_block -
-                      (size_t)(block->next - block->node->data);
-        if (block->left != 0)
+        block->बायाँ = block->गाँठ->filled_in_this_block -
+                      (माप_प्रकार)(block->अग्र - block->गाँठ->तथ्य);
+        अगर (block->बायाँ != 0)
             /* There was indeed more data appended in the current datablock. */
-            break;
-        if (block->node->next_datablock == NULL)
+            अवरोध;
+        अगर (block->गाँठ->अग्र_datablock == शून्य)
             /* No more data here, and there is no next datablock. At the end. */
-            return -1;
+            वापस -1;
         /* Try the next datablock for more data. */
-        block->node = block->node->next_datablock;
-        block->next = block->node->data;
-        block->left = block->node->filled_in_this_block;
+        block->गाँठ = block->गाँठ->अग्र_datablock;
+        block->अग्र = block->गाँठ->तथ्य;
+        block->बायाँ = block->गाँठ->filled_in_this_block;
     }
     /* We have a byte to return. */
-    block->left--;
-    return *block->next++;
+    block->बायाँ--;
+    वापस *block->अग्र++;
 }
 
 /* Return a 16-bit unsigned little-endian value from block, or a negative value
    if the end is reached. */
-local long block_get2(block_t *block) {
-    int low = block_get(block);
-    int high = block_get(block);
-    return low < 0 || high < 0 ? -1 : low | ((long)high << 8);
+local दीर्घ block_get2(block_t *block) {
+    पूर्णांक निचला = block_get(block);
+    पूर्णांक ऊपरी = block_get(block);
+    वापस निचला < 0 || ऊपरी < 0 ? -1 : निचला | ((दीर्घ)ऊपरी << 8);
 }
 
 /* Read up to len bytes from block into buf. Return the number of bytes read. */
-local size_t block_read(block_t *block, unsigned char *buf, size_t len) {
-    size_t need = len;
-    size_t take;
-    while (need) {
-        if (block->left == 0) {
+local माप_प्रकार block_read(block_t *block, अचिन्हित अक्षर *buf, माप_प्रकार len) {
+    माप_प्रकार need = len;
+    माप_प्रकार take;
+    जबतक (need) {
+        अगर (block->बायाँ == 0) {
             /* Get a byte to update and step through the linked list as needed. */
-            int got = block_get(block);
-            if (got == -1)
+            पूर्णांक got = block_get(block);
+            अगर (got == -1)
                 /* Reached the end. */
-                break;
-            *buf++ = (unsigned char)got;
+                अवरोध;
+            *buf++ = (अचिन्हित अक्षर)got;
             need--;
-            continue;
+            जारी;
         }
-        take = need > block->left ? block->left : need;
-        memcpy(buf, block->next, take);
-        block->next += take;
-        block->left -= take;
+        take = need > block->बायाँ ? block->बायाँ : need;
+        स_नकल(buf, block->अग्र, take);
+        block->अग्र += take;
+        block->बायाँ -= take;
         buf += take;
         need -= take;
     }
-    return len - need;      /* return the number of bytes copied */
+    वापस len - need;      /* return the number of bytes copied */
 }
 
 /* Skip n bytes in block. Return 0 on success or -1 if there are less than n
    bytes to the end. */
-local int block_skip(block_t *block, size_t n) {
-    while (n > block->left) {
-        n -= block->left;
-        block->next += block->left;
-        block->left = 0;
-        if (block_get(block) == -1)
-            return -1;
+local पूर्णांक block_skip(block_t *block, माप_प्रकार n) {
+    जबतक (n > block->बायाँ) {
+        n -= block->बायाँ;
+        block->अग्र += block->बायाँ;
+        block->बायाँ = 0;
+        अगर (block_get(block) == -1)
+            वापस -1;
         n--;
     }
-    block->next += n;
-    block->left -= n;
-    return 0;
+    block->अग्र += n;
+    block->बायाँ -= n;
+    वापस 0;
 }
 
 /* Process the next central directory record at *block. Return the allocated,
    zero-terminated file name, or NULL for end of input or invalid data. If
    invalid, *block is marked bad. This uses *set for the allocation of memory. */
-local char *block_central_name(block_t *block, set_t *set) {
-    unsigned flen, xlen, clen;
-    char *name = NULL;
-    for (;;) {
-        if (block_end(block))
+local अक्षर *block_central_name(block_t *block, set_t *set) {
+    अचिन्हित flen, xlen, clen;
+    अक्षर *name = शून्य;
+    क्रम (;;) {
+        अगर (block_end(block))
             /* At the end of the central directory (so far). */
-            return NULL;
+            वापस शून्य;
 
         /* Check for a central directory record signature. */
-        if (block_get2(block) != (CENTRALHEADERMAGIC & 0xffff) ||
+        अगर (block_get2(block) != (CENTRALHEADERMAGIC & 0xffff) ||
             block_get2(block) != (CENTRALHEADERMAGIC >> 16))
             /* Incorrect signature. */
-            break;
+            अवरोध;
 
         /* Go through the remaining fixed-length portion of the record,
            extracting the lengths of the three variable-length fields. */
         block_skip(block, 24);
-        flen = (unsigned)block_get2(block);    /* file name length */
-        xlen = (unsigned)block_get2(block);    /* extra length */
-        clen = (unsigned)block_get2(block);    /* comment length */
-        if (block_skip(block, 12) == -1)
+        flen = (अचिन्हित)block_get2(block);    /* file name length */
+        xlen = (अचिन्हित)block_get2(block);    /* extra length */
+        clen = (अचिन्हित)block_get2(block);    /* comment length */
+        अगर (block_skip(block, 12) == -1)
             /* Premature end of the record. */
-            break;
+            अवरोध;
 
         /* Extract the name and skip over the extra and comment fields. */
-        name = set_alloc(set, NULL, flen + 1);
-        if (block_read(block, (unsigned char *)name, flen) < flen ||
+        name = set_alloc(set, शून्य, flen + 1);
+        अगर (block_read(block, (अचिन्हित अक्षर *)name, flen) < flen ||
             block_skip(block, xlen + clen) == -1)
             /* Premature end of the record. */
-            break;
+            अवरोध;
 
         /* Check for embedded nuls in the name. */
-        if (memchr(name, 0, flen) != NULL) {
+        अगर (स_प्रथम(name, 0, flen) != शून्य) {
             /* This name can never match the zero-terminated name provided to
                zipAlreadyThere(), so we discard it and go back to get another
                name. (Who the heck is putting nuls inside their zip file entry
                names anyway?) */
             set_free(set, name);
-            continue;
+            जारी;
         }
 
         /* All good. Return the zero-terminated file name. */
         name[flen] = 0;
-        return name;
+        वापस name;
     }
 
     /* Invalid signature or premature end of the central directory record.
        Abandon trying to process the central directory. */
     set_free(set, name);
     block_stop(block);
-    return NULL;
+    वापस शून्य;
 }
 
 /* Return 0 if name is not in the central directory so far, 1 if it is, -1 if
    the central directory is invalid, -2 if out of memory, or ZIP_PARAMERROR if
    file is NULL. */
-extern int ZEXPORT zipAlreadyThere(zipFile file, char const *name) {
-    size_t len;
-    char *copy;
-    int found;
+बाह्य पूर्णांक ZEXPORT zipAlreadyThere(zipFile file, अक्षर स्थिर *name) {
+    माप_प्रकार len;
+    अक्षर *copy;
+    पूर्णांक found;
     zip64_internal *zip = file;
-    if (zip == NULL)
-        return ZIP_PARAMERROR;
-    if (zip->central_dir.first_block == NULL)
+    अगर (zip == शून्य)
+        वापस ZIP_PARAMERROR;
+    अगर (zip->central_dir.first_block == शून्य)
         /* No central directory yet, so no, name isn't there. */
-        return 0;
-    if (setjmp(zip->set.env)) {
+        वापस 0;
+    अगर (बनाओ_लाँघ(zip->set.env)) {
         /* Memory allocation failure. */
         set_end(&zip->set);
-        return -2;
+        वापस -2;
     }
-    if (!set_ok(&zip->set)) {
+    अगर (!set_ok(&zip->set)) {
         /* This is the first time here with some central directory content. We
            construct this set of names only on demand. Prepare set and block. */
         set_start(&zip->set);
@@ -490,73 +490,73 @@ extern int ZEXPORT zipAlreadyThere(zipFile file, char const *name) {
     /* Update the set of names from the current central directory contents.
        This reads any new central directory records since the last time we were
        here. */
-    for (;;) {
-        char *there = block_central_name(&zip->block, &zip->set);
-        if (there == NULL) {
-            if (zip->block.next == NULL)
+    क्रम (;;) {
+        अक्षर *there = block_central_name(&zip->block, &zip->set);
+        अगर (there == शून्य) {
+            अगर (zip->block.अग्र == शून्य)
                 /* The central directory is invalid. */
-                return -1;
-            break;
+                वापस -1;
+            अवरोध;
         }
 
         /* Add there to the set. */
-        if (set_insert(&zip->set, there))
+        अगर (set_जोड़ो(&zip->set, there))
             /* There's already a duplicate in the central directory! We'll just
                let this be and carry on. */
             set_free(&zip->set, there);
     }
 
     /* Return true if name is in the central directory. */
-    len = strlen(name);
-    copy = set_alloc(&zip->set, NULL, len + 1);
-    memcpy(copy, name, len + 1);
+    len = म_माप(name);
+    copy = set_alloc(&zip->set, शून्य, len + 1);
+    स_नकल(copy, name, len + 1);
     found = set_found(&zip->set, copy);
     set_free(&zip->set, copy);
-    return found;
+    वापस found;
 }
 
 
 /****************************************************************************/
 
-#ifndef NO_ADDFILEINEXISTINGZIP
+#अगर_अघोषित NO_ADDFILEINEXISTINGZIP
 /* ===========================================================================
    Inputs a long in LSB order to the given file
    nbByte == 1, 2 ,4 or 8 (byte, short or long, ZPOS64_T)
 */
 
-local int zip64local_putValue(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T x, int nbByte) {
-    unsigned char buf[8];
-    int n;
-    for (n = 0; n < nbByte; n++)
+local पूर्णांक zip64local_put_मूल्य(स्थिर zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T x, पूर्णांक nbByte) {
+    अचिन्हित अक्षर buf[8];
+    पूर्णांक n;
+    क्रम (n = 0; n < nbByte; n++)
     {
-        buf[n] = (unsigned char)(x & 0xff);
+        buf[n] = (अचिन्हित अक्षर)(x & 0xff);
         x >>= 8;
     }
-    if (x != 0)
+    अगर (x != 0)
       {     /* data overflow - hack for ZIP64 (X Roche) */
-      for (n = 0; n < nbByte; n++)
+      क्रम (n = 0; n < nbByte; n++)
         {
           buf[n] = 0xff;
         }
       }
 
-    if (ZWRITE64(*pzlib_filefunc_def,filestream,buf,(uLong)nbByte)!=(uLong)nbByte)
-        return ZIP_ERRNO;
-    else
-        return ZIP_OK;
+    अगर (ZWRITE64(*pzlib_filefunc_def,filestream,buf,(uLong)nbByte)!=(uLong)nbByte)
+        वापस ZIP_ERRNO;
+    अन्यथा
+        वापस ZIP_OK;
 }
 
-local void zip64local_putValue_inmemory (void* dest, ZPOS64_T x, int nbByte) {
-    unsigned char* buf=(unsigned char*)dest;
-    int n;
-    for (n = 0; n < nbByte; n++) {
-        buf[n] = (unsigned char)(x & 0xff);
+local व्योम zip64local_put_मूल्य_inmemory (व्योम* dest, ZPOS64_T x, पूर्णांक nbByte) {
+    अचिन्हित अक्षर* buf=(अचिन्हित अक्षर*)dest;
+    पूर्णांक n;
+    क्रम (n = 0; n < nbByte; n++) {
+        buf[n] = (अचिन्हित अक्षर)(x & 0xff);
         x >>= 8;
     }
 
-    if (x != 0)
+    अगर (x != 0)
     {     /* data overflow - hack for ZIP64 */
-       for (n = 0; n < nbByte; n++)
+       क्रम (n = 0; n < nbByte; n++)
        {
           buf[n] = 0xff;
        }
@@ -566,13 +566,13 @@ local void zip64local_putValue_inmemory (void* dest, ZPOS64_T x, int nbByte) {
 /****************************************************************************/
 
 
-local uLong zip64local_TmzDateToDosDate(const tm_zip* ptm) {
+local uLong zip64local_TmzDateToDosDate(स्थिर tm_zip* ptm) {
     uLong year = (uLong)ptm->tm_year;
-    if (year>=1980)
+    अगर (year>=1980)
         year-=1980;
-    else if (year>=80)
+    अन्यथा अगर (year>=80)
         year-=80;
-    return
+    वापस
       (uLong) (((uLong)(ptm->tm_mday) + (32 * (uLong)(ptm->tm_mon+1)) + (512 * year)) << 16) |
         (((uLong)ptm->tm_sec/2) + (32 * (uLong)ptm->tm_min) + (2048 * (uLong)ptm->tm_hour));
 }
@@ -580,20 +580,20 @@ local uLong zip64local_TmzDateToDosDate(const tm_zip* ptm) {
 
 /****************************************************************************/
 
-local int zip64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, int* pi) {
-    unsigned char c;
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,&c,1);
-    if (err==1)
+local पूर्णांक zip64local_getByte(स्थिर zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, पूर्णांक* pi) {
+    अचिन्हित अक्षर c;
+    पूर्णांक err = (पूर्णांक)ZREAD64(*pzlib_filefunc_def,filestream,&c,1);
+    अगर (err==1)
     {
-        *pi = (int)c;
-        return ZIP_OK;
+        *pi = (पूर्णांक)c;
+        वापस ZIP_OK;
     }
-    else
+    अन्यथा
     {
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return ZIP_ERRNO;
-        else
-            return ZIP_EOF;
+        अगर (ZERROR64(*pzlib_filefunc_def,filestream))
+            वापस ZIP_ERRNO;
+        अन्यथा
+            वापस ZIP_EOF;
     }
 }
 
@@ -601,292 +601,292 @@ local int zip64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, v
 /* ===========================================================================
    Reads a long in LSB order from the given gz_stream. Sets
 */
-local int zip64local_getShort(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
+local पूर्णांक zip64local_getShort(स्थिर zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
     uLong x ;
-    int i = 0;
-    int err;
+    पूर्णांक i = 0;
+    पूर्णांक err;
 
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x = (uLong)i;
 
-    if (err==ZIP_OK)
+    अगर (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<8;
 
-    if (err==ZIP_OK)
+    अगर (err==ZIP_OK)
         *pX = x;
-    else
+    अन्यथा
         *pX = 0;
-    return err;
+    वापस err;
 }
 
-local int zip64local_getLong(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
+local पूर्णांक zip64local_getLong(स्थिर zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
     uLong x ;
-    int i = 0;
-    int err;
+    पूर्णांक i = 0;
+    पूर्णांक err;
 
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x = (uLong)i;
 
-    if (err==ZIP_OK)
+    अगर (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<8;
 
-    if (err==ZIP_OK)
+    अगर (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<16;
 
-    if (err==ZIP_OK)
+    अगर (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<24;
 
-    if (err==ZIP_OK)
+    अगर (err==ZIP_OK)
         *pX = x;
-    else
+    अन्यथा
         *pX = 0;
-    return err;
+    वापस err;
 }
 
 
-local int zip64local_getLong64(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T *pX) {
+local पूर्णांक zip64local_getLong64(स्थिर zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T *pX) {
   ZPOS64_T x;
-  int i = 0;
-  int err;
+  पूर्णांक i = 0;
+  पूर्णांक err;
 
   err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x = (ZPOS64_T)i;
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<8;
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<16;
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<24;
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<32;
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<40;
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<48;
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<56;
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
     *pX = x;
-  else
+  अन्यथा
     *pX = 0;
 
-  return err;
+  वापस err;
 }
 
-#ifndef BUFREADCOMMENT
-#define BUFREADCOMMENT (0x400)
-#endif
+#अगर_अघोषित BUFREADCOMMENT
+#घोषणा BUFREADCOMMENT (0x400)
+#पूर्ण_अगर
 /*
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T zip64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-  unsigned char* buf;
-  ZPOS64_T uSizeFile;
+local ZPOS64_T zip64local_खोज_Central_Dir(स्थिर zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+  अचिन्हित अक्षर* buf;
+  ZPOS64_T u_आकार_File;
   ZPOS64_T uBackRead;
   ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
   ZPOS64_T uPosFound=0;
 
-  if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-    return 0;
+  अगर (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
+    वापस 0;
 
 
-  uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+  u_आकार_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-  if (uMaxBack>uSizeFile)
-    uMaxBack = uSizeFile;
+  अगर (uMaxBack>u_आकार_File)
+    uMaxBack = u_आकार_File;
 
-  buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-  if (buf==NULL)
-    return 0;
+  buf = (अचिन्हित अक्षर*)ALLOC(BUFREADCOMMENT+4);
+  अगर (buf==शून्य)
+    वापस 0;
 
   uBackRead = 4;
-  while (uBackRead<uMaxBack)
+  जबतक (uBackRead<uMaxBack)
   {
-    uLong uReadSize;
+    uLong u_Read_आकार;
     ZPOS64_T uReadPos ;
-    int i;
-    if (uBackRead+BUFREADCOMMENT>uMaxBack)
+    पूर्णांक i;
+    अगर (uBackRead+BUFREADCOMMENT>uMaxBack)
       uBackRead = uMaxBack;
-    else
+    अन्यथा
       uBackRead+=BUFREADCOMMENT;
-    uReadPos = uSizeFile-uBackRead ;
+    uReadPos = u_आकार_File-uBackRead ;
 
-    uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-      (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-      break;
+    u_Read_आकार = ((BUFREADCOMMENT+4) < (u_आकार_File-uReadPos)) ?
+      (BUFREADCOMMENT+4) : (uLong)(u_आकार_File-uReadPos);
+    अगर (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+      अवरोध;
 
-    if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-      break;
+    अगर (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_आकार)!=u_Read_आकार)
+      अवरोध;
 
-    for (i=(int)uReadSize-3; (i--)>0;)
-      if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+    क्रम (i=(पूर्णांक)u_Read_आकार-3; (i--)>0;)
+      अगर (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
         ((*(buf+i+2))==0x05) && ((*(buf+i+3))==0x06))
       {
-        uPosFound = uReadPos+(unsigned)i;
-        break;
+        uPosFound = uReadPos+(अचिन्हित)i;
+        अवरोध;
       }
 
-    if (uPosFound!=0)
-      break;
+    अगर (uPosFound!=0)
+      अवरोध;
   }
-  free(buf);
-  return uPosFound;
+  मुक्त(buf);
+  वापस uPosFound;
 }
 
 /*
 Locate the End of Zip64 Central directory locator and from there find the CD of a zipfile (at the end, just before
 the global comment)
 */
-local ZPOS64_T zip64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-  unsigned char* buf;
-  ZPOS64_T uSizeFile;
+local ZPOS64_T zip64local_खोज_Central_Dir64(स्थिर zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+  अचिन्हित अक्षर* buf;
+  ZPOS64_T u_आकार_File;
   ZPOS64_T uBackRead;
   ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
   ZPOS64_T uPosFound=0;
   uLong uL;
   ZPOS64_T relativeOffset;
 
-  if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-    return 0;
+  अगर (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
+    वापस 0;
 
-  uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+  u_आकार_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-  if (uMaxBack>uSizeFile)
-    uMaxBack = uSizeFile;
+  अगर (uMaxBack>u_आकार_File)
+    uMaxBack = u_आकार_File;
 
-  buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-  if (buf==NULL)
-    return 0;
+  buf = (अचिन्हित अक्षर*)ALLOC(BUFREADCOMMENT+4);
+  अगर (buf==शून्य)
+    वापस 0;
 
   uBackRead = 4;
-  while (uBackRead<uMaxBack)
+  जबतक (uBackRead<uMaxBack)
   {
-    uLong uReadSize;
+    uLong u_Read_आकार;
     ZPOS64_T uReadPos;
-    int i;
-    if (uBackRead+BUFREADCOMMENT>uMaxBack)
+    पूर्णांक i;
+    अगर (uBackRead+BUFREADCOMMENT>uMaxBack)
       uBackRead = uMaxBack;
-    else
+    अन्यथा
       uBackRead+=BUFREADCOMMENT;
-    uReadPos = uSizeFile-uBackRead ;
+    uReadPos = u_आकार_File-uBackRead ;
 
-    uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-      (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-      break;
+    u_Read_आकार = ((BUFREADCOMMENT+4) < (u_आकार_File-uReadPos)) ?
+      (BUFREADCOMMENT+4) : (uLong)(u_आकार_File-uReadPos);
+    अगर (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+      अवरोध;
 
-    if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-      break;
+    अगर (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_आकार)!=u_Read_आकार)
+      अवरोध;
 
-    for (i=(int)uReadSize-3; (i--)>0;)
+    क्रम (i=(पूर्णांक)u_Read_आकार-3; (i--)>0;)
     {
       /* Signature "0x07064b50" Zip64 end of central directory locator */
-      if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) && ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
+      अगर (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) && ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
       {
-        uPosFound = uReadPos+(unsigned)i;
-        break;
+        uPosFound = uReadPos+(अचिन्हित)i;
+        अवरोध;
       }
     }
 
-      if (uPosFound!=0)
-        break;
+      अगर (uPosFound!=0)
+        अवरोध;
   }
 
-  free(buf);
-  if (uPosFound == 0)
-    return 0;
+  मुक्त(buf);
+  अगर (uPosFound == 0)
+    वापस 0;
 
   /* Zip64 end of central directory locator */
-  if (ZSEEK64(*pzlib_filefunc_def,filestream, uPosFound,ZLIB_FILEFUNC_SEEK_SET)!=0)
-    return 0;
+  अगर (ZSEEK64(*pzlib_filefunc_def,filestream, uPosFound,ZLIB_FILEFUNC_SEEK_SET)!=0)
+    वापस 0;
 
   /* the signature, already checked */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
+  अगर (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    वापस 0;
 
   /* number of the disk with the start of the zip64 end of central directory */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
-  if (uL != 0)
-    return 0;
+  अगर (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    वापस 0;
+  अगर (uL != 0)
+    वापस 0;
 
   /* relative offset of the zip64 end of central directory record */
-  if (zip64local_getLong64(pzlib_filefunc_def,filestream,&relativeOffset)!=ZIP_OK)
-    return 0;
+  अगर (zip64local_getLong64(pzlib_filefunc_def,filestream,&relativeOffset)!=ZIP_OK)
+    वापस 0;
 
   /* total number of disks */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
-  if (uL != 1)
-    return 0;
+  अगर (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    वापस 0;
+  अगर (uL != 1)
+    वापस 0;
 
   /* Goto Zip64 end of central directory record */
-  if (ZSEEK64(*pzlib_filefunc_def,filestream, relativeOffset,ZLIB_FILEFUNC_SEEK_SET)!=0)
-    return 0;
+  अगर (ZSEEK64(*pzlib_filefunc_def,filestream, relativeOffset,ZLIB_FILEFUNC_SEEK_SET)!=0)
+    वापस 0;
 
   /* the signature */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
+  अगर (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    वापस 0;
 
-  if (uL != 0x06064b50) /* signature of 'Zip64 end of central directory' */
-    return 0;
+  अगर (uL != 0x06064b50) /* signature of 'Zip64 end of central directory' */
+    वापस 0;
 
-  return relativeOffset;
+  वापस relativeOffset;
 }
 
-local int LoadCentralDirectoryRecord(zip64_internal* pziinit) {
-  int err=ZIP_OK;
+local पूर्णांक LoadCentralDirectoryRecord(zip64_internal* pziinit) {
+  पूर्णांक err=ZIP_OK;
   ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
 
-  ZPOS64_T size_central_dir;     /* size of the central directory  */
+  ZPOS64_T आकार_central_dir;     /* size of the central directory  */
   ZPOS64_T offset_central_dir;   /* offset of start of central directory */
   ZPOS64_T central_pos;
   uLong uL;
 
-  uLong number_disk;          /* number of the current disk, used for
+  uLong संख्या_disk;          /* number of the current disk, used for
                               spanning ZIP, unsupported, always 0*/
-  uLong number_disk_with_CD;  /* number of the disk with central dir, used
+  uLong संख्या_disk_with_CD;  /* number of the disk with central dir, used
                               for spanning ZIP, unsupported, always 0*/
-  ZPOS64_T number_entry;
-  ZPOS64_T number_entry_CD;      /* total number of entries in
+  ZPOS64_T संख्या_entry;
+  ZPOS64_T संख्या_entry_CD;      /* total number of entries in
                                 the central dir
                                 (same than number_entry on nospan) */
   uLong VersionMadeBy;
   uLong VersionNeeded;
-  uLong size_comment;
+  uLong आकार_comment;
 
-  int hasZIP64Record = 0;
+  पूर्णांक hasZIP64Record = 0;
 
   /* check first if we find a ZIP64 record */
-  central_pos = zip64local_SearchCentralDir64(&pziinit->z_filefunc,pziinit->filestream);
-  if(central_pos > 0)
+  central_pos = zip64local_खोज_Central_Dir64(&pziinit->z_filefunc,pziinit->filestream);
+  अगर(central_pos > 0)
   {
     hasZIP64Record = 1;
   }
-  else if(central_pos == 0)
+  अन्यथा अगर(central_pos == 0)
   {
-    central_pos = zip64local_SearchCentralDir(&pziinit->z_filefunc,pziinit->filestream);
+    central_pos = zip64local_खोज_Central_Dir(&pziinit->z_filefunc,pziinit->filestream);
   }
 
 /* disable to allow appending to empty ZIP archive
@@ -894,185 +894,185 @@ local int LoadCentralDirectoryRecord(zip64_internal* pziinit) {
             err=ZIP_ERRNO;
 */
 
-  if(hasZIP64Record)
+  अगर(hasZIP64Record)
   {
-    ZPOS64_T sizeEndOfCentralDirectory;
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos, ZLIB_FILEFUNC_SEEK_SET) != 0)
+    ZPOS64_T आकार_End_Of_Central_Directory;
+    अगर (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos, ZLIB_FILEFUNC_SEEK_SET) != 0)
       err=ZIP_ERRNO;
 
     /* the signature, already checked */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
+    अगर (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* size of zip64 end of central directory record */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &sizeEndOfCentralDirectory)!=ZIP_OK)
+    अगर (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &आकार_End_Of_Central_Directory)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* version made by */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &VersionMadeBy)!=ZIP_OK)
+    अगर (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &VersionMadeBy)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* version needed to extract */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &VersionNeeded)!=ZIP_OK)
+    अगर (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &VersionNeeded)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of this disk */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&number_disk)!=ZIP_OK)
+    अगर (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&संख्या_disk)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of the disk with the start of the central directory */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&number_disk_with_CD)!=ZIP_OK)
+    अगर (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&संख्या_disk_with_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central directory on this disk */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &number_entry)!=ZIP_OK)
+    अगर (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &संख्या_entry)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central directory */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&number_entry_CD)!=ZIP_OK)
+    अगर (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&संख्या_entry_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
-    if ((number_entry_CD!=number_entry) || (number_disk_with_CD!=0) || (number_disk!=0))
+    अगर ((संख्या_entry_CD!=संख्या_entry) || (संख्या_disk_with_CD!=0) || (संख्या_disk!=0))
       err=ZIP_BADZIPFILE;
 
     /* size of the central directory */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&size_central_dir)!=ZIP_OK)
+    अगर (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&आकार_central_dir)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* offset of start of central directory with respect to the
     starting disk number */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&offset_central_dir)!=ZIP_OK)
+    अगर (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&offset_central_dir)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* TODO..
        read the comment from the standard central header. */
-    size_comment = 0;
+    आकार_comment = 0;
   }
-  else
+  अन्यथा
   {
     /* Read End of central Directory info */
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+    अगर (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
       err=ZIP_ERRNO;
 
     /* the signature, already checked */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
+    अगर (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of this disk */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&number_disk)!=ZIP_OK)
+    अगर (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&संख्या_disk)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of the disk with the start of the central directory */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&number_disk_with_CD)!=ZIP_OK)
+    अगर (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&संख्या_disk_with_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central dir on this disk */
-    number_entry = 0;
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    संख्या_entry = 0;
+    अगर (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      number_entry = uL;
+    अन्यथा
+      संख्या_entry = uL;
 
     /* total number of entries in the central dir */
-    number_entry_CD = 0;
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    संख्या_entry_CD = 0;
+    अगर (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      number_entry_CD = uL;
+    अन्यथा
+      संख्या_entry_CD = uL;
 
-    if ((number_entry_CD!=number_entry) || (number_disk_with_CD!=0) || (number_disk!=0))
+    अगर ((संख्या_entry_CD!=संख्या_entry) || (संख्या_disk_with_CD!=0) || (संख्या_disk!=0))
       err=ZIP_BADZIPFILE;
 
     /* size of the central directory */
-    size_central_dir = 0;
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    आकार_central_dir = 0;
+    अगर (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      size_central_dir = uL;
+    अन्यथा
+      आकार_central_dir = uL;
 
     /* offset of start of central directory with respect to the starting disk number */
     offset_central_dir = 0;
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    अगर (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
+    अन्यथा
       offset_central_dir = uL;
 
 
     /* zipfile global comment length */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &size_comment)!=ZIP_OK)
+    अगर (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &आकार_comment)!=ZIP_OK)
       err=ZIP_ERRNO;
   }
 
-  if ((central_pos<offset_central_dir+size_central_dir) &&
+  अगर ((central_pos<offset_central_dir+आकार_central_dir) &&
     (err==ZIP_OK))
     err=ZIP_BADZIPFILE;
 
-  if (err!=ZIP_OK)
+  अगर (err!=ZIP_OK)
   {
     ZCLOSE64(pziinit->z_filefunc, pziinit->filestream);
-    return ZIP_ERRNO;
+    वापस ZIP_ERRNO;
   }
 
-  if (size_comment>0)
+  अगर (आकार_comment>0)
   {
-    pziinit->globalcomment = (char*)ALLOC(size_comment+1);
-    if (pziinit->globalcomment)
+    pziinit->globalcomment = (अक्षर*)ALLOC(आकार_comment+1);
+    अगर (pziinit->globalcomment)
     {
-      size_comment = ZREAD64(pziinit->z_filefunc, pziinit->filestream, pziinit->globalcomment,size_comment);
-      pziinit->globalcomment[size_comment]=0;
+      आकार_comment = ZREAD64(pziinit->z_filefunc, pziinit->filestream, pziinit->globalcomment,आकार_comment);
+      pziinit->globalcomment[आकार_comment]=0;
     }
   }
 
-  byte_before_the_zipfile = central_pos - (offset_central_dir+size_central_dir);
+  byte_before_the_zipfile = central_pos - (offset_central_dir+आकार_central_dir);
   pziinit->add_position_when_writing_offset = byte_before_the_zipfile;
 
   {
-    ZPOS64_T size_central_dir_to_read = size_central_dir;
-    size_t buf_size = SIZEDATA_INDATABLOCK;
-    void* buf_read = (void*)ALLOC(buf_size);
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, offset_central_dir + byte_before_the_zipfile, ZLIB_FILEFUNC_SEEK_SET) != 0)
+    ZPOS64_T आकार_central_dir_to_read = आकार_central_dir;
+    माप_प्रकार buf_आकार_2 = SIZEDATA_INDATABLOCK;
+    व्योम* buf_read = (व्योम*)ALLOC(buf_आकार_2);
+    अगर (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, offset_central_dir + byte_before_the_zipfile, ZLIB_FILEFUNC_SEEK_SET) != 0)
       err=ZIP_ERRNO;
 
-    while ((size_central_dir_to_read>0) && (err==ZIP_OK))
+    जबतक ((आकार_central_dir_to_read>0) && (err==ZIP_OK))
     {
       ZPOS64_T read_this = SIZEDATA_INDATABLOCK;
-      if (read_this > size_central_dir_to_read)
-        read_this = size_central_dir_to_read;
+      अगर (read_this > आकार_central_dir_to_read)
+        read_this = आकार_central_dir_to_read;
 
-      if (ZREAD64(pziinit->z_filefunc, pziinit->filestream,buf_read,(uLong)read_this) != read_this)
+      अगर (ZREAD64(pziinit->z_filefunc, pziinit->filestream,buf_read,(uLong)read_this) != read_this)
         err=ZIP_ERRNO;
 
-      if (err==ZIP_OK)
-        err = add_data_in_datablock(&pziinit->central_dir,buf_read, (uLong)read_this);
+      अगर (err==ZIP_OK)
+        err = add_तथ्य_in_datablock(&pziinit->central_dir,buf_read, (uLong)read_this);
 
-      size_central_dir_to_read-=read_this;
+      आकार_central_dir_to_read-=read_this;
     }
-    free(buf_read);
+    मुक्त(buf_read);
   }
   pziinit->begin_pos = byte_before_the_zipfile;
-  pziinit->number_entry = number_entry_CD;
+  pziinit->संख्या_entry = संख्या_entry_CD;
 
-  if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, offset_central_dir+byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_SET) != 0)
+  अगर (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, offset_central_dir+byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_SET) != 0)
     err=ZIP_ERRNO;
 
-  return err;
+  वापस err;
 }
 
 
-#endif /* !NO_ADDFILEINEXISTINGZIP*/
+#पूर्ण_अगर /* !NO_ADDFILEINEXISTINGZIP*/
 
 
 /************************************************************/
-extern zipFile ZEXPORT zipOpen3(const void *pathname, int append, zipcharpc* globalcomment, zlib_filefunc64_32_def* pzlib_filefunc64_32_def) {
+बाह्य zipFile ZEXPORT zipOpen3(स्थिर व्योम *pathname, पूर्णांक append, zipcharpc* globalcomment, zlib_filefunc64_32_def* pzlib_filefunc64_32_def) {
     zip64_internal ziinit;
     zip64_internal* zi;
-    int err=ZIP_OK;
+    पूर्णांक err=ZIP_OK;
 
-    ziinit.z_filefunc.zseek32_file = NULL;
-    ziinit.z_filefunc.ztell32_file = NULL;
-    if (pzlib_filefunc64_32_def==NULL)
+    ziinit.z_filefunc.zseek32_file = शून्य;
+    ziinit.z_filefunc.ztell32_file = शून्य;
+    अगर (pzlib_filefunc64_32_def==शून्य)
         fill_fopen64_filefunc(&ziinit.z_filefunc.zfile_func64);
-    else
+    अन्यथा
         ziinit.z_filefunc = *pzlib_filefunc64_32_def;
 
     ziinit.filestream = ZOPEN64(ziinit.z_filefunc,
@@ -1081,180 +1081,180 @@ extern zipFile ZEXPORT zipOpen3(const void *pathname, int append, zipcharpc* glo
                   (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_CREATE) :
                     (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_EXISTING));
 
-    if (ziinit.filestream == NULL)
-        return NULL;
+    अगर (ziinit.filestream == शून्य)
+        वापस शून्य;
 
-    if (append == APPEND_STATUS_CREATEAFTER)
-        ZSEEK64(ziinit.z_filefunc,ziinit.filestream,0,SEEK_END);
+    अगर (append == APPEND_STATUS_CREATEAFTER)
+        ZSEEK64(ziinit.z_filefunc,ziinit.filestream,0,अंत_से);
 
     ziinit.begin_pos = ZTELL64(ziinit.z_filefunc,ziinit.filestream);
     ziinit.in_opened_file_inzip = 0;
     ziinit.ci.stream_initialised = 0;
-    ziinit.number_entry = 0;
+    ziinit.संख्या_entry = 0;
     ziinit.add_position_when_writing_offset = 0;
     init_linkedlist(&(ziinit.central_dir));
-    memset(&ziinit.set, 0, sizeof(set_t));  /* make sure set appears dormant */
+    स_रखो(&ziinit.set, 0, माप(set_t));  /* make sure set appears dormant */
 
 
 
-    zi = (zip64_internal*)ALLOC(sizeof(zip64_internal));
-    if (zi==NULL)
+    zi = (zip64_internal*)ALLOC(माप(zip64_internal));
+    अगर (zi==शून्य)
     {
         ZCLOSE64(ziinit.z_filefunc,ziinit.filestream);
-        return NULL;
+        वापस शून्य;
     }
 
     /* now we add file in a zipfile */
 #    ifndef NO_ADDFILEINEXISTINGZIP
-    ziinit.globalcomment = NULL;
-    if (append == APPEND_STATUS_ADDINZIP)
+    ziinit.globalcomment = शून्य;
+    अगर (append == APPEND_STATUS_ADDINZIP)
     {
       /* Read and Cache Central Directory Records */
       err = LoadCentralDirectoryRecord(&ziinit);
     }
 
-    if (globalcomment)
+    अगर (globalcomment)
     {
       *globalcomment = ziinit.globalcomment;
     }
 #    endif /* !NO_ADDFILEINEXISTINGZIP*/
 
-    if (err != ZIP_OK)
+    अगर (err != ZIP_OK)
     {
 #    ifndef NO_ADDFILEINEXISTINGZIP
-        free(ziinit.globalcomment);
+        मुक्त(ziinit.globalcomment);
 #    endif /* !NO_ADDFILEINEXISTINGZIP*/
-        free(zi);
-        return NULL;
+        मुक्त(zi);
+        वापस शून्य;
     }
-    else
+    अन्यथा
     {
         *zi = ziinit;
-        return (zipFile)zi;
+        वापस (zipFile)zi;
     }
 }
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname, int append, zipcharpc* globalcomment, zlib_filefunc_def* pzlib_filefunc32_def) {
-    if (pzlib_filefunc32_def != NULL)
+बाह्य zipFile ZEXPORT zipOpen2(स्थिर अक्षर *pathname, पूर्णांक append, zipcharpc* globalcomment, zlib_filefunc_def* pzlib_filefunc32_def) {
+    अगर (pzlib_filefunc32_def != शून्य)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
-        return zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
+        वापस zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
     }
-    else
-        return zipOpen3(pathname, append, globalcomment, NULL);
+    अन्यथा
+        वापस zipOpen3(pathname, append, globalcomment, शून्य);
 }
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname, int append, zipcharpc* globalcomment, zlib_filefunc64_def* pzlib_filefunc_def) {
-    if (pzlib_filefunc_def != NULL)
+बाह्य zipFile ZEXPORT zipOpen2_64(स्थिर व्योम *pathname, पूर्णांक append, zipcharpc* globalcomment, zlib_filefunc64_def* pzlib_filefunc_def) {
+    अगर (pzlib_filefunc_def != शून्य)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
-        zlib_filefunc64_32_def_fill.zopen32_file = NULL;
-        zlib_filefunc64_32_def_fill.ztell32_file = NULL;
-        zlib_filefunc64_32_def_fill.zseek32_file = NULL;
-        return zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
+        zlib_filefunc64_32_def_fill.zopen32_file = शून्य;
+        zlib_filefunc64_32_def_fill.ztell32_file = शून्य;
+        zlib_filefunc64_32_def_fill.zseek32_file = शून्य;
+        वापस zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
     }
-    else
-        return zipOpen3(pathname, append, globalcomment, NULL);
+    अन्यथा
+        वापस zipOpen3(pathname, append, globalcomment, शून्य);
 }
 
 
 
-extern zipFile ZEXPORT zipOpen(const char* pathname, int append) {
-    return zipOpen3((const void*)pathname,append,NULL,NULL);
+बाह्य zipFile ZEXPORT zipOpen(स्थिर अक्षर* pathname, पूर्णांक append) {
+    वापस zipOpen3((स्थिर व्योम*)pathname,append,शून्य,शून्य);
 }
 
-extern zipFile ZEXPORT zipOpen64(const void* pathname, int append) {
-    return zipOpen3(pathname,append,NULL,NULL);
+बाह्य zipFile ZEXPORT zipOpen64(स्थिर व्योम* pathname, पूर्णांक append) {
+    वापस zipOpen3(pathname,append,शून्य,शून्य);
 }
 
-local int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt size_extrafield_local, const void* extrafield_local) {
+local पूर्णांक Write_LocalFileHeader(zip64_internal* zi, स्थिर अक्षर* filename, uInt आकार_extrafield_local, स्थिर व्योम* extrafield_local) {
   /* write the local header */
-  int err;
-  uInt size_filename = (uInt)strlen(filename);
-  uInt size_extrafield = size_extrafield_local;
+  पूर्णांक err;
+  uInt आकार_filename = (uInt)म_माप(filename);
+  uInt आकार_extrafield = आकार_extrafield_local;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)LOCALHEADERMAGIC, 4);
+  err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)LOCALHEADERMAGIC, 4);
 
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);/* version needed to extract */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)20,2);/* version needed to extract */
+    अगर(zi->ci.zip64)
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)45,2);/* version needed to extract */
+    अन्यथा
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)20,2);/* version needed to extract */
   }
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.flag,2);
+  अगर (err==ZIP_OK)
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.flag,2);
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.method,2);
+  अगर (err==ZIP_OK)
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.method,2);
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.dosDate,4);
+  अगर (err==ZIP_OK)
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.dosDate,4);
 
   /* CRC / Compressed size / Uncompressed size will be filled in later and rewritten later */
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* crc 32, unknown */
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* crc 32, unknown */
+  अगर (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* compressed size, unknown */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* compressed size, unknown */
+    अगर(zi->ci.zip64)
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* compressed size, unknown */
+    अन्यथा
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* compressed size, unknown */
   }
-  if (err==ZIP_OK)
+  अगर (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* uncompressed size, unknown */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* uncompressed size, unknown */
-  }
-
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_filename,2);
-
-  if(zi->ci.zip64)
-  {
-    size_extrafield += 20;
+    अगर(zi->ci.zip64)
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* uncompressed size, unknown */
+    अन्यथा
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* uncompressed size, unknown */
   }
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_extrafield,2);
+  अगर (err==ZIP_OK)
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)आकार_filename,2);
 
-  if ((err==ZIP_OK) && (size_filename > 0))
+  अगर(zi->ci.zip64)
   {
-    if (ZWRITE64(zi->z_filefunc,zi->filestream,filename,size_filename)!=size_filename)
+    आकार_extrafield += 20;
+  }
+
+  अगर (err==ZIP_OK)
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)आकार_extrafield,2);
+
+  अगर ((err==ZIP_OK) && (आकार_filename > 0))
+  {
+    अगर (ZWRITE64(zi->z_filefunc,zi->filestream,filename,आकार_filename)!=आकार_filename)
       err = ZIP_ERRNO;
   }
 
-  if ((err==ZIP_OK) && (size_extrafield_local > 0))
+  अगर ((err==ZIP_OK) && (आकार_extrafield_local > 0))
   {
-    if (ZWRITE64(zi->z_filefunc, zi->filestream, extrafield_local, size_extrafield_local) != size_extrafield_local)
+    अगर (ZWRITE64(zi->z_filefunc, zi->filestream, extrafield_local, आकार_extrafield_local) != आकार_extrafield_local)
       err = ZIP_ERRNO;
   }
 
 
-  if ((err==ZIP_OK) && (zi->ci.zip64))
+  अगर ((err==ZIP_OK) && (zi->ci.zip64))
   {
       /* write the Zip64 extended info */
-      short HeaderID = 1;
-      short DataSize = 16;
-      ZPOS64_T CompressedSize = 0;
-      ZPOS64_T UncompressedSize = 0;
+      लघु HeaderID = 1;
+      लघु तथ्य_आकार_2 = 16;
+      ZPOS64_T Compressed_आकार = 0;
+      ZPOS64_T Uncompressed_आकार = 0;
 
       /* Remember position of Zip64 extended info for the local file header. (needed when we update size after done with file) */
       zi->ci.pos_zip64extrainfo = ZTELL64(zi->z_filefunc,zi->filestream);
 
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)HeaderID,2);
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)DataSize,2);
+      err = zip64local_put_मूल्य(&zi->z_filefunc, zi->filestream, (ZPOS64_T)HeaderID,2);
+      err = zip64local_put_मूल्य(&zi->z_filefunc, zi->filestream, (ZPOS64_T)तथ्य_आकार_2,2);
 
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)UncompressedSize,8);
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)CompressedSize,8);
+      err = zip64local_put_मूल्य(&zi->z_filefunc, zi->filestream, (ZPOS64_T)Uncompressed_आकार,8);
+      err = zip64local_put_मूल्य(&zi->z_filefunc, zi->filestream, (ZPOS64_T)Compressed_आकार,8);
   }
 
-  return err;
+  वापस err;
 }
 
 /* Return the length of the UTF-8 code at str[0..len-1] in [1..4], or negative
@@ -1262,8 +1262,8 @@ local int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt s
    of bytes examined in order to determine it was bad. Or if minus the return
    code is one less than len, then at least one more byte than provided would
    be needed to complete the code. */
-local int utf8len(unsigned char const *str, size_t len) {
-    return
+local पूर्णांक utf8len(अचिन्हित अक्षर स्थिर *str, माप_प्रकार len) {
+    वापस
         len == 0 ? -1 :                         /* empty input */
         str[0] < 0x80 ? 1 :                     /* good one-byte */
         str[0] < 0xc0 ? -1 :                    /* bad first byte */
@@ -1283,18 +1283,18 @@ local int utf8len(unsigned char const *str, size_t len) {
 /* Return true if str[0..len-1] is valid UTF-8 *and* it contains at least one
    code of two or more bytes. This is used to determine whether or not to set
    bit 11 in the zip header flags. */
-local int isutf8(char const *str, size_t len) {
-    int utf8 = 0;
-    while (len) {
-        int code = utf8len((unsigned char const *)str, len);
-        if (code < 0)
-            return 0;
-        if (code > 1)
+local पूर्णांक isutf8(अक्षर स्थिर *str, माप_प्रकार len) {
+    पूर्णांक utf8 = 0;
+    जबतक (len) {
+        पूर्णांक code = utf8len((अचिन्हित अक्षर स्थिर *)str, len);
+        अगर (code < 0)
+            वापस 0;
+        अगर (code > 1)
             utf8 = 1;
         str += code;
-        len -= (unsigned)code;
+        len -= (अचिन्हित)code;
     }
-    return utf8;
+    वापस utf8;
 }
 
 /*
@@ -1305,862 +1305,862 @@ local int isutf8(char const *str, size_t len) {
  It is not done here because then we need to realloc a new buffer since parameters are 'const' and I want to minimize
  unnecessary allocations.
  */
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                           const void* extrafield_local, uInt size_extrafield_local,
-                                           const void* extrafield_global, uInt size_extrafield_global,
-                                           const char* comment, int method, int level, int raw,
-                                           int windowBits,int memLevel, int strategy,
-                                           const char* password, uLong crcForCrypting,
-                                           uLong versionMadeBy, uLong flagBase, int zip64) {
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip4_64(zipFile file, स्थिर अक्षर* filename, स्थिर zip_fileinfo* zipfi,
+                                           स्थिर व्योम* extrafield_local, uInt आकार_extrafield_local,
+                                           स्थिर व्योम* extrafield_global, uInt आकार_extrafield_global,
+                                           स्थिर अक्षर* comment, पूर्णांक method, पूर्णांक level, पूर्णांक raw,
+                                           पूर्णांक windowBits,पूर्णांक memLevel, पूर्णांक strategy,
+                                           स्थिर अक्षर* password, uLong crcForCrypting,
+                                           uLong versionMadeBy, uLong flagBase, पूर्णांक zip64) {
     zip64_internal* zi;
-    uInt size_filename;
-    uInt size_comment;
+    uInt आकार_filename;
+    uInt आकार_comment;
     uInt i;
-    int err = ZIP_OK;
+    पूर्णांक err = ZIP_OK;
 
 #    ifdef NOCRYPT
-    if (password != NULL)
-        return ZIP_PARAMERROR;
+    अगर (password != शून्य)
+        वापस ZIP_PARAMERROR;
 #    endif
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
+    अगर (file == शून्य)
+        वापस ZIP_PARAMERROR;
 
-#ifdef HAVE_BZIP2
-    if ((method!=0) && (method!=Z_DEFLATED) && (method!=Z_BZIP2ED))
-      return ZIP_PARAMERROR;
-#else
-    if ((method!=0) && (method!=Z_DEFLATED))
-      return ZIP_PARAMERROR;
-#endif
+#अगर_घोषित HAVE_BZIP2
+    अगर ((method!=0) && (method!=Z_DEFLATED) && (method!=Z_BZIP2ED))
+      वापस ZIP_PARAMERROR;
+#अन्यथा
+    अगर ((method!=0) && (method!=Z_DEFLATED))
+      वापस ZIP_PARAMERROR;
+#पूर्ण_अगर
 
     /* The filename and comment length must fit in 16 bits. */
-    if ((filename!=NULL) && (strlen(filename)>0xffff))
-        return ZIP_PARAMERROR;
-    if ((comment!=NULL) && (strlen(comment)>0xffff))
-        return ZIP_PARAMERROR;
+    अगर ((filename!=शून्य) && (म_माप(filename)>0xffff))
+        वापस ZIP_PARAMERROR;
+    अगर ((comment!=शून्य) && (म_माप(comment)>0xffff))
+        वापस ZIP_PARAMERROR;
     /* The extra field length must fit in 16 bits. If the member also requires
        a Zip64 extra block, that will also need to fit within that 16-bit
        length, but that will be checked for later. */
-    if ((size_extrafield_local>0xffff) || (size_extrafield_global>0xffff))
-        return ZIP_PARAMERROR;
+    अगर ((आकार_extrafield_local>0xffff) || (आकार_extrafield_global>0xffff))
+        वापस ZIP_PARAMERROR;
 
     zi = (zip64_internal*)file;
 
-    if (zi->in_opened_file_inzip == 1)
+    अगर (zi->in_opened_file_inzip == 1)
     {
         err = zipCloseFileInZip (file);
-        if (err != ZIP_OK)
-            return err;
+        अगर (err != ZIP_OK)
+            वापस err;
     }
 
-    if (filename==NULL)
+    अगर (filename==शून्य)
         filename="-";
 
-    if (comment==NULL)
-        size_comment = 0;
-    else
-        size_comment = (uInt)strlen(comment);
+    अगर (comment==शून्य)
+        आकार_comment = 0;
+    अन्यथा
+        आकार_comment = (uInt)म_माप(comment);
 
-    size_filename = (uInt)strlen(filename);
+    आकार_filename = (uInt)म_माप(filename);
 
-    if (zipfi == NULL)
+    अगर (zipfi == शून्य)
         zi->ci.dosDate = 0;
-    else
+    अन्यथा
     {
-        if (zipfi->dosDate != 0)
+        अगर (zipfi->dosDate != 0)
             zi->ci.dosDate = zipfi->dosDate;
-        else
+        अन्यथा
           zi->ci.dosDate = zip64local_TmzDateToDosDate(&zipfi->tmz_date);
     }
 
     zi->ci.flag = flagBase;
-    if ((level==8) || (level==9))
+    अगर ((level==8) || (level==9))
       zi->ci.flag |= 2;
-    if (level==2)
+    अगर (level==2)
       zi->ci.flag |= 4;
-    if (level==1)
+    अगर (level==1)
       zi->ci.flag |= 6;
-    if (password != NULL)
+    अगर (password != शून्य)
       zi->ci.flag |= 1;
-    if (isutf8(filename, size_filename) &&
-        (size_comment == 0 || isutf8(comment, size_comment)))
+    अगर (isutf8(filename, आकार_filename) &&
+        (आकार_comment == 0 || isutf8(comment, आकार_comment)))
       zi->ci.flag |= (1 << 11);
 
     zi->ci.crc32 = 0;
     zi->ci.method = method;
     zi->ci.encrypt = 0;
     zi->ci.stream_initialised = 0;
-    zi->ci.pos_in_buffered_data = 0;
+    zi->ci.pos_in_buffered_तथ्य = 0;
     zi->ci.raw = raw;
     zi->ci.pos_local_header = ZTELL64(zi->z_filefunc,zi->filestream);
 
-    zi->ci.size_centralheader = SIZECENTRALHEADER + size_filename + size_extrafield_global + size_comment;
-    zi->ci.size_centralExtraFree = 32; /* Extra space we have reserved in case we need to add ZIP64 extra info data */
+    zi->ci.आकार_centralheader = SIZECENTRALHEADER + आकार_filename + आकार_extrafield_global + आकार_comment;
+    zi->ci.आकार_central_Extra_Free = 32; /* Extra space we have reserved in case we need to add ZIP64 extra info data */
 
-    zi->ci.central_header = (char*)ALLOC((uInt)zi->ci.size_centralheader + zi->ci.size_centralExtraFree);
+    zi->ci.central_header = (अक्षर*)ALLOC((uInt)zi->ci.आकार_centralheader + zi->ci.आकार_central_Extra_Free);
 
-    zi->ci.size_centralExtra = size_extrafield_global;
-    zip64local_putValue_inmemory(zi->ci.central_header,(uLong)CENTRALHEADERMAGIC,4);
+    zi->ci.आकार_central_Extra = आकार_extrafield_global;
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header,(uLong)CENTRALHEADERMAGIC,4);
     /* version info */
-    zip64local_putValue_inmemory(zi->ci.central_header+4,(uLong)versionMadeBy,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+6,(uLong)20,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+8,(uLong)zi->ci.flag,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+10,(uLong)zi->ci.method,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+12,(uLong)zi->ci.dosDate,4);
-    zip64local_putValue_inmemory(zi->ci.central_header+16,(uLong)0,4); /*crc*/
-    zip64local_putValue_inmemory(zi->ci.central_header+20,(uLong)0,4); /*compr size*/
-    zip64local_putValue_inmemory(zi->ci.central_header+24,(uLong)0,4); /*uncompr size*/
-    zip64local_putValue_inmemory(zi->ci.central_header+28,(uLong)size_filename,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+30,(uLong)size_extrafield_global,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+32,(uLong)size_comment,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+34,(uLong)0,2); /*disk nm start*/
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+4,(uLong)versionMadeBy,2);
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+6,(uLong)20,2);
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+8,(uLong)zi->ci.flag,2);
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+10,(uLong)zi->ci.method,2);
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+12,(uLong)zi->ci.dosDate,4);
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+16,(uLong)0,4); /*crc*/
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+20,(uLong)0,4); /*compr size*/
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+24,(uLong)0,4); /*uncompr size*/
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+28,(uLong)आकार_filename,2);
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+30,(uLong)आकार_extrafield_global,2);
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+32,(uLong)आकार_comment,2);
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+34,(uLong)0,2); /*disk nm start*/
 
-    if (zipfi==NULL)
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)0,2);
-    else
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)zipfi->internal_fa,2);
+    अगर (zipfi==शून्य)
+        zip64local_put_मूल्य_inmemory(zi->ci.central_header+36,(uLong)0,2);
+    अन्यथा
+        zip64local_put_मूल्य_inmemory(zi->ci.central_header+36,(uLong)zipfi->internal_fa,2);
 
-    if (zipfi==NULL)
-        zip64local_putValue_inmemory(zi->ci.central_header+38,(uLong)0,4);
-    else
-        zip64local_putValue_inmemory(zi->ci.central_header+38,(uLong)zipfi->external_fa,4);
+    अगर (zipfi==शून्य)
+        zip64local_put_मूल्य_inmemory(zi->ci.central_header+38,(uLong)0,4);
+    अन्यथा
+        zip64local_put_मूल्य_inmemory(zi->ci.central_header+38,(uLong)zipfi->external_fa,4);
 
-    if(zi->ci.pos_local_header >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+42,(uLong)0xffffffff,4);
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+42,(uLong)zi->ci.pos_local_header - zi->add_position_when_writing_offset,4);
+    अगर(zi->ci.pos_local_header >= 0xffffffff)
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+42,(uLong)0xffffffff,4);
+    अन्यथा
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+42,(uLong)zi->ci.pos_local_header - zi->add_position_when_writing_offset,4);
 
-    for (i=0;i<size_filename;i++)
+    क्रम (i=0;i<आकार_filename;i++)
         *(zi->ci.central_header+SIZECENTRALHEADER+i) = *(filename+i);
 
-    for (i=0;i<size_extrafield_global;i++)
-        *(zi->ci.central_header+SIZECENTRALHEADER+size_filename+i) =
-              *(((const char*)extrafield_global)+i);
+    क्रम (i=0;i<आकार_extrafield_global;i++)
+        *(zi->ci.central_header+SIZECENTRALHEADER+आकार_filename+i) =
+              *(((स्थिर अक्षर*)extrafield_global)+i);
 
-    for (i=0;i<size_comment;i++)
-        *(zi->ci.central_header+SIZECENTRALHEADER+size_filename+
-              size_extrafield_global+i) = *(comment+i);
-    if (zi->ci.central_header == NULL)
-        return ZIP_INTERNALERROR;
+    क्रम (i=0;i<आकार_comment;i++)
+        *(zi->ci.central_header+SIZECENTRALHEADER+आकार_filename+
+              आकार_extrafield_global+i) = *(comment+i);
+    अगर (zi->ci.central_header == शून्य)
+        वापस ZIP_INTERNALERROR;
 
     zi->ci.zip64 = zip64;
-    zi->ci.totalCompressedData = 0;
-    zi->ci.totalUncompressedData = 0;
+    zi->ci.योग_Compressed_तथ्य = 0;
+    zi->ci.योग_Uncompressed_तथ्य = 0;
     zi->ci.pos_zip64extrainfo = 0;
 
-    err = Write_LocalFileHeader(zi, filename, size_extrafield_local, extrafield_local);
+    err = Write_LocalFileHeader(zi, filename, आकार_extrafield_local, extrafield_local);
 
-#ifdef HAVE_BZIP2
+#अगर_घोषित HAVE_BZIP2
     zi->ci.bstream.avail_in = (uInt)0;
     zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-    zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
-    zi->ci.bstream.total_in_hi32 = 0;
-    zi->ci.bstream.total_in_lo32 = 0;
-    zi->ci.bstream.total_out_hi32 = 0;
-    zi->ci.bstream.total_out_lo32 = 0;
-#endif
+    zi->ci.bstream.अग्र_out = (अक्षर*)zi->ci.buffered_तथ्य;
+    zi->ci.bstream.योग_in_hi32 = 0;
+    zi->ci.bstream.योग_in_lo32 = 0;
+    zi->ci.bstream.योग_out_hi32 = 0;
+    zi->ci.bstream.योग_out_lo32 = 0;
+#पूर्ण_अगर
 
     zi->ci.stream.avail_in = (uInt)0;
     zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-    zi->ci.stream.next_out = zi->ci.buffered_data;
-    zi->ci.stream.total_in = 0;
-    zi->ci.stream.total_out = 0;
-    zi->ci.stream.data_type = Z_BINARY;
+    zi->ci.stream.अग्र_out = zi->ci.buffered_तथ्य;
+    zi->ci.stream.योग_in = 0;
+    zi->ci.stream.योग_out = 0;
+    zi->ci.stream.तथ्य_type = Z_द्विआधारी;
 
-#ifdef HAVE_BZIP2
-    if ((err==ZIP_OK) && (zi->ci.method == Z_DEFLATED || zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
-#else
-    if ((err==ZIP_OK) && (zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
-#endif
+#अगर_घोषित HAVE_BZIP2
+    अगर ((err==ZIP_OK) && (zi->ci.method == Z_DEFLATED || zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+#अन्यथा
+    अगर ((err==ZIP_OK) && (zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+#पूर्ण_अगर
     {
-        if(zi->ci.method == Z_DEFLATED)
+        अगर(zi->ci.method == Z_DEFLATED)
         {
           zi->ci.stream.zalloc = (alloc_func)0;
           zi->ci.stream.zfree = (free_func)0;
           zi->ci.stream.opaque = (voidpf)0;
 
-          if (windowBits>0)
+          अगर (windowBits>0)
               windowBits = -windowBits;
 
           err = deflateInit2(&zi->ci.stream, level, Z_DEFLATED, windowBits, memLevel, strategy);
 
-          if (err==Z_OK)
+          अगर (err==Z_OK)
               zi->ci.stream_initialised = Z_DEFLATED;
         }
-        else if(zi->ci.method == Z_BZIP2ED)
+        अन्यथा अगर(zi->ci.method == Z_BZIP2ED)
         {
-#ifdef HAVE_BZIP2
+#अगर_घोषित HAVE_BZIP2
             /* Init BZip stuff here */
           zi->ci.bstream.bzalloc = 0;
           zi->ci.bstream.bzfree = 0;
           zi->ci.bstream.opaque = (voidpf)0;
 
           err = BZ2_bzCompressInit(&zi->ci.bstream, level, 0,35);
-          if(err == BZ_OK)
+          अगर(err == BZ_OK)
             zi->ci.stream_initialised = Z_BZIP2ED;
-#endif
+#पूर्ण_अगर
         }
 
     }
 
 #    ifndef NOCRYPT
-    zi->ci.crypt_header_size = 0;
-    if ((err==Z_OK) && (password != NULL))
+    zi->ci.crypt_header_आकार = 0;
+    अगर ((err==Z_OK) && (password != शून्य))
     {
-        unsigned char bufHead[RAND_HEAD_LEN];
-        unsigned int sizeHead;
+        अचिन्हित अक्षर buf_शीर्ष[RAND_शीर्ष_LEN];
+        अचिन्हित पूर्णांक आकार_शीर्ष;
         zi->ci.encrypt = 1;
         zi->ci.pcrc_32_tab = get_crc_table();
         /*init_keys(password,zi->ci.keys,zi->ci.pcrc_32_tab);*/
 
-        sizeHead=crypthead(password,bufHead,RAND_HEAD_LEN,zi->ci.keys,zi->ci.pcrc_32_tab,crcForCrypting);
-        zi->ci.crypt_header_size = sizeHead;
+        आकार_शीर्ष=crypthead(password,buf_शीर्ष,RAND_शीर्ष_LEN,zi->ci.कुंजियाँ,zi->ci.pcrc_32_tab,crcForCrypting);
+        zi->ci.crypt_header_आकार = आकार_शीर्ष;
 
-        if (ZWRITE64(zi->z_filefunc,zi->filestream,bufHead,sizeHead) != sizeHead)
+        अगर (ZWRITE64(zi->z_filefunc,zi->filestream,buf_शीर्ष,आकार_शीर्ष) != आकार_शीर्ष)
                 err = ZIP_ERRNO;
     }
 #    endif
 
-    if (err==Z_OK)
+    अगर (err==Z_OK)
         zi->in_opened_file_inzip = 1;
-    return err;
+    वापस err;
 }
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw,
-                                        int windowBits,int memLevel, int strategy,
-                                        const char* password, uLong crcForCrypting,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip4(zipFile file, स्थिर अक्षर* filename, स्थिर zip_fileinfo* zipfi,
+                                        स्थिर व्योम* extrafield_local, uInt आकार_extrafield_local,
+                                        स्थिर व्योम* extrafield_global, uInt आकार_extrafield_global,
+                                        स्थिर अक्षर* comment, पूर्णांक method, पूर्णांक level, पूर्णांक raw,
+                                        पूर्णांक windowBits,पूर्णांक memLevel, पूर्णांक strategy,
+                                        स्थिर अक्षर* password, uLong crcForCrypting,
                                         uLong versionMadeBy, uLong flagBase) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
+    वापस zipOpenNewFileInZip4_64(file, filename, zipfi,
+                                   extrafield_local, आकार_extrafield_local,
+                                   extrafield_global, आकार_extrafield_global,
                                    comment, method, level, raw,
                                    windowBits, memLevel, strategy,
                                    password, crcForCrypting, versionMadeBy, flagBase, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw,
-                                        int windowBits,int memLevel, int strategy,
-                                        const char* password, uLong crcForCrypting) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip3(zipFile file, स्थिर अक्षर* filename, स्थिर zip_fileinfo* zipfi,
+                                        स्थिर व्योम* extrafield_local, uInt आकार_extrafield_local,
+                                        स्थिर व्योम* extrafield_global, uInt आकार_extrafield_global,
+                                        स्थिर अक्षर* comment, पूर्णांक method, पूर्णांक level, पूर्णांक raw,
+                                        पूर्णांक windowBits,पूर्णांक memLevel, पूर्णांक strategy,
+                                        स्थिर अक्षर* password, uLong crcForCrypting) {
+    वापस zipOpenNewFileInZip4_64(file, filename, zipfi,
+                                   extrafield_local, आकार_extrafield_local,
+                                   extrafield_global, आकार_extrafield_global,
                                    comment, method, level, raw,
                                    windowBits, memLevel, strategy,
                                    password, crcForCrypting, VERSIONMADEBY, 0, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                         const void* extrafield_local, uInt size_extrafield_local,
-                                         const void* extrafield_global, uInt size_extrafield_global,
-                                         const char* comment, int method, int level, int raw,
-                                         int windowBits,int memLevel, int strategy,
-                                         const char* password, uLong crcForCrypting, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip3_64(zipFile file, स्थिर अक्षर* filename, स्थिर zip_fileinfo* zipfi,
+                                         स्थिर व्योम* extrafield_local, uInt आकार_extrafield_local,
+                                         स्थिर व्योम* extrafield_global, uInt आकार_extrafield_global,
+                                         स्थिर अक्षर* comment, पूर्णांक method, पूर्णांक level, पूर्णांक raw,
+                                         पूर्णांक windowBits,पूर्णांक memLevel, पूर्णांक strategy,
+                                         स्थिर अक्षर* password, uLong crcForCrypting, पूर्णांक zip64) {
+    वापस zipOpenNewFileInZip4_64(file, filename, zipfi,
+                                   extrafield_local, आकार_extrafield_local,
+                                   extrafield_global, आकार_extrafield_global,
                                    comment, method, level, raw,
                                    windowBits, memLevel, strategy,
                                    password, crcForCrypting, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip2(zipFile file, स्थिर अक्षर* filename, स्थिर zip_fileinfo* zipfi,
+                                        स्थिर व्योम* extrafield_local, uInt आकार_extrafield_local,
+                                        स्थिर व्योम* extrafield_global, uInt आकार_extrafield_global,
+                                        स्थिर अक्षर* comment, पूर्णांक method, पूर्णांक level, पूर्णांक raw) {
+    वापस zipOpenNewFileInZip4_64(file, filename, zipfi,
+                                   extrafield_local, आकार_extrafield_local,
+                                   extrafield_global, आकार_extrafield_global,
                                    comment, method, level, raw,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, 0);
+                                   शून्य, 0, VERSIONMADEBY, 0, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                           const void* extrafield_local, uInt size_extrafield_local,
-                                           const void* extrafield_global, uInt size_extrafield_global,
-                                           const char* comment, int method, int level, int raw, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip2_64(zipFile file, स्थिर अक्षर* filename, स्थिर zip_fileinfo* zipfi,
+                                           स्थिर व्योम* extrafield_local, uInt आकार_extrafield_local,
+                                           स्थिर व्योम* extrafield_global, uInt आकार_extrafield_global,
+                                           स्थिर अक्षर* comment, पूर्णांक method, पूर्णांक level, पूर्णांक raw, पूर्णांक zip64) {
+    वापस zipOpenNewFileInZip4_64(file, filename, zipfi,
+                                   extrafield_local, आकार_extrafield_local,
+                                   extrafield_global, आकार_extrafield_global,
                                    comment, method, level, raw,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, zip64);
+                                   शून्य, 0, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                         const void* extrafield_local, uInt size_extrafield_local,
-                                         const void*extrafield_global, uInt size_extrafield_global,
-                                         const char* comment, int method, int level, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip64(zipFile file, स्थिर अक्षर* filename, स्थिर zip_fileinfo* zipfi,
+                                         स्थिर व्योम* extrafield_local, uInt आकार_extrafield_local,
+                                         स्थिर व्योम*extrafield_global, uInt आकार_extrafield_global,
+                                         स्थिर अक्षर* comment, पूर्णांक method, पूर्णांक level, पूर्णांक zip64) {
+    वापस zipOpenNewFileInZip4_64(file, filename, zipfi,
+                                   extrafield_local, आकार_extrafield_local,
+                                   extrafield_global, आकार_extrafield_global,
                                    comment, method, level, 0,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, zip64);
+                                   शून्य, 0, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                       const void* extrafield_local, uInt size_extrafield_local,
-                                       const void*extrafield_global, uInt size_extrafield_global,
-                                       const char* comment, int method, int level) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip(zipFile file, स्थिर अक्षर* filename, स्थिर zip_fileinfo* zipfi,
+                                       स्थिर व्योम* extrafield_local, uInt आकार_extrafield_local,
+                                       स्थिर व्योम*extrafield_global, uInt आकार_extrafield_global,
+                                       स्थिर अक्षर* comment, पूर्णांक method, पूर्णांक level) {
+    वापस zipOpenNewFileInZip4_64(file, filename, zipfi,
+                                   extrafield_local, आकार_extrafield_local,
+                                   extrafield_global, आकार_extrafield_global,
                                    comment, method, level, 0,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, 0);
+                                   शून्य, 0, VERSIONMADEBY, 0, 0);
 }
 
-local int zip64FlushWriteBuffer(zip64_internal* zi) {
-    int err=ZIP_OK;
+local पूर्णांक zip64_Flush_Write_बफर(zip64_internal* zi) {
+    पूर्णांक err=ZIP_OK;
 
-    if (zi->ci.encrypt != 0)
+    अगर (zi->ci.encrypt != 0)
     {
-#ifndef NOCRYPT
+#अगर_अघोषित NOCRYPT
         uInt i;
-        int t;
-        for (i=0;i<zi->ci.pos_in_buffered_data;i++)
-            zi->ci.buffered_data[i] = zencode(zi->ci.keys, zi->ci.pcrc_32_tab, zi->ci.buffered_data[i],t);
-#endif
+        पूर्णांक t;
+        क्रम (i=0;i<zi->ci.pos_in_buffered_तथ्य;i++)
+            zi->ci.buffered_तथ्य[i] = zencode(zi->ci.कुंजियाँ, zi->ci.pcrc_32_tab, zi->ci.buffered_तथ्य[i],t);
+#पूर्ण_अगर
     }
 
-    if (ZWRITE64(zi->z_filefunc,zi->filestream,zi->ci.buffered_data,zi->ci.pos_in_buffered_data) != zi->ci.pos_in_buffered_data)
+    अगर (ZWRITE64(zi->z_filefunc,zi->filestream,zi->ci.buffered_तथ्य,zi->ci.pos_in_buffered_तथ्य) != zi->ci.pos_in_buffered_तथ्य)
       err = ZIP_ERRNO;
 
-    zi->ci.totalCompressedData += zi->ci.pos_in_buffered_data;
+    zi->ci.योग_Compressed_तथ्य += zi->ci.pos_in_buffered_तथ्य;
 
-#ifdef HAVE_BZIP2
-    if(zi->ci.method == Z_BZIP2ED)
+#अगर_घोषित HAVE_BZIP2
+    अगर(zi->ci.method == Z_BZIP2ED)
     {
-      zi->ci.totalUncompressedData += zi->ci.bstream.total_in_lo32;
-      zi->ci.bstream.total_in_lo32 = 0;
-      zi->ci.bstream.total_in_hi32 = 0;
+      zi->ci.योग_Uncompressed_तथ्य += zi->ci.bstream.योग_in_lo32;
+      zi->ci.bstream.योग_in_lo32 = 0;
+      zi->ci.bstream.योग_in_hi32 = 0;
     }
-    else
-#endif
+    अन्यथा
+#पूर्ण_अगर
     {
-      zi->ci.totalUncompressedData += zi->ci.stream.total_in;
-      zi->ci.stream.total_in = 0;
+      zi->ci.योग_Uncompressed_तथ्य += zi->ci.stream.योग_in;
+      zi->ci.stream.योग_in = 0;
     }
 
 
-    zi->ci.pos_in_buffered_data = 0;
+    zi->ci.pos_in_buffered_तथ्य = 0;
 
-    return err;
+    वापस err;
 }
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file, const void* buf, unsigned int len) {
+बाह्य पूर्णांक ZEXPORT zipWriteInFileInZip(zipFile file, स्थिर व्योम* buf, अचिन्हित पूर्णांक len) {
     zip64_internal* zi;
-    int err=ZIP_OK;
+    पूर्णांक err=ZIP_OK;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
+    अगर (file == शून्य)
+        वापस ZIP_PARAMERROR;
     zi = (zip64_internal*)file;
 
-    if (zi->in_opened_file_inzip == 0)
-        return ZIP_PARAMERROR;
+    अगर (zi->in_opened_file_inzip == 0)
+        वापस ZIP_PARAMERROR;
 
     zi->ci.crc32 = crc32(zi->ci.crc32,buf,(uInt)len);
 
-#ifdef HAVE_BZIP2
-    if(zi->ci.method == Z_BZIP2ED && (!zi->ci.raw))
+#अगर_घोषित HAVE_BZIP2
+    अगर(zi->ci.method == Z_BZIP2ED && (!zi->ci.raw))
     {
-      zi->ci.bstream.next_in = (void*)buf;
+      zi->ci.bstream.अग्र_in = (व्योम*)buf;
       zi->ci.bstream.avail_in = len;
       err = BZ_RUN_OK;
 
-      while ((err==BZ_RUN_OK) && (zi->ci.bstream.avail_in>0))
+      जबतक ((err==BZ_RUN_OK) && (zi->ci.bstream.avail_in>0))
       {
-        if (zi->ci.bstream.avail_out == 0)
+        अगर (zi->ci.bstream.avail_out == 0)
         {
-          if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+          अगर (zip64_Flush_Write_बफर(zi) == ZIP_ERRNO)
             err = ZIP_ERRNO;
           zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-          zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
+          zi->ci.bstream.अग्र_out = (अक्षर*)zi->ci.buffered_तथ्य;
         }
 
 
-        if(err != BZ_RUN_OK)
-          break;
+        अगर(err != BZ_RUN_OK)
+          अवरोध;
 
-        if ((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+        अगर ((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
         {
-          uLong uTotalOutBefore_lo = zi->ci.bstream.total_out_lo32;
+          uLong u_योग_Out_Before_lo = zi->ci.bstream.योग_out_lo32;
 /*          uLong uTotalOutBefore_hi = zi->ci.bstream.total_out_hi32; */
           err=BZ2_bzCompress(&zi->ci.bstream,  BZ_RUN);
 
-          zi->ci.pos_in_buffered_data += (uInt)(zi->ci.bstream.total_out_lo32 - uTotalOutBefore_lo) ;
+          zi->ci.pos_in_buffered_तथ्य += (uInt)(zi->ci.bstream.योग_out_lo32 - u_योग_Out_Before_lo) ;
         }
       }
 
-      if(err == BZ_RUN_OK)
+      अगर(err == BZ_RUN_OK)
         err = ZIP_OK;
     }
-    else
-#endif
+    अन्यथा
+#पूर्ण_अगर
     {
-      zi->ci.stream.next_in = buf;
+      zi->ci.stream.अग्र_in = buf;
       zi->ci.stream.avail_in = len;
 
-      while ((err==ZIP_OK) && (zi->ci.stream.avail_in>0))
+      जबतक ((err==ZIP_OK) && (zi->ci.stream.avail_in>0))
       {
-          if (zi->ci.stream.avail_out == 0)
+          अगर (zi->ci.stream.avail_out == 0)
           {
-              if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+              अगर (zip64_Flush_Write_बफर(zi) == ZIP_ERRNO)
                   err = ZIP_ERRNO;
               zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-              zi->ci.stream.next_out = zi->ci.buffered_data;
+              zi->ci.stream.अग्र_out = zi->ci.buffered_तथ्य;
           }
 
 
-          if(err != ZIP_OK)
-              break;
+          अगर(err != ZIP_OK)
+              अवरोध;
 
-          if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+          अगर ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
           {
-              uLong uTotalOutBefore = zi->ci.stream.total_out;
+              uLong u_योग_Out_Before = zi->ci.stream.योग_out;
               err=deflate(&zi->ci.stream,  Z_NO_FLUSH);
 
-              zi->ci.pos_in_buffered_data += (uInt)(zi->ci.stream.total_out - uTotalOutBefore) ;
+              zi->ci.pos_in_buffered_तथ्य += (uInt)(zi->ci.stream.योग_out - u_योग_Out_Before) ;
           }
-          else
+          अन्यथा
           {
               uInt copy_this,i;
-              if (zi->ci.stream.avail_in < zi->ci.stream.avail_out)
+              अगर (zi->ci.stream.avail_in < zi->ci.stream.avail_out)
                   copy_this = zi->ci.stream.avail_in;
-              else
+              अन्यथा
                   copy_this = zi->ci.stream.avail_out;
 
-              for (i = 0; i < copy_this; i++)
-                  *(((char*)zi->ci.stream.next_out)+i) =
-                      *(((const char*)zi->ci.stream.next_in)+i);
+              क्रम (i = 0; i < copy_this; i++)
+                  *(((अक्षर*)zi->ci.stream.अग्र_out)+i) =
+                      *(((स्थिर अक्षर*)zi->ci.stream.अग्र_in)+i);
               {
                   zi->ci.stream.avail_in -= copy_this;
                   zi->ci.stream.avail_out-= copy_this;
-                  zi->ci.stream.next_in+= copy_this;
-                  zi->ci.stream.next_out+= copy_this;
-                  zi->ci.stream.total_in+= copy_this;
-                  zi->ci.stream.total_out+= copy_this;
-                  zi->ci.pos_in_buffered_data += copy_this;
+                  zi->ci.stream.अग्र_in+= copy_this;
+                  zi->ci.stream.अग्र_out+= copy_this;
+                  zi->ci.stream.योग_in+= copy_this;
+                  zi->ci.stream.योग_out+= copy_this;
+                  zi->ci.pos_in_buffered_तथ्य += copy_this;
               }
           }
       }/* while(...) */
     }
 
-    return err;
+    वापस err;
 }
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file, uLong uncompressed_size, uLong crc32) {
-    return zipCloseFileInZipRaw64 (file, uncompressed_size, crc32);
+बाह्य पूर्णांक ZEXPORT zipCloseFileInZipRaw(zipFile file, uLong uncompressed_आकार, uLong crc32) {
+    वापस zipCloseFileInZipRaw64 (file, uncompressed_आकार, crc32);
 }
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file, ZPOS64_T uncompressed_size, uLong crc32) {
+बाह्य पूर्णांक ZEXPORT zipCloseFileInZipRaw64(zipFile file, ZPOS64_T uncompressed_आकार, uLong crc32) {
     zip64_internal* zi;
-    ZPOS64_T compressed_size;
-    uLong invalidValue = 0xffffffff;
-    unsigned datasize = 0;
-    int err=ZIP_OK;
+    ZPOS64_T compressed_आकार;
+    uLong invalid_मूल्य = 0xffffffff;
+    अचिन्हित datasize = 0;
+    पूर्णांक err=ZIP_OK;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
+    अगर (file == शून्य)
+        वापस ZIP_PARAMERROR;
     zi = (zip64_internal*)file;
 
-    if (zi->in_opened_file_inzip == 0)
-        return ZIP_PARAMERROR;
+    अगर (zi->in_opened_file_inzip == 0)
+        वापस ZIP_PARAMERROR;
     zi->ci.stream.avail_in = 0;
 
-    if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+    अगर ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
                 {
-                        while (err==ZIP_OK)
+                        जबतक (err==ZIP_OK)
                         {
-                                uLong uTotalOutBefore;
-                                if (zi->ci.stream.avail_out == 0)
+                                uLong u_योग_Out_Before;
+                                अगर (zi->ci.stream.avail_out == 0)
                                 {
-                                        if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+                                        अगर (zip64_Flush_Write_बफर(zi) == ZIP_ERRNO)
                                                 err = ZIP_ERRNO;
                                         zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-                                        zi->ci.stream.next_out = zi->ci.buffered_data;
+                                        zi->ci.stream.अग्र_out = zi->ci.buffered_तथ्य;
                                 }
-                                uTotalOutBefore = zi->ci.stream.total_out;
+                                u_योग_Out_Before = zi->ci.stream.योग_out;
                                 err=deflate(&zi->ci.stream,  Z_FINISH);
-                                zi->ci.pos_in_buffered_data += (uInt)(zi->ci.stream.total_out - uTotalOutBefore) ;
+                                zi->ci.pos_in_buffered_तथ्य += (uInt)(zi->ci.stream.योग_out - u_योग_Out_Before) ;
                         }
                 }
-    else if ((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+    अन्यथा अगर ((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
     {
-#ifdef HAVE_BZIP2
+#अगर_घोषित HAVE_BZIP2
       err = BZ_FINISH_OK;
-      while (err==BZ_FINISH_OK)
+      जबतक (err==BZ_FINISH_OK)
       {
-        uLong uTotalOutBefore;
-        if (zi->ci.bstream.avail_out == 0)
+        uLong u_योग_Out_Before;
+        अगर (zi->ci.bstream.avail_out == 0)
         {
-          if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+          अगर (zip64_Flush_Write_बफर(zi) == ZIP_ERRNO)
             err = ZIP_ERRNO;
           zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-          zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
+          zi->ci.bstream.अग्र_out = (अक्षर*)zi->ci.buffered_तथ्य;
         }
-        uTotalOutBefore = zi->ci.bstream.total_out_lo32;
+        u_योग_Out_Before = zi->ci.bstream.योग_out_lo32;
         err=BZ2_bzCompress(&zi->ci.bstream,  BZ_FINISH);
-        if(err == BZ_STREAM_END)
+        अगर(err == BZ_STREAM_END)
           err = Z_STREAM_END;
 
-        zi->ci.pos_in_buffered_data += (uInt)(zi->ci.bstream.total_out_lo32 - uTotalOutBefore);
+        zi->ci.pos_in_buffered_तथ्य += (uInt)(zi->ci.bstream.योग_out_lo32 - u_योग_Out_Before);
       }
 
-      if(err == BZ_FINISH_OK)
+      अगर(err == BZ_FINISH_OK)
         err = ZIP_OK;
-#endif
+#पूर्ण_अगर
     }
 
-    if (err==Z_STREAM_END)
+    अगर (err==Z_STREAM_END)
         err=ZIP_OK; /* this is normal */
 
-    if ((zi->ci.pos_in_buffered_data>0) && (err==ZIP_OK))
+    अगर ((zi->ci.pos_in_buffered_तथ्य>0) && (err==ZIP_OK))
                 {
-        if (zip64FlushWriteBuffer(zi)==ZIP_ERRNO)
+        अगर (zip64_Flush_Write_बफर(zi)==ZIP_ERRNO)
             err = ZIP_ERRNO;
                 }
 
-    if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+    अगर ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
     {
-        int tmp_err = deflateEnd(&zi->ci.stream);
-        if (err == ZIP_OK)
+        पूर्णांक tmp_err = deflateEnd(&zi->ci.stream);
+        अगर (err == ZIP_OK)
             err = tmp_err;
         zi->ci.stream_initialised = 0;
     }
-#ifdef HAVE_BZIP2
-    else if((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+#अगर_घोषित HAVE_BZIP2
+    अन्यथा अगर((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
     {
-      int tmperr = BZ2_bzCompressEnd(&zi->ci.bstream);
-                        if (err==ZIP_OK)
+      पूर्णांक tmperr = BZ2_bzCompressEnd(&zi->ci.bstream);
+                        अगर (err==ZIP_OK)
                                 err = tmperr;
                         zi->ci.stream_initialised = 0;
     }
-#endif
+#पूर्ण_अगर
 
-    if (!zi->ci.raw)
+    अगर (!zi->ci.raw)
     {
         crc32 = (uLong)zi->ci.crc32;
-        uncompressed_size = zi->ci.totalUncompressedData;
+        uncompressed_आकार = zi->ci.योग_Uncompressed_तथ्य;
     }
-    compressed_size = zi->ci.totalCompressedData;
+    compressed_आकार = zi->ci.योग_Compressed_तथ्य;
 
 #    ifndef NOCRYPT
-    compressed_size += zi->ci.crypt_header_size;
+    compressed_आकार += zi->ci.crypt_header_आकार;
 #    endif
 
     /* update Current Item crc and sizes, */
-    if(compressed_size >= 0xffffffff || uncompressed_size >= 0xffffffff || zi->ci.pos_local_header >= 0xffffffff)
+    अगर(compressed_आकार >= 0xffffffff || uncompressed_आकार >= 0xffffffff || zi->ci.pos_local_header >= 0xffffffff)
     {
       /*version Made by*/
-      zip64local_putValue_inmemory(zi->ci.central_header+4,(uLong)45,2);
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+4,(uLong)45,2);
       /*version needed*/
-      zip64local_putValue_inmemory(zi->ci.central_header+6,(uLong)45,2);
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+6,(uLong)45,2);
 
     }
 
-    zip64local_putValue_inmemory(zi->ci.central_header+16,crc32,4); /*crc*/
+    zip64local_put_मूल्य_inmemory(zi->ci.central_header+16,crc32,4); /*crc*/
 
 
-    if(compressed_size >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+20, invalidValue,4); /*compr size*/
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+20, compressed_size,4); /*compr size*/
+    अगर(compressed_आकार >= 0xffffffff)
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+20, invalid_मूल्य,4); /*compr size*/
+    अन्यथा
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+20, compressed_आकार,4); /*compr size*/
 
     /* set internal file attributes field */
-    if (zi->ci.stream.data_type == Z_ASCII)
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)Z_ASCII,2);
+    अगर (zi->ci.stream.तथ्य_type == Z_ASCII)
+        zip64local_put_मूल्य_inmemory(zi->ci.central_header+36,(uLong)Z_ASCII,2);
 
-    if(uncompressed_size >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+24, invalidValue,4); /*uncompr size*/
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+24, uncompressed_size,4); /*uncompr size*/
+    अगर(uncompressed_आकार >= 0xffffffff)
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+24, invalid_मूल्य,4); /*uncompr size*/
+    अन्यथा
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+24, uncompressed_आकार,4); /*uncompr size*/
 
     /* Add ZIP64 extra info field for uncompressed size */
-    if(uncompressed_size >= 0xffffffff)
+    अगर(uncompressed_आकार >= 0xffffffff)
       datasize += 8;
 
     /* Add ZIP64 extra info field for compressed size */
-    if(compressed_size >= 0xffffffff)
+    अगर(compressed_आकार >= 0xffffffff)
       datasize += 8;
 
     /* Add ZIP64 extra info field for relative offset to local file header of current file */
-    if(zi->ci.pos_local_header >= 0xffffffff)
+    अगर(zi->ci.pos_local_header >= 0xffffffff)
       datasize += 8;
 
-    if(datasize > 0)
+    अगर(datasize > 0)
     {
-      char* p = NULL;
+      अक्षर* p = शून्य;
 
-      if((uLong)(datasize + 4) > zi->ci.size_centralExtraFree)
+      अगर((uLong)(datasize + 4) > zi->ci.आकार_central_Extra_Free)
       {
         /* we cannot write more data to the buffer that we have room for. */
-        return ZIP_BADZIPFILE;
+        वापस ZIP_BADZIPFILE;
       }
 
-      p = zi->ci.central_header + zi->ci.size_centralheader;
+      p = zi->ci.central_header + zi->ci.आकार_centralheader;
 
       /* Add Extra Information Header for 'ZIP64 information' */
-      zip64local_putValue_inmemory(p, 0x0001, 2); /* HeaderID */
+      zip64local_put_मूल्य_inmemory(p, 0x0001, 2); /* HeaderID */
       p += 2;
-      zip64local_putValue_inmemory(p, datasize, 2); /* DataSize */
+      zip64local_put_मूल्य_inmemory(p, datasize, 2); /* DataSize */
       p += 2;
 
-      if(uncompressed_size >= 0xffffffff)
+      अगर(uncompressed_आकार >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, uncompressed_size, 8);
+        zip64local_put_मूल्य_inmemory(p, uncompressed_आकार, 8);
         p += 8;
       }
 
-      if(compressed_size >= 0xffffffff)
+      अगर(compressed_आकार >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, compressed_size, 8);
+        zip64local_put_मूल्य_inmemory(p, compressed_आकार, 8);
         p += 8;
       }
 
-      if(zi->ci.pos_local_header >= 0xffffffff)
+      अगर(zi->ci.pos_local_header >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, zi->ci.pos_local_header, 8);
+        zip64local_put_मूल्य_inmemory(p, zi->ci.pos_local_header, 8);
         p += 8;
       }
 
       /* Update how much extra free space we got in the memory buffer
          and increase the centralheader size so the new ZIP64 fields are included
          ( 4 below is the size of HeaderID and DataSize field ) */
-      zi->ci.size_centralExtraFree -= datasize + 4;
-      zi->ci.size_centralheader += datasize + 4;
+      zi->ci.आकार_central_Extra_Free -= datasize + 4;
+      zi->ci.आकार_centralheader += datasize + 4;
 
       /* Update the extra info size field */
-      zi->ci.size_centralExtra += datasize + 4;
-      zip64local_putValue_inmemory(zi->ci.central_header+30,(uLong)zi->ci.size_centralExtra,2);
+      zi->ci.आकार_central_Extra += datasize + 4;
+      zip64local_put_मूल्य_inmemory(zi->ci.central_header+30,(uLong)zi->ci.आकार_central_Extra,2);
     }
 
-    if (err==ZIP_OK)
-        err = add_data_in_datablock(&zi->central_dir, zi->ci.central_header, (uLong)zi->ci.size_centralheader);
+    अगर (err==ZIP_OK)
+        err = add_तथ्य_in_datablock(&zi->central_dir, zi->ci.central_header, (uLong)zi->ci.आकार_centralheader);
 
-    free(zi->ci.central_header);
+    मुक्त(zi->ci.central_header);
 
-    if (err==ZIP_OK)
+    अगर (err==ZIP_OK)
     {
         /* Update the LocalFileHeader with the new values. */
 
         ZPOS64_T cur_pos_inzip = ZTELL64(zi->z_filefunc,zi->filestream);
 
-        if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_local_header + 14,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        अगर (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_local_header + 14,ZLIB_FILEFUNC_SEEK_SET)!=0)
             err = ZIP_ERRNO;
 
-        if (err==ZIP_OK)
-            err = zip64local_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
+        अगर (err==ZIP_OK)
+            err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
 
-        if(uncompressed_size >= 0xffffffff || compressed_size >= 0xffffffff )
+        अगर(uncompressed_आकार >= 0xffffffff || compressed_आकार >= 0xffffffff )
         {
-          if(zi->ci.pos_zip64extrainfo > 0)
+          अगर(zi->ci.pos_zip64extrainfo > 0)
           {
             /* Update the size in the ZIP64 extended field. */
-            if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_zip64extrainfo + 4,ZLIB_FILEFUNC_SEEK_SET)!=0)
+            अगर (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_zip64extrainfo + 4,ZLIB_FILEFUNC_SEEK_SET)!=0)
               err = ZIP_ERRNO;
 
-            if (err==ZIP_OK) /* compressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc, zi->filestream, uncompressed_size, 8);
+            अगर (err==ZIP_OK) /* compressed size, unknown */
+              err = zip64local_put_मूल्य(&zi->z_filefunc, zi->filestream, uncompressed_आकार, 8);
 
-            if (err==ZIP_OK) /* uncompressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc, zi->filestream, compressed_size, 8);
+            अगर (err==ZIP_OK) /* uncompressed size, unknown */
+              err = zip64local_put_मूल्य(&zi->z_filefunc, zi->filestream, compressed_आकार, 8);
           }
-          else
+          अन्यथा
               err = ZIP_BADZIPFILE; /* Caller passed zip64 = 0, so no room for zip64 info -> fatal */
         }
-        else
+        अन्यथा
         {
-          if (err==ZIP_OK) /* compressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
+          अगर (err==ZIP_OK) /* compressed size, unknown */
+              err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,compressed_आकार,4);
 
-          if (err==ZIP_OK) /* uncompressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+          अगर (err==ZIP_OK) /* uncompressed size, unknown */
+              err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,uncompressed_आकार,4);
         }
 
-        if (ZSEEK64(zi->z_filefunc,zi->filestream, cur_pos_inzip,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        अगर (ZSEEK64(zi->z_filefunc,zi->filestream, cur_pos_inzip,ZLIB_FILEFUNC_SEEK_SET)!=0)
             err = ZIP_ERRNO;
     }
 
-    zi->number_entry ++;
+    zi->संख्या_entry ++;
     zi->in_opened_file_inzip = 0;
 
-    return err;
+    वापस err;
 }
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file) {
-    return zipCloseFileInZipRaw (file,0,0);
+बाह्य पूर्णांक ZEXPORT zipCloseFileInZip(zipFile file) {
+    वापस zipCloseFileInZipRaw (file,0,0);
 }
 
-local int Write_Zip64EndOfCentralDirectoryLocator(zip64_internal* zi, ZPOS64_T zip64eocd_pos_inzip) {
-  int err = ZIP_OK;
+local पूर्णांक Write_Zip64EndOfCentralDirectoryLocator(zip64_internal* zi, ZPOS64_T zip64eocd_pos_inzip) {
+  पूर्णांक err = ZIP_OK;
   ZPOS64_T pos = zip64eocd_pos_inzip - zi->add_position_when_writing_offset;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDLOCHEADERMAGIC,4);
+  err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDLOCHEADERMAGIC,4);
 
   /*num disks*/
-    if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+    अगर (err==ZIP_OK) /* number of the disk with the start of the central directory */
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
   /*relative offset*/
-    if (err==ZIP_OK) /* Relative offset to the Zip64EndOfCentralDirectory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, pos,8);
+    अगर (err==ZIP_OK) /* Relative offset to the Zip64EndOfCentralDirectory */
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream, pos,8);
 
   /*total disks*/ /* Do not support spawning of disk so always say 1 here*/
-    if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)1,4);
+    अगर (err==ZIP_OK) /* number of the disk with the start of the central directory */
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)1,4);
 
-    return err;
+    वापस err;
 }
 
-local int Write_Zip64EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centraldir, ZPOS64_T centraldir_pos_inzip) {
-  int err = ZIP_OK;
+local पूर्णांक Write_Zip64EndOfCentralDirectoryRecord(zip64_internal* zi, uLong आकार_centraldir, ZPOS64_T centraldir_pos_inzip) {
+  पूर्णांक err = ZIP_OK;
 
-  uLong Zip64DataSize = 44;
+  uLong Zip64_तथ्य_आकार = 44;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDHEADERMAGIC,4);
+  err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDHEADERMAGIC,4);
 
-  if (err==ZIP_OK) /* size of this 'zip64 end of central directory' */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(ZPOS64_T)Zip64DataSize,8); /* why ZPOS64_T of this ? */
+  अगर (err==ZIP_OK) /* size of this 'zip64 end of central directory' */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(ZPOS64_T)Zip64_तथ्य_आकार,8); /* why ZPOS64_T of this ? */
 
-  if (err==ZIP_OK) /* version made by */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);
+  अगर (err==ZIP_OK) /* version made by */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)45,2);
 
-  if (err==ZIP_OK) /* version needed */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);
+  अगर (err==ZIP_OK) /* version needed */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)45,2);
 
-  if (err==ZIP_OK) /* number of this disk */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+  अगर (err==ZIP_OK) /* number of this disk */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
-  if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+  अगर (err==ZIP_OK) /* number of the disk with the start of the central directory */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir on this disk */
-    err = zip64local_putValue(&zi->z_filefunc, zi->filestream, zi->number_entry, 8);
+  अगर (err==ZIP_OK) /* total number of entries in the central dir on this disk */
+    err = zip64local_put_मूल्य(&zi->z_filefunc, zi->filestream, zi->संख्या_entry, 8);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir */
-    err = zip64local_putValue(&zi->z_filefunc, zi->filestream, zi->number_entry, 8);
+  अगर (err==ZIP_OK) /* total number of entries in the central dir */
+    err = zip64local_put_मूल्य(&zi->z_filefunc, zi->filestream, zi->संख्या_entry, 8);
 
-  if (err==ZIP_OK) /* size of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(ZPOS64_T)size_centraldir,8);
+  अगर (err==ZIP_OK) /* size of the central directory */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(ZPOS64_T)आकार_centraldir,8);
 
-  if (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
+  अगर (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
   {
     ZPOS64_T pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (ZPOS64_T)pos,8);
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream, (ZPOS64_T)pos,8);
   }
-  return err;
+  वापस err;
 }
 
-local int Write_EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centraldir, ZPOS64_T centraldir_pos_inzip) {
-  int err = ZIP_OK;
+local पूर्णांक Write_EndOfCentralDirectoryRecord(zip64_internal* zi, uLong आकार_centraldir, ZPOS64_T centraldir_pos_inzip) {
+  पूर्णांक err = ZIP_OK;
 
   /*signature*/
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ENDHEADERMAGIC,4);
+  err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)ENDHEADERMAGIC,4);
 
-  if (err==ZIP_OK) /* number of this disk */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,2);
+  अगर (err==ZIP_OK) /* number of this disk */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0,2);
 
-  if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,2);
+  अगर (err==ZIP_OK) /* number of the disk with the start of the central directory */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0,2);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir on this disk */
+  अगर (err==ZIP_OK) /* total number of entries in the central dir on this disk */
   {
     {
-      if(zi->number_entry >= 0xFFFF)
-        err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
-      else
-        err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->number_entry,2);
+      अगर(zi->संख्या_entry >= 0xFFFF)
+        err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
+      अन्यथा
+        err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)zi->संख्या_entry,2);
     }
   }
 
-  if (err==ZIP_OK) /* total number of entries in the central dir */
+  अगर (err==ZIP_OK) /* total number of entries in the central dir */
   {
-    if(zi->number_entry >= 0xFFFF)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->number_entry,2);
+    अगर(zi->संख्या_entry >= 0xFFFF)
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
+    अन्यथा
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)zi->संख्या_entry,2);
   }
 
-  if (err==ZIP_OK) /* size of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_centraldir,4);
+  अगर (err==ZIP_OK) /* size of the central directory */
+    err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)आकार_centraldir,4);
 
-  if (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
+  अगर (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
   {
     ZPOS64_T pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    if(pos >= 0xffffffff)
+    अगर(pos >= 0xffffffff)
     {
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (uLong)0xffffffff,4);
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream, (uLong)0xffffffff,4);
     }
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (uLong)(centraldir_pos_inzip - zi->add_position_when_writing_offset),4);
+    अन्यथा
+      err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream, (uLong)(centraldir_pos_inzip - zi->add_position_when_writing_offset),4);
   }
 
-   return err;
+   वापस err;
 }
 
-local int Write_GlobalComment(zip64_internal* zi, const char* global_comment) {
-  int err = ZIP_OK;
-  uInt size_global_comment = 0;
+local पूर्णांक Write_GlobalComment(zip64_internal* zi, स्थिर अक्षर* global_comment) {
+  पूर्णांक err = ZIP_OK;
+  uInt आकार_global_comment = 0;
 
-  if(global_comment != NULL)
-    size_global_comment = (uInt)strlen(global_comment);
+  अगर(global_comment != शून्य)
+    आकार_global_comment = (uInt)म_माप(global_comment);
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_global_comment,2);
+  err = zip64local_put_मूल्य(&zi->z_filefunc,zi->filestream,(uLong)आकार_global_comment,2);
 
-  if (err == ZIP_OK && size_global_comment > 0)
+  अगर (err == ZIP_OK && आकार_global_comment > 0)
   {
-    if (ZWRITE64(zi->z_filefunc,zi->filestream, global_comment, size_global_comment) != size_global_comment)
+    अगर (ZWRITE64(zi->z_filefunc,zi->filestream, global_comment, आकार_global_comment) != आकार_global_comment)
       err = ZIP_ERRNO;
   }
-  return err;
+  वापस err;
 }
 
-extern int ZEXPORT zipClose(zipFile file, const char* global_comment) {
+बाह्य पूर्णांक ZEXPORT zipClose(zipFile file, स्थिर अक्षर* global_comment) {
     zip64_internal* zi;
-    int err = 0;
-    uLong size_centraldir = 0;
+    पूर्णांक err = 0;
+    uLong आकार_centraldir = 0;
     ZPOS64_T centraldir_pos_inzip;
     ZPOS64_T pos;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
+    अगर (file == शून्य)
+        वापस ZIP_PARAMERROR;
 
     zi = (zip64_internal*)file;
 
-    if (zi->in_opened_file_inzip == 1)
+    अगर (zi->in_opened_file_inzip == 1)
     {
         err = zipCloseFileInZip (file);
     }
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    if (global_comment==NULL)
+#अगर_अघोषित NO_ADDFILEINEXISTINGZIP
+    अगर (global_comment==शून्य)
         global_comment = zi->globalcomment;
-#endif
+#पूर्ण_अगर
 
     centraldir_pos_inzip = ZTELL64(zi->z_filefunc,zi->filestream);
 
-    if (err==ZIP_OK)
+    अगर (err==ZIP_OK)
     {
         linkedlist_datablock_internal* ldi = zi->central_dir.first_block;
-        while (ldi!=NULL)
+        जबतक (ldi!=शून्य)
         {
-            if ((err==ZIP_OK) && (ldi->filled_in_this_block>0))
+            अगर ((err==ZIP_OK) && (ldi->filled_in_this_block>0))
             {
-                if (ZWRITE64(zi->z_filefunc,zi->filestream, ldi->data, ldi->filled_in_this_block) != ldi->filled_in_this_block)
+                अगर (ZWRITE64(zi->z_filefunc,zi->filestream, ldi->तथ्य, ldi->filled_in_this_block) != ldi->filled_in_this_block)
                     err = ZIP_ERRNO;
             }
 
-            size_centraldir += ldi->filled_in_this_block;
-            ldi = ldi->next_datablock;
+            आकार_centraldir += ldi->filled_in_this_block;
+            ldi = ldi->अग्र_datablock;
         }
     }
     free_linkedlist(&(zi->central_dir));
@@ -2168,85 +2168,85 @@ extern int ZEXPORT zipClose(zipFile file, const char* global_comment) {
     set_end(&zi->set);          /* set was zeroed, so this is safe */
 
     pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    if(pos >= 0xffffffff || zi->number_entry >= 0xFFFF)
+    अगर(pos >= 0xffffffff || zi->संख्या_entry >= 0xFFFF)
     {
       ZPOS64_T Zip64EOCDpos = ZTELL64(zi->z_filefunc,zi->filestream);
-      Write_Zip64EndOfCentralDirectoryRecord(zi, size_centraldir, centraldir_pos_inzip);
+      Write_Zip64EndOfCentralDirectoryRecord(zi, आकार_centraldir, centraldir_pos_inzip);
 
       Write_Zip64EndOfCentralDirectoryLocator(zi, Zip64EOCDpos);
     }
 
-    if (err==ZIP_OK)
-      err = Write_EndOfCentralDirectoryRecord(zi, size_centraldir, centraldir_pos_inzip);
+    अगर (err==ZIP_OK)
+      err = Write_EndOfCentralDirectoryRecord(zi, आकार_centraldir, centraldir_pos_inzip);
 
-    if(err == ZIP_OK)
+    अगर(err == ZIP_OK)
       err = Write_GlobalComment(zi, global_comment);
 
-    if (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
-        if (err == ZIP_OK)
+    अगर (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
+        अगर (err == ZIP_OK)
             err = ZIP_ERRNO;
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    free(zi->globalcomment);
-#endif
-    free(zi);
+#अगर_अघोषित NO_ADDFILEINEXISTINGZIP
+    मुक्त(zi->globalcomment);
+#पूर्ण_अगर
+    मुक्त(zi);
 
-    return err;
+    वापस err;
 }
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader) {
-  char* p = pData;
-  int size = 0;
-  char* pNewHeader;
-  char* pTmp;
-  short header;
-  short dataSize;
+बाह्य पूर्णांक ZEXPORT zipRemoveExtraInfoBlock(अक्षर* p_तथ्य, पूर्णांक* तथ्य_Len, लघु sHeader) {
+  अक्षर* p = p_तथ्य;
+  पूर्णांक आकार = 0;
+  अक्षर* pNewHeader;
+  अक्षर* pTmp;
+  लघु header;
+  लघु तथ्य_आकार;
 
-  int retVal = ZIP_OK;
+  पूर्णांक retVal = ZIP_OK;
 
-  if(pData == NULL || dataLen == NULL || *dataLen < 4)
-    return ZIP_PARAMERROR;
+  अगर(p_तथ्य == शून्य || तथ्य_Len == शून्य || *तथ्य_Len < 4)
+    वापस ZIP_PARAMERROR;
 
-  pNewHeader = (char*)ALLOC((unsigned)*dataLen);
+  pNewHeader = (अक्षर*)ALLOC((अचिन्हित)*तथ्य_Len);
   pTmp = pNewHeader;
 
-  while(p < (pData + *dataLen))
+  जबतक(p < (p_तथ्य + *तथ्य_Len))
   {
-    header = *(short*)p;
-    dataSize = *(((short*)p)+1);
+    header = *(लघु*)p;
+    तथ्य_आकार = *(((लघु*)p)+1);
 
-    if( header == sHeader ) /* Header found. */
+    अगर( header == sHeader ) /* Header found. */
     {
-      p += dataSize + 4; /* skip it. do not copy to temp buffer */
+      p += तथ्य_आकार + 4; /* skip it. do not copy to temp buffer */
     }
-    else
+    अन्यथा
     {
       /* Extra Info block should not be removed, So copy it to the temp buffer. */
-      memcpy(pTmp, p, dataSize + 4);
-      p += dataSize + 4;
-      size += dataSize + 4;
+      स_नकल(pTmp, p, तथ्य_आकार + 4);
+      p += तथ्य_आकार + 4;
+      आकार += तथ्य_आकार + 4;
     }
 
   }
 
-  if(size < *dataLen)
+  अगर(आकार < *तथ्य_Len)
   {
     /* clean old extra info block. */
-    memset(pData,0, *dataLen);
+    स_रखो(p_तथ्य,0, *तथ्य_Len);
 
     /* copy the new extra info block over the old */
-    if(size > 0)
-      memcpy(pData, pNewHeader, size);
+    अगर(आकार > 0)
+      स_नकल(p_तथ्य, pNewHeader, आकार);
 
     /* set the new extra info size */
-    *dataLen = size;
+    *तथ्य_Len = आकार;
 
     retVal = ZIP_OK;
   }
-  else
+  अन्यथा
     retVal = ZIP_ERRNO;
 
-  free(pNewHeader);
+  मुक्त(pNewHeader);
 
-  return retVal;
+  वापस retVal;
 }

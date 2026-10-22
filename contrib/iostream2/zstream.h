@@ -15,45 +15,45 @@
  *
  */
 
-#ifndef ZSTREAM__H
-#define ZSTREAM__H
+#अगर_अघोषित ZSTREAM__H
+#घोषणा ZSTREAM__H
 
 /*
  * zstream.h - C++ interface to the 'zlib' general purpose compression library
  * $Id: zstream.h 1.1 1997-06-25 12:00:56+02 tyge Exp tyge $
  */
 
-#include <strstream.h>
-#include <string.h>
-#include <stdio.h>
-#include "zlib.h"
+#समावेश <strstream.h>
+#समावेश <string.h>
+#समावेश <stdio.h>
+#समावेश "zlib.h"
 
-#if defined(_WIN32)
+#अगर defined(_WIN32)
 #   include <fcntl.h>
 #   include <io.h>
-#   define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#   define SET_BINARY_MODE(file)
-#endif
+#   define SET_द्विआधारी_MODE(file) setmode(fileno(file), O_द्विआधारी)
+#अन्यथा
+#   define SET_द्विआधारी_MODE(file)
+#पूर्ण_अगर
 
 class zstringlen {
-public:
+खुला:
     zstringlen(class izstream&);
-    zstringlen(class ozstream&, const char*);
-    size_t value() const { return val.word; }
-private:
-    struct Val { unsigned char byte; size_t word; } val;
+    zstringlen(class ozstream&, स्थिर अक्षर*);
+    माप_प्रकार मूल्य() स्थिर { वापस val.word; }
+निजी:
+    काष्ठा Val { अचिन्हित अक्षर byte; माप_प्रकार word; } val;
 };
 
 //  ----------------------------- izstream -----------------------------
 
 class izstream
 {
-    public:
+    खुला:
         izstream() : m_fp(0) {}
-        izstream(FILE* fp) : m_fp(0) { open(fp); }
-        izstream(const char* name) : m_fp(0) { open(name); }
-        ~izstream() { close(); }
+        izstream(खाता* fp) : m_fp(0) { खोलो(fp); }
+        izstream(स्थिर अक्षर* name) : m_fp(0) { खोलो(name); }
+        ~izstream() { बंद(); }
 
         /* Opens a gzip (.gz) file for reading.
          * open() can be used to read a file which is not in gzip format;
@@ -61,14 +61,14 @@ class izstream
          * decompression. errno can be checked to distinguish two error
          * cases (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name) {
-            if (m_fp) close();
+        व्योम खोलो(स्थिर अक्षर* name) {
+            अगर (m_fp) बंद();
             m_fp = ::gzopen(name, "rb");
         }
 
-        void open(FILE* fp) {
-            SET_BINARY_MODE(fp);
-            if (m_fp) close();
+        व्योम खोलो(खाता* fp) {
+            SET_द्विआधारी_MODE(fp);
+            अगर (m_fp) बंद();
             m_fp = ::gzdopen(fileno(fp), "rb");
         }
 
@@ -76,15 +76,15 @@ class izstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            int r = ::gzclose(m_fp);
-            m_fp = 0; return r;
+        पूर्णांक बंद() {
+            पूर्णांक r = ::gzclose(m_fp);
+            m_fp = 0; वापस r;
         }
 
         /* Binary read the given number of bytes from the compressed file.
          */
-        int read(void* buf, size_t len) {
-            return ::gzread(m_fp, buf, len);
+        पूर्णांक पढ़ो(व्योम* buf, माप_प्रकार len) {
+            वापस ::gzread(m_fp, buf, len);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -93,13 +93,13 @@ class izstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        स्थिर अक्षर* error(पूर्णांक* errnum) {
+            वापस ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { वापस m_fp; }
 
-    private:
+    निजी:
         gzFile m_fp;
 };
 
@@ -110,62 +110,62 @@ class izstream
  * returns the number of uncompressed bytes actually read
  * (0 for end of file, -1 for error).
  */
-template <class T, class Items>
-inline int read(izstream& zs, T* x, Items items) {
-    return ::gzread(zs.fp(), x, items*sizeof(T));
+ढाँचा <class T, class वस्तुएँ>
+अंतरभूत पूर्णांक पढ़ो(izstream& zs, T* x, वस्तुएँ वस्तुएँ_2) {
+    वापस ::gzread(zs.fp(), x, वस्तुएँ_2*माप(T));
 }
 
 /*
  * Binary input with the '>' operator.
  */
-template <class T>
-inline izstream& operator>(izstream& zs, T& x) {
-    ::gzread(zs.fp(), &x, sizeof(T));
-    return zs;
+ढाँचा <class T>
+अंतरभूत izstream& चालक>(izstream& zs, T& x) {
+    ::gzread(zs.fp(), &x, माप(T));
+    वापस zs;
 }
 
 
-inline zstringlen::zstringlen(izstream& zs) {
+अंतरभूत zstringlen::zstringlen(izstream& zs) {
     zs > val.byte;
-    if (val.byte == 255) zs > val.word;
-    else val.word = val.byte;
+    अगर (val.byte == 255) zs > val.word;
+    अन्यथा val.word = val.byte;
 }
 
 /*
  * Read length of string + the string with the '>' operator.
  */
-inline izstream& operator>(izstream& zs, char* x) {
+अंतरभूत izstream& चालक>(izstream& zs, अक्षर* x) {
     zstringlen len(zs);
-    ::gzread(zs.fp(), x, len.value());
-    x[len.value()] = '\0';
-    return zs;
+    ::gzread(zs.fp(), x, len.मूल्य());
+    x[len.मूल्य()] = '\0';
+    वापस zs;
 }
 
-inline char* read_string(izstream& zs) {
+अंतरभूत अक्षर* read_string(izstream& zs) {
     zstringlen len(zs);
-    char* x = new char[len.value()+1];
-    ::gzread(zs.fp(), x, len.value());
-    x[len.value()] = '\0';
-    return x;
+    अक्षर* x = new अक्षर[len.मूल्य()+1];
+    ::gzread(zs.fp(), x, len.मूल्य());
+    x[len.मूल्य()] = '\0';
+    वापस x;
 }
 
 // ----------------------------- ozstream -----------------------------
 
 class ozstream
 {
-    public:
+    खुला:
         ozstream() : m_fp(0), m_os(0) {
         }
-        ozstream(FILE* fp, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(खाता* fp, पूर्णांक level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
-            open(fp, level);
+            खोलो(fp, level);
         }
-        ozstream(const char* name, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(स्थिर अक्षर* name, पूर्णांक level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
-            open(name, level);
+            खोलो(name, level);
         }
         ~ozstream() {
-            close();
+            बंद();
         }
 
         /* Opens a gzip (.gz) file for writing.
@@ -173,20 +173,20 @@ class ozstream
          * errno can be checked to distinguish two error cases
          * (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name, int level = Z_DEFAULT_COMPRESSION) {
-            char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
+        व्योम खोलो(स्थिर अक्षर* name, पूर्णांक level = Z_DEFAULT_COMPRESSION) {
+            अक्षर mode[4] = "wb\0";
+            अगर (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
+            अगर (m_fp) बंद();
             m_fp = ::gzopen(name, mode);
         }
 
         /* open from a FILE pointer.
          */
-        void open(FILE* fp, int level = Z_DEFAULT_COMPRESSION) {
-            SET_BINARY_MODE(fp);
-            char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
+        व्योम खोलो(खाता* fp, पूर्णांक level = Z_DEFAULT_COMPRESSION) {
+            SET_द्विआधारी_MODE(fp);
+            अक्षर mode[4] = "wb\0";
+            अगर (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
+            अगर (m_fp) बंद();
             m_fp = ::gzdopen(fileno(fp), mode);
         }
 
@@ -194,18 +194,18 @@ class ozstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            if (m_os) {
+        पूर्णांक बंद() {
+            अगर (m_os) {
                 ::gzwrite(m_fp, m_os->str(), m_os->pcount());
                 delete[] m_os->str(); delete m_os; m_os = 0;
             }
-            int r = ::gzclose(m_fp); m_fp = 0; return r;
+            पूर्णांक r = ::gzclose(m_fp); m_fp = 0; वापस r;
         }
 
         /* Binary write the given number of bytes into the compressed file.
          */
-        int write(const void* buf, size_t len) {
-            return ::gzwrite(m_fp, (voidp) buf, len);
+        पूर्णांक ग_लिखो(स्थिर व्योम* buf, माप_प्रकार len) {
+            वापस ::gzwrite(m_fp, (voidp) buf, len);
         }
 
         /* Flushes all pending output into the compressed file. The parameter
@@ -215,9 +215,9 @@ class ozstream
          * flush() should be called only when strictly necessary because it can
          * degrade compression.
          */
-        int flush(int _flush) {
+        पूर्णांक flush(पूर्णांक _flush) {
             os_flush();
-            return ::gzflush(m_fp, _flush);
+            वापस ::gzflush(m_fp, _flush);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -226,19 +226,19 @@ class ozstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        स्थिर अक्षर* error(पूर्णांक* errnum) {
+            वापस ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { वापस m_fp; }
 
         ostream& os() {
-            if (m_os == 0) m_os = new ostrstream;
-            return *m_os;
+            अगर (m_os == 0) m_os = new ostrstream;
+            वापस *m_os;
         }
 
-        void os_flush() {
-            if (m_os && m_os->pcount()>0) {
+        व्योम os_flush() {
+            अगर (m_os && m_os->pcount()>0) {
                 ostrstream* oss = new ostrstream;
                 oss->fill(m_os->fill());
                 oss->flags(m_os->flags());
@@ -249,7 +249,7 @@ class ozstream
             }
         }
 
-    private:
+    निजी:
         gzFile m_fp;
         ostrstream* m_os;
 };
@@ -259,48 +259,48 @@ class ozstream
  * returns the number of uncompressed bytes actually written
  * (0 in case of error).
  */
-template <class T, class Items>
-inline int write(ozstream& zs, const T* x, Items items) {
-    return ::gzwrite(zs.fp(), (voidp) x, items*sizeof(T));
+ढाँचा <class T, class वस्तुएँ>
+अंतरभूत पूर्णांक ग_लिखो(ozstream& zs, स्थिर T* x, वस्तुएँ वस्तुएँ_2) {
+    वापस ::gzwrite(zs.fp(), (voidp) x, वस्तुएँ_2*माप(T));
 }
 
 /*
  * Binary output with the '<' operator.
  */
-template <class T>
-inline ozstream& operator<(ozstream& zs, const T& x) {
-    ::gzwrite(zs.fp(), (voidp) &x, sizeof(T));
-    return zs;
+ढाँचा <class T>
+अंतरभूत ozstream& चालक<(ozstream& zs, स्थिर T& x) {
+    ::gzwrite(zs.fp(), (voidp) &x, माप(T));
+    वापस zs;
 }
 
-inline zstringlen::zstringlen(ozstream& zs, const char* x) {
-    val.byte = 255;  val.word = ::strlen(x);
-    if (val.word < 255) zs < (val.byte = val.word);
-    else zs < val;
+अंतरभूत zstringlen::zstringlen(ozstream& zs, स्थिर अक्षर* x) {
+    val.byte = 255;  val.word = ::म_माप(x);
+    अगर (val.word < 255) zs < (val.byte = val.word);
+    अन्यथा zs < val;
 }
 
 /*
  * Write length of string + the string with the '<' operator.
  */
-inline ozstream& operator<(ozstream& zs, const char* x) {
+अंतरभूत ozstream& चालक<(ozstream& zs, स्थिर अक्षर* x) {
     zstringlen len(zs, x);
-    ::gzwrite(zs.fp(), (voidp) x, len.value());
-    return zs;
+    ::gzwrite(zs.fp(), (voidp) x, len.मूल्य());
+    वापस zs;
 }
 
-#ifdef _MSC_VER
-inline ozstream& operator<(ozstream& zs, char* const& x) {
-    return zs < (const char*) x;
+#अगर_घोषित _MSC_VER
+अंतरभूत ozstream& चालक<(ozstream& zs, अक्षर* स्थिर& x) {
+    वापस zs < (स्थिर अक्षर*) x;
 }
-#endif
+#पूर्ण_अगर
 
 /*
  * Ascii write with the << operator;
  */
-template <class T>
-inline ostream& operator<<(ozstream& zs, const T& x) {
+ढाँचा <class T>
+अंतरभूत ostream& चालक<<(ozstream& zs, स्थिर T& x) {
     zs.os_flush();
-    return zs.os() << x;
+    वापस zs.os() << x;
 }
 
-#endif
+#पूर्ण_अगर

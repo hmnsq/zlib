@@ -10,322 +10,322 @@
 
 /* @(#) $Id$ */
 
-#ifndef ZUTIL_H
-#define ZUTIL_H
+#अगर_अघोषित ZUTIL_H
+#घोषणा ZUTIL_H
 
-#ifdef HAVE_HIDDEN
+#अगर_घोषित HAVE_HIDDEN
 #  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
-#else
+#अन्यथा
 #  define ZLIB_INTERNAL
-#endif
+#पूर्ण_अगर
 
-#include "zlib.h"
+#समावेश "zlib.h"
 
-#if defined(STDC) && !defined(Z_SOLO)
-#  if !(defined(_WIN32_WCE) && defined(_MSC_VER))
+#अगर defined(STDC) && !defined(Z_SOLO)
+#  अगर !(defined(_WIN32_WCE) && defined(_MSC_VER))
 #    include <stddef.h>
 #  endif
 #  include <string.h>
 #  include <stdlib.h>
-#endif
+#पूर्ण_अगर
 
-#ifndef local
-#  define local static
-#endif
+#अगर_अघोषित local
+#  define local अटल
+#पूर्ण_अगर
 /* since "static" is used to mean two completely different things in C, we
    define "local" for the non-static meaning of "static", for readability
    (compile with -Dlocal if your debugger can't find static symbols) */
 
-extern const char deflate_copyright[];
-extern const char inflate_copyright[];
-extern const char inflate9_copyright[];
+बाह्य स्थिर अक्षर deflate_copyright[];
+बाह्य स्थिर अक्षर inflate_copyright[];
+बाह्य स्थिर अक्षर inflate9_copyright[];
 
-typedef unsigned char  uch;
-typedef uch FAR uchf;
-typedef unsigned short ush;
-typedef ush FAR ushf;
-typedef unsigned long  ulg;
+प्रकार अचिन्हित अक्षर  uch;
+प्रकार uch FAR uchf;
+प्रकार अचिन्हित लघु ush;
+प्रकार ush FAR ushf;
+प्रकार अचिन्हित दीर्घ  ulg;
 
-#if !defined(Z_U8) && !defined(Z_SOLO) && defined(STDC)
+#अगर !defined(Z_U8) && !defined(Z_SOLO) && defined(STDC)
 #  include <limits.h>
-#  if (ULONG_MAX == 0xffffffffffffffff)
-#    define Z_U8 unsigned long
+#  अगर (अच_दीर्घ_उच्च == 0xffffffffffffffff)
+#    define Z_U8 अचिन्हित दीर्घ
 #  elif (ULLONG_MAX == 0xffffffffffffffff)
-#    define Z_U8 unsigned long long
+#    define Z_U8 अचिन्हित दीर्घ दीर्घ
 #  elif (ULONG_LONG_MAX == 0xffffffffffffffff)
-#    define Z_U8 unsigned long long
-#  elif (UINT_MAX == 0xffffffffffffffff)
-#    define Z_U8 unsigned
+#    define Z_U8 अचिन्हित दीर्घ दीर्घ
+#  elif (अच_पूर्णांक_उच्च == 0xffffffffffffffff)
+#    define Z_U8 अचिन्हित
 #  endif
-#endif
+#पूर्ण_अगर
 
-extern z_const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
+बाह्य z_const अक्षर * स्थिर z_errmsg[10]; /* indexed by 2-zlib_error */
 /* (size given to avoid silly warnings with Visual C++) */
 
-#define ERR_MSG(err) z_errmsg[(err) < -6 || (err) > 2 ? 9 : 2 - (err)]
+#घोषणा ERR_संदेश(err) z_errmsg[(err) < -6 || (err) > 2 ? 9 : 2 - (err)]
 
-#define ERR_RETURN(strm,err) \
-  return (strm->msg = ERR_MSG(err), (err))
+#घोषणा ERR_RETURN(strm,err) \
+  वापस (strm->संदेश = ERR_संदेश(err), (err))
 /* To be used only when the state is known to be valid */
 
         /* common constants */
-#if MAX_WBITS < 9 || MAX_WBITS > 15
+#अगर MAX_WBITS < 9 || MAX_WBITS > 15
 #  error MAX_WBITS must be in 9..15
-#endif
-#ifndef DEF_WBITS
+#पूर्ण_अगर
+#अगर_अघोषित DEF_WBITS
 #  define DEF_WBITS MAX_WBITS
-#endif
+#पूर्ण_अगर
 /* default windowBits for decompression. MAX_WBITS is for compression only */
 
-#if MAX_MEM_LEVEL >= 8
+#अगर MAX_MEM_LEVEL >= 8
 #  define DEF_MEM_LEVEL 8
-#else
+#अन्यथा
 #  define DEF_MEM_LEVEL  MAX_MEM_LEVEL
-#endif
+#पूर्ण_अगर
 /* default memLevel */
 
-#define STORED_BLOCK 0
-#define STATIC_TREES 1
-#define DYN_TREES    2
+#घोषणा STORED_BLOCK 0
+#घोषणा STATIC_TREES 1
+#घोषणा DYN_TREES    2
 /* The three kinds of block type */
 
-#define MIN_MATCH  3
-#define MAX_MATCH  258
+#घोषणा MIN_MATCH  3
+#घोषणा MAX_MATCH  258
 /* The minimum and maximum match lengths */
 
-#define PRESET_DICT 0x20 /* preset dictionary flag in zlib header */
+#घोषणा PRESET_DICT 0x20 /* preset dictionary flag in zlib header */
 
         /* target dependencies */
 
-#if defined(MSDOS) || (defined(WINDOWS) && !defined(WIN32))
+#अगर defined(MSDOS) || (defined(WINDOWS) && !defined(WIN32))
 #  define OS_CODE  0x00
 #  ifndef Z_SOLO
-#    if defined(__TURBOC__) || defined(__BORLANDC__)
-#      if (__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
+#    अगर defined(__TURBOC__) || defined(__BORLANDC__)
+#      अगर (__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
          /* Allow compilation with ANSI keywords only enabled */
-         void _Cdecl farfree( void *block );
-         void *_Cdecl farmalloc( unsigned long nbytes );
-#      else
+         व्योम _Cdecl farfree( व्योम *block );
+         व्योम *_Cdecl farmalloc( अचिन्हित दीर्घ nbytes );
+#      अन्यथा
 #        include <alloc.h>
 #      endif
-#    else /* MSC or DJGPP */
+#    अन्यथा /* MSC or DJGPP */
 #      include <malloc.h>
 #    endif
 #  endif
-#endif
+#पूर्ण_अगर
 
-#ifdef AMIGA
+#अगर_घोषित AMIGA
 #  define OS_CODE  1
-#endif
+#पूर्ण_अगर
 
-#if defined(VAXC) || defined(VMS)
+#अगर defined(VAXC) || defined(VMS)
 #  define OS_CODE  2
 #  define F_OPEN(name, mode) \
-     fopen((name), (mode), "mbc=60", "ctx=stm", "rfm=fix", "mrs=512")
-#endif
+     ख_खोलो((name), (mode), "mbc=60", "ctx=stm", "rfm=fix", "mrs=512")
+#पूर्ण_अगर
 
-#ifdef __370__
-#  if __TARGET_LIB__ < 0x20000000
+#अगर_घोषित __370__
+#  अगर __TARGET_LIB__ < 0x20000000
 #    define OS_CODE 4
 #  elif __TARGET_LIB__ < 0x40000000
 #    define OS_CODE 11
-#  else
+#  अन्यथा
 #    define OS_CODE 8
 #  endif
-#endif
+#पूर्ण_अगर
 
-#if defined(ATARI) || defined(atarist)
+#अगर defined(ATARI) || defined(atarist)
 #  define OS_CODE  5
-#endif
+#पूर्ण_अगर
 
-#ifdef OS2
+#अगर_घोषित OS2
 #  define OS_CODE  6
-#  if defined(M_I86) && !defined(Z_SOLO)
+#  अगर defined(M_I86) && !defined(Z_SOLO)
 #    include <malloc.h>
 #  endif
-#endif
+#पूर्ण_अगर
 
-#if defined(MACOS)
+#अगर defined(MACOS)
 #  define OS_CODE  7
-#endif
+#पूर्ण_अगर
 
-#if defined(__acorn) || defined(__riscos)
+#अगर defined(__acorn) || defined(__riscos)
 #  define OS_CODE 13
-#endif
+#पूर्ण_अगर
 
-#if defined(WIN32) && !defined(__CYGWIN__)
+#अगर defined(WIN32) && !defined(__CYGWIN__)
 #  define OS_CODE  10
-#endif
+#पूर्ण_अगर
 
-#ifdef _BEOS_
+#अगर_घोषित _BEOS_
 #  define OS_CODE  16
-#endif
+#पूर्ण_अगर
 
-#ifdef __TOS_OS400__
+#अगर_घोषित __TOS_OS400__
 #  define OS_CODE 18
-#endif
+#पूर्ण_अगर
 
-#ifdef __APPLE__
+#अगर_घोषित __APPLE__
 #  define OS_CODE 19
-#endif
+#पूर्ण_अगर
 
-#if defined(__BORLANDC__) && !defined(MSDOS)
-  #pragma warn -8004
-  #pragma warn -8008
-  #pragma warn -8066
-#endif
+#अगर defined(__BORLANDC__) && !defined(MSDOS)
+  #आशय warn -8004
+  #आशय warn -8008
+  #आशय warn -8066
+#पूर्ण_अगर
 
 /* provide prototypes for these when building zlib without LFS */
-#ifndef Z_LARGE64
+#अगर_अघोषित Z_LARGE64
    ZEXTERN uLong ZEXPORT adler32_combine64(uLong, uLong, z_off64_t);
    ZEXTERN uLong ZEXPORT crc32_combine64(uLong, uLong, z_off64_t);
    ZEXTERN uLong ZEXPORT crc32_combine_gen64(z_off64_t);
-#endif
+#पूर्ण_अगर
 
         /* common defaults */
 
-#ifndef OS_CODE
+#अगर_अघोषित OS_CODE
 #  define OS_CODE  3     /* assume Unix */
-#endif
+#पूर्ण_अगर
 
-#ifndef F_OPEN
-#  define F_OPEN(name, mode) fopen((name), (mode))
-#endif
+#अगर_अघोषित F_OPEN
+#  define F_OPEN(name, mode) ख_खोलो((name), (mode))
+#पूर्ण_अगर
 
          /* functions */
 
-#if defined(pyr) || defined(Z_SOLO)
+#अगर defined(pyr) || defined(Z_SOLO)
 #  define NO_MEMCPY
-#endif
-#if defined(SMALL_MEDIUM) && !defined(_MSC_VER) && !defined(__SC__)
+#पूर्ण_अगर
+#अगर defined(SMALL_MEDIUM) && !defined(_MSC_VER) && !defined(__SC__)
  /* Use our own functions for small and medium model with MSC <= 5.0.
   * You may have to use the same strategy for Borland C (untested).
   * The __SC__ check is for Symantec.
   */
 #  define NO_MEMCPY
-#endif
-#if defined(STDC) && !defined(HAVE_MEMCPY) && !defined(NO_MEMCPY)
+#पूर्ण_अगर
+#अगर defined(STDC) && !defined(HAVE_MEMCPY) && !defined(NO_MEMCPY)
 #  define HAVE_MEMCPY
-#endif
-#ifdef HAVE_MEMCPY
+#पूर्ण_अगर
+#अगर_घोषित HAVE_MEMCPY
 #  ifdef SMALL_MEDIUM /* MSDOS small or medium model */
 #    define zmemcpy _fmemcpy
 #    define zmemcmp _fmemcmp
 #    define zmemzero(dest, len) _fmemset(dest, 0, len)
-#  else
-#    define zmemcpy memcpy
-#    define zmemcmp memcmp
-#    define zmemzero(dest, len) memset(dest, 0, len)
+#  अन्यथा
+#    define zmemcpy स_नकल
+#    define zmemcmp स_भेद
+#    define zmemzero(dest, len) स_रखो(dest, 0, len)
 #  endif
-#else
-   void ZLIB_INTERNAL zmemcpy(void FAR *, const void FAR *, z_size_t);
-   int ZLIB_INTERNAL zmemcmp(const void FAR *, const void FAR *, z_size_t);
-   void ZLIB_INTERNAL zmemzero(void FAR *, z_size_t);
-#endif
+#अन्यथा
+   व्योम ZLIB_INTERNAL zmemcpy(व्योम FAR *, स्थिर व्योम FAR *, z_आकार_t);
+   पूर्णांक ZLIB_INTERNAL zmemcmp(स्थिर व्योम FAR *, स्थिर व्योम FAR *, z_आकार_t);
+   व्योम ZLIB_INTERNAL zmemzero(व्योम FAR *, z_आकार_t);
+#पूर्ण_अगर
 
 /* Diagnostic functions */
-#ifdef ZLIB_DEBUG
+#अगर_घोषित ZLIB_DEBUG
 #  include <stdio.h>
-   extern int ZLIB_INTERNAL z_verbose;
-   extern void ZLIB_INTERNAL z_error(char *m);
-#  define Assert(cond,msg) {if(!(cond)) z_error(msg);}
-#  define Trace(x) {if (z_verbose>=0) fprintf x ;}
-#  define Tracev(x) {if (z_verbose>0) fprintf x ;}
-#  define Tracevv(x) {if (z_verbose>1) fprintf x ;}
-#  define Tracec(c,x) {if (z_verbose>0 && (c)) fprintf x ;}
-#  define Tracecv(c,x) {if (z_verbose>1 && (c)) fprintf x ;}
-#else
-#  define Assert(cond,msg)
+   बाह्य पूर्णांक ZLIB_INTERNAL z_verbose;
+   बाह्य व्योम ZLIB_INTERNAL z_error(अक्षर *m);
+#  define Assert(cond,संदेश) {अगर(!(cond)) z_error(संदेश);}
+#  define Trace(x) {अगर (z_verbose>=0) ख_लिखो x ;}
+#  define Tracev(x) {अगर (z_verbose>0) ख_लिखो x ;}
+#  define Tracevv(x) {अगर (z_verbose>1) ख_लिखो x ;}
+#  define Tracec(c,x) {अगर (z_verbose>0 && (c)) ख_लिखो x ;}
+#  define Tracecv(c,x) {अगर (z_verbose>1 && (c)) ख_लिखो x ;}
+#अन्यथा
+#  define Assert(cond,संदेश)
 #  define Trace(x)
 #  define Tracev(x)
 #  define Tracevv(x)
 #  define Tracec(c,x)
 #  define Tracecv(c,x)
-#endif
+#पूर्ण_अगर
 
-#ifndef Z_SOLO
-   voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items,
-                                unsigned size);
-   void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr);
-#endif
+#अगर_अघोषित Z_SOLO
+   voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, अचिन्हित वस्तुएँ_2,
+                                अचिन्हित आकार);
+   व्योम ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr);
+#पूर्ण_अगर
 
-#define ZALLOC(strm, items, size) \
-           (*((strm)->zalloc))((strm)->opaque, (items), (size))
-#define ZFREE(strm, addr)  (*((strm)->zfree))((strm)->opaque, (voidpf)(addr))
-#define TRY_FREE(s, p) {if (p) ZFREE(s, p);}
+#घोषणा ZALLOC(strm, वस्तुएँ_2, आकार) \
+           (*((strm)->zalloc))((strm)->opaque, (वस्तुएँ_2), (आकार))
+#घोषणा ZFREE(strm, addr)  (*((strm)->zfree))((strm)->opaque, (voidpf)(addr))
+#घोषणा TRY_FREE(s, p) {अगर (p) ZFREE(s, p);}
 
 /* Reverse the bytes in a 32-bit value */
-#define ZSWAP32(q) ((((q) >> 24) & 0xff) + (((q) >> 8) & 0xff00) + \
+#घोषणा ZSWAP32(q) ((((q) >> 24) & 0xff) + (((q) >> 8) & 0xff00) + \
                     (((q) & 0xff00) << 8) + (((q) & 0xff) << 24))
 
-#ifdef Z_ONCE
+#अगर_घोषित Z_ONCE
 /*
   Create a local z_once() function depending on the availability of atomics.
  */
 
 /* Check for the availability of atomics. */
-#if defined(__STDC__) && __STDC_VERSION__ >= 201112L && \
+#अगर defined(__STDC__) && __STDC_VERSION__ >= 201112L && \
     !defined(__STDC_NO_ATOMICS__)
 
-#include <stdatomic.h>
-typedef struct {
+#समावेश <stdatomic.h>
+प्रकार काष्ठा {
     atomic_flag begun;
     atomic_int done;
 } z_once_t;
-#define Z_ONCE_INIT {ATOMIC_FLAG_INIT, 0}
+#घोषणा Z_ONCE_INIT {ATOMIC_FLAG_INIT, 0}
 
 /*
   Run the provided init() function exactly once, even if multiple threads
   invoke once() at the same time. The state must be a once_t initialized with
   Z_ONCE_INIT.
  */
-local void z_once(z_once_t *state, void (*init)(void)) {
-    if (!atomic_load(&state->done)) {
-        if (atomic_flag_test_and_set(&state->begun))
-            while (!atomic_load(&state->done))
+local व्योम z_once(z_once_t *state, व्योम (*init)(व्योम)) {
+    अगर (!atomic_load(&state->done)) {
+        अगर (atomic_flag_test_and_set(&state->begun))
+            जबतक (!atomic_load(&state->done))
                 ;
-        else {
+        अन्यथा {
             init();
             atomic_store(&state->done, 1);
         }
     }
 }
 
-#else   /* no atomics */
+#अन्यथा   /* no atomics */
 
 #warning zlib not thread-safe
 
-typedef struct z_once_s {
-    volatile int begun;
-    volatile int done;
+प्रकार काष्ठा z_once_s {
+    अस्थिर पूर्णांक begun;
+    अस्थिर पूर्णांक done;
 } z_once_t;
-#define Z_ONCE_INIT {0, 0}
+#घोषणा Z_ONCE_INIT {0, 0}
 
 /* Test and set. Alas, not atomic, but tries to limit the period of
    vulnerability. */
-local int test_and_set(int volatile *flag) {
-    int was;
+local पूर्णांक test_and_set(पूर्णांक अस्थिर *flag) {
+    पूर्णांक was;
 
     was = *flag;
     *flag = 1;
-    return was;
+    वापस was;
 }
 
 /* Run the provided init() function once. This is not thread-safe. */
-local void z_once(z_once_t *state, void (*init)(void)) {
-    if (!state->done) {
-        if (test_and_set(&state->begun))
-            while (!state->done)
+local व्योम z_once(z_once_t *state, व्योम (*init)(व्योम)) {
+    अगर (!state->done) {
+        अगर (test_and_set(&state->begun))
+            जबतक (!state->done)
                 ;
-        else {
+        अन्यथा {
             init();
             state->done = 1;
         }
     }
 }
 
-#endif /* ?atomics */
+#पूर्ण_अगर /* ?atomics */
 
-#endif /* Z_ONCE */
+#पूर्ण_अगर /* Z_ONCE */
 
-#endif /* ZUTIL_H */
+#पूर्ण_अगर /* ZUTIL_H */

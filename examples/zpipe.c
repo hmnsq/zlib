@@ -13,20 +13,20 @@
    1.5  11 Feb 2026  Use underscores for Windows POSIX names
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include "zlib.h"
+#समावेश <stdio.h>
+#समावेश <string.h>
+#समावेश <assert.h>
+#समावेश "zlib.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#अगर defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) _setmode(_fileno(file), _O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define SET_द्विआधारी_MODE(file) _setmode(_fileno(file), O_द्विआधारी_2)
+#अन्यथा
+#  define SET_द्विआधारी_MODE(file)
+#पूर्ण_अगर
 
-#define CHUNK 16384
+#घोषणा CHUNK 16384
 
 /* Compress from file source to file dest until EOF on source.
    def() returns Z_OK on success, Z_MEM_ERROR if memory could not be
@@ -34,54 +34,54 @@
    level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
    version of the library linked do not match, or Z_ERRNO if there is
    an error reading or writing the files. */
-int def(FILE *source, FILE *dest, int level)
+पूर्णांक def(खाता *source, खाता *dest, पूर्णांक level)
 {
-    int ret, flush;
-    unsigned have;
+    पूर्णांक ret, flush;
+    अचिन्हित have;
     z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    अचिन्हित अक्षर in[CHUNK];
+    अचिन्हित अक्षर out[CHUNK];
 
     /* allocate deflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
     ret = deflateInit(&strm, level);
-    if (ret != Z_OK)
-        return ret;
+    अगर (ret != Z_OK)
+        वापस ret;
 
     /* compress until end of file */
-    do {
-        strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
-            (void)deflateEnd(&strm);
-            return Z_ERRNO;
+    करो {
+        strm.avail_in = ख_पढ़ो(in, 1, CHUNK, source);
+        अगर (ख_त्रुटि(source)) {
+            (व्योम)deflateEnd(&strm);
+            वापस Z_ERRNO;
         }
-        flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
-        strm.next_in = in;
+        flush = ख_पूर्ण(source) ? Z_FINISH : Z_NO_FLUSH;
+        strm.अग्र_in = in;
 
         /* run deflate() on input until output buffer not full, finish
            compression if all of source has been read in */
-        do {
+        करो {
             strm.avail_out = CHUNK;
-            strm.next_out = out;
+            strm.अग्र_out = out;
             ret = deflate(&strm, flush);    /* no bad return value */
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+            निश्चित(ret != Z_STREAM_ERROR);  /* state not clobbered */
             have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)deflateEnd(&strm);
-                return Z_ERRNO;
+            अगर (ख_डालो(out, 1, have, dest) != have || ख_त्रुटि(dest)) {
+                (व्योम)deflateEnd(&strm);
+                वापस Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
-        assert(strm.avail_in == 0);     /* all input will be used */
+        } जबतक (strm.avail_out == 0);
+        निश्चित(strm.avail_in == 0);     /* all input will be used */
 
         /* done when last data in file processed */
-    } while (flush != Z_FINISH);
-    assert(ret == Z_STREAM_END);        /* stream will be complete */
+    } जबतक (flush != Z_FINISH);
+    निश्चित(ret == Z_STREAM_END);        /* stream will be complete */
 
     /* clean up and return */
-    (void)deflateEnd(&strm);
-    return Z_OK;
+    (व्योम)deflateEnd(&strm);
+    वापस Z_OK;
 }
 
 /* Decompress from file source to file dest until stream ends or EOF.
@@ -90,117 +90,117 @@ int def(FILE *source, FILE *dest, int level)
    invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
    the version of the library linked do not match, or Z_ERRNO if there
    is an error reading or writing the files. */
-int inf(FILE *source, FILE *dest)
+पूर्णांक inf(खाता *source, खाता *dest)
 {
-    int ret;
-    unsigned have;
+    पूर्णांक ret;
+    अचिन्हित have;
     z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    अचिन्हित अक्षर in[CHUNK];
+    अचिन्हित अक्षर out[CHUNK];
 
     /* allocate inflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
     strm.avail_in = 0;
-    strm.next_in = Z_NULL;
+    strm.अग्र_in = Z_NULL;
     ret = inflateInit(&strm);
-    if (ret != Z_OK)
-        return ret;
+    अगर (ret != Z_OK)
+        वापस ret;
 
     /* decompress until deflate stream ends or end of file */
-    do {
-        strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
-            (void)inflateEnd(&strm);
-            return Z_ERRNO;
+    करो {
+        strm.avail_in = ख_पढ़ो(in, 1, CHUNK, source);
+        अगर (ख_त्रुटि(source)) {
+            (व्योम)inflateEnd(&strm);
+            वापस Z_ERRNO;
         }
-        if (strm.avail_in == 0)
-            break;
-        strm.next_in = in;
+        अगर (strm.avail_in == 0)
+            अवरोध;
+        strm.अग्र_in = in;
 
         /* run inflate() on input until output buffer not full */
-        do {
+        करो {
             strm.avail_out = CHUNK;
-            strm.next_out = out;
+            strm.अग्र_out = out;
             ret = inflate(&strm, Z_NO_FLUSH);
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            switch (ret) {
-            case Z_NEED_DICT:
-                ret = Z_DATA_ERROR;     /* and fall through */
-            case Z_DATA_ERROR:
-            case Z_MEM_ERROR:
-                (void)inflateEnd(&strm);
-                return ret;
+            निश्चित(ret != Z_STREAM_ERROR);  /* state not clobbered */
+            चयन (ret) {
+            हाल Z_NEED_DICT:
+                ret = Z_तथ्य_ERROR;     /* and fall through */
+            हाल Z_तथ्य_ERROR:
+            हाल Z_MEM_ERROR:
+                (व्योम)inflateEnd(&strm);
+                वापस ret;
             }
             have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)inflateEnd(&strm);
-                return Z_ERRNO;
+            अगर (ख_डालो(out, 1, have, dest) != have || ख_त्रुटि(dest)) {
+                (व्योम)inflateEnd(&strm);
+                वापस Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
+        } जबतक (strm.avail_out == 0);
 
         /* done when inflate() says it's done */
-    } while (ret != Z_STREAM_END);
+    } जबतक (ret != Z_STREAM_END);
 
     /* clean up and return */
-    (void)inflateEnd(&strm);
-    return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+    (व्योम)inflateEnd(&strm);
+    वापस ret == Z_STREAM_END ? Z_OK : Z_तथ्य_ERROR;
 }
 
 /* report a zlib or i/o error */
-void zerr(int ret)
+व्योम zerr(पूर्णांक ret)
 {
-    fputs("zpipe: ", stderr);
-    switch (ret) {
-    case Z_ERRNO:
-        if (ferror(stdin))
-            fputs("error reading stdin\n", stderr);
-        if (ferror(stdout))
-            fputs("error writing stdout\n", stderr);
-        break;
-    case Z_STREAM_ERROR:
-        fputs("invalid compression level\n", stderr);
-        break;
-    case Z_DATA_ERROR:
-        fputs("invalid or incomplete deflate data\n", stderr);
-        break;
-    case Z_MEM_ERROR:
-        fputs("out of memory\n", stderr);
-        break;
-    case Z_VERSION_ERROR:
-        fputs("zlib version mismatch!\n", stderr);
+    ख_माला_दो("zpipe: ", मानक_त्रुटि);
+    चयन (ret) {
+    हाल Z_ERRNO:
+        अगर (ख_त्रुटि(मानक_निवेश))
+            ख_माला_दो("error reading stdin\n", मानक_त्रुटि);
+        अगर (ख_त्रुटि(मानक_निकास))
+            ख_माला_दो("error writing stdout\n", मानक_त्रुटि);
+        अवरोध;
+    हाल Z_STREAM_ERROR:
+        ख_माला_दो("invalid compression level\n", मानक_त्रुटि);
+        अवरोध;
+    हाल Z_तथ्य_ERROR:
+        ख_माला_दो("invalid or incomplete deflate data\n", मानक_त्रुटि);
+        अवरोध;
+    हाल Z_MEM_ERROR:
+        ख_माला_दो("out of memory\n", मानक_त्रुटि);
+        अवरोध;
+    हाल Z_VERSION_ERROR:
+        ख_माला_दो("zlib version mismatch!\n", मानक_त्रुटि);
     }
 }
 
 /* compress or decompress from stdin to stdout */
-int main(int argc, char **argv)
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-    int ret;
+    पूर्णांक ret;
 
     /* avoid end-of-line conversions */
-    SET_BINARY_MODE(stdin);
-    SET_BINARY_MODE(stdout);
+    SET_द्विआधारी_MODE(मानक_निवेश);
+    SET_द्विआधारी_MODE(मानक_निकास);
 
     /* do compression if no arguments */
-    if (argc == 1) {
-        ret = def(stdin, stdout, Z_DEFAULT_COMPRESSION);
-        if (ret != Z_OK)
+    अगर (argc == 1) {
+        ret = def(मानक_निवेश, मानक_निकास, Z_DEFAULT_COMPRESSION);
+        अगर (ret != Z_OK)
             zerr(ret);
-        return ret;
+        वापस ret;
     }
 
     /* do decompression if -d specified */
-    else if (argc == 2 && strcmp(argv[1], "-d") == 0) {
-        ret = inf(stdin, stdout);
-        if (ret != Z_OK)
+    अन्यथा अगर (argc == 2 && म_भेद(argv[1], "-d") == 0) {
+        ret = inf(मानक_निवेश, मानक_निकास);
+        अगर (ret != Z_OK)
             zerr(ret);
-        return ret;
+        वापस ret;
     }
 
     /* otherwise, report usage */
-    else {
-        fputs("zpipe usage: zpipe [-d] < source > dest\n", stderr);
-        return 1;
+    अन्यथा {
+        ख_माला_दो("zpipe usage: zpipe [-d] < source > dest\n", मानक_त्रुटि);
+        वापस 1;
     }
 }

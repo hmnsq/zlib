@@ -15,43 +15,43 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#अगर defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
-#endif
+#पूर्ण_अगर
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "puff.h"
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#अगर defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define SET_द्विआधारी_MODE(file) setmode(fileno(file), O_द्विआधारी)
+#अन्यथा
+#  define SET_द्विआधारी_MODE(file)
+#पूर्ण_अगर
 
-#define local static
+#घोषणा local अटल
 
 /* Return size times approximately the cube root of 2, keeping the result as 1,
    3, or 5 times a power of 2 -- the result is always > size, until the result
    is the maximum value of an unsigned long, where it remains.  This is useful
    to keep reallocations less than ~33% over the actual data. */
-local size_t bythirds(size_t size)
+local माप_प्रकार bythirds(माप_प्रकार आकार)
 {
-    int n;
-    size_t m;
+    पूर्णांक n;
+    माप_प्रकार m;
 
-    m = size;
-    for (n = 0; m; n++)
+    m = आकार;
+    क्रम (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    अगर (n < 3)
+        वापस आकार + 1;
     n -= 3;
-    m = size >> n;
+    m = आकार >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    वापस m > आकार ? m : (माप_प्रकार)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,109 +60,109 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local व्योम *load(स्थिर अक्षर *name, माप_प्रकार *len)
 {
-    size_t size;
-    void *buf, *swap;
-    FILE *in;
+    माप_प्रकार आकार;
+    व्योम *buf, *swap;
+    खाता *in;
 
     *len = 0;
-    buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
-    in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
-            size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
-                free(buf);
-                buf = NULL;
-                break;
+    buf = दो_स्मृति(आकार = 4096);
+    अगर (buf == शून्य)
+        वापस शून्य;
+    in = name == शून्य ? मानक_निवेश : ख_खोलो(name, "rb");
+    अगर (in != शून्य) {
+        क्रम (;;) {
+            *len += ख_पढ़ो((अक्षर *)buf + *len, 1, आकार - *len, in);
+            अगर (*len < आकार) अवरोध;
+            आकार = bythirds(आकार);
+            अगर (आकार == *len || (swap = पुनः_स्मृति(buf, आकार)) == शून्य) {
+                मुक्त(buf);
+                buf = शून्य;
+                अवरोध;
             }
             buf = swap;
         }
-        fclose(in);
+        ख_बंद(in);
     }
-    return buf;
+    वापस buf;
 }
 
-int main(int argc, char **argv)
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-    int ret, put = 0, fail = 0;
-    unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
-    size_t len = 0;
-    unsigned long sourcelen, destlen;
+    पूर्णांक ret, put = 0, fail = 0;
+    अचिन्हित skip = 0;
+    अक्षर *arg, *name = शून्य;
+    अचिन्हित अक्षर *source = शून्य, *dest;
+    माप_प्रकार len = 0;
+    अचिन्हित दीर्घ sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    जबतक (arg = *++argv, --argc)
+        अगर (arg[0] == '-') {
+            अगर (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            अन्यथा अगर (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
-                skip = (unsigned)atoi(arg + 1);
-            else {
-                fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+            अन्यथा अगर (arg[1] >= '0' && arg[1] <= '9')
+                skip = (अचिन्हित)म_से_प(arg + 1);
+            अन्यथा {
+                ख_लिखो(मानक_त्रुटि, "invalid option %s\n", arg);
+                वापस 3;
             }
         }
-        else if (name != NULL) {
-            fprintf(stderr, "only one file name allowed\n");
-            return 3;
+        अन्यथा अगर (name != शून्य) {
+            ख_लिखो(मानक_त्रुटि, "only one file name allowed\n");
+            वापस 3;
         }
-        else
+        अन्यथा
             name = arg;
     source = load(name, &len);
-    if (source == NULL) {
-        fprintf(stderr, "memory allocation failure\n");
-        return 4;
+    अगर (source == शून्य) {
+        ख_लिखो(मानक_त्रुटि, "memory allocation failure\n");
+        वापस 4;
     }
-    if (len == 0) {
-        fprintf(stderr, "could not read %s, or it was empty\n",
-                name == NULL ? "<stdin>" : name);
-        free(source);
-        return 3;
+    अगर (len == 0) {
+        ख_लिखो(मानक_त्रुटि, "could not read %s, or it was empty\n",
+                name == शून्य ? "<stdin>" : name);
+        मुक्त(source);
+        वापस 3;
     }
-    if (skip >= len) {
-        fprintf(stderr, "skip request of %d leaves no input\n", skip);
-        free(source);
-        return 3;
+    अगर (skip >= len) {
+        ख_लिखो(मानक_त्रुटि, "skip request of %d leaves no input\n", skip);
+        मुक्त(source);
+        वापस 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
-    sourcelen = (unsigned long)len;
+    sourcelen = (अचिन्हित दीर्घ)len;
     ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
-        fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
-        fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+    अगर (ret)
+        ख_लिखो(मानक_त्रुटि, "puff() failed with return code %d\n", ret);
+    अन्यथा {
+        ख_लिखो(मानक_त्रुटि, "puff() succeeded uncompressing %lu bytes\n", destlen);
+        अगर (sourcelen < len) ख_लिखो(मानक_त्रुटि, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    अगर (put && ret == 0) {
+        अगर (fail)
             destlen >>= 1;
-        dest = malloc(destlen);
-        if (dest == NULL) {
-            fprintf(stderr, "memory allocation failure\n");
-            free(source);
-            return 4;
+        dest = दो_स्मृति(destlen);
+        अगर (dest == शून्य) {
+            ख_लिखो(मानक_त्रुटि, "memory allocation failure\n");
+            मुक्त(source);
+            वापस 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
-        SET_BINARY_MODE(stdout);
-        fwrite(dest, 1, destlen, stdout);
-        free(dest);
+        SET_द्विआधारी_MODE(मानक_निकास);
+        ख_डालो(dest, 1, destlen, मानक_निकास);
+        मुक्त(dest);
     }
 
     /* clean up */
-    free(source);
-    return ret;
+    मुक्त(source);
+    वापस ret;
 }

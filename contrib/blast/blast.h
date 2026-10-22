@@ -21,7 +21,7 @@
   Mark Adler    madler@alumni.caltech.edu
  */
 
-#define local static            /* for local function definitions */
+#घोषणा local अटल            /* for local function definitions */
 
 /*
  * blast() decompresses the PKWare Data Compression Library (DCL) compressed
@@ -36,15 +36,15 @@
  */
 
 
-typedef unsigned (*blast_in)(void *how, unsigned char **buf);
-typedef int (*blast_out)(void *how, unsigned char *buf, unsigned len);
+प्रकार अचिन्हित (*blast_in)(व्योम *how, अचिन्हित अक्षर **buf);
+प्रकार पूर्णांक (*blast_out)(व्योम *how, अचिन्हित अक्षर *buf, अचिन्हित len);
 /* Definitions for input/output functions passed to blast().  See below for
  * what the provided functions need to do.
  */
 
 
-int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
-          unsigned *left, unsigned char **in);
+पूर्णांक blast(blast_in infun, व्योम *inhow, blast_out outfun, व्योम *outhow,
+          अचिन्हित *बायाँ, अचिन्हित अक्षर **in);
 /* Decompress input to output using the provided infun() and outfun() calls.
  * On success, the return value of blast() is zero.  If there is an error in
  * the source data, i.e. it is not in the proper format, then a negative value
