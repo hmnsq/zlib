@@ -10,98 +10,98 @@ gzfilebuf::gzfilebuf() :
 gzfilebuf::~gzfilebuf() {
 
   sync();
-  if ( own_file_descriptor )
+  якщо ( own_file_descriptor )
     close();
 
 }
 
 gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+                            ціле io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  якщо ( is_open() )
+    повернути NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  якщо ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } інакше якщо ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } інакше {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  якщо ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  якщо ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  якщо ( (file = gzopen(name, char_mode)) == NULL )
+    повернути NULL;
 
   own_file_descriptor = 1;
 
-  return this;
+  повернути this;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( ціле file_descriptor,
+                              ціле io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  якщо ( is_open() )
+    повернути NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  якщо ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } інакше якщо ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } інакше {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  якщо ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  якщо ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  якщо ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
+    повернути NULL;
 
   own_file_descriptor = 0;
 
-  return this;
+  повернути this;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  якщо ( is_open() ) {
 
     sync();
     gzclose( file );
@@ -109,145 +109,145 @@ gzfilebuf *gzfilebuf::close() {
 
   }
 
-  return this;
+  повернути this;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+ціле gzfilebuf::setcompressionlevel( ціле comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  повернути gzsetparams(file, comp_level, -2);
 
 }
 
+ціле gzfilebuf::setcompressionstrategy( ціле comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  повернути gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, ціле which ) {
+
+  повернути streampos(EOF);
+
+}
+
+ціле gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  якщо ( !is_open() || !(mode & ios::in) )
+    повернути EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  якщо ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    якщо ( (allocate()) == EOF )
+      повернути EOF;
     setp(0,0);
 
-  } else {
+  } інакше {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    якщо ( in_avail() )
+      повернути (unsigned char) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    якщо ( out_waiting() ) {
+      якщо ( flushbuf() == EOF )
+        повернути EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  ціле result = fillbuf();
+  якщо ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    повернути EOF;
   }
 
-  return (unsigned char) *gptr();
+  повернути (unsigned char) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+ціле gzfilebuf::overflow( ціле c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  якщо ( !is_open() || !(mode & ios::out) )
+    повернути EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  якщо ( !base() ) {
+    якщо ( allocate() == EOF )
+      повернути EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } інакше {
+    якщо (in_avail()) {
+        повернути EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    якщо (out_waiting()) {
+      якщо (flushbuf() == EOF)
+        повернути EOF;
     }
   }
 
-  int bl = blen();
+  ціле bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  якщо ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  повернути 0;
 
 }
 
-int gzfilebuf::sync() {
+ціле gzfilebuf::sync() {
 
-  if ( !is_open() )
-    return EOF;
+  якщо ( !is_open() )
+    повернути EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  якщо ( out_waiting() )
+    повернути flushbuf();
 
-  return 0;
+  повернути 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+ціле gzfilebuf::flushbuf() {
 
-  int n;
+  ціле n;
   char *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  якщо ( gzwrite( file, q, n) < n )
+    повернути EOF;
 
   setp(0,0);
 
-  return 0;
+  повернути 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+ціле gzfilebuf::fillbuf() {
 
-  int required;
+  ціле required;
   char *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  ціле t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  якщо ( t <= 0) повернути EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  повернути t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+void gzfilestream_common::attach( ціле fd, ціле io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  якщо ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  інакше
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+void gzfilestream_common::open( const char *name, ціле io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  якщо ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  інакше
     clear();
 
 }
 
 void gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  якщо ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  повернути &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( const char *name, ціле io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( ціле fd, ціле io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( const char *name, ціле io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( ціле fd, ціле io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );

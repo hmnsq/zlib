@@ -10,7 +10,7 @@
 
 #ifdef ASMINF
 #  pragma message("Assembler code may have bugs -- use at your own risk")
-#else
+#інакше
 
 /*
    Decode literal, length, and distance codes and write out the resulting
@@ -98,7 +98,7 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
     /* decode literals and length/distances until end-of-block or not enough
        input data or output space */
     do {
-        if (bits < 15) {
+        якщо (bits < 15) {
             hold += (unsigned long)(*in++) << bits;
             bits += 8;
             hold += (unsigned long)(*in++) << bits;
@@ -110,17 +110,17 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
         hold >>= op;
         bits -= op;
         op = (unsigned)(here->op);
-        if (op == 0) {                          /* literal */
+        якщо (op == 0) {                          /* literal */
             Tracevv((stderr, here->val >= 0x20 && here->val < 0x7f ?
                     "inflate:         literal '%c'\n" :
                     "inflate:         literal 0x%02x\n", here->val));
             *out++ = (unsigned char)(here->val);
         }
-        else if (op & 16) {                     /* length base */
+        інакше якщо (op & 16) {                     /* length base */
             len = (unsigned)(here->val);
             op &= 15;                           /* number of extra bits */
-            if (op) {
-                if (bits < op) {
+            якщо (op) {
+                якщо (bits < op) {
                     hold += (unsigned long)(*in++) << bits;
                     bits += 8;
                 }
@@ -129,7 +129,7 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
                 bits -= op;
             }
             Tracevv((stderr, "inflate:         length %u\n", len));
-            if (bits < 15) {
+            якщо (bits < 15) {
                 hold += (unsigned long)(*in++) << bits;
                 bits += 8;
                 hold += (unsigned long)(*in++) << bits;
@@ -141,20 +141,20 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
             hold >>= op;
             bits -= op;
             op = (unsigned)(here->op);
-            if (op & 16) {                      /* distance base */
+            якщо (op & 16) {                      /* distance base */
                 dist = (unsigned)(here->val);
                 op &= 15;                       /* number of extra bits */
-                if (bits < op) {
+                якщо (bits < op) {
                     hold += (unsigned long)(*in++) << bits;
                     bits += 8;
-                    if (bits < op) {
+                    якщо (bits < op) {
                         hold += (unsigned long)(*in++) << bits;
                         bits += 8;
                     }
                 }
                 dist += (unsigned)hold & ((1U << op) - 1);
 #ifdef INFLATE_STRICT
-                if (dist > dmax) {
+                якщо (dist > dmax) {
                     strm->msg = (z_const char *)
                         "invalid distance too far back";
                     state->mode = BAD;
@@ -165,127 +165,127 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
                 bits -= op;
                 Tracevv((stderr, "inflate:         distance %u\n", dist));
                 op = (unsigned)(out - beg);     /* max distance in output */
-                if (dist > op) {                /* see if copy from window */
+                якщо (dist > op) {                /* see if copy from window */
                     op = dist - op;             /* distance back in window */
-                    if (op > whave) {
-                        if (state->sane) {
+                    якщо (op > whave) {
+                        якщо (state->sane) {
                             strm->msg = (z_const char *)
                                 "invalid distance too far back";
                             state->mode = BAD;
                             break;
                         }
 #ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-                        if (len <= op - whave) {
+                        якщо (len <= op - whave) {
                             do {
                                 *out++ = 0;
-                            } while (--len);
+                            } поки (--len);
                             continue;
                         }
                         len -= op - whave;
                         do {
                             *out++ = 0;
-                        } while (--op > whave);
-                        if (op == 0) {
+                        } поки (--op > whave);
+                        якщо (op == 0) {
                             from = out - dist;
                             do {
                                 *out++ = *from++;
-                            } while (--len);
+                            } поки (--len);
                             continue;
                         }
 #endif
                     }
                     from = window;
-                    if (wnext == 0) {           /* very common case */
+                    якщо (wnext == 0) {           /* very common case */
                         from += wsize - op;
-                        if (op < len) {         /* some from window */
+                        якщо (op < len) {         /* some from window */
                             len -= op;
                             do {
                                 *out++ = *from++;
-                            } while (--op);
+                            } поки (--op);
                             from = out - dist;  /* rest from output */
                         }
                     }
-                    else if (wnext < op) {      /* wrap around window */
+                    інакше якщо (wnext < op) {      /* wrap around window */
                         from += wsize + wnext - op;
                         op -= wnext;
-                        if (op < len) {         /* some from end of window */
+                        якщо (op < len) {         /* some from end of window */
                             len -= op;
                             do {
                                 *out++ = *from++;
-                            } while (--op);
+                            } поки (--op);
                             from = window;
-                            if (wnext < len) {  /* some from start of window */
+                            якщо (wnext < len) {  /* some from start of window */
                                 op = wnext;
                                 len -= op;
                                 do {
                                     *out++ = *from++;
-                                } while (--op);
+                                } поки (--op);
                                 from = out - dist;      /* rest from output */
                             }
                         }
                     }
-                    else {                      /* contiguous in window */
+                    інакше {                      /* contiguous in window */
                         from += wnext - op;
-                        if (op < len) {         /* some from window */
+                        якщо (op < len) {         /* some from window */
                             len -= op;
                             do {
                                 *out++ = *from++;
-                            } while (--op);
+                            } поки (--op);
                             from = out - dist;  /* rest from output */
                         }
                     }
-                    while (len > 2) {
+                    поки (len > 2) {
                         *out++ = *from++;
                         *out++ = *from++;
                         *out++ = *from++;
                         len -= 3;
                     }
-                    if (len) {
+                    якщо (len) {
                         *out++ = *from++;
-                        if (len > 1)
+                        якщо (len > 1)
                             *out++ = *from++;
                     }
                 }
-                else {
+                інакше {
                     from = out - dist;          /* copy direct from output */
                     do {                        /* minimum length is three */
                         *out++ = *from++;
                         *out++ = *from++;
                         *out++ = *from++;
                         len -= 3;
-                    } while (len > 2);
-                    if (len) {
+                    } поки (len > 2);
+                    якщо (len) {
                         *out++ = *from++;
-                        if (len > 1)
+                        якщо (len > 1)
                             *out++ = *from++;
                     }
                 }
             }
-            else if ((op & 64) == 0) {          /* 2nd level distance code */
+            інакше якщо ((op & 64) == 0) {          /* 2nd level distance code */
                 here = dcode + here->val + (hold & ((1U << op) - 1));
                 goto dodist;
             }
-            else {
+            інакше {
                 strm->msg = (z_const char *)"invalid distance code";
                 state->mode = BAD;
                 break;
             }
         }
-        else if ((op & 64) == 0) {              /* 2nd level length code */
+        інакше якщо ((op & 64) == 0) {              /* 2nd level length code */
             here = lcode + here->val + (hold & ((1U << op) - 1));
             goto dolen;
         }
-        else if (op & 32) {                     /* end-of-block */
+        інакше якщо (op & 32) {                     /* end-of-block */
             Tracevv((stderr, "inflate:         end of block\n"));
             state->mode = TYPE;
             break;
         }
-        else {
+        інакше {
             strm->msg = (z_const char *)"invalid literal/length code";
             state->mode = BAD;
             break;
         }
-    } while (in < last && out < end);
+    } поки (in < last && out < end);
 
     /* return unused bytes (on entry, bits < 8, so in won't go too far back) */
     len = bits >> 3;
@@ -301,7 +301,7 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
                                  257 + (end - out) : 257 - (out - end));
     state->hold = hold;
     state->bits = bits;
-    return;
+    повернути;
 }
 
 /*

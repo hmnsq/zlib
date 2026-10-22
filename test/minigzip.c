@@ -19,10 +19,10 @@
 #  define _POSIX_C_SOURCE 200112L
 #endif
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#якщо defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#якщо defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
@@ -40,14 +40,14 @@
 #  include <sys/stat.h>
 #endif
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#якщо defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  ifdef UNDER_CE
 #    include <stdlib.h>
 #  endif
 #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#інакше
 #  define SET_BINARY_MODE(file)
 #endif
 
@@ -55,24 +55,24 @@
 #  define unlink delete
 #  define GZ_SUFFIX "-gz"
 #endif
-#if defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#якщо defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define GZ_SUFFIX "/gz"
 #  ifndef __GNUC__
 #    define unlink remove
 #    define fileno(file) file->__file
 #  endif
 #endif
-#if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
+#якщо defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
 #  include <unix.h> /* for fileno */
 #endif
 
-#if !defined(Z_HAVE_UNISTD_H) && !defined(_LARGEFILE64_SOURCE)
+#якщо !defined(Z_HAVE_UNISTD_H) && !defined(_LARGEFILE64_SOURCE)
 #ifndef WIN32 /* unlink already in stdio.h for WIN32 */
-  extern int unlink(const char *);
+  extern ціле unlink(const char *);
 #endif
 #endif
 
-#if defined(UNDER_CE)
+#якщо defined(UNDER_CE)
 #  include <windows.h>
 #  define perror(s) pwinerror(s)
 
@@ -101,15 +101,15 @@ static char *strwinerror (error)
         (LPVOID)&msgbuf,
         0,
         NULL);
-    if (chars != 0) {
+    якщо (chars != 0) {
         /* If there is an \r\n appended, zap it.  */
-        if (chars >= 2
+        якщо (chars >= 2
             && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n') {
             chars -= 2;
             msgbuf[chars] = 0;
         }
 
-        if (chars > sizeof (buf) - 1) {
+        якщо (chars > sizeof (buf) - 1) {
             chars = sizeof (buf) - 1;
             msgbuf[chars] = 0;
         }
@@ -117,20 +117,20 @@ static char *strwinerror (error)
         wcstombs(buf, msgbuf, chars + 1);
         LocalFree(msgbuf);
     }
-    else {
+    інакше {
         sprintf(buf, "unknown win32 error (%lu)", error);
     }
 
     SetLastError(lasterr);
-    return buf;
+    повернути buf;
 }
 
 static void pwinerror (s)
     const char *s;
 {
-    if (s && *s)
+    якщо (s && *s)
         fprintf(stderr, "%s: %s\n", s, strwinerror(GetLastError ()));
-    else
+    інакше
         fprintf(stderr, "%s\n", strwinerror(GetLastError ()));
 }
 
@@ -147,7 +147,7 @@ static void pwinerror (s)
 #ifdef MAXSEG_64K
 #  define local static
    /* Needed for systems with limitation on stack size. */
-#else
+#інакше
 #  define local
 #endif
 
@@ -158,28 +158,28 @@ static void pwinerror (s)
  * null. If len is zero, nothing is written to *dst and NULL is returned.
  */
 static char *string_copy(char *dst, char const *src, z_size_t len) {
-    if (len == 0)
-        return NULL;
-    while (--len) {
+    якщо (len == 0)
+        повернути NULL;
+    поки (--len) {
         *dst = *src++;
-        if (*dst == 0)
-            return dst;
+        якщо (*dst == 0)
+            повернути dst;
         dst++;
     }
     *dst = 0;
-    return dst;
+    повернути dst;
 }
 
 #ifdef Z_SOLO
 /* for Z_SOLO, create simplified gz* functions using deflate and inflate */
 
-#if defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
+#якщо defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
 #  include <unistd.h>       /* for unlink() */
 #endif
 
 static void *myalloc(void *q, unsigned n, unsigned m) {
     (void)q;
-    return calloc(n, m);
+    повернути calloc(n, m);
 }
 
 static void myfree(void *q, void *p) {
@@ -189,60 +189,60 @@ static void myfree(void *q, void *p) {
 
 typedef struct gzFile_s {
     FILE *file;
-    int write;
-    int err;
+    ціле write;
+    ціле err;
     char *msg;
     z_stream strm;
 } *gzFile;
 
-static gzFile gz_open(const char *path, int fd, const char *mode) {
+static gzFile gz_open(const char *path, ціле fd, const char *mode) {
     gzFile gz;
-    int ret;
+    ціле ret;
 
     gz = malloc(sizeof(struct gzFile_s));
-    if (gz == NULL)
-        return NULL;
+    якщо (gz == NULL)
+        повернути NULL;
     gz->write = strchr(mode, 'w') != NULL;
     gz->strm.zalloc = myalloc;
     gz->strm.zfree = myfree;
     gz->strm.opaque = Z_NULL;
-    if (gz->write)
+    якщо (gz->write)
         ret = deflateInit2(&(gz->strm), -1, 8, 15 + 16, 8, 0);
-    else {
+    інакше {
         gz->strm.next_in = 0;
         gz->strm.avail_in = Z_NULL;
         ret = inflateInit2(&(gz->strm), 15 + 16);
     }
-    if (ret != Z_OK) {
+    якщо (ret != Z_OK) {
         free(gz);
-        return NULL;
+        повернути NULL;
     }
     gz->file = path == NULL ? fdopen(fd, gz->write ? "wb" : "rb") :
                               fopen(path, gz->write ? "wb" : "rb");
-    if (gz->file == NULL) {
+    якщо (gz->file == NULL) {
         gz->write ? deflateEnd(&(gz->strm)) : inflateEnd(&(gz->strm));
         free(gz);
-        return NULL;
+        повернути NULL;
     }
     gz->err = 0;
     gz->msg = "";
-    return gz;
+    повернути gz;
 }
 
 static gzFile gzopen(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+    повернути gz_open(path, -1, mode);
 }
 
-static gzFile gzdopen(int fd, const char *mode) {
-    return gz_open(NULL, fd, mode);
+static gzFile gzdopen(ціле fd, const char *mode) {
+    повернути gz_open(NULL, fd, mode);
 }
 
-static int gzwrite(gzFile gz, const void *buf, unsigned len) {
+static ціле gzwrite(gzFile gz, const void *buf, unsigned len) {
     z_stream *strm;
     unsigned char out[BUFLEN];
 
-    if (gz == NULL || !gz->write)
-        return 0;
+    якщо (gz == NULL || !gz->write)
+        повернути 0;
     strm = &(gz->strm);
     strm->next_in = (void *)buf;
     strm->avail_in = len;
@@ -251,49 +251,49 @@ static int gzwrite(gzFile gz, const void *buf, unsigned len) {
         strm->avail_out = BUFLEN;
         (void)deflate(strm, Z_NO_FLUSH);
         fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-    } while (strm->avail_out == 0);
-    return (int)len;
+    } поки (strm->avail_out == 0);
+    повернути (ціле)len;
 }
 
-static int gzread(gzFile gz, void *buf, unsigned len) {
-    int ret;
+static ціле gzread(gzFile gz, void *buf, unsigned len) {
+    ціле ret;
     unsigned got;
     unsigned char in[1];
     z_stream *strm;
 
-    if (gz == NULL || gz->write)
-        return 0;
-    if (gz->err)
-        return 0;
+    якщо (gz == NULL || gz->write)
+        повернути 0;
+    якщо (gz->err)
+        повернути 0;
     strm = &(gz->strm);
     strm->next_out = (void *)buf;
     strm->avail_out = len;
     do {
         got = (unsigned)fread(in, 1, 1, gz->file);
-        if (got == 0)
+        якщо (got == 0)
             break;
         strm->next_in = in;
         strm->avail_in = 1;
         ret = inflate(strm, Z_NO_FLUSH);
-        if (ret == Z_DATA_ERROR) {
+        якщо (ret == Z_DATA_ERROR) {
             gz->err = Z_DATA_ERROR;
             gz->msg = strm->msg;
-            return 0;
+            повернути 0;
         }
-        if (ret == Z_STREAM_END)
+        якщо (ret == Z_STREAM_END)
             inflateReset(strm);
-    } while (strm->avail_out);
-    return (int)(len - strm->avail_out);
+    } поки (strm->avail_out);
+    повернути (ціле)(len - strm->avail_out);
 }
 
-static int gzclose(gzFile gz) {
+static ціле gzclose(gzFile gz) {
     z_stream *strm;
     unsigned char out[BUFLEN];
 
-    if (gz == NULL)
-        return Z_STREAM_ERROR;
+    якщо (gz == NULL)
+        повернути Z_STREAM_ERROR;
     strm = &(gz->strm);
-    if (gz->write) {
+    якщо (gz->write) {
         strm->next_in = Z_NULL;
         strm->avail_in = 0;
         do {
@@ -301,19 +301,19 @@ static int gzclose(gzFile gz) {
             strm->avail_out = BUFLEN;
             (void)deflate(strm, Z_FINISH);
             fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-        } while (strm->avail_out == 0);
+        } поки (strm->avail_out == 0);
         deflateEnd(strm);
     }
-    else
+    інакше
         inflateEnd(strm);
     fclose(gz->file);
     free(gz);
-    return Z_OK;
+    повернути Z_OK;
 }
 
-static const char *gzerror(gzFile gz, int *err) {
+static const char *gzerror(gzFile gz, ціле *err) {
     *err = gz->err;
-    return gz->msg;
+    повернути gz->msg;
 }
 
 #endif
@@ -333,32 +333,32 @@ static void error(const char *msg) {
 /* Try compressing the input file at once using mmap. Return Z_OK if
  * success, Z_ERRNO otherwise.
  */
-static int gz_compress_mmap(FILE *in, gzFile out) {
-    int len;
-    int err;
-    int ifd = fileno(in);
+static ціле gz_compress_mmap(FILE *in, gzFile out) {
+    ціле len;
+    ціле err;
+    ціле ifd = fileno(in);
     caddr_t buf;    /* mmap'ed buffer for the entire input file */
     off_t buf_len;  /* length of the input file */
     struct stat sb;
 
     /* Determine the size of the file, needed for mmap: */
-    if (fstat(ifd, &sb) < 0) return Z_ERRNO;
+    якщо (fstat(ifd, &sb) < 0) повернути Z_ERRNO;
     buf_len = sb.st_size;
-    if (buf_len <= 0) return Z_ERRNO;
+    якщо (buf_len <= 0) повернути Z_ERRNO;
 
     /* Now do the actual mmap: */
     buf = mmap((caddr_t) 0, buf_len, PROT_READ, MAP_SHARED, ifd, (off_t)0);
-    if (buf == (caddr_t)(-1)) return Z_ERRNO;
+    якщо (buf == (caddr_t)(-1)) повернути Z_ERRNO;
 
     /* Compress the whole file at once: */
     len = gzwrite(out, (char *)buf, (unsigned)buf_len);
 
-    if (len != (int)buf_len) error(gzerror(out, &err));
+    якщо (len != (ціле)buf_len) error(gzerror(out, &err));
 
     munmap(buf, buf_len);
     fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
-    return Z_OK;
+    якщо (gzclose(out) != Z_OK) error("failed gzclose");
+    повернути Z_OK;
 }
 #endif /* USE_MMAP */
 
@@ -368,27 +368,27 @@ static int gz_compress_mmap(FILE *in, gzFile out) {
 
 static void gz_compress(FILE *in, gzFile out) {
     local char buf[BUFLEN];
-    int len;
-    int err;
+    ціле len;
+    ціле err;
 
 #ifdef USE_MMAP
     /* Try first compressing with mmap. If mmap fails (minigzip used in a
      * pipe), use the normal fread loop.
      */
-    if (gz_compress_mmap(in, out) == Z_OK) return;
+    якщо (gz_compress_mmap(in, out) == Z_OK) повернути;
 #endif
-    for (;;) {
-        len = (int)fread(buf, 1, sizeof(buf), in);
-        if (ferror(in)) {
+    для (;;) {
+        len = (ціле)fread(buf, 1, sizeof(buf), in);
+        якщо (ferror(in)) {
             perror("fread");
             exit(1);
         }
-        if (len == 0) break;
+        якщо (len == 0) break;
 
-        if (gzwrite(out, buf, (unsigned)len) != len) error(gzerror(out, &err));
+        якщо (gzwrite(out, buf, (unsigned)len) != len) error(gzerror(out, &err));
     }
     fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
+    якщо (gzclose(out) != Z_OK) error("failed gzclose");
 }
 
 /* ===========================================================================
@@ -396,21 +396,21 @@ static void gz_compress(FILE *in, gzFile out) {
  */
 static void gz_uncompress(gzFile in, FILE *out) {
     local char buf[BUFLEN];
-    int len;
-    int err;
+    ціле len;
+    ціле err;
 
-    for (;;) {
+    для (;;) {
         len = gzread(in, buf, sizeof(buf));
-        if (len < 0) error (gzerror(in, &err));
-        if (len == 0) break;
+        якщо (len < 0) error (gzerror(in, &err));
+        якщо (len == 0) break;
 
-        if ((int)fwrite(buf, 1, (unsigned)len, out) != len) {
+        якщо ((ціле)fwrite(buf, 1, (unsigned)len, out) != len) {
             error("failed fwrite");
         }
     }
-    if (fclose(out)) error("failed fclose");
+    якщо (fclose(out)) error("failed fclose");
 
-    if (gzclose(in) != Z_OK) error("failed gzclose");
+    якщо (gzclose(in) != Z_OK) error("failed gzclose");
 }
 
 
@@ -423,7 +423,7 @@ static void file_compress(char *file, char *mode) {
     FILE  *in;
     gzFile out;
 
-    if (strlen(file) + strlen(GZ_SUFFIX) >= sizeof(outfile)) {
+    якщо (strlen(file) + strlen(GZ_SUFFIX) >= sizeof(outfile)) {
         fprintf(stderr, "%s: filename too long\n", prog);
         exit(1);
     }
@@ -432,12 +432,12 @@ static void file_compress(char *file, char *mode) {
     string_copy(end, GZ_SUFFIX, sizeof(outfile) - (z_size_t)(end - outfile));
 
     in = fopen(file, "rb");
-    if (in == NULL) {
+    якщо (in == NULL) {
         perror(file);
         exit(1);
     }
     out = gzopen(outfile, mode);
-    if (out == NULL) {
+    якщо (out == NULL) {
         fclose(in);
         fprintf(stderr, "%s: can't gzopen %s\n", prog, outfile);
         exit(1);
@@ -458,29 +458,29 @@ static void file_uncompress(char *file) {
     gzFile in;
     z_size_t len = strlen(file);
 
-    if (len + strlen(GZ_SUFFIX) >= sizeof(buf)) {
+    якщо (len + strlen(GZ_SUFFIX) >= sizeof(buf)) {
         fprintf(stderr, "%s: filename too long\n", prog);
         exit(1);
     }
 
     string_copy(buf, file, sizeof(buf));
 
-    if (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
+    якщо (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
         infile = file;
         outfile = buf;
         outfile[len-3] = '\0';
-    } else {
+    } інакше {
         outfile = file;
         infile = buf;
         string_copy(buf + len, GZ_SUFFIX, sizeof(buf) - len);
     }
     in = gzopen(infile, "rb");
-    if (in == NULL) {
+    якщо (in == NULL) {
         fprintf(stderr, "%s: can't gzopen %s\n", prog, infile);
         exit(1);
     }
     out = fopen(outfile, "wb");
-    if (out == NULL) {
+    якщо (out == NULL) {
         gzclose(in);
         perror(file);
         exit(1);
@@ -502,91 +502,91 @@ static void file_uncompress(char *file) {
  *   -1 to -9 : compression level
  */
 
-int main(int argc, char *argv[]) {
-    int copyout = 0;
-    int uncompr = 0;
+ціле main(ціле argc, char *argv[]) {
+    ціле copyout = 0;
+    ціле uncompr = 0;
     gzFile file;
     char *bname, outmode[5];
 
     string_copy(outmode, "wb6 ", sizeof(outmode));
     prog = argv[0];
     bname = strrchr(argv[0], '/');
-    if (bname)
+    якщо (bname)
       bname++;
-    else
+    інакше
       bname = argv[0];
     argc--, argv++;
 
-    if (!strcmp(bname, "gunzip"))
+    якщо (!strcmp(bname, "gunzip"))
       uncompr = 1;
-    else if (!strcmp(bname, "zcat"))
+    інакше якщо (!strcmp(bname, "zcat"))
       copyout = uncompr = 1;
 
-    while (argc > 0) {
-      if (strcmp(*argv, "-c") == 0)
+    поки (argc > 0) {
+      якщо (strcmp(*argv, "-c") == 0)
         copyout = 1;
-      else if (strcmp(*argv, "-d") == 0)
+      інакше якщо (strcmp(*argv, "-d") == 0)
         uncompr = 1;
-      else if (strcmp(*argv, "-f") == 0)
+      інакше якщо (strcmp(*argv, "-f") == 0)
         outmode[3] = 'f';
-      else if (strcmp(*argv, "-h") == 0)
+      інакше якщо (strcmp(*argv, "-h") == 0)
         outmode[3] = 'h';
-      else if (strcmp(*argv, "-r") == 0)
+      інакше якщо (strcmp(*argv, "-r") == 0)
         outmode[3] = 'R';
-      else if ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
+      інакше якщо ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
                (*argv)[2] == 0)
         outmode[2] = (*argv)[1];
-      else
+      інакше
         break;
       argc--, argv++;
     }
-    if (outmode[3] == ' ')
+    якщо (outmode[3] == ' ')
         outmode[3] = 0;
-    if (argc == 0) {
+    якщо (argc == 0) {
         SET_BINARY_MODE(stdin);
         SET_BINARY_MODE(stdout);
-        if (uncompr) {
+        якщо (uncompr) {
             file = gzdopen(fileno(stdin), "rb");
-            if (file == NULL) error("can't gzdopen stdin");
+            якщо (file == NULL) error("can't gzdopen stdin");
             gz_uncompress(file, stdout);
-        } else {
+        } інакше {
             file = gzdopen(fileno(stdout), outmode);
-            if (file == NULL) error("can't gzdopen stdout");
+            якщо (file == NULL) error("can't gzdopen stdout");
             gz_compress(stdin, file);
         }
-    } else {
-        if (copyout) {
+    } інакше {
+        якщо (copyout) {
             SET_BINARY_MODE(stdout);
         }
         do {
-            if (uncompr) {
-                if (copyout) {
+            якщо (uncompr) {
+                якщо (copyout) {
                     file = gzopen(*argv, "rb");
-                    if (file == NULL)
+                    якщо (file == NULL)
                         fprintf(stderr, "%s: can't gzopen %s\n", prog, *argv);
-                    else
+                    інакше
                         gz_uncompress(file, stdout);
-                } else {
+                } інакше {
                     file_uncompress(*argv);
                 }
-            } else {
-                if (copyout) {
+            } інакше {
+                якщо (copyout) {
                     FILE * in = fopen(*argv, "rb");
 
-                    if (in == NULL) {
+                    якщо (in == NULL) {
                         perror(*argv);
-                    } else {
+                    } інакше {
                         file = gzdopen(fileno(stdout), outmode);
-                        if (file == NULL) error("can't gzdopen stdout");
+                        якщо (file == NULL) error("can't gzdopen stdout");
 
                         gz_compress(in, file);
                     }
 
-                } else {
+                } інакше {
                     file_compress(*argv, outmode);
                 }
             }
-        } while (argv++, --argc);
+        } поки (argv++, --argc);
     }
-    return 0;
+    повернути 0;
 }

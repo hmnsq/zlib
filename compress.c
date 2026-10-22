@@ -21,16 +21,16 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                        z_size_t sourceLen, int level) {
+ціле ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
+                        z_size_t sourceLen, ціле level) {
     z_stream stream;
-    int err;
+    ціле err;
     const uInt max = (uInt)-1;
     z_size_t left;
 
-    if ((sourceLen > 0 && source == NULL) ||
+    якщо ((sourceLen > 0 && source == NULL) ||
         destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+        повернути Z_STREAM_ERROR;
 
     left = *destLen;
     *destLen = 0;
@@ -40,7 +40,7 @@ int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
     stream.opaque = (voidpf)0;
 
     err = deflateInit(&stream, level);
-    if (err != Z_OK) return err;
+    якщо (err != Z_OK) повернути err;
 
     stream.next_out = dest;
     stream.avail_out = 0;
@@ -48,40 +48,40 @@ int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
     stream.avail_in = 0;
 
     do {
-        if (stream.avail_out == 0) {
+        якщо (stream.avail_out == 0) {
             stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
             left -= stream.avail_out;
         }
-        if (stream.avail_in == 0) {
+        якщо (stream.avail_in == 0) {
             stream.avail_in = sourceLen > (z_size_t)max ? max :
                                                           (uInt)sourceLen;
             sourceLen -= stream.avail_in;
         }
         err = deflate(&stream, sourceLen ? Z_NO_FLUSH : Z_FINISH);
-    } while (err == Z_OK);
+    } поки (err == Z_OK);
 
     *destLen = (z_size_t)(stream.next_out - dest);
     deflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK : err;
+    повернути err == Z_STREAM_END ? Z_OK : err;
 }
-int ZEXPORT compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen, int level) {
-    int ret;
+ціле ZEXPORT compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
+                      uLong sourceLen, ціле level) {
+    ціле ret;
     z_size_t got = *destLen;
     ret = compress2_z(dest, &got, source, sourceLen, level);
     *destLen = (uLong)got;
-    return ret;
+    повернути ret;
 }
 /* ===========================================================================
  */
-int ZEXPORT compress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
+ціле ZEXPORT compress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
                        z_size_t sourceLen) {
-    return compress2_z(dest, destLen, source, sourceLen,
+    повернути compress2_z(dest, destLen, source, sourceLen,
                        Z_DEFAULT_COMPRESSION);
 }
-int ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
+ціле ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
                      uLong sourceLen) {
-    return compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
+    повернути compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
 }
 
 /* ===========================================================================
@@ -91,9 +91,9 @@ int ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
 z_size_t ZEXPORT compressBound_z(z_size_t sourceLen) {
     z_size_t bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
                      (sourceLen >> 25) + 13;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+    повернути bound < sourceLen ? (z_size_t)-1 : bound;
 }
 uLong ZEXPORT compressBound(uLong sourceLen) {
     z_size_t bound = compressBound_z(sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+    повернути (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }

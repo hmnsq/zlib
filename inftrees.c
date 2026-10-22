@@ -43,7 +43,7 @@ const char inflate_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
+ціле ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
                                 unsigned codes, code FAR * FAR *table,
                                 unsigned FAR *bits, unsigned short FAR *work) {
     unsigned len;               /* a code's length in bits */
@@ -52,7 +52,7 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     unsigned root;              /* number of index bits for root table */
     unsigned curr;              /* number of index bits for current table */
     unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
+    ціле left;                   /* number of prefix codes available */
     unsigned used;              /* code entries in table used */
     unsigned huff;              /* Huffman code */
     unsigned incr;              /* for incrementing code, index */
@@ -113,47 +113,47 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
      */
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    for (len = 0; len <= MAXBITS; len++)
+    для (len = 0; len <= MAXBITS; len++)
         count[len] = 0;
-    for (sym = 0; sym < codes; sym++)
+    для (sym = 0; sym < codes; sym++)
         count[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
     root = *bits;
-    for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) {                     /* no symbols to code at all */
+    для (max = MAXBITS; max >= 1; max--)
+        якщо (count[max] != 0) break;
+    якщо (root > max) root = max;
+    якщо (max == 0) {                     /* no symbols to code at all */
         here.op = (unsigned char)64;    /* invalid code marker */
         here.bits = (unsigned char)1;
         here.val = (unsigned short)0;
         *(*table)++ = here;             /* make a table to force an error */
         *(*table)++ = here;
         *bits = 1;
-        return 0;     /* no symbols, but wait for decoding to report error */
+        повернути 0;     /* no symbols, but wait for decoding to report error */
     }
-    for (min = 1; min < max; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+    для (min = 1; min < max; min++)
+        якщо (count[min] != 0) break;
+    якщо (root < min) root = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;
-    for (len = 1; len <= MAXBITS; len++) {
+    для (len = 1; len <= MAXBITS; len++) {
         left <<= 1;
         left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+        якщо (left < 0) повернути -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    якщо (left > 0 && (type == CODES || max != 1))
+        повернути -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
+    для (len = 1; len < MAXBITS; len++)
         offs[len + 1] = offs[len] + count[len];
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+    для (sym = 0; sym < codes; sym++)
+        якщо (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -213,23 +213,23 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used > ENOUGH_LENS) ||
+    якщо ((type == LENS && used > ENOUGH_LENS) ||
         (type == DISTS && used > ENOUGH_DISTS))
-        return 1;
+        повернути 1;
 
     /* process all codes and make table entries */
-    for (;;) {
+    для (;;) {
         /* create table entry */
         here.bits = (unsigned char)(len - drop);
-        if (work[sym] + 1U < match) {
+        якщо (work[sym] + 1U < match) {
             here.op = (unsigned char)0;
             here.val = work[sym];
         }
-        else if (work[sym] >= match) {
+        інакше якщо (work[sym] >= match) {
             here.op = (unsigned char)(extra[work[sym] - match]);
             here.val = base[work[sym] - match];
         }
-        else {
+        інакше {
             here.op = (unsigned char)(32 + 64);         /* end of block */
             here.val = 0;
         }
@@ -241,30 +241,30 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
         do {
             fill -= incr;
             next[(huff >> drop) + fill] = here;
-        } while (fill != 0);
+        } поки (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        поки (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        якщо (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        інакше
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        якщо (--(count[len]) == 0) {
+            якщо (len == max) break;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        якщо (len > root && (huff & mask) != low) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
+            якщо (drop == 0)
                 drop = root;
 
             /* increment past last table */
@@ -272,19 +272,19 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
+            left = (ціле)(1 << curr);
+            поки (curr + drop < max) {
                 left -= count[curr + drop];
-                if (left <= 0) break;
+                якщо (left <= 0) break;
                 curr++;
                 left <<= 1;
             }
 
             /* check for enough space */
             used += 1U << curr;
-            if ((type == LENS && used > ENOUGH_LENS) ||
+            якщо ((type == LENS && used > ENOUGH_LENS) ||
                 (type == DISTS && used > ENOUGH_DISTS))
-                return 1;
+                повернути 1;
 
             /* point entry in root table to sub-table */
             low = huff & mask;
@@ -297,7 +297,7 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     /* fill in remaining table entry if code is incomplete (guaranteed to have
        at most one remaining entry, since if the code is incomplete, the
        maximum code length that was allowed to get this far is one bit) */
-    if (huff != 0) {
+    якщо (huff != 0) {
         here.op = (unsigned char)64;            /* invalid code marker */
         here.bits = (unsigned char)(len - drop);
         here.val = (unsigned short)0;
@@ -307,7 +307,7 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     /* set return parameters */
     *table += used;
     *bits = root;
-    return 0;
+    повернути 0;
 }
 
 #ifdef BUILDFIXED
@@ -331,10 +331,10 @@ local void buildtables(void) {
 
     /* literal/length table */
     sym = 0;
-    while (sym < 144) lens[sym++] = 8;
-    while (sym < 256) lens[sym++] = 9;
-    while (sym < 280) lens[sym++] = 7;
-    while (sym < 288) lens[sym++] = 8;
+    поки (sym < 144) lens[sym++] = 8;
+    поки (sym < 256) lens[sym++] = 9;
+    поки (sym < 280) lens[sym++] = 7;
+    поки (sym < 288) lens[sym++] = 8;
     next = fixed;
     lenfix = next;
     bits = 9;
@@ -342,12 +342,12 @@ local void buildtables(void) {
 
     /* distance table */
     sym = 0;
-    while (sym < 32) lens[sym++] = 5;
+    поки (sym < 32) lens[sym++] = 5;
     distfix = next;
     bits = 5;
     inflate_table(DISTS, lens, 32, &(next), &(bits), work);
 }
-#else /* !BUILDFIXED */
+#інакше /* !BUILDFIXED */
 #  include "inffixed.h"
 #endif /* BUILDFIXED */
 
@@ -383,7 +383,7 @@ void inflate_fixed(struct inflate_state FAR *state) {
        cc -DMAKEFIXED -o fix inftrees.c zutil.c
        ./fix > inffixed.h
  */
-int main(void) {
+ціле main(void) {
     unsigned low, size;
     struct inflate_state state;
 
@@ -400,25 +400,25 @@ int main(void) {
     size = 1U << 9;
     printf("static const code lenfix[%u] = {", size);
     low = 0;
-    for (;;) {
-        if ((low % 7) == 0) printf("\n    ");
+    для (;;) {
+        якщо ((low % 7) == 0) printf("\n    ");
         printf("{%u,%u,%d}", (low & 127) == 99 ? 64 : state.lencode[low].op,
                state.lencode[low].bits, state.lencode[low].val);
-        if (++low == size) break;
+        якщо (++low == size) break;
         putchar(',');
     }
     puts("\n};");
     size = 1U << 5;
     printf("\nstatic const code distfix[%u] = {", size);
     low = 0;
-    for (;;) {
-        if ((low % 6) == 0) printf("\n    ");
+    для (;;) {
+        якщо ((low % 6) == 0) printf("\n    ");
         printf("{%u,%u,%d}", state.distcode[low].op, state.distcode[low].bits,
                state.distcode[low].val);
-        if (++low == size) break;
+        якщо (++low == size) break;
         putchar(',');
     }
     puts("\n};");
-    return 0;
+    повернути 0;
 }
 #endif /* MAKEFIXED */

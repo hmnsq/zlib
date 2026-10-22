@@ -20,92 +20,92 @@
 
 #define WRITE_8(buff, n) do { \
   *((unsigned char*)(buff)) = (unsigned char) ((n) & 0xff); \
-} while(0)
+} поки(0)
 #define WRITE_16(buff, n) do { \
   WRITE_8((unsigned char*)(buff), n); \
   WRITE_8(((unsigned char*)(buff)) + 1, (n) >> 8); \
-} while(0)
+} поки(0)
 #define WRITE_32(buff, n) do { \
   WRITE_16((unsigned char*)(buff), (n) & 0xffff); \
   WRITE_16((unsigned char*)(buff) + 2, (n) >> 16); \
-} while(0)
+} поки(0)
 
-extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
-  int err = Z_OK;
+extern ціле ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
+  ціле err = Z_OK;
   FILE* fpZip = fopen(file, "rb");
   FILE* fpOut = fopen(fileOut, "wb");
   FILE* fpOutCD = fopen(fileOutTmp, "wb");
-  if (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
-    int entries = 0;
+  якщо (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
+    ціле entries = 0;
     uLong totalBytes = 0;
     char header[30];
     char filename[1024];
     char extra[1024];
-    int offset = 0;
-    int offsetCD = 0;
-    while ( fread(header, 1, 30, fpZip) == 30 ) {
-      int currentOffset = offset;
+    ціле offset = 0;
+    ціле offsetCD = 0;
+    поки ( fread(header, 1, 30, fpZip) == 30 ) {
+      ціле currentOffset = offset;
 
       /* File entry */
-      if (READ_32(header) == 0x04034b50) {
-        unsigned int version = READ_16(header + 4);
-        unsigned int gpflag = READ_16(header + 6);
-        unsigned int method = READ_16(header + 8);
-        unsigned int filetime = READ_16(header + 10);
-        unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+      якщо (READ_32(header) == 0x04034b50) {
+        unsigned ціле version = READ_16(header + 4);
+        unsigned ціле gpflag = READ_16(header + 6);
+        unsigned ціле method = READ_16(header + 8);
+        unsigned ціле filetime = READ_16(header + 10);
+        unsigned ціле filedate = READ_16(header + 12);
+        unsigned ціле crc = READ_32(header + 14); /* crc */
+        unsigned ціле cpsize = READ_32(header + 18); /* compressed size */
+        unsigned ціле uncpsize = READ_32(header + 22); /* uncompressed sz */
+        unsigned ціле fnsize = READ_16(header + 26); /* file name length */
+        unsigned ціле extsize = READ_16(header + 28); /* extra field length */
         filename[0] = extra[0] = '\0';
 
         /* Header */
-        if (fwrite(header, 1, 30, fpOut) == 30) {
+        якщо (fwrite(header, 1, 30, fpOut) == 30) {
           offset += 30;
-        } else {
+        } інакше {
           err = Z_ERRNO;
           break;
         }
 
         /* Filename */
-        if (fnsize > 0) {
-          if (fnsize < sizeof(filename)) {
-            if (fread(filename, 1, fnsize, fpZip) == fnsize) {
-                if (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
+        якщо (fnsize > 0) {
+          якщо (fnsize < sizeof(filename)) {
+            якщо (fread(filename, 1, fnsize, fpZip) == fnsize) {
+                якщо (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
                 offset += fnsize;
-              } else {
+              } інакше {
                 err = Z_ERRNO;
                 break;
               }
-            } else {
+            } інакше {
               err = Z_ERRNO;
               break;
             }
-          } else {
+          } інакше {
             err = Z_ERRNO;
             break;
           }
-        } else {
+        } інакше {
           err = Z_STREAM_ERROR;
           break;
         }
 
         /* Extra field */
-        if (extsize > 0) {
-          if (extsize < sizeof(extra)) {
-            if (fread(extra, 1, extsize, fpZip) == extsize) {
-              if (fwrite(extra, 1, extsize, fpOut) == extsize) {
+        якщо (extsize > 0) {
+          якщо (extsize < sizeof(extra)) {
+            якщо (fread(extra, 1, extsize, fpZip) == extsize) {
+              якщо (fwrite(extra, 1, extsize, fpOut) == extsize) {
                 offset += extsize;
-                } else {
+                } інакше {
                 err = Z_ERRNO;
                 break;
               }
-            } else {
+            } інакше {
               err = Z_ERRNO;
               break;
             }
-          } else {
+          } інакше {
             err = Z_ERRNO;
             break;
           }
@@ -113,28 +113,28 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
 
         /* Data */
         {
-          int dataSize = cpsize;
-          if (dataSize == 0) {
+          ціле dataSize = cpsize;
+          якщо (dataSize == 0) {
             dataSize = uncpsize;
           }
-          if (dataSize > 0) {
+          якщо (dataSize > 0) {
             char* data = malloc(dataSize);
-            if (data != NULL) {
-              if ((int)fread(data, 1, dataSize, fpZip) == dataSize) {
-                if ((int)fwrite(data, 1, dataSize, fpOut) == dataSize) {
+            якщо (data != NULL) {
+              якщо ((ціле)fread(data, 1, dataSize, fpZip) == dataSize) {
+                якщо ((ціле)fwrite(data, 1, dataSize, fpOut) == dataSize) {
                   offset += dataSize;
                   totalBytes += dataSize;
-                } else {
+                } інакше {
                   err = Z_ERRNO;
                 }
-              } else {
+              } інакше {
                 err = Z_ERRNO;
               }
               free(data);
-              if (err != Z_OK) {
+              якщо (err != Z_OK) {
                 break;
               }
-            } else {
+            } інакше {
               err = Z_MEM_ERROR;
               break;
             }
@@ -145,7 +145,7 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
         {
           char central[46];
           char* comment = "";
-          int comsize = (int) strlen(comment);
+          ціле comsize = (ціле) strlen(comment);
           WRITE_32(central, 0x02014b50);
           WRITE_16(central + 4, version);
           WRITE_16(central + 6, version);
@@ -164,44 +164,44 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
           WRITE_32(central + 38, 0);    /* ext attrb */
           WRITE_32(central + 42, currentOffset);
           /* Header */
-          if (fwrite(central, 1, 46, fpOutCD) == 46) {
+          якщо (fwrite(central, 1, 46, fpOutCD) == 46) {
             offsetCD += 46;
 
             /* Filename */
-            if (fnsize > 0) {
-              if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
+            якщо (fnsize > 0) {
+              якщо (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
                 offsetCD += fnsize;
-              } else {
+              } інакше {
                 err = Z_ERRNO;
                 break;
               }
-            } else {
+            } інакше {
               err = Z_STREAM_ERROR;
               break;
             }
 
             /* Extra field */
-            if (extsize > 0) {
-              if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
+            якщо (extsize > 0) {
+              якщо (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
                 offsetCD += extsize;
-              } else {
+              } інакше {
                 err = Z_ERRNO;
                 break;
               }
             }
 
             /* Comment field */
-            if (comsize > 0) {
-              if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
+            якщо (comsize > 0) {
+              якщо ((ціле)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
                 offsetCD += comsize;
-              } else {
+              } інакше {
                 err = Z_ERRNO;
                 break;
               }
             }
 
 
-          } else {
+          } інакше {
             err = Z_ERRNO;
             break;
           }
@@ -210,18 +210,18 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
         /* Success */
         entries++;
 
-      } else {
+      } інакше {
         break;
       }
     }
 
     /* Final central directory  */
     {
-      int entriesZip = entries;
+      ціле entriesZip = entries;
       char end[22];
       char* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
-      int comsize = (int) strlen(comment);
-      if (entriesZip > 0xffff) {
+      ціле comsize = (ціле) strlen(comment);
+      якщо (entriesZip > 0xffff) {
         entriesZip = 0xffff;
       }
       WRITE_32(end, 0x06054b50);
@@ -234,29 +234,29 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
       WRITE_16(end + 20, comsize);          /* comment */
 
       /* Header */
-      if (fwrite(end, 1, 22, fpOutCD) == 22) {
+      якщо (fwrite(end, 1, 22, fpOutCD) == 22) {
 
         /* Comment field */
-        if (comsize > 0) {
-          if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
+        якщо (comsize > 0) {
+          якщо ((ціле)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
             err = Z_ERRNO;
           }
         }
 
-      } else {
+      } інакше {
         err = Z_ERRNO;
       }
     }
 
     /* Final merge (file + central directory) */
     fclose(fpOutCD);
-    if (err == Z_OK) {
+    якщо (err == Z_OK) {
       fpOutCD = fopen(fileOutTmp, "rb");
-      if (fpOutCD != NULL) {
-        int nRead;
+      якщо (fpOutCD != NULL) {
+        ціле nRead;
         char buffer[8192];
-        while ( (nRead = (int)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
-          if ((int)fwrite(buffer, 1, nRead, fpOut) != nRead) {
+        поки ( (nRead = (ціле)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
+          якщо ((ціле)fwrite(buffer, 1, nRead, fpOut) != nRead) {
             err = Z_ERRNO;
             break;
           }
@@ -273,22 +273,22 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
     (void)remove(fileOutTmp);
 
     /* Number of recovered entries */
-    if (err == Z_OK) {
-      if (nRecovered != NULL) {
+    якщо (err == Z_OK) {
+      якщо (nRecovered != NULL) {
         *nRecovered = entries;
       }
-      if (bytesRecovered != NULL) {
+      якщо (bytesRecovered != NULL) {
         *bytesRecovered = totalBytes;
       }
     }
-  } else {
-    if (fpOutCD != NULL)
+  } інакше {
+    якщо (fpOutCD != NULL)
       fclose(fpOutCD);
-    if (fpZip != NULL)
+    якщо (fpZip != NULL)
       fclose(fpZip);
-    if (fpOut != NULL)
+    якщо (fpOut != NULL)
       fclose(fpOut);
     err = Z_STREAM_ERROR;
   }
-  return err;
+  повернути err;
 }

@@ -79,7 +79,7 @@
 /* structure for infback() to pass to input function in() -- it maintains the
    input file and a buffer of size SIZE */
 struct ind {
-    int infile;
+    ціле infile;
     unsigned char *inbuf;
 };
 
@@ -88,7 +88,7 @@ struct ind {
    returns end-of-file or error.  Return 0 on error. */
 local unsigned in(void *in_desc, z_const unsigned char **buf)
 {
-    int ret;
+    ціле ret;
     unsigned len;
     unsigned char *next;
     struct ind *me = (struct ind *)in_desc;
@@ -98,17 +98,17 @@ local unsigned in(void *in_desc, z_const unsigned char **buf)
     len = 0;
     do {
         ret = PIECE;
-        if ((unsigned)ret > SIZE - len)
-            ret = (int)(SIZE - len);
-        ret = (int)read(me->infile, next, ret);
-        if (ret == -1) {
+        якщо ((unsigned)ret > SIZE - len)
+            ret = (ціле)(SIZE - len);
+        ret = (ціле)read(me->infile, next, ret);
+        якщо (ret == -1) {
             len = 0;
             break;
         }
         next += ret;
         len += ret;
-    } while (ret != 0 && len < SIZE);
-    return len;
+    } поки (ret != 0 && len < SIZE);
+    повернути len;
 }
 
 /* structure for infback() to pass to output function out() -- it maintains the
@@ -117,8 +117,8 @@ local unsigned in(void *in_desc, z_const unsigned char **buf)
    the gzip trailer is stored modulo 2^32, so it's ok if a long is 32 bits and
    the output is greater than 4 GB.) */
 struct outd {
-    int outfile;
-    int check;                  /* true if checking crc and total */
+    ціле outfile;
+    ціле check;                  /* true if checking crc and total */
     unsigned long crc;
     unsigned long total;
 };
@@ -128,32 +128,32 @@ struct outd {
    On success out() returns 0.  For a write failure, out() returns 1.  If the
    output file descriptor is -1, then nothing is written.
  */
-local int out(void *out_desc, unsigned char *buf, unsigned len)
+local ціле out(void *out_desc, unsigned char *buf, unsigned len)
 {
-    int ret;
+    ціле ret;
     struct outd *me = (struct outd *)out_desc;
 
-    if (me->check) {
+    якщо (me->check) {
         me->crc = crc32(me->crc, buf, len);
         me->total += len;
     }
-    if (me->outfile != -1)
+    якщо (me->outfile != -1)
         do {
             ret = PIECE;
-            if ((unsigned)ret > len)
-                ret = (int)len;
-            ret = (int)write(me->outfile, buf, ret);
-            if (ret == -1)
-                return 1;
+            якщо ((unsigned)ret > len)
+                ret = (ціле)len;
+            ret = (ціле)write(me->outfile, buf, ret);
+            якщо (ret == -1)
+                повернути 1;
             buf += ret;
             len -= ret;
-        } while (len != 0);
-    return 0;
+        } поки (len != 0);
+    повернути 0;
 }
 
 /* next input byte macro for use inside lunpipe() and gunpipe() */
 #define NEXT() (have ? 0 : (have = in(indp, &next)), \
-                last = have ? (have--, (int)(*next++)) : -1)
+                last = have ? (have--, (ціле)(*next++)) : -1)
 
 /* memory for gunpipe() and lunpipe() --
    the first 256 entries of prefix[] and suffix[] are never used, could
@@ -172,13 +172,13 @@ unsigned char match[65280 + 2];         /* buffer for reversed match or gzip
     do { \
         left = 0; \
         rem = 0; \
-        if (chunk > have) { \
+        якщо (chunk > have) { \
             chunk -= have; \
             have = 0; \
-            if (NEXT() == -1) \
+            якщо (NEXT() == -1) \
                 break; \
             chunk--; \
-            if (chunk > have) { \
+            якщо (chunk > have) { \
                 chunk = have = 0; \
                 break; \
             } \
@@ -186,7 +186,7 @@ unsigned char match[65280 + 2];         /* buffer for reversed match or gzip
         have -= chunk; \
         next += chunk; \
         chunk = 0; \
-    } while (0)
+    } поки (0)
 
 /* Decompress a compress (LZW) file from indp to outfile.  The compress magic
    header (two bytes) has already been read and verified.  There are have bytes
@@ -197,17 +197,17 @@ unsigned char match[65280 + 2];         /* buffer for reversed match or gzip
    file, read error, or write error (a write error indicated by strm->next_in
    not equal to Z_NULL), or Z_DATA_ERROR for invalid input.
  */
-local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
-                  int outfile, z_stream *strm)
+local ціле lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
+                  ціле outfile, z_stream *strm)
 {
-    int last;                   /* last byte read by NEXT(), or -1 if EOF */
+    ціле last;                   /* last byte read by NEXT(), or -1 if EOF */
     unsigned chunk;             /* bytes left in current chunk */
-    int left;                   /* bits left in rem */
+    ціле left;                   /* bits left in rem */
     unsigned rem;               /* unused bits from input */
-    int bits;                   /* current bits per code */
+    ціле bits;                   /* current bits per code */
     unsigned code;              /* code, table traversal index */
     unsigned mask;              /* mask for current bits codes */
-    int max;                    /* maximum bits per code for this stream */
+    ціле max;                    /* maximum bits per code for this stream */
     unsigned flags;             /* compress flags, then block compress flag */
     unsigned end;               /* last valid entry in prefix/suffix tables */
     unsigned temp;              /* current code */
@@ -224,18 +224,18 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
 
     /* process remainder of compress header -- a flags byte */
     flags = NEXT();
-    if (last == -1)
-        return Z_BUF_ERROR;
-    if (flags & 0x60) {
+    якщо (last == -1)
+        повернути Z_BUF_ERROR;
+    якщо (flags & 0x60) {
         strm->msg = (z_const char *)"unknown lzw flags set";
-        return Z_DATA_ERROR;
+        повернути Z_DATA_ERROR;
     }
     max = flags & 0x1f;
-    if (max < 9 || max > 16) {
+    якщо (max < 9 || max > 16) {
         strm->msg = (z_const char *)"lzw bits out of range";
-        return Z_DATA_ERROR;
+        повернути Z_DATA_ERROR;
     }
-    if (max == 9)                           /* 9 doesn't really mean 9 */
+    якщо (max == 9)                           /* 9 doesn't really mean 9 */
         max = 10;
     flags &= 0x80;                          /* true if block compress */
 
@@ -246,14 +246,14 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
 
     /* set up: get first 9-bit code, which is the first decompressed byte, but
        don't create a table entry until the next code */
-    if (NEXT() == -1)                       /* no compressed data is ok */
-        return Z_OK;
+    якщо (NEXT() == -1)                       /* no compressed data is ok */
+        повернути Z_OK;
     final = prev = (unsigned)last;          /* low 8 bits of code */
-    if (NEXT() == -1)                       /* missing a bit */
-        return Z_BUF_ERROR;
-    if (last & 1) {                         /* code must be < 256 */
+    якщо (NEXT() == -1)                       /* missing a bit */
+        повернути Z_BUF_ERROR;
+    якщо (last & 1) {                         /* code must be < 256 */
         strm->msg = (z_const char *)"invalid lzw code";
-        return Z_DATA_ERROR;
+        повернути Z_DATA_ERROR;
     }
     rem = (unsigned)last >> 1;              /* remaining 7 bits */
     left = 7;
@@ -263,9 +263,9 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
 
     /* decode codes */
     stack = 0;
-    for (;;) {
+    для (;;) {
         /* if the table will be full after this, increment the code size */
-        if (end >= mask && bits < max) {
+        якщо (end >= mask && bits < max) {
             FLUSHCODE();
             bits++;
             mask <<= 1;
@@ -273,23 +273,23 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
         }
 
         /* get a code of length bits */
-        if (chunk == 0)                     /* decrement chunk modulo bits */
+        якщо (chunk == 0)                     /* decrement chunk modulo bits */
             chunk = bits;
         code = rem;                         /* low bits of code */
-        if (NEXT() == -1) {                 /* EOF is end of compressed data */
+        якщо (NEXT() == -1) {                 /* EOF is end of compressed data */
             /* write remaining buffered output */
-            if (outcnt && out(&outd, outbuf, outcnt)) {
+            якщо (outcnt && out(&outd, outbuf, outcnt)) {
                 strm->next_in = outbuf;     /* signal write error */
-                return Z_BUF_ERROR;
+                повернути Z_BUF_ERROR;
             }
-            return Z_OK;
+            повернути Z_OK;
         }
         code += (unsigned)last << left;     /* middle (or high) bits of code */
         left += 8;
         chunk--;
-        if (bits > left) {                  /* need more bits */
-            if (NEXT() == -1)               /* can't end in middle of code */
-                return Z_BUF_ERROR;
+        якщо (bits > left) {                  /* need more bits */
+            якщо (NEXT() == -1)               /* can't end in middle of code */
+                повернути Z_BUF_ERROR;
             code += (unsigned)last << left; /* high bits of code */
             left += 8;
             chunk--;
@@ -299,7 +299,7 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
         rem = (unsigned)last >> (8 - left); /* unused bits from last byte */
 
         /* process clear code (256) */
-        if (code == 256 && flags) {
+        якщо (code == 256 && flags) {
             FLUSHCODE();
             bits = 9;                       /* initialize bits and mask */
             mask = 0x1ff;
@@ -309,7 +309,7 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
 
         /* special code to reuse last match */
         temp = code;                        /* save the current code */
-        if (code > end) {
+        якщо (code > end) {
             /* Be picky on the allowed code here, and make sure that the code
                we drop through (prev) will be a valid index so that random
                input does not cause an exception.  The code != end + 1 check is
@@ -318,9 +318,9 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
                removed.  Leaving this check in greatly improves gun's ability
                to detect random or corrupted input after a compress header.
                In any case, the prev > end check must be retained. */
-            if (code != end + 1 || prev > end) {
+            якщо (code != end + 1 || prev > end) {
                 strm->msg = (z_const char *)"invalid lzw code";
-                return Z_DATA_ERROR;
+                повернути Z_DATA_ERROR;
             }
             match[stack++] = (unsigned char)final;
             code = prev;
@@ -328,7 +328,7 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
 
         /* walk through linked list to generate output in reverse order */
         p = match + stack;
-        while (code >= 256) {
+        поки (code >= 256) {
             *p++ = suffix[code];
             code = prefix[code];
         }
@@ -337,7 +337,7 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
         final = code;
 
         /* link new table entry */
-        if (end < mask) {
+        якщо (end < mask) {
             end++;
             prefix[end] = (unsigned short)prev;
             suffix[end] = (unsigned char)final;
@@ -347,19 +347,19 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
         prev = temp;
 
         /* write output in forward order */
-        while (stack > SIZE - outcnt) {
-            while (outcnt < SIZE)
+        поки (stack > SIZE - outcnt) {
+            поки (outcnt < SIZE)
                 outbuf[outcnt++] = match[--stack];
-            if (out(&outd, outbuf, outcnt)) {
+            якщо (out(&outd, outbuf, outcnt)) {
                 strm->next_in = outbuf; /* signal write error */
-                return Z_BUF_ERROR;
+                повернути Z_BUF_ERROR;
             }
             outcnt = 0;
         }
         p = match + stack;
         do {
             outbuf[outcnt++] = *--p;
-        } while (p > match);
+        } поки (p > match);
         stack = 0;
 
         /* loop for next code with final and prev as the last match, rem and
@@ -380,9 +380,9 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
    prematurely or a write error occurs, or Z_ERRNO if junk (not a another gzip
    stream) follows a valid gzip stream.
  */
-local int gunpipe(z_stream *strm, int infile, int outfile)
+local ціле gunpipe(z_stream *strm, ціле infile, ціле outfile)
 {
-    int ret, first, last;
+    ціле ret, first, last;
     unsigned have, flags, len;
     z_const unsigned char *next = NULL;
     struct ind ind, *indp;
@@ -397,13 +397,13 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
     have = 0;                               /* no input data read in yet */
     first = 1;                              /* looking for first gzip header */
     strm->next_in = Z_NULL;                 /* so Z_BUF_ERROR means EOF */
-    for (;;) {
+    для (;;) {
         /* look for the two magic header bytes for a gzip stream */
-        if (NEXT() == -1) {
+        якщо (NEXT() == -1) {
             ret = Z_OK;
             break;                          /* empty gzip stream is ok */
         }
-        if (last != 31 || (NEXT() != 139 && last != 157)) {
+        якщо (last != 31 || (NEXT() != 139 && last != 157)) {
             strm->msg = (z_const char *)"incorrect header check";
             ret = first ? Z_DATA_ERROR : Z_ERRNO;
             break;                          /* not a gzip or compress header */
@@ -411,15 +411,15 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
         first = 0;                          /* next non-header is junk */
 
         /* process a compress (LZW) file -- can't be concatenated after this */
-        if (last == 157) {
+        якщо (last == 157) {
             ret = lunpipe(have, next, indp, outfile, strm);
             break;
         }
 
         /* process remainder of gzip header */
         ret = Z_BUF_ERROR;
-        if (NEXT() != 8) {                  /* only deflate method allowed */
-            if (last == -1) break;
+        якщо (NEXT() != 8) {                  /* only deflate method allowed */
+            якщо (last == -1) break;
             strm->msg = (z_const char *)"unknown compression method";
             ret = Z_DATA_ERROR;
             break;
@@ -431,37 +431,37 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
         NEXT();
         NEXT();
         NEXT();
-        if (last == -1) break;
-        if (flags & 0xe0) {
+        якщо (last == -1) break;
+        якщо (flags & 0xe0) {
             strm->msg = (z_const char *)"unknown header flags set";
             ret = Z_DATA_ERROR;
             break;
         }
-        if (flags & 4) {                    /* extra field */
+        якщо (flags & 4) {                    /* extra field */
             len = NEXT();
             len += (unsigned)(NEXT()) << 8;
-            if (last == -1) break;
-            while (len > have) {
+            якщо (last == -1) break;
+            поки (len > have) {
                 len -= have;
                 have = 0;
-                if (NEXT() == -1) break;
+                якщо (NEXT() == -1) break;
                 len--;
             }
-            if (last == -1) break;
+            якщо (last == -1) break;
             have -= len;
             next += len;
         }
-        if (flags & 8)                      /* file name */
-            while (NEXT() != 0 && last != -1)
+        якщо (flags & 8)                      /* file name */
+            поки (NEXT() != 0 && last != -1)
                 ;
-        if (flags & 16)                     /* comment */
-            while (NEXT() != 0 && last != -1)
+        якщо (flags & 16)                     /* comment */
+            поки (NEXT() != 0 && last != -1)
                 ;
-        if (flags & 2) {                    /* header crc */
+        якщо (flags & 2) {                    /* header crc */
             NEXT();
             NEXT();
         }
-        if (last == -1) break;
+        якщо (last == -1) break;
 
         /* set up output */
         outd.outfile = outfile;
@@ -473,30 +473,30 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
         strm->next_in = next;
         strm->avail_in = have;
         ret = inflateBack(strm, in, indp, out, &outd);
-        if (ret != Z_STREAM_END) break;
+        якщо (ret != Z_STREAM_END) break;
         next = strm->next_in;
         have = strm->avail_in;
         strm->next_in = Z_NULL;             /* so Z_BUF_ERROR means EOF */
 
         /* check trailer */
         ret = Z_BUF_ERROR;
-        if (NEXT() != (int)(outd.crc & 0xff) ||
-            NEXT() != (int)((outd.crc >> 8) & 0xff) ||
-            NEXT() != (int)((outd.crc >> 16) & 0xff) ||
-            NEXT() != (int)((outd.crc >> 24) & 0xff)) {
+        якщо (NEXT() != (ціле)(outd.crc & 0xff) ||
+            NEXT() != (ціле)((outd.crc >> 8) & 0xff) ||
+            NEXT() != (ціле)((outd.crc >> 16) & 0xff) ||
+            NEXT() != (ціле)((outd.crc >> 24) & 0xff)) {
             /* crc error */
-            if (last != -1) {
+            якщо (last != -1) {
                 strm->msg = (z_const char *)"incorrect data check";
                 ret = Z_DATA_ERROR;
             }
             break;
         }
-        if (NEXT() != (int)(outd.total & 0xff) ||
-            NEXT() != (int)((outd.total >> 8) & 0xff) ||
-            NEXT() != (int)((outd.total >> 16) & 0xff) ||
-            NEXT() != (int)((outd.total >> 24) & 0xff)) {
+        якщо (NEXT() != (ціле)(outd.total & 0xff) ||
+            NEXT() != (ціле)((outd.total >> 8) & 0xff) ||
+            NEXT() != (ціле)((outd.total >> 16) & 0xff) ||
+            NEXT() != (ціле)((outd.total >> 24) & 0xff)) {
             /* length error */
-            if (last != -1) {
+            якщо (last != -1) {
                 strm->msg = (z_const char *)"incorrect length check";
                 ret = Z_DATA_ERROR;
             }
@@ -507,7 +507,7 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
     }
 
     /* clean up and return */
-    return ret;
+    повернути ret;
 }
 
 /* Copy file attributes, from -> to, as best we can.  This is best effort, so
@@ -520,8 +520,8 @@ local void copymeta(char *from, char *to)
     struct utimbuf when;
 
     /* get all of from's Unix meta data, return if not a regular file */
-    if (stat(from, &was) != 0 || (was.st_mode & S_IFMT) != S_IFREG)
-        return;
+    якщо (stat(from, &was) != 0 || (was.st_mode & S_IFMT) != S_IFREG)
+        повернути;
 
     /* set to's mode bits, ignore errors */
     (void)chmod(to, was.st_mode & 07777);
@@ -545,92 +545,92 @@ local void copymeta(char *from, char *to)
    gunzip() returns 1 if there is an out-of-memory error or an unexpected
    return code from gunpipe().  Otherwise it returns 0.
  */
-local int gunzip(z_stream *strm, char *inname, char *outname, int test)
+local ціле gunzip(z_stream *strm, char *inname, char *outname, ціле test)
 {
-    int ret;
-    int infile, outfile;
+    ціле ret;
+    ціле infile, outfile;
 
     /* open files */
-    if (inname == NULL || *inname == 0) {
+    якщо (inname == NULL || *inname == 0) {
         inname = "-";
         infile = 0;     /* stdin */
     }
-    else {
+    інакше {
         infile = open(inname, O_RDONLY, 0);
-        if (infile == -1) {
+        якщо (infile == -1) {
             fprintf(stderr, "gun cannot open %s\n", inname);
-            return 0;
+            повернути 0;
         }
     }
-    if (test)
+    якщо (test)
         outfile = -1;
-    else if (outname == NULL || *outname == 0) {
+    інакше якщо (outname == NULL || *outname == 0) {
         outname = "-";
         outfile = 1;    /* stdout */
     }
-    else {
+    інакше {
         outfile = open(outname, O_CREAT | O_TRUNC | O_WRONLY, 0666);
-        if (outfile == -1) {
+        якщо (outfile == -1) {
             close(infile);
             fprintf(stderr, "gun cannot create %s\n", outname);
-            return 0;
+            повернути 0;
         }
     }
     errno = 0;
 
     /* decompress */
     ret = gunpipe(strm, infile, outfile);
-    if (outfile > 2) close(outfile);
-    if (infile > 2) close(infile);
+    якщо (outfile > 2) close(outfile);
+    якщо (infile > 2) close(infile);
 
     /* interpret result */
     switch (ret) {
     case Z_OK:
     case Z_ERRNO:
-        if (infile > 2 && outfile > 2) {
+        якщо (infile > 2 && outfile > 2) {
             copymeta(inname, outname);          /* copy attributes */
             unlink(inname);
         }
-        if (ret == Z_ERRNO)
+        якщо (ret == Z_ERRNO)
             fprintf(stderr, "gun warning: trailing garbage ignored in %s\n",
                     inname);
         break;
     case Z_DATA_ERROR:
-        if (outfile > 2) unlink(outname);
+        якщо (outfile > 2) unlink(outname);
         fprintf(stderr, "gun data error on %s: %s\n", inname, strm->msg);
         break;
     case Z_MEM_ERROR:
-        if (outfile > 2) unlink(outname);
+        якщо (outfile > 2) unlink(outname);
         fprintf(stderr, "gun out of memory error--aborting\n");
-        return 1;
+        повернути 1;
     case Z_BUF_ERROR:
-        if (outfile > 2) unlink(outname);
-        if (strm->next_in != Z_NULL) {
+        якщо (outfile > 2) unlink(outname);
+        якщо (strm->next_in != Z_NULL) {
             fprintf(stderr, "gun write error on %s: %s\n",
                     outname, strerror(errno));
         }
-        else if (errno) {
+        інакше якщо (errno) {
             fprintf(stderr, "gun read error on %s: %s\n",
                     inname, strerror(errno));
         }
-        else {
+        інакше {
             fprintf(stderr, "gun unexpected end of file on %s\n",
                     inname);
         }
         break;
     default:
-        if (outfile > 2) unlink(outname);
+        якщо (outfile > 2) unlink(outname);
         fprintf(stderr, "gun internal error--aborting\n");
-        return 1;
+        повернути 1;
     }
-    return 0;
+    повернути 0;
 }
 
 /* Process the gun command line arguments.  See the command syntax near the
    beginning of this source file. */
-int main(int argc, char **argv)
+ціле main(ціле argc, char **argv)
 {
-    int ret, len, test;
+    ціле ret, len, test;
     char *outname;
     unsigned char *window;
     z_stream strm;
@@ -641,47 +641,47 @@ int main(int argc, char **argv)
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
     ret = inflateBackInit(&strm, 15, window);
-    if (ret != Z_OK) {
+    якщо (ret != Z_OK) {
         fprintf(stderr, "gun out of memory error--aborting\n");
-        return 1;
+        повернути 1;
     }
 
     /* decompress each file to the same name with the suffix removed */
     argc--;
     argv++;
     test = 0;
-    if (argc && strcmp(*argv, "-h") == 0) {
+    якщо (argc && strcmp(*argv, "-h") == 0) {
         fprintf(stderr, "gun 1.6 (17 Jan 2010)\n");
         fprintf(stderr, "Copyright (C) 2003-2010 Mark Adler\n");
         fprintf(stderr, "usage: gun [-t] [file1.gz [file2.Z ...]]\n");
-        return 0;
+        повернути 0;
     }
-    if (argc && strcmp(*argv, "-t") == 0) {
+    якщо (argc && strcmp(*argv, "-t") == 0) {
         test = 1;
         argc--;
         argv++;
     }
-    if (argc)
+    якщо (argc)
         do {
-            if (test)
+            якщо (test)
                 outname = NULL;
-            else {
-                len = (int)strlen(*argv);
-                if (strcmp(*argv + len - 3, ".gz") == 0 ||
+            інакше {
+                len = (ціле)strlen(*argv);
+                якщо (strcmp(*argv + len - 3, ".gz") == 0 ||
                     strcmp(*argv + len - 3, "-gz") == 0)
                     len -= 3;
-                else if (strcmp(*argv + len - 2, ".z") == 0 ||
+                інакше якщо (strcmp(*argv + len - 2, ".z") == 0 ||
                     strcmp(*argv + len - 2, "-z") == 0 ||
                     strcmp(*argv + len - 2, "_z") == 0 ||
                     strcmp(*argv + len - 2, ".Z") == 0)
                     len -= 2;
-                else {
+                інакше {
                     fprintf(stderr, "gun error: no gz type on %s--skipping\n",
                             *argv);
                     continue;
                 }
                 outname = malloc(len + 1);
-                if (outname == NULL) {
+                якщо (outname == NULL) {
                     fprintf(stderr, "gun out of memory error--aborting\n");
                     ret = 1;
                     break;
@@ -690,13 +690,13 @@ int main(int argc, char **argv)
                 outname[len] = 0;
             }
             ret = gunzip(&strm, *argv, outname, test);
-            if (outname != NULL) free(outname);
-            if (ret) break;
-        } while (argv++, --argc);
-    else
+            якщо (outname != NULL) free(outname);
+            якщо (ret) break;
+        } поки (argv++, --argc);
+    інакше
         ret = gunzip(&strm, NULL, NULL, test);
 
     /* clean up */
     inflateBackEnd(&strm);
-    return ret;
+    повернути ret;
 }

@@ -13,11 +13,11 @@
 
 #ifdef HAVE_HIDDEN
 #  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
-#else
+#інакше
 #  define ZLIB_INTERNAL
 #endif
 
-#if defined(_WIN32)
+#якщо defined(_WIN32)
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
 #  endif
@@ -46,12 +46,12 @@
 #  include <stddef.h>
 #endif
 
-#if defined(__TURBOC__) || defined(_MSC_VER) || defined(_WIN32)
+#якщо defined(__TURBOC__) || defined(_MSC_VER) || defined(_WIN32)
 #  include <io.h>
 #  include <sys/stat.h>
 #endif
 
-#if defined(_WIN32) && !defined(WIDECHAR)
+#якщо defined(_WIN32) && !defined(WIDECHAR)
 #  define WIDECHAR
 #endif
 
@@ -59,26 +59,26 @@
 #  define NO_GZCOMPRESS
 #endif
 
-#if defined(STDC99) || (defined(__TURBOC__) && __TURBOC__ >= 0x550)
+#якщо defined(STDC99) || (defined(__TURBOC__) && __TURBOC__ >= 0x550)
 #  ifndef HAVE_VSNPRINTF
 #    define HAVE_VSNPRINTF
 #  endif
 #endif
 
-#if defined(__CYGWIN__)
+#якщо defined(__CYGWIN__)
 #  ifndef HAVE_VSNPRINTF
 #    define HAVE_VSNPRINTF
 #  endif
 #endif
 
-#if defined(MSDOS) && defined(__BORLANDC__) && (BORLANDC > 0x410)
+#якщо defined(MSDOS) && defined(__BORLANDC__) && (BORLANDC > 0x410)
 #  ifndef HAVE_VSNPRINTF
 #    define HAVE_VSNPRINTF
 #  endif
 #endif
 
 #ifndef HAVE_VSNPRINTF
-#  if !defined(NO_vsnprintf) && \
+#  якщо !defined(NO_vsnprintf) && \
       (defined(MSDOS) || defined(__TURBOC__) || defined(__SASC) || \
        defined(VMS) || defined(__OS400) || defined(__MVS__))
 /* vsnprintf may exist on some MS-DOS compilers (DJGPP?),
@@ -87,7 +87,7 @@
 #  endif
 #  ifdef WIN32
 /* In Win32, vsnprintf is available as the "non-ANSI" _vsnprintf. */
-#    if !defined(_MSC_VER) || ( defined(_MSC_VER) && _MSC_VER < 1500 )
+#    якщо !defined(_MSC_VER) || ( defined(_MSC_VER) && _MSC_VER < 1500 )
 #      ifndef vsnprintf
 #        define vsnprintf _vsnprintf
 #      endif
@@ -106,7 +106,7 @@
 /* unlike snprintf (which is required in C99), _snprintf does not guarantee
    null termination of the result -- however this is only used in gzlib.c where
    the result is assured to fit in the space provided */
-#if defined(_MSC_VER) && _MSC_VER < 1900
+#якщо defined(_MSC_VER) && _MSC_VER < 1900
 #  define snprintf _snprintf
 #endif
 
@@ -124,14 +124,14 @@
 #endif
 
 /* get errno and strerror definition */
-#if defined UNDER_CE
+#якщо defined UNDER_CE
 #  include <windows.h>
 #  define zstrerror() gz_strwinerror((DWORD)GetLastError())
-#else
+#інакше
 #  ifndef NO_STRERROR
 #    include <errno.h>
 #    define zstrerror() strerror(errno)
-#  else
+#  інакше
 #    define zstrerror() "stdio error (consult errno)"
 #  endif
 #endif
@@ -139,29 +139,29 @@
 #ifdef EAGAIN
 #  ifdef EWOULDBLOCK
 #    define BLOCKED(e) ((e) == EAGAIN || (e) == EWOULDBLOCK)
-#  else
+#  інакше
 #    define BLOCKED(e) ((e) == EAGAIN)
 #  endif
-#else
+#інакше
 #  ifdef EWOULDBLOCK
 #    define BLOCKED(e) ((e) == EWOULDBLOCK)
-#  else
+#  інакше
 #    define BLOCKED(e) (0)
 #  endif
 #endif
 
 /* provide prototypes for these when building zlib without LFS */
-#if !defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0
+#якщо !defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0
     ZEXTERN gzFile ZEXPORT gzopen64(const char *, const char *);
-    ZEXTERN z_off64_t ZEXPORT gzseek64(gzFile, z_off64_t, int);
+    ZEXTERN z_off64_t ZEXPORT gzseek64(gzFile, z_off64_t, ціле);
     ZEXTERN z_off64_t ZEXPORT gztell64(gzFile);
     ZEXTERN z_off64_t ZEXPORT gzoffset64(gzFile);
 #endif
 
 /* default memLevel */
-#if MAX_MEM_LEVEL >= 8
+#якщо MAX_MEM_LEVEL >= 8
 #  define DEF_MEM_LEVEL 8
-#else
+#інакше
 #  define DEF_MEM_LEVEL  MAX_MEM_LEVEL
 #endif
 
@@ -188,29 +188,29 @@ typedef struct {
                             /* x.next: next output data to deliver or write */
                             /* x.pos: current position in uncompressed data */
         /* used for both reading and writing */
-    int mode;               /* see gzip modes above */
-    int fd;                 /* file descriptor */
+    ціле mode;               /* see gzip modes above */
+    ціле fd;                 /* file descriptor */
     char *path;             /* path or fd for error messages */
     unsigned size;          /* buffer size, zero if not allocated yet */
     unsigned want;          /* requested buffer size, default is GZBUFSIZE */
     unsigned char *in;      /* input buffer (double-sized when writing) */
     unsigned char *out;     /* output buffer (double-sized when reading) */
-    int direct;             /* 0 if processing gzip, 1 if transparent */
+    ціле direct;             /* 0 if processing gzip, 1 if transparent */
         /* just for reading */
-    int junk;               /* -1 = start, 1 = junk candidate, 0 = in gzip */
-    int how;                /* 0: get header, 1: copy, 2: decompress */
-    int again;              /* true if EAGAIN or EWOULDBLOCK on last i/o */
+    ціле junk;               /* -1 = start, 1 = junk candidate, 0 = in gzip */
+    ціле how;                /* 0: get header, 1: copy, 2: decompress */
+    ціле again;              /* true if EAGAIN or EWOULDBLOCK on last i/o */
     z_off64_t start;        /* where the gzip data started, for rewinding */
-    int eof;                /* true if end of input file reached */
-    int past;               /* true if read requested past end */
+    ціле eof;                /* true if end of input file reached */
+    ціле past;               /* true if read requested past end */
         /* just for writing */
-    int level;              /* compression level */
-    int strategy;           /* compression strategy */
-    int reset;              /* true if a reset is pending after a Z_FINISH */
+    ціле level;              /* compression level */
+    ціле strategy;           /* compression strategy */
+    ціле reset;              /* true if a reset is pending after a Z_FINISH */
         /* seek request */
     z_off64_t skip;         /* amount to skip (already rewound if backwards) */
         /* error information */
-    int err;                /* error code */
+    ціле err;                /* error code */
     char *msg;              /* error message */
         /* zlib inflate or deflate stream */
     z_stream strm;          /* stream structure in-place (not a pointer) */
@@ -218,8 +218,8 @@ typedef struct {
 typedef gz_state FAR *gz_statep;
 
 /* shared functions */
-void ZLIB_INTERNAL gz_error(gz_statep, int, const char *);
-#if defined UNDER_CE
+void ZLIB_INTERNAL gz_error(gz_statep, ціле, const char *);
+#якщо defined UNDER_CE
 char ZLIB_INTERNAL *gz_strwinerror(DWORD error);
 #endif
 
@@ -227,7 +227,7 @@ char ZLIB_INTERNAL *gz_strwinerror(DWORD error);
    value -- needed when comparing unsigned to z_off64_t, which is signed
    (possible z_off64_t types off_t, off64_t, and long are all signed) */
 unsigned ZLIB_INTERNAL gz_intmax(void);
-#define GT_OFF(x) (sizeof(int) == sizeof(z_off64_t) && (x) > gz_intmax())
+#define GT_OFF(x) (sizeof(ціле) == sizeof(z_off64_t) && (x) > gz_intmax())
 
 /* largest value representable in z_off64_t */
 #ifndef CHAR_BIT
