@@ -1,253 +1,253 @@
 
-#include "zfstream.h"
+#ಅನ್ತರ್ಭಾವ "zfstream.h"
 
 gzfilebuf::gzfilebuf() :
-  file(NULL),
+  file(ರಿಕ್ತ),
   mode(0),
   own_file_descriptor(0)
 { }
 
 gzfilebuf::~gzfilebuf() {
 
-  sync();
-  if ( own_file_descriptor )
+  ಸಮಕಾಲ();
+  ಯದಿ ( own_file_descriptor )
     close();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::open( ಧ್ರುವ ವರ್ಣ *name,
+                            ಪೂರ್ಣಾಙ್ಕ io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ಯದಿ ( is_open() )
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
-  char char_mode[10];
-  char *p = char_mode;
+  ವರ್ಣ char_mode[10];
+  ವರ್ಣ *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ಯದಿ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } ಅನ್ಯಥಾ ಯದಿ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } ಅನ್ಯಥಾ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ಯದಿ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ಯದಿ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  ಯದಿ ( (file = gzopen(name, char_mode)) == ರಿಕ್ತ )
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
   own_file_descriptor = 1;
 
-  return this;
+  ಪ್ರತ್ಯಾಗಮ ಏತತ್;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( ಪೂರ್ಣಾಙ್ಕ file_descriptor,
+                              ಪೂರ್ಣಾಙ್ಕ io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ಯದಿ ( is_open() )
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
-  char char_mode[10];
-  char *p = char_mode;
+  ವರ್ಣ char_mode[10];
+  ವರ್ಣ *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ಯದಿ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } ಅನ್ಯಥಾ ಯದಿ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } ಅನ್ಯಥಾ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ಯದಿ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ಯದಿ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  ಯದಿ ( (file = gzdopen(file_descriptor, char_mode)) == ರಿಕ್ತ )
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
   own_file_descriptor = 0;
 
-  return this;
+  ಪ್ರತ್ಯಾಗಮ ಏತತ್;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  ಯದಿ ( is_open() ) {
 
-    sync();
+    ಸಮಕಾಲ();
     gzclose( file );
-    file = NULL;
+    file = ರಿಕ್ತ;
 
   }
 
-  return this;
+  ಪ್ರತ್ಯಾಗಮ ಏತತ್;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+ಪೂರ್ಣಾಙ್ಕ gzfilebuf::setcompressionlevel( ಪೂರ್ಣಾಙ್ಕ comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  ಪ್ರತ್ಯಾಗಮ gzsetparams(file, comp_level, -2);
 
 }
 
+ಪೂರ್ಣಾಙ್ಕ gzfilebuf::setcompressionstrategy( ಪೂರ್ಣಾಙ್ಕ comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  ಪ್ರತ್ಯಾಗಮ gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, ಪೂರ್ಣಾಙ್ಕ which ) {
+
+  ಪ್ರತ್ಯಾಗಮ streampos(EOF);
+
+}
+
+ಪೂರ್ಣಾಙ್ಕ gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  ಯದಿ ( !is_open() || !(mode & ios::in) )
+    ಪ್ರತ್ಯಾಗಮ EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  ಯದಿ ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    ಯದಿ ( (allocate()) == EOF )
+      ಪ್ರತ್ಯಾಗಮ EOF;
     setp(0,0);
 
-  } else {
+  } ಅನ್ಯಥಾ {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    ಯದಿ ( in_avail() )
+      ಪ್ರತ್ಯಾಗಮ (unsigned ವರ್ಣ) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    ಯದಿ ( out_waiting() ) {
+      ಯದಿ ( flushbuf() == EOF )
+        ಪ್ರತ್ಯಾಗಮ EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  ಪೂರ್ಣಾಙ್ಕ result = fillbuf();
+  ಯದಿ ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    ಪ್ರತ್ಯಾಗಮ EOF;
   }
 
-  return (unsigned char) *gptr();
+  ಪ್ರತ್ಯಾಗಮ (unsigned ವರ್ಣ) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+ಪೂರ್ಣಾಙ್ಕ gzfilebuf::overflow( ಪೂರ್ಣಾಙ್ಕ c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  ಯದಿ ( !is_open() || !(mode & ios::out) )
+    ಪ್ರತ್ಯಾಗಮ EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  ಯದಿ ( !base() ) {
+    ಯದಿ ( allocate() == EOF )
+      ಪ್ರತ್ಯಾಗಮ EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } ಅನ್ಯಥಾ {
+    ಯದಿ (in_avail()) {
+        ಪ್ರತ್ಯಾಗಮ EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    ಯದಿ (out_waiting()) {
+      ಯದಿ (flushbuf() == EOF)
+        ಪ್ರತ್ಯಾಗಮ EOF;
     }
   }
 
-  int bl = blen();
+  ಪೂರ್ಣಾಙ್ಕ bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  ಯದಿ ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  ಪ್ರತ್ಯಾಗಮ 0;
 
 }
 
-int gzfilebuf::sync() {
+ಪೂರ್ಣಾಙ್ಕ gzfilebuf::ಸಮಕಾಲ() {
 
-  if ( !is_open() )
-    return EOF;
+  ಯದಿ ( !is_open() )
+    ಪ್ರತ್ಯಾಗಮ EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  ಯದಿ ( out_waiting() )
+    ಪ್ರತ್ಯಾಗಮ flushbuf();
 
-  return 0;
+  ಪ್ರತ್ಯಾಗಮ 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+ಪೂರ್ಣಾಙ್ಕ gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  ಪೂರ್ಣಾಙ್ಕ n;
+  ವರ್ಣ *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  ಯದಿ ( gzwrite( file, q, n) < n )
+    ಪ್ರತ್ಯಾಗಮ EOF;
 
   setp(0,0);
 
-  return 0;
+  ಪ್ರತ್ಯಾಗಮ 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+ಪೂರ್ಣಾಙ್ಕ gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  ಪೂರ್ಣಾಙ್ಕ required;
+  ವರ್ಣ *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  ಪೂರ್ಣಾಙ್ಕ t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  ಯದಿ ( t <= 0) ಪ್ರತ್ಯಾಗಮ EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  ಪ್ರತ್ಯಾಗಮ t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+ಶೂನ್ಯ gzfilestream_common::attach( ಪೂರ್ಣಾಙ್ಕ fd, ಪೂರ್ಣಾಙ್ಕ io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  ಯದಿ ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  ಅನ್ಯಥಾ
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+ಶೂನ್ಯ gzfilestream_common::open( ಧ್ರುವ ವರ್ಣ *name, ಪೂರ್ಣಾಙ್ಕ io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  ಯದಿ ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  ಅನ್ಯಥಾ
     clear();
 
 }
 
-void gzfilestream_common::close() {
+ಶೂನ್ಯ gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  ಯದಿ ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  ಪ್ರತ್ಯಾಗಮ &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( ಧ್ರುವ ವರ್ಣ *name, ಪೂರ್ಣಾಙ್ಕ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( ಪೂರ್ಣಾಙ್ಕ fd, ಪೂರ್ಣಾಙ್ಕ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( ಧ್ರುವ ವರ್ಣ *name, ಪೂರ್ಣಾಙ್ಕ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( ಪೂರ್ಣಾಙ್ಕ fd, ಪೂರ್ಣಾಙ್ಕ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );

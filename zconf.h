@@ -57,7 +57,7 @@
 #  define deflateInit_          z_deflateInit_
 #  define deflateParams         z_deflateParams
 #  define deflatePending        z_deflatePending
-#  define deflatePrime          z_deflatePrime
+#  define deflate_ಅವಿಭಾಜ್ಯ          z_deflate_ಅವಿಭಾಜ್ಯ
 #  define deflateReset          z_deflateReset
 #  define deflateResetKeep      z_deflateResetKeep
 #  define deflateSetDictionary  z_deflateSetDictionary
@@ -121,7 +121,7 @@
 #  define inflateInit2_         z_inflateInit2_
 #  define inflateInit_          z_inflateInit_
 #  define inflateMark           z_inflateMark
-#  define inflatePrime          z_inflatePrime
+#  define inflate_ಅವಿಭಾಜ್ಯ          z_inflate_ಅವಿಭಾಜ್ಯ
 #  define inflateReset          z_inflateReset
 #  define inflateReset2         z_inflateReset2
 #  define inflateResetKeep      z_inflateResetKeep
@@ -176,22 +176,22 @@
 
 #endif
 
-#if defined(__MSDOS__) && !defined(MSDOS)
+#ಯದಿ defined(__MSDOS__) && !defined(MSDOS)
 #  define MSDOS
 #endif
-#if (defined(OS_2) || defined(__OS2__)) && !defined(OS2)
+#ಯದಿ (defined(OS_2) || defined(__OS2__)) && !defined(OS2)
 #  define OS2
 #endif
-#if defined(_WINDOWS) && !defined(WINDOWS)
+#ಯದಿ defined(_WINDOWS) && !defined(WINDOWS)
 #  define WINDOWS
 #endif
-#if defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
+#ಯದಿ defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
 #  ifndef WIN32
 #    define WIN32
 #  endif
 #endif
-#if (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
-#  if !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
+#ಯದಿ (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
+#  ಯದಿ !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
 #    ifndef SYS16BIT
 #      define SYS16BIT
 #    endif
@@ -213,58 +213,58 @@
 #  ifndef STDC
 #    define STDC
 #  endif
-#  if __STDC_VERSION__ >= 199901L
+#  ಯದಿ __STDC_VERSION__ >= 199901L
 #    ifndef STDC99
 #      define STDC99
 #    endif
 #  endif
 #endif
-#if !defined(STDC) && (defined(__STDC__) || defined(__cplusplus))
+#ಯದಿ !defined(STDC) && (defined(__STDC__) || defined(__cplusplus))
 #  define STDC
 #endif
-#if !defined(STDC) && (defined(__GNUC__) || defined(__BORLANDC__))
+#ಯದಿ !defined(STDC) && (defined(__GNUC__) || defined(__BORLANDC__))
 #  define STDC
 #endif
-#if !defined(STDC) && (defined(MSDOS) || defined(WINDOWS) || defined(WIN32))
+#ಯದಿ !defined(STDC) && (defined(MSDOS) || defined(WINDOWS) || defined(WIN32))
 #  define STDC
 #endif
-#if !defined(STDC) && (defined(OS2) || defined(__HOS_AIX__))
+#ಯದಿ !defined(STDC) && (defined(OS2) || defined(__HOS_AIX__))
 #  define STDC
 #endif
 
-#if defined(__OS400__) && !defined(STDC)    /* iSeries (formerly AS/400). */
+#ಯದಿ defined(__OS400__) && !defined(STDC)    /* iSeries (formerly AS/400). */
 #  define STDC
 #endif
 
 #ifndef STDC
-#  ifndef const /* cannot use !defined(STDC) && !defined(const) on Mac */
-#    define const       /* note: need a more gentle solution here */
+#  ifndef ಧ್ರುವ /* cannot use !defined(STDC) && !defined(const) on Mac */
+#    define ಧ್ರುವ       /* note: need a more gentle solution here */
 #  endif
 #endif
 
 #ifndef z_const
 #  ifdef ZLIB_CONST
-#    define z_const const
-#  else
+#    define z_const ಧ್ರುವ
+#  ಅನ್ಯಥಾ
 #    define z_const
 #  endif
 #endif
 
 #ifdef Z_SOLO
 #  ifdef _WIN64
-     typedef unsigned long long z_size_t;
-#  else
-     typedef unsigned long z_size_t;
+     ಪ್ರಕಾರನಿರ್ದೇಶ unsigned long long z_size_t;
+#  ಅನ್ಯಥಾ
+     ಪ್ರಕಾರನಿರ್ದೇಶ unsigned long z_size_t;
 #  endif
-#else
+#ಅನ್ಯಥಾ
 #  define z_longlong long long
-#  if defined(NO_SIZE_T)
-     typedef unsigned NO_SIZE_T z_size_t;
+#  ಯದಿ defined(NO_SIZE_T)
+     ಪ್ರಕಾರನಿರ್ದೇಶ unsigned NO_SIZE_T z_size_t;
 #  elif defined(STDC)
 #    include <stddef.h>
-     typedef size_t z_size_t;
-#  else
-     typedef unsigned long z_size_t;
+     ಪ್ರಕಾರನಿರ್ದೇಶ size_t z_size_t;
+#  ಅನ್ಯಥಾ
+     ಪ್ರಕಾರನಿರ್ದೇಶ unsigned long z_size_t;
 #  endif
 #  undef z_longlong
 #endif
@@ -273,7 +273,7 @@
 #ifndef MAX_MEM_LEVEL
 #  ifdef MAXSEG_64K
 #    define MAX_MEM_LEVEL 8
-#  else
+#  ಅನ್ಯಥಾ
 #    define MAX_MEM_LEVEL 9
 #  endif
 #endif
@@ -305,7 +305,7 @@
 #ifndef OF /* function prototypes */
 #  ifdef STDC
 #    define OF(args)  args
-#  else
+#  ಅನ್ಯಥಾ
 #    define OF(args)  ()
 #  endif
 #endif
@@ -317,36 +317,36 @@
  * just define FAR to be empty.
  */
 #ifdef SYS16BIT
-#  if defined(M_I86SM) || defined(M_I86MM)
+#  ಯದಿ defined(M_I86SM) || defined(M_I86MM)
      /* MSC small or medium model */
 #    define SMALL_MEDIUM
 #    ifdef _MSC_VER
 #      define FAR _far
-#    else
+#    ಅನ್ಯಥಾ
 #      define FAR far
 #    endif
 #  endif
-#  if (defined(__SMALL__) || defined(__MEDIUM__))
+#  ಯದಿ (defined(__SMALL__) || defined(__MEDIUM__))
      /* Turbo C small or medium model */
 #    define SMALL_MEDIUM
 #    ifdef __BORLANDC__
 #      define FAR _far
-#    else
+#    ಅನ್ಯಥಾ
 #      define FAR far
 #    endif
 #  endif
 #endif
 
-#if defined(WINDOWS) || defined(WIN32)
+#ಯದಿ defined(WINDOWS) || defined(WIN32)
    /* If building or using zlib as a DLL, define ZLIB_DLL.
     * This is not mandatory, but it offers a little performance increase.
     */
 #  ifdef ZLIB_DLL
-#    if defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
+#    ಯದಿ defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
 #      ifdef ZLIB_INTERNAL
-#        define ZEXTERN extern __declspec(dllexport)
-#      else
-#        define ZEXTERN extern __declspec(dllimport)
+#        define ZEXTERN ಬಾಹ್ಯ __declspec(dllexport)
+#      ಅನ್ಯಥಾ
+#        define ZEXTERN ಬಾಹ್ಯ __declspec(dllimport)
 #      endif
 #    endif
 #  endif  /* ZLIB_DLL */
@@ -367,18 +367,18 @@
 #    define ZEXPORT WINAPI
 #    ifdef WIN32
 #      define ZEXPORTVA WINAPIV
-#    else
+#    ಅನ್ಯಥಾ
 #      define ZEXPORTVA FAR CDECL
 #    endif
 #  endif
 #endif
 
-#if defined (__BEOS__)
+#ಯದಿ defined (__BEOS__)
 #  ifdef ZLIB_DLL
 #    ifdef ZLIB_INTERNAL
 #      define ZEXPORT   __declspec(dllexport)
 #      define ZEXPORTVA __declspec(dllexport)
-#    else
+#    ಅನ್ಯಥಾ
 #      define ZEXPORT   __declspec(dllimport)
 #      define ZEXPORTVA __declspec(dllimport)
 #    endif
@@ -386,7 +386,7 @@
 #endif
 
 #ifndef ZEXTERN
-#  define ZEXTERN extern
+#  define ZEXTERN ಬಾಹ್ಯ
 #endif
 #ifndef ZEXPORT
 #  define ZEXPORT
@@ -399,36 +399,36 @@
 #  define FAR
 #endif
 
-#if !defined(__MACTYPES__)
-typedef unsigned char  Byte;  /* 8 bits */
+#ಯದಿ !defined(__MACTYPES__)
+ಪ್ರಕಾರನಿರ್ದೇಶ unsigned ವರ್ಣ  Byte;  /* 8 bits */
 #endif
-typedef unsigned int   uInt;  /* 16 bits or more */
-typedef unsigned long  uLong; /* 32 bits or more */
+ಪ್ರಕಾರನಿರ್ದೇಶ unsigned ಪೂರ್ಣಾಙ್ಕ   uInt;  /* 16 bits or more */
+ಪ್ರಕಾರನಿರ್ದೇಶ unsigned long  uLong; /* 32 bits or more */
 
 #ifdef SMALL_MEDIUM
    /* Borland C/C++ and some old MSC versions ignore FAR inside typedef */
 #  define Bytef Byte FAR
-#else
-   typedef Byte  FAR Bytef;
+#ಅನ್ಯಥಾ
+   ಪ್ರಕಾರನಿರ್ದೇಶ Byte  FAR Bytef;
 #endif
-typedef char  FAR charf;
-typedef int   FAR intf;
-typedef uInt  FAR uIntf;
-typedef uLong FAR uLongf;
+ಪ್ರಕಾರನಿರ್ದೇಶ ವರ್ಣ  FAR charf;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಪೂರ್ಣಾಙ್ಕ   FAR intf;
+ಪ್ರಕಾರನಿರ್ದೇಶ uInt  FAR uIntf;
+ಪ್ರಕಾರನಿರ್ದೇಶ uLong FAR uLongf;
 
 #ifdef STDC
-   typedef void const *voidpc;
-   typedef void FAR   *voidpf;
-   typedef void       *voidp;
-#else
-   typedef Byte const *voidpc;
-   typedef Byte FAR   *voidpf;
-   typedef Byte       *voidp;
+   ಪ್ರಕಾರನಿರ್ದೇಶ ಶೂನ್ಯ ಧ್ರುವ *voidpc;
+   ಪ್ರಕಾರನಿರ್ದೇಶ ಶೂನ್ಯ FAR   *voidpf;
+   ಪ್ರಕಾರನಿರ್ದೇಶ ಶೂನ್ಯ       *voidp;
+#ಅನ್ಯಥಾ
+   ಪ್ರಕಾರನಿರ್ದೇಶ Byte ಧ್ರುವ *voidpc;
+   ಪ್ರಕಾರನಿರ್ದೇಶ Byte FAR   *voidpf;
+   ಪ್ರಕಾರನಿರ್ದೇಶ Byte       *voidp;
 #endif
 
-#if !defined(Z_U4) && !defined(Z_SOLO) && defined(STDC)
+#ಯದಿ !defined(Z_U4) && !defined(Z_SOLO) && defined(STDC)
 #  include <limits.h>
-#  if (UINT_MAX == 0xffffffffUL)
+#  ಯದಿ (UINT_MAX == 0xffffffffUL)
 #    define Z_U4 unsigned
 #  elif (ULONG_MAX == 0xffffffffUL)
 #    define Z_U4 unsigned long
@@ -438,16 +438,16 @@ typedef uLong FAR uLongf;
 #endif
 
 #ifdef Z_U4
-   typedef Z_U4 z_crc_t;
-#else
-   typedef unsigned long z_crc_t;
+   ಪ್ರಕಾರನಿರ್ದೇಶ Z_U4 z_crc_t;
+#ಅನ್ಯಥಾ
+   ಪ್ರಕಾರನಿರ್ದೇಶ unsigned long z_crc_t;
 #endif
 
-#if HAVE_UNISTD_H-0     /* may be set to #if 1 by ./configure */
+#ಯದಿ HAVE_UNISTD_H-0     /* may be set to #if 1 by ./configure */
 #  define Z_HAVE_UNISTD_H
 #endif
 
-#if HAVE_STDARG_H-0     /* may be set to #if 1 by ./configure */
+#ಯದಿ HAVE_STDARG_H-0     /* may be set to #if 1 by ./configure */
 #  define Z_HAVE_STDARG_H
 #endif
 
@@ -457,7 +457,7 @@ typedef uLong FAR uLongf;
 #  endif
 #endif
 
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+#ಯದಿ defined(STDC) || defined(Z_HAVE_STDARG_H)
 #  ifndef Z_SOLO
 #    include <stdarg.h>         /* for va_list */
 #  endif
@@ -475,18 +475,18 @@ typedef uLong FAR uLongf;
  * both "#undef _LARGEFILE64_SOURCE" and "#define _LARGEFILE64_SOURCE 0" as
  * equivalently requesting no 64-bit operations
  */
-#if defined(_LARGEFILE64_SOURCE) && -_LARGEFILE64_SOURCE - -1 == 1
+#ಯದಿ defined(_LARGEFILE64_SOURCE) && -_LARGEFILE64_SOURCE - -1 == 1
 #  undef _LARGEFILE64_SOURCE
 #endif
 
 #ifndef Z_HAVE_UNISTD_H
-#  if defined(__WATCOMC__) || defined(__GO32__) || \
+#  ಯದಿ defined(__WATCOMC__) || defined(__GO32__) || \
       (defined(_LARGEFILE64_SOURCE) && !defined(_WIN32))
 #    define Z_HAVE_UNISTD_H
 #  endif
 #endif
 #ifndef Z_SOLO
-#  if defined(Z_HAVE_UNISTD_H)
+#  ಯದಿ defined(Z_HAVE_UNISTD_H)
 #    include <unistd.h>         /* for SEEK_*, off_t, and _LFS64_LARGEFILE */
 #    ifdef VMS
 #      include <unixio.h>       /* for off_t */
@@ -497,19 +497,19 @@ typedef uLong FAR uLongf;
 #  endif
 #endif
 
-#if defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
+#ಯದಿ defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
 #  define Z_LFS64
 #endif
 
-#if defined(_LARGEFILE64_SOURCE) && defined(Z_LFS64)
+#ಯದಿ defined(_LARGEFILE64_SOURCE) && defined(Z_LFS64)
 #  define Z_LARGE64
 #endif
 
-#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64 && defined(Z_LFS64)
+#ಯದಿ defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64 && defined(Z_LFS64)
 #  define Z_WANT64
 #endif
 
-#if !defined(SEEK_SET) && !defined(Z_SOLO)
+#ಯದಿ !defined(SEEK_SET) && !defined(Z_SOLO)
 #  define SEEK_SET        0       /* Seek from beginning of file.  */
 #  define SEEK_CUR        1       /* Seek from current position.  */
 #  define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
@@ -519,20 +519,20 @@ typedef uLong FAR uLongf;
 #  define z_off_t long long
 #endif
 
-#if !defined(_WIN32) && defined(Z_LARGE64)
+#ಯದಿ !defined(_WIN32) && defined(Z_LARGE64)
 #  define z_off64_t off64_t
-#elif defined(__MINGW32__)
+#ನೋಚೇದ್ಯದಿ defined(__MINGW32__)
 #  define z_off64_t long long
-#elif defined(_WIN32) && !defined(__GNUC__)
+#ನೋಚೇದ್ಯದಿ defined(_WIN32) && !defined(__GNUC__)
 #  define z_off64_t __int64
-#elif defined(__GO32__)
+#ನೋಚೇದ್ಯದಿ defined(__GO32__)
 #  define z_off64_t offset_t
-#else
+#ಅನ್ಯಥಾ
 #  define z_off64_t z_off_t
 #endif
 
 /* MVS linker does not support external names larger than 8 bytes */
-#if defined(__MVS__)
+#ಯದಿ defined(__MVS__)
   #pragma map(deflateInit_,"DEIN")
   #pragma map(deflateInit2_,"DEIN2")
   #pragma map(deflateEnd,"DEEND")

@@ -5,14 +5,14 @@
  * original version by Kevin Ruland <kevin@rodin.wustl.edu>
  */
 
-#include "zfstream.h"
-#include <iostream>      // for cout
+#ಅನ್ತರ್ಭಾವ "zfstream.h"
+#ಅನ್ತರ್ಭಾವ <iostream>      // for cout
 
-int main() {
+ಪೂರ್ಣಾಙ್ಕ main() {
 
   gzofstream outf;
   gzifstream inf;
-  char buf[80];
+  ವರ್ಣ buf[80];
 
   outf.open("test1.txt.gz");
   outf << "The quick brown fox sidestepped the lazy canine\n"
@@ -24,7 +24,7 @@ int main() {
 
   std::cout << "\nReading 'test1.txt.gz' (buffered) produces:\n";
   inf.open("test1.txt.gz");
-  while (inf.getline(buf,80,'\n')) {
+  ಯಾವತ್ (inf.getline(buf,80,'\n')) {
     std::cout << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
   }
   inf.close();
@@ -40,11 +40,11 @@ int main() {
   std::cout << "\nReading 'test2.txt.gz' (unbuffered) produces:\n";
   inf.rdbuf()->pubsetbuf(0,0);
   inf.open("test2.txt.gz");
-  while (inf.getline(buf,80,'\n')) {
+  ಯಾವತ್ (inf.getline(buf,80,'\n')) {
     std::cout << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
   }
   inf.close();
 
-  return 0;
+  ಪ್ರತ್ಯಾಗಮ 0;
 
 }
