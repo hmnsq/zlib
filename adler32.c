@@ -5,7 +5,7 @@
 
 /* @(#) $Id$ */
 
-#include "zutil.h"
+#अन्तर्भाव "zutil.h"
 
 #define BASE 65521U     /* largest prime smaller than 65536 */
 #define NMAX 5552
@@ -23,23 +23,23 @@
 /* note that this assumes BASE is 65521, where 65536 % 65521 == 15
    (thank you to John Reiser for pointing this out) */
 #  define CHOP(a) \
-    do { \
-        unsigned long tmp = a >> 16; \
+    कुरु { \
+        अचिन्हित दीर्घ tmp = a >> 16; \
         a &= 0xffffUL; \
         a += (tmp << 4) - tmp; \
-    } while (0)
+    } यावत् (0)
 #  define MOD28(a) \
-    do { \
+    कुरु { \
         CHOP(a); \
-        if (a >= BASE) a -= BASE; \
-    } while (0)
+        यदि (a >= BASE) a -= BASE; \
+    } यावत् (0)
 #  define MOD(a) \
-    do { \
+    कुरु { \
         CHOP(a); \
         MOD28(a); \
-    } while (0)
+    } यावत् (0)
 #  define MOD63(a) \
-    do { /* this assumes a is not negative */ \
+    कुरु { /* this assumes a is not negative */ \
         z_off64_t tmp = a >> 32; \
         a &= 0xffffffffL; \
         a += (tmp << 8) - (tmp << 5) + tmp; \
@@ -49,70 +49,70 @@
         tmp = a >> 16; \
         a &= 0xffffL; \
         a += (tmp << 4) - tmp; \
-        if (a >= BASE) a -= BASE; \
-    } while (0)
-#else
+        यदि (a >= BASE) a -= BASE; \
+    } यावत् (0)
+#अन्यथा
 #  define MOD(a) a %= BASE
 #  define MOD28(a) a %= BASE
 #  define MOD63(a) a %= BASE
 #endif
 
 /* ========================================================================= */
-uLong ZEXPORT adler32_z(uLong adler, const Bytef *buf, z_size_t len) {
-    unsigned long sum2;
-    unsigned n;
+uLong ZEXPORT adler32_z(uLong adler, ध्रुव Bytef *buf, z_size_t len) {
+    अचिन्हित दीर्घ sum2;
+    अचिन्हित n;
 
     /* split Adler-32 into component sums */
     sum2 = (adler >> 16) & 0xffff;
     adler &= 0xffff;
 
     /* in case user likes doing a byte at a time, keep it fast */
-    if (len == 1) {
+    यदि (len == 1) {
         adler += buf[0];
-        if (adler >= BASE)
+        यदि (adler >= BASE)
             adler -= BASE;
         sum2 += adler;
-        if (sum2 >= BASE)
+        यदि (sum2 >= BASE)
             sum2 -= BASE;
-        return adler | (sum2 << 16);
+        प्रत्यागम adler | (sum2 << 16);
     }
 
     /* initial Adler-32 value (deferred check for len == 1 speed) */
-    if (buf == Z_NULL)
-        return 1L;
+    यदि (buf == Z_NULL)
+        प्रत्यागम 1L;
 
     /* in case short lengths are provided, keep it somewhat fast */
-    if (len < 16) {
-        while (len--) {
+    यदि (len < 16) {
+        यावत् (len--) {
             adler += *buf++;
             sum2 += adler;
         }
-        if (adler >= BASE)
+        यदि (adler >= BASE)
             adler -= BASE;
         MOD28(sum2);            /* only added so many BASE's */
-        return adler | (sum2 << 16);
+        प्रत्यागम adler | (sum2 << 16);
     }
 
     /* do length NMAX blocks -- requires just one modulo operation */
-    while (len >= NMAX) {
+    यावत् (len >= NMAX) {
         len -= NMAX;
         n = NMAX / 16;          /* NMAX is divisible by 16 */
-        do {
+        कुरु {
             DO16(buf);          /* 16 sums unrolled */
             buf += 16;
-        } while (--n);
+        } यावत् (--n);
         MOD(adler);
         MOD(sum2);
     }
 
     /* do remaining bytes (less than NMAX, still just one modulo) */
-    if (len) {                  /* avoid modulos if none remaining */
-        while (len >= 16) {
+    यदि (len) {                  /* avoid modulos if none remaining */
+        यावत् (len >= 16) {
             len -= 16;
             DO16(buf);
             buf += 16;
         }
-        while (len--) {
+        यावत् (len--) {
             adler += *buf++;
             sum2 += adler;
         }
@@ -121,44 +121,44 @@ uLong ZEXPORT adler32_z(uLong adler, const Bytef *buf, z_size_t len) {
     }
 
     /* return recombined sums */
-    return adler | (sum2 << 16);
+    प्रत्यागम adler | (sum2 << 16);
 }
 
 /* ========================================================================= */
-uLong ZEXPORT adler32(uLong adler, const Bytef *buf, uInt len) {
-    return adler32_z(adler, buf, len);
+uLong ZEXPORT adler32(uLong adler, ध्रुव Bytef *buf, uInt len) {
+    प्रत्यागम adler32_z(adler, buf, len);
 }
 
 /* ========================================================================= */
 local uLong adler32_combine_(uLong adler1, uLong adler2, z_off64_t len2) {
-    unsigned long sum1;
-    unsigned long sum2;
-    unsigned rem;
+    अचिन्हित दीर्घ sum1;
+    अचिन्हित दीर्घ sum2;
+    अचिन्हित rem;
 
     /* for negative len, return invalid adler32 as a clue for debugging */
-    if (len2 < 0)
-        return 0xffffffffUL;
+    यदि (len2 < 0)
+        प्रत्यागम 0xffffffffUL;
 
     /* the derivation of this formula is left as an exercise for the reader */
     MOD63(len2);                /* assumes len2 >= 0 */
-    rem = (unsigned)len2;
+    rem = (अचिन्हित)len2;
     sum1 = adler1 & 0xffff;
     sum2 = rem * sum1;
     MOD(sum2);
     sum1 += (adler2 & 0xffff) + BASE - 1;
     sum2 += ((adler1 >> 16) & 0xffff) + ((adler2 >> 16) & 0xffff) + BASE - rem;
-    if (sum1 >= BASE) sum1 -= BASE;
-    if (sum1 >= BASE) sum1 -= BASE;
-    if (sum2 >= ((unsigned long)BASE << 1)) sum2 -= ((unsigned long)BASE << 1);
-    if (sum2 >= BASE) sum2 -= BASE;
-    return sum1 | (sum2 << 16);
+    यदि (sum1 >= BASE) sum1 -= BASE;
+    यदि (sum1 >= BASE) sum1 -= BASE;
+    यदि (sum2 >= ((अचिन्हित दीर्घ)BASE << 1)) sum2 -= ((अचिन्हित दीर्घ)BASE << 1);
+    यदि (sum2 >= BASE) sum2 -= BASE;
+    प्रत्यागम sum1 | (sum2 << 16);
 }
 
 /* ========================================================================= */
 uLong ZEXPORT adler32_combine(uLong adler1, uLong adler2, z_off_t len2) {
-    return adler32_combine_(adler1, adler2, len2);
+    प्रत्यागम adler32_combine_(adler1, adler2, len2);
 }
 
 uLong ZEXPORT adler32_combine64(uLong adler1, uLong adler2, z_off64_t len2) {
-    return adler32_combine_(adler1, adler2, len2);
+    प्रत्यागम adler32_combine_(adler1, adler2, len2);
 }

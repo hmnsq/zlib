@@ -3,30 +3,30 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "gzguts.h"
+#अन्तर्भाव "gzguts.h"
 
 /* Initialize state for writing a gzip file.  Mark initialization by setting
    state->size to non-zero.  Return -1 on a memory allocation failure, or 0 on
    success. */
-local int gz_init(gz_statep state) {
-    int ret;
+local पूर्णाङ्क gz_init(gz_statep state) {
+    पूर्णाङ्क ret;
     z_streamp strm = &(state->strm);
 
     /* allocate input buffer (double size for gzprintf) */
-    state->in = (unsigned char *)malloc(state->want << 1);
-    if (state->in == NULL) {
+    state->in = (अचिन्हित वर्ण *)दो_स्मृति(state->want << 1);
+    यदि (state->in == रिक्त) {
         gz_error(state, Z_MEM_ERROR, "out of memory");
-        return -1;
+        प्रत्यागम -1;
     }
 
     /* only need output buffer and deflate state if compressing */
-    if (!state->direct) {
+    यदि (!state->direct) {
         /* allocate output buffer */
-        state->out = (unsigned char *)malloc(state->want);
-        if (state->out == NULL) {
-            free(state->in);
+        state->out = (अचिन्हित वर्ण *)दो_स्मृति(state->want);
+        यदि (state->out == रिक्त) {
+            मुक्त(state->in);
             gz_error(state, Z_MEM_ERROR, "out of memory");
-            return -1;
+            प्रत्यागम -1;
         }
 
         /* allocate deflate memory, set up for gzip compression */
@@ -35,25 +35,25 @@ local int gz_init(gz_statep state) {
         strm->opaque = Z_NULL;
         ret = deflateInit2(strm, state->level, Z_DEFLATED,
                            MAX_WBITS + 16, DEF_MEM_LEVEL, state->strategy);
-        if (ret != Z_OK) {
-            free(state->out);
-            free(state->in);
+        यदि (ret != Z_OK) {
+            मुक्त(state->out);
+            मुक्त(state->in);
             gz_error(state, Z_MEM_ERROR, "out of memory");
-            return -1;
+            प्रत्यागम -1;
         }
-        strm->next_in = NULL;
+        strm->next_in = रिक्त;
     }
 
     /* mark state as initialized */
     state->size = state->want;
 
     /* initialize write buffer if compressing */
-    if (!state->direct) {
+    यदि (!state->direct) {
         strm->avail_out = state->size;
         strm->next_out = state->out;
         state->x.next = strm->next_out;
     }
-    return 0;
+    प्रत्यागम 0;
 }
 
 /* Compress whatever is at avail_in and next_in and write to the output file.
@@ -62,66 +62,66 @@ local int gz_init(gz_statep state) {
    deflate() flush value.  If flush is Z_FINISH, then the deflate() state is
    reset to start a new gzip stream.  If gz->direct is true, then simply write
    to the output file without compressing, and ignore flush. */
-local int gz_comp(gz_statep state, int flush) {
-    int ret, writ;
-    unsigned have, put, max = ((unsigned)-1 >> 2) + 1;
+local पूर्णाङ्क gz_comp(gz_statep state, पूर्णाङ्क flush) {
+    पूर्णाङ्क ret, writ;
+    अचिन्हित have, put, max = ((अचिन्हित)-1 >> 2) + 1;
     z_streamp strm = &(state->strm);
 
     /* allocate memory if this is the first time through */
-    if (state->size == 0 && gz_init(state) == -1)
-        return -1;
+    यदि (state->size == 0 && gz_init(state) == -1)
+        प्रत्यागम -1;
 
     /* write directly if requested */
-    if (state->direct) {
-        while (strm->avail_in) {
-            errno = 0;
+    यदि (state->direct) {
+        यावत् (strm->avail_in) {
+            त्रुटि_सं = 0;
             state->again = 0;
             put = strm->avail_in > max ? max : strm->avail_in;
-            writ = (int)write(state->fd, strm->next_in, put);
-            if (writ < 0) {
-                if (BLOCKED(errno))
+            writ = (पूर्णाङ्क)लिख(state->fd, strm->next_in, put);
+            यदि (writ < 0) {
+                यदि (BLOCKED(त्रुटि_सं))
                     state->again = 1;
                 gz_error(state, Z_ERRNO, zstrerror());
-                return -1;
+                प्रत्यागम -1;
             }
-            strm->avail_in -= (unsigned)writ;
+            strm->avail_in -= (अचिन्हित)writ;
             strm->next_in += writ;
         }
-        return 0;
+        प्रत्यागम 0;
     }
 
     /* check for a pending reset */
-    if (state->reset) {
+    यदि (state->reset) {
         /* don't start a new gzip member unless there is data to write and
            we're not flushing */
-        if (strm->avail_in == 0 && flush == Z_NO_FLUSH)
-            return 0;
+        यदि (strm->avail_in == 0 && flush == Z_NO_FLUSH)
+            प्रत्यागम 0;
         deflateReset(strm);
         state->reset = 0;
     }
 
     /* run deflate() on provided input until it produces no more output */
     ret = Z_OK;
-    do {
+    कुरु {
         /* write out current buffer contents if full, or if flushing, but if
            doing Z_FINISH then don't write until we get to Z_STREAM_END */
-        if (strm->avail_out == 0 || (flush != Z_NO_FLUSH &&
+        यदि (strm->avail_out == 0 || (flush != Z_NO_FLUSH &&
             (flush != Z_FINISH || ret == Z_STREAM_END))) {
-            while (strm->next_out > state->x.next) {
-                errno = 0;
+            यावत् (strm->next_out > state->x.next) {
+                त्रुटि_सं = 0;
                 state->again = 0;
-                put = strm->next_out - state->x.next > (int)max ? max :
-                      (unsigned)(strm->next_out - state->x.next);
-                writ = (int)write(state->fd, state->x.next, put);
-                if (writ < 0) {
-                    if (BLOCKED(errno))
+                put = strm->next_out - state->x.next > (पूर्णाङ्क)max ? max :
+                      (अचिन्हित)(strm->next_out - state->x.next);
+                writ = (पूर्णाङ्क)लिख(state->fd, state->x.next, put);
+                यदि (writ < 0) {
+                    यदि (BLOCKED(त्रुटि_सं))
                         state->again = 1;
                     gz_error(state, Z_ERRNO, zstrerror());
-                    return -1;
+                    प्रत्यागम -1;
                 }
                 state->x.next += writ;
             }
-            if (strm->avail_out == 0) {
+            यदि (strm->avail_out == 0) {
                 strm->avail_out = state->size;
                 strm->next_out = state->out;
                 state->x.next = state->out;
@@ -131,42 +131,42 @@ local int gz_comp(gz_statep state, int flush) {
         /* compress */
         have = strm->avail_out;
         ret = deflate(strm, flush);
-        if (ret == Z_STREAM_ERROR) {
+        यदि (ret == Z_STREAM_ERROR) {
             gz_error(state, Z_STREAM_ERROR,
                       "internal error: deflate stream corrupt");
-            return -1;
+            प्रत्यागम -1;
         }
         have -= strm->avail_out;
-    } while (have);
+    } यावत् (have);
 
     /* if that completed a deflate stream, allow another to start */
-    if (flush == Z_FINISH)
+    यदि (flush == Z_FINISH)
         state->reset = 1;
 
     /* all done, no errors */
-    return 0;
+    प्रत्यागम 0;
 }
 
 /* Compress state->skip (> 0) zeros to output.  Return -1 on a write error or
    memory allocation failure by gz_comp(), or 0 on success. state->skip is
    updated with the number of successfully written zeros, in case there is a
    stall on a non-blocking write destination. */
-local int gz_zero(gz_statep state) {
-    int first, ret;
-    unsigned n;
+local पूर्णाङ्क gz_zero(gz_statep state) {
+    पूर्णाङ्क first, ret;
+    अचिन्हित n;
     z_streamp strm = &(state->strm);
 
     /* consume whatever's left in the input buffer */
-    if (strm->avail_in && gz_comp(state, Z_NO_FLUSH) == -1)
-        return -1;
+    यदि (strm->avail_in && gz_comp(state, Z_NO_FLUSH) == -1)
+        प्रत्यागम -1;
 
     /* compress state->skip zeros */
     first = 1;
-    do {
+    कुरु {
         n = GT_OFF(state->size) || (z_off64_t)state->size > state->skip ?
-            (unsigned)state->skip : state->size;
-        if (first) {
-            memset(state->in, 0, n);
+            (अचिन्हित)state->skip : state->size;
+        यदि (first) {
+            स_रखो(state->in, 0, n);
             first = 0;
         }
         strm->avail_in = n;
@@ -175,10 +175,10 @@ local int gz_zero(gz_statep state) {
         n -= strm->avail_in;
         state->x.pos += n;
         state->skip -= n;
-        if (ret == -1)
-            return -1;
-    } while (state->skip);
-    return 0;
+        यदि (ret == -1)
+            प्रत्यागम -1;
+    } यावत् (state->skip);
+    प्रत्यागम 0;
 }
 
 /* Write len bytes from buf to file.  Return the number of bytes written.  If
@@ -187,96 +187,96 @@ local int gz_zero(gz_statep state) {
    For any other error, 0 is returned. */
 local z_size_t gz_write(gz_statep state, voidpc buf, z_size_t len) {
     z_size_t put = len;
-    int ret;
+    पूर्णाङ्क ret;
 
     /* if len is zero, avoid unnecessary operations */
-    if (len == 0)
-        return 0;
+    यदि (len == 0)
+        प्रत्यागम 0;
 
     /* allocate memory if this is the first time through */
-    if (state->size == 0 && gz_init(state) == -1)
-        return 0;
+    यदि (state->size == 0 && gz_init(state) == -1)
+        प्रत्यागम 0;
 
     /* check for seek request */
-    if (state->skip && gz_zero(state) == -1)
-        return 0;
+    यदि (state->skip && gz_zero(state) == -1)
+        प्रत्यागम 0;
 
     /* for small len, copy to input buffer, otherwise compress directly */
-    if (len < state->size) {
+    यदि (len < state->size) {
         /* copy to input buffer, compress when full */
-        for (;;) {
-            unsigned have, copy;
+        प्रति (;;) {
+            अचिन्हित have, copy;
 
-            if (state->strm.avail_in == 0)
+            यदि (state->strm.avail_in == 0)
                 state->strm.next_in = state->in;
-            have = (unsigned)((state->strm.next_in + state->strm.avail_in) -
+            have = (अचिन्हित)((state->strm.next_in + state->strm.avail_in) -
                               state->in);
             copy = state->size - have;
-            if (copy > len)
-                copy = (unsigned)len;
-            memcpy(state->in + have, buf, copy);
+            यदि (copy > len)
+                copy = (अचिन्हित)len;
+            स_नकल(state->in + have, buf, copy);
             state->strm.avail_in += copy;
             state->x.pos += copy;
-            buf = (const char *)buf + copy;
+            buf = (ध्रुव वर्ण *)buf + copy;
             len -= copy;
-            if (len == 0)
-                break;
-            if (gz_comp(state, Z_NO_FLUSH) == -1)
-                return state->again ? put - len : 0;
+            यदि (len == 0)
+                भङ्ग;
+            यदि (gz_comp(state, Z_NO_FLUSH) == -1)
+                प्रत्यागम state->again ? put - len : 0;
         }
     }
-    else {
+    अन्यथा {
         /* consume whatever's left in the input buffer */
-        if (state->strm.avail_in && gz_comp(state, Z_NO_FLUSH) == -1)
-            return 0;
+        यदि (state->strm.avail_in && gz_comp(state, Z_NO_FLUSH) == -1)
+            प्रत्यागम 0;
 
         /* directly compress user buffer to file */
         state->strm.next_in = (z_const Bytef *)buf;
-        do {
-            unsigned n = (unsigned)-1;
+        कुरु {
+            अचिन्हित n = (अचिन्हित)-1;
 
-            if (n > len)
-                n = (unsigned)len;
+            यदि (n > len)
+                n = (अचिन्हित)len;
             state->strm.avail_in = n;
             ret = gz_comp(state, Z_NO_FLUSH);
             n -= state->strm.avail_in;
             state->x.pos += n;
             len -= n;
-            if (ret == -1) {
+            यदि (ret == -1) {
                 state->strm.avail_in = 0;
                 state->strm.next_in = state->in;
-                return state->again ? put - len : 0;
+                प्रत्यागम state->again ? put - len : 0;
             }
-        } while (len);
+        } यावत् (len);
     }
 
     /* input was all buffered or compressed */
-    return put;
+    प्रत्यागम put;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzwrite(gzFile file, voidpc buf, unsigned len) {
+पूर्णाङ्क ZEXPORT gzwrite(gzFile file, voidpc buf, अचिन्हित len) {
     gz_statep state;
 
     /* get internal structure */
-    if (file == NULL)
-        return 0;
+    यदि (file == रिक्त)
+        प्रत्यागम 0;
     state = (gz_statep)file;
 
     /* check that we're writing and that there's no (serious) error */
-    if (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
-        return 0;
-    gz_error(state, Z_OK, NULL);
+    यदि (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
+        प्रत्यागम 0;
+    gz_error(state, Z_OK, रिक्त);
 
     /* since an int is returned, make sure len fits in one, otherwise return
        with an error (this avoids a flaw in the interface) */
-    if ((int)len < 0) {
+    यदि ((पूर्णाङ्क)len < 0) {
         gz_error(state, Z_DATA_ERROR, "requested length does not fit in int");
-        return 0;
+        प्रत्यागम 0;
     }
 
     /* write len bytes from buf (the return value will fit in an int) */
-    return (int)gz_write(state, buf, len);
+    प्रत्यागम (पूर्णाङ्क)gz_write(state, buf, len);
 }
 
 /* -- see zlib.h -- */
@@ -286,95 +286,95 @@ z_size_t ZEXPORT gzfwrite(voidpc buf, z_size_t size, z_size_t nitems,
     gz_statep state;
 
     /* get internal structure */
-    if (file == NULL)
-        return 0;
+    यदि (file == रिक्त)
+        प्रत्यागम 0;
     state = (gz_statep)file;
 
     /* check that we're writing and that there's no (serious) error */
-    if (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
-        return 0;
-    gz_error(state, Z_OK, NULL);
+    यदि (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
+        प्रत्यागम 0;
+    gz_error(state, Z_OK, रिक्त);
 
     /* compute bytes to read -- error on overflow */
     len = nitems * size;
-    if (size && len / size != nitems) {
+    यदि (size && len / size != nitems) {
         gz_error(state, Z_STREAM_ERROR, "request does not fit in a size_t");
-        return 0;
+        प्रत्यागम 0;
     }
 
     /* write len bytes to buf, return the number of full items written */
-    return len ? gz_write(state, buf, len) / size : 0;
+    प्रत्यागम len ? gz_write(state, buf, len) / size : 0;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzputc(gzFile file, int c) {
-    unsigned have;
-    unsigned char buf[1];
+पूर्णाङ्क ZEXPORT gzputc(gzFile file, पूर्णाङ्क c) {
+    अचिन्हित have;
+    अचिन्हित वर्ण buf[1];
     gz_statep state;
     z_streamp strm;
 
     /* get internal structure */
-    if (file == NULL)
-        return -1;
+    यदि (file == रिक्त)
+        प्रत्यागम -1;
     state = (gz_statep)file;
     strm = &(state->strm);
 
     /* check that we're writing and that there's no (serious) error */
-    if (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
-        return -1;
-    gz_error(state, Z_OK, NULL);
+    यदि (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
+        प्रत्यागम -1;
+    gz_error(state, Z_OK, रिक्त);
 
     /* check for seek request */
-    if (state->skip && gz_zero(state) == -1)
-        return -1;
+    यदि (state->skip && gz_zero(state) == -1)
+        प्रत्यागम -1;
 
     /* try writing to input buffer for speed (state->size == 0 if buffer not
        initialized) */
-    if (state->size) {
-        if (strm->avail_in == 0)
+    यदि (state->size) {
+        यदि (strm->avail_in == 0)
             strm->next_in = state->in;
-        have = (unsigned)((strm->next_in + strm->avail_in) - state->in);
-        if (have < state->size) {
-            state->in[have] = (unsigned char)c;
+        have = (अचिन्हित)((strm->next_in + strm->avail_in) - state->in);
+        यदि (have < state->size) {
+            state->in[have] = (अचिन्हित वर्ण)c;
             strm->avail_in++;
             state->x.pos++;
-            return c & 0xff;
+            प्रत्यागम c & 0xff;
         }
     }
 
     /* no room in buffer or not initialized, use gz_write() */
-    buf[0] = (unsigned char)c;
-    if (gz_write(state, buf, 1) != 1)
-        return -1;
-    return c & 0xff;
+    buf[0] = (अचिन्हित वर्ण)c;
+    यदि (gz_write(state, buf, 1) != 1)
+        प्रत्यागम -1;
+    प्रत्यागम c & 0xff;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzputs(gzFile file, const char *s) {
+पूर्णाङ्क ZEXPORT gzputs(gzFile file, ध्रुव वर्ण *s) {
     z_size_t len, put;
     gz_statep state;
 
     /* get internal structure */
-    if (file == NULL)
-        return -1;
+    यदि (file == रिक्त)
+        प्रत्यागम -1;
     state = (gz_statep)file;
 
     /* check that we're writing and that there's no (serious) error */
-    if (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
-        return -1;
-    gz_error(state, Z_OK, NULL);
+    यदि (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
+        प्रत्यागम -1;
+    gz_error(state, Z_OK, रिक्त);
 
     /* write string */
-    len = strlen(s);
-    if ((int)len < 0 || (unsigned)len != len) {
+    len = म_माप(s);
+    यदि ((पूर्णाङ्क)len < 0 || (अचिन्हित)len != len) {
         gz_error(state, Z_STREAM_ERROR, "string length does not fit in int");
-        return -1;
+        प्रत्यागम -1;
     }
     put = gz_write(state, s, len);
-    return len && put == 0 ? -1 : (int)put;
+    प्रत्यागम len && put == 0 ? -1 : (पूर्णाङ्क)put;
 }
 
-#if (((!defined(STDC) && !defined(Z_HAVE_STDARG_H)) || !defined(NO_vsnprintf)) && \
+#यदि (((!defined(STDC) && !defined(Z_HAVE_STDARG_H)) || !defined(NO_vsnprintf)) && \
      (defined(STDC) || defined(Z_HAVE_STDARG_H) || !defined(NO_snprintf))) || \
     defined(ZLIB_INSECURE)
 /* If the second half of the input buffer is occupied, write out the contents.
@@ -382,222 +382,222 @@ int ZEXPORT gzputs(gzFile file, const char *s) {
    it to the start of the buffer. Return true if this did not open up the
    second half of the buffer.  state->err should be checked after this to
    handle a gz_comp() error. */
-local int gz_vacate(gz_statep state) {
+local पूर्णाङ्क gz_vacate(gz_statep state) {
     z_streamp strm;
 
     strm = &(state->strm);
-    if (strm->next_in == NULL ||
+    यदि (strm->next_in == रिक्त ||
         strm->next_in + strm->avail_in <= state->in + state->size)
-        return 0;
-    (void)gz_comp(state, Z_NO_FLUSH);
-    if (strm->avail_in == 0) {
+        प्रत्यागम 0;
+    (शून्य)gz_comp(state, Z_NO_FLUSH);
+    यदि (strm->avail_in == 0) {
         strm->next_in = state->in;
-        return 0;
+        प्रत्यागम 0;
     }
-    memmove(state->in, strm->next_in, strm->avail_in);
+    स_हटाओ(state->in, strm->next_in, strm->avail_in);
     strm->next_in = state->in;
-    return strm->avail_in > state->size;
+    प्रत्यागम strm->avail_in > state->size;
 }
 #endif
 
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
-#include <stdarg.h>
+#यदि defined(STDC) || defined(Z_HAVE_STDARG_H)
+#अन्तर्भाव <stdarg.h>
 
 /* -- see zlib.h -- */
-int ZEXPORTVA gzvprintf(gzFile file, const char *format, va_list va) {
-#if defined(NO_vsnprintf) && !defined(ZLIB_INSECURE)
+पूर्णाङ्क ZEXPORTVA gzvprintf(gzFile file, ध्रुव वर्ण *format, बहु_सूची va) {
+#यदि defined(NO_vsnprintf) && !defined(ZLIB_INSECURE)
 #warning "vsnprintf() not available -- gzprintf() stub returns Z_STREAM_ERROR"
 #warning "you can recompile with ZLIB_INSECURE defined to use vsprintf()"
     /* prevent use of insecure vsprintf(), unless purposefully requested */
-    (void)file, (void)format, (void)va;
-    return Z_STREAM_ERROR;
-#else
-    int len, ret;
-    char *next;
+    (शून्य)file, (शून्य)format, (शून्य)va;
+    प्रत्यागम Z_STREAM_ERROR;
+#अन्यथा
+    पूर्णाङ्क len, ret;
+    वर्ण *next;
     gz_statep state;
     z_streamp strm;
 
     /* get internal structure */
-    if (file == NULL)
-        return Z_STREAM_ERROR;
+    यदि (file == रिक्त)
+        प्रत्यागम Z_STREAM_ERROR;
     state = (gz_statep)file;
     strm = &(state->strm);
 
     /* check that we're writing and that there's no (serious) error */
-    if (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
-        return Z_STREAM_ERROR;
-    gz_error(state, Z_OK, NULL);
+    यदि (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
+        प्रत्यागम Z_STREAM_ERROR;
+    gz_error(state, Z_OK, रिक्त);
 
     /* make sure we have some buffer space */
-    if (state->size == 0 && gz_init(state) == -1)
-        return state->err;
+    यदि (state->size == 0 && gz_init(state) == -1)
+        प्रत्यागम state->err;
 
     /* check for seek request */
-    if (state->skip && gz_zero(state) == -1)
-        return state->err;
+    यदि (state->skip && gz_zero(state) == -1)
+        प्रत्यागम state->err;
 
     /* do the printf() into the input buffer, put length in len -- the input
        buffer is double-sized just for this function, so there should be
        state->size bytes available after the current contents */
     ret = gz_vacate(state);
-    if (state->err) {
-        if (ret && state->again) {
+    यदि (state->err) {
+        यदि (ret && state->again) {
             /* There was a non-blocking stall on write, resulting in the part
                of the second half of the output buffer being occupied.  Return
                a Z_BUF_ERROR to let the application know that this gzprintf()
                needs to be retried. */
             gz_error(state, Z_BUF_ERROR, "stalled write on gzprintf");
-            return state->err;
+            प्रत्यागम state->err;
         }
-        if (!state->again)
-            return state->err;
+        यदि (!state->again)
+            प्रत्यागम state->err;
     }
-    if (strm->avail_in == 0)
+    यदि (strm->avail_in == 0)
         strm->next_in = state->in;
-    next = (char *)(state->in + (strm->next_in - state->in) + strm->avail_in);
+    next = (वर्ण *)(state->in + (strm->next_in - state->in) + strm->avail_in);
     next[state->size - 1] = 0;
 #ifdef NO_vsnprintf
 #  ifdef HAS_vsprintf_void
-    (void)vsprintf(next, format, va);
-    for (len = 0; len < state->size; len++)
-        if (next[len] == 0) break;
-#  else
-    len = vsprintf(next, format, va);
+    (शून्य)भम_लिखो(next, format, va);
+    प्रति (len = 0; len < state->size; len++)
+        यदि (next[len] == 0) भङ्ग;
+#  अन्यथा
+    len = भम_लिखो(next, format, va);
 #  endif
-#else
+#अन्यथा
 #  ifdef HAS_vsnprintf_void
-    (void)vsnprintf(next, state->size, format, va);
-    len = strlen(next);
-#  else
+    (शून्य)vsnprintf(next, state->size, format, va);
+    len = म_माप(next);
+#  अन्यथा
     len = vsnprintf(next, state->size, format, va);
 #  endif
 #endif
 
     /* check that printf() results fit in buffer */
-    if (len == 0 || (unsigned)len >= state->size || next[state->size - 1] != 0)
-        return 0;
+    यदि (len == 0 || (अचिन्हित)len >= state->size || next[state->size - 1] != 0)
+        प्रत्यागम 0;
 
     /* update buffer and position */
-    strm->avail_in += (unsigned)len;
+    strm->avail_in += (अचिन्हित)len;
     state->x.pos += len;
 
     /* write out buffer if more than half is occupied */
     ret = gz_vacate(state);
-    if (ret) {
+    यदि (ret) {
         /* discard unwritten formatted output */
-        strm->avail_in -= (unsigned)len;
+        strm->avail_in -= (अचिन्हित)len;
         state->x.pos -= len;
-        if (state->again)
+        यदि (state->again)
             gz_error(state, Z_BUF_ERROR, "stalled write on gzprintf");
-        return state->err;
+        प्रत्यागम state->err;
     }
-    if (state->err && !state->again)
-        return state->err;
-    return len;
+    यदि (state->err && !state->again)
+        प्रत्यागम state->err;
+    प्रत्यागम len;
 #endif
 }
 
-int ZEXPORTVA gzprintf(gzFile file, const char *format, ...) {
-    va_list va;
-    int ret;
+पूर्णाङ्क ZEXPORTVA gzprintf(gzFile file, ध्रुव वर्ण *format, ...) {
+    बहु_सूची va;
+    पूर्णाङ्क ret;
 
-    va_start(va, format);
+    बहु_शुरू(va, format);
     ret = gzvprintf(file, format, va);
-    va_end(va);
-    return ret;
+    बहु_पूर्ण(va);
+    प्रत्यागम ret;
 }
 
-#else /* !STDC && !Z_HAVE_STDARG_H */
+#अन्यथा /* !STDC && !Z_HAVE_STDARG_H */
 
 /* -- see zlib.h -- */
-int ZEXPORTVA gzprintf(gzFile file, const char *format, int a1, int a2, int a3,
-                       int a4, int a5, int a6, int a7, int a8, int a9, int a10,
-                       int a11, int a12, int a13, int a14, int a15, int a16,
-                       int a17, int a18, int a19, int a20) {
-#if defined(NO_snprintf) && !defined(ZLIB_INSECURE)
+पूर्णाङ्क ZEXPORTVA gzprintf(gzFile file, ध्रुव वर्ण *format, पूर्णाङ्क a1, पूर्णाङ्क a2, पूर्णाङ्क a3,
+                       पूर्णाङ्क a4, पूर्णाङ्क a5, पूर्णाङ्क a6, पूर्णाङ्क a7, पूर्णाङ्क a8, पूर्णाङ्क a9, पूर्णाङ्क a10,
+                       पूर्णाङ्क a11, पूर्णाङ्क a12, पूर्णाङ्क a13, पूर्णाङ्क a14, पूर्णाङ्क a15, पूर्णाङ्क a16,
+                       पूर्णाङ्क a17, पूर्णाङ्क a18, पूर्णाङ्क a19, पूर्णाङ्क a20) {
+#यदि defined(NO_snprintf) && !defined(ZLIB_INSECURE)
 #warning "snprintf() not available -- gzprintf() stub returns Z_STREAM_ERROR"
 #warning "you can recompile with ZLIB_INSECURE defined to use sprintf()"
     /* prevent use of insecure sprintf(), unless purposefully requested */
-    (void)file, (void)format, (void)a1, (void)a2, (void)a3, (void)a4, (void)a5,
-    (void)a6, (void)a7, (void)a8, (void)a9, (void)a10, (void)a11, (void)a12,
-    (void)a13, (void)a14, (void)a15, (void)a16, (void)a17, (void)a18,
-    (void)a19, (void)a20;
-    return Z_STREAM_ERROR;
-#else
-    int ret;
-    unsigned len, left;
-    char *next;
+    (शून्य)file, (शून्य)format, (शून्य)a1, (शून्य)a2, (शून्य)a3, (शून्य)a4, (शून्य)a5,
+    (शून्य)a6, (शून्य)a7, (शून्य)a8, (शून्य)a9, (शून्य)a10, (शून्य)a11, (शून्य)a12,
+    (शून्य)a13, (शून्य)a14, (शून्य)a15, (शून्य)a16, (शून्य)a17, (शून्य)a18,
+    (शून्य)a19, (शून्य)a20;
+    प्रत्यागम Z_STREAM_ERROR;
+#अन्यथा
+    पूर्णाङ्क ret;
+    अचिन्हित len, बायाँ;
+    वर्ण *next;
     gz_statep state;
     z_streamp strm;
 
     /* get internal structure */
-    if (file == NULL)
-        return Z_STREAM_ERROR;
+    यदि (file == रिक्त)
+        प्रत्यागम Z_STREAM_ERROR;
     state = (gz_statep)file;
     strm = &(state->strm);
 
     /* check that can really pass pointer in ints */
-    if (sizeof(int) != sizeof(void *))
-        return Z_STREAM_ERROR;
+    यदि (परिमाण(पूर्णाङ्क) != परिमाण(शून्य *))
+        प्रत्यागम Z_STREAM_ERROR;
 
     /* check that we're writing and that there's no (serious) error */
-    if (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
-        return Z_STREAM_ERROR;
-    gz_error(state, Z_OK, NULL);
+    यदि (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
+        प्रत्यागम Z_STREAM_ERROR;
+    gz_error(state, Z_OK, रिक्त);
 
     /* make sure we have some buffer space */
-    if (state->size == 0 && gz_init(state) == -1)
-        return state->err;
+    यदि (state->size == 0 && gz_init(state) == -1)
+        प्रत्यागम state->err;
 
     /* check for seek request */
-    if (state->skip && gz_zero(state) == -1)
-        return state->err;
+    यदि (state->skip && gz_zero(state) == -1)
+        प्रत्यागम state->err;
 
     /* do the printf() into the input buffer, put length in len -- the input
        buffer is double-sized just for this function, so there is guaranteed to
        be state->size bytes available after the current contents */
     ret = gz_vacate(state);
-    if (state->err) {
-        if (ret && state->again) {
+    यदि (state->err) {
+        यदि (ret && state->again) {
             /* There was a non-blocking stall on write, resulting in the part
                of the second half of the output buffer being occupied.  Return
                a Z_BUF_ERROR to let the application know that this gzprintf()
                needs to be retried. */
             gz_error(state, Z_BUF_ERROR, "stalled write on gzprintf");
-            return state->err;
+            प्रत्यागम state->err;
         }
-        if (!state->again)
-            return state->err;
+        यदि (!state->again)
+            प्रत्यागम state->err;
     }
-    if (strm->avail_in == 0)
+    यदि (strm->avail_in == 0)
         strm->next_in = state->in;
-    next = (char *)(strm->next_in + strm->avail_in);
+    next = (वर्ण *)(strm->next_in + strm->avail_in);
     next[state->size - 1] = 0;
 #ifdef NO_snprintf
 #  ifdef HAS_sprintf_void
-    sprintf(next, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+    प्र_लिखो(next, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
             a13, a14, a15, a16, a17, a18, a19, a20);
-    for (len = 0; len < size; len++)
-        if (next[len] == 0)
-            break;
-#  else
-    len = sprintf(next, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
+    प्रति (len = 0; len < size; len++)
+        यदि (next[len] == 0)
+            भङ्ग;
+#  अन्यथा
+    len = प्र_लिखो(next, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
                   a12, a13, a14, a15, a16, a17, a18, a19, a20);
 #  endif
-#else
+#अन्यथा
 #  ifdef HAS_snprintf_void
     snprintf(next, state->size, format, a1, a2, a3, a4, a5, a6, a7, a8, a9,
              a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20);
-    len = strlen(next);
-#  else
+    len = म_माप(next);
+#  अन्यथा
     len = snprintf(next, state->size, format, a1, a2, a3, a4, a5, a6, a7, a8,
                    a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20);
 #  endif
 #endif
 
     /* check that printf() results fit in buffer */
-    if (len == 0 || len >= state->size || next[state->size - 1] != 0)
-        return 0;
+    यदि (len == 0 || len >= state->size || next[state->size - 1] != 0)
+        प्रत्यागम 0;
 
     /* update buffer and position, compress first half if past that */
     strm->avail_in += len;
@@ -605,118 +605,118 @@ int ZEXPORTVA gzprintf(gzFile file, const char *format, int a1, int a2, int a3,
 
     /* write out buffer if more than half is occupied */
     ret = gz_vacate(state);
-    if (ret) {
+    यदि (ret) {
         /* discard unwritten formatted output */
-        strm->avail_in -= (unsigned)len;
+        strm->avail_in -= (अचिन्हित)len;
         state->x.pos -= len;
-        if (state->again)
+        यदि (state->again)
             gz_error(state, Z_BUF_ERROR, "stalled write on gzprintf");
-        return state->err;
+        प्रत्यागम state->err;
     }
-    if (state->err && !state->again)
-        return state->err;
-    return (int)len;
+    यदि (state->err && !state->again)
+        प्रत्यागम state->err;
+    प्रत्यागम (पूर्णाङ्क)len;
 #endif
 }
 
 #endif
 
 /* -- see zlib.h -- */
-int ZEXPORT gzflush(gzFile file, int flush) {
+पूर्णाङ्क ZEXPORT gzflush(gzFile file, पूर्णाङ्क flush) {
     gz_statep state;
 
     /* get internal structure */
-    if (file == NULL)
-        return Z_STREAM_ERROR;
+    यदि (file == रिक्त)
+        प्रत्यागम Z_STREAM_ERROR;
     state = (gz_statep)file;
 
     /* check that we're writing and that there's no (serious) error */
-    if (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
-        return Z_STREAM_ERROR;
-    gz_error(state, Z_OK, NULL);
+    यदि (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again))
+        प्रत्यागम Z_STREAM_ERROR;
+    gz_error(state, Z_OK, रिक्त);
 
     /* check flush parameter */
-    if (flush < 0 || flush > Z_FINISH)
-        return Z_STREAM_ERROR;
+    यदि (flush < 0 || flush > Z_FINISH)
+        प्रत्यागम Z_STREAM_ERROR;
 
     /* check for seek request */
-    if (state->skip && gz_zero(state) == -1)
-        return state->err;
+    यदि (state->skip && gz_zero(state) == -1)
+        प्रत्यागम state->err;
 
     /* compress remaining data with requested flush */
-    (void)gz_comp(state, flush);
-    return state->err;
+    (शून्य)gz_comp(state, flush);
+    प्रत्यागम state->err;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzsetparams(gzFile file, int level, int strategy) {
+पूर्णाङ्क ZEXPORT gzsetparams(gzFile file, पूर्णाङ्क level, पूर्णाङ्क strategy) {
     gz_statep state;
     z_streamp strm;
 
     /* get internal structure */
-    if (file == NULL)
-        return Z_STREAM_ERROR;
+    यदि (file == रिक्त)
+        प्रत्यागम Z_STREAM_ERROR;
     state = (gz_statep)file;
     strm = &(state->strm);
 
     /* check that we're compressing and that there's no (serious) error */
-    if (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again) ||
+    यदि (state->mode != GZ_WRITE || (state->err != Z_OK && !state->again) ||
             state->direct)
-        return Z_STREAM_ERROR;
-    gz_error(state, Z_OK, NULL);
+        प्रत्यागम Z_STREAM_ERROR;
+    gz_error(state, Z_OK, रिक्त);
 
     /* if no change is requested, then do nothing */
-    if (level == state->level && strategy == state->strategy)
-        return Z_OK;
+    यदि (level == state->level && strategy == state->strategy)
+        प्रत्यागम Z_OK;
 
     /* check for seek request */
-    if (state->skip && gz_zero(state) == -1)
-        return state->err;
+    यदि (state->skip && gz_zero(state) == -1)
+        प्रत्यागम state->err;
 
     /* change compression parameters for subsequent input */
-    if (state->size) {
+    यदि (state->size) {
         /* flush previous input with previous parameters before changing */
-        if (strm->avail_in && gz_comp(state, Z_BLOCK) == -1)
-            return state->err;
+        यदि (strm->avail_in && gz_comp(state, Z_BLOCK) == -1)
+            प्रत्यागम state->err;
         deflateParams(strm, level, strategy);
     }
     state->level = level;
     state->strategy = strategy;
-    return Z_OK;
+    प्रत्यागम Z_OK;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzclose_w(gzFile file) {
-    int ret = Z_OK;
+पूर्णाङ्क ZEXPORT gzclose_w(gzFile file) {
+    पूर्णाङ्क ret = Z_OK;
     gz_statep state;
 
     /* get internal structure */
-    if (file == NULL)
-        return Z_STREAM_ERROR;
+    यदि (file == रिक्त)
+        प्रत्यागम Z_STREAM_ERROR;
     state = (gz_statep)file;
 
     /* check that we're writing */
-    if (state->mode != GZ_WRITE)
-        return Z_STREAM_ERROR;
+    यदि (state->mode != GZ_WRITE)
+        प्रत्यागम Z_STREAM_ERROR;
 
     /* check for seek request */
-    if (state->skip && gz_zero(state) == -1)
+    यदि (state->skip && gz_zero(state) == -1)
         ret = state->err;
 
     /* flush, free memory, and close file */
-    if (gz_comp(state, Z_FINISH) == -1)
+    यदि (gz_comp(state, Z_FINISH) == -1)
         ret = state->err;
-    if (state->size) {
-        if (!state->direct) {
-            (void)deflateEnd(&(state->strm));
-            free(state->out);
+    यदि (state->size) {
+        यदि (!state->direct) {
+            (शून्य)deflateEnd(&(state->strm));
+            मुक्त(state->out);
         }
-        free(state->in);
+        मुक्त(state->in);
     }
-    gz_error(state, Z_OK, NULL);
-    free(state->path);
-    if (close(state->fd) == -1)
+    gz_error(state, Z_OK, रिक्त);
+    मुक्त(state->path);
+    यदि (बंद(state->fd) == -1)
         ret = Z_ERRNO;
-    free(state);
-    return ret;
+    मुक्त(state);
+    प्रत्यागम ret;
 }

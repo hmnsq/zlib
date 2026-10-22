@@ -8,4 +8,4 @@
    subject to change. Applications should only use zlib.h.
  */
 
-void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start);
+शून्य ZLIB_INTERNAL inflate_fast(z_streamp strm, अचिन्हित start);

@@ -5,159 +5,159 @@
 
 /* @(#) $Id$ */
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#यदि defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "zlib.h"
-#include <stdio.h>
+#अन्तर्भाव "zlib.h"
+#अन्तर्भाव <stdio.h>
 
 #ifdef STDC
 #  include <string.h>
 #  include <stdlib.h>
 #endif
 
-#if defined(VMS)
+#यदि defined(VMS)
 #  define TESTFILE "foo-gz"
-#elif defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#नोचेद्यदि defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define TESTFILE "foo/gz"
-#else
+#अन्यथा
 #  define TESTFILE "foo.gz"
 #endif
 
-#define CHECK_ERR(err, msg) { \
-    if (err != Z_OK) { \
-        fprintf(stderr, "%s error: %d\n", msg, err); \
-        exit(1); \
+#define CHECK_ERR(err, संदेश) { \
+    यदि (err != Z_OK) { \
+        ख_लिखो(मानक_त्रुटि, "%s error: %d\n", संदेश, err); \
+        निकास(1); \
     } \
 }
 
-static z_const char hello[] = "hello, hello!";
+स्थिर z_const वर्ण hello[] = "hello, hello!";
 /* "hello world" would be more standard, but the repeated "hello"
  * stresses the compression code better, sorry...
  */
 
-static const char dictionary[] = "hello";
-static uLong dictId;    /* Adler32 value of the dictionary */
+स्थिर ध्रुव वर्ण dictionary[] = "hello";
+स्थिर uLong dictId;    /* Adler32 value of the dictionary */
 
 #ifdef Z_SOLO
 
-static void *myalloc(void *q, unsigned n, unsigned m) {
-    (void)q;
-    return calloc(n, m);
+स्थिर शून्य *myalloc(शून्य *q, अचिन्हित n, अचिन्हित m) {
+    (शून्य)q;
+    प्रत्यागम सुस्मृति(n, m);
 }
 
-static void myfree(void *q, void *p) {
-    (void)q;
-    free(p);
+स्थिर शून्य myfree(शून्य *q, शून्य *p) {
+    (शून्य)q;
+    मुक्त(p);
 }
 
-static alloc_func zalloc = myalloc;
-static free_func zfree = myfree;
+स्थिर alloc_func zalloc = myalloc;
+स्थिर free_func zfree = myfree;
 
-#else /* !Z_SOLO */
+#अन्यथा /* !Z_SOLO */
 
-static alloc_func zalloc = (alloc_func)0;
-static free_func zfree = (free_func)0;
+स्थिर alloc_func zalloc = (alloc_func)0;
+स्थिर free_func zfree = (free_func)0;
 
 /* ===========================================================================
  * Test compress() and uncompress()
  */
-static void test_compress(Byte *compr, uLong comprLen, Byte *uncompr,
+स्थिर शून्य test_compress(Byte *compr, uLong comprLen, Byte *uncompr,
                    uLong uncomprLen) {
-    int err;
-    uLong len = (uLong)strlen(hello)+1;
+    पूर्णाङ्क err;
+    uLong len = (uLong)म_माप(hello)+1;
 
-    err = compress(compr, &comprLen, (const Bytef*)hello, len);
+    err = compress(compr, &comprLen, (ध्रुव Bytef*)hello, len);
     CHECK_ERR(err, "compress");
 
-    strcpy((char*)uncompr, "garbage");
+    म_नकल((वर्ण*)uncompr, "garbage");
 
     err = uncompress(uncompr, &uncomprLen, compr, comprLen);
     CHECK_ERR(err, "uncompress");
 
-    if (strcmp((char*)uncompr, hello)) {
-        fprintf(stderr, "bad uncompress\n");
-        exit(1);
-    } else {
-        printf("uncompress(): %s\n", (char *)uncompr);
+    यदि (म_भेद((वर्ण*)uncompr, hello)) {
+        ख_लिखो(मानक_त्रुटि, "bad uncompress\n");
+        निकास(1);
+    } अन्यथा {
+        म_लिखो("uncompress(): %s\n", (वर्ण *)uncompr);
     }
 }
 
 /* ===========================================================================
  * Test read/write of .gz files
  */
-static void test_gzio(const char *fname, Byte *uncompr, uLong uncomprLen) {
+स्थिर शून्य test_gzio(ध्रुव वर्ण *fname, Byte *uncompr, uLong uncomprLen) {
 #ifdef NO_GZCOMPRESS
-    fprintf(stderr, "NO_GZCOMPRESS -- gz* functions cannot compress\n");
-#else
-    int err;
-    int len = (int)strlen(hello)+1;
+    ख_लिखो(मानक_त्रुटि, "NO_GZCOMPRESS -- gz* functions cannot compress\n");
+#अन्यथा
+    पूर्णाङ्क err;
+    पूर्णाङ्क len = (पूर्णाङ्क)म_माप(hello)+1;
     gzFile file;
     z_off_t pos;
 
     file = gzopen(fname, "wb");
-    if (file == NULL) {
-        fprintf(stderr, "gzopen error\n");
-        exit(1);
+    यदि (file == रिक्त) {
+        ख_लिखो(मानक_त्रुटि, "gzopen error\n");
+        निकास(1);
     }
     gzputc(file, 'h');
-    if (gzputs(file, "ello") != 4) {
-        fprintf(stderr, "gzputs err: %s\n", gzerror(file, &err));
-        exit(1);
+    यदि (gzputs(file, "ello") != 4) {
+        ख_लिखो(मानक_त्रुटि, "gzputs err: %s\n", gzerror(file, &err));
+        निकास(1);
     }
-    if (gzprintf(file, ", %s!", "hello") != 8) {
-        fprintf(stderr, "gzprintf err: %s\n", gzerror(file, &err));
-        exit(1);
+    यदि (gzprintf(file, ", %s!", "hello") != 8) {
+        ख_लिखो(मानक_त्रुटि, "gzprintf err: %s\n", gzerror(file, &err));
+        निकास(1);
     }
-    gzseek(file, 1L, SEEK_CUR); /* add one zero byte */
+    gzseek(file, 1L, प्रस्तुत_से); /* add one zero byte */
     gzclose(file);
 
     file = gzopen(fname, "rb");
-    if (file == NULL) {
-        fprintf(stderr, "gzopen error\n");
-        exit(1);
+    यदि (file == रिक्त) {
+        ख_लिखो(मानक_त्रुटि, "gzopen error\n");
+        निकास(1);
     }
-    strcpy((char*)uncompr, "garbage");
+    म_नकल((वर्ण*)uncompr, "garbage");
 
-    if (gzread(file, uncompr, (unsigned)uncomprLen) != len) {
-        fprintf(stderr, "gzread err: %s\n", gzerror(file, &err));
-        exit(1);
+    यदि (gzread(file, uncompr, (अचिन्हित)uncomprLen) != len) {
+        ख_लिखो(मानक_त्रुटि, "gzread err: %s\n", gzerror(file, &err));
+        निकास(1);
     }
-    if (strcmp((char*)uncompr, hello)) {
-        fprintf(stderr, "bad gzread: %s\n", (char*)uncompr);
-        exit(1);
-    } else {
-        printf("gzread(): %s\n", (char*)uncompr);
-    }
-
-    pos = gzseek(file, -8L, SEEK_CUR);
-    if (pos != 6 || gztell(file) != pos) {
-        fprintf(stderr, "gzseek error, pos=%ld, gztell=%ld\n",
-                (long)pos, (long)gztell(file));
-        exit(1);
+    यदि (म_भेद((वर्ण*)uncompr, hello)) {
+        ख_लिखो(मानक_त्रुटि, "bad gzread: %s\n", (वर्ण*)uncompr);
+        निकास(1);
+    } अन्यथा {
+        म_लिखो("gzread(): %s\n", (वर्ण*)uncompr);
     }
 
-    if (gzgetc(file) != ' ') {
-        fprintf(stderr, "gzgetc error\n");
-        exit(1);
+    pos = gzseek(file, -8L, प्रस्तुत_से);
+    यदि (pos != 6 || gztell(file) != pos) {
+        ख_लिखो(मानक_त्रुटि, "gzseek error, pos=%ld, gztell=%ld\n",
+                (दीर्घ)pos, (दीर्घ)gztell(file));
+        निकास(1);
     }
 
-    if (gzungetc(' ', file) != ' ') {
-        fprintf(stderr, "gzungetc error\n");
-        exit(1);
+    यदि (gzgetc(file) != ' ') {
+        ख_लिखो(मानक_त्रुटि, "gzgetc error\n");
+        निकास(1);
     }
 
-    gzgets(file, (char*)uncompr, (int)uncomprLen);
-    if (strlen((char*)uncompr) != 7) { /* " hello!" */
-        fprintf(stderr, "gzgets err after gzseek: %s\n", gzerror(file, &err));
-        exit(1);
+    यदि (gzungetc(' ', file) != ' ') {
+        ख_लिखो(मानक_त्रुटि, "gzungetc error\n");
+        निकास(1);
     }
-    if (strcmp((char*)uncompr, hello + 6)) {
-        fprintf(stderr, "bad gzgets after gzseek\n");
-        exit(1);
-    } else {
-        printf("gzgets() after gzseek: %s\n", (char*)uncompr);
+
+    gzgets(file, (वर्ण*)uncompr, (पूर्णाङ्क)uncomprLen);
+    यदि (म_माप((वर्ण*)uncompr) != 7) { /* " hello!" */
+        ख_लिखो(मानक_त्रुटि, "gzgets err after gzseek: %s\n", gzerror(file, &err));
+        निकास(1);
+    }
+    यदि (म_भेद((वर्ण*)uncompr, hello + 6)) {
+        ख_लिखो(मानक_त्रुटि, "bad gzgets after gzseek\n");
+        निकास(1);
+    } अन्यथा {
+        म_लिखो("gzgets() after gzseek: %s\n", (वर्ण*)uncompr);
     }
 
     gzclose(file);
@@ -169,10 +169,10 @@ static void test_gzio(const char *fname, Byte *uncompr, uLong uncomprLen) {
 /* ===========================================================================
  * Test deflate() with small buffers
  */
-static void test_deflate(Byte *compr, uLong comprLen) {
+स्थिर शून्य test_deflate(Byte *compr, uLong comprLen) {
     z_stream c_stream; /* compression stream */
-    int err;
-    uLong len = (uLong)strlen(hello)+1;
+    पूर्णाङ्क err;
+    uLong len = (uLong)म_माप(hello)+1;
 
     c_stream.zalloc = zalloc;
     c_stream.zfree = zfree;
@@ -181,19 +181,19 @@ static void test_deflate(Byte *compr, uLong comprLen) {
     err = deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_in  = (z_const unsigned char *)hello;
+    c_stream.next_in  = (z_const अचिन्हित वर्ण *)hello;
     c_stream.next_out = compr;
 
-    while (c_stream.total_in != len && c_stream.total_out < comprLen) {
+    यावत् (c_stream.total_in != len && c_stream.total_out < comprLen) {
         c_stream.avail_in = c_stream.avail_out = 1; /* force small buffers */
         err = deflate(&c_stream, Z_NO_FLUSH);
         CHECK_ERR(err, "deflate");
     }
     /* Finish the stream, still forcing small buffers: */
-    for (;;) {
+    प्रति (;;) {
         c_stream.avail_out = 1;
         err = deflate(&c_stream, Z_FINISH);
-        if (err == Z_STREAM_END) break;
+        यदि (err == Z_STREAM_END) भङ्ग;
         CHECK_ERR(err, "deflate");
     }
 
@@ -204,12 +204,12 @@ static void test_deflate(Byte *compr, uLong comprLen) {
 /* ===========================================================================
  * Test inflate() with small buffers
  */
-static void test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+स्थिर शून्य test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                   uLong uncomprLen) {
-    int err;
+    पूर्णाङ्क err;
     z_stream d_stream; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    म_नकल((वर्ण*)uncompr, "garbage");
 
     d_stream.zalloc = zalloc;
     d_stream.zfree = zfree;
@@ -222,31 +222,31 @@ static void test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
     err = inflateInit(&d_stream);
     CHECK_ERR(err, "inflateInit");
 
-    while (d_stream.total_out < uncomprLen && d_stream.total_in < comprLen) {
+    यावत् (d_stream.total_out < uncomprLen && d_stream.total_in < comprLen) {
         d_stream.avail_in = d_stream.avail_out = 1; /* force small buffers */
         err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
+        यदि (err == Z_STREAM_END) भङ्ग;
         CHECK_ERR(err, "inflate");
     }
 
     err = inflateEnd(&d_stream);
     CHECK_ERR(err, "inflateEnd");
 
-    if (strcmp((char*)uncompr, hello)) {
-        fprintf(stderr, "bad inflate\n");
-        exit(1);
-    } else {
-        printf("inflate(): %s\n", (char *)uncompr);
+    यदि (म_भेद((वर्ण*)uncompr, hello)) {
+        ख_लिखो(मानक_त्रुटि, "bad inflate\n");
+        निकास(1);
+    } अन्यथा {
+        म_लिखो("inflate(): %s\n", (वर्ण *)uncompr);
     }
 }
 
 /* ===========================================================================
  * Test deflate() with large buffers and dynamic change of compression level
  */
-static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
+स्थिर शून्य test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
                         uLong uncomprLen) {
     z_stream c_stream; /* compression stream */
-    int err;
+    पूर्णाङ्क err;
 
     c_stream.zalloc = zalloc;
     c_stream.zfree = zfree;
@@ -265,9 +265,9 @@ static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
     c_stream.avail_in = (uInt)uncomprLen;
     err = deflate(&c_stream, Z_NO_FLUSH);
     CHECK_ERR(err, "deflate");
-    if (c_stream.avail_in != 0) {
-        fprintf(stderr, "deflate not greedy\n");
-        exit(1);
+    यदि (c_stream.avail_in != 0) {
+        ख_लिखो(मानक_त्रुटि, "deflate not greedy\n");
+        निकास(1);
     }
 
     /* Feed in already compressed data and switch to no compression: */
@@ -285,9 +285,9 @@ static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
     CHECK_ERR(err, "deflate");
 
     err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
-        fprintf(stderr, "deflate should report Z_STREAM_END\n");
-        exit(1);
+    यदि (err != Z_STREAM_END) {
+        ख_लिखो(मानक_त्रुटि, "deflate should report Z_STREAM_END\n");
+        निकास(1);
     }
     err = deflateEnd(&c_stream);
     CHECK_ERR(err, "deflateEnd");
@@ -296,12 +296,12 @@ static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
 /* ===========================================================================
  * Test inflate() with large buffers
  */
-static void test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+स्थिर शून्य test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                         uLong uncomprLen) {
-    int err;
+    पूर्णाङ्क err;
     z_stream d_stream; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    म_नकल((वर्ण*)uncompr, "garbage");
 
     d_stream.zalloc = zalloc;
     d_stream.zfree = zfree;
@@ -313,32 +313,32 @@ static void test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
     err = inflateInit(&d_stream);
     CHECK_ERR(err, "inflateInit");
 
-    for (;;) {
+    प्रति (;;) {
         d_stream.next_out = uncompr;            /* discard the output */
         d_stream.avail_out = (uInt)uncomprLen;
         err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
+        यदि (err == Z_STREAM_END) भङ्ग;
         CHECK_ERR(err, "large inflate");
     }
 
     err = inflateEnd(&d_stream);
     CHECK_ERR(err, "inflateEnd");
 
-    if (d_stream.total_out != 2*uncomprLen + uncomprLen/2) {
-        fprintf(stderr, "bad large inflate: %lu\n", d_stream.total_out);
-        exit(1);
-    } else {
-        printf("large_inflate(): OK\n");
+    यदि (d_stream.total_out != 2*uncomprLen + uncomprLen/2) {
+        ख_लिखो(मानक_त्रुटि, "bad large inflate: %lu\n", d_stream.total_out);
+        निकास(1);
+    } अन्यथा {
+        म_लिखो("large_inflate(): OK\n");
     }
 }
 
 /* ===========================================================================
  * Test deflate() with full flush
  */
-static void test_flush(Byte *compr, uLong *comprLen) {
+स्थिर शून्य test_flush(Byte *compr, uLong *comprLen) {
     z_stream c_stream; /* compression stream */
-    int err;
-    uInt len = (uInt)strlen(hello)+1;
+    पूर्णाङ्क err;
+    uInt len = (uInt)म_माप(hello)+1;
 
     c_stream.zalloc = zalloc;
     c_stream.zfree = zfree;
@@ -347,7 +347,7 @@ static void test_flush(Byte *compr, uLong *comprLen) {
     err = deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_in  = (z_const unsigned char *)hello;
+    c_stream.next_in  = (z_const अचिन्हित वर्ण *)hello;
     c_stream.next_out = compr;
     c_stream.avail_in = 3;
     c_stream.avail_out = (uInt)*comprLen;
@@ -358,7 +358,7 @@ static void test_flush(Byte *compr, uLong *comprLen) {
     c_stream.avail_in = len - 3;
 
     err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    यदि (err != Z_STREAM_END) {
         CHECK_ERR(err, "deflate");
     }
     err = deflateEnd(&c_stream);
@@ -370,12 +370,12 @@ static void test_flush(Byte *compr, uLong *comprLen) {
 /* ===========================================================================
  * Test inflateSync()
  */
-static void test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
+स्थिर शून्य test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
                       uLong uncomprLen) {
-    int err;
+    पूर्णाङ्क err;
     z_stream d_stream; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    म_नकल((वर्ण*)uncompr, "garbage");
 
     d_stream.zalloc = zalloc;
     d_stream.zfree = zfree;
@@ -398,22 +398,22 @@ static void test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
     CHECK_ERR(err, "inflateSync");
 
     err = inflate(&d_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
-        fprintf(stderr, "inflate should report Z_STREAM_END\n");
-        exit(1);
+    यदि (err != Z_STREAM_END) {
+        ख_लिखो(मानक_त्रुटि, "inflate should report Z_STREAM_END\n");
+        निकास(1);
     }
     err = inflateEnd(&d_stream);
     CHECK_ERR(err, "inflateEnd");
 
-    printf("after inflateSync(): hel%s\n", (char *)uncompr);
+    म_लिखो("after inflateSync(): hel%s\n", (वर्ण *)uncompr);
 }
 
 /* ===========================================================================
  * Test deflate() with preset dictionary
  */
-static void test_dict_deflate(Byte *compr, uLong comprLen) {
+स्थिर शून्य test_dict_deflate(Byte *compr, uLong comprLen) {
     z_stream c_stream; /* compression stream */
-    int err;
+    पूर्णाङ्क err;
 
     c_stream.zalloc = zalloc;
     c_stream.zfree = zfree;
@@ -423,20 +423,20 @@ static void test_dict_deflate(Byte *compr, uLong comprLen) {
     CHECK_ERR(err, "deflateInit");
 
     err = deflateSetDictionary(&c_stream,
-                (const Bytef*)dictionary, (int)sizeof(dictionary));
+                (ध्रुव Bytef*)dictionary, (पूर्णाङ्क)परिमाण(dictionary));
     CHECK_ERR(err, "deflateSetDictionary");
 
     dictId = c_stream.adler;
     c_stream.next_out = compr;
     c_stream.avail_out = (uInt)comprLen;
 
-    c_stream.next_in = (z_const unsigned char *)hello;
-    c_stream.avail_in = (uInt)strlen(hello)+1;
+    c_stream.next_in = (z_const अचिन्हित वर्ण *)hello;
+    c_stream.avail_in = (uInt)म_माप(hello)+1;
 
     err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
-        fprintf(stderr, "deflate should report Z_STREAM_END\n");
-        exit(1);
+    यदि (err != Z_STREAM_END) {
+        ख_लिखो(मानक_त्रुटि, "deflate should report Z_STREAM_END\n");
+        निकास(1);
     }
     err = deflateEnd(&c_stream);
     CHECK_ERR(err, "deflateEnd");
@@ -445,12 +445,12 @@ static void test_dict_deflate(Byte *compr, uLong comprLen) {
 /* ===========================================================================
  * Test inflate() with a preset dictionary
  */
-static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+स्थिर शून्य test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                        uLong uncomprLen) {
-    int err;
+    पूर्णाङ्क err;
     z_stream d_stream; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    म_नकल((वर्ण*)uncompr, "garbage");
 
     d_stream.zalloc = zalloc;
     d_stream.zfree = zfree;
@@ -465,16 +465,16 @@ static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
     d_stream.next_out = uncompr;
     d_stream.avail_out = (uInt)uncomprLen;
 
-    for (;;) {
+    प्रति (;;) {
         err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
-        if (err == Z_NEED_DICT) {
-            if (d_stream.adler != dictId) {
-                fprintf(stderr, "unexpected dictionary");
-                exit(1);
+        यदि (err == Z_STREAM_END) भङ्ग;
+        यदि (err == Z_NEED_DICT) {
+            यदि (d_stream.adler != dictId) {
+                ख_लिखो(मानक_त्रुटि, "unexpected dictionary");
+                निकास(1);
             }
-            err = inflateSetDictionary(&d_stream, (const Bytef*)dictionary,
-                                       (int)sizeof(dictionary));
+            err = inflateSetDictionary(&d_stream, (ध्रुव Bytef*)dictionary,
+                                       (पूर्णाङ्क)परिमाण(dictionary));
         }
         CHECK_ERR(err, "inflate with dict");
     }
@@ -482,11 +482,11 @@ static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
     err = inflateEnd(&d_stream);
     CHECK_ERR(err, "inflateEnd");
 
-    if (strcmp((char*)uncompr, hello)) {
-        fprintf(stderr, "bad inflate with dict\n");
-        exit(1);
-    } else {
-        printf("inflate with dictionary: %s\n", (char *)uncompr);
+    यदि (म_भेद((वर्ण*)uncompr, hello)) {
+        ख_लिखो(मानक_त्रुटि, "bad inflate with dict\n");
+        निकास(1);
+    } अन्यथा {
+        म_लिखो("inflate with dictionary: %s\n", (वर्ण *)uncompr);
     }
 }
 
@@ -494,38 +494,38 @@ static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
  * Usage:  example [output.gz  [input.gz]]
  */
 
-int main(int argc, char *argv[]) {
+पूर्णाङ्क main(पूर्णाङ्क argc, वर्ण *argv[]) {
     Byte *compr, *uncompr;
     uLong uncomprLen = 20000;
     uLong comprLen = 3 * uncomprLen;
-    static const char* myVersion = ZLIB_VERSION;
+    स्थिर ध्रुव वर्ण* myVersion = ZLIB_VERSION;
 
-    if (zlibVersion()[0] != myVersion[0]) {
-        fprintf(stderr, "incompatible zlib version\n");
-        exit(1);
+    यदि (zlibVersion()[0] != myVersion[0]) {
+        ख_लिखो(मानक_त्रुटि, "incompatible zlib version\n");
+        निकास(1);
 
-    } else if (strcmp(zlibVersion(), ZLIB_VERSION) != 0) {
-        fprintf(stderr, "warning: different zlib version linked: %s\n",
+    } अन्यथा यदि (म_भेद(zlibVersion(), ZLIB_VERSION) != 0) {
+        ख_लिखो(मानक_त्रुटि, "warning: different zlib version linked: %s\n",
                 zlibVersion());
     }
 
-    printf("zlib version %s = 0x%04x, compile flags = 0x%lx\n",
-            ZLIB_VERSION, (unsigned)ZLIB_VERNUM, zlibCompileFlags());
+    म_लिखो("zlib version %s = 0x%04x, compile flags = 0x%lx\n",
+            ZLIB_VERSION, (अचिन्हित)ZLIB_VERNUM, zlibCompileFlags());
 
-    compr    = (Byte*)calloc((uInt)comprLen, 1);
-    uncompr  = (Byte*)calloc((uInt)uncomprLen, 1);
+    compr    = (Byte*)सुस्मृति((uInt)comprLen, 1);
+    uncompr  = (Byte*)सुस्मृति((uInt)uncomprLen, 1);
     /* compr and uncompr are cleared to avoid reading uninitialized
      * data and to ensure that uncompr compresses well.
      */
-    if (compr == Z_NULL || uncompr == Z_NULL) {
-        printf("out of memory\n");
-        exit(1);
+    यदि (compr == Z_NULL || uncompr == Z_NULL) {
+        म_लिखो("out of memory\n");
+        निकास(1);
     }
 
 #ifdef Z_SOLO
-    (void)argc;
-    (void)argv;
-#else
+    (शून्य)argc;
+    (शून्य)argv;
+#अन्यथा
     test_compress(compr, comprLen, uncompr, uncomprLen);
 
     test_gzio((argc > 1 ? argv[1] : TESTFILE),
@@ -545,8 +545,8 @@ int main(int argc, char *argv[]) {
     test_dict_deflate(compr, comprLen);
     test_dict_inflate(compr, comprLen, uncompr, uncomprLen);
 
-    free(compr);
-    free(uncompr);
+    मुक्त(compr);
+    मुक्त(uncompr);
 
-    return 0;
+    प्रत्यागम 0;
 }
