@@ -95,18 +95,18 @@
 #define FIXLCODES 288           /* number of fixed literal/length codes */
 
 /* input and output state */
-struct state {
+sa_nracanaa state {
     /* output state */
-    unsigned char *out;         /* output buffer */
+    unsigned var_na *out;         /* output buffer */
     unsigned long outlen;       /* available space at out */
     unsigned long outcnt;       /* bytes written to out so far */
 
     /* input state */
-    const unsigned char *in;    /* input buffer */
+    const unsigned var_na *in;    /* input buffer */
     unsigned long inlen;        /* available input at in */
     unsigned long incnt;        /* bytes read so far */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    จำนวนเต็ม bitbuf;                 /* bit buffer */
+    จำนวนเต็ม bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
@@ -123,25 +123,25 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local จำนวนเต็ม bits(sa_nracanaa state *s, จำนวนเต็ม need)
 {
     long val;           /* bit accumulator (can use up to 20 bits) */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->incnt == s->inlen)
+    ขณะ (s->bitcnt < need) {
+        ถ้า (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
         val |= (long)(s->in[s->incnt++]) << s->bitcnt;  /* load eight bits */
         s->bitcnt += 8;
     }
 
     /* drop need bits and update buffer, always zero to seven bits left */
-    s->bitbuf = (int)(val >> need);
+    s->bitbuf = (จำนวนเต็ม)(val >> need);
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return (int)(val & ((1L << need) - 1));
+    คืน (จำนวนเต็ม)(val & ((1L << need) - 1));
 }
 
 /*
@@ -161,7 +161,7 @@ local int bits(struct state *s, int need)
  * - A stored block can have zero length.  This is sometimes used to byte-align
  *   subsets of the compressed data for random access or partial recovery.
  */
-local int stored(struct state *s)
+local จำนวนเต็ม stored(sa_nracanaa state *s)
 {
     unsigned len;       /* length of stored block */
 
@@ -170,30 +170,30 @@ local int stored(struct state *s)
     s->bitcnt = 0;
 
     /* get length and check against its one's complement */
-    if (s->incnt + 4 > s->inlen)
-        return 2;                               /* not enough input */
+    ถ้า (s->incnt + 4 > s->inlen)
+        คืน 2;                               /* not enough input */
     len = s->in[s->incnt++];
     len |= s->in[s->incnt++] << 8;
-    if (s->in[s->incnt++] != (~len & 0xff) ||
+    ถ้า (s->in[s->incnt++] != (~len & 0xff) ||
         s->in[s->incnt++] != ((~len >> 8) & 0xff))
-        return -2;                              /* didn't match complement! */
+        คืน -2;                              /* didn't match complement! */
 
     /* copy len bytes from in to out */
-    if (s->incnt + len > s->inlen)
-        return 2;                               /* not enough input */
-    if (s->out != NIL) {
-        if (s->outcnt + len > s->outlen)
-            return 1;                           /* not enough output space */
-        while (len--)
+    ถ้า (s->incnt + len > s->inlen)
+        คืน 2;                               /* not enough input */
+    ถ้า (s->out != NIL) {
+        ถ้า (s->outcnt + len > s->outlen)
+            คืน 1;                           /* not enough output space */
+        ขณะ (len--)
             s->out[s->outcnt++] = s->in[s->incnt++];
     }
-    else {                                      /* just scanning */
+    มิฉะนั้น {                                      /* just scanning */
         s->outcnt += len;
         s->incnt += len;
     }
 
     /* done with a valid stored block */
-    return 0;
+    คืน 0;
 }
 
 /*
@@ -203,7 +203,7 @@ local int stored(struct state *s)
  * entries is the sum of the counts in count[].  The decoding process can be
  * seen in the function decode() below.
  */
-struct huffman {
+sa_nracanaa huffman {
     short *count;       /* number of symbols of each length */
     short *symbol;      /* canonically ordered symbols */
 };
@@ -232,26 +232,26 @@ struct huffman {
  *   in the deflate format.  See the format notes for fixed() and dynamic().
  */
 #ifdef SLOW
-local int decode(struct state *s, const struct huffman *h)
+local จำนวนเต็ม decode(sa_nracanaa state *s, const sa_nracanaa huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
+    จำนวนเต็ม len;            /* current number of bits in code */
+    จำนวนเต็ม code;           /* len bits being decoded */
+    จำนวนเต็ม first;          /* first code of length len */
+    จำนวนเต็ม count;          /* number of codes of length len */
+    จำนวนเต็ม index;          /* index of first code of length len in symbol table */
 
     code = first = index = 0;
-    for (len = 1; len <= MAXBITS; len++) {
+    สำหรับ (len = 1; len <= MAXBITS; len++) {
         code |= bits(s, 1);             /* get next bit */
         count = h->count[len];
-        if (code - count < first)       /* if length len, return symbol */
-            return h->symbol[index + (code - first)];
+        ถ้า (code - count < first)       /* if length len, return symbol */
+            คืน h->symbol[index + (code - first)];
         index += count;                 /* else update for next length */
         first += count;
         first <<= 1;
         code <<= 1;
     }
-    return -10;                         /* ran out of codes */
+    คืน -10;                         /* ran out of codes */
 }
 
 /*
@@ -259,16 +259,16 @@ local int decode(struct state *s, const struct huffman *h)
  * as readable, but it makes puff() twice as fast.  And it only makes the code
  * a few percent larger.
  */
-#else /* !SLOW */
-local int decode(struct state *s, const struct huffman *h)
+#มิฉะนั้น /* !SLOW */
+local จำนวนเต็ม decode(sa_nracanaa state *s, const sa_nracanaa huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    จำนวนเต็ม len;            /* current number of bits in code */
+    จำนวนเต็ม code;           /* len bits being decoded */
+    จำนวนเต็ม first;          /* first code of length len */
+    จำนวนเต็ม count;          /* number of codes of length len */
+    จำนวนเต็ม index;          /* index of first code of length len in symbol table */
+    จำนวนเต็ม bitbuf;         /* bits from stream */
+    จำนวนเต็ม left;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
@@ -276,15 +276,15 @@ local int decode(struct state *s, const struct huffman *h)
     code = first = index = 0;
     len = 1;
     next = h->count + 1;
-    while (1) {
-        while (left--) {
+    ขณะ (1) {
+        ขณะ (left--) {
             code |= bitbuf & 1;
             bitbuf >>= 1;
             count = *next++;
-            if (code - count < first) { /* if length len, return symbol */
+            ถ้า (code - count < first) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                คืน h->symbol[index + (code - first)];
             }
             index += count;             /* else update for next length */
             first += count;
@@ -293,15 +293,15 @@ local int decode(struct state *s, const struct huffman *h)
             len++;
         }
         left = (MAXBITS+1) - len;
-        if (left == 0)
-            break;
-        if (s->incnt == s->inlen)
+        ถ้า (left == 0)
+            bha_nga;
+        ถ้า (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
         bitbuf = s->in[s->incnt++];
-        if (left > 8)
+        ถ้า (left > 8)
             left = 8;
     }
-    return -10;                         /* ran out of codes */
+    คืน -10;                         /* ran out of codes */
 }
 #endif /* SLOW */
 
@@ -337,45 +337,45 @@ local int decode(struct state *s, const struct huffman *h)
  * - Within a given code length, the symbols are kept in ascending order for
  *   the code bits definition.
  */
-local int construct(struct huffman *h, const short *length, int n)
+local จำนวนเต็ม construct(sa_nracanaa huffman *h, const short *length, จำนวนเต็ม n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    จำนวนเต็ม symbol;         /* current symbol when stepping through length[] */
+    จำนวนเต็ม len;            /* current length when stepping through h->count[] */
+    จำนวนเต็ม left;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
 
     /* count number of codes of each length */
-    for (len = 0; len <= MAXBITS; len++)
+    สำหรับ (len = 0; len <= MAXBITS; len++)
         h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
+    สำหรับ (symbol = 0; symbol < n; symbol++)
         (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    ถ้า (h->count[0] == n)               /* no codes! */
+        คืน 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;                           /* one possible code of zero length */
-    for (len = 1; len <= MAXBITS; len++) {
+    สำหรับ (len = 1; len <= MAXBITS; len++) {
         left <<= 1;                     /* one more bit, double codes left */
         left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0)
-            return left;                /* over-subscribed--return negative */
+        ถ้า (left < 0)
+            คืน left;                /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
+    สำหรับ (len = 1; len < MAXBITS; len++)
         offs[len + 1] = offs[len] + h->count[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
+    สำหรับ (symbol = 0; symbol < n; symbol++)
+        ถ้า (length[symbol] != 0)
             h->symbol[offs[length[symbol]]++] = symbol;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    คืน left;
 }
 
 /*
@@ -433,12 +433,12 @@ local int construct(struct huffman *h, const short *length, int n)
  *   since though their behavior -is- defined for overlapping arrays, it is
  *   defined to do the wrong thing in this case.
  */
-local int codes(struct state *s,
-                const struct huffman *lencode,
-                const struct huffman *distcode)
+local จำนวนเต็ม codes(sa_nracanaa state *s,
+                const sa_nracanaa huffman *lencode,
+                const sa_nracanaa huffman *distcode)
 {
-    int symbol;         /* decoded symbol */
-    int len;            /* length for copy */
+    จำนวนเต็ม symbol;         /* decoded symbol */
+    จำนวนเต็ม len;            /* length for copy */
     unsigned dist;      /* distance for copy */
     static const short lens[29] = { /* Size base for length codes 257..285 */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
@@ -458,39 +458,39 @@ local int codes(struct state *s,
     /* decode literals and length/distance pairs */
     do {
         symbol = decode(s, lencode);
-        if (symbol < 0)
-            return symbol;              /* invalid symbol */
-        if (symbol < 256) {             /* literal: symbol is the byte */
+        ถ้า (symbol < 0)
+            คืน symbol;              /* invalid symbol */
+        ถ้า (symbol < 256) {             /* literal: symbol is the byte */
             /* write out the literal */
-            if (s->out != NIL) {
-                if (s->outcnt == s->outlen)
-                    return 1;
+            ถ้า (s->out != NIL) {
+                ถ้า (s->outcnt == s->outlen)
+                    คืน 1;
                 s->out[s->outcnt] = symbol;
             }
             s->outcnt++;
         }
-        else if (symbol > 256) {        /* length */
+        มิฉะนั้น ถ้า (symbol > 256) {        /* length */
             /* get and compute length */
             symbol -= 257;
-            if (symbol >= 29)
-                return -10;             /* invalid fixed code */
+            ถ้า (symbol >= 29)
+                คืน -10;             /* invalid fixed code */
             len = lens[symbol] + bits(s, lext[symbol]);
 
             /* get and check distance */
             symbol = decode(s, distcode);
-            if (symbol < 0)
-                return symbol;          /* invalid symbol */
+            ถ้า (symbol < 0)
+                คืน symbol;          /* invalid symbol */
             dist = dists[symbol] + bits(s, dext[symbol]);
 #ifndef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-            if (dist > s->outcnt)
-                return -11;     /* distance too far back */
+            ถ้า (dist > s->outcnt)
+                คืน -11;     /* distance too far back */
 #endif
 
             /* copy length bytes from distance bytes back */
-            if (s->out != NIL) {
-                if (s->outcnt + len > s->outlen)
-                    return 1;
-                while (len--) {
+            ถ้า (s->out != NIL) {
+                ถ้า (s->outcnt + len > s->outlen)
+                    คืน 1;
+                ขณะ (len--) {
                     s->out[s->outcnt] =
 #ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
                         dist > s->outcnt ?
@@ -500,13 +500,13 @@ local int codes(struct state *s,
                     s->outcnt++;
                 }
             }
-            else
+            มิฉะนั้น
                 s->outcnt += len;
         }
-    } while (symbol != 256);            /* end of block symbol */
+    } ขณะ (symbol != 256);            /* end of block symbol */
 
     /* done with a valid fixed or dynamic block */
-    return 0;
+    คืน 0;
 }
 
 /*
@@ -533,16 +533,16 @@ local int codes(struct state *s,
  *   length, this can be implemented as an incomplete code.  Then the invalid
  *   codes are detected while decoding.
  */
-local int fixed(struct state *s)
+local จำนวนเต็ม fixed(sa_nracanaa state *s)
 {
-    static int virgin = 1;
+    static จำนวนเต็ม virgin = 1;
     static short lencnt[MAXBITS+1], lensym[FIXLCODES];
     static short distcnt[MAXBITS+1], distsym[MAXDCODES];
-    static struct huffman lencode, distcode;
+    static sa_nracanaa huffman lencode, distcode;
 
     /* build fixed huffman tables if first call (may not be thread safe) */
-    if (virgin) {
-        int symbol;
+    ถ้า (virgin) {
+        จำนวนเต็ม symbol;
         short lengths[FIXLCODES];
 
         /* construct lencode and distcode */
@@ -552,18 +552,18 @@ local int fixed(struct state *s)
         distcode.symbol = distsym;
 
         /* literal/length table */
-        for (symbol = 0; symbol < 144; symbol++)
+        สำหรับ (symbol = 0; symbol < 144; symbol++)
             lengths[symbol] = 8;
-        for (; symbol < 256; symbol++)
+        สำหรับ (; symbol < 256; symbol++)
             lengths[symbol] = 9;
-        for (; symbol < 280; symbol++)
+        สำหรับ (; symbol < 280; symbol++)
             lengths[symbol] = 7;
-        for (; symbol < FIXLCODES; symbol++)
+        สำหรับ (; symbol < FIXLCODES; symbol++)
             lengths[symbol] = 8;
         construct(&lencode, lengths, FIXLCODES);
 
         /* distance table */
-        for (symbol = 0; symbol < MAXDCODES; symbol++)
+        สำหรับ (symbol = 0; symbol < MAXDCODES; symbol++)
             lengths[symbol] = 5;
         construct(&distcode, lengths, MAXDCODES);
 
@@ -572,7 +572,7 @@ local int fixed(struct state *s)
     }
 
     /* decode data until end-of-block code */
-    return codes(s, &lencode, &distcode);
+    คืน codes(s, &lencode, &distcode);
 }
 
 /*
@@ -662,15 +662,15 @@ local int fixed(struct state *s)
  * - For reference, a "typical" size for the code description in a dynamic
  *   block is around 80 bytes.
  */
-local int dynamic(struct state *s)
+local จำนวนเต็ม dynamic(sa_nracanaa state *s)
 {
-    int nlen, ndist, ncode;             /* number of lengths in descriptor */
-    int index;                          /* index of lengths[] */
-    int err;                            /* construct() return value */
+    จำนวนเต็ม nlen, ndist, ncode;             /* number of lengths in descriptor */
+    จำนวนเต็ม index;                          /* index of lengths[] */
+    จำนวนเต็ม err;                            /* construct() return value */
     short lengths[MAXCODES];            /* descriptor code lengths */
     short lencnt[MAXBITS+1], lensym[MAXLCODES];         /* lencode memory */
     short distcnt[MAXBITS+1], distsym[MAXDCODES];       /* distcode memory */
-    struct huffman lencode, distcode;   /* length and distance codes */
+    sa_nracanaa huffman lencode, distcode;   /* length and distance codes */
     static const short order[19] =      /* permutation of code length codes */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
@@ -684,66 +684,66 @@ local int dynamic(struct state *s)
     nlen = bits(s, 5) + 257;
     ndist = bits(s, 5) + 1;
     ncode = bits(s, 4) + 4;
-    if (nlen > MAXLCODES || ndist > MAXDCODES)
-        return -3;                      /* bad counts */
+    ถ้า (nlen > MAXLCODES || ndist > MAXDCODES)
+        คืน -3;                      /* bad counts */
 
     /* read code length code lengths (really), missing lengths are zero */
-    for (index = 0; index < ncode; index++)
+    สำหรับ (index = 0; index < ncode; index++)
         lengths[order[index]] = bits(s, 3);
-    for (; index < 19; index++)
+    สำหรับ (; index < 19; index++)
         lengths[order[index]] = 0;
 
     /* build huffman table for code lengths codes (use lencode temporarily) */
     err = construct(&lencode, lengths, 19);
-    if (err != 0)               /* require complete code set here */
-        return -4;
+    ถ้า (err != 0)               /* require complete code set here */
+        คืน -4;
 
     /* read length/literal and distance code length tables */
     index = 0;
-    while (index < nlen + ndist) {
-        int symbol;             /* decoded value */
-        int len;                /* last length to repeat */
+    ขณะ (index < nlen + ndist) {
+        จำนวนเต็ม symbol;             /* decoded value */
+        จำนวนเต็ม len;                /* last length to repeat */
 
         symbol = decode(s, &lencode);
-        if (symbol < 0)
-            return symbol;          /* invalid symbol */
-        if (symbol < 16)                /* length in 0..15 */
+        ถ้า (symbol < 0)
+            คืน symbol;          /* invalid symbol */
+        ถ้า (symbol < 16)                /* length in 0..15 */
             lengths[index++] = symbol;
-        else {                          /* repeat instruction */
+        มิฉะนั้น {                          /* repeat instruction */
             len = 0;                    /* assume repeating zeros */
-            if (symbol == 16) {         /* repeat last length 3..6 times */
-                if (index == 0)
-                    return -5;          /* no last length! */
+            ถ้า (symbol == 16) {         /* repeat last length 3..6 times */
+                ถ้า (index == 0)
+                    คืน -5;          /* no last length! */
                 len = lengths[index - 1];       /* last length */
                 symbol = 3 + bits(s, 2);
             }
-            else if (symbol == 17)      /* repeat zero 3..10 times */
+            มิฉะนั้น ถ้า (symbol == 17)      /* repeat zero 3..10 times */
                 symbol = 3 + bits(s, 3);
-            else                        /* == 18, repeat zero 11..138 times */
+            มิฉะนั้น                        /* == 18, repeat zero 11..138 times */
                 symbol = 11 + bits(s, 7);
-            if (index + symbol > nlen + ndist)
-                return -6;              /* too many lengths! */
-            while (symbol--)            /* repeat last or zero symbol times */
+            ถ้า (index + symbol > nlen + ndist)
+                คืน -6;              /* too many lengths! */
+            ขณะ (symbol--)            /* repeat last or zero symbol times */
                 lengths[index++] = len;
         }
     }
 
     /* check for end-of-block code -- there better be one! */
-    if (lengths[256] == 0)
-        return -9;
+    ถ้า (lengths[256] == 0)
+        คืน -9;
 
     /* build huffman table for literal/length codes */
     err = construct(&lencode, lengths, nlen);
-    if (err && (err < 0 || nlen != lencode.count[0] + lencode.count[1]))
-        return -7;      /* incomplete code ok only for single length 1 code */
+    ถ้า (err && (err < 0 || nlen != lencode.count[0] + lencode.count[1]))
+        คืน -7;      /* incomplete code ok only for single length 1 code */
 
     /* build huffman table for distance codes */
     err = construct(&distcode, lengths + nlen, ndist);
-    if (err && (err < 0 || ndist != distcode.count[0] + distcode.count[1]))
-        return -8;      /* incomplete code ok only for single length 1 code */
+    ถ้า (err && (err < 0 || ndist != distcode.count[0] + distcode.count[1]))
+        คืน -8;      /* incomplete code ok only for single length 1 code */
 
     /* decode data until end-of-block code */
-    return codes(s, &lencode, &distcode);
+    คืน codes(s, &lencode, &distcode);
 }
 
 /*
@@ -790,14 +790,14 @@ local int dynamic(struct state *s)
  *   block (if it was a fixed or dynamic block) are undefined and have no
  *   expected values to check.
  */
-int puff(unsigned char *dest,           /* pointer to destination pointer */
+จำนวนเต็ม puff(unsigned var_na *dest,           /* pointer to destination pointer */
          unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
+         const unsigned var_na *source,   /* pointer to source data pointer */
          unsigned long *sourcelen)      /* amount of input available */
 {
-    struct state s;             /* input/output state */
-    int last, type;             /* block information */
-    int err;                    /* return value */
+    sa_nracanaa state s;             /* input/output state */
+    จำนวนเต็ม last, type;             /* block information */
+    จำนวนเต็ม err;                    /* return value */
 
     /* initialize output state */
     s.out = dest;
@@ -812,9 +812,9 @@ int puff(unsigned char *dest,           /* pointer to destination pointer */
     s.bitcnt = 0;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp() */
+    ถ้า (setjmp(s.env) != 0)             /* if came back here via longjmp() */
         err = 2;                        /* then skip do-loop, return error */
-    else {
+    มิฉะนั้น {
         /* process blocks until last block or error */
         do {
             last = bits(&s, 1);         /* one if last block */
@@ -826,15 +826,15 @@ int puff(unsigned char *dest,           /* pointer to destination pointer */
                         (type == 2 ?
                             dynamic(&s) :
                             -1));       /* type == 3, invalid */
-            if (err != 0)
-                break;                  /* return with error */
-        } while (!last);
+            ถ้า (err != 0)
+                bha_nga;                  /* return with error */
+        } ขณะ (!last);
     }
 
     /* update the lengths and return */
-    if (err <= 0) {
+    ถ้า (err <= 0) {
         *destlen = s.outcnt;
         *sourcelen = s.incnt;
     }
-    return err;
+    คืน err;
 }

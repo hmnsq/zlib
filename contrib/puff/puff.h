@@ -26,10 +26,10 @@
  * See puff.c for purpose and usage.
  */
 #ifndef NIL
-#  define NIL ((unsigned char *)0)      /* for no output option */
+#  define NIL ((unsigned var_na *)0)      /* for no output option */
 #endif
 
-int puff(unsigned char *dest,           /* pointer to destination pointer */
+จำนวนเต็ม puff(unsigned var_na *dest,           /* pointer to destination pointer */
          unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
+         const unsigned var_na *source,   /* pointer to source data pointer */
          unsigned long *sourcelen);     /* amount of input available */

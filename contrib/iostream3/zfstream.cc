@@ -32,74 +32,74 @@ gzfilebuf::~gzfilebuf()
   // Sync output buffer and close only if responsible for file
   // (i.e. attached streams should be left open at this stage)
   this->sync();
-  if (own_fd)
+  ถ้า (own_fd)
     this->close();
   // Make sure internal buffer is deallocated
   this->disable_buffer();
 }
 
 // Set compression level and strategy
-int
-gzfilebuf::setcompression(int comp_level,
-                          int comp_strategy)
+จำนวนเต็ม
+gzfilebuf::setcompression(จำนวนเต็ม comp_level,
+                          จำนวนเต็ม comp_strategy)
 {
-  return gzsetparams(file, comp_level, comp_strategy);
+  คืน gzsetparams(file, comp_level, comp_strategy);
 }
 
 // Open gzipped file
 gzfilebuf*
-gzfilebuf::open(const char *name,
+gzfilebuf::open(const var_na *name,
                 std::ios_base::openmode mode)
 {
   // Fail if file already open
-  if (this->is_open())
-    return NULL;
+  ถ้า (this->is_open())
+    คืน NULL;
   // Don't support simultaneous read/write access (yet)
-  if ((mode & std::ios_base::in) && (mode & std::ios_base::out))
-    return NULL;
+  ถ้า ((mode & std::ios_base::in) && (mode & std::ios_base::out))
+    คืน NULL;
 
   // Build mode string for gzopen and check it [27.8.1.3.2]
-  char char_mode[6] = "\0\0\0\0\0";
-  if (!this->open_mode(mode, char_mode))
-    return NULL;
+  var_na char_mode[6] = "\0\0\0\0\0";
+  ถ้า (!this->open_mode(mode, char_mode))
+    คืน NULL;
 
   // Attempt to open file
-  if ((file = gzopen(name, char_mode)) == NULL)
-    return NULL;
+  ถ้า ((file = gzopen(name, char_mode)) == NULL)
+    คืน NULL;
 
   // On success, allocate internal buffer and set flags
   this->enable_buffer();
   io_mode = mode;
   own_fd = true;
-  return this;
+  คืน this;
 }
 
 // Attach to gzipped file
 gzfilebuf*
-gzfilebuf::attach(int fd,
+gzfilebuf::attach(จำนวนเต็ม fd,
                   std::ios_base::openmode mode)
 {
   // Fail if file already open
-  if (this->is_open())
-    return NULL;
+  ถ้า (this->is_open())
+    คืน NULL;
   // Don't support simultaneous read/write access (yet)
-  if ((mode & std::ios_base::in) && (mode & std::ios_base::out))
-    return NULL;
+  ถ้า ((mode & std::ios_base::in) && (mode & std::ios_base::out))
+    คืน NULL;
 
   // Build mode string for gzdopen and check it [27.8.1.3.2]
-  char char_mode[6] = "\0\0\0\0\0";
-  if (!this->open_mode(mode, char_mode))
-    return NULL;
+  var_na char_mode[6] = "\0\0\0\0\0";
+  ถ้า (!this->open_mode(mode, char_mode))
+    คืน NULL;
 
   // Attempt to attach to file
-  if ((file = gzdopen(fd, char_mode)) == NULL)
-    return NULL;
+  ถ้า ((file = gzdopen(fd, char_mode)) == NULL)
+    คืน NULL;
 
   // On success, allocate internal buffer and set flags
   this->enable_buffer();
   io_mode = mode;
   own_fd = false;
-  return this;
+  คืน this;
 }
 
 // Close gzipped file
@@ -107,21 +107,21 @@ gzfilebuf*
 gzfilebuf::close()
 {
   // Fail immediately if no file is open
-  if (!this->is_open())
-    return NULL;
+  ถ้า (!this->is_open())
+    คืน NULL;
   // Assume success
   gzfilebuf* retval = this;
   // Attempt to sync and close gzipped file
-  if (this->sync() == -1)
+  ถ้า (this->sync() == -1)
     retval = NULL;
-  if (gzclose(file) < 0)
+  ถ้า (gzclose(file) < 0)
     retval = NULL;
   // File is now gone anyway (postcondition [27.8.1.3.8])
   file = NULL;
   own_fd = false;
   // Destroy internal buffer if it exists
   this->disable_buffer();
-  return retval;
+  คืน retval;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -129,7 +129,7 @@ gzfilebuf::close()
 // Convert int open mode to mode string
 bool
 gzfilebuf::open_mode(std::ios_base::openmode mode,
-                     char* c_mode) const
+                     var_na* c_mode) const
 {
   bool testb = mode & std::ios_base::binary;
   bool testi = mode & std::ios_base::in;
@@ -142,13 +142,13 @@ gzfilebuf::open_mode(std::ios_base::openmode mode,
   // Double the time for less than 1% size improvement seems
   // excessive though - keeping it at the default level
   // To change back, just append "9" to the next three mode strings
-  if (!testi && testo && !testt && !testa)
+  ถ้า (!testi && testo && !testt && !testa)
     strcpy(c_mode, "w");
-  if (!testi && testo && !testt && testa)
+  ถ้า (!testi && testo && !testt && testa)
     strcpy(c_mode, "a");
-  if (!testi && testo && testt && !testa)
+  ถ้า (!testi && testo && testt && !testa)
     strcpy(c_mode, "w");
-  if (testi && !testo && !testt && !testa)
+  ถ้า (testi && !testo && !testt && !testa)
     strcpy(c_mode, "r");
   // No read/write mode yet
 //  if (testi && testo && !testt && !testa)
@@ -157,11 +157,11 @@ gzfilebuf::open_mode(std::ios_base::openmode mode,
 //    strcpy(c_mode, "w+");
 
   // Mode string should be empty for invalid combination of flags
-  if (strlen(c_mode) == 0)
-    return false;
-  if (testb)
+  ถ้า (strlen(c_mode) == 0)
+    คืน false;
+  ถ้า (testb)
     strcat(c_mode, "b");
-  return true;
+  คืน true;
 }
 
 // Determine number of characters in internal get buffer
@@ -169,13 +169,13 @@ std::streamsize
 gzfilebuf::showmanyc()
 {
   // Calls to underflow will fail if file not opened for reading
-  if (!this->is_open() || !(io_mode & std::ios_base::in))
-    return -1;
+  ถ้า (!this->is_open() || !(io_mode & std::ios_base::in))
+    คืน -1;
   // Make sure get area is in use
-  if (this->gptr() && (this->gptr() < this->egptr()))
-    return std::streamsize(this->egptr() - this->gptr());
-  else
-    return 0;
+  ถ้า (this->gptr() && (this->gptr() < this->egptr()))
+    คืน std::streamsize(this->egptr() - this->gptr());
+  มิฉะนั้น
+    คืน 0;
 }
 
 // Fill get area from gzipped file
@@ -185,28 +185,28 @@ gzfilebuf::underflow()
   // If something is left in the get area by chance, return it
   // (this shouldn't normally happen, as underflow is only supposed
   // to be called when gptr >= egptr, but it serves as error check)
-  if (this->gptr() && (this->gptr() < this->egptr()))
-    return traits_type::to_int_type(*(this->gptr()));
+  ถ้า (this->gptr() && (this->gptr() < this->egptr()))
+    คืน traits_type::to_int_type(*(this->gptr()));
 
   // If the file hasn't been opened for reading, produce error
-  if (!this->is_open() || !(io_mode & std::ios_base::in))
-    return traits_type::eof();
+  ถ้า (!this->is_open() || !(io_mode & std::ios_base::in))
+    คืน traits_type::eof();
 
   // Attempt to fill internal buffer from gzipped file
   // (buffer must be guaranteed to exist...)
-  int bytes_read = gzread(file, buffer, buffer_size);
+  จำนวนเต็ม bytes_read = gzread(file, buffer, buffer_size);
   // Indicates error or EOF
-  if (bytes_read <= 0)
+  ถ้า (bytes_read <= 0)
   {
     // Reset get area
     this->setg(buffer, buffer, buffer);
-    return traits_type::eof();
+    คืน traits_type::eof();
   }
   // Make all bytes read from file available as get area
   this->setg(buffer, buffer, buffer + bytes_read);
 
   // Return next character in get area
-  return traits_type::to_int_type(*(this->gptr()));
+  คืน traits_type::to_int_type(*(this->gptr()));
 }
 
 // Write put area to gzipped file
@@ -214,51 +214,51 @@ gzfilebuf::int_type
 gzfilebuf::overflow(int_type c)
 {
   // Determine whether put area is in use
-  if (this->pbase())
+  ถ้า (this->pbase())
   {
     // Double-check pointer range
-    if (this->pptr() > this->epptr() || this->pptr() < this->pbase())
-      return traits_type::eof();
+    ถ้า (this->pptr() > this->epptr() || this->pptr() < this->pbase())
+      คืน traits_type::eof();
     // Add extra character to buffer if not EOF
-    if (!traits_type::eq_int_type(c, traits_type::eof()))
+    ถ้า (!traits_type::eq_int_type(c, traits_type::eof()))
     {
       *(this->pptr()) = traits_type::to_char_type(c);
       this->pbump(1);
     }
     // Number of characters to write to file
-    int bytes_to_write = this->pptr() - this->pbase();
+    จำนวนเต็ม bytes_to_write = this->pptr() - this->pbase();
     // Overflow doesn't fail if nothing is to be written
-    if (bytes_to_write > 0)
+    ถ้า (bytes_to_write > 0)
     {
       // If the file hasn't been opened for writing, produce error
-      if (!this->is_open() || !(io_mode & std::ios_base::out))
-        return traits_type::eof();
+      ถ้า (!this->is_open() || !(io_mode & std::ios_base::out))
+        คืน traits_type::eof();
       // If gzipped file won't accept all bytes written to it, fail
-      if (gzwrite(file, this->pbase(), bytes_to_write) != bytes_to_write)
-        return traits_type::eof();
+      ถ้า (gzwrite(file, this->pbase(), bytes_to_write) != bytes_to_write)
+        คืน traits_type::eof();
       // Reset next pointer to point to pbase on success
       this->pbump(-bytes_to_write);
     }
   }
   // Write extra character to file if not EOF
-  else if (!traits_type::eq_int_type(c, traits_type::eof()))
+  มิฉะนั้น ถ้า (!traits_type::eq_int_type(c, traits_type::eof()))
   {
     // If the file hasn't been opened for writing, produce error
-    if (!this->is_open() || !(io_mode & std::ios_base::out))
-      return traits_type::eof();
+    ถ้า (!this->is_open() || !(io_mode & std::ios_base::out))
+      คืน traits_type::eof();
     // Impromptu char buffer (allows "unbuffered" output)
     char_type last_char = traits_type::to_char_type(c);
     // If gzipped file won't accept this character, fail
-    if (gzwrite(file, &last_char, 1) != 1)
-      return traits_type::eof();
+    ถ้า (gzwrite(file, &last_char, 1) != 1)
+      คืน traits_type::eof();
   }
 
   // If you got here, you have succeeded (even if c was EOF)
   // The return value should therefore be non-EOF
-  if (traits_type::eq_int_type(c, traits_type::eof()))
-    return traits_type::not_eof(c);
-  else
-    return c;
+  ถ้า (traits_type::eq_int_type(c, traits_type::eof()))
+    คืน traits_type::not_eof(c);
+  มิฉะนั้น
+    คืน c;
 }
 
 // Assign new buffer
@@ -267,13 +267,13 @@ gzfilebuf::setbuf(char_type* p,
                   std::streamsize n)
 {
   // First make sure stuff is sync'ed, for safety
-  if (this->sync() == -1)
-    return NULL;
+  ถ้า (this->sync() == -1)
+    คืน NULL;
   // If buffering is turned off on purpose via setbuf(0,0), still allocate one...
   // "Unbuffered" only really refers to put [27.8.1.4.10], while get needs at
   // least a buffer of size 1 (very inefficient though, therefore make it bigger?)
   // This follows from [27.5.2.4.3]/12 (gptr needs to point at something, it seems)
-  if (!p || !n)
+  ถ้า (!p || !n)
   {
     // Replace existing buffer (if any) with small internal buffer
     this->disable_buffer();
@@ -282,7 +282,7 @@ gzfilebuf::setbuf(char_type* p,
     own_buffer = true;
     this->enable_buffer();
   }
-  else
+  มิฉะนั้น
   {
     // Replace existing buffer (if any) with external buffer
     this->disable_buffer();
@@ -291,14 +291,14 @@ gzfilebuf::setbuf(char_type* p,
     own_buffer = false;
     this->enable_buffer();
   }
-  return this;
+  คืน this;
 }
 
 // Write put area to gzipped file (i.e. ensures that put area is empty)
-int
+จำนวนเต็ม
 gzfilebuf::sync()
 {
-  return traits_type::eq_int_type(this->overflow(), traits_type::eof()) ? -1 : 0;
+  คืน traits_type::eq_int_type(this->overflow(), traits_type::eof()) ? -1 : 0;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -308,10 +308,10 @@ void
 gzfilebuf::enable_buffer()
 {
   // If internal buffer required, allocate one
-  if (own_buffer && !buffer)
+  ถ้า (own_buffer && !buffer)
   {
     // Check for buffered vs. "unbuffered"
-    if (buffer_size > 0)
+    ถ้า (buffer_size > 0)
     {
       // Allocate internal buffer
       buffer = new char_type[buffer_size];
@@ -323,7 +323,7 @@ gzfilebuf::enable_buffer()
       // These pointers remain in place for the duration of the buffer
       this->setp(buffer, buffer + buffer_size - 1);
     }
-    else
+    มิฉะนั้น
     {
       // Even in "unbuffered" case, (small?) get buffer is still required
       buffer_size = SMALLBUFSIZE;
@@ -333,7 +333,7 @@ gzfilebuf::enable_buffer()
       this->setp(0, 0);
     }
   }
-  else
+  มิฉะนั้น
   {
     // If buffer already allocated, reset buffer pointers just to make sure no
     // stale chars are lying around
@@ -347,23 +347,23 @@ void
 gzfilebuf::disable_buffer()
 {
   // If internal buffer exists, deallocate it
-  if (own_buffer && buffer)
+  ถ้า (own_buffer && buffer)
   {
     // Preserve unbuffered status by zeroing size
-    if (!this->pbase())
+    ถ้า (!this->pbase())
       buffer_size = 0;
     delete[] buffer;
     buffer = NULL;
     this->setg(0, 0, 0);
     this->setp(0, 0);
   }
-  else
+  มิฉะนั้น
   {
     // Reset buffer pointers to initial state if external buffer exists
     this->setg(buffer, buffer, buffer);
-    if (buffer)
+    ถ้า (buffer)
       this->setp(buffer, buffer + buffer_size - 1);
-    else
+    มิฉะนั้น
       this->setp(0, 0);
   }
 }
@@ -376,7 +376,7 @@ gzifstream::gzifstream()
 { this->init(&sb); }
 
 // Initialize stream buffer and open file
-gzifstream::gzifstream(const char* name,
+gzifstream::gzifstream(const var_na* name,
                        std::ios_base::openmode mode)
 : std::istream(NULL), sb()
 {
@@ -385,7 +385,7 @@ gzifstream::gzifstream(const char* name,
 }
 
 // Initialize stream buffer and attach to file
-gzifstream::gzifstream(int fd,
+gzifstream::gzifstream(จำนวนเต็ม fd,
                        std::ios_base::openmode mode)
 : std::istream(NULL), sb()
 {
@@ -395,23 +395,23 @@ gzifstream::gzifstream(int fd,
 
 // Open file and go into fail() state if unsuccessful
 void
-gzifstream::open(const char* name,
+gzifstream::open(const var_na* name,
                  std::ios_base::openmode mode)
 {
-  if (!sb.open(name, mode | std::ios_base::in))
+  ถ้า (!sb.open(name, mode | std::ios_base::in))
     this->setstate(std::ios_base::failbit);
-  else
+  มิฉะนั้น
     this->clear();
 }
 
 // Attach to file and go into fail() state if unsuccessful
 void
-gzifstream::attach(int fd,
+gzifstream::attach(จำนวนเต็ม fd,
                    std::ios_base::openmode mode)
 {
-  if (!sb.attach(fd, mode | std::ios_base::in))
+  ถ้า (!sb.attach(fd, mode | std::ios_base::in))
     this->setstate(std::ios_base::failbit);
-  else
+  มิฉะนั้น
     this->clear();
 }
 
@@ -419,7 +419,7 @@ gzifstream::attach(int fd,
 void
 gzifstream::close()
 {
-  if (!sb.close())
+  ถ้า (!sb.close())
     this->setstate(std::ios_base::failbit);
 }
 
@@ -431,7 +431,7 @@ gzofstream::gzofstream()
 { this->init(&sb); }
 
 // Initialize stream buffer and open file
-gzofstream::gzofstream(const char* name,
+gzofstream::gzofstream(const var_na* name,
                        std::ios_base::openmode mode)
 : std::ostream(NULL), sb()
 {
@@ -440,7 +440,7 @@ gzofstream::gzofstream(const char* name,
 }
 
 // Initialize stream buffer and attach to file
-gzofstream::gzofstream(int fd,
+gzofstream::gzofstream(จำนวนเต็ม fd,
                        std::ios_base::openmode mode)
 : std::ostream(NULL), sb()
 {
@@ -450,23 +450,23 @@ gzofstream::gzofstream(int fd,
 
 // Open file and go into fail() state if unsuccessful
 void
-gzofstream::open(const char* name,
+gzofstream::open(const var_na* name,
                  std::ios_base::openmode mode)
 {
-  if (!sb.open(name, mode | std::ios_base::out))
+  ถ้า (!sb.open(name, mode | std::ios_base::out))
     this->setstate(std::ios_base::failbit);
-  else
+  มิฉะนั้น
     this->clear();
 }
 
 // Attach to file and go into fail() state if unsuccessful
 void
-gzofstream::attach(int fd,
+gzofstream::attach(จำนวนเต็ม fd,
                    std::ios_base::openmode mode)
 {
-  if (!sb.attach(fd, mode | std::ios_base::out))
+  ถ้า (!sb.attach(fd, mode | std::ios_base::out))
     this->setstate(std::ios_base::failbit);
-  else
+  มิฉะนั้น
     this->clear();
 }
 
@@ -474,6 +474,6 @@ gzofstream::attach(int fd,
 void
 gzofstream::close()
 {
-  if (!sb.close())
+  ถ้า (!sb.close())
     this->setstate(std::ios_base::failbit);
 }

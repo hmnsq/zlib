@@ -3,15 +3,15 @@
 #include <stdlib.h>
 #include <iomanip.h>
 
-void main() {
-    char h[256] = "Hello";
-    char* g = "Goodbye";
+void หลัก() {
+    var_na h[256] = "Hello";
+    var_na* g = "Goodbye";
     ozstream out("temp.gz");
     out < "This works well" < h < g;
     out.close();
 
     izstream in("temp.gz"); // read it back
-    char *x = read_string(in), *y = new char[256], z[256];
+    var_na *x = read_string(in), *y = new var_na[256], z[256];
     in > y > z;
     in.close();
     cout << x << endl << y << endl << z << endl;

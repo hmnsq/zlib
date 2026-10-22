@@ -12,7 +12,7 @@
 */
 
 
-#if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
+#ถ้า (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
         #ifndef __USE_FILE_OFFSET64
                 #define __USE_FILE_OFFSET64
         #endif
@@ -27,12 +27,12 @@
         #endif
 #endif
 
-#if defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
+#ถ้า defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
 // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
 #define FOPEN_FUNC(filename, mode) fopen(filename, mode)
 #define FTELLO_FUNC(stream) ftello(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
-#else
+#มิฉะนั้น
 #define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
 #define FTELLO_FUNC(stream) ftello64(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
@@ -53,7 +53,7 @@
 #ifdef _WIN32
 # include <direct.h>
 # include <io.h>
-#else
+#มิฉะนั้น
 # include <unistd.h>
 # include <utime.h>
 # include <sys/types.h>
@@ -76,16 +76,16 @@
 #ifdef _WIN32
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
+static จำนวนเต็ม filetime(const var_na *f, tm_zip *tmzip, uLong *dt) {
   (void)tmzip;
-  int ret = 0;
+  จำนวนเต็ม ret = 0;
   {
       FILETIME ftLocal;
       HANDLE hFind;
       WIN32_FIND_DATAA ff32;
 
       hFind = FindFirstFileA(f,&ff32);
-      if (hFind != INVALID_HANDLE_VALUE)
+      ถ้า (hFind != INVALID_HANDLE_VALUE)
       {
         FileTimeToLocalFileTime(&(ff32.ftLastWriteTime),&ftLocal);
         FileTimeToDosDateTime(&ftLocal,((LPWORD)dt)+1,((LPWORD)dt)+0);
@@ -93,33 +93,33 @@ static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
         ret = 1;
       }
   }
-  return ret;
+  คืน ret;
 }
 #elif defined(__unix__) || defined(__unix) || defined(__APPLE__)
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
+static จำนวนเต็ม filetime(const var_na *f, tm_zip *tmzip, uLong *dt) {
   (void)dt;
-  int ret=0;
-  struct stat s;        /* results of stat() */
-  struct tm* filedate;
+  จำนวนเต็ม ret=0;
+  sa_nracanaa stat s;        /* results of stat() */
+  sa_nracanaa tm* filedate;
   time_t tm_t=0;
 
-  if (strcmp(f,"-")!=0)
+  ถ้า (strcmp(f,"-")!=0)
   {
-    char name[MAXFILENAME+1];
+    var_na name[MAXFILENAME+1];
     size_t len = strlen(f);
-    if (len > MAXFILENAME)
+    ถ้า (len > MAXFILENAME)
       len = MAXFILENAME;
 
     strncpy(name, f,MAXFILENAME-1);
     /* strncpy doesn't append the trailing NULL, of the string is too long. */
     name[ MAXFILENAME ] = '\0';
 
-    if (name[len - 1] == '/')
+    ถ้า (name[len - 1] == '/')
       name[len - 1] = '\0';
     /* not all systems allow stat'ing a file with / appended */
-    if (stat(name,&s)==0)
+    ถ้า (stat(name,&s)==0)
     {
       tm_t = s.st_mtime;
       ret = 1;
@@ -134,31 +134,31 @@ static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
   tmzip->tm_mon  = filedate->tm_mon ;
   tmzip->tm_year = filedate->tm_year;
 
-  return ret;
+  คืน ret;
 }
-#else
+#มิฉะนั้น
 /* f: name of file to get info on, tmzip: return value: access,
    modification and creation times, dt: dostime */
-static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
+static จำนวนเต็ม filetime(const var_na *f, tm_zip *tmzip, uLong *dt) {
     (void)f;
     (void)tmzip;
     (void)dt;
-    return 0;
+    คืน 0;
 }
 #endif
 
 
 
 
-static int check_exist_file(const char* filename) {
+static จำนวนเต็ม check_exist_file(const var_na* filename) {
     FILE* ftestexist;
-    int ret = 1;
+    จำนวนเต็ม ret = 1;
     ftestexist = FOPEN_FUNC(filename,"rb");
-    if (ftestexist==NULL)
+    ถ้า (ftestexist==NULL)
         ret = 0;
-    else
+    มิฉะนั้น
         fclose(ftestexist);
-    return ret;
+    คืน ret;
 }
 
 static void do_banner(void) {
@@ -178,115 +178,115 @@ static void do_help(void) {
 
 /* calculate the CRC32 of a file,
    because to encrypt a file, we need known the CRC32 of the file before */
-static int getFileCrc(const char* filenameinzip, void* buf, unsigned long size_buf, unsigned long* result_crc) {
+static จำนวนเต็ม getFileCrc(const var_na* filenameinzip, void* buf, unsigned long size_buf, unsigned long* result_crc) {
    unsigned long calculate_crc=0;
-   int err=ZIP_OK;
+   จำนวนเต็ม err=ZIP_OK;
    FILE * fin = FOPEN_FUNC(filenameinzip,"rb");
 
    unsigned long size_read = 0;
    /* unsigned long total_read = 0; */
-   if (fin==NULL)
+   ถ้า (fin==NULL)
    {
        err = ZIP_ERRNO;
    }
 
-    if (err == ZIP_OK)
+    ถ้า (err == ZIP_OK)
         do
         {
             err = ZIP_OK;
             size_read = (unsigned long)fread(buf,1,size_buf,fin);
-            if (size_read < size_buf)
-                if (feof(fin)==0)
+            ถ้า (size_read < size_buf)
+                ถ้า (feof(fin)==0)
             {
                 printf("error in reading %s\n",filenameinzip);
                 err = ZIP_ERRNO;
             }
 
-            if (size_read>0)
+            ถ้า (size_read>0)
                 calculate_crc = crc32_z(calculate_crc,buf,size_read);
             /* total_read += size_read; */
 
-        } while ((err == ZIP_OK) && (size_read>0));
+        } ขณะ ((err == ZIP_OK) && (size_read>0));
 
-    if (fin)
+    ถ้า (fin)
         fclose(fin);
 
     *result_crc=calculate_crc;
     printf("file %s crc %lx\n", filenameinzip, calculate_crc);
-    return err;
+    คืน err;
 }
 
-static int isLargeFile(const char* filename) {
-  int largeFile = 0;
+static จำนวนเต็ม isLargeFile(const var_na* filename) {
+  จำนวนเต็ม largeFile = 0;
   ZPOS64_T pos = 0;
   FILE* pFile = FOPEN_FUNC(filename, "rb");
 
-  if(pFile != NULL)
+  ถ้า(pFile != NULL)
   {
     FSEEKO_FUNC(pFile, 0, SEEK_END);
     pos = (ZPOS64_T)FTELLO_FUNC(pFile);
 
                 printf("File : %s is %"PUI64" bytes\n", filename, pos);
 
-    if(pos >= 0xffffffff)
+    ถ้า(pos >= 0xffffffff)
      largeFile = 1;
 
                 fclose(pFile);
   }
 
- return largeFile;
+ คืน largeFile;
 }
 
-int main(int argc, char *argv[]) {
-    int i;
-    int opt_overwrite=0;
-    int opt_compress_level=Z_DEFAULT_COMPRESSION;
-    int opt_exclude_path=0;
-    int zipfilenamearg = 0;
-    char filename_try[MAXFILENAME+16];
-    int zipok;
-    int err=0;
+จำนวนเต็ม หลัก(จำนวนเต็ม argc, var_na *argv[]) {
+    จำนวนเต็ม i;
+    จำนวนเต็ม opt_overwrite=0;
+    จำนวนเต็ม opt_compress_level=Z_DEFAULT_COMPRESSION;
+    จำนวนเต็ม opt_exclude_path=0;
+    จำนวนเต็ม zipfilenamearg = 0;
+    var_na filename_try[MAXFILENAME+16];
+    จำนวนเต็ม zipok;
+    จำนวนเต็ม err=0;
     unsigned long size_buf=0;
     void* buf=NULL;
-    const char* password=NULL;
+    const var_na* password=NULL;
 
 
     do_banner();
-    if (argc==1)
+    ถ้า (argc==1)
     {
         do_help();
-        return 0;
+        คืน 0;
     }
-    else
+    มิฉะนั้น
     {
-        for (i=1;i<argc;i++)
+        สำหรับ (i=1;i<argc;i++)
         {
-            if ((*argv[i])=='-')
+            ถ้า ((*argv[i])=='-')
             {
-                const char *p=argv[i]+1;
+                const var_na *p=argv[i]+1;
 
-                while ((*p)!='\0')
+                ขณะ ((*p)!='\0')
                 {
-                    char c=*(p++);
-                    if ((c=='o') || (c=='O'))
+                    var_na c=*(p++);
+                    ถ้า ((c=='o') || (c=='O'))
                         opt_overwrite = 1;
-                    if ((c=='a') || (c=='A'))
+                    ถ้า ((c=='a') || (c=='A'))
                         opt_overwrite = 2;
-                    if ((c>='0') && (c<='9'))
+                    ถ้า ((c>='0') && (c<='9'))
                         opt_compress_level = c-'0';
-                    if ((c=='j') || (c=='J'))
+                    ถ้า ((c=='j') || (c=='J'))
                         opt_exclude_path = 1;
 
-                    if (((c=='p') || (c=='P')) && (i+1<argc))
+                    ถ้า (((c=='p') || (c=='P')) && (i+1<argc))
                     {
                         password=argv[i+1];
                         i++;
                     }
                 }
             }
-            else
+            มิฉะนั้น
             {
-                if (zipfilenamearg == 0)
+                ถ้า (zipfilenamearg == 0)
                 {
                     zipfilenamearg = i ;
                 }
@@ -296,90 +296,90 @@ int main(int argc, char *argv[]) {
 
     size_buf = WRITEBUFFERSIZE;
     buf = (void*)malloc(size_buf);
-    if (buf==NULL)
+    ถ้า (buf==NULL)
     {
         printf("Error allocating memory\n");
-        return ZIP_INTERNALERROR;
+        คืน ZIP_INTERNALERROR;
     }
 
-    if (zipfilenamearg==0)
+    ถ้า (zipfilenamearg==0)
     {
         zipok=0;
     }
-    else
+    มิฉะนั้น
     {
-        int len;
-        int dot_found=0;
+        จำนวนเต็ม len;
+        จำนวนเต็ม dot_found=0;
 
         zipok = 1 ;
         strncpy(filename_try, argv[zipfilenamearg],MAXFILENAME-1);
         /* strncpy doesn't append the trailing NULL, of the string is too long. */
         filename_try[ MAXFILENAME ] = '\0';
 
-        len=(int)strlen(filename_try);
-        for (i=0;i<len;i++)
-            if (filename_try[i]=='.')
+        len=(จำนวนเต็ม)strlen(filename_try);
+        สำหรับ (i=0;i<len;i++)
+            ถ้า (filename_try[i]=='.')
                 dot_found=1;
 
-        if (dot_found==0)
+        ถ้า (dot_found==0)
             strcat(filename_try,".zip");
 
-        if (opt_overwrite==2)
+        ถ้า (opt_overwrite==2)
         {
             /* if the file don't exist, we not append file */
-            if (check_exist_file(filename_try)==0)
+            ถ้า (check_exist_file(filename_try)==0)
                 opt_overwrite=1;
         }
-        else
-        if (opt_overwrite==0)
-            if (check_exist_file(filename_try)!=0)
+        มิฉะนั้น
+        ถ้า (opt_overwrite==0)
+            ถ้า (check_exist_file(filename_try)!=0)
             {
-                char rep=0;
+                var_na rep=0;
                 do
                 {
-                    char answer[128];
-                    int ret;
+                    var_na answer[128];
+                    จำนวนเต็ม ret;
                     printf("The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ",filename_try);
                     ret = scanf("%1s",answer);
-                    if (ret != 1)
+                    ถ้า (ret != 1)
                     {
                        exit(EXIT_FAILURE);
                     }
                     rep = answer[0] ;
-                    if ((rep>='a') && (rep<='z'))
+                    ถ้า ((rep>='a') && (rep<='z'))
                         rep -= 0x20;
                 }
-                while ((rep!='Y') && (rep!='N') && (rep!='A'));
-                if (rep=='N')
+                ขณะ ((rep!='Y') && (rep!='N') && (rep!='A'));
+                ถ้า (rep=='N')
                     zipok = 0;
-                if (rep=='A')
+                ถ้า (rep=='A')
                     opt_overwrite = 2;
             }
     }
 
-    if (zipok==1)
+    ถ้า (zipok==1)
     {
         zipFile zf;
-        int errclose;
+        จำนวนเต็ม errclose;
 #        ifdef USEWIN32IOAPI
         zlib_filefunc64_def ffunc;
         fill_win32_filefunc64A(&ffunc);
         zf = zipOpen2_64(filename_try,(opt_overwrite==2) ? 2 : 0,NULL,&ffunc);
-#        else
+#        มิฉะนั้น
         zf = zipOpen64(filename_try,(opt_overwrite==2) ? 2 : 0);
 #        endif
 
-        if (zf == NULL)
+        ถ้า (zf == NULL)
         {
             printf("error opening %s\n",filename_try);
             err= ZIP_ERRNO;
         }
-        else
+        มิฉะนั้น
             printf("creating %s\n",filename_try);
 
-        for (i=zipfilenamearg+1;(i<argc) && (err==ZIP_OK);i++)
+        สำหรับ (i=zipfilenamearg+1;(i<argc) && (err==ZIP_OK);i++)
         {
-            if (!((((*(argv[i]))=='-') || ((*(argv[i]))=='/')) &&
+            ถ้า (!((((*(argv[i]))=='-') || ((*(argv[i]))=='/')) &&
                   ((argv[i][1]=='o') || (argv[i][1]=='O') ||
                    (argv[i][1]=='a') || (argv[i][1]=='A') ||
                    (argv[i][1]=='p') || (argv[i][1]=='P') ||
@@ -388,11 +388,11 @@ int main(int argc, char *argv[]) {
             {
                 FILE * fin = NULL;
                 size_t size_read;
-                const char* filenameinzip = argv[i];
-                const char *savefilenameinzip;
+                const var_na* filenameinzip = argv[i];
+                const var_na *savefilenameinzip;
                 zip_fileinfo zi;
                 unsigned long crcFile=0;
-                int zip64 = 0;
+                จำนวนเต็ม zip64 = 0;
 
                 zi.tmz_date.tm_sec = zi.tmz_date.tm_min = zi.tmz_date.tm_hour =
                 zi.tmz_date.tm_mday = zi.tmz_date.tm_mon = zi.tmz_date.tm_year = 0;
@@ -407,7 +407,7 @@ int main(int argc, char *argv[]) {
                                  (opt_compress_level != 0) ? Z_DEFLATED : 0,
                                  opt_compress_level);
 */
-                if ((password != NULL) && (err==ZIP_OK))
+                ถ้า ((password != NULL) && (err==ZIP_OK))
                     err = getFileCrc(filenameinzip,buf,size_buf,&crcFile);
 
                 zip64 = isLargeFile(filenameinzip);
@@ -415,24 +415,24 @@ int main(int argc, char *argv[]) {
                                                          /* The path name saved, should not include a leading slash. */
                /*if it did, windows/xp and dynazip couldn't read the zip file. */
                  savefilenameinzip = filenameinzip;
-                 while( savefilenameinzip[0] == '\\' || savefilenameinzip[0] == '/' )
+                 ขณะ( savefilenameinzip[0] == '\\' || savefilenameinzip[0] == '/' )
                  {
                      savefilenameinzip++;
                  }
 
                  /*should the zip file contain any path at all?*/
-                 if( opt_exclude_path )
+                 ถ้า( opt_exclude_path )
                  {
-                     const char *tmpptr;
-                     const char *lastslash = 0;
-                     for( tmpptr = savefilenameinzip; *tmpptr; tmpptr++)
+                     const var_na *tmpptr;
+                     const var_na *lastslash = 0;
+                     สำหรับ( tmpptr = savefilenameinzip; *tmpptr; tmpptr++)
                      {
-                         if( *tmpptr == '\\' || *tmpptr == '/')
+                         ถ้า( *tmpptr == '\\' || *tmpptr == '/')
                          {
                              lastslash = tmpptr;
                          }
                      }
-                     if( lastslash != NULL )
+                     ถ้า( lastslash != NULL )
                      {
                          savefilenameinzip = lastslash+1; /* base filename follows last slash. */
                      }
@@ -447,65 +447,65 @@ int main(int argc, char *argv[]) {
                                  -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
                                  password,crcFile, zip64);
 
-                if (err != ZIP_OK)
+                ถ้า (err != ZIP_OK)
                     printf("error in opening %s in zipfile\n",filenameinzip);
-                else
+                มิฉะนั้น
                 {
                     fin = FOPEN_FUNC(filenameinzip,"rb");
-                    if (fin==NULL)
+                    ถ้า (fin==NULL)
                     {
                         err=ZIP_ERRNO;
                         printf("error in opening %s for reading\n",filenameinzip);
                     }
                 }
 
-                if (err == ZIP_OK)
+                ถ้า (err == ZIP_OK)
                     do
                     {
                         err = ZIP_OK;
                         size_read = fread(buf,1,size_buf,fin);
-                        if (size_read < size_buf)
-                            if (feof(fin)==0)
+                        ถ้า (size_read < size_buf)
+                            ถ้า (feof(fin)==0)
                         {
                             printf("error in reading %s\n",filenameinzip);
                             err = ZIP_ERRNO;
                         }
 
-                        if (size_read>0)
+                        ถ้า (size_read>0)
                         {
                             err = zipWriteInFileInZip (zf,buf,(unsigned)size_read);
-                            if (err<0)
+                            ถ้า (err<0)
                             {
                                 printf("error in writing %s in the zipfile\n",
                                                  filenameinzip);
                             }
 
                         }
-                    } while ((err == ZIP_OK) && (size_read>0));
+                    } ขณะ ((err == ZIP_OK) && (size_read>0));
 
-                if (fin)
+                ถ้า (fin)
                     fclose(fin);
 
-                if (err<0)
+                ถ้า (err<0)
                     err=ZIP_ERRNO;
-                else
+                มิฉะนั้น
                 {
                     err = zipCloseFileInZip(zf);
-                    if (err!=ZIP_OK)
+                    ถ้า (err!=ZIP_OK)
                         printf("error in closing %s in the zipfile\n",
                                     filenameinzip);
                 }
             }
         }
         errclose = zipClose(zf,NULL);
-        if (errclose != ZIP_OK)
+        ถ้า (errclose != ZIP_OK)
             printf("error in closing %s\n",filename_try);
     }
-    else
+    มิฉะนั้น
     {
        do_help();
     }
 
     free(buf);
-    return err;
+    คืน err;
 }

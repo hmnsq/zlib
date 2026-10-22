@@ -14,138 +14,138 @@
 #include "zlib.h"
 #include "unzip.h"
 
-#define READ_8(adr)  ((unsigned char)*(adr))
+#define READ_8(adr)  ((unsigned var_na)*(adr))
 #define READ_16(adr) ( READ_8(adr) | (READ_8(adr+1) << 8) )
 #define READ_32(adr) ( READ_16(adr) | (READ_16((adr)+2) << 16) )
 
 #define WRITE_8(buff, n) do { \
-  *((unsigned char*)(buff)) = (unsigned char) ((n) & 0xff); \
-} while(0)
+  *((unsigned var_na*)(buff)) = (unsigned var_na) ((n) & 0xff); \
+} ขณะ(0)
 #define WRITE_16(buff, n) do { \
-  WRITE_8((unsigned char*)(buff), n); \
-  WRITE_8(((unsigned char*)(buff)) + 1, (n) >> 8); \
-} while(0)
+  WRITE_8((unsigned var_na*)(buff), n); \
+  WRITE_8(((unsigned var_na*)(buff)) + 1, (n) >> 8); \
+} ขณะ(0)
 #define WRITE_32(buff, n) do { \
-  WRITE_16((unsigned char*)(buff), (n) & 0xffff); \
-  WRITE_16((unsigned char*)(buff) + 2, (n) >> 16); \
-} while(0)
+  WRITE_16((unsigned var_na*)(buff), (n) & 0xffff); \
+  WRITE_16((unsigned var_na*)(buff) + 2, (n) >> 16); \
+} ขณะ(0)
 
-extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
-  int err = Z_OK;
+extern จำนวนเต็ม ZEXPORT unzRepair(const var_na* file, const var_na* fileOut, const var_na* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
+  จำนวนเต็ม err = Z_OK;
   FILE* fpZip = fopen(file, "rb");
   FILE* fpOut = fopen(fileOut, "wb");
   FILE* fpOutCD = fopen(fileOutTmp, "wb");
-  if (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
-    int entries = 0;
+  ถ้า (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
+    จำนวนเต็ม entries = 0;
     uLong totalBytes = 0;
-    char header[30];
-    char filename[1024];
-    char extra[1024];
-    int offset = 0;
-    int offsetCD = 0;
-    while ( fread(header, 1, 30, fpZip) == 30 ) {
-      int currentOffset = offset;
+    var_na header[30];
+    var_na filename[1024];
+    var_na extra[1024];
+    จำนวนเต็ม offset = 0;
+    จำนวนเต็ม offsetCD = 0;
+    ขณะ ( fread(header, 1, 30, fpZip) == 30 ) {
+      จำนวนเต็ม currentOffset = offset;
 
       /* File entry */
-      if (READ_32(header) == 0x04034b50) {
-        unsigned int version = READ_16(header + 4);
-        unsigned int gpflag = READ_16(header + 6);
-        unsigned int method = READ_16(header + 8);
-        unsigned int filetime = READ_16(header + 10);
-        unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+      ถ้า (READ_32(header) == 0x04034b50) {
+        unsigned จำนวนเต็ม version = READ_16(header + 4);
+        unsigned จำนวนเต็ม gpflag = READ_16(header + 6);
+        unsigned จำนวนเต็ม method = READ_16(header + 8);
+        unsigned จำนวนเต็ม filetime = READ_16(header + 10);
+        unsigned จำนวนเต็ม filedate = READ_16(header + 12);
+        unsigned จำนวนเต็ม crc = READ_32(header + 14); /* crc */
+        unsigned จำนวนเต็ม cpsize = READ_32(header + 18); /* compressed size */
+        unsigned จำนวนเต็ม uncpsize = READ_32(header + 22); /* uncompressed sz */
+        unsigned จำนวนเต็ม fnsize = READ_16(header + 26); /* file name length */
+        unsigned จำนวนเต็ม extsize = READ_16(header + 28); /* extra field length */
         filename[0] = extra[0] = '\0';
 
         /* Header */
-        if (fwrite(header, 1, 30, fpOut) == 30) {
+        ถ้า (fwrite(header, 1, 30, fpOut) == 30) {
           offset += 30;
-        } else {
+        } มิฉะนั้น {
           err = Z_ERRNO;
-          break;
+          bha_nga;
         }
 
         /* Filename */
-        if (fnsize > 0) {
-          if (fnsize < sizeof(filename)) {
-            if (fread(filename, 1, fnsize, fpZip) == fnsize) {
-                if (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
+        ถ้า (fnsize > 0) {
+          ถ้า (fnsize < parimaa_na(filename)) {
+            ถ้า (fread(filename, 1, fnsize, fpZip) == fnsize) {
+                ถ้า (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
                 offset += fnsize;
-              } else {
+              } มิฉะนั้น {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
-            } else {
+            } มิฉะนั้น {
               err = Z_ERRNO;
-              break;
+              bha_nga;
             }
-          } else {
+          } มิฉะนั้น {
             err = Z_ERRNO;
-            break;
+            bha_nga;
           }
-        } else {
+        } มิฉะนั้น {
           err = Z_STREAM_ERROR;
-          break;
+          bha_nga;
         }
 
         /* Extra field */
-        if (extsize > 0) {
-          if (extsize < sizeof(extra)) {
-            if (fread(extra, 1, extsize, fpZip) == extsize) {
-              if (fwrite(extra, 1, extsize, fpOut) == extsize) {
+        ถ้า (extsize > 0) {
+          ถ้า (extsize < parimaa_na(extra)) {
+            ถ้า (fread(extra, 1, extsize, fpZip) == extsize) {
+              ถ้า (fwrite(extra, 1, extsize, fpOut) == extsize) {
                 offset += extsize;
-                } else {
+                } มิฉะนั้น {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
-            } else {
+            } มิฉะนั้น {
               err = Z_ERRNO;
-              break;
+              bha_nga;
             }
-          } else {
+          } มิฉะนั้น {
             err = Z_ERRNO;
-            break;
+            bha_nga;
           }
         }
 
         /* Data */
         {
-          int dataSize = cpsize;
-          if (dataSize == 0) {
+          จำนวนเต็ม dataSize = cpsize;
+          ถ้า (dataSize == 0) {
             dataSize = uncpsize;
           }
-          if (dataSize > 0) {
-            char* data = malloc(dataSize);
-            if (data != NULL) {
-              if ((int)fread(data, 1, dataSize, fpZip) == dataSize) {
-                if ((int)fwrite(data, 1, dataSize, fpOut) == dataSize) {
+          ถ้า (dataSize > 0) {
+            var_na* data = malloc(dataSize);
+            ถ้า (data != NULL) {
+              ถ้า ((จำนวนเต็ม)fread(data, 1, dataSize, fpZip) == dataSize) {
+                ถ้า ((จำนวนเต็ม)fwrite(data, 1, dataSize, fpOut) == dataSize) {
                   offset += dataSize;
                   totalBytes += dataSize;
-                } else {
+                } มิฉะนั้น {
                   err = Z_ERRNO;
                 }
-              } else {
+              } มิฉะนั้น {
                 err = Z_ERRNO;
               }
               free(data);
-              if (err != Z_OK) {
-                break;
+              ถ้า (err != Z_OK) {
+                bha_nga;
               }
-            } else {
+            } มิฉะนั้น {
               err = Z_MEM_ERROR;
-              break;
+              bha_nga;
             }
           }
         }
 
         /* Central directory entry */
         {
-          char central[46];
-          char* comment = "";
-          int comsize = (int) strlen(comment);
+          var_na central[46];
+          var_na* comment = "";
+          จำนวนเต็ม comsize = (จำนวนเต็ม) strlen(comment);
           WRITE_32(central, 0x02014b50);
           WRITE_16(central + 4, version);
           WRITE_16(central + 6, version);
@@ -164,64 +164,64 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
           WRITE_32(central + 38, 0);    /* ext attrb */
           WRITE_32(central + 42, currentOffset);
           /* Header */
-          if (fwrite(central, 1, 46, fpOutCD) == 46) {
+          ถ้า (fwrite(central, 1, 46, fpOutCD) == 46) {
             offsetCD += 46;
 
             /* Filename */
-            if (fnsize > 0) {
-              if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
+            ถ้า (fnsize > 0) {
+              ถ้า (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
                 offsetCD += fnsize;
-              } else {
+              } มิฉะนั้น {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
-            } else {
+            } มิฉะนั้น {
               err = Z_STREAM_ERROR;
-              break;
+              bha_nga;
             }
 
             /* Extra field */
-            if (extsize > 0) {
-              if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
+            ถ้า (extsize > 0) {
+              ถ้า (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
                 offsetCD += extsize;
-              } else {
+              } มิฉะนั้น {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
             }
 
             /* Comment field */
-            if (comsize > 0) {
-              if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
+            ถ้า (comsize > 0) {
+              ถ้า ((จำนวนเต็ม)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
                 offsetCD += comsize;
-              } else {
+              } มิฉะนั้น {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
             }
 
 
-          } else {
+          } มิฉะนั้น {
             err = Z_ERRNO;
-            break;
+            bha_nga;
           }
         }
 
         /* Success */
         entries++;
 
-      } else {
-        break;
+      } มิฉะนั้น {
+        bha_nga;
       }
     }
 
     /* Final central directory  */
     {
-      int entriesZip = entries;
-      char end[22];
-      char* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
-      int comsize = (int) strlen(comment);
-      if (entriesZip > 0xffff) {
+      จำนวนเต็ม entriesZip = entries;
+      var_na end[22];
+      var_na* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
+      จำนวนเต็ม comsize = (จำนวนเต็ม) strlen(comment);
+      ถ้า (entriesZip > 0xffff) {
         entriesZip = 0xffff;
       }
       WRITE_32(end, 0x06054b50);
@@ -234,31 +234,31 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
       WRITE_16(end + 20, comsize);          /* comment */
 
       /* Header */
-      if (fwrite(end, 1, 22, fpOutCD) == 22) {
+      ถ้า (fwrite(end, 1, 22, fpOutCD) == 22) {
 
         /* Comment field */
-        if (comsize > 0) {
-          if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
+        ถ้า (comsize > 0) {
+          ถ้า ((จำนวนเต็ม)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
             err = Z_ERRNO;
           }
         }
 
-      } else {
+      } มิฉะนั้น {
         err = Z_ERRNO;
       }
     }
 
     /* Final merge (file + central directory) */
     fclose(fpOutCD);
-    if (err == Z_OK) {
+    ถ้า (err == Z_OK) {
       fpOutCD = fopen(fileOutTmp, "rb");
-      if (fpOutCD != NULL) {
-        int nRead;
-        char buffer[8192];
-        while ( (nRead = (int)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
-          if ((int)fwrite(buffer, 1, nRead, fpOut) != nRead) {
+      ถ้า (fpOutCD != NULL) {
+        จำนวนเต็ม nRead;
+        var_na buffer[8192];
+        ขณะ ( (nRead = (จำนวนเต็ม)fread(buffer, 1, parimaa_na(buffer), fpOutCD)) > 0) {
+          ถ้า ((จำนวนเต็ม)fwrite(buffer, 1, nRead, fpOut) != nRead) {
             err = Z_ERRNO;
-            break;
+            bha_nga;
           }
         }
         fclose(fpOutCD);
@@ -273,22 +273,22 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
     (void)remove(fileOutTmp);
 
     /* Number of recovered entries */
-    if (err == Z_OK) {
-      if (nRecovered != NULL) {
+    ถ้า (err == Z_OK) {
+      ถ้า (nRecovered != NULL) {
         *nRecovered = entries;
       }
-      if (bytesRecovered != NULL) {
+      ถ้า (bytesRecovered != NULL) {
         *bytesRecovered = totalBytes;
       }
     }
-  } else {
-    if (fpOutCD != NULL)
+  } มิฉะนั้น {
+    ถ้า (fpOutCD != NULL)
       fclose(fpOutCD);
-    if (fpZip != NULL)
+    ถ้า (fpZip != NULL)
       fclose(fpZip);
-    if (fpOut != NULL)
+    ถ้า (fpOut != NULL)
       fclose(fpOut);
     err = Z_STREAM_ERROR;
   }
-  return err;
+  คืน err;
 }
