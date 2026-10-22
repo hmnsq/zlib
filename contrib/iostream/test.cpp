@@ -1,7 +1,7 @@
 
-#include "zfstream.h"
+#অন্তর্ভাৱ "zfstream.h"
 
-int main() {
+পূর্ণাঙ্ক main() {
 
   // Construct a stream object with this filebuffer.  Anything sent
   // to this stream will go to standard out.
@@ -19,6 +19,6 @@ int main() {
 
   os.close();
 
-  return 0;
+  ঘূৰাই 0;
 
 }

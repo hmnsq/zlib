@@ -8,144 +8,144 @@
 #ifndef _CRT_SECURE_NO_WARNINGS
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "zlib.h"
-#include "unzip.h"
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ "zlib.h"
+#অন্তর্ভাৱ "unzip.h"
 
-#define READ_8(adr)  ((unsigned char)*(adr))
+#define READ_8(adr)  ((unsigned ৱর্ণ)*(adr))
 #define READ_16(adr) ( READ_8(adr) | (READ_8(adr+1) << 8) )
 #define READ_32(adr) ( READ_16(adr) | (READ_16((adr)+2) << 16) )
 
-#define WRITE_8(buff, n) do { \
-  *((unsigned char*)(buff)) = (unsigned char) ((n) & 0xff); \
-} while(0)
-#define WRITE_16(buff, n) do { \
-  WRITE_8((unsigned char*)(buff), n); \
-  WRITE_8(((unsigned char*)(buff)) + 1, (n) >> 8); \
-} while(0)
-#define WRITE_32(buff, n) do { \
-  WRITE_16((unsigned char*)(buff), (n) & 0xffff); \
-  WRITE_16((unsigned char*)(buff) + 2, (n) >> 16); \
-} while(0)
+#define WRITE_8(buff, n) কৰা { \
+  *((unsigned ৱর্ণ*)(buff)) = (unsigned ৱর্ণ) ((n) & 0xff); \
+} যেতিয়ালৈ(0)
+#define WRITE_16(buff, n) কৰা { \
+  WRITE_8((unsigned ৱর্ণ*)(buff), n); \
+  WRITE_8(((unsigned ৱর্ণ*)(buff)) + 1, (n) >> 8); \
+} যেতিয়ালৈ(0)
+#define WRITE_32(buff, n) কৰা { \
+  WRITE_16((unsigned ৱর্ণ*)(buff), (n) & 0xffff); \
+  WRITE_16((unsigned ৱর্ণ*)(buff) + 2, (n) >> 16); \
+} যেতিয়ালৈ(0)
 
-extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
-  int err = Z_OK;
+বাহ্য পূর্ণাঙ্ক ZEXPORT unzRepair(ধ্রুৱ ৱর্ণ* file, ধ্রুৱ ৱর্ণ* fileOut, ধ্রুৱ ৱর্ণ* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
+  পূর্ণাঙ্ক err = Z_OK;
   FILE* fpZip = fopen(file, "rb");
   FILE* fpOut = fopen(fileOut, "wb");
   FILE* fpOutCD = fopen(fileOutTmp, "wb");
-  if (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
-    int entries = 0;
+  যদি (fpZip != রিক্ত && fpOut != রিক্ত && fpOutCD != রিক্ত ) {
+    পূর্ণাঙ্ক entries = 0;
     uLong totalBytes = 0;
-    char header[30];
-    char filename[1024];
-    char extra[1024];
-    int offset = 0;
-    int offsetCD = 0;
-    while ( fread(header, 1, 30, fpZip) == 30 ) {
-      int currentOffset = offset;
+    ৱর্ণ header[30];
+    ৱর্ণ filename[1024];
+    ৱর্ণ extra[1024];
+    পূর্ণাঙ্ক offset = 0;
+    পূর্ণাঙ্ক offsetCD = 0;
+    যেতিয়ালৈ ( fread(header, 1, 30, fpZip) == 30 ) {
+      পূর্ণাঙ্ক currentOffset = offset;
 
       /* File entry */
-      if (READ_32(header) == 0x04034b50) {
-        unsigned int version = READ_16(header + 4);
-        unsigned int gpflag = READ_16(header + 6);
-        unsigned int method = READ_16(header + 8);
-        unsigned int filetime = READ_16(header + 10);
-        unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+      যদি (READ_32(header) == 0x04034b50) {
+        unsigned পূর্ণাঙ্ক version = READ_16(header + 4);
+        unsigned পূর্ণাঙ্ক gpflag = READ_16(header + 6);
+        unsigned পূর্ণাঙ্ক method = READ_16(header + 8);
+        unsigned পূর্ণাঙ্ক filetime = READ_16(header + 10);
+        unsigned পূর্ণাঙ্ক filedate = READ_16(header + 12);
+        unsigned পূর্ণাঙ্ক crc = READ_32(header + 14); /* crc */
+        unsigned পূর্ণাঙ্ক cpsize = READ_32(header + 18); /* compressed size */
+        unsigned পূর্ণাঙ্ক uncpsize = READ_32(header + 22); /* uncompressed sz */
+        unsigned পূর্ণাঙ্ক fnsize = READ_16(header + 26); /* file name length */
+        unsigned পূর্ণাঙ্ক extsize = READ_16(header + 28); /* extra field length */
         filename[0] = extra[0] = '\0';
 
         /* Header */
-        if (fwrite(header, 1, 30, fpOut) == 30) {
+        যদি (fwrite(header, 1, 30, fpOut) == 30) {
           offset += 30;
-        } else {
+        } অন্যথা {
           err = Z_ERRNO;
-          break;
+          ভঙ্গ;
         }
 
         /* Filename */
-        if (fnsize > 0) {
-          if (fnsize < sizeof(filename)) {
-            if (fread(filename, 1, fnsize, fpZip) == fnsize) {
-                if (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
+        যদি (fnsize > 0) {
+          যদি (fnsize < পরিমাণ(filename)) {
+            যদি (fread(filename, 1, fnsize, fpZip) == fnsize) {
+                যদি (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
                 offset += fnsize;
-              } else {
+              } অন্যথা {
                 err = Z_ERRNO;
-                break;
+                ভঙ্গ;
               }
-            } else {
+            } অন্যথা {
               err = Z_ERRNO;
-              break;
+              ভঙ্গ;
             }
-          } else {
+          } অন্যথা {
             err = Z_ERRNO;
-            break;
+            ভঙ্গ;
           }
-        } else {
+        } অন্যথা {
           err = Z_STREAM_ERROR;
-          break;
+          ভঙ্গ;
         }
 
         /* Extra field */
-        if (extsize > 0) {
-          if (extsize < sizeof(extra)) {
-            if (fread(extra, 1, extsize, fpZip) == extsize) {
-              if (fwrite(extra, 1, extsize, fpOut) == extsize) {
+        যদি (extsize > 0) {
+          যদি (extsize < পরিমাণ(extra)) {
+            যদি (fread(extra, 1, extsize, fpZip) == extsize) {
+              যদি (fwrite(extra, 1, extsize, fpOut) == extsize) {
                 offset += extsize;
-                } else {
+                } অন্যথা {
                 err = Z_ERRNO;
-                break;
+                ভঙ্গ;
               }
-            } else {
+            } অন্যথা {
               err = Z_ERRNO;
-              break;
+              ভঙ্গ;
             }
-          } else {
+          } অন্যথা {
             err = Z_ERRNO;
-            break;
+            ভঙ্গ;
           }
         }
 
         /* Data */
         {
-          int dataSize = cpsize;
-          if (dataSize == 0) {
+          পূর্ণাঙ্ক dataSize = cpsize;
+          যদি (dataSize == 0) {
             dataSize = uncpsize;
           }
-          if (dataSize > 0) {
-            char* data = malloc(dataSize);
-            if (data != NULL) {
-              if ((int)fread(data, 1, dataSize, fpZip) == dataSize) {
-                if ((int)fwrite(data, 1, dataSize, fpOut) == dataSize) {
+          যদি (dataSize > 0) {
+            ৱর্ণ* data = malloc(dataSize);
+            যদি (data != রিক্ত) {
+              যদি ((পূর্ণাঙ্ক)fread(data, 1, dataSize, fpZip) == dataSize) {
+                যদি ((পূর্ণাঙ্ক)fwrite(data, 1, dataSize, fpOut) == dataSize) {
                   offset += dataSize;
                   totalBytes += dataSize;
-                } else {
+                } অন্যথা {
                   err = Z_ERRNO;
                 }
-              } else {
+              } অন্যথা {
                 err = Z_ERRNO;
               }
-              free(data);
-              if (err != Z_OK) {
-                break;
+              মুক্ত(data);
+              যদি (err != Z_OK) {
+                ভঙ্গ;
               }
-            } else {
+            } অন্যথা {
               err = Z_MEM_ERROR;
-              break;
+              ভঙ্গ;
             }
           }
         }
 
         /* Central directory entry */
         {
-          char central[46];
-          char* comment = "";
-          int comsize = (int) strlen(comment);
+          ৱর্ণ central[46];
+          ৱর্ণ* comment = "";
+          পূর্ণাঙ্ক comsize = (পূর্ণাঙ্ক) strlen(comment);
           WRITE_32(central, 0x02014b50);
           WRITE_16(central + 4, version);
           WRITE_16(central + 6, version);
@@ -164,64 +164,64 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
           WRITE_32(central + 38, 0);    /* ext attrb */
           WRITE_32(central + 42, currentOffset);
           /* Header */
-          if (fwrite(central, 1, 46, fpOutCD) == 46) {
+          যদি (fwrite(central, 1, 46, fpOutCD) == 46) {
             offsetCD += 46;
 
             /* Filename */
-            if (fnsize > 0) {
-              if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
+            যদি (fnsize > 0) {
+              যদি (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
                 offsetCD += fnsize;
-              } else {
+              } অন্যথা {
                 err = Z_ERRNO;
-                break;
+                ভঙ্গ;
               }
-            } else {
+            } অন্যথা {
               err = Z_STREAM_ERROR;
-              break;
+              ভঙ্গ;
             }
 
             /* Extra field */
-            if (extsize > 0) {
-              if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
+            যদি (extsize > 0) {
+              যদি (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
                 offsetCD += extsize;
-              } else {
+              } অন্যথা {
                 err = Z_ERRNO;
-                break;
+                ভঙ্গ;
               }
             }
 
             /* Comment field */
-            if (comsize > 0) {
-              if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
+            যদি (comsize > 0) {
+              যদি ((পূর্ণাঙ্ক)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
                 offsetCD += comsize;
-              } else {
+              } অন্যথা {
                 err = Z_ERRNO;
-                break;
+                ভঙ্গ;
               }
             }
 
 
-          } else {
+          } অন্যথা {
             err = Z_ERRNO;
-            break;
+            ভঙ্গ;
           }
         }
 
         /* Success */
         entries++;
 
-      } else {
-        break;
+      } অন্যথা {
+        ভঙ্গ;
       }
     }
 
     /* Final central directory  */
     {
-      int entriesZip = entries;
-      char end[22];
-      char* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
-      int comsize = (int) strlen(comment);
-      if (entriesZip > 0xffff) {
+      পূর্ণাঙ্ক entriesZip = entries;
+      ৱর্ণ end[22];
+      ৱর্ণ* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
+      পূর্ণাঙ্ক comsize = (পূর্ণাঙ্ক) strlen(comment);
+      যদি (entriesZip > 0xffff) {
         entriesZip = 0xffff;
       }
       WRITE_32(end, 0x06054b50);
@@ -234,31 +234,31 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
       WRITE_16(end + 20, comsize);          /* comment */
 
       /* Header */
-      if (fwrite(end, 1, 22, fpOutCD) == 22) {
+      যদি (fwrite(end, 1, 22, fpOutCD) == 22) {
 
         /* Comment field */
-        if (comsize > 0) {
-          if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
+        যদি (comsize > 0) {
+          যদি ((পূর্ণাঙ্ক)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
             err = Z_ERRNO;
           }
         }
 
-      } else {
+      } অন্যথা {
         err = Z_ERRNO;
       }
     }
 
     /* Final merge (file + central directory) */
     fclose(fpOutCD);
-    if (err == Z_OK) {
+    যদি (err == Z_OK) {
       fpOutCD = fopen(fileOutTmp, "rb");
-      if (fpOutCD != NULL) {
-        int nRead;
-        char buffer[8192];
-        while ( (nRead = (int)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
-          if ((int)fwrite(buffer, 1, nRead, fpOut) != nRead) {
+      যদি (fpOutCD != রিক্ত) {
+        পূর্ণাঙ্ক nRead;
+        ৱর্ণ buffer[8192];
+        যেতিয়ালৈ ( (nRead = (পূর্ণাঙ্ক)fread(buffer, 1, পরিমাণ(buffer), fpOutCD)) > 0) {
+          যদি ((পূর্ণাঙ্ক)fwrite(buffer, 1, nRead, fpOut) != nRead) {
             err = Z_ERRNO;
-            break;
+            ভঙ্গ;
           }
         }
         fclose(fpOutCD);
@@ -270,25 +270,25 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
     fclose(fpOut);
 
     /* Wipe temporary file */
-    (void)remove(fileOutTmp);
+    (শূন্য)remove(fileOutTmp);
 
     /* Number of recovered entries */
-    if (err == Z_OK) {
-      if (nRecovered != NULL) {
+    যদি (err == Z_OK) {
+      যদি (nRecovered != রিক্ত) {
         *nRecovered = entries;
       }
-      if (bytesRecovered != NULL) {
+      যদি (bytesRecovered != রিক্ত) {
         *bytesRecovered = totalBytes;
       }
     }
-  } else {
-    if (fpOutCD != NULL)
+  } অন্যথা {
+    যদি (fpOutCD != রিক্ত)
       fclose(fpOutCD);
-    if (fpZip != NULL)
+    যদি (fpZip != রিক্ত)
       fclose(fpZip);
-    if (fpOut != NULL)
+    যদি (fpOut != রিক্ত)
       fclose(fpOut);
     err = Z_STREAM_ERROR;
   }
-  return err;
+  ঘূৰাই err;
 }
