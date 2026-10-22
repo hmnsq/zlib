@@ -8,144 +8,144 @@
 #ifndef _CRT_SECURE_NO_WARNINGS
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "zlib.h"
-#include "unzip.h"
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل "zlib.h"
+#شامل "unzip.h"
 
-#define READ_8(adr)  ((unsigned char)*(adr))
+#define READ_8(adr)  ((unsigned نویسه)*(adr))
 #define READ_16(adr) ( READ_8(adr) | (READ_8(adr+1) << 8) )
 #define READ_32(adr) ( READ_16(adr) | (READ_16((adr)+2) << 16) )
 
-#define WRITE_8(buff, n) do { \
-  *((unsigned char*)(buff)) = (unsigned char) ((n) & 0xff); \
-} while(0)
-#define WRITE_16(buff, n) do { \
-  WRITE_8((unsigned char*)(buff), n); \
-  WRITE_8(((unsigned char*)(buff)) + 1, (n) >> 8); \
-} while(0)
-#define WRITE_32(buff, n) do { \
-  WRITE_16((unsigned char*)(buff), (n) & 0xffff); \
-  WRITE_16((unsigned char*)(buff) + 2, (n) >> 16); \
-} while(0)
+#define WRITE_8(buff, n) انجامبده { \
+  *((unsigned نویسه*)(buff)) = (unsigned نویسه) ((n) & 0xff); \
+} وقتی(0)
+#define WRITE_16(buff, n) انجامبده { \
+  WRITE_8((unsigned نویسه*)(buff), n); \
+  WRITE_8(((unsigned نویسه*)(buff)) + 1, (n) >> 8); \
+} وقتی(0)
+#define WRITE_32(buff, n) انجامبده { \
+  WRITE_16((unsigned نویسه*)(buff), (n) & 0xffff); \
+  WRITE_16((unsigned نویسه*)(buff) + 2, (n) >> 16); \
+} وقتی(0)
 
-extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
-  int err = Z_OK;
+بیرونی صحیح ZEXPORT unzRepair(ثابت نویسه* file, ثابت نویسه* fileOut, ثابت نویسه* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
+  صحیح err = Z_OK;
   FILE* fpZip = fopen(file, "rb");
   FILE* fpOut = fopen(fileOut, "wb");
   FILE* fpOutCD = fopen(fileOutTmp, "wb");
-  if (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
-    int entries = 0;
+  اگر (fpZip != پوچ && fpOut != پوچ && fpOutCD != پوچ ) {
+    صحیح entries = 0;
     uLong totalBytes = 0;
-    char header[30];
-    char filename[1024];
-    char extra[1024];
-    int offset = 0;
-    int offsetCD = 0;
-    while ( fread(header, 1, 30, fpZip) == 30 ) {
-      int currentOffset = offset;
+    نویسه header[30];
+    نویسه filename[1024];
+    نویسه extra[1024];
+    صحیح offset = 0;
+    صحیح offsetCD = 0;
+    وقتی ( fread(header, 1, 30, fpZip) == 30 ) {
+      صحیح currentOffset = offset;
 
       /* File entry */
-      if (READ_32(header) == 0x04034b50) {
-        unsigned int version = READ_16(header + 4);
-        unsigned int gpflag = READ_16(header + 6);
-        unsigned int method = READ_16(header + 8);
-        unsigned int filetime = READ_16(header + 10);
-        unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+      اگر (READ_32(header) == 0x04034b50) {
+        unsigned صحیح version = READ_16(header + 4);
+        unsigned صحیح gpflag = READ_16(header + 6);
+        unsigned صحیح method = READ_16(header + 8);
+        unsigned صحیح filetime = READ_16(header + 10);
+        unsigned صحیح filedate = READ_16(header + 12);
+        unsigned صحیح crc = READ_32(header + 14); /* crc */
+        unsigned صحیح cpsize = READ_32(header + 18); /* compressed size */
+        unsigned صحیح uncpsize = READ_32(header + 22); /* uncompressed sz */
+        unsigned صحیح fnsize = READ_16(header + 26); /* file name length */
+        unsigned صحیح extsize = READ_16(header + 28); /* extra field length */
         filename[0] = extra[0] = '\0';
 
         /* Header */
-        if (fwrite(header, 1, 30, fpOut) == 30) {
+        اگر (fwrite(header, 1, 30, fpOut) == 30) {
           offset += 30;
-        } else {
+        } وگرنه {
           err = Z_ERRNO;
-          break;
+          بشکن;
         }
 
         /* Filename */
-        if (fnsize > 0) {
-          if (fnsize < sizeof(filename)) {
-            if (fread(filename, 1, fnsize, fpZip) == fnsize) {
-                if (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
+        اگر (fnsize > 0) {
+          اگر (fnsize < اندازه(filename)) {
+            اگر (fread(filename, 1, fnsize, fpZip) == fnsize) {
+                اگر (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
                 offset += fnsize;
-              } else {
+              } وگرنه {
                 err = Z_ERRNO;
-                break;
+                بشکن;
               }
-            } else {
+            } وگرنه {
               err = Z_ERRNO;
-              break;
+              بشکن;
             }
-          } else {
+          } وگرنه {
             err = Z_ERRNO;
-            break;
+            بشکن;
           }
-        } else {
+        } وگرنه {
           err = Z_STREAM_ERROR;
-          break;
+          بشکن;
         }
 
         /* Extra field */
-        if (extsize > 0) {
-          if (extsize < sizeof(extra)) {
-            if (fread(extra, 1, extsize, fpZip) == extsize) {
-              if (fwrite(extra, 1, extsize, fpOut) == extsize) {
+        اگر (extsize > 0) {
+          اگر (extsize < اندازه(extra)) {
+            اگر (fread(extra, 1, extsize, fpZip) == extsize) {
+              اگر (fwrite(extra, 1, extsize, fpOut) == extsize) {
                 offset += extsize;
-                } else {
+                } وگرنه {
                 err = Z_ERRNO;
-                break;
+                بشکن;
               }
-            } else {
+            } وگرنه {
               err = Z_ERRNO;
-              break;
+              بشکن;
             }
-          } else {
+          } وگرنه {
             err = Z_ERRNO;
-            break;
+            بشکن;
           }
         }
 
         /* Data */
         {
-          int dataSize = cpsize;
-          if (dataSize == 0) {
+          صحیح dataSize = cpsize;
+          اگر (dataSize == 0) {
             dataSize = uncpsize;
           }
-          if (dataSize > 0) {
-            char* data = malloc(dataSize);
-            if (data != NULL) {
-              if ((int)fread(data, 1, dataSize, fpZip) == dataSize) {
-                if ((int)fwrite(data, 1, dataSize, fpOut) == dataSize) {
+          اگر (dataSize > 0) {
+            نویسه* data = malloc(dataSize);
+            اگر (data != پوچ) {
+              اگر ((صحیح)fread(data, 1, dataSize, fpZip) == dataSize) {
+                اگر ((صحیح)fwrite(data, 1, dataSize, fpOut) == dataSize) {
                   offset += dataSize;
                   totalBytes += dataSize;
-                } else {
+                } وگرنه {
                   err = Z_ERRNO;
                 }
-              } else {
+              } وگرنه {
                 err = Z_ERRNO;
               }
-              free(data);
-              if (err != Z_OK) {
-                break;
+              آزاد(data);
+              اگر (err != Z_OK) {
+                بشکن;
               }
-            } else {
+            } وگرنه {
               err = Z_MEM_ERROR;
-              break;
+              بشکن;
             }
           }
         }
 
         /* Central directory entry */
         {
-          char central[46];
-          char* comment = "";
-          int comsize = (int) strlen(comment);
+          نویسه central[46];
+          نویسه* comment = "";
+          صحیح comsize = (صحیح) strlen(comment);
           WRITE_32(central, 0x02014b50);
           WRITE_16(central + 4, version);
           WRITE_16(central + 6, version);
@@ -164,64 +164,64 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
           WRITE_32(central + 38, 0);    /* ext attrb */
           WRITE_32(central + 42, currentOffset);
           /* Header */
-          if (fwrite(central, 1, 46, fpOutCD) == 46) {
+          اگر (fwrite(central, 1, 46, fpOutCD) == 46) {
             offsetCD += 46;
 
             /* Filename */
-            if (fnsize > 0) {
-              if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
+            اگر (fnsize > 0) {
+              اگر (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
                 offsetCD += fnsize;
-              } else {
+              } وگرنه {
                 err = Z_ERRNO;
-                break;
+                بشکن;
               }
-            } else {
+            } وگرنه {
               err = Z_STREAM_ERROR;
-              break;
+              بشکن;
             }
 
             /* Extra field */
-            if (extsize > 0) {
-              if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
+            اگر (extsize > 0) {
+              اگر (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
                 offsetCD += extsize;
-              } else {
+              } وگرنه {
                 err = Z_ERRNO;
-                break;
+                بشکن;
               }
             }
 
             /* Comment field */
-            if (comsize > 0) {
-              if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
+            اگر (comsize > 0) {
+              اگر ((صحیح)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
                 offsetCD += comsize;
-              } else {
+              } وگرنه {
                 err = Z_ERRNO;
-                break;
+                بشکن;
               }
             }
 
 
-          } else {
+          } وگرنه {
             err = Z_ERRNO;
-            break;
+            بشکن;
           }
         }
 
         /* Success */
         entries++;
 
-      } else {
-        break;
+      } وگرنه {
+        بشکن;
       }
     }
 
     /* Final central directory  */
     {
-      int entriesZip = entries;
-      char end[22];
-      char* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
-      int comsize = (int) strlen(comment);
-      if (entriesZip > 0xffff) {
+      صحیح entriesZip = entries;
+      نویسه end[22];
+      نویسه* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
+      صحیح comsize = (صحیح) strlen(comment);
+      اگر (entriesZip > 0xffff) {
         entriesZip = 0xffff;
       }
       WRITE_32(end, 0x06054b50);
@@ -234,31 +234,31 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
       WRITE_16(end + 20, comsize);          /* comment */
 
       /* Header */
-      if (fwrite(end, 1, 22, fpOutCD) == 22) {
+      اگر (fwrite(end, 1, 22, fpOutCD) == 22) {
 
         /* Comment field */
-        if (comsize > 0) {
-          if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
+        اگر (comsize > 0) {
+          اگر ((صحیح)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
             err = Z_ERRNO;
           }
         }
 
-      } else {
+      } وگرنه {
         err = Z_ERRNO;
       }
     }
 
     /* Final merge (file + central directory) */
     fclose(fpOutCD);
-    if (err == Z_OK) {
+    اگر (err == Z_OK) {
       fpOutCD = fopen(fileOutTmp, "rb");
-      if (fpOutCD != NULL) {
-        int nRead;
-        char buffer[8192];
-        while ( (nRead = (int)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
-          if ((int)fwrite(buffer, 1, nRead, fpOut) != nRead) {
+      اگر (fpOutCD != پوچ) {
+        صحیح nRead;
+        نویسه buffer[8192];
+        وقتی ( (nRead = (صحیح)fread(buffer, 1, اندازه(buffer), fpOutCD)) > 0) {
+          اگر ((صحیح)fwrite(buffer, 1, nRead, fpOut) != nRead) {
             err = Z_ERRNO;
-            break;
+            بشکن;
           }
         }
         fclose(fpOutCD);
@@ -270,25 +270,25 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
     fclose(fpOut);
 
     /* Wipe temporary file */
-    (void)remove(fileOutTmp);
+    (تهی)remove(fileOutTmp);
 
     /* Number of recovered entries */
-    if (err == Z_OK) {
-      if (nRecovered != NULL) {
+    اگر (err == Z_OK) {
+      اگر (nRecovered != پوچ) {
         *nRecovered = entries;
       }
-      if (bytesRecovered != NULL) {
+      اگر (bytesRecovered != پوچ) {
         *bytesRecovered = totalBytes;
       }
     }
-  } else {
-    if (fpOutCD != NULL)
+  } وگرنه {
+    اگر (fpOutCD != پوچ)
       fclose(fpOutCD);
-    if (fpZip != NULL)
+    اگر (fpZip != پوچ)
       fclose(fpZip);
-    if (fpOut != NULL)
+    اگر (fpOut != پوچ)
       fclose(fpOut);
     err = Z_STREAM_ERROR;
   }
-  return err;
+  بازگشت err;
 }

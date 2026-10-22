@@ -40,35 +40,35 @@
 #define _zip12_H
 
 #ifdef __cplusplus
-extern "C" {
+بیرونی "C" {
 #endif
 
 /* #define HAVE_BZIP2 */
 
 #ifndef _ZLIB_H
-#include "zlib.h"
+#شامل "zlib.h"
 #endif
 
 #ifndef _ZLIBIOAPI_H
-#include "ioapi.h"
+#شامل "ioapi.h"
 #endif
 
 #ifdef HAVE_BZIP2
-#include "bzlib.h"
+#شامل "bzlib.h"
 #endif
 
 #define Z_BZIP2ED 12
 
-#if defined(STRICTZIP) || defined(STRICTZIPUNZIP)
+#اگر defined(STRICTZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
-typedef struct TagzipFile__ { int unused; } zipFile__;
-typedef zipFile__ *zipFile;
-#else
-typedef voidp zipFile;
+تعریفنوع ساختار TagzipFile__ { صحیح unused; } zipFile__;
+تعریفنوع zipFile__ *zipFile;
+#وگرنه
+تعریفنوع voidp zipFile;
 #endif
 
-extern const char zip_copyright[];
+بیرونی ثابت نویسه zip_copyright[];
 
 #define ZIP_OK                          (0)
 #define ZIP_EOF                         (0)
@@ -78,26 +78,26 @@ extern const char zip_copyright[];
 #define ZIP_INTERNALERROR               (-104)
 
 #ifndef DEF_MEM_LEVEL
-#  if MAX_MEM_LEVEL >= 8
+#  اگر MAX_MEM_LEVEL >= 8
 #    define DEF_MEM_LEVEL 8
-#  else
+#  وگرنه
 #    define DEF_MEM_LEVEL  MAX_MEM_LEVEL
 #  endif
 #endif
 /* default memLevel */
 
 /* tm_zip contain date/time info */
-typedef struct tm_zip_s
+تعریفنوع ساختار tm_zip_s
 {
-    int tm_sec;             /* seconds after the minute - [0,59] */
-    int tm_min;             /* minutes after the hour - [0,59] */
-    int tm_hour;            /* hours since midnight - [0,23] */
-    int tm_mday;            /* day of the month - [1,31] */
-    int tm_mon;             /* months since January - [0,11] */
-    int tm_year;            /* years - [1980..2044] */
+    صحیح tm_sec;             /* seconds after the minute - [0,59] */
+    صحیح tm_min;             /* minutes after the hour - [0,59] */
+    صحیح tm_hour;            /* hours since midnight - [0,23] */
+    صحیح tm_mday;            /* day of the month - [1,31] */
+    صحیح tm_mon;             /* months since January - [0,11] */
+    صحیح tm_year;            /* years - [1980..2044] */
 } tm_zip;
 
-typedef struct
+تعریفنوع ساختار
 {
     tm_zip      tmz_date;       /* date in understandable format           */
     uLong       dosDate;       /* if dos_date == 0, tmu_date is used      */
@@ -107,15 +107,15 @@ typedef struct
     uLong       external_fa;    /* external file attributes        4 bytes */
 } zip_fileinfo;
 
-typedef const char* zipcharpc;
+تعریفنوع ثابت نویسه* zipcharpc;
 
 
 #define APPEND_STATUS_CREATE        (0)
 #define APPEND_STATUS_CREATEAFTER   (1)
 #define APPEND_STATUS_ADDINZIP      (2)
 
-extern zipFile ZEXPORT zipOpen(const char *pathname, int append);
-extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
+بیرونی zipFile ZEXPORT zipOpen(ثابت نویسه *pathname, صحیح append);
+بیرونی zipFile ZEXPORT zipOpen64(ثابت تهی *pathname, صحیح append);
 /*
   Create a zipfile.
      pathname contain on Windows XP a filename like "c:\\zlib\\zlib113.zip" or on
@@ -135,43 +135,43 @@ extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
    Of course, you can use RAW reading and writing to copy the file you did not want delete
  */
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname,
-                                int append,
+بیرونی zipFile ZEXPORT zipOpen2(ثابت نویسه *pathname,
+                                صحیح append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname,
-                                   int append,
+بیرونی zipFile ZEXPORT zipOpen2_64(ثابت تهی *pathname,
+                                   صحیح append,
                                    zipcharpc* globalcomment,
                                    zlib_filefunc64_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen3(const void *pathname,
-                                int append,
+بیرونی zipFile ZEXPORT zipOpen3(ثابت تهی *pathname,
+                                صحیح append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc64_32_def* pzlib_filefunc64_32_def);
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file,
-                                       const char* filename,
-                                       const zip_fileinfo* zipfi,
-                                       const void* extrafield_local,
+بیرونی صحیح ZEXPORT zipOpenNewFileInZip(zipFile file,
+                                       ثابت نویسه* filename,
+                                       ثابت zip_fileinfo* zipfi,
+                                       ثابت تهی* extrafield_local,
                                        uInt size_extrafield_local,
-                                       const void* extrafield_global,
+                                       ثابت تهی* extrafield_global,
                                        uInt size_extrafield_global,
-                                       const char* comment,
-                                       int method,
-                                       int level);
+                                       ثابت نویسه* comment,
+                                       صحیح method,
+                                       صحیح level);
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
-                                         const char* filename,
-                                         const zip_fileinfo* zipfi,
-                                         const void* extrafield_local,
+بیرونی صحیح ZEXPORT zipOpenNewFileInZip64(zipFile file,
+                                         ثابت نویسه* filename,
+                                         ثابت zip_fileinfo* zipfi,
+                                         ثابت تهی* extrafield_local,
                                          uInt size_extrafield_local,
-                                         const void* extrafield_global,
+                                         ثابت تهی* extrafield_global,
                                          uInt size_extrafield_global,
-                                         const char* comment,
-                                         int method,
-                                         int level,
-                                         int zip64);
+                                         ثابت نویسه* comment,
+                                         صحیح method,
+                                         صحیح level,
+                                         صحیح zip64);
 
 /*
   Open a file in the ZIP for writing.
@@ -190,69 +190,69 @@ extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
  */
 
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+بیرونی صحیح ZEXPORT zipOpenNewFileInZip2(zipFile file,
+                                        ثابت نویسه* filename,
+                                        ثابت zip_fileinfo* zipfi,
+                                        ثابت تهی* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        ثابت تهی* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw);
+                                        ثابت نویسه* comment,
+                                        صحیح method,
+                                        صحیح level,
+                                        صحیح raw);
 
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+بیرونی صحیح ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
+                                           ثابت نویسه* filename,
+                                           ثابت zip_fileinfo* zipfi,
+                                           ثابت تهی* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           ثابت تهی* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int zip64);
+                                           ثابت نویسه* comment,
+                                           صحیح method,
+                                           صحیح level,
+                                           صحیح raw,
+                                           صحیح zip64);
 /*
   Same than zipOpenNewFileInZip, except if raw=1, we write raw file
  */
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+بیرونی صحیح ZEXPORT zipOpenNewFileInZip3(zipFile file,
+                                        ثابت نویسه* filename,
+                                        ثابت zip_fileinfo* zipfi,
+                                        ثابت تهی* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        ثابت تهی* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
+                                        ثابت نویسه* comment,
+                                        صحیح method,
+                                        صحیح level,
+                                        صحیح raw,
+                                        صحیح windowBits,
+                                        صحیح memLevel,
+                                        صحیح strategy,
+                                        ثابت نویسه* password,
                                         uLong crcForCrypting);
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+بیرونی صحیح ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
+                                           ثابت نویسه* filename,
+                                           ثابت zip_fileinfo* zipfi,
+                                           ثابت تهی* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           ثابت تهی* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
+                                           ثابت نویسه* comment,
+                                           صحیح method,
+                                           صحیح level,
+                                           صحیح raw,
+                                           صحیح windowBits,
+                                           صحیح memLevel,
+                                           صحیح strategy,
+                                           ثابت نویسه* password,
                                            uLong crcForCrypting,
-                                           int zip64);
+                                           صحیح zip64);
 
 /*
   Same than zipOpenNewFileInZip2, except
@@ -261,45 +261,45 @@ extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
     crcForCrypting : crc of file to compress (needed for crypting)
  */
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+بیرونی صحیح ZEXPORT zipOpenNewFileInZip4(zipFile file,
+                                        ثابت نویسه* filename,
+                                        ثابت zip_fileinfo* zipfi,
+                                        ثابت تهی* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        ثابت تهی* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
+                                        ثابت نویسه* comment,
+                                        صحیح method,
+                                        صحیح level,
+                                        صحیح raw,
+                                        صحیح windowBits,
+                                        صحیح memLevel,
+                                        صحیح strategy,
+                                        ثابت نویسه* password,
                                         uLong crcForCrypting,
                                         uLong versionMadeBy,
                                         uLong flagBase);
 
 
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+بیرونی صحیح ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
+                                           ثابت نویسه* filename,
+                                           ثابت zip_fileinfo* zipfi,
+                                           ثابت تهی* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           ثابت تهی* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
+                                           ثابت نویسه* comment,
+                                           صحیح method,
+                                           صحیح level,
+                                           صحیح raw,
+                                           صحیح windowBits,
+                                           صحیح memLevel,
+                                           صحیح strategy,
+                                           ثابت نویسه* password,
                                            uLong crcForCrypting,
                                            uLong versionMadeBy,
                                            uLong flagBase,
-                                           int zip64);
+                                           صحیح zip64);
 /*
   Same than zipOpenNewFileInZip4, except
     versionMadeBy : value for Version made by field
@@ -307,28 +307,28 @@ extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
  */
 
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file,
-                                       const void* buf,
+بیرونی صحیح ZEXPORT zipWriteInFileInZip(zipFile file,
+                                       ثابت تهی* buf,
                                        unsigned len);
 /*
   Write data in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file);
+بیرونی صحیح ZEXPORT zipCloseFileInZip(zipFile file);
 /*
   Close the current file in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file,
+بیرونی صحیح ZEXPORT zipCloseFileInZipRaw(zipFile file,
                                         uLong uncompressed_size,
                                         uLong crc32);
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file,
+بیرونی صحیح ZEXPORT zipCloseFileInZipRaw64(zipFile file,
                                           ZPOS64_T uncompressed_size,
                                           uLong crc32);
 
-extern int ZEXPORT zipAlreadyThere(zipFile file,
-                                   char const* name);
+بیرونی صحیح ZEXPORT zipAlreadyThere(zipFile file,
+                                   نویسه ثابت* name);
 /*
   See if name is already in file's central directory.
  */
@@ -339,14 +339,14 @@ extern int ZEXPORT zipAlreadyThere(zipFile file,
   uncompressed_size and crc32 are value for the uncompressed size
  */
 
-extern int ZEXPORT zipClose(zipFile file,
-                            const char* global_comment);
+بیرونی صحیح ZEXPORT zipClose(zipFile file,
+                            ثابت نویسه* global_comment);
 /*
   Close the zipfile
  */
 
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader);
+بیرونی صحیح ZEXPORT zipRemoveExtraInfoBlock(نویسه* pData, صحیح* dataLen, short sHeader);
 /*
   zipRemoveExtraInfoBlock -  Added by Mathias Svensson
 

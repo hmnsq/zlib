@@ -23,36 +23,36 @@
  * $Id: zstream.h 1.1 1997-06-25 12:00:56+02 tyge Exp tyge $
  */
 
-#include <strstream.h>
-#include <string.h>
-#include <stdio.h>
-#include "zlib.h"
+#شامل <strstream.h>
+#شامل <string.h>
+#شامل <stdio.h>
+#شامل "zlib.h"
 
-#if defined(_WIN32)
+#اگر defined(_WIN32)
 #   include <fcntl.h>
 #   include <io.h>
-#   define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#   define SET_BINARY_MODE(file)
+#   define SET_دودویی_MODE(file) setmode(fileno(file), O_دودویی)
+#وگرنه
+#   define SET_دودویی_MODE(file)
 #endif
 
 class zstringlen {
-public:
+عمومی:
     zstringlen(class izstream&);
-    zstringlen(class ozstream&, const char*);
-    size_t value() const { return val.word; }
-private:
-    struct Val { unsigned char byte; size_t word; } val;
+    zstringlen(class ozstream&, ثابت نویسه*);
+    size_t مقدار() ثابت { بازگشت val.word; }
+خصوصی:
+    ساختار Val { unsigned نویسه byte; size_t word; } val;
 };
 
 //  ----------------------------- izstream -----------------------------
 
 class izstream
 {
-    public:
+    عمومی:
         izstream() : m_fp(0) {}
         izstream(FILE* fp) : m_fp(0) { open(fp); }
-        izstream(const char* name) : m_fp(0) { open(name); }
+        izstream(ثابت نویسه* name) : m_fp(0) { open(name); }
         ~izstream() { close(); }
 
         /* Opens a gzip (.gz) file for reading.
@@ -61,14 +61,14 @@ class izstream
          * decompression. errno can be checked to distinguish two error
          * cases (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name) {
-            if (m_fp) close();
+        تهی open(ثابت نویسه* name) {
+            اگر (m_fp) close();
             m_fp = ::gzopen(name, "rb");
         }
 
-        void open(FILE* fp) {
-            SET_BINARY_MODE(fp);
-            if (m_fp) close();
+        تهی open(FILE* fp) {
+            SET_دودویی_MODE(fp);
+            اگر (m_fp) close();
             m_fp = ::gzdopen(fileno(fp), "rb");
         }
 
@@ -76,15 +76,15 @@ class izstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            int r = ::gzclose(m_fp);
-            m_fp = 0; return r;
+        صحیح close() {
+            صحیح r = ::gzclose(m_fp);
+            m_fp = 0; بازگشت r;
         }
 
         /* Binary read the given number of bytes from the compressed file.
          */
-        int read(void* buf, size_t len) {
-            return ::gzread(m_fp, buf, len);
+        صحیح اقرأ(تهی* buf, size_t len) {
+            بازگشت ::gzread(m_fp, buf, len);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -93,13 +93,13 @@ class izstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        ثابت نویسه* error(صحیح* errnum) {
+            بازگشت ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { بازگشت m_fp; }
 
-    private:
+    خصوصی:
         gzFile m_fp;
 };
 
@@ -110,57 +110,57 @@ class izstream
  * returns the number of uncompressed bytes actually read
  * (0 for end of file, -1 for error).
  */
-template <class T, class Items>
-inline int read(izstream& zs, T* x, Items items) {
-    return ::gzread(zs.fp(), x, items*sizeof(T));
+template <class T, class اقلام>
+درونخطی صحیح اقرأ(izstream& zs, T* x, اقلام اقلام_2) {
+    بازگشت ::gzread(zs.fp(), x, اقلام_2*اندازه(T));
 }
 
 /*
  * Binary input with the '>' operator.
  */
 template <class T>
-inline izstream& operator>(izstream& zs, T& x) {
-    ::gzread(zs.fp(), &x, sizeof(T));
-    return zs;
+درونخطی izstream& operator>(izstream& zs, T& x) {
+    ::gzread(zs.fp(), &x, اندازه(T));
+    بازگشت zs;
 }
 
 
-inline zstringlen::zstringlen(izstream& zs) {
+درونخطی zstringlen::zstringlen(izstream& zs) {
     zs > val.byte;
-    if (val.byte == 255) zs > val.word;
-    else val.word = val.byte;
+    اگر (val.byte == 255) zs > val.word;
+    وگرنه val.word = val.byte;
 }
 
 /*
  * Read length of string + the string with the '>' operator.
  */
-inline izstream& operator>(izstream& zs, char* x) {
+درونخطی izstream& operator>(izstream& zs, نویسه* x) {
     zstringlen len(zs);
-    ::gzread(zs.fp(), x, len.value());
-    x[len.value()] = '\0';
-    return zs;
+    ::gzread(zs.fp(), x, len.مقدار());
+    x[len.مقدار()] = '\0';
+    بازگشت zs;
 }
 
-inline char* read_string(izstream& zs) {
+درونخطی نویسه* read_string(izstream& zs) {
     zstringlen len(zs);
-    char* x = new char[len.value()+1];
-    ::gzread(zs.fp(), x, len.value());
-    x[len.value()] = '\0';
-    return x;
+    نویسه* x = new نویسه[len.مقدار()+1];
+    ::gzread(zs.fp(), x, len.مقدار());
+    x[len.مقدار()] = '\0';
+    بازگشت x;
 }
 
 // ----------------------------- ozstream -----------------------------
 
 class ozstream
 {
-    public:
+    عمومی:
         ozstream() : m_fp(0), m_os(0) {
         }
-        ozstream(FILE* fp, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(FILE* fp, صحیح level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
             open(fp, level);
         }
-        ozstream(const char* name, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(ثابت نویسه* name, صحیح level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
             open(name, level);
         }
@@ -173,20 +173,20 @@ class ozstream
          * errno can be checked to distinguish two error cases
          * (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name, int level = Z_DEFAULT_COMPRESSION) {
-            char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
+        تهی open(ثابت نویسه* name, صحیح level = Z_DEFAULT_COMPRESSION) {
+            نویسه mode[4] = "wb\0";
+            اگر (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
+            اگر (m_fp) close();
             m_fp = ::gzopen(name, mode);
         }
 
         /* open from a FILE pointer.
          */
-        void open(FILE* fp, int level = Z_DEFAULT_COMPRESSION) {
-            SET_BINARY_MODE(fp);
-            char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
+        تهی open(FILE* fp, صحیح level = Z_DEFAULT_COMPRESSION) {
+            SET_دودویی_MODE(fp);
+            نویسه mode[4] = "wb\0";
+            اگر (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
+            اگر (m_fp) close();
             m_fp = ::gzdopen(fileno(fp), mode);
         }
 
@@ -194,18 +194,18 @@ class ozstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            if (m_os) {
+        صحیح close() {
+            اگر (m_os) {
                 ::gzwrite(m_fp, m_os->str(), m_os->pcount());
                 delete[] m_os->str(); delete m_os; m_os = 0;
             }
-            int r = ::gzclose(m_fp); m_fp = 0; return r;
+            صحیح r = ::gzclose(m_fp); m_fp = 0; بازگشت r;
         }
 
         /* Binary write the given number of bytes into the compressed file.
          */
-        int write(const void* buf, size_t len) {
-            return ::gzwrite(m_fp, (voidp) buf, len);
+        صحیح اكتب(ثابت تهی* buf, size_t len) {
+            بازگشت ::gzwrite(m_fp, (voidp) buf, len);
         }
 
         /* Flushes all pending output into the compressed file. The parameter
@@ -215,9 +215,9 @@ class ozstream
          * flush() should be called only when strictly necessary because it can
          * degrade compression.
          */
-        int flush(int _flush) {
+        صحیح flush(صحیح _flush) {
             os_flush();
-            return ::gzflush(m_fp, _flush);
+            بازگشت ::gzflush(m_fp, _flush);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -226,19 +226,19 @@ class ozstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        ثابت نویسه* error(صحیح* errnum) {
+            بازگشت ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { بازگشت m_fp; }
 
         ostream& os() {
-            if (m_os == 0) m_os = new ostrstream;
-            return *m_os;
+            اگر (m_os == 0) m_os = new ostrstream;
+            بازگشت *m_os;
         }
 
-        void os_flush() {
-            if (m_os && m_os->pcount()>0) {
+        تهی os_flush() {
+            اگر (m_os && m_os->pcount()>0) {
                 ostrstream* oss = new ostrstream;
                 oss->fill(m_os->fill());
                 oss->flags(m_os->flags());
@@ -249,7 +249,7 @@ class ozstream
             }
         }
 
-    private:
+    خصوصی:
         gzFile m_fp;
         ostrstream* m_os;
 };
@@ -259,38 +259,38 @@ class ozstream
  * returns the number of uncompressed bytes actually written
  * (0 in case of error).
  */
-template <class T, class Items>
-inline int write(ozstream& zs, const T* x, Items items) {
-    return ::gzwrite(zs.fp(), (voidp) x, items*sizeof(T));
+template <class T, class اقلام>
+درونخطی صحیح اكتب(ozstream& zs, ثابت T* x, اقلام اقلام_2) {
+    بازگشت ::gzwrite(zs.fp(), (voidp) x, اقلام_2*اندازه(T));
 }
 
 /*
  * Binary output with the '<' operator.
  */
 template <class T>
-inline ozstream& operator<(ozstream& zs, const T& x) {
-    ::gzwrite(zs.fp(), (voidp) &x, sizeof(T));
-    return zs;
+درونخطی ozstream& operator<(ozstream& zs, ثابت T& x) {
+    ::gzwrite(zs.fp(), (voidp) &x, اندازه(T));
+    بازگشت zs;
 }
 
-inline zstringlen::zstringlen(ozstream& zs, const char* x) {
+درونخطی zstringlen::zstringlen(ozstream& zs, ثابت نویسه* x) {
     val.byte = 255;  val.word = ::strlen(x);
-    if (val.word < 255) zs < (val.byte = val.word);
-    else zs < val;
+    اگر (val.word < 255) zs < (val.byte = val.word);
+    وگرنه zs < val;
 }
 
 /*
  * Write length of string + the string with the '<' operator.
  */
-inline ozstream& operator<(ozstream& zs, const char* x) {
+درونخطی ozstream& operator<(ozstream& zs, ثابت نویسه* x) {
     zstringlen len(zs, x);
-    ::gzwrite(zs.fp(), (voidp) x, len.value());
-    return zs;
+    ::gzwrite(zs.fp(), (voidp) x, len.مقدار());
+    بازگشت zs;
 }
 
 #ifdef _MSC_VER
-inline ozstream& operator<(ozstream& zs, char* const& x) {
-    return zs < (const char*) x;
+درونخطی ozstream& operator<(ozstream& zs, نویسه* ثابت& x) {
+    بازگشت zs < (ثابت نویسه*) x;
 }
 #endif
 
@@ -298,9 +298,9 @@ inline ozstream& operator<(ozstream& zs, char* const& x) {
  * Ascii write with the << operator;
  */
 template <class T>
-inline ostream& operator<<(ozstream& zs, const T& x) {
+درونخطی ostream& operator<<(ozstream& zs, ثابت T& x) {
     zs.os_flush();
-    return zs.os() << x;
+    بازگشت zs.os() << x;
 }
 
 #endif

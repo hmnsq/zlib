@@ -1,17 +1,17 @@
-#include "zstream.h"
-#include <math.h>
-#include <stdlib.h>
-#include <iomanip.h>
+#شامل "zstream.h"
+#شامل <math.h>
+#شامل <stdlib.h>
+#شامل <iomanip.h>
 
-void main() {
-    char h[256] = "Hello";
-    char* g = "Goodbye";
+تهی اصلی() {
+    نویسه h[256] = "Hello";
+    نویسه* g = "Goodbye";
     ozstream out("temp.gz");
     out < "This works well" < h < g;
     out.close();
 
     izstream in("temp.gz"); // read it back
-    char *x = read_string(in), *y = new char[256], z[256];
+    نویسه *x = read_string(in), *y = جدید نویسه[256], z[256];
     in > y > z;
     in.close();
     cout << x << endl << y << endl << z << endl;
