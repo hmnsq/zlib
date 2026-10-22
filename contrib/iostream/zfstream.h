@@ -12,23 +12,23 @@ public:
   gzfilebuf( );
   virtual ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( const var_na *name, පූර්ණ_සංඛ්‍යා io_mode );
+  gzfilebuf *attach( පූර්ණ_සංඛ්‍යා file_descriptor, පූර්ණ_සංඛ්‍යා io_mode );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  පූර්ණ_සංඛ්‍යා setcompressionlevel( පූර්ණ_සංඛ්‍යා comp_level );
+  පූර්ණ_සංඛ්‍යා setcompressionstrategy( පූර්ණ_සංඛ්‍යා comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  anta_hstha පූර්ණ_සංඛ්‍යා is_open() const { ආපසු (file !=NULL); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  virtual streampos seekoff( streamoff, ios::seek_dir, පූර්ණ_සංඛ්‍යා );
 
-  virtual int sync();
+  virtual පූර්ණ_සංඛ්‍යා sync();
 
-protected:
+rak_sita:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  virtual පූර්ණ_සංඛ්‍යා underflow();
+  virtual පූර්ණ_සංඛ්‍යා overflow( පූර්ණ_සංඛ්‍යා = EOF );
 
 private:
 
@@ -36,8 +36,8 @@ private:
   short mode;
   short own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  පූර්ණ_සංඛ්‍යා flushbuf();
+  පූර්ණ_සංඛ්‍යා fillbuf();
 
 };
 
@@ -45,17 +45,17 @@ class gzfilestream_common : virtual public ios {
 
   friend class gzifstream;
   friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  friend gzofstream &setcompressionlevel( gzofstream &, පූර්ණ_සංඛ්‍යා );
+  friend gzofstream &setcompressionstrategy( gzofstream &, පූර්ණ_සංඛ්‍යා );
 
 public:
   virtual ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
+  void attach( පූර්ණ_සංඛ්‍යා fd, පූර්ණ_සංඛ්‍යා io_mode );
+  void open( const var_na *name, පූර්ණ_සංඛ්‍යා io_mode );
   void close();
 
-protected:
+rak_sita:
   gzfilestream_common();
 
 private:
@@ -70,8 +70,8 @@ class gzifstream : public gzfilestream_common, public istream {
 public:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( const var_na *name, පූර්ණ_සංඛ්‍යා io_mode = ios::in );
+  gzifstream( පූර්ණ_සංඛ්‍යා fd, පූර්ණ_සංඛ්‍යා io_mode = ios::in );
 
   virtual ~gzifstream();
 
@@ -82,8 +82,8 @@ class gzofstream : public gzfilestream_common, public ostream {
 public:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( const var_na *name, පූර්ණ_සංඛ්‍යා io_mode = ios::out );
+  gzofstream( පූර්ණ_සංඛ්‍යා fd, පූර්ණ_සංඛ්‍යා io_mode = ios::out );
 
   virtual ~gzofstream();
 
@@ -100,29 +100,29 @@ private:
 
 template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  ආපසු (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+anta_hstha gzofstream &setcompressionlevel( gzofstream &s, පූර්ණ_සංඛ්‍යා l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  ආපසු s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+anta_hstha gzofstream &setcompressionstrategy( gzofstream &s, පූර්ණ_සංඛ්‍යා l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  ආපසු s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+anta_hstha gzomanip<පූර්ණ_සංඛ්‍යා> setcompressionlevel(පූර්ණ_සංඛ්‍යා l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  ආපසු gzomanip<පූර්ණ_සංඛ්‍යා>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+anta_hstha gzomanip<පූර්ණ_සංඛ්‍යා> setcompressionstrategy(පූර්ණ_සංඛ්‍යා l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  ආපසු gzomanip<පූර්ණ_සංඛ්‍යා>(&setcompressionstrategy,l);
 }
 
 #endif
