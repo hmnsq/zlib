@@ -78,7 +78,7 @@ local int bail(char *why1, char *why2)
 typedef struct {
     char *name;             /* name of file for error messages */
     int fd;                 /* file descriptor */
-    unsigned left;          /* bytes remaining at next */
+    unsigned कालिवा;          /* bytes remaining at next */
     unsigned char *next;    /* next byte to read */
     unsigned char *buf;     /* allocated buffer of length CHUNK */
 } bin;
@@ -110,7 +110,7 @@ local bin *bopen(char *name)
         bclose(in);
         return NULL;
     }
-    in->left = 0;
+    in->कालिवा = 0;
     in->next = in->buf;
     in->name = name;
     return in;
@@ -124,21 +124,21 @@ local int bload(bin *in)
 
     if (in == NULL)
         return -1;
-    if (in->left != 0)
+    if (in->कालिवा != 0)
         return 0;
     in->next = in->buf;
     do {
-        len = (long)read(in->fd, in->buf + in->left, CHUNK - in->left);
+        len = (long)read(in->fd, in->buf + in->कालिवा, CHUNK - in->कालिवा);
         if (len < 0)
             return -1;
-        in->left += (unsigned)len;
-    } while (len != 0 && in->left < CHUNK);
+        in->कालिवा += (unsigned)len;
+    } while (len != 0 && in->कालिवा < CHUNK);
     return len == 0 ? 1 : 0;
 }
 
 /* get a byte from the file, bail if end of file */
-#define bget(in) (in->left ? 0 : bload(in), \
-                  in->left ? (in->left--, *(in->next)++) : \
+#define bget(in) (in->कालिवा ? 0 : bload(in), \
+                  in->कालिवा ? (in->कालिवा--, *(in->next)++) : \
                     bail("unexpected end of file on ", in->name))
 
 /* get a four-byte little-endian unsigned integer from file */
@@ -161,22 +161,22 @@ local void bskip(bin *in, unsigned skip)
         return;
 
     /* easy case -- skip bytes in buffer */
-    if (skip <= in->left) {
-        in->left -= skip;
+    if (skip <= in->कालिवा) {
+        in->कालिवा -= skip;
         in->next += skip;
         return;
     }
 
     /* skip what's in buffer, discard buffer contents */
-    skip -= in->left;
-    in->left = 0;
+    skip -= in->कालिवा;
+    in->कालिवा = 0;
 
     /* seek past multiples of CHUNK bytes */
     if (skip > CHUNK) {
-        unsigned left;
+        unsigned कालिवा;
 
-        left = skip & (CHUNK - 1);
-        if (left == 0) {
+        कालिवा = skip & (CHUNK - 1);
+        if (कालिवा == 0) {
             /* exact number of chunks: seek all the way minus one byte to check
                for end-of-file with a read */
             lseek(in->fd, skip - 1, SEEK_CUR);
@@ -186,15 +186,15 @@ local void bskip(bin *in, unsigned skip)
         }
 
         /* skip the integral chunks, update skip with remainder */
-        lseek(in->fd, skip - left, SEEK_CUR);
-        skip = left;
+        lseek(in->fd, skip - कालिवा, SEEK_CUR);
+        skip = कालिवा;
     }
 
     /* read more input and skip remainder */
     bload(in);
-    if (skip > in->left)
+    if (skip > in->कालिवा)
         bail("unexpected end of file on ", in->name);
-    in->left -= skip;
+    in->कालिवा -= skip;
     in->next += skip;
 }
 
@@ -253,11 +253,11 @@ local void put4(unsigned long val, FILE *out)
 /* Load up zlib stream from buffered input, bail if end of file */
 local void zpull(z_streamp strm, bin *in)
 {
-    if (in->left == 0)
+    if (in->कालिवा == 0)
         bload(in);
-    if (in->left == 0)
+    if (in->कालिवा == 0)
         bail("unexpected end of file on ", in->name);
-    strm->avail_in = in->left;
+    strm->avail_in = in->कालिवा;
     strm->next_in = in->next;
 }
 
@@ -319,7 +319,7 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
         if (strm.avail_in == 0 && strm.avail_out != 0) {
             fwrite(start, 1, strm.next_in - start, out);
             start = in->buf;
-            in->left = 0;
+            in->कालिवा = 0;
             zpull(&strm, in);
         }
 
@@ -360,7 +360,7 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
                     /* don't have that byte yet -- get it */
                     fwrite(start, 1, strm.next_in - start, out);
                     start = in->buf;
-                    in->left = 0;
+                    in->कालिवा = 0;
                     zpull(&strm, in);
                 }
                 last = strm.next_in[0] & 1;
@@ -371,7 +371,7 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
     }
 
     /* update buffer with unused input */
-    in->left = strm.avail_in;
+    in->कालिवा = strm.avail_in;
     in->next = in->buf + (strm.next_in - in->buf);
 
     /* copy used input, write empty blocks to get to byte boundary */

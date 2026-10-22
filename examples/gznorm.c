@@ -28,9 +28,9 @@
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+#  define SET_दालावाहान_MODE(file) setmode(fileno(file), O_दालावाहान)
 #else
-#  define SET_BINARY_MODE(file)
+#  define SET_दालावाहान_MODE(file)
 #endif
 
 #define local static
@@ -39,10 +39,10 @@
 // allocation fails.
 local char *aprintf(char *fmt, ...) {
     // Get the length of the result of the printf.
-    va_list args;
-    va_start(args, fmt);
-    int len = vsnprintf(NULL, 0, fmt, args);
-    va_end(args);
+    va_list मगा_कातविरान;
+    va_start(मगा_कातविरान, fmt);
+    int len = vsnprintf(NULL, 0, fmt, मगा_कातविरान);
+    va_end(मगा_कातविरान);
     if (len < 0)
         return NULL;
 
@@ -50,9 +50,9 @@ local char *aprintf(char *fmt, ...) {
     char *str = malloc(len + 1);
     if (str == NULL)
         return NULL;
-    va_start(args, fmt);
-    vsnprintf(str, len + 1, fmt, args);
-    va_end(args);
+    va_start(मगा_कातविरान, fmt);
+    vsnprintf(str, len + 1, fmt, मगा_कातविरान);
+    va_end(मगा_कातविरान);
     return str;
 }
 
@@ -108,7 +108,7 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
     unsigned long crc = 0;          // accumulated CRC of uncompressed data
     unsigned long len = 0;          // accumulated length of uncompressed data
     unsigned long buf = 0;          // deflate stream bit buffer of num bits
-    int num = 0;                    // number of bits in buf (at bottom)
+    int नुमेरो_2 = 0;                    // number of bits in buf (at bottom)
 
     // Write a canonical gzip header (no mod time, file name, comment, extra
     // block, or extra flags, and OS is marked as unknown).
@@ -153,7 +153,7 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                 if (ret == Z_MEM_ERROR)
                     BYE("out of memory");
                 if (ret == Z_DATA_ERROR)
-                    BYE("input invalid: %s", strm.msg);
+                    BYE("input invalid: %s", strm.मेनसाहे);
                 if (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_STREAM_END)
                     BYE("internal error");
 
@@ -185,7 +185,7 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                     if (strm.data_type & 0x80) {
                         // End of header reached -- deflate blocks follow.
                         put = strm.next_in;
-                        prev = num;
+                        prev = नुमेरो_2;
                         memb = 0;
                         state = BLOCK;
                     }
@@ -238,9 +238,9 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                         // Some or all of the three header bits for this block
                         // may already be in the bit buffer. Load any remaining
                         // header bits into the bit buffer.
-                        if (num - prev < 3) {
-                            buf += (unsigned long)*put++ << num;
-                            num += 8;
+                        if (नुमेरो_2 - prev < 3) {
+                            buf += (unsigned long)*put++ << नुमेरो_2;
+                            नुमेरो_2 += 8;
                         }
 
                         // Set last to have a 1 in the position of the last
@@ -252,26 +252,26 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                             // bits from this block, including the header, into
                             // the bit buffer. We already have at least three,
                             // so at most one more byte needs to be loaded.
-                            if (num - prev < 10) {
+                            if (नुमेरो_2 - prev < 10) {
                                 if (put == strm.next_in)
                                     // Need to go get and process more input.
                                     // We'll end up back here to finish this.
                                     break;
-                                buf += (unsigned long)*put++ << num;
-                                num += 8;
+                                buf += (unsigned long)*put++ << नुमेरो_2;
+                                नुमेरो_2 += 8;
                             }
                             if (((buf >> prev) & 0x3ff) == 3) {
                                 // That final fixed block is empty. Delete it
                                 // to avoid adding an empty block every time a
                                 // gzip stream is normalized.
-                                num = prev;
+                                नुमेरो_2 = prev;
                                 buf &= last - 1;    // zero the pad bits
                             }
                         }
                         else if (((buf >> prev) & 6) == 0) {
                             // This is a stored block. Flush to the next
                             // byte boundary after the three-bit header.
-                            num = (prev + 10) & ~7;
+                            नुमेरो_2 = (prev + 10) & ~7;
                             buf &= last - 1;        // zero the pad bits
                         }
 
@@ -279,10 +279,10 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                         buf &= ~last;
 
                         // Write out complete bytes in the bit buffer.
-                        while (num >= 8) {
+                        while (नुमेरो_2 >= 8) {
                             putc(buf, out);
                             buf >>= 8;
-                            num -= 8;
+                            नुमेरो_2 -= 8;
                         }
 
                         // If no more bytes left to process, then we have
@@ -312,11 +312,11 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                     // compressed data in buf when done.
                     unsigned char *end = strm.next_in - mix;
                     if (put < end) {
-                        if (num)
+                        if (नुमेरो_2)
                             // Insert num bits from buf before the data being
                             // copied.
                             do {
-                                buf += (unsigned)(*put++) << num;
+                                buf += (unsigned)(*put++) << नुमेरो_2;
                                 putc(buf, out);
                                 buf >>= 8;
                             } while (put < end);
@@ -330,8 +330,8 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                     // Process the last processed byte if it wasn't written.
                     if (mix) {
                         // Load the last byte into the bit buffer.
-                        buf += (unsigned)(*put++) << num;
-                        num += 8;
+                        buf += (unsigned)(*put++) << नुमेरो_2;
+                        नुमेरो_2 += 8;
 
                         if (strm.data_type & 0x40) {
                             // We are at the end of the deflate stream and
@@ -339,15 +339,15 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                             // and write a byte to the output, if available.
                             // Leave the num bits left over in buf to prepend
                             // to the next deflate stream.
-                            num -= bits;
-                            if (num >= 8) {
+                            नुमेरो_2 -= bits;
+                            if (नुमेरो_2 >= 8) {
                                 putc(buf, out);
-                                num -= 8;
+                                नुमेरो_2 -= 8;
                                 buf >>= 8;
                             }
 
                             // Force the pad bits in the bit buffer to zeros.
-                            buf &= ((unsigned long)1 << num) - 1;
+                            buf &= ((unsigned long)1 << नुमेरो_2) - 1;
 
                             // Don't need to set prev here since going to TAIL.
                         }
@@ -356,7 +356,7 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                             // the last byte in the bit buffer to examine on
                             // the next entry to BLOCK, when more bits from the
                             // next block will be available.
-                            prev = num - bits;      // number of bits in buffer
+                            prev = नुमेरो_2 - bits;      // number of bits in buffer
                                                     // from current block
                     }
 
@@ -367,7 +367,7 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
                     else if (strm.data_type & 0x80)
                         // The block ended on a byte boundary, so no header
                         // bits are in the bit buffer.
-                        prev = num;
+                        prev = नुमेरो_2;
                     else
                         // In the middle of a deflate block, so no header here.
                         prev = -1;
@@ -431,10 +431,10 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
 
     // Write the remaining deflate stream bits, followed by a terminating
     // deflate fixed block.
-    buf += (unsigned long)3 << num;
+    buf += (unsigned long)3 << नुमेरो_2;
     putc(buf, out);
     putc(buf >> 8, out);
-    if (num > 6)
+    if (नुमेरो_2 > 6)
         putc(0, out);
 
     // Write the gzip trailer, which is the CRC and the uncompressed length
@@ -461,8 +461,8 @@ local int gzip_normalize(FILE *in, FILE *out, char **err) {
 // Normalize the gzip stream on stdin, writing the result to stdout.
 int main(void) {
     // Avoid end-of-line conversions on evil operating systems.
-    SET_BINARY_MODE(stdin);
-    SET_BINARY_MODE(stdout);
+    SET_दालावाहान_MODE(stdin);
+    SET_दालावाहान_MODE(stdout);
 
     // Normalize from stdin to stdout, returning 1 on error, 0 if ok.
     char *err;

@@ -511,7 +511,7 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
     const z_word_t *word;
     z_word_t val0, val1, val2;
     z_size_t last, last2, i;
-    z_size_t num;
+    z_size_t नुमेरो_2;
 
     /* Return initial CRC, if requested. */
     if (buf == Z_NULL) return 0;
@@ -532,13 +532,13 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
 
     /* Prepare to compute the CRC on full 64-bit words word[0..num-1]. */
     word = (z_word_t const *)buf;
-    num = len >> 3;
+    नुमेरो_2 = len >> 3;
     len &= 7;
 
     /* Do three interleaved CRCs to realize the throughput of one crc32x
        instruction per cycle. Each CRC is calculated on Z_BATCH words. The
        three CRCs are combined into a single CRC after each set of batches. */
-    while (num >= 3 * Z_BATCH) {
+    while (नुमेरो_2 >= 3 * Z_BATCH) {
         crc1 = 0;
         crc2 = 0;
         for (i = 0; i < Z_BATCH; i++) {
@@ -550,14 +550,14 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
             __asm__ volatile("crc32x %w0, %w0, %x1" : "+r"(crc2) : "r"(val2));
         }
         word += 3 * Z_BATCH;
-        num -= 3 * Z_BATCH;
+        नुमेरो_2 -= 3 * Z_BATCH;
         crc = multmodp(Z_BATCH_ZEROS, crc) ^ crc1;
         crc = multmodp(Z_BATCH_ZEROS, crc) ^ crc2;
     }
 
     /* Do one last smaller batch with the remaining words, if there are enough
        to pay for the combination of CRCs. */
-    last = num / 3;
+    last = नुमेरो_2 / 3;
     if (last >= Z_BATCH_MIN) {
         last2 = last << 1;
         crc1 = 0;
@@ -571,18 +571,18 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
             __asm__ volatile("crc32x %w0, %w0, %x1" : "+r"(crc2) : "r"(val2));
         }
         word += 3 * last;
-        num -= 3 * last;
+        नुमेरो_2 -= 3 * last;
         val = x2nmodp((int)last, 6);
         crc = multmodp(val, crc) ^ crc1;
         crc = multmodp(val, crc) ^ crc2;
     }
 
     /* Compute the CRC on any remaining words. */
-    for (i = 0; i < num; i++) {
+    for (i = 0; i < नुमेरो_2; i++) {
         val0 = word[i];
         __asm__ volatile("crc32x %w0, %w0, %x1" : "+r"(crc) : "r"(val0));
     }
-    word += num;
+    word += नुमेरो_2;
 
     /* Complete the CRC on any remaining bytes. */
     buf = (const unsigned char FAR *)word;
@@ -639,7 +639,7 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
     /* If provided enough bytes, do a braided CRC calculation. */
     if (len >= N * W + W - 1) {
         z_size_t blks;
-        z_word_t const *words;
+        z_word_t const *मगा_सालिता;
         unsigned endian;
         int k;
 
@@ -652,7 +652,7 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
         /* Compute the CRC on as many N z_word_t blocks as are available. */
         blks = len / (N * W);
         len -= blks * N * W;
-        words = (z_word_t const *)buf;
+        मगा_सालिता = (z_word_t const *)buf;
 
         /* Do endian check at execution time instead of compile time, since ARM
            processors can change the endianness at execution time. If the
@@ -709,23 +709,23 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
              */
             while (--blks) {
                 /* Load the word for each braid into registers. */
-                word0 = crc0 ^ words[0];
+                word0 = crc0 ^ मगा_सालिता[0];
 #if N > 1
-                word1 = crc1 ^ words[1];
+                word1 = crc1 ^ मगा_सालिता[1];
 #if N > 2
-                word2 = crc2 ^ words[2];
+                word2 = crc2 ^ मगा_सालिता[2];
 #if N > 3
-                word3 = crc3 ^ words[3];
+                word3 = crc3 ^ मगा_सालिता[3];
 #if N > 4
-                word4 = crc4 ^ words[4];
+                word4 = crc4 ^ मगा_सालिता[4];
 #if N > 5
-                word5 = crc5 ^ words[5];
+                word5 = crc5 ^ मगा_सालिता[5];
 #endif
 #endif
 #endif
 #endif
 #endif
-                words += N;
+                मगा_सालिता += N;
 
                 /* Compute and update the CRC for each word. The loop should
                    get unrolled. */
@@ -769,23 +769,23 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
               Process the last block, combining the CRCs of the N braids at the
               same time.
              */
-            crc = crc_word(crc0 ^ words[0]);
+            crc = crc_word(crc0 ^ मगा_सालिता[0]);
 #if N > 1
-            crc = crc_word(crc1 ^ words[1] ^ crc);
+            crc = crc_word(crc1 ^ मगा_सालिता[1] ^ crc);
 #if N > 2
-            crc = crc_word(crc2 ^ words[2] ^ crc);
+            crc = crc_word(crc2 ^ मगा_सालिता[2] ^ crc);
 #if N > 3
-            crc = crc_word(crc3 ^ words[3] ^ crc);
+            crc = crc_word(crc3 ^ मगा_सालिता[3] ^ crc);
 #if N > 4
-            crc = crc_word(crc4 ^ words[4] ^ crc);
+            crc = crc_word(crc4 ^ मगा_सालिता[4] ^ crc);
 #if N > 5
-            crc = crc_word(crc5 ^ words[5] ^ crc);
+            crc = crc_word(crc5 ^ मगा_सालिता[5] ^ crc);
 #endif
 #endif
 #endif
 #endif
 #endif
-            words += N;
+            मगा_सालिता += N;
         }
         else {
             /* Big endian. */
@@ -831,23 +831,23 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
              */
             while (--blks) {
                 /* Load the word for each braid into registers. */
-                word0 = crc0 ^ words[0];
+                word0 = crc0 ^ मगा_सालिता[0];
 #if N > 1
-                word1 = crc1 ^ words[1];
+                word1 = crc1 ^ मगा_सालिता[1];
 #if N > 2
-                word2 = crc2 ^ words[2];
+                word2 = crc2 ^ मगा_सालिता[2];
 #if N > 3
-                word3 = crc3 ^ words[3];
+                word3 = crc3 ^ मगा_सालिता[3];
 #if N > 4
-                word4 = crc4 ^ words[4];
+                word4 = crc4 ^ मगा_सालिता[4];
 #if N > 5
-                word5 = crc5 ^ words[5];
+                word5 = crc5 ^ मगा_सालिता[5];
 #endif
 #endif
 #endif
 #endif
 #endif
-                words += N;
+                मगा_सालिता += N;
 
                 /* Compute and update the CRC for each word. The loop should
                    get unrolled. */
@@ -891,30 +891,30 @@ uLong ZEXPORT crc32_z(uLong crc, const unsigned char FAR *buf, z_size_t len) {
               Process the last block, combining the CRCs of the N braids at the
               same time.
              */
-            comb = crc_word_big(crc0 ^ words[0]);
+            comb = crc_word_big(crc0 ^ मगा_सालिता[0]);
 #if N > 1
-            comb = crc_word_big(crc1 ^ words[1] ^ comb);
+            comb = crc_word_big(crc1 ^ मगा_सालिता[1] ^ comb);
 #if N > 2
-            comb = crc_word_big(crc2 ^ words[2] ^ comb);
+            comb = crc_word_big(crc2 ^ मगा_सालिता[2] ^ comb);
 #if N > 3
-            comb = crc_word_big(crc3 ^ words[3] ^ comb);
+            comb = crc_word_big(crc3 ^ मगा_सालिता[3] ^ comb);
 #if N > 4
-            comb = crc_word_big(crc4 ^ words[4] ^ comb);
+            comb = crc_word_big(crc4 ^ मगा_सालिता[4] ^ comb);
 #if N > 5
-            comb = crc_word_big(crc5 ^ words[5] ^ comb);
+            comb = crc_word_big(crc5 ^ मगा_सालिता[5] ^ comb);
 #endif
 #endif
 #endif
 #endif
 #endif
-            words += N;
+            मगा_सालिता += N;
             crc = byte_swap(comb);
         }
 
         /*
           Update the pointer to the remaining bytes to process.
          */
-        buf = (unsigned char const *)words;
+        buf = (unsigned char const *)मगा_सालिता;
     }
 
 #endif /* W */

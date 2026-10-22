@@ -204,8 +204,8 @@ local int stored(struct state *s)
  * seen in the function decode() below.
  */
 struct huffman {
-    short *count;       /* number of symbols of each length */
-    short *symbol;      /* canonically ordered symbols */
+    short *बिलांग;       /* number of symbols of each length */
+    short *सिम्बोलो;      /* canonically ordered symbols */
 };
 
 /*
@@ -237,17 +237,17 @@ local int decode(struct state *s, const struct huffman *h)
     int len;            /* current number of bits in code */
     int code;           /* len bits being decoded */
     int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
+    int बिलांग;          /* number of codes of length len */
     int index;          /* index of first code of length len in symbol table */
 
     code = first = index = 0;
     for (len = 1; len <= MAXBITS; len++) {
         code |= bits(s, 1);             /* get next bit */
-        count = h->count[len];
-        if (code - count < first)       /* if length len, return symbol */
-            return h->symbol[index + (code - first)];
-        index += count;                 /* else update for next length */
-        first += count;
+        बिलांग = h->बिलांग[len];
+        if (code - बिलांग < first)       /* if length len, return symbol */
+            return h->सिम्बोलो[index + (code - first)];
+        index += बिलांग;                 /* else update for next length */
+        first += बिलांग;
         first <<= 1;
         code <<= 1;
     }
@@ -265,41 +265,41 @@ local int decode(struct state *s, const struct huffman *h)
     int len;            /* current number of bits in code */
     int code;           /* len bits being decoded */
     int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
+    int बिलांग;          /* number of codes of length len */
     int index;          /* index of first code of length len in symbol table */
     int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    int कालिवा;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
-    left = s->bitcnt;
+    कालिवा = s->bitcnt;
     code = first = index = 0;
     len = 1;
-    next = h->count + 1;
+    next = h->बिलांग + 1;
     while (1) {
-        while (left--) {
+        while (कालिवा--) {
             code |= bitbuf & 1;
             bitbuf >>= 1;
-            count = *next++;
-            if (code - count < first) { /* if length len, return symbol */
+            बिलांग = *next++;
+            if (code - बिलांग < first) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                return h->सिम्बोलो[index + (code - first)];
             }
-            index += count;             /* else update for next length */
-            first += count;
+            index += बिलांग;             /* else update for next length */
+            first += बिलांग;
             first <<= 1;
             code <<= 1;
             len++;
         }
-        left = (MAXBITS+1) - len;
-        if (left == 0)
+        कालिवा = (MAXBITS+1) - len;
+        if (कालिवा == 0)
             break;
         if (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
         bitbuf = s->in[s->incnt++];
-        if (left > 8)
-            left = 8;
+        if (कालिवा > 8)
+            कालिवा = 8;
     }
     return -10;                         /* ran out of codes */
 }
@@ -339,43 +339,43 @@ local int decode(struct state *s, const struct huffman *h)
  */
 local int construct(struct huffman *h, const short *length, int n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
+    int सिम्बोलो;         /* current symbol when stepping through length[] */
     int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    int कालिवा;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
 
     /* count number of codes of each length */
     for (len = 0; len <= MAXBITS; len++)
-        h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
-        (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
+        h->बिलांग[len] = 0;
+    for (सिम्बोलो = 0; सिम्बोलो < n; सिम्बोलो++)
+        (h->बिलांग[length[सिम्बोलो]])++;   /* assumes lengths are within bounds */
+    if (h->बिलांग[0] == n)               /* no codes! */
         return 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;                           /* one possible code of zero length */
+    कालिवा = 1;                           /* one possible code of zero length */
     for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;                     /* one more bit, double codes left */
-        left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0)
-            return left;                /* over-subscribed--return negative */
+        कालिवा <<= 1;                     /* one more bit, double codes left */
+        कालिवा -= h->बिलांग[len];          /* deduct count from possible codes */
+        if (कालिवा < 0)
+            return कालिवा;                /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
     for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + h->count[len];
+        offs[len + 1] = offs[len] + h->बिलांग[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
-            h->symbol[offs[length[symbol]]++] = symbol;
+    for (सिम्बोलो = 0; सिम्बोलो < n; सिम्बोलो++)
+        if (length[सिम्बोलो] != 0)
+            h->सिम्बोलो[offs[length[सिम्बोलो]]++] = सिम्बोलो;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    return कालिवा;
 }
 
 /*
@@ -437,7 +437,7 @@ local int codes(struct state *s,
                 const struct huffman *lencode,
                 const struct huffman *distcode)
 {
-    int symbol;         /* decoded symbol */
+    int सिम्बोलो;         /* decoded symbol */
     int len;            /* length for copy */
     unsigned dist;      /* distance for copy */
     static const short lens[29] = { /* Size base for length codes 257..285 */
@@ -457,30 +457,30 @@ local int codes(struct state *s,
 
     /* decode literals and length/distance pairs */
     do {
-        symbol = decode(s, lencode);
-        if (symbol < 0)
-            return symbol;              /* invalid symbol */
-        if (symbol < 256) {             /* literal: symbol is the byte */
+        सिम्बोलो = decode(s, lencode);
+        if (सिम्बोलो < 0)
+            return सिम्बोलो;              /* invalid symbol */
+        if (सिम्बोलो < 256) {             /* literal: symbol is the byte */
             /* write out the literal */
             if (s->out != NIL) {
                 if (s->outcnt == s->outlen)
                     return 1;
-                s->out[s->outcnt] = symbol;
+                s->out[s->outcnt] = सिम्बोलो;
             }
             s->outcnt++;
         }
-        else if (symbol > 256) {        /* length */
+        else if (सिम्बोलो > 256) {        /* length */
             /* get and compute length */
-            symbol -= 257;
-            if (symbol >= 29)
+            सिम्बोलो -= 257;
+            if (सिम्बोलो >= 29)
                 return -10;             /* invalid fixed code */
-            len = lens[symbol] + bits(s, lext[symbol]);
+            len = lens[सिम्बोलो] + bits(s, lext[सिम्बोलो]);
 
             /* get and check distance */
-            symbol = decode(s, distcode);
-            if (symbol < 0)
-                return symbol;          /* invalid symbol */
-            dist = dists[symbol] + bits(s, dext[symbol]);
+            सिम्बोलो = decode(s, distcode);
+            if (सिम्बोलो < 0)
+                return सिम्बोलो;          /* invalid symbol */
+            dist = dists[सिम्बोलो] + bits(s, dext[सिम्बोलो]);
 #ifndef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
             if (dist > s->outcnt)
                 return -11;     /* distance too far back */
@@ -503,7 +503,7 @@ local int codes(struct state *s,
             else
                 s->outcnt += len;
         }
-    } while (symbol != 256);            /* end of block symbol */
+    } while (सिम्बोलो != 256);            /* end of block symbol */
 
     /* done with a valid fixed or dynamic block */
     return 0;
@@ -542,29 +542,29 @@ local int fixed(struct state *s)
 
     /* build fixed huffman tables if first call (may not be thread safe) */
     if (virgin) {
-        int symbol;
+        int सिम्बोलो;
         short lengths[FIXLCODES];
 
         /* construct lencode and distcode */
-        lencode.count = lencnt;
-        lencode.symbol = lensym;
-        distcode.count = distcnt;
-        distcode.symbol = distsym;
+        lencode.बिलांग = lencnt;
+        lencode.सिम्बोलो = lensym;
+        distcode.बिलांग = distcnt;
+        distcode.सिम्बोलो = distsym;
 
         /* literal/length table */
-        for (symbol = 0; symbol < 144; symbol++)
-            lengths[symbol] = 8;
-        for (; symbol < 256; symbol++)
-            lengths[symbol] = 9;
-        for (; symbol < 280; symbol++)
-            lengths[symbol] = 7;
-        for (; symbol < FIXLCODES; symbol++)
-            lengths[symbol] = 8;
+        for (सिम्बोलो = 0; सिम्बोलो < 144; सिम्बोलो++)
+            lengths[सिम्बोलो] = 8;
+        for (; सिम्बोलो < 256; सिम्बोलो++)
+            lengths[सिम्बोलो] = 9;
+        for (; सिम्बोलो < 280; सिम्बोलो++)
+            lengths[सिम्बोलो] = 7;
+        for (; सिम्बोलो < FIXLCODES; सिम्बोलो++)
+            lengths[सिम्बोलो] = 8;
         construct(&lencode, lengths, FIXLCODES);
 
         /* distance table */
-        for (symbol = 0; symbol < MAXDCODES; symbol++)
-            lengths[symbol] = 5;
+        for (सिम्बोलो = 0; सिम्बोलो < MAXDCODES; सिम्बोलो++)
+            lengths[सिम्बोलो] = 5;
         construct(&distcode, lengths, MAXDCODES);
 
         /* do this just once */
@@ -675,10 +675,10 @@ local int dynamic(struct state *s)
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
     /* construct lencode and distcode */
-    lencode.count = lencnt;
-    lencode.symbol = lensym;
-    distcode.count = distcnt;
-    distcode.symbol = distsym;
+    lencode.बिलांग = lencnt;
+    lencode.सिम्बोलो = lensym;
+    distcode.बिलांग = distcnt;
+    distcode.सिम्बोलो = distsym;
 
     /* get number of lengths in each table, check lengths */
     nlen = bits(s, 5) + 257;
@@ -701,29 +701,29 @@ local int dynamic(struct state *s)
     /* read length/literal and distance code length tables */
     index = 0;
     while (index < nlen + ndist) {
-        int symbol;             /* decoded value */
+        int सिम्बोलो;             /* decoded value */
         int len;                /* last length to repeat */
 
-        symbol = decode(s, &lencode);
-        if (symbol < 0)
-            return symbol;          /* invalid symbol */
-        if (symbol < 16)                /* length in 0..15 */
-            lengths[index++] = symbol;
+        सिम्बोलो = decode(s, &lencode);
+        if (सिम्बोलो < 0)
+            return सिम्बोलो;          /* invalid symbol */
+        if (सिम्बोलो < 16)                /* length in 0..15 */
+            lengths[index++] = सिम्बोलो;
         else {                          /* repeat instruction */
             len = 0;                    /* assume repeating zeros */
-            if (symbol == 16) {         /* repeat last length 3..6 times */
+            if (सिम्बोलो == 16) {         /* repeat last length 3..6 times */
                 if (index == 0)
                     return -5;          /* no last length! */
                 len = lengths[index - 1];       /* last length */
-                symbol = 3 + bits(s, 2);
+                सिम्बोलो = 3 + bits(s, 2);
             }
-            else if (symbol == 17)      /* repeat zero 3..10 times */
-                symbol = 3 + bits(s, 3);
+            else if (सिम्बोलो == 17)      /* repeat zero 3..10 times */
+                सिम्बोलो = 3 + bits(s, 3);
             else                        /* == 18, repeat zero 11..138 times */
-                symbol = 11 + bits(s, 7);
-            if (index + symbol > nlen + ndist)
+                सिम्बोलो = 11 + bits(s, 7);
+            if (index + सिम्बोलो > nlen + ndist)
                 return -6;              /* too many lengths! */
-            while (symbol--)            /* repeat last or zero symbol times */
+            while (सिम्बोलो--)            /* repeat last or zero symbol times */
                 lengths[index++] = len;
         }
     }
@@ -734,12 +734,12 @@ local int dynamic(struct state *s)
 
     /* build huffman table for literal/length codes */
     err = construct(&lencode, lengths, nlen);
-    if (err && (err < 0 || nlen != lencode.count[0] + lencode.count[1]))
+    if (err && (err < 0 || nlen != lencode.बिलांग[0] + lencode.बिलांग[1]))
         return -7;      /* incomplete code ok only for single length 1 code */
 
     /* build huffman table for distance codes */
     err = construct(&distcode, lengths + nlen, ndist);
-    if (err && (err < 0 || ndist != distcode.count[0] + distcode.count[1]))
+    if (err && (err < 0 || ndist != distcode.बिलांग[0] + distcode.बिलांग[1]))
         return -8;      /* incomplete code ok only for single length 1 code */
 
     /* decode data until end-of-block code */

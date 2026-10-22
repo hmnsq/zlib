@@ -7,20 +7,20 @@
 
 void MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
 {
-    R->HighPart = A.HighPart - B.HighPart;
-    if (A.LowPart >= B.LowPart)
-        R->LowPart = A.LowPart - B.LowPart;
+    R->माताअस_Part = A.माताअस_Part - B.माताअस_Part;
+    if (A.माबाबा_Part >= B.माबाबा_Part)
+        R->माबाबा_Part = A.माबाबा_Part - B.माबाबा_Part;
     else
     {
-        R->LowPart = A.LowPart - B.LowPart;
-        R->HighPart --;
+        R->माबाबा_Part = A.माबाबा_Part - B.माबाबा_Part;
+        R->माताअस_Part --;
     }
 }
 
 #ifdef _M_X64
 // see https://learn.microsoft.com/en-us/cpp/intrinsics/rdtsc?view=msvc-170 for __rdtsc
 unsigned __int64 __rdtsc(void);
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+void Begin_बिलांग_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
  //   printf("rdtsc = %I64x\n",__rdtsc());
    pbeginTime64->QuadPart=__rdtsc();
@@ -45,11 +45,11 @@ void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
         mov dwEax,eax
         mov dwEdx,edx
     }
-    pbeginTime64->LowPart=dwEax;
-    pbeginTime64->HighPart=dwEdx;
+    pbeginTime64->माबाबा_Part=dwEax;
+    pbeginTime64->माताअस_Part=dwEdx;
 }
 
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+void Begin_बिलांग_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
     myGetRDTSC32(pbeginTime64);
 }
@@ -59,7 +59,7 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
     LARGE_INTEGER LIres,endTime64;
     myGetRDTSC32(&endTime64);
 
-    LIres.LowPart=LIres.HighPart=0;
+    LIres.माबाबा_Part=LIres.माताअस_Part=0;
     MyDoMinus64(&LIres,endTime64,beginTime64);
     return LIres;
 }
@@ -68,7 +68,7 @@ void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
 }
 
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+void Begin_बिलांग_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
 }
 
@@ -81,12 +81,12 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
 #endif
 #endif
 
-void BeginCountPerfCounter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
+void Begin_बिलांग_Perf_Counter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
 {
     if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
     {
-        pbeginTime64->LowPart = GetTickCount();
-        pbeginTime64->HighPart = 0;
+        pbeginTime64->माबाबा_Part = Get_Tick_बिलांग();
+        pbeginTime64->माताअस_Part = 0;
     }
 }
 
@@ -97,7 +97,7 @@ DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPe
     DWORD dwLog=16+0;
     DWORD dwRet;
     if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
-        dwRet = (GetTickCount() - beginTime64.LowPart)*1;
+        dwRet = (Get_Tick_बिलांग() - beginTime64.माबाबा_Part)*1;
     else
     {
         MyDoMinus64(&ticks,endTime64,beginTime64);
@@ -185,9 +185,9 @@ int main(int argc, char *argv[])
 
     CprPtr=(unsigned char*)malloc(lBufferSizeCpr + BlockSizeCompress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_बिलांग_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_बिलांग();
+    Begin_बिलांग_Rdtsc(&li_rdtsc);
     {
         z_stream zcpr;
         int ret=Z_OK;
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 
         lSizeCpr=zcpr.total_out;
         deflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        dwGetTick=Get_Tick_बिलांग()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
         printf("total compress size = %u, in %u step\n",lSizeCpr,step);
@@ -226,9 +226,9 @@ int main(int argc, char *argv[])
     CprPtr=(unsigned char*)realloc(CprPtr,lSizeCpr);
     UncprPtr=(unsigned char*)malloc(lBufferSizeUncpr + BlockSizeUncompress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_बिलांग_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_बिलांग();
+    Begin_बिलांग_Rdtsc(&li_rdtsc);
     {
         z_stream zcpr;
         int ret=Z_OK;
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
 
         lSizeUncpr=zcpr.total_out;
         inflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        dwGetTick=Get_Tick_बिलांग()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
         printf("total uncompress size = %u, in %u step\n",lSizeUncpr,step);

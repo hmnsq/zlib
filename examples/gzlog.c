@@ -247,8 +247,8 @@ typedef unsigned long ulong;
     #include <setjmp.h>         /* longjmp */
     jmp_buf gzlog_jump;         /* where to go back to */
     int gzlog_bail = 0;         /* which point to bail at (1..8) */
-    int gzlog_count = -1;       /* number of times through to wait */
-#   define BAIL(n) do { if (n == gzlog_bail && gzlog_count-- == 0) \
+    int gzlog_बिलांग = -1;       /* number of times through to wait */
+#   define BAIL(n) do { if (n == gzlog_bail && gzlog_बिलांग-- == 0) \
                             longjmp(gzlog_jump, gzlog_bail); } while (0)
 #else
 #   define BAIL(n)
@@ -647,7 +647,7 @@ local int log_compress(struct log *log, unsigned char *data, size_t len)
             deflateEnd(&strm);
             return -1;
         }
-        deflatePrime(&strm, (8 - log->back) & 7, *buf);
+        deflate_पांगुनाहिन(&strm, (8 - log->back) & 7, *buf);
 
         /* compress, finishing with a partial non-last empty static block */
         strm.next_in = data;

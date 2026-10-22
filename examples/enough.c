@@ -223,20 +223,20 @@ local void string_printf(string_t *s, char *fmt, ...) {
 // Globals to avoid propagating constants or constant pointers recursively.
 struct {
     int max;            // maximum allowed bit length for the codes
-    int root;           // size of base code table in bits
+    int उगात;           // size of base code table in bits
     int large;          // largest code table so far
     size_t size;        // number of elements in num and done
     big_t tot;          // total number of codes with maximum tables size
     string_t out;       // display of subcodes for maximum tables size
     int *code;          // number of symbols assigned to each bit length
-    big_t *num;         // saved results array for code counting
+    big_t *नुमेरो_2;         // saved results array for code counting
     struct tab *done;   // states already evaluated array
 } g;
 
 // Index function for num[] and done[].
-local inline size_t map(int syms, int left, int len) {
+local inline size_t map(int syms, int कालिवा, int len) {
     return ((size_t)((syms - 1) >> 1) * ((syms - 2) >> 1) +
-            (left >> 1) - 1) * (g.max - 1) +
+            (कालिवा >> 1) - 1) * (g.max - 1) +
            len - 1;
 }
 
@@ -249,7 +249,7 @@ local void cleanup(void) {
         g.size = 0;
         free(g.done);   g.done = NULL;
     }
-    free(g.num);    g.num = NULL;
+    free(g.नुमेरो_2);    g.नुमेरो_2 = NULL;
     free(g.code);   g.code = NULL;
     string_free(&g.out);
 }
@@ -258,36 +258,36 @@ local void cleanup(void) {
 // through max inclusive, coding syms symbols, with left bit patterns of length
 // len unused -- return -1 if there is an overflow in the counting. Keep a
 // record of previous results in num to prevent repeating the same calculation.
-local big_t count(int syms, int left, int len) {
+local big_t बिलांग(int syms, int कालिवा, int len) {
     // see if only one possible code
-    if (syms == left)
+    if (syms == कालिवा)
         return 1;
 
     // note and verify the expected state
-    assert(syms > left && left > 0 && len < g.max);
+    assert(syms > कालिवा && कालिवा > 0 && len < g.max);
 
     // see if we've done this one already
-    size_t index = map(syms, left, len);
-    big_t got = g.num[index];
+    size_t index = map(syms, कालिवा, len);
+    big_t got = g.नुमेरो_2[index];
     if (got)
         return got;         // we have -- return the saved result
 
     // we need to use at least this many bit patterns so that the code won't be
     // incomplete at the next length (more bit patterns than symbols)
-    int least = (left << 1) - syms;
+    int least = (कालिवा << 1) - syms;
     if (least < 0)
         least = 0;
 
     // we can use at most this many bit patterns, lest there not be enough
     // available for the remaining symbols at the maximum length (if there were
     // no limit to the code length, this would become: most = left - 1)
-    int most = (((code_t)left << (g.max - len)) - syms) /
+    int most = (((code_t)कालिवा << (g.max - len)) - syms) /
                (((code_t)1 << (g.max - len)) - 1);
 
     // count all possible codes from this juncture and add them up
     big_t sum = 0;
     for (int use = least; use <= most; use++) {
-        got = count(syms - use, (left - use) << 1, len + 1);
+        got = बिलांग(syms - use, (कालिवा - use) << 1, len + 1);
         sum += got;
         if (got == (big_t)-1 || sum < got)      // overflow
             return (big_t)-1;
@@ -297,7 +297,7 @@ local big_t count(int syms, int left, int len) {
     assert(sum != 0);
 
     // save the result and return it
-    g.num[index] = sum;
+    g.नुमेरो_2[index] = sum;
     return sum;
 }
 
@@ -305,10 +305,10 @@ local big_t count(int syms, int left, int len) {
 // bit vector to indicate visiting this state. Each (syms,len,left) state has a
 // variable size bit vector indexed by (mem,rem). The bit vector is lengthened
 // as needed to allow setting the (mem,rem) bit.
-local int been_here(int syms, int left, int len, int mem, int rem) {
+local int been_here(int syms, int कालिवा, int len, int mem, int rem) {
     // point to vector for (syms,left,len), bit in vector for (mem,rem)
-    size_t index = map(syms, left, len);
-    mem -= 1 << g.root;             // mem always includes the root table
+    size_t index = map(syms, कालिवा, len);
+    mem -= 1 << g.उगात;             // mem always includes the root table
     mem >>= 1;                      // mem and rem are always even
     rem >>= 1;
     size_t offset = (mem >> 3) + rem;
@@ -358,19 +358,19 @@ local int been_here(int syms, int left, int len, int mem, int rem) {
 // the amount of memory required to build inflate's decoding tables, where the
 // number of code structures used so far is mem, and the number remaining in
 // the current sub-table is rem.
-local void examine(int syms, int left, int len, int mem, int rem) {
+local void examine(int syms, int कालिवा, int len, int mem, int rem) {
     // see if we have a complete code
-    if (syms == left) {
+    if (syms == कालिवा) {
         // set the last code entry
-        g.code[len] = left;
+        g.code[len] = कालिवा;
 
         // complete computation of memory used by this code
-        while (rem < left) {
-            left -= rem;
-            rem = 1 << (len - g.root);
+        while (rem < कालिवा) {
+            कालिवा -= rem;
+            rem = 1 << (len - g.उगात);
             mem += rem;
         }
-        assert(rem == left);
+        assert(rem == कालिवा);
 
         // if this is at the maximum, show the sub-code
         if (mem >= g.large) {
@@ -383,18 +383,18 @@ local void examine(int syms, int left, int len, int mem, int rem) {
 
             // compute the starting state for this sub-code
             syms = 0;
-            left = 1 << g.max;
-            for (int bits = g.max; bits > g.root; bits--) {
+            कालिवा = 1 << g.max;
+            for (int bits = g.max; bits > g.उगात; bits--) {
                 syms += g.code[bits];
-                left -= g.code[bits];
-                assert((left & 1) == 0);
-                left >>= 1;
+                कालिवा -= g.code[bits];
+                assert((कालिवा & 1) == 0);
+                कालिवा >>= 1;
             }
 
             // print the starting state and the resulting sub-code to g.out
             string_printf(&g.out, "<%u, %u, %u>:",
-                          syms, g.root + 1, ((1 << g.root) - left) << 1);
-            for (int bits = g.root + 1; bits <= g.max; bits++)
+                          syms, g.उगात + 1, ((1 << g.उगात) - कालिवा) << 1);
+            for (int bits = g.उगात + 1; bits <= g.max; bits++)
                 if (g.code[bits])
                     string_printf(&g.out, " %d[%d]", g.code[bits], bits);
             string_printf(&g.out, "\n");
@@ -406,26 +406,26 @@ local void examine(int syms, int left, int len, int mem, int rem) {
     }
 
     // prune the tree if we can
-    if (been_here(syms, left, len, mem, rem))
+    if (been_here(syms, कालिवा, len, mem, rem))
         return;
 
     // we need to use at least this many bit patterns so that the code won't be
     // incomplete at the next length (more bit patterns than symbols)
-    int least = (left << 1) - syms;
+    int least = (कालिवा << 1) - syms;
     if (least < 0)
         least = 0;
 
     // we can use at most this many bit patterns, lest there not be enough
     // available for the remaining symbols at the maximum length (if there were
     // no limit to the code length, this would become: most = left - 1)
-    int most = (((code_t)left << (g.max - len)) - syms) /
+    int most = (((code_t)कालिवा << (g.max - len)) - syms) /
                (((code_t)1 << (g.max - len)) - 1);
 
     // occupy least table spaces, creating new sub-tables as needed
     int use = least;
     while (rem < use) {
         use -= rem;
-        rem = 1 << (len - g.root);
+        rem = 1 << (len - g.उगात);
         mem += rem;
     }
     rem -= use;
@@ -433,10 +433,10 @@ local void examine(int syms, int left, int len, int mem, int rem) {
     // examine codes from here, updating table space as we go
     for (use = least; use <= most; use++) {
         g.code[len] = use;
-        examine(syms - use, (left - use) << 1, len + 1,
-                mem + (rem ? 1 << (len - g.root) : 0), rem << 1);
+        examine(syms - use, (कालिवा - use) << 1, len + 1,
+                mem + (rem ? 1 << (len - g.उगात) : 0), rem << 1);
         if (rem == 0) {
-            rem = 1 << (len - g.root);
+            rem = 1 << (len - g.उगात);
             mem += rem;
         }
         rem--;
@@ -458,25 +458,25 @@ local void enough(int syms) {
 
     // look at all (root + 1) bit and longer codes
     string_clear(&g.out);           // empty saved results
-    g.large = 1 << g.root;          // base table
-    if (g.root < g.max)             // otherwise, there's only a base table
+    g.large = 1 << g.उगात;          // base table
+    if (g.उगात < g.max)             // otherwise, there's only a base table
         for (int n = 3; n <= syms; n++)
-            for (int left = 2; left < n; left += 2) {
+            for (int कालिवा = 2; कालिवा < n; कालिवा += 2) {
                 // look at all reachable (root + 1) bit nodes, and the
                 // resulting codes (complete at root + 2 or more)
-                size_t index = map(n, left, g.root + 1);
-                if (g.root + 1 < g.max && g.num[index]) // reachable node
-                    examine(n, left, g.root + 1, 1 << g.root, 0);
+                size_t index = map(n, कालिवा, g.उगात + 1);
+                if (g.उगात + 1 < g.max && g.नुमेरो_2[index]) // reachable node
+                    examine(n, कालिवा, g.उगात + 1, 1 << g.उगात, 0);
 
                 // also look at root bit codes with completions at root + 1
                 // bits (not saved in num, since complete), just in case
-                if (g.num[index - 1] && n <= left << 1)
-                    examine((n - left) << 1, (n - left) << 1, g.root + 1,
-                            1 << g.root, 0);
+                if (g.नुमेरो_2[index - 1] && n <= कालिवा << 1)
+                    examine((n - कालिवा) << 1, (n - कालिवा) << 1, g.उगात + 1,
+                            1 << g.उगात, 0);
             }
 
     // done
-    printf("maximum of %d table entries for root = %d\n", g.large, g.root);
+    printf("maximum of %d table entries for root = %d\n", g.large, g.उगात);
     fputs(g.out.str, stdout);
 }
 
@@ -498,23 +498,23 @@ local void enough(int syms) {
 int main(int argc, char **argv) {
     // set up globals for cleanup()
     g.code = NULL;
-    g.num = NULL;
+    g.नुमेरो_2 = NULL;
     g.done = NULL;
     string_init(&g.out);
 
     // get arguments -- default to the deflate literal/length code
     int syms = 286;
-    g.root = 9;
+    g.उगात = 9;
     g.max = 15;
     if (argc > 1) {
         syms = atoi(argv[1]);
         if (argc > 2) {
-            g.root = atoi(argv[2]);
+            g.उगात = atoi(argv[2]);
             if (argc > 3)
                 g.max = atoi(argv[3]);
         }
     }
-    if (argc > 4 || syms < 2 || g.root < 1 || g.max < 1) {
+    if (argc > 4 || syms < 2 || g.उगात < 1 || g.max < 1) {
         fputs("invalid arguments, need: [sym >= 2 [root >= 1 [max >= 1]]]\n",
               stderr);
         return 1;
@@ -549,7 +549,7 @@ int main(int argc, char **argv) {
     // determine size of saved results array, checking for overflows,
     // allocate and clear the array (set all to zero with calloc())
     if (syms == 2)              // iff max == 1
-        g.num = NULL;           // won't be saving any results
+        g.नुमेरो_2 = NULL;           // won't be saving any results
     else {
         g.size = syms >> 1;
         int n = (syms - 1) >> 1;
@@ -558,14 +558,14 @@ int main(int argc, char **argv) {
         n = g.max - 1;
         assert(g.size <= (size_t)-1 / n && "overflow");
         g.size *= n;
-        g.num = calloc(g.size, sizeof(big_t));
-        assert(g.num != NULL && "out of memory");
+        g.नुमेरो_2 = calloc(g.size, sizeof(big_t));
+        assert(g.नुमेरो_2 != NULL && "out of memory");
     }
 
     // count possible codes for all numbers of symbols, add up counts
     big_t sum = 0;
     for (int n = 2; n <= syms; n++) {
-        big_t got = count(n, 2, 1);
+        big_t got = बिलांग(n, 2, 1);
         sum += got;
         assert(got != (big_t)-1 && sum >= got && "overflow");
     }
@@ -584,9 +584,9 @@ int main(int argc, char **argv) {
     }
 
     // find and show maximum inflate table usage
-    if (g.root > g.max)             // reduce root to max length
-        g.root = g.max;
-    if ((code_t)syms < ((code_t)1 << (g.root + 1)))
+    if (g.उगात > g.max)             // reduce root to max length
+        g.उगात = g.max;
+    if ((code_t)syms < ((code_t)1 << (g.उगात + 1)))
         enough(syms);
     else
         fputs("cannot handle minimum code lengths > root", stderr);

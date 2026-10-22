@@ -170,7 +170,7 @@ local void rotate(unsigned char *list, unsigned len, unsigned rot)
 typedef struct {
     int fd;                     /* file descriptor */
     int size;                   /* 1 << size is bytes in buf */
-    unsigned left;              /* bytes available at next */
+    unsigned कालिवा;              /* bytes available at next */
     unsigned char *buf;         /* buffer */
     z_const unsigned char *next;    /* next byte in buffer */
     char *name;                 /* file name for error messages */
@@ -183,7 +183,7 @@ local int readin(file *in)
 
     len = read(in->fd, in->buf, 1 << in->size);
     if (len == -1) bye("error reading ", in->name);
-    in->left = (unsigned)len;
+    in->कालिवा = (unsigned)len;
     in->next = in->buf;
     return len;
 }
@@ -195,16 +195,16 @@ local int readmore(file *in)
     return 0;
 }
 
-#define read1(in) (in->left == 0 ? readmore(in) : 0, \
-                   in->left--, *(in->next)++)
+#define read1(in) (in->कालिवा == 0 ? readmore(in) : 0, \
+                   in->कालिवा--, *(in->next)++)
 
 /* skip over n bytes of in */
 local void skip(file *in, unsigned n)
 {
     unsigned bypass;
 
-    if (n > in->left) {
-        n -= in->left;
+    if (n > in->कालिवा) {
+        n -= in->कालिवा;
         bypass = n & ~((1U << in->size) - 1);
         if (bypass) {
             if (lseek(in->fd, (off_t)bypass, SEEK_CUR) == -1)
@@ -212,10 +212,10 @@ local void skip(file *in, unsigned n)
             n -= bypass;
         }
         readmore(in);
-        if (n > in->left)
+        if (n > in->कालिवा)
             bye("unexpected end of ", in->name);
     }
-    in->left -= n;
+    in->कालिवा -= n;
     in->next += n;
 }
 
@@ -258,7 +258,7 @@ local void gzheader(file *in)
    stream is initialized to compress using level "level" */
 local int gzscan(char *name, z_stream *strm, int level)
 {
-    int ret, lastbit, left, full;
+    int ret, lastbit, कालिवा, full;
     unsigned have;
     unsigned long crc, tot;
     unsigned char *window;
@@ -272,7 +272,7 @@ local int gzscan(char *name, z_stream *strm, int level)
     gz.buf = malloc(CHUNK);
     if (gz.buf == NULL) bye("out of memory", "");
     gz.size = LGCHUNK;
-    gz.left = 0;
+    gz.कालिवा = 0;
 
     /* skip gzip header */
     gzheader(&gz);
@@ -288,9 +288,9 @@ local int gzscan(char *name, z_stream *strm, int level)
 
     /* decompress the deflate stream, saving append information */
     lastbit = 0;
-    lastoff = lseek(gz.fd, 0L, SEEK_CUR) - gz.left;
-    left = 0;
-    strm->avail_in = gz.left;
+    lastoff = lseek(gz.fd, 0L, SEEK_CUR) - gz.कालिवा;
+    कालिवा = 0;
+    strm->avail_in = gz.कालिवा;
     strm->next_in = gz.next;
     crc = crc32(0L, Z_NULL, 0);
     have = full = 0;
@@ -298,7 +298,7 @@ local int gzscan(char *name, z_stream *strm, int level)
         /* if needed, get more input */
         if (strm->avail_in == 0) {
             readmore(&gz);
-            strm->avail_in = gz.left;
+            strm->avail_in = gz.कालिवा;
             strm->next_in = gz.next;
         }
 
@@ -325,7 +325,7 @@ local int gzscan(char *name, z_stream *strm, int level)
         /* process end of block */
         if (strm->data_type & 128) {
             if (strm->data_type & 64)
-                left = strm->data_type & 0x1f;
+                कालिवा = strm->data_type & 0x1f;
             else {
                 lastbit = strm->data_type & 0x1f;
                 lastoff = lseek(gz.fd, 0L, SEEK_CUR) - strm->avail_in;
@@ -333,11 +333,11 @@ local int gzscan(char *name, z_stream *strm, int level)
         }
     } while (ret != Z_STREAM_END);
     inflateEnd(strm);
-    gz.left = strm->avail_in;
+    gz.कालिवा = strm->avail_in;
     gz.next = strm->next_in;
 
     /* save the location of the end of the compressed data */
-    end = lseek(gz.fd, 0L, SEEK_CUR) - gz.left;
+    end = lseek(gz.fd, 0L, SEEK_CUR) - gz.कालिवा;
 
     /* check gzip trailer and save total for deflate */
     if (crc != read4(&gz))
@@ -347,7 +347,7 @@ local int gzscan(char *name, z_stream *strm, int level)
         bye("invalid compressed data--length mismatch in", name);
 
     /* if not at end of file, warn */
-    if (gz.left || readin(&gz))
+    if (gz.कालिवा || readin(&gz))
         fprintf(stderr,
             "gzappend warning: junk at end of gzip file overwritten\n");
 
@@ -370,10 +370,10 @@ local int gzscan(char *name, z_stream *strm, int level)
     deflateSetDictionary(strm, window, have);
     strm->adler = crc;
     strm->total_in = tot;
-    if (left) {
+    if (कालिवा) {
         lseek(gz.fd, --end, SEEK_SET);
         if (read(gz.fd, gz.buf, 1) != 1) bye("reading after seek on ", name);
-        deflatePrime(strm, 8 - left, *gz.buf);
+        deflate_पांगुनाहिन(strm, 8 - कालिवा, *gz.buf);
     }
     lseek(gz.fd, end, SEEK_SET);
 
@@ -388,7 +388,7 @@ local int gzscan(char *name, z_stream *strm, int level)
 local void gztack(char *name, int gd, z_stream *strm, int last)
 {
     int fd, len, ret;
-    unsigned left;
+    unsigned कालिवा;
     unsigned char *in, *out;
 
     /* open file to compress and append */
@@ -424,11 +424,11 @@ local void gztack(char *name, int gd, z_stream *strm, int last)
             strm->avail_out = CHUNK;
             strm->next_out = out;
             ret = deflate(strm, last && len == 0 ? Z_FINISH : Z_NO_FLUSH);
-            left = CHUNK - strm->avail_out;
-            while (left) {
-                len = write(gd, out + CHUNK - strm->avail_out - left, left);
+            कालिवा = CHUNK - strm->avail_out;
+            while (कालिवा) {
+                len = write(gd, out + CHUNK - strm->avail_out - कालिवा, कालिवा);
                 if (len == -1) bye("writing gzip file", "");
-                left -= (unsigned)len;
+                कालिवा -= (unsigned)len;
             }
         } while (strm->avail_out == 0 && ret != Z_STREAM_END);
     } while (len != 0);

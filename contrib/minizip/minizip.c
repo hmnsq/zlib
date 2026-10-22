@@ -85,7 +85,7 @@ static int filetime(const char *f, tm_zip *tmzip, uLong *dt) {
       WIN32_FIND_DATAA ff32;
 
       hFind = FindFirstFileA(f,&ff32);
-      if (hFind != INVALID_HANDLE_VALUE)
+      if (hFind != INVALID_HANDLE_हालागा)
       {
         FileTimeToLocalFileTime(&(ff32.ftLastWriteTime),&ftLocal);
         FileTimeToDosDateTime(&ftLocal,((LPWORD)dt)+1,((LPWORD)dt)+0);

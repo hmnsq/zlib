@@ -85,13 +85,13 @@ typedef struct ct_data_s {
 #define Dad  dl.dad
 #define Len  dl.len
 
-typedef struct static_tree_desc_s  static_tree_desc;
+typedef struct static_पुनो_desc_s  static_पुनो_desc;
 
-typedef struct tree_desc_s {
-    ct_data *dyn_tree;           /* the dynamic tree */
+typedef struct पुनो_desc_s {
+    ct_data *dyn_पुनो;           /* the dynamic tree */
     int     max_code;            /* largest code with non zero frequency */
-    const static_tree_desc *stat_desc;  /* the corresponding static tree */
-} FAR tree_desc;
+    const static_पुनो_desc *stat_desc;  /* the corresponding static tree */
+} FAR पुनो_desc;
 
 typedef ush Pos;
 typedef Pos FAR Posf;
@@ -183,7 +183,7 @@ typedef struct internal_state {
      * smaller than this value. This mechanism is used only for compression
      * levels >= 4.
      */
-#   define max_insert_length  max_lazy_match
+#   define max_इसिंगित_length  max_lazy_match
     /* Insert new strings in the hash table only if the match length is not
      * greater than this length. This saves time but degrades compression.
      * max_insert_length is used only for compression levels <= 3.
@@ -201,13 +201,13 @@ typedef struct internal_state {
     /* Didn't use ct_data typedef below to suppress compiler warning */
     struct ct_data_s dyn_ltree[HEAP_SIZE];   /* literal and length tree */
     struct ct_data_s dyn_dtree[2*D_CODES+1]; /* distance tree */
-    struct ct_data_s bl_tree[2*BL_CODES+1];  /* Huffman tree for bit lengths */
+    struct ct_data_s bl_पुनो[2*BL_CODES+1];  /* Huffman tree for bit lengths */
 
-    struct tree_desc_s l_desc;               /* desc. for literal tree */
-    struct tree_desc_s d_desc;               /* desc. for distance tree */
-    struct tree_desc_s bl_desc;              /* desc. for bit length tree */
+    struct पुनो_desc_s l_desc;               /* desc. for literal tree */
+    struct पुनो_desc_s d_desc;               /* desc. for distance tree */
+    struct पुनो_desc_s bl_desc;              /* desc. for bit length tree */
 
-    ush bl_count[MAX_BITS+1];
+    ush bl_बिलांग[MAX_BITS+1];
     /* number of codes at each bit length for an optimal tree */
 
     int heap[2*L_CODES+1];      /* heap used to build the Huffman trees */
@@ -256,7 +256,7 @@ typedef struct internal_state {
     ulg opt_len;        /* bit length of current block with optimal trees */
     ulg static_len;     /* bit length of current block with static trees */
     uInt matches;       /* number of string matches in current block */
-    uInt insert;        /* bytes at end of window left to insert */
+    uInt इसिंगित;        /* bytes at end of window left to insert */
 
 #ifdef ZLIB_DEBUG
     ulg compressed_len; /* total bit length of compressed file mod 2^32 */
@@ -275,7 +275,7 @@ typedef struct internal_state {
     /* Last number of used bits when going to a byte boundary.
      */
 
-    ulg high_water;
+    ulg माताअस_water;
     /* High water mark offset in window for initialized bytes -- bytes above
      * this are set to zero in order to avoid memory check warnings when
      * longest match routines access bytes past the input.  This is then

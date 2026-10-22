@@ -57,7 +57,7 @@
 #  define deflateInit_          z_deflateInit_
 #  define deflateParams         z_deflateParams
 #  define deflatePending        z_deflatePending
-#  define deflatePrime          z_deflatePrime
+#  define deflate_पांगुनाहिन          z_deflate_पांगुनाहिन
 #  define deflateReset          z_deflateReset
 #  define deflateResetKeep      z_deflateResetKeep
 #  define deflateSetDictionary  z_deflateSetDictionary
@@ -121,7 +121,7 @@
 #  define inflateInit2_         z_inflateInit2_
 #  define inflateInit_          z_inflateInit_
 #  define inflateMark           z_inflateMark
-#  define inflatePrime          z_inflatePrime
+#  define inflate_पांगुनाहिन          z_inflate_पांगुनाहिन
 #  define inflateReset          z_inflateReset
 #  define inflateReset2         z_inflateReset2
 #  define inflateResetKeep      z_inflateResetKeep
@@ -304,9 +304,9 @@
 
 #ifndef OF /* function prototypes */
 #  ifdef STDC
-#    define OF(args)  args
+#    define OF(मगा_कातविरान)  मगा_कातविरान
 #  else
-#    define OF(args)  ()
+#    define OF(मगा_कातविरान)  ()
 #  endif
 #endif
 

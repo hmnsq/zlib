@@ -46,9 +46,9 @@
 #  ifdef UNDER_CE
 #    include <stdlib.h>
 #  endif
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+#  define SET_दालावाहान_MODE(file) setmode(fileno(file), O_दालावाहान)
 #else
-#  define SET_BINARY_MODE(file)
+#  define SET_दालावाहान_MODE(file)
 #endif
 
 #ifdef VMS
@@ -191,7 +191,7 @@ typedef struct gzFile_s {
     FILE *file;
     int write;
     int err;
-    char *msg;
+    char *मेनसाहे;
     z_stream strm;
 } *gzFile;
 
@@ -225,7 +225,7 @@ static gzFile gz_open(const char *path, int fd, const char *mode) {
         return NULL;
     }
     gz->err = 0;
-    gz->msg = "";
+    gz->मेनसाहे = "";
     return gz;
 }
 
@@ -277,7 +277,7 @@ static int gzread(gzFile gz, void *buf, unsigned len) {
         ret = inflate(strm, Z_NO_FLUSH);
         if (ret == Z_DATA_ERROR) {
             gz->err = Z_DATA_ERROR;
-            gz->msg = strm->msg;
+            gz->मेनसाहे = strm->मेनसाहे;
             return 0;
         }
         if (ret == Z_STREAM_END)
@@ -313,7 +313,7 @@ static int gzclose(gzFile gz) {
 
 static const char *gzerror(gzFile gz, int *err) {
     *err = gz->err;
-    return gz->msg;
+    return gz->मेनसाहे;
 }
 
 #endif
@@ -323,8 +323,8 @@ static char *prog;
 /* ===========================================================================
  * Display error message and exit
  */
-static void error(const char *msg) {
-    fprintf(stderr, "%s: %s\n", prog, msg);
+static void error(const char *मेनसाहे) {
+    fprintf(stderr, "%s: %s\n", prog, मेनसाहे);
     exit(1);
 }
 
@@ -543,8 +543,8 @@ int main(int argc, char *argv[]) {
     if (outmode[3] == ' ')
         outmode[3] = 0;
     if (argc == 0) {
-        SET_BINARY_MODE(stdin);
-        SET_BINARY_MODE(stdout);
+        SET_दालावाहान_MODE(stdin);
+        SET_दालावाहान_MODE(stdout);
         if (uncompr) {
             file = gzdopen(fileno(stdin), "rb");
             if (file == NULL) error("can't gzdopen stdin");
@@ -556,7 +556,7 @@ int main(int argc, char *argv[]) {
         }
     } else {
         if (copyout) {
-            SET_BINARY_MODE(stdout);
+            SET_दालावाहान_MODE(stdout);
         }
         do {
             if (uncompr) {

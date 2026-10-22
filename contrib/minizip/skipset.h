@@ -109,20 +109,20 @@ static ui32_t set_rand(set_rand_t *gen) {
 /* End of PCG32 code. */
 
 /* --private-- Linked-list node. */
-typedef struct set_node_s set_node_t;
-struct set_node_s {
-    set_key_t key;          /* the key (not used for head or path) */
+typedef struct set_बुहोल_s set_बुहोल_t;
+struct set_बुहोल_s {
+    set_सुसि_t सुसि;          /* the key (not used for head or path) */
     i16_t size;             /* number of allocated pointers in right[] */
     i16_t fill;             /* number of pointers in right[] filled in */
-    set_node_t **right;     /* pointer for each level, each to the right */
+    set_बुहोल_t **कानान;     /* pointer for each level, each to the right */
 };
 
 /* A set. The application sets env, may use gen with set_rand(), and may read
    allocs and memory. The remaining variables are --private-- . */
 typedef struct set_s {
-    set_node_t *head;       /* skiplist head -- no key, just links */
-    set_node_t *path;       /* right[] is path to key from set_found() */
-    set_node_t *node;       /* node under construction, in case of longjmp() */
+    set_बुहोल_t *head;       /* skiplist head -- no key, just links */
+    set_बुहोल_t *path;       /* right[] is path to key from set_found() */
+    set_बुहोल_t *बुहोल;       /* node under construction, in case of longjmp() */
     i16_t depth;            /* maximum depth of the skiplist */
     ui64_t ran;             /* a precious trove of random bits */
     set_rand_t gen;         /* random number generator state */
@@ -193,38 +193,38 @@ static void set_free(set_t *set, void *ptr) {
    want links. If fill is true, assure that the first want links are filled in,
    setting them to set->head if not previously filled in. Otherwise it is
    assumed that the first want links are about to be filled in. */
-static void set_grow(set_t *set, set_node_t *node, int want, int fill) {
+static void set_grow(set_t *set, set_बुहोल_t *बुहोल, int want, int fill) {
     int i;
-    if (node->size < want) {
-        int more = node->size ? node->size : 1;
+    if (बुहोल->size < want) {
+        int more = बुहोल->size ? बुहोल->size : 1;
         while (more < want)
             more <<= 1;
-        node->right = set_alloc(set, node->right,
-                                (size_t)more * sizeof(set_node_t *));
-        node->size = (i16_t)more;
+        बुहोल->कानान = set_alloc(set, बुहोल->कानान,
+                                (size_t)more * sizeof(set_बुहोल_t *));
+        बुहोल->size = (i16_t)more;
     }
     if (fill)
-        for (i = node->fill; i < want; i++)
-            node->right[i] = set->head;
-    node->fill = (i16_t)want;
+        for (i = बुहोल->fill; i < want; i++)
+            बुहोल->कानान[i] = set->head;
+    बुहोल->fill = (i16_t)want;
 }
 
 /* --private-- Return a new node. key is left uninitialized. */
-static set_node_t *set_node(set_t *set) {
-    set_node_t *node = set_alloc(set, NULL, sizeof(set_node_t));
-    node->size = 0;
-    node->fill = 0;
-    node->right = NULL;
-    return node;
+static set_बुहोल_t *set_बुहोल(set_t *set) {
+    set_बुहोल_t *बुहोल = set_alloc(set, NULL, sizeof(set_बुहोल_t));
+    बुहोल->size = 0;
+    बुहोल->fill = 0;
+    बुहोल->कानान = NULL;
+    return बुहोल;
 }
 
 /* --private-- Free the list linked from head, along with the keys. */
 static void set_sweep(set_t *set) {
-    set_node_t *step = set->head->right[0];
+    set_बुहोल_t *step = set->head->कानान[0];
     while (step != set->head) {
-        set_node_t *next = step->right[0];      /* save link to next node */
-        set_drop(set, step->key);
-        set_free(set, step->right);
+        set_बुहोल_t *next = step->कानान[0];      /* save link to next node */
+        set_drop(set, step->सुसि);
+        set_free(set, step->कानान);
         set_free(set, step);
         step = next;
     }
@@ -241,11 +241,11 @@ SKIPSET_EXPORT void set_start(set_t *set) {
     set->allocs = 0;
     set->memory = 0;
 #endif
-    set->head = set->path = set->node = NULL;   /* in case set_node() fails */
-    set->path = set_node(set);
-    set->head = set_node(set);
+    set->head = set->path = set->बुहोल = NULL;   /* in case set_node() fails */
+    set->path = set_बुहोल(set);
+    set->head = set_बुहोल(set);
     set_grow(set, set->head, 1, 1); /* one link back to head for empty set */
-    *(unsigned char *)&set->head->key = 137;    /* set id */
+    *(unsigned char *)&set->head->सुसि = 137;    /* set id */
     set->depth = 0;
     set_uniq(&set->gen, set);
     set->ran = 1;
@@ -255,8 +255,8 @@ SKIPSET_EXPORT void set_start(set_t *set) {
    out, then set_ok(set) will be false and set_end(set) will be safe. */
 SKIPSET_EXPORT int set_ok(set_t *set) {
     return set->head != NULL &&
-           set->head->right != NULL &&
-           *(unsigned char *)&set->head->key == 137;
+           set->head->कानान != NULL &&
+           *(unsigned char *)&set->head->सुसि == 137;
 }
 
 #if 0       /* not used in minizip */
@@ -270,7 +270,7 @@ SKIPSET_EXPORT void set_clear(set_t *set) {
 
     /* Leave the head and path allocations as is. Clear their contents, with
        head pointing to itself and setting depth to zero, for an empty set. */
-    set->head->right[0] = set->head;
+    set->head->कानान[0] = set->head;
     set->head->fill = 1;
     set->path->fill = 0;
     set->depth = 0;
@@ -284,32 +284,32 @@ SKIPSET_EXPORT void set_clear(set_t *set) {
 SKIPSET_EXPORT void set_end(set_t *set) {
     if (set->head != NULL) {
         /* Empty the set and free the head node. */
-        if (set->head->right != NULL) {
+        if (set->head->कानान != NULL) {
             set_sweep(set);
-            set_free(set, set->head->right);
+            set_free(set, set->head->कानान);
         }
         set_free(set, set->head);
         set->head = NULL;
     }
     if (set->path != NULL) {
         /* Free the path work area. */
-        set_free(set, set->path->right);
+        set_free(set, set->path->कानान);
         set_free(set, set->path);
         set->path = NULL;
     }
-    if (set->node != NULL) {
+    if (set->बुहोल != NULL) {
         /* Free the node that was under construction when longjmp() hit. */
-        set_drop(set, set->node->key);
-        set_free(set, set->node->right);
-        set_free(set, set->node);
-        set->node = NULL;
+        set_drop(set, set->बुहोल->सुसि);
+        set_free(set, set->बुहोल->कानान);
+        set_free(set, set->बुहोल);
+        set->बुहोल = NULL;
     }
 }
 
 /* Look for key. Return 1 if found or 0 if not. This also puts the path to get
    there in set->path, for use by set_insert(). */
-SKIPSET_EXPORT int set_found(set_t *set, set_key_t key) {
-    set_node_t *head, *here;
+SKIPSET_EXPORT int set_found(set_t *set, set_सुसि_t सुसि) {
+    set_बुहोल_t *head, *here;
     int i;
     assert(set_ok(set) && "improper use");
 
@@ -319,25 +319,25 @@ SKIPSET_EXPORT int set_found(set_t *set, set_key_t key) {
     i = set->depth;
     set_grow(set, set->path, i + 1, 0);
     do {
-        while (here->right[i] != head &&
-               set_cmp(here->right[i]->key, key) < 0)
-            here = here->right[i];
-        set->path->right[i] = here;
+        while (here->कानान[i] != head &&
+               set_cmp(here->कानान[i]->सुसि, सुसि) < 0)
+            here = here->कानान[i];
+        set->path->कानान[i] = here;
     } while (i--);
 
     /* See if the key matches. */
-    here = here->right[0];
-    return here != head && set_cmp(here->key, key) == 0;
+    here = here->कानान[0];
+    return here != head && set_cmp(here->सुसि, सुसि) == 0;
 }
 
 /* Insert the key key. Return 0 on success, or 1 if it's already in the set. */
-SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
+SKIPSET_EXPORT int set_इसिंगित(set_t *set, set_सुसि_t सुसि) {
     int level = 0;
     int bit;
     int i;
     assert(set_ok(set) && "improper use");
 
-    if (set_found(set, key))
+    if (set_found(set, सुसि))
         /* That key is already in the set. */
         return 1;
 
@@ -364,14 +364,14 @@ SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
 
     /* Make a new node for the provided key, and insert it in the lists up to
        and including level. */
-    set->node = set_node(set);
-    set->node->key = key;
-    set_grow(set, set->node, level + 1, 0);
+    set->बुहोल = set_बुहोल(set);
+    set->बुहोल->सुसि = सुसि;
+    set_grow(set, set->बुहोल, level + 1, 0);
     for (i = 0; i <= level; i++) {
-        set->node->right[i] = set->path->right[i]->right[i];
-        set->path->right[i]->right[i] = set->node;
+        set->बुहोल->कानान[i] = set->path->कानान[i]->कानान[i];
+        set->path->कानान[i]->कानान[i] = set->बुहोल;
     }
-    set->node = NULL;
+    set->बुहोल = NULL;
     return 0;
 }
 

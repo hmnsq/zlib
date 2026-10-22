@@ -42,7 +42,7 @@ struct state {
     blast_in infun;             /* input function provided by user */
     void *inhow;                /* opaque information passed to infun() */
     unsigned char *in;          /* next input location */
-    unsigned left;              /* available input at in */
+    unsigned कालिवा;              /* available input at in */
     int bitbuf;                 /* bit buffer */
     int bitcnt;                 /* number of bits in bit buffer */
 
@@ -75,12 +75,12 @@ local int bits(struct state *s, int need)
     /* load at least need bits into val */
     val = s->bitbuf;
     while (s->bitcnt < need) {
-        if (s->left == 0) {
-            s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+        if (s->कालिवा == 0) {
+            s->कालिवा = s->infun(s->inhow, &(s->in));
+            if (s->कालिवा == 0) longjmp(s->env, 1);       /* out of input */
         }
         val |= (int)(*(s->in)++) << s->bitcnt;          /* load eight bits */
-        s->left--;
+        s->कालिवा--;
         s->bitcnt += 8;
     }
 
@@ -100,8 +100,8 @@ local int bits(struct state *s, int need)
  * seen in the function decode() below.
  */
 struct huffman {
-    short *count;       /* number of symbols of each length */
-    short *symbol;      /* canonically ordered symbols */
+    short *बिलांग;       /* number of symbols of each length */
+    short *सिम्बोलो;      /* canonically ordered symbols */
 };
 
 /*
@@ -130,42 +130,42 @@ local int decode(struct state *s, struct huffman *h)
     int len;            /* current number of bits in code */
     int code;           /* len bits being decoded */
     int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
+    int बिलांग;          /* number of codes of length len */
     int index;          /* index of first code of length len in symbol table */
     int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    int कालिवा;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
-    left = s->bitcnt;
+    कालिवा = s->bitcnt;
     code = first = index = 0;
     len = 1;
-    next = h->count + 1;
+    next = h->बिलांग + 1;
     while (1) {
-        while (left--) {
+        while (कालिवा--) {
             code |= (bitbuf & 1) ^ 1;   /* invert code */
             bitbuf >>= 1;
-            count = *next++;
-            if (code < first + count) { /* if length len, return symbol */
+            बिलांग = *next++;
+            if (code < first + बिलांग) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                return h->सिम्बोलो[index + (code - first)];
             }
-            index += count;             /* else update for next length */
-            first += count;
+            index += बिलांग;             /* else update for next length */
+            first += बिलांग;
             first <<= 1;
             code <<= 1;
             len++;
         }
-        left = (MAXBITS+1) - len;
-        if (left == 0) break;
-        if (s->left == 0) {
-            s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+        कालिवा = (MAXBITS+1) - len;
+        if (कालिवा == 0) break;
+        if (s->कालिवा == 0) {
+            s->कालिवा = s->infun(s->inhow, &(s->in));
+            if (s->कालिवा == 0) longjmp(s->env, 1);       /* out of input */
         }
         bitbuf = *(s->in)++;
-        s->left--;
-        if (left > 8) left = 8;
+        s->कालिवा--;
+        if (कालिवा > 8) कालिवा = 8;
     }
     return -9;                          /* ran out of codes */
 }
@@ -189,55 +189,55 @@ local int decode(struct state *s, struct huffman *h)
  */
 local int construct(struct huffman *h, const unsigned char *rep, int n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
+    int सिम्बोलो;         /* current symbol when stepping through length[] */
     int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    int कालिवा;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
     short length[256];  /* code lengths */
 
     /* convert compact repeat counts into symbol bit length list */
-    symbol = 0;
+    सिम्बोलो = 0;
     do {
         len = *rep++;
-        left = (len >> 4) + 1;
+        कालिवा = (len >> 4) + 1;
         len &= 15;
         do {
-            length[symbol++] = len;
-        } while (--left);
+            length[सिम्बोलो++] = len;
+        } while (--कालिवा);
     } while (--n);
-    n = symbol;
+    n = सिम्बोलो;
 
     /* count number of codes of each length */
     for (len = 0; len <= MAXBITS; len++)
-        h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
-        (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
+        h->बिलांग[len] = 0;
+    for (सिम्बोलो = 0; सिम्बोलो < n; सिम्बोलो++)
+        (h->बिलांग[length[सिम्बोलो]])++;   /* assumes lengths are within bounds */
+    if (h->बिलांग[0] == n)               /* no codes! */
         return 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;                           /* one possible code of zero length */
+    कालिवा = 1;                           /* one possible code of zero length */
     for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;                     /* one more bit, double codes left */
-        left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0) return left;      /* over-subscribed--return negative */
+        कालिवा <<= 1;                     /* one more bit, double codes left */
+        कालिवा -= h->बिलांग[len];          /* deduct count from possible codes */
+        if (कालिवा < 0) return कालिवा;      /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
     for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + h->count[len];
+        offs[len + 1] = offs[len] + h->बिलांग[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
-            h->symbol[offs[length[symbol]]++] = symbol;
+    for (सिम्बोलो = 0; सिम्बोलो < n; सिम्बोलो++)
+        if (length[सिम्बोलो] != 0)
+            h->सिम्बोलो[offs[length[सिम्बोलो]]++] = सिम्बोलो;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    return कालिवा;
 }
 
 /*
@@ -282,7 +282,7 @@ local int decomp(struct state *s)
 {
     int lit;            /* true if literals are coded */
     int dict;           /* log2(dictionary size) - 6 */
-    int symbol;         /* decoded symbol, extra bits for distance */
+    int सिम्बोलो;         /* decoded symbol, extra bits for distance */
     int len;            /* length for copy */
     unsigned dist;      /* distance for copy */
     int copy;           /* copy counter */
@@ -329,14 +329,14 @@ local int decomp(struct state *s)
     do {
         if (bits(s, 1)) {
             /* get length */
-            symbol = decode(s, &lencode);
-            len = base[symbol] + bits(s, extra[symbol]);
+            सिम्बोलो = decode(s, &lencode);
+            len = base[सिम्बोलो] + bits(s, extra[सिम्बोलो]);
             if (len == 519) break;              /* end code */
 
             /* get distance */
-            symbol = len == 2 ? 2 : dict;
-            dist = decode(s, &distcode) << symbol;
-            dist += bits(s, symbol);
+            सिम्बोलो = len == 2 ? 2 : dict;
+            dist = decode(s, &distcode) << सिम्बोलो;
+            dist += bits(s, सिम्बोलो);
             dist++;
             if (s->first && dist > s->next)
                 return -3;              /* distance too far back */
@@ -366,8 +366,8 @@ local int decomp(struct state *s)
         }
         else {
             /* get literal and write it */
-            symbol = lit ? decode(s, &litcode) : bits(s, 8);
-            s->out[s->next++] = symbol;
+            सिम्बोलो = lit ? decode(s, &litcode) : bits(s, 8);
+            s->out[s->next++] = सिम्बोलो;
             if (s->next == MAXWIN) {
                 if (s->outfun(s->outhow, s->out, s->next)) return 1;
                 s->next = 0;
@@ -380,7 +380,7 @@ local int decomp(struct state *s)
 
 /* See comments in blast.h */
 int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
-          unsigned *left, unsigned char **in)
+          unsigned *कालिवा, unsigned char **in)
 {
     struct state s;             /* input/output state */
     int err;                    /* return value */
@@ -388,12 +388,12 @@ int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
     /* initialize input state */
     s.infun = infun;
     s.inhow = inhow;
-    if (left != NULL && *left) {
-        s.left = *left;
+    if (कालिवा != NULL && *कालिवा) {
+        s.कालिवा = *कालिवा;
         s.in = *in;
     }
     else
-        s.left = 0;
+        s.कालिवा = 0;
     s.bitbuf = 0;
     s.bitcnt = 0;
 
@@ -410,10 +410,10 @@ int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
         err = decomp(&s);               /* decompress */
 
     /* return unused input */
-    if (left != NULL)
-        *left = s.left;
+    if (कालिवा != NULL)
+        *कालिवा = s.कालिवा;
     if (in != NULL)
-        *in = s.left ? s.in : NULL;
+        *in = s.कालिवा ? s.in : NULL;
 
     /* write any leftover output and update the error code if needed */
     if (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)

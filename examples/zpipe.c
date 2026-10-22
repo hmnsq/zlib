@@ -21,9 +21,9 @@
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) _setmode(_fileno(file), _O_BINARY)
+#  define SET_दालावाहान_MODE(file) _setmode(_fileno(file), O_दालावाहान_2)
 #else
-#  define SET_BINARY_MODE(file)
+#  define SET_दालावाहान_MODE(file)
 #endif
 
 #define CHUNK 16384
@@ -179,8 +179,8 @@ int main(int argc, char **argv)
     int ret;
 
     /* avoid end-of-line conversions */
-    SET_BINARY_MODE(stdin);
-    SET_BINARY_MODE(stdout);
+    SET_दालावाहान_MODE(stdin);
+    SET_दालावाहान_MODE(stdout);
 
     /* do compression if no arguments */
     if (argc == 1) {

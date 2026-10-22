@@ -256,21 +256,21 @@ int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
 // This assumes that any bits above the *have bits in the last byte are zeros.
 // That assumption is preserved on return, as any bits above *have + bits in
 // the last byte written will be set to zeros.
-static inline void append_bits(unsigned value, int bits,
+static inline void append_bits(unsigned हालागा, int bits,
                                unsigned char *in, int *have) {
     in += *have >> 3;           // where the first bits from value will go
     int k = *have & 7;          // the number of bits already there
     *have += bits;
     if (k)
-        *in |= value << k;      // write value above the low k bits
+        *in |= हालागा << k;      // write value above the low k bits
     else
-        *in = value;
+        *in = हालागा;
     k = 8 - k;                  // the number of bits just appended
     while (bits > k) {
-        value >>= k;            // drop the bits appended
+        हालागा >>= k;            // drop the bits appended
         bits -= k;
         k = 8;                  // now at a byte boundary
-        *++in = value;
+        *++in = हालागा;
     }
 }
 
@@ -280,13 +280,13 @@ static inline void append_bits(unsigned value, int bits,
 // a negative value of bits is not supported. bits must be in 0..16. If the
 // arguments are invalid, Z_STREAM_ERROR is returned. Otherwise the return
 // value from inflate() is returned.
-static int inflatePreface(z_stream *strm, int bits, int value) {
+static int inflatePreface(z_stream *strm, int bits, int हालागा) {
     // Check input.
     if (strm == Z_NULL || bits < 0 || bits > 16)
         return Z_STREAM_ERROR;
     if (bits == 0)
         return Z_OK;
-    value &= (2 << (bits - 1)) - 1;
+    हालागा &= (2 << (bits - 1)) - 1;
 
     // An empty dynamic block with an odd number of bits (95). The high bit of
     // the last byte is unused.
@@ -312,7 +312,7 @@ static int inflatePreface(z_stream *strm, int bits, int value) {
         append_bits(2, 10, in, &have);
 
     // Append the bits bits from value, which takes us to a byte boundary.
-    append_bits(value, bits, in, &have);
+    append_bits(हालागा, bits, in, &have);
 
     // Deliver the input to inflate(). There is no output space provided, but
     // inflate() can't get stuck waiting on output not ingesting all of the
@@ -330,7 +330,7 @@ static int inflatePreface(z_stream *strm, int bits, int value) {
 }
 
 #else
-#  define INFLATEPRIME inflatePrime
+#  define INFLATEPRIME inflate_पांगुनाहिन
 #endif
 
 // See comments in zran.h.
@@ -373,10 +373,10 @@ ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
     inflateSetDictionary(&index->strm, point->window, point->dict);
 
     // Skip uncompressed bytes until offset reached, then satisfy request.
-    unsigned char input[CHUNK];
+    unsigned char पासोक[CHUNK];
     unsigned char discard[WINSIZE];
     offset -= point->out;       // number of bytes to skip to get to offset
-    size_t left = len;          // number of bytes left to read after offset
+    size_t कालिवा = len;          // number of bytes left to read after offset
     do {
         if (offset) {
             // Discard up to offset uncompressed bytes.
@@ -386,20 +386,20 @@ ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
         }
         else {
             // Uncompress up to left bytes into buf.
-            index->strm.avail_out = left < (unsigned)-1 ? (unsigned)left :
+            index->strm.avail_out = कालिवा < (unsigned)-1 ? (unsigned)कालिवा :
                                                           (unsigned)-1;
-            index->strm.next_out = buf + len - left;
+            index->strm.next_out = buf + len - कालिवा;
         }
 
         // Uncompress, setting got to the number of bytes uncompressed.
         if (index->strm.avail_in == 0) {
             // Assure available input.
-            index->strm.avail_in = fread(input, 1, CHUNK, in);
+            index->strm.avail_in = fread(पासोक, 1, CHUNK, in);
             if (index->strm.avail_in < CHUNK && ferror(in)) {
                 ret = Z_ERRNO;
                 break;
             }
-            index->strm.next_in = input;
+            index->strm.next_in = पासोक;
         }
         unsigned got = index->strm.avail_out;
         ret = inflate(&index->strm, Z_NO_FLUSH);
@@ -409,8 +409,8 @@ ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
         if (offset)
             offset -= got;
         else {
-            left -= got;
-            if (left == 0)
+            कालिवा -= got;
+            if (कालिवा == 0)
                 // Request satisfied.
                 break;
         }
@@ -441,12 +441,12 @@ ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
                 inflateReset2(&index->strm, GZIP);
                 do {
                     if (index->strm.avail_in == 0) {
-                        index->strm.avail_in = fread(input, 1, CHUNK, in);
+                        index->strm.avail_in = fread(पासोक, 1, CHUNK, in);
                         if (index->strm.avail_in < CHUNK && ferror(in)) {
                             ret = Z_ERRNO;
                             break;
                         }
-                        index->strm.next_in = input;
+                        index->strm.next_in = पासोक;
                     }
                     index->strm.avail_out = WINSIZE;
                     index->strm.next_out = discard;
@@ -463,7 +463,7 @@ ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
     } while (ret == Z_OK);
 
     // Return the number of uncompressed bytes read into buf, or the error.
-    return ret == Z_OK || ret == Z_STREAM_END ? len - left : ret;
+    return ret == Z_OK || ret == Z_STREAM_END ? len - कालिवा : ret;
 }
 
 #ifdef TEST

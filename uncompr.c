@@ -31,15 +31,15 @@ int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
     z_stream stream;
     int err;
     const uInt max = (uInt)-1;
-    z_size_t len, left;
+    z_size_t len, कालिवा;
 
     if (sourceLen == NULL || (*sourceLen > 0 && source == NULL) ||
         destLen == NULL || (*destLen > 0 && dest == NULL))
         return Z_STREAM_ERROR;
 
     len = *sourceLen;
-    left = *destLen;
-    if (left == 0 && dest == Z_NULL)
+    कालिवा = *destLen;
+    if (कालिवा == 0 && dest == Z_NULL)
         dest = (Bytef *)&stream.reserved;       /* next_out cannot be NULL */
 
     stream.next_in = (z_const Bytef *)source;
@@ -56,8 +56,8 @@ int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
 
     do {
         if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+            stream.avail_out = कालिवा > (z_size_t)max ? max : (uInt)कालिवा;
+            कालिवा -= stream.avail_out;
         }
         if (stream.avail_in == 0) {
             stream.avail_in = len > (z_size_t)max ? max : (uInt)len;
@@ -70,9 +70,9 @@ int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
        *sourceLen to the amount of input consumed. Set *destLen to the amount
        of data produced. */
     len += stream.avail_in;
-    left += stream.avail_out;
+    कालिवा += stream.avail_out;
     *sourceLen -= len;
-    *destLen -= left;
+    *destLen -= कालिवा;
 
     inflateEnd(&stream);
     return err == Z_STREAM_END ? Z_OK :

@@ -23,19 +23,19 @@ local int outf(void *how, unsigned char *buf, unsigned len)
 int main(void)
 {
     int ret;
-    unsigned left;
+    unsigned कालिवा;
 
     /* decompress to stdout */
-    left = 0;
-    ret = blast(inf, stdin, outf, stdout, &left, NULL);
+    कालिवा = 0;
+    ret = blast(inf, stdin, outf, stdout, &कालिवा, NULL);
     if (ret != 0)
         fprintf(stderr, "blast error: %d\n", ret);
 
     /* count any leftover bytes */
     while (getchar() != EOF)
-        left++;
-    if (left)
-        fprintf(stderr, "blast warning: %u unused bytes of input\n", left);
+        कालिवा++;
+    if (कालिवा)
+        fprintf(stderr, "blast warning: %u unused bytes of input\n", कालिवा);
 
     /* return blast() error code */
     return ret;

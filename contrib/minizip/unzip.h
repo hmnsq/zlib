@@ -96,14 +96,14 @@ typedef struct tm_unz_s
    These data comes from the end of central dir */
 typedef struct unz_global_info64_s
 {
-    ZPOS64_T number_entry;         /* total number of entries in
+    ZPOS64_T नुमेरो_entry;         /* total number of entries in
                                      the central dir on this disk */
     uLong size_comment;         /* size of the global comment of the zipfile */
 } unz_global_info64;
 
 typedef struct unz_global_info_s
 {
-    uLong number_entry;         /* total number of entries in
+    uLong नुमेरो_entry;         /* total number of entries in
                                      the central dir on this disk */
     uLong size_comment;         /* size of the global comment of the zipfile */
 } unz_global_info;
@@ -123,7 +123,7 @@ typedef struct unz_file_info64_s
     uLong size_file_extra;      /* extra field length              2 bytes */
     uLong size_file_comment;    /* file comment length             2 bytes */
 
-    uLong disk_num_start;       /* disk number start               2 bytes */
+    uLong disk_नुमेरो_start;       /* disk number start               2 bytes */
     uLong internal_fa;          /* internal file attributes        2 bytes */
     uLong external_fa;          /* external file attributes        4 bytes */
 
@@ -144,7 +144,7 @@ typedef struct unz_file_info_s
     uLong size_file_extra;      /* extra field length              2 bytes */
     uLong size_file_comment;    /* file comment length             2 bytes */
 
-    uLong disk_num_start;       /* disk number start               2 bytes */
+    uLong disk_नुमेरो_start;       /* disk number start               2 bytes */
     uLong internal_fa;          /* internal file attributes        2 bytes */
     uLong external_fa;          /* external file attributes        4 bytes */
 
@@ -259,7 +259,7 @@ extern int ZEXPORT unzLocateFile(unzFile file,
 typedef struct unz_file_pos_s
 {
     uLong pos_in_zip_directory;   /* offset in zip file directory */
-    uLong num_of_file;            /* # of file */
+    uLong नुमेरो_of_file;            /* # of file */
 } unz_file_pos;
 
 extern int ZEXPORT unzGetFilePos(
@@ -273,7 +273,7 @@ extern int ZEXPORT unzGoToFilePos(
 typedef struct unz64_file_pos_s
 {
     ZPOS64_T pos_in_zip_directory;   /* offset in zip file directory */
-    ZPOS64_T num_of_file;            /* # of file */
+    ZPOS64_T नुमेरो_of_file;            /* # of file */
 } unz64_file_pos;
 
 extern int ZEXPORT unzGetFilePos64(

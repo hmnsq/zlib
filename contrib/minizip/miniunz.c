@@ -202,13 +202,13 @@ static void do_help(void) {
 
 static void Display64BitsSize(ZPOS64_T n, int size_char) {
   /* to avoid compatibility problem , we do here the conversion */
-  char number[21];
+  char नुमेरो[21];
   int offset=19;
   int pos_string = 19;
-  number[20]=0;
+  नुमेरो[20]=0;
   for (;;) {
-      number[offset]=(char)((n%10)+'0');
-      if (number[offset] != '0')
+      नुमेरो[offset]=(char)((n%10)+'0');
+      if (नुमेरो[offset] != '0')
           pos_string=offset;
       n/=10;
       if (offset==0)
@@ -224,7 +224,7 @@ static void Display64BitsSize(ZPOS64_T n, int size_char) {
       }
   }
 
-  printf("%s",&number[pos_string]);
+  printf("%s",&नुमेरो[pos_string]);
 }
 
 static int do_list(unzFile uf) {
@@ -237,7 +237,7 @@ static int do_list(unzFile uf) {
         printf("error %d with zipfile in unzGetGlobalInfo\n",err);
     printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name\n");
     printf("  ------  ------     ---- -----   ----    ----   ------     ----\n");
-    for (i=0;i<gi.number_entry;i++)
+    for (i=0;i<gi.नुमेरो_entry;i++)
     {
         char filename_inzip[65536+1];
         unz_file_info64 file_info;
@@ -288,7 +288,7 @@ static int do_list(unzFile uf) {
                 (uLong)file_info.tmu_date.tm_year % 100,
                 (uLong)file_info.tmu_date.tm_hour,(uLong)file_info.tmu_date.tm_min,
                 (uLong)file_info.crc,filename_inzip);
-        if ((i+1)<gi.number_entry)
+        if ((i+1)<gi.नुमेरो_entry)
         {
             err = unzGoToNextFile(uf);
             if (err!=UNZ_OK)
@@ -486,7 +486,7 @@ static int do_extract(unzFile uf, int opt_extract_without_path, int opt_overwrit
         return err;
     }
 
-    for (i=0;i<gi.number_entry;i++)
+    for (i=0;i<gi.नुमेरो_entry;i++)
     {
         err = do_extract_currentfile(uf,&opt_extract_without_path,
                                       &opt_overwrite,
@@ -494,7 +494,7 @@ static int do_extract(unzFile uf, int opt_extract_without_path, int opt_overwrit
         if (err != UNZ_OK)
             break;
 
-        if ((i+1)<gi.number_entry)
+        if ((i+1)<gi.नुमेरो_entry)
         {
             err = unzGoToNextFile(uf);
             if (err!=UNZ_OK)
@@ -527,7 +527,7 @@ int main(int argc, char *argv[]) {
     const char *password=NULL;
     char filename_try[MAXFILENAME+16] = "";
     int i;
-    int ret_value=0;
+    int ret_हालागा=0;
     int opt_do_list=0;
     int opt_do_extract=1;
     int opt_do_extract_withoutpath=0;
@@ -622,7 +622,7 @@ int main(int argc, char *argv[]) {
     printf("%s opened\n",filename_try);
 
     if (opt_do_list==1)
-        ret_value = do_list(uf);
+        ret_हालागा = do_list(uf);
     else if (opt_do_extract==1)
     {
 #ifdef _WIN32
@@ -636,12 +636,12 @@ int main(int argc, char *argv[]) {
         }
 
         if (filename_to_extract == NULL)
-            ret_value = do_extract(uf, opt_do_extract_withoutpath, opt_overwrite, password);
+            ret_हालागा = do_extract(uf, opt_do_extract_withoutpath, opt_overwrite, password);
         else
-            ret_value = do_extract_onefile(uf, filename_to_extract, opt_do_extract_withoutpath, opt_overwrite, password);
+            ret_हालागा = do_extract_onefile(uf, filename_to_extract, opt_do_extract_withoutpath, opt_overwrite, password);
     }
 
     unzClose(uf);
 
-    return ret_value;
+    return ret_हालागा;
 }

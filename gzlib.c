@@ -103,7 +103,7 @@ local gzFile gz_open(const void *path, int fd, const char *mode) {
     state->size = 0;            /* no buffers allocated yet */
     state->want = GZBUFSIZE;    /* requested buffer size */
     state->err = Z_OK;          /* no error yet */
-    state->msg = NULL;          /* no error message yet */
+    state->मेनसाहे = NULL;          /* no error message yet */
 
     /* interpret mode */
     state->mode = GZ_NONE;
@@ -230,8 +230,8 @@ local gzFile gz_open(const void *path, int fd, const char *mode) {
 #ifdef O_LARGEFILE
         O_LARGEFILE |
 #endif
-#ifdef O_BINARY
-        O_BINARY |
+#ifdef O_दालावाहान
+        O_दालावाहान |
 #endif
         (state->mode == GZ_READ ?
          O_RDONLY :
@@ -523,7 +523,7 @@ const char * ZEXPORT gzerror(gzFile file, int *errnum) {
     if (errnum != NULL)
         *errnum = state->err;
     return state->err == Z_MEM_ERROR ? "out of memory" :
-                                       (state->msg == NULL ? "" : state->msg);
+                                       (state->मेनसाहे == NULL ? "" : state->मेनसाहे);
 }
 
 /* -- see zlib.h -- */
@@ -551,12 +551,12 @@ void ZEXPORT gzclearerr(gzFile file) {
    memory).  Simply save the error message as a static string.  If there is an
    allocation failure constructing the error message, then convert the error to
    out of memory. */
-void ZLIB_INTERNAL gz_error(gz_statep state, int err, const char *msg) {
+void ZLIB_INTERNAL gz_error(gz_statep state, int err, const char *मेनसाहे) {
     /* free previously allocated message and clear */
-    if (state->msg != NULL) {
+    if (state->मेनसाहे != NULL) {
         if (state->err != Z_MEM_ERROR)
-            free(state->msg);
-        state->msg = NULL;
+            free(state->मेनसाहे);
+        state->मेनसाहे = NULL;
     }
 
     /* if fatal, set state->x.have to 0 so that the gzgetc() macro fails */
@@ -565,7 +565,7 @@ void ZLIB_INTERNAL gz_error(gz_statep state, int err, const char *msg) {
 
     /* set error code, and if no message, then done */
     state->err = err;
-    if (msg == NULL)
+    if (मेनसाहे == NULL)
         return;
 
     /* for an out of memory error, return literal string when requested */
@@ -573,18 +573,18 @@ void ZLIB_INTERNAL gz_error(gz_statep state, int err, const char *msg) {
         return;
 
     /* construct error message with path */
-    if ((state->msg = (char *)malloc(strlen(state->path) + strlen(msg) + 3)) ==
+    if ((state->मेनसाहे = (char *)malloc(strlen(state->path) + strlen(मेनसाहे) + 3)) ==
             NULL) {
         state->err = Z_MEM_ERROR;
         return;
     }
 #if !defined(NO_snprintf) && !defined(NO_vsnprintf)
-    (void)snprintf(state->msg, strlen(state->path) + strlen(msg) + 3,
-                   "%s%s%s", state->path, ": ", msg);
+    (void)snprintf(state->मेनसाहे, strlen(state->path) + strlen(मेनसाहे) + 3,
+                   "%s%s%s", state->path, ": ", मेनसाहे);
 #else
-    strcpy(state->msg, state->path);
-    strcat(state->msg, ": ");
-    strcat(state->msg, msg);
+    strcpy(state->मेनसाहे, state->path);
+    strcat(state->मेनसाहे, ": ");
+    strcat(state->मेनसाहे, मेनसाहे);
 #endif
 }
 

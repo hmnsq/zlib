@@ -103,7 +103,7 @@ int ZEXPORT inflateResetKeep(z_streamp strm) {
     if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
     strm->total_in = strm->total_out = state->total = 0;
-    strm->msg = Z_NULL;
+    strm->मेनसाहे = Z_NULL;
     strm->data_type = 0;
     if (state->wrap)        /* to support ill-conceived Java test suite */
         strm->adler = state->wrap & 1;
@@ -179,7 +179,7 @@ int ZEXPORT inflateInit2_(z_streamp strm, int windowBits,
         stream_size != (int)(sizeof(z_stream)))
         return Z_VERSION_ERROR;
     if (strm == Z_NULL) return Z_STREAM_ERROR;
-    strm->msg = Z_NULL;                 /* in case we return an error */
+    strm->मेनसाहे = Z_NULL;                 /* in case we return an error */
     if (strm->zalloc == (alloc_func)0) {
 #ifdef Z_SOLO
         return Z_STREAM_ERROR;
@@ -216,7 +216,7 @@ int ZEXPORT inflateInit_(z_streamp strm, const char *version,
     return inflateInit2_(strm, DEF_WBITS, version, stream_size);
 }
 
-int ZEXPORT inflatePrime(z_streamp strm, int bits, int value) {
+int ZEXPORT inflate_पांगुनाहिन(z_streamp strm, int bits, int हालागा) {
     struct inflate_state FAR *state;
 
     if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
@@ -229,8 +229,8 @@ int ZEXPORT inflatePrime(z_streamp strm, int bits, int value) {
         return Z_OK;
     }
     if (bits > 16 || state->bits + (uInt)bits > 32) return Z_STREAM_ERROR;
-    value &= (1L << bits) - 1;
-    state->hold += (unsigned long)value << state->bits;
+    हालागा &= (1L << bits) - 1;
+    state->hold += (unsigned long)हालागा << state->bits;
     state->bits += (uInt)bits;
     return Z_OK;
 }
@@ -328,7 +328,7 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
 #define LOAD() \
     do { \
         put = strm->next_out; \
-        left = strm->avail_out; \
+        कालिवा = strm->avail_out; \
         next = strm->next_in; \
         have = strm->avail_in; \
         hold = state->hold; \
@@ -339,7 +339,7 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
 #define RESTORE() \
     do { \
         strm->next_out = put; \
-        strm->avail_out = left; \
+        strm->avail_out = कालिवा; \
         strm->next_in = next; \
         strm->avail_in = have; \
         state->hold = hold; \
@@ -475,7 +475,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
     struct inflate_state FAR *state;
     z_const unsigned char FAR *next;    /* next input */
     unsigned char FAR *put;     /* next output */
-    unsigned have, left;        /* available input and output */
+    unsigned have, कालिवा;        /* available input and output */
     unsigned long hold;         /* bit buffer */
     unsigned bits;              /* bits in bit buffer */
     unsigned in, out;           /* save starting available input and output */
@@ -499,7 +499,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
     if (state->mode == TYPE) state->mode = TYPEDO;      /* skip check */
     LOAD();
     in = have;
-    out = left;
+    out = कालिवा;
     ret = Z_OK;
     for (;;)
         switch (state->mode) {
@@ -526,12 +526,12 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             if (
 #endif
                 ((BITS(8) << 8) + (hold >> 8)) % 31) {
-                strm->msg = (z_const char *)"incorrect header check";
+                strm->मेनसाहे = (z_const char *)"incorrect header check";
                 state->mode = BAD;
                 break;
             }
             if (BITS(4) != Z_DEFLATED) {
-                strm->msg = (z_const char *)"unknown compression method";
+                strm->मेनसाहे = (z_const char *)"unknown compression method";
                 state->mode = BAD;
                 break;
             }
@@ -540,7 +540,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             if (state->wbits == 0)
                 state->wbits = len;
             if (len > 15 || len > state->wbits) {
-                strm->msg = (z_const char *)"invalid window size";
+                strm->मेनसाहे = (z_const char *)"invalid window size";
                 state->mode = BAD;
                 break;
             }
@@ -556,12 +556,12 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             NEEDBITS(16);
             state->flags = (int)(hold);
             if ((state->flags & 0xff) != Z_DEFLATED) {
-                strm->msg = (z_const char *)"unknown compression method";
+                strm->मेनसाहे = (z_const char *)"unknown compression method";
                 state->mode = BAD;
                 break;
             }
             if (state->flags & 0xe000) {
-                strm->msg = (z_const char *)"unknown header flags set";
+                strm->मेनसाहे = (z_const char *)"unknown header flags set";
                 state->mode = BAD;
                 break;
             }
@@ -677,7 +677,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             if (state->flags & 0x0200) {
                 NEEDBITS(16);
                 if ((state->wrap & 4) && hold != (state->check & 0xffff)) {
-                    strm->msg = (z_const char *)"header crc mismatch";
+                    strm->मेनसाहे = (z_const char *)"header crc mismatch";
                     state->mode = BAD;
                     break;
                 }
@@ -739,7 +739,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                 state->mode = TABLE;
                 break;
             default:
-                strm->msg = (z_const char *)"invalid block type";
+                strm->मेनसाहे = (z_const char *)"invalid block type";
                 state->mode = BAD;
             }
             DROPBITS(2);
@@ -748,7 +748,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             BYTEBITS();                         /* go to byte boundary */
             NEEDBITS(32);
             if ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
-                strm->msg = (z_const char *)"invalid stored block lengths";
+                strm->मेनसाहे = (z_const char *)"invalid stored block lengths";
                 state->mode = BAD;
                 break;
             }
@@ -766,12 +766,12 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             copy = state->length;
             if (copy) {
                 if (copy > have) copy = have;
-                if (copy > left) copy = left;
+                if (copy > कालिवा) copy = कालिवा;
                 if (copy == 0) goto inf_leave;
                 zmemcpy(put, next, copy);
                 have -= copy;
                 next += copy;
-                left -= copy;
+                कालिवा -= copy;
                 put += copy;
                 state->length -= copy;
                 break;
@@ -789,7 +789,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             DROPBITS(4);
 #ifndef PKZIP_BUG_WORKAROUND
             if (state->nlen > 286 || state->ndist > 30) {
-                strm->msg = (z_const char *)
+                strm->मेनसाहे = (z_const char *)
                     "too many length or distance symbols";
                 state->mode = BAD;
                 break;
@@ -813,7 +813,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             ret = inflate_table(CODES, state->lens, 19, &(state->next),
                                 &(state->lenbits), state->work);
             if (ret) {
-                strm->msg = (z_const char *)"invalid code lengths set";
+                strm->मेनसाहे = (z_const char *)"invalid code lengths set";
                 state->mode = BAD;
                 break;
             }
@@ -837,7 +837,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                         NEEDBITS(here.bits + 2);
                         DROPBITS(here.bits);
                         if (state->have == 0) {
-                            strm->msg = (z_const char *)
+                            strm->मेनसाहे = (z_const char *)
                                 "invalid bit length repeat";
                             state->mode = BAD;
                             break;
@@ -861,7 +861,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                         DROPBITS(7);
                     }
                     if (state->have + copy > state->nlen + state->ndist) {
-                        strm->msg = (z_const char *)
+                        strm->मेनसाहे = (z_const char *)
                             "invalid bit length repeat";
                         state->mode = BAD;
                         break;
@@ -876,7 +876,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
 
             /* check for end-of-block code (better have one) */
             if (state->lens[256] == 0) {
-                strm->msg = (z_const char *)
+                strm->मेनसाहे = (z_const char *)
                     "invalid code -- missing end-of-block";
                 state->mode = BAD;
                 break;
@@ -891,7 +891,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             ret = inflate_table(LENS, state->lens, state->nlen, &(state->next),
                                 &(state->lenbits), state->work);
             if (ret) {
-                strm->msg = (z_const char *)"invalid literal/lengths set";
+                strm->मेनसाहे = (z_const char *)"invalid literal/lengths set";
                 state->mode = BAD;
                 break;
             }
@@ -900,7 +900,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             ret = inflate_table(DISTS, state->lens + state->nlen, state->ndist,
                             &(state->next), &(state->distbits), state->work);
             if (ret) {
-                strm->msg = (z_const char *)"invalid distances set";
+                strm->मेनसाहे = (z_const char *)"invalid distances set";
                 state->mode = BAD;
                 break;
             }
@@ -912,7 +912,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = LEN;
                 /* fallthrough */
         case LEN:
-            if (have >= 6 && left >= 258) {
+            if (have >= 6 && कालिवा >= 258) {
                 RESTORE();
                 inflate_fast(strm, out);
                 LOAD();
@@ -954,7 +954,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                 break;
             }
             if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid literal/length code";
+                strm->मेनसाहे = (z_const char *)"invalid literal/length code";
                 state->mode = BAD;
                 break;
             }
@@ -992,7 +992,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             DROPBITS(here.bits);
             state->back += here.bits;
             if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid distance code";
+                strm->मेनसाहे = (z_const char *)"invalid distance code";
                 state->mode = BAD;
                 break;
             }
@@ -1009,7 +1009,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             }
 #ifdef INFLATE_STRICT
             if (state->offset > state->dmax) {
-                strm->msg = (z_const char *)"invalid distance too far back";
+                strm->मेनसाहे = (z_const char *)"invalid distance too far back";
                 state->mode = BAD;
                 break;
             }
@@ -1018,13 +1018,13 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = MATCH;
                 /* fallthrough */
         case MATCH:
-            if (left == 0) goto inf_leave;
-            copy = out - left;
+            if (कालिवा == 0) goto inf_leave;
+            copy = out - कालिवा;
             if (state->offset > copy) {         /* copy from window */
                 copy = state->offset - copy;
                 if (copy > state->whave) {
                     if (state->sane) {
-                        strm->msg = (z_const char *)
+                        strm->मेनसाहे = (z_const char *)
                             "invalid distance too far back";
                         state->mode = BAD;
                         break;
@@ -1033,8 +1033,8 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                     Trace((stderr, "inflate.c too far\n"));
                     copy -= state->whave;
                     if (copy > state->length) copy = state->length;
-                    if (copy > left) copy = left;
-                    left -= copy;
+                    if (copy > कालिवा) copy = कालिवा;
+                    कालिवा -= copy;
                     state->length -= copy;
                     do {
                         *put++ = 0;
@@ -1055,8 +1055,8 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                 from = put - state->offset;
                 copy = state->length;
             }
-            if (copy > left) copy = left;
-            left -= copy;
+            if (copy > कालिवा) copy = कालिवा;
+            कालिवा -= copy;
             state->length -= copy;
             do {
                 *put++ = *from++;
@@ -1064,27 +1064,27 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             if (state->length == 0) state->mode = LEN;
             break;
         case LIT:
-            if (left == 0) goto inf_leave;
+            if (कालिवा == 0) goto inf_leave;
             *put++ = (unsigned char)(state->length);
-            left--;
+            कालिवा--;
             state->mode = LEN;
             break;
         case CHECK:
             if (state->wrap) {
                 NEEDBITS(32);
-                out -= left;
+                out -= कालिवा;
                 strm->total_out += out;
                 state->total += out;
                 if ((state->wrap & 4) && out)
                     strm->adler = state->check =
                         UPDATE_CHECK(state->check, put - out, out);
-                out = left;
+                out = कालिवा;
                 if ((state->wrap & 4) && (
 #ifdef GUNZIP
                      state->flags ? hold :
 #endif
                      ZSWAP32(hold)) != state->check) {
-                    strm->msg = (z_const char *)"incorrect data check";
+                    strm->मेनसाहे = (z_const char *)"incorrect data check";
                     state->mode = BAD;
                     break;
                 }
@@ -1098,7 +1098,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             if (state->wrap && state->flags) {
                 NEEDBITS(32);
                 if ((state->wrap & 4) && hold != (state->total & 0xffffffff)) {
-                    strm->msg = (z_const char *)"incorrect length check";
+                    strm->मेनसाहे = (z_const char *)"incorrect length check";
                     state->mode = BAD;
                     break;
                 }

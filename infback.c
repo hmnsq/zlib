@@ -33,7 +33,7 @@ int ZEXPORT inflateBackInit_(z_streamp strm, int windowBits,
     if (strm == Z_NULL || window == Z_NULL ||
         windowBits < 8 || windowBits > 15)
         return Z_STREAM_ERROR;
-    strm->msg = Z_NULL;                 /* in case we return an error */
+    strm->मेनसाहे = Z_NULL;                 /* in case we return an error */
     if (strm->zalloc == (alloc_func)0) {
 #ifdef Z_SOLO
         return Z_STREAM_ERROR;
@@ -69,7 +69,7 @@ int ZEXPORT inflateBackInit_(z_streamp strm, int windowBits,
 #define LOAD() \
     do { \
         put = strm->next_out; \
-        left = strm->avail_out; \
+        कालिवा = strm->avail_out; \
         next = strm->next_in; \
         have = strm->avail_in; \
         hold = state->hold; \
@@ -80,7 +80,7 @@ int ZEXPORT inflateBackInit_(z_streamp strm, int windowBits,
 #define RESTORE() \
     do { \
         strm->next_out = put; \
-        strm->avail_out = left; \
+        strm->avail_out = कालिवा; \
         strm->next_in = next; \
         strm->avail_in = have; \
         state->hold = hold; \
@@ -150,11 +150,11 @@ int ZEXPORT inflateBackInit_(z_streamp strm, int windowBits,
    Z_BUF_ERROR. */
 #define ROOM() \
     do { \
-        if (left == 0) { \
+        if (कालिवा == 0) { \
             put = state->window; \
-            left = state->wsize; \
-            state->whave = left; \
-            if (out(out_desc, put, left)) { \
+            कालिवा = state->wsize; \
+            state->whave = कालिवा; \
+            if (out(out_desc, put, कालिवा)) { \
                 ret = Z_BUF_ERROR; \
                 goto inf_leave; \
             } \
@@ -193,7 +193,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
     struct inflate_state FAR *state;
     z_const unsigned char FAR *next;    /* next input */
     unsigned char FAR *put;     /* next output */
-    unsigned have, left;        /* available input and output */
+    unsigned have, कालिवा;        /* available input and output */
     unsigned long hold;         /* bit buffer */
     unsigned bits;              /* bits in bit buffer */
     unsigned copy;              /* number of stored or match bytes to copy */
@@ -211,7 +211,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
     state = (struct inflate_state FAR *)strm->state;
 
     /* Reset the state */
-    strm->msg = Z_NULL;
+    strm->मेनसाहे = Z_NULL;
     state->mode = TYPE;
     state->last = 0;
     state->whave = 0;
@@ -220,7 +220,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
     hold = 0;
     bits = 0;
     put = state->window;
-    left = state->wsize;
+    कालिवा = state->wsize;
 
     /* Inflate until end of block marked as last */
     for (;;)
@@ -253,7 +253,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
                 state->mode = TABLE;
                 break;
             default:
-                strm->msg = (z_const char *)"invalid block type";
+                strm->मेनसाहे = (z_const char *)"invalid block type";
                 state->mode = BAD;
             }
             DROPBITS(2);
@@ -264,7 +264,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
             BYTEBITS();                         /* go to byte boundary */
             NEEDBITS(32);
             if ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
-                strm->msg = (z_const char *)"invalid stored block lengths";
+                strm->मेनसाहे = (z_const char *)"invalid stored block lengths";
                 state->mode = BAD;
                 break;
             }
@@ -279,11 +279,11 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
                 PULL();
                 ROOM();
                 if (copy > have) copy = have;
-                if (copy > left) copy = left;
+                if (copy > कालिवा) copy = कालिवा;
                 zmemcpy(put, next, copy);
                 have -= copy;
                 next += copy;
-                left -= copy;
+                कालिवा -= copy;
                 put += copy;
                 state->length -= copy;
             }
@@ -302,7 +302,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
             DROPBITS(4);
 #ifndef PKZIP_BUG_WORKAROUND
             if (state->nlen > 286 || state->ndist > 30) {
-                strm->msg = (z_const char *)
+                strm->मेनसाहे = (z_const char *)
                     "too many length or distance symbols";
                 state->mode = BAD;
                 break;
@@ -325,7 +325,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
             ret = inflate_table(CODES, state->lens, 19, &(state->next),
                                 &(state->lenbits), state->work);
             if (ret) {
-                strm->msg = (z_const char *)"invalid code lengths set";
+                strm->मेनसाहे = (z_const char *)"invalid code lengths set";
                 state->mode = BAD;
                 break;
             }
@@ -348,7 +348,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
                         NEEDBITS(here.bits + 2);
                         DROPBITS(here.bits);
                         if (state->have == 0) {
-                            strm->msg = (z_const char *)
+                            strm->मेनसाहे = (z_const char *)
                                 "invalid bit length repeat";
                             state->mode = BAD;
                             break;
@@ -372,7 +372,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
                         DROPBITS(7);
                     }
                     if (state->have + copy > state->nlen + state->ndist) {
-                        strm->msg = (z_const char *)
+                        strm->मेनसाहे = (z_const char *)
                             "invalid bit length repeat";
                         state->mode = BAD;
                         break;
@@ -387,7 +387,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
 
             /* check for end-of-block code (better have one) */
             if (state->lens[256] == 0) {
-                strm->msg = (z_const char *)
+                strm->मेनसाहे = (z_const char *)
                     "invalid code -- missing end-of-block";
                 state->mode = BAD;
                 break;
@@ -402,7 +402,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
             ret = inflate_table(LENS, state->lens, state->nlen, &(state->next),
                                 &(state->lenbits), state->work);
             if (ret) {
-                strm->msg = (z_const char *)"invalid literal/lengths set";
+                strm->मेनसाहे = (z_const char *)"invalid literal/lengths set";
                 state->mode = BAD;
                 break;
             }
@@ -411,7 +411,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
             ret = inflate_table(DISTS, state->lens + state->nlen, state->ndist,
                             &(state->next), &(state->distbits), state->work);
             if (ret) {
-                strm->msg = (z_const char *)"invalid distances set";
+                strm->मेनसाहे = (z_const char *)"invalid distances set";
                 state->mode = BAD;
                 break;
             }
@@ -421,7 +421,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
 
         case LEN:
             /* use inflate_fast() if we have enough input and output */
-            if (have >= 6 && left >= 258) {
+            if (have >= 6 && कालिवा >= 258) {
                 RESTORE();
                 inflate_fast(strm, state->wsize);
                 LOAD();
@@ -454,7 +454,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
                         "inflate:         literal 0x%02x\n", here.val));
                 ROOM();
                 *put++ = (unsigned char)(state->length);
-                left--;
+                कालिवा--;
                 state->mode = LEN;
                 break;
             }
@@ -468,7 +468,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
 
             /* invalid code */
             if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid literal/length code";
+                strm->मेनसाहे = (z_const char *)"invalid literal/length code";
                 state->mode = BAD;
                 break;
             }
@@ -500,7 +500,7 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
             }
             DROPBITS(here.bits);
             if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid distance code";
+                strm->मेनसाहे = (z_const char *)"invalid distance code";
                 state->mode = BAD;
                 break;
             }
@@ -514,8 +514,8 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
                 DROPBITS(state->extra);
             }
             if (state->offset > state->wsize - (state->whave < state->wsize ?
-                                                left : 0)) {
-                strm->msg = (z_const char *)"invalid distance too far back";
+                                                कालिवा : 0)) {
+                strm->मेनसाहे = (z_const char *)"invalid distance too far back";
                 state->mode = BAD;
                 break;
             }
@@ -525,17 +525,17 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
             do {
                 ROOM();
                 copy = state->wsize - state->offset;
-                if (copy < left) {
+                if (copy < कालिवा) {
                     from = put + copy;
-                    copy = left - copy;
+                    copy = कालिवा - copy;
                 }
                 else {
                     from = put - state->offset;
-                    copy = left;
+                    copy = कालिवा;
                 }
                 if (copy > state->length) copy = state->length;
                 state->length -= copy;
-                left -= copy;
+                कालिवा -= copy;
                 do {
                     *put++ = *from++;
                 } while (--copy);
@@ -559,8 +559,8 @@ int ZEXPORT inflateBack(z_streamp strm, in_func in, void FAR *in_desc,
 
     /* Write leftover output and return unused input */
   inf_leave:
-    if (left < state->wsize) {
-        if (out(out_desc, state->window, state->wsize - left) &&
+    if (कालिवा < state->wsize) {
+        if (out(out_desc, state->window, state->wsize - कालिवा) &&
             ret == Z_STREAM_END)
             ret = Z_BUF_ERROR;
     }

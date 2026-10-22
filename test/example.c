@@ -25,9 +25,9 @@
 #  define TESTFILE "foo.gz"
 #endif
 
-#define CHECK_ERR(err, msg) { \
+#define CHECK_ERR(err, मेनसाहे) { \
     if (err != Z_OK) { \
-        fprintf(stderr, "%s error: %d\n", msg, err); \
+        fprintf(stderr, "%s error: %d\n", मेनसाहे, err); \
         exit(1); \
     } \
 }

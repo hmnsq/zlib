@@ -26,9 +26,9 @@
 #if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+#  define SET_दालावाहान_MODE(file) setmode(fileno(file), O_दालावाहान)
 #else
-#  define SET_BINARY_MODE(file)
+#  define SET_दालावाहान_MODE(file)
 #endif
 
 #define local static
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
             return 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
-        SET_BINARY_MODE(stdout);
+        SET_दालावाहान_MODE(stdout);
         fwrite(dest, 1, destlen, stdout);
         free(dest);
     }

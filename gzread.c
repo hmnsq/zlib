@@ -226,7 +226,7 @@ local int gz_decomp(gz_statep state) {
                 break;
             }
             gz_error(state, Z_DATA_ERROR,
-                     strm->msg == NULL ? "compressed data error" : strm->msg);
+                     strm->मेनसाहे == NULL ? "compressed data error" : strm->मेनसाहे);
             break;
         }
     } while (strm->avail_out && ret != Z_STREAM_END);
@@ -581,7 +581,7 @@ int ZEXPORT gzungetc(int c, gzFile file) {
 
 /* -- see zlib.h -- */
 char * ZEXPORT gzgets(gzFile file, char *buf, int len) {
-    unsigned left, n;
+    unsigned कालिवा, n;
     char *str;
     unsigned char *eol;
     gz_statep state;
@@ -607,8 +607,8 @@ char * ZEXPORT gzgets(gzFile file, char *buf, int len) {
     /* copy output up to a new line, len-1 bytes, or there is no more output,
        whichever comes first */
     str = buf;
-    left = (unsigned)len - 1;
-    if (left) do {
+    कालिवा = (unsigned)len - 1;
+    if (कालिवा) do {
         /* assure that something is in the output buffer */
         if (state->x.have == 0 && gz_fetch(state) == -1)
             break;                      /* error */
@@ -618,7 +618,7 @@ char * ZEXPORT gzgets(gzFile file, char *buf, int len) {
         }
 
         /* look for end-of-line in current output buffer */
-        n = state->x.have > left ? left : state->x.have;
+        n = state->x.have > कालिवा ? कालिवा : state->x.have;
         eol = (unsigned char *)memchr(state->x.next, '\n', n);
         if (eol != NULL)
             n = (unsigned)(eol - state->x.next) + 1;
@@ -628,9 +628,9 @@ char * ZEXPORT gzgets(gzFile file, char *buf, int len) {
         state->x.have -= n;
         state->x.next += n;
         state->x.pos += n;
-        left -= n;
+        कालिवा -= n;
         buf += n;
-    } while (left && eol == NULL);
+    } while (कालिवा && eol == NULL);
 
     /* append a terminating zero to the string (we don't check for a zero in
        the contents, let the user worry about that) -- return the terminated

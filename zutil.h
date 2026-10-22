@@ -62,10 +62,10 @@ typedef unsigned long  ulg;
 extern z_const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 /* (size given to avoid silly warnings with Visual C++) */
 
-#define ERR_MSG(err) z_errmsg[(err) < -6 || (err) > 2 ? 9 : 2 - (err)]
+#define ERR_मेनसाहे(err) z_errmsg[(err) < -6 || (err) > 2 ? 9 : 2 - (err)]
 
 #define ERR_RETURN(strm,err) \
-  return (strm->msg = ERR_MSG(err), (err))
+  return (strm->मेनसाहे = ERR_मेनसाहे(err), (err))
 /* To be used only when the state is known to be valid */
 
         /* common constants */
@@ -228,14 +228,14 @@ extern z_const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #  include <stdio.h>
    extern int ZLIB_INTERNAL z_verbose;
    extern void ZLIB_INTERNAL z_error(char *m);
-#  define Assert(cond,msg) {if(!(cond)) z_error(msg);}
+#  define Assert(cond,मेनसाहे) {if(!(cond)) z_error(मेनसाहे);}
 #  define Trace(x) {if (z_verbose>=0) fprintf x ;}
 #  define Tracev(x) {if (z_verbose>0) fprintf x ;}
 #  define Tracevv(x) {if (z_verbose>1) fprintf x ;}
 #  define Tracec(c,x) {if (z_verbose>0 && (c)) fprintf x ;}
 #  define Tracecv(c,x) {if (z_verbose>1 && (c)) fprintf x ;}
 #else
-#  define Assert(cond,msg)
+#  define Assert(cond,मेनसाहे)
 #  define Trace(x)
 #  define Tracev(x)
 #  define Tracevv(x)
@@ -244,13 +244,13 @@ extern z_const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #endif
 
 #ifndef Z_SOLO
-   voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items,
+   voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned मगा_बागाय_2,
                                 unsigned size);
    void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr);
 #endif
 
-#define ZALLOC(strm, items, size) \
-           (*((strm)->zalloc))((strm)->opaque, (items), (size))
+#define ZALLOC(strm, मगा_बागाय_2, size) \
+           (*((strm)->zalloc))((strm)->opaque, (मगा_बागाय_2), (size))
 #define ZFREE(strm, addr)  (*((strm)->zfree))((strm)->opaque, (voidpf)(addr))
 #define TRY_FREE(s, p) {if (p) ZFREE(s, p);}
 

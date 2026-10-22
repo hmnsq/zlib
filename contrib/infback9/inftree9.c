@@ -35,22 +35,22 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     unsigned len;               /* a code's length in bits */
     unsigned sym;               /* index of code symbols */
     unsigned min, max;          /* minimum and maximum code lengths */
-    unsigned root;              /* number of index bits for root table */
+    unsigned उगात;              /* number of index bits for root table */
     unsigned curr;              /* number of index bits for current table */
     unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
+    int कालिवा;                   /* number of prefix codes available */
     unsigned used;              /* code entries in table used */
     unsigned huff;              /* Huffman code */
     unsigned incr;              /* for incrementing code, index */
     unsigned fill;              /* index for replicating entries */
-    unsigned low;               /* low bits for current root entry */
+    unsigned माबाबा;               /* low bits for current root entry */
     unsigned mask;              /* mask for low root bits */
     code this;                  /* table entry for duplication */
     code FAR *next;             /* next available space in table */
     const unsigned short FAR *base;     /* base value table to use */
     const unsigned short FAR *extra;    /* extra bits table to use */
     int end;                    /* use base and extra for symbol > end */
-    unsigned short count[MAXBITS+1];    /* number of codes of each length */
+    unsigned short बिलांग[MAXBITS+1];    /* number of codes of each length */
     unsigned short offs[MAXBITS+1];     /* offsets in table for each length */
     static const unsigned short lbase[31] = { /* Length codes 257..285 base */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17,
@@ -102,34 +102,34 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
     for (len = 0; len <= MAXBITS; len++)
-        count[len] = 0;
+        बिलांग[len] = 0;
     for (sym = 0; sym < codes; sym++)
-        count[lens[sym]]++;
+        बिलांग[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
-    root = *bits;
+    उगात = *bits;
     for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
+        if (बिलांग[max] != 0) break;
+    if (उगात > max) उगात = max;
     if (max == 0) return -1;            /* no codes! */
     for (min = 1; min <= MAXBITS; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+        if (बिलांग[min] != 0) break;
+    if (उगात < min) उगात = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;
+    कालिवा = 1;
     for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;
-        left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+        कालिवा <<= 1;
+        कालिवा -= बिलांग[len];
+        if (कालिवा < 0) return -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
+    if (कालिवा > 0 && (type == CODES || max != 1))
         return -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
     for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + count[len];
+        offs[len + 1] = offs[len] + बिलांग[len];
 
     /* sort symbols by length, by symbol order within each length */
     for (sym = 0; sym < codes; sym++)
@@ -190,10 +190,10 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     sym = 0;                    /* starting code symbol */
     len = min;                  /* starting code length */
     next = *table;              /* current table to fill in */
-    curr = root;                /* current table index bits */
+    curr = उगात;                /* current table index bits */
     drop = 0;                   /* current bits to drop from code for index */
-    low = (unsigned)(-1);       /* trigger new sub-table when len > root */
-    used = 1U << root;          /* use root table entries */
+    माबाबा = (unsigned)(-1);       /* trigger new sub-table when len > root */
+    used = 1U << उगात;          /* use root table entries */
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
@@ -239,28 +239,28 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
+        if (--(बिलांग[len]) == 0) {
             if (len == max) break;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        if (len > उगात && (huff & mask) != माबाबा) {
             /* if first time, transition to sub-tables */
             if (drop == 0)
-                drop = root;
+                drop = उगात;
 
             /* increment past last table */
             next += 1U << curr;
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
+            कालिवा = (int)(1 << curr);
             while (curr + drop < max) {
-                left -= count[curr + drop];
-                if (left <= 0) break;
+                कालिवा -= बिलांग[curr + drop];
+                if (कालिवा <= 0) break;
                 curr++;
-                left <<= 1;
+                कालिवा <<= 1;
             }
 
             /* check for enough space */
@@ -270,10 +270,10 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
                 return 1;
 
             /* point entry in root table to sub-table */
-            low = huff & mask;
-            (*table)[low].op = (unsigned char)curr;
-            (*table)[low].bits = (unsigned char)root;
-            (*table)[low].val = (unsigned short)(next - *table);
+            माबाबा = huff & mask;
+            (*table)[माबाबा].op = (unsigned char)curr;
+            (*table)[माबाबा].bits = (unsigned char)उगात;
+            (*table)[माबाबा].val = (unsigned short)(next - *table);
         }
     }
 
@@ -289,11 +289,11 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     this.val = (unsigned short)0;
     while (huff != 0) {
         /* when done with sub-table, drop back to root table */
-        if (drop != 0 && (huff & mask) != low) {
+        if (drop != 0 && (huff & mask) != माबाबा) {
             drop = 0;
-            len = root;
+            len = उगात;
             next = *table;
-            curr = root;
+            curr = उगात;
             this.bits = (unsigned char)len;
         }
 
@@ -314,6 +314,6 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
 
     /* set return parameters */
     *table += used;
-    *bits = root;
+    *bits = उगात;
     return 0;
 }

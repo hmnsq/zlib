@@ -26,13 +26,13 @@ int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
     z_stream stream;
     int err;
     const uInt max = (uInt)-1;
-    z_size_t left;
+    z_size_t कालिवा;
 
     if ((sourceLen > 0 && source == NULL) ||
         destLen == NULL || (*destLen > 0 && dest == NULL))
         return Z_STREAM_ERROR;
 
-    left = *destLen;
+    कालिवा = *destLen;
     *destLen = 0;
 
     stream.zalloc = (alloc_func)0;
@@ -49,8 +49,8 @@ int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
 
     do {
         if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+            stream.avail_out = कालिवा > (z_size_t)max ? max : (uInt)कालिवा;
+            कालिवा -= stream.avail_out;
         }
         if (stream.avail_in == 0) {
             stream.avail_in = sourceLen > (z_size_t)max ? max :

@@ -211,7 +211,7 @@ typedef struct {
     z_off64_t skip;         /* amount to skip (already rewound if backwards) */
         /* error information */
     int err;                /* error code */
-    char *msg;              /* error message */
+    char *मेनसाहे;              /* error message */
         /* zlib inflate or deflate stream */
     z_stream strm;          /* stream structure in-place (not a pointer) */
 } gz_state;

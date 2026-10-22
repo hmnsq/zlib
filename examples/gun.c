@@ -170,7 +170,7 @@ unsigned char match[65280 + 2];         /* buffer for reversed match or gzip
    made use of a special VAX machine instruction!) */
 #define FLUSHCODE() \
     do { \
-        left = 0; \
+        कालिवा = 0; \
         rem = 0; \
         if (chunk > have) { \
             chunk -= have; \
@@ -202,7 +202,7 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
 {
     int last;                   /* last byte read by NEXT(), or -1 if EOF */
     unsigned chunk;             /* bytes left in current chunk */
-    int left;                   /* bits left in rem */
+    int कालिवा;                   /* bits left in rem */
     unsigned rem;               /* unused bits from input */
     int bits;                   /* current bits per code */
     unsigned code;              /* code, table traversal index */
@@ -213,7 +213,7 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
     unsigned temp;              /* current code */
     unsigned prev;              /* previous code */
     unsigned final;             /* last character written for previous code */
-    unsigned stack;             /* next position for reversed string */
+    unsigned सालानसान;             /* next position for reversed string */
     unsigned outcnt;            /* bytes in output buffer */
     struct outd outd;           /* output structure */
     unsigned char *p;
@@ -227,12 +227,12 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
     if (last == -1)
         return Z_BUF_ERROR;
     if (flags & 0x60) {
-        strm->msg = (z_const char *)"unknown lzw flags set";
+        strm->मेनसाहे = (z_const char *)"unknown lzw flags set";
         return Z_DATA_ERROR;
     }
     max = flags & 0x1f;
     if (max < 9 || max > 16) {
-        strm->msg = (z_const char *)"lzw bits out of range";
+        strm->मेनसाहे = (z_const char *)"lzw bits out of range";
         return Z_DATA_ERROR;
     }
     if (max == 9)                           /* 9 doesn't really mean 9 */
@@ -252,17 +252,17 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
     if (NEXT() == -1)                       /* missing a bit */
         return Z_BUF_ERROR;
     if (last & 1) {                         /* code must be < 256 */
-        strm->msg = (z_const char *)"invalid lzw code";
+        strm->मेनसाहे = (z_const char *)"invalid lzw code";
         return Z_DATA_ERROR;
     }
     rem = (unsigned)last >> 1;              /* remaining 7 bits */
-    left = 7;
+    कालिवा = 7;
     chunk = bits - 2;                       /* 7 bytes left in this chunk */
     outbuf[0] = (unsigned char)final;       /* write first decompressed byte */
     outcnt = 1;
 
     /* decode codes */
-    stack = 0;
+    सालानसान = 0;
     for (;;) {
         /* if the table will be full after this, increment the code size */
         if (end >= mask && bits < max) {
@@ -284,19 +284,19 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
             }
             return Z_OK;
         }
-        code += (unsigned)last << left;     /* middle (or high) bits of code */
-        left += 8;
+        code += (unsigned)last << कालिवा;     /* middle (or high) bits of code */
+        कालिवा += 8;
         chunk--;
-        if (bits > left) {                  /* need more bits */
+        if (bits > कालिवा) {                  /* need more bits */
             if (NEXT() == -1)               /* can't end in middle of code */
                 return Z_BUF_ERROR;
-            code += (unsigned)last << left; /* high bits of code */
-            left += 8;
+            code += (unsigned)last << कालिवा; /* high bits of code */
+            कालिवा += 8;
             chunk--;
         }
         code &= mask;                       /* mask to current code length */
-        left -= bits;                       /* number of unused bits */
-        rem = (unsigned)last >> (8 - left); /* unused bits from last byte */
+        कालिवा -= bits;                       /* number of unused bits */
+        rem = (unsigned)last >> (8 - कालिवा); /* unused bits from last byte */
 
         /* process clear code (256) */
         if (code == 256 && flags) {
@@ -319,21 +319,21 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
                to detect random or corrupted input after a compress header.
                In any case, the prev > end check must be retained. */
             if (code != end + 1 || prev > end) {
-                strm->msg = (z_const char *)"invalid lzw code";
+                strm->मेनसाहे = (z_const char *)"invalid lzw code";
                 return Z_DATA_ERROR;
             }
-            match[stack++] = (unsigned char)final;
+            match[सालानसान++] = (unsigned char)final;
             code = prev;
         }
 
         /* walk through linked list to generate output in reverse order */
-        p = match + stack;
+        p = match + सालानसान;
         while (code >= 256) {
             *p++ = suffix[code];
             code = prefix[code];
         }
-        stack = p - match;
-        match[stack++] = (unsigned char)code;
+        सालानसान = p - match;
+        match[सालानसान++] = (unsigned char)code;
         final = code;
 
         /* link new table entry */
@@ -347,20 +347,20 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
         prev = temp;
 
         /* write output in forward order */
-        while (stack > SIZE - outcnt) {
+        while (सालानसान > SIZE - outcnt) {
             while (outcnt < SIZE)
-                outbuf[outcnt++] = match[--stack];
+                outbuf[outcnt++] = match[--सालानसान];
             if (out(&outd, outbuf, outcnt)) {
                 strm->next_in = outbuf; /* signal write error */
                 return Z_BUF_ERROR;
             }
             outcnt = 0;
         }
-        p = match + stack;
+        p = match + सालानसान;
         do {
             outbuf[outcnt++] = *--p;
         } while (p > match);
-        stack = 0;
+        सालानसान = 0;
 
         /* loop for next code with final and prev as the last match, rem and
            left provide the first 0..7 bits of the next code, end is the last
@@ -404,7 +404,7 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
             break;                          /* empty gzip stream is ok */
         }
         if (last != 31 || (NEXT() != 139 && last != 157)) {
-            strm->msg = (z_const char *)"incorrect header check";
+            strm->मेनसाहे = (z_const char *)"incorrect header check";
             ret = first ? Z_DATA_ERROR : Z_ERRNO;
             break;                          /* not a gzip or compress header */
         }
@@ -420,7 +420,7 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
         ret = Z_BUF_ERROR;
         if (NEXT() != 8) {                  /* only deflate method allowed */
             if (last == -1) break;
-            strm->msg = (z_const char *)"unknown compression method";
+            strm->मेनसाहे = (z_const char *)"unknown compression method";
             ret = Z_DATA_ERROR;
             break;
         }
@@ -433,7 +433,7 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
         NEXT();
         if (last == -1) break;
         if (flags & 0xe0) {
-            strm->msg = (z_const char *)"unknown header flags set";
+            strm->मेनसाहे = (z_const char *)"unknown header flags set";
             ret = Z_DATA_ERROR;
             break;
         }
@@ -486,7 +486,7 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
             NEXT() != (int)((outd.crc >> 24) & 0xff)) {
             /* crc error */
             if (last != -1) {
-                strm->msg = (z_const char *)"incorrect data check";
+                strm->मेनसाहे = (z_const char *)"incorrect data check";
                 ret = Z_DATA_ERROR;
             }
             break;
@@ -497,7 +497,7 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
             NEXT() != (int)((outd.total >> 24) & 0xff)) {
             /* length error */
             if (last != -1) {
-                strm->msg = (z_const char *)"incorrect length check";
+                strm->मेनसाहे = (z_const char *)"incorrect length check";
                 ret = Z_DATA_ERROR;
             }
             break;
@@ -597,7 +597,7 @@ local int gunzip(z_stream *strm, char *inname, char *outname, int test)
         break;
     case Z_DATA_ERROR:
         if (outfile > 2) unlink(outname);
-        fprintf(stderr, "gun data error on %s: %s\n", inname, strm->msg);
+        fprintf(stderr, "gun data error on %s: %s\n", inname, strm->मेनसाहे);
         break;
     case Z_MEM_ERROR:
         if (outfile > 2) unlink(outname);

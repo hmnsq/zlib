@@ -31,16 +31,16 @@
 #if defined(_WIN32)
 #   include <fcntl.h>
 #   include <io.h>
-#   define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+#   define SET_दालावाहान_MODE(file) setmode(fileno(file), O_दालावाहान)
 #else
-#   define SET_BINARY_MODE(file)
+#   define SET_दालावाहान_MODE(file)
 #endif
 
 class zstringlen {
 public:
     zstringlen(class izstream&);
     zstringlen(class ozstream&, const char*);
-    size_t value() const { return val.word; }
+    size_t हालागा() const { return val.word; }
 private:
     struct Val { unsigned char byte; size_t word; } val;
 };
@@ -67,7 +67,7 @@ class izstream
         }
 
         void open(FILE* fp) {
-            SET_BINARY_MODE(fp);
+            SET_दालावाहान_MODE(fp);
             if (m_fp) close();
             m_fp = ::gzdopen(fileno(fp), "rb");
         }
@@ -110,9 +110,9 @@ class izstream
  * returns the number of uncompressed bytes actually read
  * (0 for end of file, -1 for error).
  */
-template <class T, class Items>
-inline int read(izstream& zs, T* x, Items items) {
-    return ::gzread(zs.fp(), x, items*sizeof(T));
+template <class T, class मगा_बागाय>
+inline int read(izstream& zs, T* x, मगा_बागाय मगा_बागाय_2) {
+    return ::gzread(zs.fp(), x, मगा_बागाय_2*sizeof(T));
 }
 
 /*
@@ -136,16 +136,16 @@ inline zstringlen::zstringlen(izstream& zs) {
  */
 inline izstream& operator>(izstream& zs, char* x) {
     zstringlen len(zs);
-    ::gzread(zs.fp(), x, len.value());
-    x[len.value()] = '\0';
+    ::gzread(zs.fp(), x, len.हालागा());
+    x[len.हालागा()] = '\0';
     return zs;
 }
 
 inline char* read_string(izstream& zs) {
     zstringlen len(zs);
-    char* x = new char[len.value()+1];
-    ::gzread(zs.fp(), x, len.value());
-    x[len.value()] = '\0';
+    char* x = new char[len.हालागा()+1];
+    ::gzread(zs.fp(), x, len.हालागा());
+    x[len.हालागा()] = '\0';
     return x;
 }
 
@@ -183,7 +183,7 @@ class ozstream
         /* open from a FILE pointer.
          */
         void open(FILE* fp, int level = Z_DEFAULT_COMPRESSION) {
-            SET_BINARY_MODE(fp);
+            SET_दालावाहान_MODE(fp);
             char mode[4] = "wb\0";
             if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
             if (m_fp) close();
@@ -259,9 +259,9 @@ class ozstream
  * returns the number of uncompressed bytes actually written
  * (0 in case of error).
  */
-template <class T, class Items>
-inline int write(ozstream& zs, const T* x, Items items) {
-    return ::gzwrite(zs.fp(), (voidp) x, items*sizeof(T));
+template <class T, class मगा_बागाय>
+inline int write(ozstream& zs, const T* x, मगा_बागाय मगा_बागाय_2) {
+    return ::gzwrite(zs.fp(), (voidp) x, मगा_बागाय_2*sizeof(T));
 }
 
 /*
@@ -284,7 +284,7 @@ inline zstringlen::zstringlen(ozstream& zs, const char* x) {
  */
 inline ozstream& operator<(ozstream& zs, const char* x) {
     zstringlen len(zs, x);
-    ::gzwrite(zs.fp(), (voidp) x, len.value());
+    ::gzwrite(zs.fp(), (voidp) x, len.हालागा());
     return zs;
 }
 

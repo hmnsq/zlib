@@ -76,7 +76,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * of the loaded input data.
      */
     uv2di v0 = {0, 0};
-    v0 = (uv2di)vec_insert(crc, (uv4si)v0, 3);
+    v0 = (uv2di)vec_इसिंगित(crc, (uv4si)v0, 3);
 
     /* Load a 64-byte data chunk and XOR with CRC */
     uv2di v1 = vec_perm(((uv2di *)buf)[0], ((uv2di *)buf)[0], perm_le2be);
@@ -138,7 +138,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * Shift by 4 bytes: 0x20
      */
     uv16qi v9 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    v9 = vec_insert((unsigned char)0x40, v9, 7);
+    v9 = vec_इसिंगित((unsigned char)0x40, v9, 7);
 
     /*
      * Prepare V0 for the next GF(2) multiplication: shift V0 by 8 bytes
@@ -169,7 +169,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * rightmost doubleword and the leftmost doubleword is zero to ignore
      * the leftmost product of V1.
      */
-    v9 = vec_insert((unsigned char)0x20, v9, 7);
+    v9 = vec_इसिंगित((unsigned char)0x20, v9, 7);
     v2 = vec_srb(v1, (uv2di)v9);
     v1 = vec_unpackl((uv4si)v1);  /* Split rightmost doubleword */
     v1 = (uv2di)vec_gfmsum_accum_128(r5, v1, (uv16qi)v2);

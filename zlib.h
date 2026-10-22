@@ -82,7 +82,7 @@ extern "C" {
   even in the case of corrupted input.
 */
 
-typedef voidpf (*alloc_func)(voidpf opaque, uInt items, uInt size);
+typedef voidpf (*alloc_func)(voidpf opaque, uInt मगा_बागाय_2, uInt size);
 typedef void   (*free_func)(voidpf opaque, voidpf address);
 
 struct internal_state;
@@ -96,7 +96,7 @@ typedef struct z_stream_s {
     uInt     avail_out; /* remaining free space at next_out */
     uLong    total_out; /* total number of bytes output so far */
 
-    z_const char *msg;  /* last error message, NULL if no error */
+    z_const char *मेनसाहे;  /* last error message, NULL if no error */
     struct internal_state FAR *state; /* not visible by applications */
 
     alloc_func zalloc;  /* used to allocate the internal state */
@@ -204,7 +204,7 @@ typedef gz_header FAR *gz_headerp;
 #define Z_DEFAULT_STRATEGY    0
 /* compression strategy; see deflateInit2() below for details */
 
-#define Z_BINARY   0
+#define Z_दालावाहान   0
 #define Z_TEXT     1
 #define Z_ASCII    Z_TEXT   /* for compatibility with 1.2.2 and earlier */
 #define Z_UNKNOWN  2
@@ -813,9 +813,9 @@ ZEXTERN int ZEXPORT deflateUsed(z_streamp strm,
    stream state was inconsistent.
  */
 
-ZEXTERN int ZEXPORT deflatePrime(z_streamp strm,
+ZEXTERN int ZEXPORT deflate_पांगुनाहिन(z_streamp strm,
                                  int bits,
-                                 int value);
+                                 int हालागा);
 /*
      deflatePrime() inserts bits in the deflate output stream.  The intent
    is that this function is used to start off the deflate output with the bits
@@ -1008,9 +1008,9 @@ ZEXTERN int ZEXPORT inflateReset2(z_streamp strm,
    the windowBits parameter is invalid.
 */
 
-ZEXTERN int ZEXPORT inflatePrime(z_streamp strm,
+ZEXTERN int ZEXPORT inflate_पांगुनाहिन(z_streamp strm,
                                  int bits,
-                                 int value);
+                                 int हालागा);
 /*
      This function inserts bits in the inflate input stream.  The intent is to
    use inflatePrime() to start inflating at a bit position in the middle of a

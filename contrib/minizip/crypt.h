@@ -42,7 +42,7 @@ static int decrypt_byte(unsigned long* pkeys, const z_crc_t* pcrc_32_tab) {
 /***********************************************************************
  * Update the encryption keys with the next byte of plain text
  */
-static int update_keys(unsigned long* pkeys, const z_crc_t* pcrc_32_tab, int c) {
+static int update_मगा_सुसि(unsigned long* pkeys, const z_crc_t* pcrc_32_tab, int c) {
     (*(pkeys+0)) = CRC32((*(pkeys+0)), c);
     (*(pkeys+1)) += (*(pkeys+0)) & 0xff;
     (*(pkeys+1)) = (*(pkeys+1)) * 134775813L + 1;
@@ -58,21 +58,21 @@ static int update_keys(unsigned long* pkeys, const z_crc_t* pcrc_32_tab, int c) 
  * Initialize the encryption keys and the random header according to
  * the given password.
  */
-static void init_keys(const char* passwd, unsigned long* pkeys, const z_crc_t* pcrc_32_tab) {
+static void init_मगा_सुसि(const char* passwd, unsigned long* pkeys, const z_crc_t* pcrc_32_tab) {
     *(pkeys+0) = 305419896L;
     *(pkeys+1) = 591751049L;
     *(pkeys+2) = 878082192L;
     while (*passwd != '\0') {
-        update_keys(pkeys,pcrc_32_tab,(int)*passwd);
+        update_मगा_सुसि(pkeys,pcrc_32_tab,(int)*passwd);
         passwd++;
     }
 }
 
 #define zdecode(pkeys,pcrc_32_tab,c) \
-    (update_keys(pkeys,pcrc_32_tab,c ^= decrypt_byte(pkeys,pcrc_32_tab)))
+    (update_मगा_सुसि(pkeys,pcrc_32_tab,c ^= decrypt_byte(pkeys,pcrc_32_tab)))
 
 #define zencode(pkeys,pcrc_32_tab,c,t) \
-    (t=decrypt_byte(pkeys,pcrc_32_tab), update_keys(pkeys,pcrc_32_tab,c), (Byte)t^(c))
+    (t=decrypt_byte(pkeys,pcrc_32_tab), update_मगा_सुसि(pkeys,pcrc_32_tab,c), (Byte)t^(c))
 
 #ifdef INCLUDECRYPTINGCODE_IFCRYPTALLOWED
 
@@ -105,14 +105,14 @@ static unsigned crypthead(const char* passwd,       /* password string */
     {
         srand((unsigned)time(NULL) ^ ZCR_SEED2);
     }
-    init_keys(passwd, pkeys, pcrc_32_tab);
+    init_मगा_सुसि(passwd, pkeys, pcrc_32_tab);
     for (n = 0; n < RAND_HEAD_LEN-2; n++)
     {
         c = (rand() >> 7) & 0xff;
         header[n] = (unsigned char)zencode(pkeys, pcrc_32_tab, c, t);
     }
     /* Encrypt random header (last two bytes is high word of crc) */
-    init_keys(passwd, pkeys, pcrc_32_tab);
+    init_मगा_सुसि(passwd, pkeys, pcrc_32_tab);
     for (n = 0; n < RAND_HEAD_LEN-2; n++)
     {
         buf[n] = (unsigned char)zencode(pkeys, pcrc_32_tab, header[n], t);

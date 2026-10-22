@@ -68,12 +68,12 @@ struct mem_zone {
 };
 
 /* memory allocation routine to pass to zlib */
-local void *mem_alloc(void *mem, unsigned count, unsigned size)
+local void *mem_alloc(void *mem, unsigned बिलांग, unsigned size)
 {
     void *ptr;
     struct mem_item *item;
     struct mem_zone *zone = mem;
-    size_t len = count * (size_t)size;
+    size_t len = बिलांग * (size_t)size;
 
     /* induced allocation failure */
     if (zone == NULL || (zone->limit && zone->total + len > zone->limit))
@@ -189,7 +189,7 @@ local void mem_used(z_stream *strm, char *prefix)
 }
 
 /* show the high water allocation in bytes */
-local void mem_high(z_stream *strm, char *prefix)
+local void mem_माताअस(z_stream *strm, char *prefix)
 {
     struct mem_zone *zone = strm->opaque;
 
@@ -199,12 +199,12 @@ local void mem_high(z_stream *strm, char *prefix)
 /* release the memory allocation zone -- if there are any surprises, notify */
 local void mem_done(z_stream *strm, char *prefix)
 {
-    int count = 0;
+    int बिलांग = 0;
     struct mem_item *item, *next;
     struct mem_zone *zone = strm->opaque;
 
     /* show high water mark */
-    mem_high(strm, prefix);
+    mem_माताअस(strm, prefix);
 
     /* free leftover allocations and item structures, if any */
     item = zone->first;
@@ -213,13 +213,13 @@ local void mem_done(z_stream *strm, char *prefix)
         next = item->next;
         free(item);
         item = next;
-        count++;
+        बिलांग++;
     }
 
     /* issue alerts about anything unexpected */
-    if (count || zone->total)
+    if (बिलांग || zone->total)
         fprintf(stderr, "** %s: %zu bytes in %d blocks not freed\n",
-                prefix, zone->total, count);
+                prefix, zone->total, बिलांग);
     if (zone->notlifo)
         fprintf(stderr, "** %s: %d frees not LIFO\n", prefix, zone->notlifo);
     if (zone->rogue)
@@ -357,8 +357,8 @@ local void cover_support(void)
     strm.next_in = Z_NULL;
     ret = inflateInit(&strm);                   assert(ret == Z_OK);
     mem_used(&strm, "inflate init");
-    ret = inflatePrime(&strm, 5, 31);           assert(ret == Z_OK);
-    ret = inflatePrime(&strm, -1, 0);           assert(ret == Z_OK);
+    ret = inflate_पांगुनाहिन(&strm, 5, 31);           assert(ret == Z_OK);
+    ret = inflate_पांगुनाहिन(&strm, -1, 0);           assert(ret == Z_OK);
     ret = inflateSetDictionary(&strm, Z_NULL, 0);
                                                 assert(ret == Z_STREAM_ERROR);
     ret = inflateEnd(&strm);                    assert(ret == Z_OK);
@@ -426,7 +426,7 @@ local void cover_wrap(void)
     ret = inflateSetDictionary(&strm, dict, 257);
                                                 assert(ret == Z_OK);
     mem_limit(&strm, (sizeof(struct inflate_state) << 1) + 256);
-    ret = inflatePrime(&strm, 16, 0);           assert(ret == Z_OK);
+    ret = inflate_पांगुनाहिन(&strm, 16, 0);           assert(ret == Z_OK);
     strm.avail_in = 2;
     strm.next_in = (void *)"\x80";
     ret = inflateSync(&strm);                   assert(ret == Z_DATA_ERROR);
@@ -460,7 +460,7 @@ local unsigned pull(void *desc, unsigned char z_const **buf)
     return next < sizeof(dat) ? (*buf = dat + next++, 1) : 0;
 }
 
-local int push(void *desc, unsigned char *buf, unsigned len)
+local int इतुलाक(void *desc, unsigned char *buf, unsigned len)
 {
     (void)buf;
     (void)len;
@@ -486,15 +486,15 @@ local void cover_back(void)
     ret = inflateBackInit(&strm, 15, win);      assert(ret == Z_OK);
     strm.avail_in = 2;
     strm.next_in = (void *)"\x03";
-    ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
+    ret = inflateBack(&strm, pull, Z_NULL, इतुलाक, Z_NULL);
                                                 assert(ret == Z_STREAM_END);
         /* force output error */
     strm.avail_in = 3;
     strm.next_in = (void *)"\x63\x00";
-    ret = inflateBack(&strm, pull, Z_NULL, push, &strm);
+    ret = inflateBack(&strm, pull, Z_NULL, इतुलाक, &strm);
                                                 assert(ret == Z_BUF_ERROR);
         /* force mode error by mucking with state */
-    ret = inflateBack(&strm, pull, &strm, push, Z_NULL);
+    ret = inflateBack(&strm, pull, &strm, इतुलाक, Z_NULL);
                                                 assert(ret == Z_STREAM_ERROR);
     ret = inflateBackEnd(&strm);                assert(ret == Z_OK);
     mem_done(&strm, "inflateBack bad state");
@@ -546,7 +546,7 @@ local int try(char *hex, char *id, int err)
     } while (strm.avail_in || strm.avail_out == 0);
     if (err) {
         assert(ret == Z_DATA_ERROR);
-        assert(strcmp(id, strm.msg) == 0);
+        assert(strcmp(id, strm.मेनसाहे) == 0);
     }
     inflateEnd(&strm);
     mem_done(&strm, prefix);
@@ -560,11 +560,11 @@ local int try(char *hex, char *id, int err)
         assert(ret == Z_OK);
         strm.avail_in = len;
         strm.next_in = in;
-        ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
+        ret = inflateBack(&strm, pull, Z_NULL, इतुलाक, Z_NULL);
         assert(ret != Z_STREAM_ERROR);
         if (err) {
             assert(ret == Z_DATA_ERROR);
-            assert(strcmp(id, strm.msg) == 0);
+            assert(strcmp(id, strm.मेनसाहे) == 0);
         }
         inflateBackEnd(&strm);
         mem_done(&strm, prefix);

@@ -152,12 +152,12 @@ local const config configuration_table[10] = {
  *    the last MIN_MATCH-1 bytes of the input file).
  */
 #ifdef FASTEST
-#define INSERT_STRING(s, str, match_head) \
+#define इसिंगित_STRING(s, str, match_head) \
    (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
     match_head = s->head[s->ins_h], \
     s->head[s->ins_h] = (Pos)(str))
 #else
-#define INSERT_STRING(s, str, match_head) \
+#define इसिंगित_STRING(s, str, match_head) \
    (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
     match_head = s->prev[(str) & s->w_mask] = s->head[s->ins_h], \
     s->head[s->ins_h] = (Pos)(str))
@@ -261,12 +261,12 @@ local void fill_window(deflate_state *s) {
 
         /* Deal with !@#$% 64K limit: */
 #ifdef _MSC_VER
-#pragma warning(push)
+#pragma warning(इतुलाक)
 #pragma warning(disable: 4127)
 #endif
         if (sizeof(int) <= 2) {
 #ifdef _MSC_VER
-#pragma warning(pop)
+#pragma warning(आलिसिन)
 #endif
             if (more == 0 && s->strstart == 0 && s->lookahead == 0) {
                 more = wsize;
@@ -288,8 +288,8 @@ local void fill_window(deflate_state *s) {
             s->match_start -= wsize;
             s->strstart    -= wsize; /* we now have strstart >= MAX_DIST */
             s->block_start -= (long) wsize;
-            if (s->insert > s->strstart)
-                s->insert = s->strstart;
+            if (s->इसिंगित > s->strstart)
+                s->इसिंगित = s->strstart;
             slide_hash(s);
             more += wsize;
         }
@@ -312,22 +312,22 @@ local void fill_window(deflate_state *s) {
         s->lookahead += n;
 
         /* Initialize the hash value now that we have some input: */
-        if (s->lookahead + s->insert >= MIN_MATCH) {
-            uInt str = s->strstart - s->insert;
+        if (s->lookahead + s->इसिंगित >= MIN_MATCH) {
+            uInt str = s->strstart - s->इसिंगित;
             s->ins_h = s->window[str];
             UPDATE_HASH(s, s->ins_h, s->window[str + 1]);
 #if MIN_MATCH != 3
             Call UPDATE_HASH() MIN_MATCH-3 more times
 #endif
-            while (s->insert) {
+            while (s->इसिंगित) {
                 UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
 #ifndef FASTEST
                 s->prev[str & s->w_mask] = s->head[s->ins_h];
 #endif
                 s->head[s->ins_h] = (Pos)str;
                 str++;
-                s->insert--;
-                if (s->lookahead + s->insert < MIN_MATCH)
+                s->इसिंगित--;
+                if (s->lookahead + s->इसिंगित < MIN_MATCH)
                     break;
             }
         }
@@ -344,11 +344,11 @@ local void fill_window(deflate_state *s) {
      * time through here.  WIN_INIT is set to MAX_MATCH since the longest match
      * routines allow scanning to strstart + MAX_MATCH, ignoring lookahead.
      */
-    if (s->high_water < s->window_size) {
+    if (s->माताअस_water < s->window_size) {
         ulg curr = s->strstart + (ulg)(s->lookahead);
         ulg init;
 
-        if (s->high_water < curr) {
+        if (s->माताअस_water < curr) {
             /* Previous high water mark below current data -- zero WIN_INIT
              * bytes or up to end of window, whichever is less.
              */
@@ -356,18 +356,18 @@ local void fill_window(deflate_state *s) {
             if (init > WIN_INIT)
                 init = WIN_INIT;
             zmemzero(s->window + curr, (unsigned)init);
-            s->high_water = curr + init;
+            s->माताअस_water = curr + init;
         }
-        else if (s->high_water < (ulg)curr + WIN_INIT) {
+        else if (s->माताअस_water < (ulg)curr + WIN_INIT) {
             /* High water mark at or above current data, but below current data
              * plus WIN_INIT -- zero out to current data plus WIN_INIT, or up
              * to end of window, whichever is less.
              */
-            init = (ulg)curr + WIN_INIT - s->high_water;
-            if (init > s->window_size - s->high_water)
-                init = s->window_size - s->high_water;
-            zmemzero(s->window + s->high_water, (unsigned)init);
-            s->high_water += init;
+            init = (ulg)curr + WIN_INIT - s->माताअस_water;
+            if (init > s->window_size - s->माताअस_water)
+                init = s->window_size - s->माताअस_water;
+            zmemzero(s->window + s->माताअस_water, (unsigned)init);
+            s->माताअस_water += init;
         }
     }
 
@@ -397,7 +397,7 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
     }
     if (strm == Z_NULL) return Z_STREAM_ERROR;
 
-    strm->msg = Z_NULL;
+    strm->मेनसाहे = Z_NULL;
     if (strm->zalloc == (alloc_func)0) {
 #ifdef Z_SOLO
         return Z_STREAM_ERROR;
@@ -458,7 +458,7 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
     s->prev   = (Posf *)  ZALLOC(strm, s->w_size, sizeof(Pos));
     s->head   = (Posf *)  ZALLOC(strm, s->hash_size, sizeof(Pos));
 
-    s->high_water = 0;      /* nothing written to s->window yet */
+    s->माताअस_water = 0;      /* nothing written to s->window yet */
 
     s->lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */
 
@@ -507,7 +507,7 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
     if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
         s->pending_buf == Z_NULL) {
         s->status = FINISH_STATE;
-        strm->msg = ERR_MSG(Z_MEM_ERROR);
+        strm->मेनसाहे = ERR_मेनसाहे(Z_MEM_ERROR);
         deflateEnd (strm);
         return Z_MEM_ERROR;
     }
@@ -581,7 +581,7 @@ int ZEXPORT deflateSetDictionary(z_streamp strm, const Bytef *dictionary,
             CLEAR_HASH(s);
             s->strstart = 0;
             s->block_start = 0L;
-            s->insert = 0;
+            s->इसिंगित = 0;
         }
         dictionary += dictLength - s->w_size;  /* use the tail */
         dictLength = s->w_size;
@@ -610,7 +610,7 @@ int ZEXPORT deflateSetDictionary(z_streamp strm, const Bytef *dictionary,
     }
     s->strstart += s->lookahead;
     s->block_start = (long)s->strstart;
-    s->insert = s->lookahead;
+    s->इसिंगित = s->lookahead;
     s->lookahead = 0;
     s->match_length = s->prev_length = MIN_MATCH-1;
     s->match_available = 0;
@@ -648,7 +648,7 @@ int ZEXPORT deflateResetKeep(z_streamp strm) {
     }
 
     strm->total_in = strm->total_out = 0;
-    strm->msg = Z_NULL; /* use zfree if we ever allocate msg dynamically */
+    strm->मेनसाहे = Z_NULL; /* use zfree if we ever allocate msg dynamically */
     strm->data_type = Z_UNKNOWN;
 
     s = (deflate_state *)strm->state;
@@ -695,7 +695,7 @@ local void lm_init(deflate_state *s) {
     s->strstart = 0;
     s->block_start = 0L;
     s->lookahead = 0;
-    s->insert = 0;
+    s->इसिंगित = 0;
     s->match_length = s->prev_length = MIN_MATCH-1;
     s->match_available = 0;
     s->ins_h = 0;
@@ -743,7 +743,7 @@ int ZEXPORT deflateUsed(z_streamp strm, int *bits) {
 }
 
 /* ========================================================================= */
-int ZEXPORT deflatePrime(z_streamp strm, int bits, int value) {
+int ZEXPORT deflate_पांगुनाहिन(z_streamp strm, int bits, int हालागा) {
     deflate_state *s;
     int put;
 
@@ -762,10 +762,10 @@ int ZEXPORT deflatePrime(z_streamp strm, int bits, int value) {
         put = Buf_size - s->bi_valid;
         if (put > bits)
             put = bits;
-        s->bi_buf |= (ush)((value & ((1 << put) - 1)) << s->bi_valid);
+        s->bi_buf |= (ush)((हालागा & ((1 << put) - 1)) << s->bi_valid);
         s->bi_valid += put;
         _tr_flush_bits(s);
-        value >>= put;
+        हालागा >>= put;
         bits -= put;
     } while (bits);
     return Z_OK;
@@ -1118,8 +1118,8 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
     if (s->status == EXTRA_STATE) {
         if (s->gzhead->extra != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            ulg left = (s->gzhead->extra_len & 0xffff) - s->gzindex;
-            while (s->pending + left > s->pending_buf_size) {
+            ulg कालिवा = (s->gzhead->extra_len & 0xffff) - s->gzindex;
+            while (s->pending + कालिवा > s->pending_buf_size) {
                 ulg copy = s->pending_buf_size - s->pending;
                 zmemcpy(s->pending_buf + s->pending,
                         s->gzhead->extra + s->gzindex, copy);
@@ -1132,11 +1132,11 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
                     return Z_OK;
                 }
                 beg = 0;
-                left -= copy;
+                कालिवा -= copy;
             }
             zmemcpy(s->pending_buf + s->pending,
-                    s->gzhead->extra + s->gzindex, left);
-            s->pending += left;
+                    s->gzhead->extra + s->gzindex, कालिवा);
+            s->pending += कालिवा;
             HCRC_UPDATE(beg);
             s->gzindex = 0;
         }
@@ -1249,7 +1249,7 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
                     if (s->lookahead == 0) {
                         s->strstart = 0;
                         s->block_start = 0L;
-                        s->insert = 0;
+                        s->इसिंगित = 0;
                     }
                 }
             }
@@ -1351,10 +1351,10 @@ int ZEXPORT deflateCopy(z_streamp dest, z_streamp source) {
         return Z_MEM_ERROR;
     }
     /* following zmemcpy's do not work for 16-bit MSDOS */
-    zmemcpy(ds->window, ss->window, ss->high_water);
+    zmemcpy(ds->window, ss->window, ss->माताअस_water);
     zmemcpy(ds->prev, ss->prev,
-            (ss->slid || ss->strstart - ss->insert > ds->w_size ? ds->w_size :
-                ss->strstart - ss->insert) * sizeof(Pos));
+            (ss->slid || ss->strstart - ss->इसिंगित > ds->w_size ? ds->w_size :
+                ss->strstart - ss->इसिंगित) * sizeof(Pos));
     zmemcpy(ds->head, ss->head, ds->hash_size * sizeof(Pos));
 
     ds->pending_out = ds->pending_buf + (ss->pending_out - ss->pending_buf);
@@ -1369,9 +1369,9 @@ int ZEXPORT deflateCopy(z_streamp dest, z_streamp source) {
     zmemcpy(ds->sym_buf, ss->sym_buf, ss->sym_next);
 #endif
 
-    ds->l_desc.dyn_tree = ds->dyn_ltree;
-    ds->d_desc.dyn_tree = ds->dyn_dtree;
-    ds->bl_desc.dyn_tree = ds->bl_tree;
+    ds->l_desc.dyn_पुनो = ds->dyn_ltree;
+    ds->d_desc.dyn_पुनो = ds->dyn_dtree;
+    ds->bl_desc.dyn_पुनो = ds->bl_पुनो;
 
     return Z_OK;
 #endif /* MAXSEG_64K */
@@ -1678,7 +1678,7 @@ local block_state deflate_stored(deflate_state *s, int flush) {
      * stored blocks, if there is enough space.
      */
     int last = 0;
-    unsigned len, left, have;
+    unsigned len, कालिवा, have;
     unsigned used = s->strm->avail_in;
     do {
         /* Set len to the maximum size block that we can copy directly with the
@@ -1691,9 +1691,9 @@ local block_state deflate_stored(deflate_state *s, int flush) {
             break;
             /* maximum stored block length that will fit in avail_out: */
         have = s->strm->avail_out - have;
-        left = (unsigned)(s->strstart - s->block_start);    /* window bytes */
-        if (len > (ulg)left + s->strm->avail_in)
-            len = left + s->strm->avail_in;     /* limit len to the input */
+        कालिवा = (unsigned)(s->strstart - s->block_start);    /* window bytes */
+        if (len > (ulg)कालिवा + s->strm->avail_in)
+            len = कालिवा + s->strm->avail_in;     /* limit len to the input */
         if (len > have)
             len = have;                         /* limit len to the output */
 
@@ -1704,13 +1704,13 @@ local block_state deflate_stored(deflate_state *s, int flush) {
          */
         if (len < min_block && ((len == 0 && flush != Z_FINISH) ||
                                 flush == Z_NO_FLUSH ||
-                                len != left + s->strm->avail_in))
+                                len != कालिवा + s->strm->avail_in))
             break;
 
         /* Make a dummy stored block in pending to get the header bytes,
          * including any pending bits. This also updates the debugging counts.
          */
-        last = flush == Z_FINISH && len == left + s->strm->avail_in ? 1 : 0;
+        last = flush == Z_FINISH && len == कालिवा + s->strm->avail_in ? 1 : 0;
         _tr_stored_block(s, (char *)0, 0L, last);
 
         /* Replace the lengths in the dummy stored block with len. */
@@ -1729,15 +1729,15 @@ local block_state deflate_stored(deflate_state *s, int flush) {
 #endif
 
         /* Copy uncompressed bytes from the window to next_out. */
-        if (left) {
-            if (left > len)
-                left = len;
-            zmemcpy(s->strm->next_out, s->window + s->block_start, left);
-            s->strm->next_out += left;
-            s->strm->avail_out -= left;
-            s->strm->total_out += left;
-            s->block_start += left;
-            len -= left;
+        if (कालिवा) {
+            if (कालिवा > len)
+                कालिवा = len;
+            zmemcpy(s->strm->next_out, s->window + s->block_start, कालिवा);
+            s->strm->next_out += कालिवा;
+            s->strm->avail_out -= कालिवा;
+            s->strm->total_out += कालिवा;
+            s->block_start += कालिवा;
+            len -= कालिवा;
         }
 
         /* Copy uncompressed bytes directly from next_in to next_out, updating
@@ -1766,7 +1766,7 @@ local block_state deflate_stored(deflate_state *s, int flush) {
             s->matches = 2;         /* clear hash */
             zmemcpy(s->window, s->strm->next_in - s->w_size, s->w_size);
             s->strstart = s->w_size;
-            s->insert = s->strstart;
+            s->इसिंगित = s->strstart;
         }
         else {
             if (s->window_size - s->strstart <= used) {
@@ -1775,17 +1775,17 @@ local block_state deflate_stored(deflate_state *s, int flush) {
                 zmemcpy(s->window, s->window + s->w_size, s->strstart);
                 if (s->matches < 2)
                     s->matches++;   /* add a pending slide_hash() */
-                if (s->insert > s->strstart)
-                    s->insert = s->strstart;
+                if (s->इसिंगित > s->strstart)
+                    s->इसिंगित = s->strstart;
             }
             zmemcpy(s->window + s->strstart, s->strm->next_in - used, used);
             s->strstart += used;
-            s->insert += MIN(used, s->w_size - s->insert);
+            s->इसिंगित += MIN(used, s->w_size - s->इसिंगित);
         }
         s->block_start = s->strstart;
     }
-    if (s->high_water < s->strstart)
-        s->high_water = s->strstart;
+    if (s->माताअस_water < s->strstart)
+        s->माताअस_water = s->strstart;
 
     /* If the last block was written to next_out, then done. */
     if (last) {
@@ -1808,18 +1808,18 @@ local block_state deflate_stored(deflate_state *s, int flush) {
         if (s->matches < 2)
             s->matches++;           /* add a pending slide_hash() */
         have += s->w_size;          /* more space now */
-        if (s->insert > s->strstart)
-            s->insert = s->strstart;
+        if (s->इसिंगित > s->strstart)
+            s->इसिंगित = s->strstart;
     }
     if (have > s->strm->avail_in)
         have = s->strm->avail_in;
     if (have) {
         read_buf(s->strm, s->window + s->strstart, have);
         s->strstart += have;
-        s->insert += MIN(have, s->w_size - s->insert);
+        s->इसिंगित += MIN(have, s->w_size - s->इसिंगित);
     }
-    if (s->high_water < s->strstart)
-        s->high_water = s->strstart;
+    if (s->माताअस_water < s->strstart)
+        s->माताअस_water = s->strstart;
 
     /* There was not enough avail_out to write a complete worthy or flushed
      * stored block to next_out. Write a stored block to pending instead, if we
@@ -1830,13 +1830,13 @@ local block_state deflate_stored(deflate_state *s, int flush) {
         /* maximum stored block length that will fit in pending: */
     have = (unsigned)MIN(s->pending_buf_size - have, MAX_STORED);
     min_block = MIN(have, s->w_size);
-    left = (unsigned)(s->strstart - s->block_start);
-    if (left >= min_block ||
-        ((left || flush == Z_FINISH) && flush != Z_NO_FLUSH &&
-         s->strm->avail_in == 0 && left <= have)) {
-        len = MIN(left, have);
+    कालिवा = (unsigned)(s->strstart - s->block_start);
+    if (कालिवा >= min_block ||
+        ((कालिवा || flush == Z_FINISH) && flush != Z_NO_FLUSH &&
+         s->strm->avail_in == 0 && कालिवा <= have)) {
+        len = MIN(कालिवा, have);
         last = flush == Z_FINISH && s->strm->avail_in == 0 &&
-               len == left ? 1 : 0;
+               len == कालिवा ? 1 : 0;
         _tr_stored_block(s, (charf *)s->window + s->block_start, len, last);
         s->block_start += len;
         flush_pending(s->strm);
@@ -1878,7 +1878,7 @@ local block_state deflate_fast(deflate_state *s, int flush) {
          */
         hash_head = NIL;
         if (s->lookahead >= MIN_MATCH) {
-            INSERT_STRING(s, s->strstart, hash_head);
+            इसिंगित_STRING(s, s->strstart, hash_head);
         }
 
         /* Find the longest match, discarding those <= prev_length.
@@ -1904,12 +1904,12 @@ local block_state deflate_fast(deflate_state *s, int flush) {
              * is not too large. This saves time but degrades compression.
              */
 #ifndef FASTEST
-            if (s->match_length <= s->max_insert_length &&
+            if (s->match_length <= s->max_इसिंगित_length &&
                 s->lookahead >= MIN_MATCH) {
                 s->match_length--; /* string at strstart already in table */
                 do {
                     s->strstart++;
-                    INSERT_STRING(s, s->strstart, hash_head);
+                    इसिंगित_STRING(s, s->strstart, hash_head);
                     /* strstart never exceeds WSIZE-MAX_MATCH, so there are
                      * always MIN_MATCH bytes ahead.
                      */
@@ -1938,7 +1938,7 @@ local block_state deflate_fast(deflate_state *s, int flush) {
         }
         if (bflush) FLUSH_BLOCK(s, 0);
     }
-    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
+    s->इसिंगित = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
     if (flush == Z_FINISH) {
         FLUSH_BLOCK(s, 1);
         return finish_done;
@@ -1978,7 +1978,7 @@ local block_state deflate_slow(deflate_state *s, int flush) {
          */
         hash_head = NIL;
         if (s->lookahead >= MIN_MATCH) {
-            INSERT_STRING(s, s->strstart, hash_head);
+            इसिंगित_STRING(s, s->strstart, hash_head);
         }
 
         /* Find the longest match, discarding those <= prev_length.
@@ -2012,7 +2012,7 @@ local block_state deflate_slow(deflate_state *s, int flush) {
          * match is not better, output the previous match:
          */
         if (s->prev_length >= MIN_MATCH && s->match_length <= s->prev_length) {
-            uInt max_insert = s->strstart + s->lookahead - MIN_MATCH;
+            uInt max_इसिंगित = s->strstart + s->lookahead - MIN_MATCH;
             /* Do not insert strings in hash table beyond this. */
 
             check_match(s, s->strstart - 1, s->prev_match, (int)s->prev_length);
@@ -2028,8 +2028,8 @@ local block_state deflate_slow(deflate_state *s, int flush) {
             s->lookahead -= s->prev_length - 1;
             s->prev_length -= 2;
             do {
-                if (++s->strstart <= max_insert) {
-                    INSERT_STRING(s, s->strstart, hash_head);
+                if (++s->strstart <= max_इसिंगित) {
+                    इसिंगित_STRING(s, s->strstart, hash_head);
                 }
             } while (--s->prev_length != 0);
             s->match_available = 0;
@@ -2066,7 +2066,7 @@ local block_state deflate_slow(deflate_state *s, int flush) {
         _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
         s->match_available = 0;
     }
-    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
+    s->इसिंगित = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
     if (flush == Z_FINISH) {
         FLUSH_BLOCK(s, 1);
         return finish_done;
@@ -2139,7 +2139,7 @@ local block_state deflate_rle(deflate_state *s, int flush) {
         }
         if (bflush) FLUSH_BLOCK(s, 0);
     }
-    s->insert = 0;
+    s->इसिंगित = 0;
     if (flush == Z_FINISH) {
         FLUSH_BLOCK(s, 1);
         return finish_done;
@@ -2175,7 +2175,7 @@ local block_state deflate_huff(deflate_state *s, int flush) {
         s->strstart++;
         if (bflush) FLUSH_BLOCK(s, 0);
     }
-    s->insert = 0;
+    s->इसिंगित = 0;
     if (flush == Z_FINISH) {
         FLUSH_BLOCK(s, 1);
         return finish_done;

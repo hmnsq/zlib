@@ -525,7 +525,7 @@ int ZEXPORTVA gzprintf(gzFile file, const char *format, int a1, int a2, int a3,
     return Z_STREAM_ERROR;
 #else
     int ret;
-    unsigned len, left;
+    unsigned len, कालिवा;
     char *next;
     gz_statep state;
     z_streamp strm;

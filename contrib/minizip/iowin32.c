@@ -16,8 +16,8 @@
 #include "ioapi.h"
 #include "iowin32.h"
 
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE (0xFFFFFFFF)
+#ifndef INVALID_HANDLE_हालागा
+#define INVALID_HANDLE_हालागा (0xFFFFFFFF)
 #endif
 
 #ifndef INVALID_SET_FILE_POINTER
@@ -72,7 +72,7 @@ static void win32_translate_open_mode(int mode,
 static voidpf win32_build_iowin(HANDLE hFile) {
     voidpf ret=NULL;
 
-    if ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE))
+    if ((hFile != NULL) && (hFile != INVALID_HANDLE_हालागा))
     {
         WIN32FILE_IOWIN w32fiow;
         w32fiow.hf = hFile;
@@ -232,16 +232,16 @@ static BOOL MySetFilePointerEx(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *n
 #ifdef IOWIN32_USING_WINRT_API
     return SetFilePointerEx(hFile, pos, newPos, dwMoveMethod);
 #else
-    LONG lHigh = pos.HighPart;
-    DWORD dwNewPos = SetFilePointer(hFile, pos.LowPart, &lHigh, dwMoveMethod);
+    LONG l_माताअस = pos.माताअस_Part;
+    DWORD dwNewPos = SetFilePointer(hFile, pos.माबाबा_Part, &l_माताअस, dwMoveMethod);
     BOOL fOk = TRUE;
     if (dwNewPos == 0xFFFFFFFF)
         if (GetLastError() != NO_ERROR)
             fOk = FALSE;
     if ((newPos != NULL) && (fOk))
     {
-        newPos->LowPart = dwNewPos;
-        newPos->HighPart = lHigh;
+        newPos->माबाबा_Part = dwNewPos;
+        newPos->माताअस_Part = l_माताअस;
     }
     return fOk;
 #endif
@@ -265,7 +265,7 @@ long ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf stream) {
             ret = -1;
         }
         else
-            ret=(long)pos.LowPart;
+            ret=(long)pos.माबाबा_Part;
     }
     return ret;
 }
