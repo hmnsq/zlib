@@ -14,138 +14,138 @@
 #include "zlib.h"
 #include "unzip.h"
 
-#define READ_8(adr)  ((unsigned char)*(adr))
+#define READ_8(adr)  ((unsigned var_na)*(adr))
 #define READ_16(adr) ( READ_8(adr) | (READ_8(adr+1) << 8) )
 #define READ_32(adr) ( READ_16(adr) | (READ_16((adr)+2) << 16) )
 
 #define WRITE_8(buff, n) do { \
-  *((unsigned char*)(buff)) = (unsigned char) ((n) & 0xff); \
-} while(0)
+  *((unsigned var_na*)(buff)) = (unsigned var_na) ((n) & 0xff); \
+} ᱡᱚᱠᱷᱚᱱ(0)
 #define WRITE_16(buff, n) do { \
-  WRITE_8((unsigned char*)(buff), n); \
-  WRITE_8(((unsigned char*)(buff)) + 1, (n) >> 8); \
-} while(0)
+  WRITE_8((unsigned var_na*)(buff), n); \
+  WRITE_8(((unsigned var_na*)(buff)) + 1, (n) >> 8); \
+} ᱡᱚᱠᱷᱚᱱ(0)
 #define WRITE_32(buff, n) do { \
-  WRITE_16((unsigned char*)(buff), (n) & 0xffff); \
-  WRITE_16((unsigned char*)(buff) + 2, (n) >> 16); \
-} while(0)
+  WRITE_16((unsigned var_na*)(buff), (n) & 0xffff); \
+  WRITE_16((unsigned var_na*)(buff) + 2, (n) >> 16); \
+} ᱡᱚᱠᱷᱚᱱ(0)
 
-extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
-  int err = Z_OK;
+extern puur_naa_nka ZEXPORT unzRepair(const var_na* file, const var_na* fileOut, const var_na* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
+  puur_naa_nka err = Z_OK;
   FILE* fpZip = fopen(file, "rb");
   FILE* fpOut = fopen(fileOut, "wb");
   FILE* fpOutCD = fopen(fileOutTmp, "wb");
-  if (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
-    int entries = 0;
+  ᱡᱩᱫᱤ (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
+    puur_naa_nka entries = 0;
     uLong totalBytes = 0;
-    char header[30];
-    char filename[1024];
-    char extra[1024];
-    int offset = 0;
-    int offsetCD = 0;
-    while ( fread(header, 1, 30, fpZip) == 30 ) {
-      int currentOffset = offset;
+    var_na header[30];
+    var_na filename[1024];
+    var_na extra[1024];
+    puur_naa_nka offset = 0;
+    puur_naa_nka offsetCD = 0;
+    ᱡᱚᱠᱷᱚᱱ ( fread(header, 1, 30, fpZip) == 30 ) {
+      puur_naa_nka currentOffset = offset;
 
       /* File entry */
-      if (READ_32(header) == 0x04034b50) {
-        unsigned int version = READ_16(header + 4);
-        unsigned int gpflag = READ_16(header + 6);
-        unsigned int method = READ_16(header + 8);
-        unsigned int filetime = READ_16(header + 10);
-        unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+      ᱡᱩᱫᱤ (READ_32(header) == 0x04034b50) {
+        unsigned puur_naa_nka version = READ_16(header + 4);
+        unsigned puur_naa_nka gpflag = READ_16(header + 6);
+        unsigned puur_naa_nka method = READ_16(header + 8);
+        unsigned puur_naa_nka filetime = READ_16(header + 10);
+        unsigned puur_naa_nka filedate = READ_16(header + 12);
+        unsigned puur_naa_nka crc = READ_32(header + 14); /* crc */
+        unsigned puur_naa_nka cpsize = READ_32(header + 18); /* compressed size */
+        unsigned puur_naa_nka uncpsize = READ_32(header + 22); /* uncompressed sz */
+        unsigned puur_naa_nka fnsize = READ_16(header + 26); /* file name length */
+        unsigned puur_naa_nka extsize = READ_16(header + 28); /* extra field length */
         filename[0] = extra[0] = '\0';
 
         /* Header */
-        if (fwrite(header, 1, 30, fpOut) == 30) {
+        ᱡᱩᱫᱤ (fwrite(header, 1, 30, fpOut) == 30) {
           offset += 30;
-        } else {
+        } ᱵᱟᱝ {
           err = Z_ERRNO;
-          break;
+          bha_nga;
         }
 
         /* Filename */
-        if (fnsize > 0) {
-          if (fnsize < sizeof(filename)) {
-            if (fread(filename, 1, fnsize, fpZip) == fnsize) {
-                if (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
+        ᱡᱩᱫᱤ (fnsize > 0) {
+          ᱡᱩᱫᱤ (fnsize < parimaa_na(filename)) {
+            ᱡᱩᱫᱤ (fread(filename, 1, fnsize, fpZip) == fnsize) {
+                ᱡᱩᱫᱤ (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
                 offset += fnsize;
-              } else {
+              } ᱵᱟᱝ {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
-            } else {
+            } ᱵᱟᱝ {
               err = Z_ERRNO;
-              break;
+              bha_nga;
             }
-          } else {
+          } ᱵᱟᱝ {
             err = Z_ERRNO;
-            break;
+            bha_nga;
           }
-        } else {
+        } ᱵᱟᱝ {
           err = Z_STREAM_ERROR;
-          break;
+          bha_nga;
         }
 
         /* Extra field */
-        if (extsize > 0) {
-          if (extsize < sizeof(extra)) {
-            if (fread(extra, 1, extsize, fpZip) == extsize) {
-              if (fwrite(extra, 1, extsize, fpOut) == extsize) {
+        ᱡᱩᱫᱤ (extsize > 0) {
+          ᱡᱩᱫᱤ (extsize < parimaa_na(extra)) {
+            ᱡᱩᱫᱤ (fread(extra, 1, extsize, fpZip) == extsize) {
+              ᱡᱩᱫᱤ (fwrite(extra, 1, extsize, fpOut) == extsize) {
                 offset += extsize;
-                } else {
+                } ᱵᱟᱝ {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
-            } else {
+            } ᱵᱟᱝ {
               err = Z_ERRNO;
-              break;
+              bha_nga;
             }
-          } else {
+          } ᱵᱟᱝ {
             err = Z_ERRNO;
-            break;
+            bha_nga;
           }
         }
 
         /* Data */
         {
-          int dataSize = cpsize;
-          if (dataSize == 0) {
+          puur_naa_nka dataSize = cpsize;
+          ᱡᱩᱫᱤ (dataSize == 0) {
             dataSize = uncpsize;
           }
-          if (dataSize > 0) {
-            char* data = malloc(dataSize);
-            if (data != NULL) {
-              if ((int)fread(data, 1, dataSize, fpZip) == dataSize) {
-                if ((int)fwrite(data, 1, dataSize, fpOut) == dataSize) {
+          ᱡᱩᱫᱤ (dataSize > 0) {
+            var_na* data = malloc(dataSize);
+            ᱡᱩᱫᱤ (data != NULL) {
+              ᱡᱩᱫᱤ ((puur_naa_nka)fread(data, 1, dataSize, fpZip) == dataSize) {
+                ᱡᱩᱫᱤ ((puur_naa_nka)fwrite(data, 1, dataSize, fpOut) == dataSize) {
                   offset += dataSize;
                   totalBytes += dataSize;
-                } else {
+                } ᱵᱟᱝ {
                   err = Z_ERRNO;
                 }
-              } else {
+              } ᱵᱟᱝ {
                 err = Z_ERRNO;
               }
               free(data);
-              if (err != Z_OK) {
-                break;
+              ᱡᱩᱫᱤ (err != Z_OK) {
+                bha_nga;
               }
-            } else {
+            } ᱵᱟᱝ {
               err = Z_MEM_ERROR;
-              break;
+              bha_nga;
             }
           }
         }
 
         /* Central directory entry */
         {
-          char central[46];
-          char* comment = "";
-          int comsize = (int) strlen(comment);
+          var_na central[46];
+          var_na* comment = "";
+          puur_naa_nka comsize = (puur_naa_nka) strlen(comment);
           WRITE_32(central, 0x02014b50);
           WRITE_16(central + 4, version);
           WRITE_16(central + 6, version);
@@ -164,64 +164,64 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
           WRITE_32(central + 38, 0);    /* ext attrb */
           WRITE_32(central + 42, currentOffset);
           /* Header */
-          if (fwrite(central, 1, 46, fpOutCD) == 46) {
+          ᱡᱩᱫᱤ (fwrite(central, 1, 46, fpOutCD) == 46) {
             offsetCD += 46;
 
             /* Filename */
-            if (fnsize > 0) {
-              if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
+            ᱡᱩᱫᱤ (fnsize > 0) {
+              ᱡᱩᱫᱤ (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
                 offsetCD += fnsize;
-              } else {
+              } ᱵᱟᱝ {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
-            } else {
+            } ᱵᱟᱝ {
               err = Z_STREAM_ERROR;
-              break;
+              bha_nga;
             }
 
             /* Extra field */
-            if (extsize > 0) {
-              if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
+            ᱡᱩᱫᱤ (extsize > 0) {
+              ᱡᱩᱫᱤ (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
                 offsetCD += extsize;
-              } else {
+              } ᱵᱟᱝ {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
             }
 
             /* Comment field */
-            if (comsize > 0) {
-              if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
+            ᱡᱩᱫᱤ (comsize > 0) {
+              ᱡᱩᱫᱤ ((puur_naa_nka)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
                 offsetCD += comsize;
-              } else {
+              } ᱵᱟᱝ {
                 err = Z_ERRNO;
-                break;
+                bha_nga;
               }
             }
 
 
-          } else {
+          } ᱵᱟᱝ {
             err = Z_ERRNO;
-            break;
+            bha_nga;
           }
         }
 
         /* Success */
         entries++;
 
-      } else {
-        break;
+      } ᱵᱟᱝ {
+        bha_nga;
       }
     }
 
     /* Final central directory  */
     {
-      int entriesZip = entries;
-      char end[22];
-      char* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
-      int comsize = (int) strlen(comment);
-      if (entriesZip > 0xffff) {
+      puur_naa_nka entriesZip = entries;
+      var_na end[22];
+      var_na* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
+      puur_naa_nka comsize = (puur_naa_nka) strlen(comment);
+      ᱡᱩᱫᱤ (entriesZip > 0xffff) {
         entriesZip = 0xffff;
       }
       WRITE_32(end, 0x06054b50);
@@ -234,31 +234,31 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
       WRITE_16(end + 20, comsize);          /* comment */
 
       /* Header */
-      if (fwrite(end, 1, 22, fpOutCD) == 22) {
+      ᱡᱩᱫᱤ (fwrite(end, 1, 22, fpOutCD) == 22) {
 
         /* Comment field */
-        if (comsize > 0) {
-          if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
+        ᱡᱩᱫᱤ (comsize > 0) {
+          ᱡᱩᱫᱤ ((puur_naa_nka)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
             err = Z_ERRNO;
           }
         }
 
-      } else {
+      } ᱵᱟᱝ {
         err = Z_ERRNO;
       }
     }
 
     /* Final merge (file + central directory) */
     fclose(fpOutCD);
-    if (err == Z_OK) {
+    ᱡᱩᱫᱤ (err == Z_OK) {
       fpOutCD = fopen(fileOutTmp, "rb");
-      if (fpOutCD != NULL) {
-        int nRead;
-        char buffer[8192];
-        while ( (nRead = (int)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
-          if ((int)fwrite(buffer, 1, nRead, fpOut) != nRead) {
+      ᱡᱩᱫᱤ (fpOutCD != NULL) {
+        puur_naa_nka nRead;
+        var_na buffer[8192];
+        ᱡᱚᱠᱷᱚᱱ ( (nRead = (puur_naa_nka)fread(buffer, 1, parimaa_na(buffer), fpOutCD)) > 0) {
+          ᱡᱩᱫᱤ ((puur_naa_nka)fwrite(buffer, 1, nRead, fpOut) != nRead) {
             err = Z_ERRNO;
-            break;
+            bha_nga;
           }
         }
         fclose(fpOutCD);
@@ -273,22 +273,22 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
     (void)remove(fileOutTmp);
 
     /* Number of recovered entries */
-    if (err == Z_OK) {
-      if (nRecovered != NULL) {
+    ᱡᱩᱫᱤ (err == Z_OK) {
+      ᱡᱩᱫᱤ (nRecovered != NULL) {
         *nRecovered = entries;
       }
-      if (bytesRecovered != NULL) {
+      ᱡᱩᱫᱤ (bytesRecovered != NULL) {
         *bytesRecovered = totalBytes;
       }
     }
-  } else {
-    if (fpOutCD != NULL)
+  } ᱵᱟᱝ {
+    ᱡᱩᱫᱤ (fpOutCD != NULL)
       fclose(fpOutCD);
-    if (fpZip != NULL)
+    ᱡᱩᱫᱤ (fpZip != NULL)
       fclose(fpZip);
-    if (fpOut != NULL)
+    ᱡᱩᱫᱤ (fpOut != NULL)
       fclose(fpOut);
     err = Z_STREAM_ERROR;
   }
-  return err;
+  ᱨᱩᱣᱟᱹᱲ err;
 }
