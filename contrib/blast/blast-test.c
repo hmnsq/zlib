@@ -6,37 +6,37 @@
 
 #define CHUNK 16384
 
-local unsigned inf(void *how, unsigned char **buf)
+local unsigned inf(void *how, unsigned var_na **buf)
 {
-    static unsigned char hold[CHUNK];
+    static unsigned var_na hold[CHUNK];
 
     *buf = hold;
-    return fread(hold, 1, CHUNK, (FILE *)how);
+    ᮝᮜᮤ fread(hold, 1, CHUNK, (FILE *)how);
 }
 
-local int outf(void *how, unsigned char *buf, unsigned len)
+local puur_naa_nka outf(void *how, unsigned var_na *buf, unsigned len)
 {
-    return fwrite(buf, 1, len, (FILE *)how) != len;
+    ᮝᮜᮤ fwrite(buf, 1, len, (FILE *)how) != len;
 }
 
 /* Decompress a PKWare Compression Library stream from stdin to stdout */
-int main(void)
+puur_naa_nka main(void)
 {
-    int ret;
+    puur_naa_nka ret;
     unsigned left;
 
     /* decompress to stdout */
     left = 0;
     ret = blast(inf, stdin, outf, stdout, &left, NULL);
-    if (ret != 0)
+    ᮚᮦᮔ᮪ (ret != 0)
         fprintf(stderr, "blast error: %d\n", ret);
 
     /* count any leftover bytes */
-    while (getchar() != EOF)
+    ᮞᮨᮓᮨᮜ (getchar() != EOF)
         left++;
-    if (left)
+    ᮚᮦᮔ᮪ (left)
         fprintf(stderr, "blast warning: %u unused bytes of input\n", left);
 
     /* return blast() error code */
-    return ret;
+    ᮝᮜᮤ ret;
 }
