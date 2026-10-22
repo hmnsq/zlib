@@ -1,0 +1,615 @@
+# What is still missing
+
+76 languages. Each line says in how many languages it is missing.
+
+## Files in languages BURP cannot read yet
+
+- `.cs`: 9 files
+- `.adb`: 7 files
+- `.ads`: 3 files
+- `.ac`: 1 files
+- `.sh`: 1 files
+
+## Keywords with no word in a language's table
+
+- shraeni:ios: 75
+- shraeni:clear: 75
+- shraeni:eof: 75
+- shraeni:app: 75
+- shraeni:binary: 75
+- shraeni:istream: 75
+- shraeni:ostream: 75
+- shraeni:getline: 75
+- shraeni:setw: 75
+- shraeni:setfill: 75
+- shraeni:setprecision: 75
+- shraeni:trunc: 75
+- guru:stderr: 71
+- guru:fprintf: 71
+- guru:size_t: 71
+- guru:FILE: 71
+- guru:fwrite: 71
+- guru:close: 71
+- guru:fclose: 71
+- guru:putc: 71
+- guru:stdout: 71
+- guru:SEEK_CUR: 71
+- guru:fopen: 71
+- guru:SEEK_SET: 71
+- guru:fread: 71
+- shraeni:EOF: 71
+- guru:ferror: 71
+- guru:errno: 71
+- guru:fputs: 71
+- shraeni:close: 71
+- guru:stdin: 71
+- guru:time: 71
+- guru:SEEK_END: 71
+- guru:dirname: 71
+- guru:EOF: 71
+- guru:realloc: 71
+- guru:longjmp: 71
+- guru:UINT_MAX: 71
+- guru:ULONG_MAX: 71
+- guru:FILENAME_MAX: 71
+- guru:fseek: 71
+- guru:va_list: 71
+- guru:sprintf: 71
+- guru:perror: 71
+- guru:jmp_buf: 71
+- guru:ftell: 71
+- guru:feof: 71
+- guru:ptrdiff_t: 71
+- guru:atoi: 71
+- guru:va_start: 71
+- guru:va_end: 71
+- guru:strerror: 71
+- guru:getc: 71
+- guru:wchar_t: 71
+- guru:setjmp: 71
+- guru:USHRT_MAX: 71
+- guru:strncpy: 71
+- guru:time_t: 71
+- guru:atol: 71
+- guru:memcmp: 71
+- guru:memmove: 71
+- guru:CHAR_BIT: 71
+- guru:UCHAR_MAX: 71
+- guru:tm: 71
+- guru:EXIT_FAILURE: 71
+- guru:remove: 71
+- guru:memchr: 71
+- guru:strtol: 71
+- guru:times: 71
+- guru:ungetc: 71
+- guru:vsprintf: 71
+- guru:isgraph: 71
+- shraeni:BUFSIZ: 71
+- shraeni:setbuf: 71
+- guru:setbuf: 71
+- guru:mktime: 71
+- guru:mkdir: 71
+- guru:chdir: 71
+- guru:localtime: 71
+- guru:clock: 71
+- guru:rename: 71
+- guru:ctime: 71
+- guru:fflush: 71
+- guru:strchr: 71
+- guru:fstat: 71
+- guru:strrchr: 71
+- guru:strcmp: 70
+- guru:strcpy: 70
+- guru:open: 70
+- guru:puts: 70
+- shraeni:open: 70
+- guru:memset: 70
+- guru:strcat: 70
+- guru:getchar: 70
+- shraeni:strcpy: 70
+- guru:scanf: 70
+- shraeni:strcat: 70
+- guru:srand: 70
+- guru:rand: 70
+- guru:log: 67
+- guru:#endif: 66
+- guru:#define: 66
+- guru:#ifdef: 66
+- guru:#ifndef: 66
+- guru:#pragma: 66
+- shraeni:endl: 66
+- shraeni:cout: 66
+- shraeni:delete: 66
+- shraeni:#define: 66
+- guru:#error: 66
+- guru:unsigned: 62
+- guru:long: 62
+- guru:short: 62
+- guru:printf: 62
+- guru:malloc: 62
+- guru:strlen: 62
+- guru:exit: 62
+- guru:memcpy: 62
+- guru:template: 62
+- guru:operator: 62
+- guru:calloc: 62
+- guru:friend: 62
+- guru:putchar: 62
+- shraeni:unsigned: 62
+- guru:INT_MAX: 62
+- shraeni:strlen: 62
+- guru:signed: 62
+- guru:main: 54
+- shraeni:main: 54
+- guru:virtual: 40
+- shraeni:true: 38
+- shraeni:sync: 26
+- shraeni:bool: 26
+- shraeni:false: 26
+- guru:NULL: 25
+- guru:const: 25
+- guru:void: 25
+- guru:static: 25
+- guru:do: 25
+- guru:extern: 25
+- guru:typedef: 25
+- guru:free: 25
+- guru:assert: 25
+- shraeni:this: 25
+- shraeni:NULL: 25
+- guru:switch: 25
+- guru:write: 25
+- guru:goto: 25
+- guru:public: 25
+- guru:default: 25
+- guru:read: 25
+- guru:continue: 25
+- guru:#elif: 25
+- shraeni:void: 25
+- shraeni:const: 25
+- guru:private: 25
+- shraeni:new: 25
+- guru:for: 9
+- guru:char: 9
+- guru:break: 9
+- guru:struct: 9
+- guru:case: 9
+- guru:sizeof: 9
+- shraeni:char: 9
+- guru:inline: 9
+- guru:volatile: 9
+- guru:enum: 9
+- guru:double: 9
+- guru:protected: 9
+- guru:union: 9
+- guru:if: 1
+- guru:int: 1
+- guru:return: 1
+- guru:else: 1
+- guru:while: 1
+- guru:#if: 1
+- guru:#else: 1
+- shraeni:if: 1
+- shraeni:return: 1
+- shraeni:int: 1
+- shraeni:else: 1
+- shraeni:while: 1
+
+## Names with no dictionary entry (the most common first)
+
+- `s`: 76
+- `state`: 76
+- `strm`: 76
+- `len`: 76
+- `err`: 76
+- `ret`: 76
+- `buf`: 76
+- `define`: 76
+- `uLong`: 76
+- `zi`: 76
+- `file`: 76
+- `n`: 76
+- `ZEXPORT`: 76
+- `defined`: 76
+- `local`: 76
+- `i`: 76
+- `filestream`: 76
+- `have`: 76
+- `FAR`: 76
+- `ci`: 76
+- `Z_NULL`: 76
+- `uInt`: 76
+- `copy`: 76
+- `Z_OK`: 76
+- `z_filefunc`: 76
+- `x`: 76
+- `fd`: 76
+- `ZPOS64_T`: 76
+- `voidpf`: 76
+- `p`: 76
+- `level`: 76
+- `pzlib_filefunc_def`: 76
+- `val`: 76
+- `op`: 76
+- `opaque`: 76
+- `g`: 76
+- `c`: 76
+- `ZIP_OK`: 76
+- `ZEXTERN`: 76
+- `name`: 76
+- `UNZ_OK`: 76
+- `argv`: 76
+- `endif`: 76
+- `strstart`: 76
+- `z_streamp`: 76
+- `filename`: 76
+- `gzFile`: 76
+- `k`: 76
+- `z_const`: 76
+- `pos`: 76
+- `Bytef`: 76
+- `hold`: 76
+- `flush`: 76
+- `flags`: 76
+- `gz`: 76
+- `put`: 76
+- `max`: 76
+- `N`: 76
+- `dest`: 76
+- `us`: 76
+- `unzFile`: 76
+- `dist`: 76
+- `UNZ_ERRNO`: 76
+- `extra`: 76
+- `str`: 76
+- `wrap`: 76
+- `gz_statep`: 76
+- `inflate_state`: 76
+- `adler`: 76
+- `file_info`: 76
+- `deflate_state`: 76
+- `sym`: 76
+- `lens`: 76
+- `pziinit`: 76
+- `inf`: 76
+- `DROPBITS`: 76
+- `gzfilebuf`: 76
+- `hFile`: 76
+- `ptr`: 76
+- `BAD`: 76
+- `m`: 76
+- `gzofstream`: 76
+- `a`: 76
+- `got`: 76
+- `bstream`: 76
+- `lookahead`: 76
+- `from`: 76
+- `ZIP_ERRNO`: 76
+- `argc`: 76
+- `zfree`: 76
+- `Byte`: 76
+- `strategy`: 76
+- `ush`: 76
+- `uncompr`: 76
+- `z_off64_t`: 76
+- `Tracev`: 76
+- `Z_BUF_ERROR`: 76
+- `skip`: 76
+- `raw`: 76
+- `zalloc`: 76
+- `lencode`: 76
+- `pending`: 76
+- `gz_error`: 76
+- `Z_NO_FLUSH`: 76
+- `unz64_s`: 76
+- `ds`: 76
+- `CHUNK`: 76
+- `Z_ERRNO`: 76
+- `uL`: 76
+- `Z_MEM_ERROR`: 76
+- `comment`: 76
+- `ulg`: 76
+- `zone`: 76
+- `ifndef`: 76
+- `wsize`: 76
+- `zipFile`: 76
+- `W`: 76
+- `check`: 76
+- `NEEDBITS`: 76
+- `ifdef`: 76
+- `syms`: 76
+- `again`: 76
+- `z_off_t`: 76
+- `distcode`: 76
+- `error`: 76
+- `work`: 76
+- `STDC`: 76
+- `put_byte`: 76
+- `Freq`: 76
+- `zmemcpy`: 76
+- `password`: 76
+- `uv2di`: 76
+- `gzhead`: 76
+- `outfile`: 76
+- `MAXBITS`: 76
+- `h`: 76
+- `ZCALLBACK`: 76
+- `DWORD`: 76
+- `ldi`: 76
+- `Assert`: 76
+- `def`: 76
+- `compr`: 76
+- `destLen`: 76
+- `_WIN32`: 76
+- `zfile_func64`: 76
+- `ZSEEK64`: 76
+- `Z_SOLO`: 76
+- `q`: 76
+- `zs`: 76
+- `uch`: 76
+- `CHECK_ERR`: 76
+- `comprLen`: 76
+- `rem`: 76
+- `drop`: 76
+- `zlib_filefunc64_32_def`: 76
+- `zipfi`: 76
+- `pkeys`: 76
+- `uncomprLen`: 76
+- `codes`: 76
+- `curr`: 76
+- `m_fp`: 76
+- `cur_file_info`: 76
+- `inflate`: 76
+- `inf_leave`: 76
+- `nlen`: 76
+- `gzifstream`: 76
+- `pcrc_32_tab`: 76
+- `dwDesiredAccess`: 76
+- `uf`: 76
+- `gi`: 76
+- `bi_valid`: 76
+- `Len`: 76
+- `GZ_READ`: 76
+- `wnext`: 76
+- `huff`: 76
+- `sb`: 76
+- `std`: 76
+- `b`: 76
+- `LARGE_INTEGER`: 76
+- `UNZ_PARAMERROR`: 76
+- `zcpr`: 76
+- `tmp`: 76
+- `origin`: 76
+- `Z_DEFLATED`: 76
+- `ziinit`: 76
+- `extrafield_local`: 76
+- `outcnt`: 76
+- `crc1`: 76
+- `crc2`: 76
+- `pending_buf`: 76
+- `bye`: 76
+- `deflate`: 76
+- `bitbuf`: 76
+- `mem`: 76
+- `beg`: 76
+- `whave`: 76
+- `v1`: 76
+- `Tracevv`: 76
+- `incr`: 76
+- `gzfilestream_common`: 76
+- `m_os`: 76
+- `unz64local_getShort`: 76
+- `unz64local_getLong`: 76
+- `BUFREADCOMMENT`: 76
+- `CENTRALDIRINVALID`: 76
+- `uReadPos`: 76
+- `pfile_info`: 76
+- `extrafield_global`: 76
+- `dictionary`: 76
+- `outd`: 76
+- `sum2`: 76
+- `bound`: 76
+- `lenbits`: 76
+- `ndist`: 76
+- `how`: 76
+- `rep`: 76
+- `type`: 76
+- `T`: 76
+- `tmu_date`: 76
+- `zip64`: 76
+- `central_pos`: 76
+- `globalcomment`: 76
+- `memLevel`: 76
+- `GZIP`: 76
+- `ss`: 76
+- `chars`: 76
+- `len2`: 76
+- `Z_DEFAULT_COMPRESSION`: 76
+- `dict`: 76
+- `uv16qi`: 76
+- `PULLBYTE`: 76
+- `TYPE`: 76
+- `fill`: 76
+- `voidp`: 76
+- `pfilefunc`: 76
+- `filename_try`: 76
+- `list`: 76
+- `outname`: 76
+- `free_func`: 76
+- `offs`: 76
+- `min`: 76
+- `f`: 76
+- `flag`: 76
+- `infile`: 76
+- `GZ_WRITE`: 76
+- `bitcnt`: 76
+- `v2`: 76
+- `is_open`: 76
+- `fp`: 76
+- `WRITE_16`: 76
+- `central`: 76
+- `file_pos`: 76
+- `copy_this`: 76
+- `append`: 76
+- `dyn_ltree`: 76
+- `LEN`: 76
+- `WIN32`: 76
+- `ZREAD64`: 76
+- `filefunc`: 76
+- `WIN32FILE_IOWIN`: 76
+- `dwCreationDisposition`: 76
+- `Z_BZIP2ED`: 76
+- `dosDate`: 76
+- `zip_fileinfo`: 76
+- `pX`: 76
+- `zlib_filefunc64_32_def_fill`: 76
+- `uReadThis`: 76
+- `lengths`: 76
+- `ins_h`: 76
+- `ushf`: 76
+- `sym_buf`: 76
+- `bi_buf`: 76
+- `ZLIB_DEBUG`: 76
+- `D_CODES`: 76
+- `desc`: 76
+- `curlen`: 76
+- `alloc_func`: 76
+- `need`: 76
+- `ZALLOC`: 76
+- `attach`: 76
+- `write_filename`: 76
+- `opt_overwrite`: 76
+- `DEF_MEM_LEVEL`: 76
+- `ALLOC`: 76
+- `lSeek`: 76
+- `file_info64`: 76
+- `zip`: 76
+- `pathname`: 76
+- `stored`: 76
+- `bflush`: 76
+- `map`: 76
+- `st`: 76
+- `win`: 76
+- `format`: 76
+- `inflateStateCheck`: 76
+- `INITBITS`: 76
+- `ozstream`: 76
+- `_MSC_VER`: 76
+- `zlib_filefunc64_def`: 76
+- `HANDLE`: 76
+
+## Comments with no translation
+
+- -- see zlib.h --: 76
+- fallthrough: 76
+- get internal structure: 76
+- size of the central directory: 76
+- number of the disk with the start of the central directory: 76
+- WARNING: this file should *not* be used by applications. It is
+   part of the implementation of the : 76
+- get internal structure and check integrity: 76
+- check for seek request: 76
+- check that we're writing and that there's no (serious) error: 76
+- the signature, already checked: 76
+- number of this disk: 76
+- bit buffer: 76
+- clean up: 76
+- DYNAMIC_CRC_TABLE: 76
+- clean up and return: 76
+- get internal structure and check that it's for reading: 76
+- check that there was no (serious) error: 76
+- out of input: 76
+- check for an over-subscribed or incomplete set of lengths: 76
+- generate offsets into symbol table for each length for sorting: 76
+- return code: 76
+- decode codes: 76
+- maximum size of global comment: 76
+- version needed to extract: 76
+- total number of entries in the central dir on this disk: 76
+- total number of entries in the central dir: 76
+- UNZ_PARAMERROR;: 76
+- compressed size, unknown: 76
+- uncompressed size, unknown: 76
+- set if current block must be flushed: 76
+- flush the current block: 76
+- check arguments: 76
+- !Z_SOLO: 76
+- compression stream: 76
+- decompression stream: 76
+- current number of bits in code: 76
+- len bits being decoded: 76
+- first code of length len: 76
+- number of codes of length len: 76
+- index of first code of length len in symbol table: 76
+- if length len, return symbol: 76
+- else update for next length: 76
+- ran out of codes: 76
+- no codes!: 76
+- decompress: 76
+- in case we return an error: 76
+- literal/length table: 76
+- distance table: 76
+- Clear the input bit accumulator: 76
+- Assure that there are at least n bits in the bit accumulator.  If there is
+   not enough available i: 76
+- Remove n bits from the bit accumulator: 76
+- Remove zero to seven bits as needed to go to a byte boundary: 76
+- next input: 76
+- next output: 76
+- allocated sliding window, if needed: 76
+- bits in bit buffer: 76
+- number of stored or match bytes to copy: 76
+- where to copy match bytes from: 76
+- current decoding table entry: 76
+- parent table entry: 76
+- length to copy for repeats, bits to drop: 76
+- permutation of code lengths: 76
+- stored block: 76
+- fixed block: 76
+- dynamic block: 76
+- go to byte boundary: 76
+- handle error breaks in while: 76
+- check for end-of-block code (better have one): 76
+- build code tables -- note: do not change the lenbits or distbits
+               values here (9 and 6: 76
+- process end of block: 76
+- backwards increment the len-bit code huff: 76
+- invalid code marker: 76
+- Default constructor: 76
+- *
+   *  @brief  Check if file is open.
+   *  @return  True if file is open.: 76
+- *
+   *  @brief  Open gzipped file.
+   *  @param  name  File name.
+   *  @param  mode  Open mode flag: 76
+- *
+   *  @brief  Attach to already open gzipped file.
+   *  @param  fd  File descriptor.
+   *  @param: 76
+- In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit : 76
+- strncpy doesn't append the trailing NULL, of the string is too long.: 76
+- f: name of file to get info on, tmzip: return value: access,
+   modification and creation times, dt:: 76
+- comment: 76
+- disk #: 76
+- hack: 76
+- io structure of the zipfile: 76
+- byte before the zipfile, (>0 for sfx): 76
+- version made by: 76
+- Write info about the ZipFile in the *pglobal_info structure.
+  No preparation of the structure is ne: 76
+- general purpose bit flag        2 bytes: 76
+- internal file attributes        2 bytes: 76
+- external file attributes        4 bytes: 76
+- offset of start of central directory with respect to the starting disk number: 76
+- !NO_ADDFILEINEXISTINGZIP: 76
+- overlong code: 76
+- compr size: 76
+- uncompr size: 76
+- default memLevel: 76
+- input buffer: 76
+- invalid symbol: 76
+- MAKECRCH: 76
+- Compression must start with an empty pending buffer: 76
+- start of bytes to update crc: 76
