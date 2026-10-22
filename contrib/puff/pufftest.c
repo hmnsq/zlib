@@ -15,23 +15,23 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#જો defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "puff.h"
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#જો defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
+#  define SET_દ્વિઅંકી_MODE(file) setmode(fileno(file), O_દ્વિઅંકી)
+#નહીંતર
+#  define SET_દ્વિઅંકી_MODE(file)
 #endif
 
-#define local static
+#define local સ્થિર
 
 /* Return size times approximately the cube root of 2, keeping the result as 1,
    3, or 5 times a power of 2 -- the result is always > size, until the result
@@ -39,19 +39,19 @@
    to keep reallocations less than ~33% over the actual data. */
 local size_t bythirds(size_t size)
 {
-    int n;
+    પૂર્ણાંક n;
     size_t m;
 
     m = size;
-    for (n = 0; m; n++)
+    માટે (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    જો (n < 3)
+        પાછા size + 1;
     n -= 3;
     m = size >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    પાછા m > size ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,109 +60,109 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local શૂન્ય *load(અચલ અક્ષર *name, size_t *len)
 {
     size_t size;
-    void *buf, *swap;
+    શૂન્ય *buf, *swap;
     FILE *in;
 
     *len = 0;
     buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
-    in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
+    જો (buf == ખાલી)
+        પાછા ખાલી;
+    in = name == ખાલી ? stdin : fopen(name, "rb");
+    જો (in != ખાલી) {
+        માટે (;;) {
+            *len += fread((અક્ષર *)buf + *len, 1, size - *len, in);
+            જો (*len < size) તોડો;
             size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
-                free(buf);
-                buf = NULL;
-                break;
+            જો (size == *len || (swap = realloc(buf, size)) == ખાલી) {
+                મુક્ત(buf);
+                buf = ખાલી;
+                તોડો;
             }
             buf = swap;
         }
         fclose(in);
     }
-    return buf;
+    પાછા buf;
 }
 
-int main(int argc, char **argv)
+પૂર્ણાંક મુખ્ય(પૂર્ણાંક argc, અક્ષર **argv)
 {
-    int ret, put = 0, fail = 0;
+    પૂર્ણાંક ret, put = 0, fail = 0;
     unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
+    અક્ષર *arg, *name = ખાલી;
+    unsigned અક્ષર *source = ખાલી, *dest;
     size_t len = 0;
     unsigned long sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    જ્યારે (arg = *++argv, --argc)
+        જો (arg[0] == '-') {
+            જો (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            નહીંતર જો (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
+            નહીંતર જો (arg[1] >= '0' && arg[1] <= '9')
                 skip = (unsigned)atoi(arg + 1);
-            else {
+            નહીંતર {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                પાછા 3;
             }
         }
-        else if (name != NULL) {
+        નહીંતર જો (name != ખાલી) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            પાછા 3;
         }
-        else
+        નહીંતર
             name = arg;
     source = load(name, &len);
-    if (source == NULL) {
+    જો (source == ખાલી) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        પાછા 4;
     }
-    if (len == 0) {
+    જો (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
-                name == NULL ? "<stdin>" : name);
-        free(source);
-        return 3;
+                name == ખાલી ? "<stdin>" : name);
+        મુક્ત(source);
+        પાછા 3;
     }
-    if (skip >= len) {
+    જો (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
-        free(source);
-        return 3;
+        મુક્ત(source);
+        પાછા 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
     sourcelen = (unsigned long)len;
     ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    જો (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    નહીંતર {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        જો (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    જો (put && ret == 0) {
+        જો (fail)
             destlen >>= 1;
         dest = malloc(destlen);
-        if (dest == NULL) {
+        જો (dest == ખાલી) {
             fprintf(stderr, "memory allocation failure\n");
-            free(source);
-            return 4;
+            મુક્ત(source);
+            પાછા 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
-        SET_BINARY_MODE(stdout);
+        SET_દ્વિઅંકી_MODE(stdout);
         fwrite(dest, 1, destlen, stdout);
-        free(dest);
+        મુક્ત(dest);
     }
 
     /* clean up */
-    free(source);
-    return ret;
+    મુક્ત(source);
+    પાછા ret;
 }

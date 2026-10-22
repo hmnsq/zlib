@@ -1,17 +1,17 @@
-#include "zstream.h"
-#include <math.h>
-#include <stdlib.h>
-#include <iomanip.h>
+#અન્તર્ભાવ "zstream.h"
+#અન્તર્ભાવ <math.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <iomanip.h>
 
-void main() {
-    char h[256] = "Hello";
-    char* g = "Goodbye";
+શૂન્ય મુખ્ય() {
+    અક્ષર h[256] = "Hello";
+    અક્ષર* g = "Goodbye";
     ozstream out("temp.gz");
     out < "This works well" < h < g;
     out.close();
 
     izstream in("temp.gz"); // read it back
-    char *x = read_string(in), *y = new char[256], z[256];
+    અક્ષર *x = read_string(in), *y = નવું અક્ષર[256], z[256];
     in > y > z;
     in.close();
     cout << x << endl << y << endl << z << endl;

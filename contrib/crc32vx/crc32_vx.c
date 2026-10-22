@@ -12,18 +12,18 @@
  * relicensed under the zlib license.
  */
 #define Z_ONCE
-#include "../../zutil.h"
-#include "crc32_vx_hooks.h"
+#અન્તર્ભાવ "../../zutil.h"
+#અન્તર્ભાવ "crc32_vx_hooks.h"
 
-#include <stdint.h>
-#include <stdio.h>
-#include <vecintrin.h>
-#include <sys/auxv.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <vecintrin.h>
+#અન્તર્ભાવ <sys/auxv.h>
 
 #ifdef __clang__
-#  if ((__clang_major__ == 18) || (__clang_major__ == 19 && (__clang_minor__ < 1 || (__clang_minor__ == 1 && __clang_patchlevel__ < 2))))
+#  જો ((__clang_major__ == 18) || (__clang_major__ == 19 && (__clang_minor__ < 1 || (__clang_minor__ == 1 && __clang_patchlevel__ < 2))))
 # error crc32_vx optimizations are broken due to compiler bug in Clang versions: 18.0.0 <= clang_version < 19.1.2. \
-        Either disable the zlib crc32_vx optimization, or switch to another compiler/compiler version.
+        Either disable the zlib crc32_vx optimization, or પસંદગી to another compiler/compiler version.
 #  endif
 #endif
 
@@ -31,11 +31,11 @@
 #define VX_ALIGNMENT 16L
 #define VX_ALIGN_MASK (VX_ALIGNMENT - 1)
 
-typedef unsigned char uv16qi __attribute__((vector_size(16)));
-typedef unsigned int uv4si __attribute__((vector_size(16)));
-typedef unsigned long long uv2di __attribute__((vector_size(16)));
+પ્રકારવ્યાખ્યા unsigned અક્ષર uv16qi __attribute__((vector_size(16)));
+પ્રકારવ્યાખ્યા unsigned પૂર્ણાંક uv4si __attribute__((vector_size(16)));
+પ્રકારવ્યાખ્યા unsigned long long uv2di __attribute__((vector_size(16)));
 
-local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t len) {
+local uint32_t crc32_le_vgfm_16(uint32_t crc, અચલ unsigned અક્ષર *buf, size_t len) {
     /*
      * The CRC-32 constant block contains reduction constants to fold and
      * process particular chunks of the input data stream in parallel.
@@ -61,12 +61,12 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      *      P(x)  = 0x04C11DB7
      *      P'(x) = 0xEDB88320
      */
-    const uv16qi perm_le2be = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};  /* BE->LE mask */
-    const uv2di r2r1 = {0x1C6E41596, 0x154442BD4};                                     /* R2, R1 */
-    const uv2di r4r3 = {0x0CCAA009E, 0x1751997D0};                                     /* R4, R3 */
-    const uv2di r5 = {0, 0x163CD6124};                                                 /* R5 */
-    const uv2di ru_poly = {0, 0x1F7011641};                                            /* u' */
-    const uv2di crc_poly = {0, 0x1DB710641};                                           /* P'(x) << 1 */
+    અચલ uv16qi perm_le2be = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};  /* BE->LE mask */
+    અચલ uv2di r2r1 = {0x1C6E41596, 0x154442BD4};                                     /* R2, R1 */
+    અચલ uv2di r4r3 = {0x0CCAA009E, 0x1751997D0};                                     /* R4, R3 */
+    અચલ uv2di r5 = {0, 0x163CD6124};                                                 /* R5 */
+    અચલ uv2di ru_poly = {0, 0x1F7011641};                                            /* u' */
+    અચલ uv2di crc_poly = {0, 0x1DB710641};                                           /* P'(x) << 1 */
 
     /*
      * Load the initial CRC value.
@@ -76,7 +76,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * of the loaded input data.
      */
     uv2di v0 = {0, 0};
-    v0 = (uv2di)vec_insert(crc, (uv4si)v0, 3);
+    v0 = (uv2di)vec_ઉમેરો(crc, (uv4si)v0, 3);
 
     /* Load a 64-byte data chunk and XOR with CRC */
     uv2di v1 = vec_perm(((uv2di *)buf)[0], ((uv2di *)buf)[0], perm_le2be);
@@ -88,7 +88,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     buf += 64;
     len -= 64;
 
-    while (len >= 64) {
+    જ્યારે (len >= 64) {
         /* Load the next 64-byte data chunk */
         uv16qi part1 = vec_perm(((uv16qi *)buf)[0], ((uv16qi *)buf)[0], perm_le2be);
         uv16qi part2 = vec_perm(((uv16qi *)buf)[1], ((uv16qi *)buf)[1], perm_le2be);
@@ -120,7 +120,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     v1 = (uv2di)vec_gfmsum_accum_128(r4r3, v1, (uv16qi)v3);
     v1 = (uv2di)vec_gfmsum_accum_128(r4r3, v1, (uv16qi)v4);
 
-    while (len >= 16) {
+    જ્યારે (len >= 16) {
         /* Load next data chunk */
         v2 = vec_perm(*(uv2di *)buf, *(uv2di *)buf, perm_le2be);
 
@@ -138,7 +138,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * Shift by 4 bytes: 0x20
      */
     uv16qi v9 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    v9 = vec_insert((unsigned char)0x40, v9, 7);
+    v9 = vec_ઉમેરો((unsigned અક્ષર)0x40, v9, 7);
 
     /*
      * Prepare V0 for the next GF(2) multiplication: shift V0 by 8 bytes
@@ -169,7 +169,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * rightmost doubleword and the leftmost doubleword is zero to ignore
      * the leftmost product of V1.
      */
-    v9 = vec_insert((unsigned char)0x20, v9, 7);
+    v9 = vec_ઉમેરો((unsigned અક્ષર)0x20, v9, 7);
     v2 = vec_srb(v1, (uv2di)v9);
     v1 = vec_unpackl((uv4si)v1);  /* Split rightmost doubleword */
     v1 = (uv2di)vec_gfmsum_accum_128(r5, v1, (uv16qi)v2);
@@ -205,20 +205,20 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     v2 = vec_unpackl((uv4si)v2);
     v2 = (uv2di)vec_gfmsum_accum_128(crc_poly, v2, (uv16qi)v1);
 
-    return ((uv4si)v2)[2];
+    પાછા ((uv4si)v2)[2];
 }
 
 
-local unsigned long s390_crc32_vx(unsigned long crc, const unsigned char FAR *buf, z_size_t len)
+local unsigned long s390_crc32_vx(unsigned long crc, અચલ unsigned અક્ષર FAR *buf, z_size_t len)
 {
     uintptr_t prealign, aligned, remaining;
 
-    if (buf == Z_NULL) return 0UL;
+    જો (buf == Z_NULL) પાછા 0UL;
 
-    if (len < VX_MIN_LEN + VX_ALIGN_MASK)
-        return crc32_z(crc, buf, len);
+    જો (len < VX_MIN_LEN + VX_ALIGN_MASK)
+        પાછા crc32_z(crc, buf, len);
 
-    if ((uintptr_t)buf & VX_ALIGN_MASK) {
+    જો ((uintptr_t)buf & VX_ALIGN_MASK) {
         prealign = VX_ALIGNMENT - ((uintptr_t)buf & VX_ALIGN_MASK);
         len -= prealign;
         crc = crc32_z(crc, buf, prealign);
@@ -229,26 +229,26 @@ local unsigned long s390_crc32_vx(unsigned long crc, const unsigned char FAR *bu
 
     crc = crc32_le_vgfm_16(crc ^ 0xffffffff, buf, (size_t)aligned) ^ 0xffffffff;
 
-    if (remaining)
+    જો (remaining)
         crc = crc32_z(crc, buf + aligned, remaining);
 
-    return crc;
+    પાછા crc;
 }
 
 local z_once_t s390_crc32_made = Z_ONCE_INIT;
-local void s390_crc32_setup() {
+local શૂન્ય s390_crc32_setup() {
     unsigned long hwcap = getauxval(AT_HWCAP);
 
-    if (hwcap & HWCAP_S390_VX)
+    જો (hwcap & HWCAP_S390_VX)
         crc32_z_hook = s390_crc32_vx;
-    else
+    નહીંતર
         crc32_z_hook = crc32_z;
 }
 
-local unsigned long s390_crc32_init(unsigned long crc, const unsigned char FAR *buf, z_size_t len)
+local unsigned long s390_crc32_init(unsigned long crc, અચલ unsigned અક્ષર FAR *buf, z_size_t len)
 {
     z_once(&s390_crc32_made,s390_crc32_setup);
-    return crc32_z_hook(crc, buf, len);
+    પાછા crc32_z_hook(crc, buf, len);
 }
 
-ZLIB_INTERNAL unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len) = s390_crc32_init;
+ZLIB_INTERNAL unsigned long (*crc32_z_hook)(unsigned long crc, અચલ unsigned અક્ષર FAR *buf, z_size_t len) = s390_crc32_init;

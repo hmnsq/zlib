@@ -34,7 +34,7 @@
 
 /* #define GEN_TREES_H */
 
-#include "deflate.h"
+#અન્તર્ભાવ "deflate.h"
 
 #ifdef ZLIB_DEBUG
 #  include <ctype.h>
@@ -59,16 +59,16 @@
 #define REPZ_11_138  18
 /* repeat a zero length 11-138 times  (7 bits of repeat count) */
 
-local const int extra_lbits[LENGTH_CODES] /* extra bits for each length code */
+local અચલ પૂર્ણાંક extra_lbits[LENGTH_CODES] /* extra bits for each length code */
    = {0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0};
 
-local const int extra_dbits[D_CODES] /* extra bits for each distance code */
+local અચલ પૂર્ણાંક extra_dbits[D_CODES] /* extra bits for each distance code */
    = {0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13};
 
-local const int extra_blbits[BL_CODES]/* extra bits for each bit length code */
+local અચલ પૂર્ણાંક extra_blbits[BL_CODES]/* extra bits for each bit length code */
    = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7};
 
-local const uch bl_order[BL_CODES]
+local અચલ uch bl_order[BL_CODES]
    = {16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15};
 /* The lengths of the bit length codes are sent in order of decreasing
  * probability, to avoid transmitting the lengths for unused bit length codes.
@@ -80,7 +80,7 @@ local const uch bl_order[BL_CODES]
 
 #define DIST_CODE_LEN  512 /* see definition of array dist_code below */
 
-#if defined(GEN_TREES_H) || !defined(STDC)
+#જો defined(GEN_TREES_H) || !defined(STDC)
 /* non ANSI compilers may not accept trees.h */
 
 local ct_data static_ltree[L_CODES+2];
@@ -104,38 +104,38 @@ uch _dist_code[DIST_CODE_LEN];
 uch _length_code[MAX_MATCH-MIN_MATCH+1];
 /* length code for each normalized match length (0 == MIN_MATCH) */
 
-local int base_length[LENGTH_CODES];
+local પૂર્ણાંક base_length[LENGTH_CODES];
 /* First normalized length for each code (0 = MIN_MATCH) */
 
-local int base_dist[D_CODES];
+local પૂર્ણાંક base_dist[D_CODES];
 /* First normalized distance for each code (0 = distance of 1) */
 
-#else
+#નહીંતર
 #  include "trees.h"
 #endif /* defined(GEN_TREES_H) || !defined(STDC) */
 
-struct static_tree_desc_s {
-    const ct_data *static_tree;  /* static tree or NULL */
-    const intf *extra_bits;      /* extra bits for each code or NULL */
-    int     extra_base;          /* base index for extra_bits */
-    int     elems;               /* max number of elements in the tree */
-    int     max_length;          /* max bit length for the codes */
+સંરચના static_વૃક્ષ_desc_s {
+    અચલ ct_data *static_વૃક્ષ;  /* static tree or NULL */
+    અચલ intf *extra_bits;      /* extra bits for each code or NULL */
+    પૂર્ણાંક     extra_base;          /* base index for extra_bits */
+    પૂર્ણાંક     elems;               /* max number of elements in the tree */
+    પૂર્ણાંક     max_length;          /* max bit length for the codes */
 };
 
 #ifdef NO_INIT_GLOBAL_POINTERS
 #  define TCONST
-#else
-#  define TCONST const
+#નહીંતર
+#  define TCONST અચલ
 #endif
 
-local TCONST static_tree_desc static_l_desc =
+local TCONST static_વૃક્ષ_desc static_l_desc =
 {static_ltree, extra_lbits, LITERALS+1, L_CODES, MAX_BITS};
 
-local TCONST static_tree_desc static_d_desc =
+local TCONST static_વૃક્ષ_desc static_d_desc =
 {static_dtree, extra_dbits, 0,          D_CODES, MAX_BITS};
 
-local TCONST static_tree_desc static_bl_desc =
-{(const ct_data *)0, extra_blbits, 0,   BL_CODES, MAX_BL_BITS};
+local TCONST static_વૃક્ષ_desc static_bl_desc =
+{(અચલ ct_data *)0, extra_blbits, 0,   BL_CODES, MAX_BL_BITS};
 
 /* ===========================================================================
  * Output a short LSB first on the stream.
@@ -151,24 +151,24 @@ local TCONST static_tree_desc static_bl_desc =
  * method would use a table)
  * IN assertion: 1 <= len <= 15
  */
-local unsigned bi_reverse(unsigned code, int len) {
+local unsigned bi_reverse(unsigned code, પૂર્ણાંક len) {
     unsigned res = 0;
-    do {
+    કરો {
         res |= code & 1;
         code >>= 1, res <<= 1;
-    } while (--len > 0);
-    return res >> 1;
+    } જ્યારે (--len > 0);
+    પાછા res >> 1;
 }
 
 /* ===========================================================================
  * Flush the bit buffer, keeping at most 7 bits in it.
  */
-local void bi_flush(deflate_state *s) {
-    if (s->bi_valid == 16) {
+local શૂન્ય bi_flush(deflate_state *s) {
+    જો (s->bi_valid == 16) {
         put_short(s, s->bi_buf);
         s->bi_buf = 0;
         s->bi_valid = 0;
-    } else if (s->bi_valid >= 8) {
+    } નહીંતર જો (s->bi_valid >= 8) {
         put_byte(s, (Byte)s->bi_buf);
         s->bi_buf >>= 8;
         s->bi_valid -= 8;
@@ -178,10 +178,10 @@ local void bi_flush(deflate_state *s) {
 /* ===========================================================================
  * Flush the bit buffer and align the output on a byte boundary
  */
-local void bi_windup(deflate_state *s) {
-    if (s->bi_valid > 8) {
+local શૂન્ય bi_windup(deflate_state *s) {
+    જો (s->bi_valid > 8) {
         put_short(s, s->bi_buf);
-    } else if (s->bi_valid > 0) {
+    } નહીંતર જો (s->bi_valid > 0) {
         put_byte(s, (Byte)s->bi_buf);
     }
     s->bi_used = ((s->bi_valid - 1) & 7) + 1;
@@ -200,49 +200,49 @@ local void bi_windup(deflate_state *s) {
  * OUT assertion: the field code is set for all tree elements of non
  *     zero code length.
  */
-local void gen_codes(ct_data *tree, int max_code, ushf *bl_count) {
+local શૂન્ય gen_codes(ct_data *વૃક્ષ, પૂર્ણાંક max_code, ushf *bl_ગણતરી) {
     ush next_code[MAX_BITS+1]; /* next code value for each bit length */
     unsigned code = 0;         /* running code value */
-    int bits;                  /* bit index */
-    int n;                     /* code index */
+    પૂર્ણાંક bits;                  /* bit index */
+    પૂર્ણાંક n;                     /* code index */
 
     /* The distribution counts are first used to generate the code values
      * without bit reversal.
      */
-    for (bits = 1; bits <= MAX_BITS; bits++) {
-        code = (code + bl_count[bits - 1]) << 1;
+    માટે (bits = 1; bits <= MAX_BITS; bits++) {
+        code = (code + bl_ગણતરી[bits - 1]) << 1;
         next_code[bits] = (ush)code;
     }
     /* Check that the bit counts in bl_count are consistent. The last code
      * must be all ones.
      */
-    Assert (code + bl_count[MAX_BITS] - 1 == (1 << MAX_BITS) - 1,
+    Assert (code + bl_ગણતરી[MAX_BITS] - 1 == (1 << MAX_BITS) - 1,
             "inconsistent bit counts");
     Tracev((stderr,"\ngen_codes: max_code %d ", max_code));
 
-    for (n = 0;  n <= max_code; n++) {
-        int len = tree[n].Len;
-        if (len == 0) continue;
+    માટે (n = 0;  n <= max_code; n++) {
+        પૂર્ણાંક len = વૃક્ષ[n].Len;
+        જો (len == 0) ચાલુ;
         /* Now reverse the bits */
-        tree[n].Code = (ush)bi_reverse(next_code[len]++, len);
+        વૃક્ષ[n].Code = (ush)bi_reverse(next_code[len]++, len);
 
-        Tracecv(tree != static_ltree, (stderr,"\nn %3d %c l %2d c %4x (%x) ",
-            n, (isgraph(n) ? n : ' '), len, tree[n].Code, next_code[len] - 1));
+        Tracecv(વૃક્ષ != static_ltree, (stderr,"\nn %3d %c l %2d c %4x (%x) ",
+            n, (isgraph(n) ? n : ' '), len, વૃક્ષ[n].Code, next_code[len] - 1));
     }
 }
 
 #ifdef GEN_TREES_H
-local void gen_trees_header(void);
+local શૂન્ય gen_trees_header(શૂન્ય);
 #endif
 
 #ifndef ZLIB_DEBUG
-#  define send_code(s, c, tree) send_bits(s, tree[c].Code, tree[c].Len)
+#  define send_code(s, c, વૃક્ષ) send_bits(s, વૃક્ષ[c].Code, વૃક્ષ[c].Len)
    /* Send a code of the given tree. c and tree must not have side effects */
 
-#else /* !ZLIB_DEBUG */
-#  define send_code(s, c, tree) \
-     { if (z_verbose>2) fprintf(stderr,"\ncd %3d ",(c)); \
-       send_bits(s, tree[c].Code, tree[c].Len); }
+#નહીંતર /* !ZLIB_DEBUG */
+#  define send_code(s, c, વૃક્ષ) \
+     { જો (z_verbose>2) fprintf(stderr,"\ncd %3d ",(c)); \
+       send_bits(s, વૃક્ષ[c].Code, વૃક્ષ[c].Len); }
 #endif
 
 /* ===========================================================================
@@ -250,8 +250,8 @@ local void gen_trees_header(void);
  * IN assertion: length <= 16 and value fits in length bits.
  */
 #ifdef ZLIB_DEBUG
-local void send_bits(deflate_state *s, int value, int length) {
-    Tracevv((stderr," l %2d v %4x ", length, value));
+local શૂન્ય send_bits(deflate_state *s, પૂર્ણાંક કિંમત, પૂર્ણાંક length) {
+    Tracevv((stderr," l %2d v %4x ", length, કિંમત));
     Assert(length > 0 && length <= 15, "invalid length");
     s->bits_sent += (ulg)length;
 
@@ -259,28 +259,28 @@ local void send_bits(deflate_state *s, int value, int length) {
      * (16 - bi_valid) bits from value, leaving (width - (16 - bi_valid))
      * unused bits in value.
      */
-    if (s->bi_valid > (int)Buf_size - length) {
-        s->bi_buf |= (ush)value << s->bi_valid;
+    જો (s->bi_valid > (પૂર્ણાંક)Buf_size - length) {
+        s->bi_buf |= (ush)કિંમત << s->bi_valid;
         put_short(s, s->bi_buf);
-        s->bi_buf = (ush)value >> (Buf_size - s->bi_valid);
+        s->bi_buf = (ush)કિંમત >> (Buf_size - s->bi_valid);
         s->bi_valid += length - Buf_size;
-    } else {
-        s->bi_buf |= (ush)value << s->bi_valid;
+    } નહીંતર {
+        s->bi_buf |= (ush)કિંમત << s->bi_valid;
         s->bi_valid += length;
     }
 }
-#else /* !ZLIB_DEBUG */
+#નહીંતર /* !ZLIB_DEBUG */
 
-#define send_bits(s, value, length) \
-{ int len = length;\
-  if (s->bi_valid > (int)Buf_size - len) {\
-    int val = (int)value;\
+#define send_bits(s, કિંમત, length) \
+{ પૂર્ણાંક len = length;\
+  જો (s->bi_valid > (પૂર્ણાંક)Buf_size - len) {\
+    પૂર્ણાંક val = (પૂર્ણાંક)કિંમત;\
     s->bi_buf |= (ush)val << s->bi_valid;\
     put_short(s, s->bi_buf);\
     s->bi_buf = (ush)val >> (Buf_size - s->bi_valid);\
     s->bi_valid += len - Buf_size;\
-  } else {\
-    s->bi_buf |= (ush)(value) << s->bi_valid;\
+  } નહીંતર {\
+    s->bi_buf |= (ush)(કિંમત) << s->bi_valid;\
     s->bi_valid += len;\
   }\
 }
@@ -292,33 +292,33 @@ local void send_bits(deflate_state *s, int value, int length) {
 /* ===========================================================================
  * Initialize the various 'constant' tables.
  */
-local void tr_static_init(void) {
-#if defined(GEN_TREES_H) || !defined(STDC)
-    static int static_init_done = 0;
-    int n;        /* iterates over tree elements */
-    int bits;     /* bit counter */
-    int length;   /* length value */
-    int code;     /* code value */
-    int dist;     /* distance index */
-    ush bl_count[MAX_BITS+1];
+local શૂન્ય tr_static_init(શૂન્ય) {
+#જો defined(GEN_TREES_H) || !defined(STDC)
+    સ્થિર પૂર્ણાંક static_init_done = 0;
+    પૂર્ણાંક n;        /* iterates over tree elements */
+    પૂર્ણાંક bits;     /* bit counter */
+    પૂર્ણાંક length;   /* length value */
+    પૂર્ણાંક code;     /* code value */
+    પૂર્ણાંક dist;     /* distance index */
+    ush bl_ગણતરી[MAX_BITS+1];
     /* number of codes at each bit length for an optimal tree */
 
-    if (static_init_done) return;
+    જો (static_init_done) પાછા;
 
     /* For some embedded targets, global variables are not initialized: */
 #ifdef NO_INIT_GLOBAL_POINTERS
-    static_l_desc.static_tree = static_ltree;
+    static_l_desc.static_વૃક્ષ = static_ltree;
     static_l_desc.extra_bits = extra_lbits;
-    static_d_desc.static_tree = static_dtree;
+    static_d_desc.static_વૃક્ષ = static_dtree;
     static_d_desc.extra_bits = extra_dbits;
     static_bl_desc.extra_bits = extra_blbits;
 #endif
 
     /* Initialize the mapping length (0..255) -> length code (0..28) */
     length = 0;
-    for (code = 0; code < LENGTH_CODES-1; code++) {
+    માટે (code = 0; code < LENGTH_CODES-1; code++) {
         base_length[code] = length;
-        for (n = 0; n < (1 << extra_lbits[code]); n++) {
+        માટે (n = 0; n < (1 << extra_lbits[code]); n++) {
             _length_code[length++] = (uch)code;
         }
     }
@@ -331,37 +331,37 @@ local void tr_static_init(void) {
 
     /* Initialize the mapping dist (0..32K) -> dist code (0..29) */
     dist = 0;
-    for (code = 0 ; code < 16; code++) {
+    માટે (code = 0 ; code < 16; code++) {
         base_dist[code] = dist;
-        for (n = 0; n < (1 << extra_dbits[code]); n++) {
+        માટે (n = 0; n < (1 << extra_dbits[code]); n++) {
             _dist_code[dist++] = (uch)code;
         }
     }
     Assert (dist == 256, "tr_static_init: dist != 256");
     dist >>= 7; /* from now on, all distances are divided by 128 */
-    for ( ; code < D_CODES; code++) {
+    માટે ( ; code < D_CODES; code++) {
         base_dist[code] = dist << 7;
-        for (n = 0; n < (1 << (extra_dbits[code] - 7)); n++) {
+        માટે (n = 0; n < (1 << (extra_dbits[code] - 7)); n++) {
             _dist_code[256 + dist++] = (uch)code;
         }
     }
     Assert (dist == 256, "tr_static_init: 256 + dist != 512");
 
     /* Construct the codes of the static literal tree */
-    for (bits = 0; bits <= MAX_BITS; bits++) bl_count[bits] = 0;
+    માટે (bits = 0; bits <= MAX_BITS; bits++) bl_ગણતરી[bits] = 0;
     n = 0;
-    while (n <= 143) static_ltree[n++].Len = 8, bl_count[8]++;
-    while (n <= 255) static_ltree[n++].Len = 9, bl_count[9]++;
-    while (n <= 279) static_ltree[n++].Len = 7, bl_count[7]++;
-    while (n <= 287) static_ltree[n++].Len = 8, bl_count[8]++;
+    જ્યારે (n <= 143) static_ltree[n++].Len = 8, bl_ગણતરી[8]++;
+    જ્યારે (n <= 255) static_ltree[n++].Len = 9, bl_ગણતરી[9]++;
+    જ્યારે (n <= 279) static_ltree[n++].Len = 7, bl_ગણતરી[7]++;
+    જ્યારે (n <= 287) static_ltree[n++].Len = 8, bl_ગણતરી[8]++;
     /* Codes 286 and 287 do not exist, but we must include them in the
      * tree construction to get a canonical Huffman tree (longest code
      * all ones)
      */
-    gen_codes((ct_data *)static_ltree, L_CODES+1, bl_count);
+    gen_codes((ct_data *)static_ltree, L_CODES+1, bl_ગણતરી);
 
     /* The static distance tree is trivial: */
-    for (n = 0; n < D_CODES; n++) {
+    માટે (n = 0; n < D_CODES; n++) {
         static_dtree[n].Len = 5;
         static_dtree[n].Code = bi_reverse((unsigned)n, 5);
     }
@@ -385,47 +385,47 @@ local void tr_static_init(void) {
       ((i) == (last)? "\n};\n\n" :    \
        ((i) % (width) == (width) - 1 ? ",\n" : ", "))
 
-void gen_trees_header(void) {
+શૂન્ય gen_trees_header(શૂન્ય) {
     FILE *header = fopen("trees.h", "w");
-    int i;
+    પૂર્ણાંક i;
 
-    Assert (header != NULL, "Can't open trees.h");
+    Assert (header != ખાલી, "Can't open trees.h");
     fprintf(header,
             "/* header created automatically with -DGEN_TREES_H */\n\n");
 
     fprintf(header, "local const ct_data static_ltree[L_CODES+2] = {\n");
-    for (i = 0; i < L_CODES+2; i++) {
+    માટે (i = 0; i < L_CODES+2; i++) {
         fprintf(header, "{{%3u},{%3u}}%s", static_ltree[i].Code,
                 static_ltree[i].Len, SEPARATOR(i, L_CODES+1, 5));
     }
 
     fprintf(header, "local const ct_data static_dtree[D_CODES] = {\n");
-    for (i = 0; i < D_CODES; i++) {
+    માટે (i = 0; i < D_CODES; i++) {
         fprintf(header, "{{%2u},{%2u}}%s", static_dtree[i].Code,
                 static_dtree[i].Len, SEPARATOR(i, D_CODES-1, 5));
     }
 
     fprintf(header, "const uch ZLIB_INTERNAL _dist_code[DIST_CODE_LEN] = {\n");
-    for (i = 0; i < DIST_CODE_LEN; i++) {
+    માટે (i = 0; i < DIST_CODE_LEN; i++) {
         fprintf(header, "%2u%s", _dist_code[i],
                 SEPARATOR(i, DIST_CODE_LEN-1, 20));
     }
 
     fprintf(header,
         "const uch ZLIB_INTERNAL _length_code[MAX_MATCH-MIN_MATCH+1]= {\n");
-    for (i = 0; i < MAX_MATCH-MIN_MATCH+1; i++) {
+    માટે (i = 0; i < MAX_MATCH-MIN_MATCH+1; i++) {
         fprintf(header, "%2u%s", _length_code[i],
                 SEPARATOR(i, MAX_MATCH-MIN_MATCH, 20));
     }
 
     fprintf(header, "local const int base_length[LENGTH_CODES] = {\n");
-    for (i = 0; i < LENGTH_CODES; i++) {
+    માટે (i = 0; i < LENGTH_CODES; i++) {
         fprintf(header, "%1u%s", base_length[i],
                 SEPARATOR(i, LENGTH_CODES-1, 20));
     }
 
     fprintf(header, "local const int base_dist[D_CODES] = {\n");
-    for (i = 0; i < D_CODES; i++) {
+    માટે (i = 0; i < D_CODES; i++) {
         fprintf(header, "%5u%s", base_dist[i],
                 SEPARATOR(i, D_CODES-1, 10));
     }
@@ -437,13 +437,13 @@ void gen_trees_header(void) {
 /* ===========================================================================
  * Initialize a new block.
  */
-local void init_block(deflate_state *s) {
-    int n; /* iterates over tree elements */
+local શૂન્ય init_block(deflate_state *s) {
+    પૂર્ણાંક n; /* iterates over tree elements */
 
     /* Initialize the trees. */
-    for (n = 0; n < L_CODES;  n++) s->dyn_ltree[n].Freq = 0;
-    for (n = 0; n < D_CODES;  n++) s->dyn_dtree[n].Freq = 0;
-    for (n = 0; n < BL_CODES; n++) s->bl_tree[n].Freq = 0;
+    માટે (n = 0; n < L_CODES;  n++) s->dyn_ltree[n].Freq = 0;
+    માટે (n = 0; n < D_CODES;  n++) s->dyn_dtree[n].Freq = 0;
+    માટે (n = 0; n < BL_CODES; n++) s->bl_વૃક્ષ[n].Freq = 0;
 
     s->dyn_ltree[END_BLOCK].Freq = 1;
     s->opt_len = s->static_len = 0L;
@@ -453,16 +453,16 @@ local void init_block(deflate_state *s) {
 /* ===========================================================================
  * Initialize the tree data structures for a new zlib stream.
  */
-void ZLIB_INTERNAL _tr_init(deflate_state *s) {
+શૂન્ય ZLIB_INTERNAL _tr_init(deflate_state *s) {
     tr_static_init();
 
-    s->l_desc.dyn_tree = s->dyn_ltree;
+    s->l_desc.dyn_વૃક્ષ = s->dyn_ltree;
     s->l_desc.stat_desc = &static_l_desc;
 
-    s->d_desc.dyn_tree = s->dyn_dtree;
+    s->d_desc.dyn_વૃક્ષ = s->dyn_dtree;
     s->d_desc.stat_desc = &static_d_desc;
 
-    s->bl_desc.dyn_tree = s->bl_tree;
+    s->bl_desc.dyn_વૃક્ષ = s->bl_વૃક્ષ;
     s->bl_desc.stat_desc = &static_bl_desc;
 
     s->bi_buf = 0;
@@ -485,20 +485,20 @@ void ZLIB_INTERNAL _tr_init(deflate_state *s) {
  * Remove the smallest element from the heap and recreate the heap with
  * one less element. Updates heap and heap_len.
  */
-#define pqremove(s, tree, top) \
+#define pqremove(s, વૃક્ષ, ટોચ) \
 {\
-    top = s->heap[SMALLEST]; \
+    ટોચ = s->heap[SMALLEST]; \
     s->heap[SMALLEST] = s->heap[s->heap_len--]; \
-    pqdownheap(s, tree, SMALLEST); \
+    pqdownheap(s, વૃક્ષ, SMALLEST); \
 }
 
 /* ===========================================================================
  * Compares to subtrees, using the tree depth as tie breaker when
  * the subtrees have equal frequency. This minimizes the worst case length.
  */
-#define smaller(tree, n, m, depth) \
-   (tree[n].Freq < tree[m].Freq || \
-   (tree[n].Freq == tree[m].Freq && depth[n] <= depth[m]))
+#define smaller(વૃક્ષ, n, m, depth) \
+   (વૃક્ષ[n].Freq < વૃક્ષ[m].Freq || \
+   (વૃક્ષ[n].Freq == વૃક્ષ[m].Freq && depth[n] <= depth[m]))
 
 /* ===========================================================================
  * Restore the heap property by moving down the tree starting at node k,
@@ -506,17 +506,17 @@ void ZLIB_INTERNAL _tr_init(deflate_state *s) {
  * when the heap property is re-established (each father smaller than its
  * two sons).
  */
-local void pqdownheap(deflate_state *s, ct_data *tree, int k) {
-    int v = s->heap[k];
-    int j = k << 1;  /* left son of k */
-    while (j <= s->heap_len) {
+local શૂન્ય pqdownheap(deflate_state *s, ct_data *વૃક્ષ, પૂર્ણાંક k) {
+    પૂર્ણાંક v = s->heap[k];
+    પૂર્ણાંક j = k << 1;  /* left son of k */
+    જ્યારે (j <= s->heap_len) {
         /* Set j to the smallest of the two sons: */
-        if (j < s->heap_len &&
-            smaller(tree, s->heap[j + 1], s->heap[j], s->depth)) {
+        જો (j < s->heap_len &&
+            smaller(વૃક્ષ, s->heap[j + 1], s->heap[j], s->depth)) {
             j++;
         }
         /* Exit if v is smaller than both sons */
-        if (smaller(tree, v, s->heap[j], s->depth)) break;
+        જો (smaller(વૃક્ષ, v, s->heap[j], s->depth)) તોડો;
 
         /* Exchange v with the smallest son */
         s->heap[k] = s->heap[j];  k = j;
@@ -537,82 +537,82 @@ local void pqdownheap(deflate_state *s, ct_data *tree, int k) {
  *     The length opt_len is updated; static_len is also updated if stree is
  *     not null.
  */
-local void gen_bitlen(deflate_state *s, tree_desc *desc) {
-    ct_data *tree        = desc->dyn_tree;
-    int max_code         = desc->max_code;
-    const ct_data *stree = desc->stat_desc->static_tree;
-    const intf *extra    = desc->stat_desc->extra_bits;
-    int base             = desc->stat_desc->extra_base;
-    int max_length       = desc->stat_desc->max_length;
-    int h;              /* heap index */
-    int n, m;           /* iterate over the tree elements */
-    int bits;           /* bit length */
-    int xbits;          /* extra bits */
+local શૂન્ય gen_bitlen(deflate_state *s, વૃક્ષ_desc *desc) {
+    ct_data *વૃક્ષ        = desc->dyn_વૃક્ષ;
+    પૂર્ણાંક max_code         = desc->max_code;
+    અચલ ct_data *stree = desc->stat_desc->static_વૃક્ષ;
+    અચલ intf *extra    = desc->stat_desc->extra_bits;
+    પૂર્ણાંક base             = desc->stat_desc->extra_base;
+    પૂર્ણાંક max_length       = desc->stat_desc->max_length;
+    પૂર્ણાંક h;              /* heap index */
+    પૂર્ણાંક n, m;           /* iterate over the tree elements */
+    પૂર્ણાંક bits;           /* bit length */
+    પૂર્ણાંક xbits;          /* extra bits */
     ush f;              /* frequency */
-    int overflow = 0;   /* number of elements with bit length too large */
+    પૂર્ણાંક overflow = 0;   /* number of elements with bit length too large */
 
-    for (bits = 0; bits <= MAX_BITS; bits++) s->bl_count[bits] = 0;
+    માટે (bits = 0; bits <= MAX_BITS; bits++) s->bl_ગણતરી[bits] = 0;
 
     /* In a first pass, compute the optimal bit lengths (which may
      * overflow in the case of the bit length tree).
      */
-    tree[s->heap[s->heap_max]].Len = 0; /* root of the heap */
+    વૃક્ષ[s->heap[s->heap_max]].Len = 0; /* root of the heap */
 
-    for (h = s->heap_max + 1; h < HEAP_SIZE; h++) {
+    માટે (h = s->heap_max + 1; h < HEAP_SIZE; h++) {
         n = s->heap[h];
-        bits = tree[tree[n].Dad].Len + 1;
-        if (bits > max_length) bits = max_length, overflow++;
-        tree[n].Len = (ush)bits;
+        bits = વૃક્ષ[વૃક્ષ[n].Dad].Len + 1;
+        જો (bits > max_length) bits = max_length, overflow++;
+        વૃક્ષ[n].Len = (ush)bits;
         /* We overwrite tree[n].Dad which is no longer needed */
 
-        if (n > max_code) continue; /* not a leaf node */
+        જો (n > max_code) ચાલુ; /* not a leaf node */
 
-        s->bl_count[bits]++;
+        s->bl_ગણતરી[bits]++;
         xbits = 0;
-        if (n >= base) xbits = extra[n - base];
-        f = tree[n].Freq;
+        જો (n >= base) xbits = extra[n - base];
+        f = વૃક્ષ[n].Freq;
         s->opt_len += (ulg)f * (unsigned)(bits + xbits);
-        if (stree) s->static_len += (ulg)f * (unsigned)(stree[n].Len + xbits);
+        જો (stree) s->static_len += (ulg)f * (unsigned)(stree[n].Len + xbits);
     }
-    if (overflow == 0) return;
+    જો (overflow == 0) પાછા;
 
     Tracev((stderr,"\nbit length overflow\n"));
     /* This happens for example on obj2 and pic of the Calgary corpus */
 
     /* Find the first bit length which could increase: */
-    do {
+    કરો {
         bits = max_length - 1;
-        while (s->bl_count[bits] == 0) bits--;
-        s->bl_count[bits]--;        /* move one leaf down the tree */
-        s->bl_count[bits + 1] += 2; /* move one overflow item as its brother */
-        s->bl_count[max_length]--;
+        જ્યારે (s->bl_ગણતરી[bits] == 0) bits--;
+        s->bl_ગણતરી[bits]--;        /* move one leaf down the tree */
+        s->bl_ગણતરી[bits + 1] += 2; /* move one overflow item as its brother */
+        s->bl_ગણતરી[max_length]--;
         /* The brother of the overflow item also moves one step up,
          * but this does not affect bl_count[max_length]
          */
         overflow -= 2;
-    } while (overflow > 0);
+    } જ્યારે (overflow > 0);
 
     /* Now recompute all bit lengths, scanning in increasing frequency.
      * h is still equal to HEAP_SIZE. (It is simpler to reconstruct all
      * lengths instead of fixing only the wrong ones. This idea is taken
      * from 'ar' written by Haruhiko Okumura.)
      */
-    for (bits = max_length; bits != 0; bits--) {
-        n = s->bl_count[bits];
-        while (n != 0) {
+    માટે (bits = max_length; bits != 0; bits--) {
+        n = s->bl_ગણતરી[bits];
+        જ્યારે (n != 0) {
             m = s->heap[--h];
-            if (m > max_code) continue;
-            if ((unsigned) tree[m].Len != (unsigned) bits) {
-                Tracev((stderr,"code %d bits %d->%d\n", m, tree[m].Len, bits));
-                s->opt_len += ((ulg)bits - tree[m].Len) * tree[m].Freq;
-                tree[m].Len = (ush)bits;
+            જો (m > max_code) ચાલુ;
+            જો ((unsigned) વૃક્ષ[m].Len != (unsigned) bits) {
+                Tracev((stderr,"code %d bits %d->%d\n", m, વૃક્ષ[m].Len, bits));
+                s->opt_len += ((ulg)bits - વૃક્ષ[m].Len) * વૃક્ષ[m].Freq;
+                વૃક્ષ[m].Len = (ush)bits;
             }
             n--;
         }
     }
 }
 
-#ifdef DUMP_BL_TREE
+#ifdef DUMP_BL_વૃક્ષ
 #  include <stdio.h>
 #endif
 
@@ -624,13 +624,13 @@ local void gen_bitlen(deflate_state *s, tree_desc *desc) {
  *     and corresponding code. The length opt_len is updated; static_len is
  *     also updated if stree is not null. The field max_code is set.
  */
-local void build_tree(deflate_state *s, tree_desc *desc) {
-    ct_data *tree         = desc->dyn_tree;
-    const ct_data *stree  = desc->stat_desc->static_tree;
-    int elems             = desc->stat_desc->elems;
-    int n, m;          /* iterate over heap elements */
-    int max_code = -1; /* largest code with non zero frequency */
-    int node;          /* new node being created */
+local શૂન્ય build_વૃક્ષ(deflate_state *s, વૃક્ષ_desc *desc) {
+    ct_data *વૃક્ષ         = desc->dyn_વૃક્ષ;
+    અચલ ct_data *stree  = desc->stat_desc->static_વૃક્ષ;
+    પૂર્ણાંક elems             = desc->stat_desc->elems;
+    પૂર્ણાંક n, m;          /* iterate over heap elements */
+    પૂર્ણાંક max_code = -1; /* largest code with non zero frequency */
+    પૂર્ણાંક ગાંઠ;          /* new node being created */
 
     /* Construct the initial heap, with least frequent element in
      * heap[SMALLEST]. The sons of heap[n] are heap[2*n] and heap[2*n + 1].
@@ -638,12 +638,12 @@ local void build_tree(deflate_state *s, tree_desc *desc) {
      */
     s->heap_len = 0, s->heap_max = HEAP_SIZE;
 
-    for (n = 0; n < elems; n++) {
-        if (tree[n].Freq != 0) {
+    માટે (n = 0; n < elems; n++) {
+        જો (વૃક્ષ[n].Freq != 0) {
             s->heap[++(s->heap_len)] = max_code = n;
             s->depth[n] = 0;
-        } else {
-            tree[n].Len = 0;
+        } નહીંતર {
+            વૃક્ષ[n].Len = 0;
         }
     }
 
@@ -652,11 +652,11 @@ local void build_tree(deflate_state *s, tree_desc *desc) {
      * possible code. So to avoid special checks later on we force at least
      * two codes of non zero frequency.
      */
-    while (s->heap_len < 2) {
-        node = s->heap[++(s->heap_len)] = (max_code < 2 ? ++max_code : 0);
-        tree[node].Freq = 1;
-        s->depth[node] = 0;
-        s->opt_len--; if (stree) s->static_len -= stree[node].Len;
+    જ્યારે (s->heap_len < 2) {
+        ગાંઠ = s->heap[++(s->heap_len)] = (max_code < 2 ? ++max_code : 0);
+        વૃક્ષ[ગાંઠ].Freq = 1;
+        s->depth[ગાંઠ] = 0;
+        s->opt_len--; જો (stree) s->static_len -= stree[ગાંઠ].Len;
         /* node is 0 or 1 so it does not have extra bits */
     }
     desc->max_code = max_code;
@@ -664,84 +664,84 @@ local void build_tree(deflate_state *s, tree_desc *desc) {
     /* The elements heap[heap_len/2 + 1 .. heap_len] are leaves of the tree,
      * establish sub-heaps of increasing lengths:
      */
-    for (n = s->heap_len/2; n >= 1; n--) pqdownheap(s, tree, n);
+    માટે (n = s->heap_len/2; n >= 1; n--) pqdownheap(s, વૃક્ષ, n);
 
     /* Construct the Huffman tree by repeatedly combining the least two
      * frequent nodes.
      */
-    node = elems;              /* next internal node of the tree */
-    do {
-        pqremove(s, tree, n);  /* n = node of least frequency */
+    ગાંઠ = elems;              /* next internal node of the tree */
+    કરો {
+        pqremove(s, વૃક્ષ, n);  /* n = node of least frequency */
         m = s->heap[SMALLEST]; /* m = node of next least frequency */
 
         s->heap[--(s->heap_max)] = n; /* keep the nodes sorted by frequency */
         s->heap[--(s->heap_max)] = m;
 
         /* Create a new node father of n and m */
-        tree[node].Freq = tree[n].Freq + tree[m].Freq;
-        s->depth[node] = (uch)((s->depth[n] >= s->depth[m] ?
+        વૃક્ષ[ગાંઠ].Freq = વૃક્ષ[n].Freq + વૃક્ષ[m].Freq;
+        s->depth[ગાંઠ] = (uch)((s->depth[n] >= s->depth[m] ?
                                 s->depth[n] : s->depth[m]) + 1);
-        tree[n].Dad = tree[m].Dad = (ush)node;
-#ifdef DUMP_BL_TREE
-        if (tree == s->bl_tree) {
+        વૃક્ષ[n].Dad = વૃક્ષ[m].Dad = (ush)ગાંઠ;
+#ifdef DUMP_BL_વૃક્ષ
+        જો (વૃક્ષ == s->bl_વૃક્ષ) {
             fprintf(stderr,"\nnode %d(%d), sons %d(%d) %d(%d)",
-                    node, tree[node].Freq, n, tree[n].Freq, m, tree[m].Freq);
+                    ગાંઠ, વૃક્ષ[ગાંઠ].Freq, n, વૃક્ષ[n].Freq, m, વૃક્ષ[m].Freq);
         }
 #endif
         /* and insert the new node in the heap */
-        s->heap[SMALLEST] = node++;
-        pqdownheap(s, tree, SMALLEST);
+        s->heap[SMALLEST] = ગાંઠ++;
+        pqdownheap(s, વૃક્ષ, SMALLEST);
 
-    } while (s->heap_len >= 2);
+    } જ્યારે (s->heap_len >= 2);
 
     s->heap[--(s->heap_max)] = s->heap[SMALLEST];
 
     /* At this point, the fields freq and dad are set. We can now
      * generate the bit lengths.
      */
-    gen_bitlen(s, (tree_desc *)desc);
+    gen_bitlen(s, (વૃક્ષ_desc *)desc);
 
     /* The field len is now set, we can generate the bit codes */
-    gen_codes ((ct_data *)tree, max_code, s->bl_count);
+    gen_codes ((ct_data *)વૃક્ષ, max_code, s->bl_ગણતરી);
 }
 
 /* ===========================================================================
  * Scan a literal or distance tree to determine the frequencies of the codes
  * in the bit length tree.
  */
-local void scan_tree(deflate_state *s, ct_data *tree, int max_code) {
-    int n;                     /* iterates over all tree elements */
-    int prevlen = -1;          /* last emitted length */
-    int curlen;                /* length of current code */
-    int nextlen = tree[0].Len; /* length of next code */
-    int count = 0;             /* repeat count of the current code */
-    int max_count = 7;         /* max repeat count */
-    int min_count = 4;         /* min repeat count */
+local શૂન્ય scan_વૃક્ષ(deflate_state *s, ct_data *વૃક્ષ, પૂર્ણાંક max_code) {
+    પૂર્ણાંક n;                     /* iterates over all tree elements */
+    પૂર્ણાંક prevlen = -1;          /* last emitted length */
+    પૂર્ણાંક curlen;                /* length of current code */
+    પૂર્ણાંક nextlen = વૃક્ષ[0].Len; /* length of next code */
+    પૂર્ણાંક ગણતરી = 0;             /* repeat count of the current code */
+    પૂર્ણાંક max_ગણતરી = 7;         /* max repeat count */
+    પૂર્ણાંક min_ગણતરી = 4;         /* min repeat count */
 
-    if (nextlen == 0) max_count = 138, min_count = 3;
-    tree[max_code + 1].Len = (ush)0xffff; /* guard */
+    જો (nextlen == 0) max_ગણતરી = 138, min_ગણતરી = 3;
+    વૃક્ષ[max_code + 1].Len = (ush)0xffff; /* guard */
 
-    for (n = 0; n <= max_code; n++) {
-        curlen = nextlen; nextlen = tree[n + 1].Len;
-        if (++count < max_count && curlen == nextlen) {
-            continue;
-        } else if (count < min_count) {
-            s->bl_tree[curlen].Freq += (ush)count;
-        } else if (curlen != 0) {
-            if (curlen != prevlen) s->bl_tree[curlen].Freq++;
-            s->bl_tree[REP_3_6].Freq++;
-        } else if (count <= 10) {
-            s->bl_tree[REPZ_3_10].Freq++;
-        } else {
-            s->bl_tree[REPZ_11_138].Freq++;
+    માટે (n = 0; n <= max_code; n++) {
+        curlen = nextlen; nextlen = વૃક્ષ[n + 1].Len;
+        જો (++ગણતરી < max_ગણતરી && curlen == nextlen) {
+            ચાલુ;
+        } નહીંતર જો (ગણતરી < min_ગણતરી) {
+            s->bl_વૃક્ષ[curlen].Freq += (ush)ગણતરી;
+        } નહીંતર જો (curlen != 0) {
+            જો (curlen != prevlen) s->bl_વૃક્ષ[curlen].Freq++;
+            s->bl_વૃક્ષ[REP_3_6].Freq++;
+        } નહીંતર જો (ગણતરી <= 10) {
+            s->bl_વૃક્ષ[REPZ_3_10].Freq++;
+        } નહીંતર {
+            s->bl_વૃક્ષ[REPZ_11_138].Freq++;
         }
-        count = 0; prevlen = curlen;
-        if (nextlen == 0) {
-            max_count = 138, min_count = 3;
-        } else if (curlen == nextlen) {
-            max_count = 6, min_count = 3;
-        } else {
-            max_count = 7, min_count = 4;
+        ગણતરી = 0; prevlen = curlen;
+        જો (nextlen == 0) {
+            max_ગણતરી = 138, min_ગણતરી = 3;
+        } નહીંતર જો (curlen == nextlen) {
+            max_ગણતરી = 6, min_ગણતરી = 3;
+        } નહીંતર {
+            max_ગણતરી = 7, min_ગણતરી = 4;
         }
     }
 }
@@ -750,45 +750,45 @@ local void scan_tree(deflate_state *s, ct_data *tree, int max_code) {
  * Send a literal or distance tree in compressed form, using the codes in
  * bl_tree.
  */
-local void send_tree(deflate_state *s, ct_data *tree, int max_code) {
-    int n;                     /* iterates over all tree elements */
-    int prevlen = -1;          /* last emitted length */
-    int curlen;                /* length of current code */
-    int nextlen = tree[0].Len; /* length of next code */
-    int count = 0;             /* repeat count of the current code */
-    int max_count = 7;         /* max repeat count */
-    int min_count = 4;         /* min repeat count */
+local શૂન્ય send_વૃક્ષ(deflate_state *s, ct_data *વૃક્ષ, પૂર્ણાંક max_code) {
+    પૂર્ણાંક n;                     /* iterates over all tree elements */
+    પૂર્ણાંક prevlen = -1;          /* last emitted length */
+    પૂર્ણાંક curlen;                /* length of current code */
+    પૂર્ણાંક nextlen = વૃક્ષ[0].Len; /* length of next code */
+    પૂર્ણાંક ગણતરી = 0;             /* repeat count of the current code */
+    પૂર્ણાંક max_ગણતરી = 7;         /* max repeat count */
+    પૂર્ણાંક min_ગણતરી = 4;         /* min repeat count */
 
     /* tree[max_code + 1].Len = -1; */  /* guard already set */
-    if (nextlen == 0) max_count = 138, min_count = 3;
+    જો (nextlen == 0) max_ગણતરી = 138, min_ગણતરી = 3;
 
-    for (n = 0; n <= max_code; n++) {
-        curlen = nextlen; nextlen = tree[n + 1].Len;
-        if (++count < max_count && curlen == nextlen) {
-            continue;
-        } else if (count < min_count) {
-            do { send_code(s, curlen, s->bl_tree); } while (--count != 0);
+    માટે (n = 0; n <= max_code; n++) {
+        curlen = nextlen; nextlen = વૃક્ષ[n + 1].Len;
+        જો (++ગણતરી < max_ગણતરી && curlen == nextlen) {
+            ચાલુ;
+        } નહીંતર જો (ગણતરી < min_ગણતરી) {
+            કરો { send_code(s, curlen, s->bl_વૃક્ષ); } જ્યારે (--ગણતરી != 0);
 
-        } else if (curlen != 0) {
-            if (curlen != prevlen) {
-                send_code(s, curlen, s->bl_tree); count--;
+        } નહીંતર જો (curlen != 0) {
+            જો (curlen != prevlen) {
+                send_code(s, curlen, s->bl_વૃક્ષ); ગણતરી--;
             }
-            Assert(count >= 3 && count <= 6, " 3_6?");
-            send_code(s, REP_3_6, s->bl_tree); send_bits(s, count - 3, 2);
+            Assert(ગણતરી >= 3 && ગણતરી <= 6, " 3_6?");
+            send_code(s, REP_3_6, s->bl_વૃક્ષ); send_bits(s, ગણતરી - 3, 2);
 
-        } else if (count <= 10) {
-            send_code(s, REPZ_3_10, s->bl_tree); send_bits(s, count - 3, 3);
+        } નહીંતર જો (ગણતરી <= 10) {
+            send_code(s, REPZ_3_10, s->bl_વૃક્ષ); send_bits(s, ગણતરી - 3, 3);
 
-        } else {
-            send_code(s, REPZ_11_138, s->bl_tree); send_bits(s, count - 11, 7);
+        } નહીંતર {
+            send_code(s, REPZ_11_138, s->bl_વૃક્ષ); send_bits(s, ગણતરી - 11, 7);
         }
-        count = 0; prevlen = curlen;
-        if (nextlen == 0) {
-            max_count = 138, min_count = 3;
-        } else if (curlen == nextlen) {
-            max_count = 6, min_count = 3;
-        } else {
-            max_count = 7, min_count = 4;
+        ગણતરી = 0; prevlen = curlen;
+        જો (nextlen == 0) {
+            max_ગણતરી = 138, min_ગણતરી = 3;
+        } નહીંતર જો (curlen == nextlen) {
+            max_ગણતરી = 6, min_ગણતરી = 3;
+        } નહીંતર {
+            max_ગણતરી = 7, min_ગણતરી = 4;
         }
     }
 }
@@ -797,15 +797,15 @@ local void send_tree(deflate_state *s, ct_data *tree, int max_code) {
  * Construct the Huffman tree for the bit lengths and return the index in
  * bl_order of the last bit length code to send.
  */
-local int build_bl_tree(deflate_state *s) {
-    int max_blindex;  /* index of last bit length code of non zero freq */
+local પૂર્ણાંક build_bl_વૃક્ષ(deflate_state *s) {
+    પૂર્ણાંક max_blindex;  /* index of last bit length code of non zero freq */
 
     /* Determine the bit length frequencies for literal and distance trees */
-    scan_tree(s, (ct_data *)s->dyn_ltree, s->l_desc.max_code);
-    scan_tree(s, (ct_data *)s->dyn_dtree, s->d_desc.max_code);
+    scan_વૃક્ષ(s, (ct_data *)s->dyn_ltree, s->l_desc.max_code);
+    scan_વૃક્ષ(s, (ct_data *)s->dyn_dtree, s->d_desc.max_code);
 
     /* Build the bit length tree: */
-    build_tree(s, (tree_desc *)(&(s->bl_desc)));
+    build_વૃક્ષ(s, (વૃક્ષ_desc *)(&(s->bl_desc)));
     /* opt_len now includes the length of the tree representations, except the
      * lengths of the bit lengths codes and the 5 + 5 + 4 bits for the counts.
      */
@@ -814,15 +814,15 @@ local int build_bl_tree(deflate_state *s) {
      * requires that at least 4 bit length codes be sent. (appnote.txt says
      * 3 but the actual value used is 4.)
      */
-    for (max_blindex = BL_CODES-1; max_blindex >= 3; max_blindex--) {
-        if (s->bl_tree[bl_order[max_blindex]].Len != 0) break;
+    માટે (max_blindex = BL_CODES-1; max_blindex >= 3; max_blindex--) {
+        જો (s->bl_વૃક્ષ[bl_order[max_blindex]].Len != 0) તોડો;
     }
     /* Update opt_len to include the bit length tree and counts */
     s->opt_len += 3*((ulg)max_blindex + 1) + 5 + 5 + 4;
     Tracev((stderr, "\ndyn trees: dyn %lu, stat %lu",
             s->opt_len, s->static_len));
 
-    return max_blindex;
+    પાછા max_blindex;
 }
 
 /* ===========================================================================
@@ -830,9 +830,9 @@ local int build_bl_tree(deflate_state *s) {
  * lengths of the bit length codes, the literal tree and the distance tree.
  * IN assertion: lcodes >= 257, dcodes >= 1, blcodes >= 4.
  */
-local void send_all_trees(deflate_state *s, int lcodes, int dcodes,
-                          int blcodes) {
-    int rank;                    /* index in bl_order */
+local શૂન્ય send_all_trees(deflate_state *s, પૂર્ણાંક lcodes, પૂર્ણાંક dcodes,
+                          પૂર્ણાંક blcodes) {
+    પૂર્ણાંક rank;                    /* index in bl_order */
 
     Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, "not enough codes");
     Assert (lcodes <= L_CODES && dcodes <= D_CODES && blcodes <= BL_CODES,
@@ -841,29 +841,29 @@ local void send_all_trees(deflate_state *s, int lcodes, int dcodes,
     send_bits(s, lcodes - 257, 5);  /* not +255 as stated in appnote.txt */
     send_bits(s, dcodes - 1,   5);
     send_bits(s, blcodes - 4,  4);  /* not -3 as stated in appnote.txt */
-    for (rank = 0; rank < blcodes; rank++) {
+    માટે (rank = 0; rank < blcodes; rank++) {
         Tracev((stderr, "\nbl code %2d ", bl_order[rank]));
-        send_bits(s, s->bl_tree[bl_order[rank]].Len, 3);
+        send_bits(s, s->bl_વૃક્ષ[bl_order[rank]].Len, 3);
     }
     Tracev((stderr, "\nbl tree: sent %lu", s->bits_sent));
 
-    send_tree(s, (ct_data *)s->dyn_ltree, lcodes - 1);  /* literal tree */
+    send_વૃક્ષ(s, (ct_data *)s->dyn_ltree, lcodes - 1);  /* literal tree */
     Tracev((stderr, "\nlit tree: sent %lu", s->bits_sent));
 
-    send_tree(s, (ct_data *)s->dyn_dtree, dcodes - 1);  /* distance tree */
+    send_વૃક્ષ(s, (ct_data *)s->dyn_dtree, dcodes - 1);  /* distance tree */
     Tracev((stderr, "\ndist tree: sent %lu", s->bits_sent));
 }
 
 /* ===========================================================================
  * Send a stored block
  */
-void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
-                                    ulg stored_len, int last) {
+શૂન્ય ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
+                                    ulg stored_len, પૂર્ણાંક last) {
     send_bits(s, (STORED_BLOCK<<1) + last, 3);  /* send block type */
     bi_windup(s);        /* align on byte boundary */
     put_short(s, (ush)stored_len);
     put_short(s, (ush)~stored_len);
-    if (stored_len)
+    જો (stored_len)
         zmemcpy(s->pending_buf + s->pending, (Bytef *)buf, stored_len);
     s->pending += stored_len;
 #ifdef ZLIB_DEBUG
@@ -877,7 +877,7 @@ void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
 /* ===========================================================================
  * Flush the bits in the bit buffer to pending output (leaves at most 7 bits)
  */
-void ZLIB_INTERNAL _tr_flush_bits(deflate_state *s) {
+શૂન્ય ZLIB_INTERNAL _tr_flush_bits(deflate_state *s) {
     bi_flush(s);
 }
 
@@ -885,7 +885,7 @@ void ZLIB_INTERNAL _tr_flush_bits(deflate_state *s) {
  * Send one empty static block to give enough lookahead for inflate.
  * This takes 10 bits, of which 7 may remain in the bit buffer.
  */
-void ZLIB_INTERNAL _tr_align(deflate_state *s) {
+શૂન્ય ZLIB_INTERNAL _tr_align(deflate_state *s) {
     send_bits(s, STATIC_TREES<<1, 3);
     send_code(s, END_BLOCK, static_ltree);
 #ifdef ZLIB_DEBUG
@@ -897,32 +897,32 @@ void ZLIB_INTERNAL _tr_align(deflate_state *s) {
 /* ===========================================================================
  * Send the block data compressed using the given Huffman trees
  */
-local void compress_block(deflate_state *s, const ct_data *ltree,
-                          const ct_data *dtree) {
+local શૂન્ય compress_block(deflate_state *s, અચલ ct_data *ltree,
+                          અચલ ct_data *dtree) {
     unsigned dist;      /* distance of matched string */
-    int lc;             /* match length or unmatched char (if dist == 0) */
+    પૂર્ણાંક lc;             /* match length or unmatched char (if dist == 0) */
     unsigned sx = 0;    /* running index in symbol buffers */
     unsigned code;      /* the code to send */
-    int extra;          /* number of extra bits to send */
+    પૂર્ણાંક extra;          /* number of extra bits to send */
 
-    if (s->sym_next != 0) do {
+    જો (s->sym_next != 0) કરો {
 #ifdef LIT_MEM
         dist = s->d_buf[sx];
         lc = s->l_buf[sx++];
-#else
+#નહીંતર
         dist = s->sym_buf[sx++] & 0xff;
         dist += (unsigned)(s->sym_buf[sx++] & 0xff) << 8;
         lc = s->sym_buf[sx++];
 #endif
-        if (dist == 0) {
+        જો (dist == 0) {
             send_code(s, lc, ltree); /* send a literal byte */
             Tracecv(isgraph(lc), (stderr," '%c' ", lc));
-        } else {
+        } નહીંતર {
             /* Here, lc is the match length - MIN_MATCH */
             code = _length_code[lc];
             send_code(s, code + LITERALS + 1, ltree);   /* send length code */
             extra = extra_lbits[code];
-            if (extra != 0) {
+            જો (extra != 0) {
                 lc -= base_length[code];
                 send_bits(s, lc, extra);       /* send the extra length bits */
             }
@@ -932,20 +932,20 @@ local void compress_block(deflate_state *s, const ct_data *ltree,
 
             send_code(s, code, dtree);       /* send the distance code */
             extra = extra_dbits[code];
-            if (extra != 0) {
+            જો (extra != 0) {
                 dist -= (unsigned)base_dist[code];
-                send_bits(s, (int)dist, extra); /* send the extra bits */
+                send_bits(s, (પૂર્ણાંક)dist, extra); /* send the extra bits */
             }
         } /* literal or match pair ? */
 
         /* Check for no overlay of pending_buf on needed symbols */
 #ifdef LIT_MEM
         Assert(s->pending < 2 * (s->lit_bufsize + sx), "pendingBuf overflow");
-#else
+#નહીંતર
         Assert(s->pending < s->lit_bufsize + sx, "pendingBuf overflow");
 #endif
 
-    } while (sx < s->sym_next);
+    } જ્યારે (sx < s->sym_next);
 
     send_code(s, END_BLOCK, ltree);
 }
@@ -963,55 +963,55 @@ local void compress_block(deflate_state *s, const ct_data *ltree,
  *   (7 {BEL}, 8 {BS}, 11 {VT}, 12 {FF}, 26 {SUB}, 27 {ESC}).
  * IN assertion: the fields Freq of dyn_ltree are set.
  */
-local int detect_data_type(deflate_state *s) {
+local પૂર્ણાંક detect_data_type(deflate_state *s) {
     /* block_mask is the bit mask of block-listed bytes
      * set bits 0..6, 14..25, and 28..31
      * 0xf3ffc07f = binary 11110011111111111100000001111111
      */
     unsigned long block_mask = 0xf3ffc07fUL;
-    int n;
+    પૂર્ણાંક n;
 
     /* Check for non-textual ("block-listed") bytes. */
-    for (n = 0; n <= 31; n++, block_mask >>= 1)
-        if ((block_mask & 1) && (s->dyn_ltree[n].Freq != 0))
-            return Z_BINARY;
+    માટે (n = 0; n <= 31; n++, block_mask >>= 1)
+        જો ((block_mask & 1) && (s->dyn_ltree[n].Freq != 0))
+            પાછા Z_દ્વિઅંકી;
 
     /* Check for textual ("allow-listed") bytes. */
-    if (s->dyn_ltree[9].Freq != 0 || s->dyn_ltree[10].Freq != 0
+    જો (s->dyn_ltree[9].Freq != 0 || s->dyn_ltree[10].Freq != 0
             || s->dyn_ltree[13].Freq != 0)
-        return Z_TEXT;
-    for (n = 32; n < LITERALS; n++)
-        if (s->dyn_ltree[n].Freq != 0)
-            return Z_TEXT;
+        પાછા Z_TEXT;
+    માટે (n = 32; n < LITERALS; n++)
+        જો (s->dyn_ltree[n].Freq != 0)
+            પાછા Z_TEXT;
 
     /* There are no "block-listed" or "allow-listed" bytes:
      * this stream either is empty or has tolerated ("gray-listed") bytes only.
      */
-    return Z_BINARY;
+    પાછા Z_દ્વિઅંકી;
 }
 
 /* ===========================================================================
  * Determine the best encoding for the current block: dynamic trees, static
  * trees or store, and write out the encoded block.
  */
-void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
-                                   ulg stored_len, int last) {
+શૂન્ય ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
+                                   ulg stored_len, પૂર્ણાંક last) {
     ulg opt_lenb, static_lenb; /* opt_len and static_len in bytes */
-    int max_blindex = 0;  /* index of last bit length code of non zero freq */
+    પૂર્ણાંક max_blindex = 0;  /* index of last bit length code of non zero freq */
 
     /* Build the Huffman trees unless a stored block is forced */
-    if (s->level > 0) {
+    જો (s->level > 0) {
 
         /* Check if the file is binary or text */
-        if (s->strm->data_type == Z_UNKNOWN)
+        જો (s->strm->data_type == Z_UNKNOWN)
             s->strm->data_type = detect_data_type(s);
 
         /* Construct the literal and distance trees */
-        build_tree(s, (tree_desc *)(&(s->l_desc)));
+        build_વૃક્ષ(s, (વૃક્ષ_desc *)(&(s->l_desc)));
         Tracev((stderr, "\nlit data: dyn %lu, stat %lu", s->opt_len,
                 s->static_len));
 
-        build_tree(s, (tree_desc *)(&(s->d_desc)));
+        build_વૃક્ષ(s, (વૃક્ષ_desc *)(&(s->d_desc)));
         Tracev((stderr, "\ndist data: dyn %lu, stat %lu", s->opt_len,
                 s->static_len));
         /* At this point, opt_len and static_len are the total bit lengths of
@@ -1021,7 +1021,7 @@ void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
         /* Build the bit length tree for the above two trees, and get the index
          * in bl_order of the last bit length code to send.
          */
-        max_blindex = build_bl_tree(s);
+        max_blindex = build_bl_વૃક્ષ(s);
 
         /* Determine the best encoding. Compute the block lengths in bytes. */
         opt_lenb = (s->opt_len + 3 + 7) >> 3;
@@ -1032,19 +1032,19 @@ void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
                 s->sym_next / 3));
 
 #ifndef FORCE_STATIC
-        if (static_lenb <= opt_lenb || s->strategy == Z_FIXED)
+        જો (static_lenb <= opt_lenb || s->strategy == Z_FIXED)
 #endif
             opt_lenb = static_lenb;
 
-    } else {
-        Assert(buf != (char*)0, "lost buf");
+    } નહીંતર {
+        Assert(buf != (અક્ષર*)0, "lost buf");
         opt_lenb = static_lenb = stored_len + 5; /* force a stored block */
     }
 
 #ifdef FORCE_STORED
-    if (buf != (char*)0) { /* force stored block */
-#else
-    if (stored_len + 4 <= opt_lenb && buf != (char*)0) {
+    જો (buf != (અક્ષર*)0) { /* force stored block */
+#નહીંતર
+    જો (stored_len + 4 <= opt_lenb && buf != (અક્ષર*)0) {
                        /* 4: two words for the lengths */
 #endif
         /* The test buf != NULL is only necessary if LIT_BUFSIZE > WSIZE.
@@ -1055,19 +1055,19 @@ void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
          */
         _tr_stored_block(s, buf, stored_len, last);
 
-    } else if (static_lenb == opt_lenb) {
+    } નહીંતર જો (static_lenb == opt_lenb) {
         send_bits(s, (STATIC_TREES<<1) + last, 3);
-        compress_block(s, (const ct_data *)static_ltree,
-                       (const ct_data *)static_dtree);
+        compress_block(s, (અચલ ct_data *)static_ltree,
+                       (અચલ ct_data *)static_dtree);
 #ifdef ZLIB_DEBUG
         s->compressed_len += 3 + s->static_len;
 #endif
-    } else {
+    } નહીંતર {
         send_bits(s, (DYN_TREES<<1) + last, 3);
         send_all_trees(s, s->l_desc.max_code + 1, s->d_desc.max_code + 1,
                        max_blindex + 1);
-        compress_block(s, (const ct_data *)s->dyn_ltree,
-                       (const ct_data *)s->dyn_dtree);
+        compress_block(s, (અચલ ct_data *)s->dyn_ltree,
+                       (અચલ ct_data *)s->dyn_dtree);
 #ifdef ZLIB_DEBUG
         s->compressed_len += 3 + s->opt_len;
 #endif
@@ -1078,7 +1078,7 @@ void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
      */
     init_block(s);
 
-    if (last) {
+    જો (last) {
         bi_windup(s);
 #ifdef ZLIB_DEBUG
         s->compressed_len += 7;  /* align on byte boundary */
@@ -1092,19 +1092,19 @@ void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
  * Save the match info and tally the frequency counts. Return true if
  * the current block must be flushed.
  */
-int ZLIB_INTERNAL _tr_tally(deflate_state *s, unsigned dist, unsigned lc) {
+પૂર્ણાંક ZLIB_INTERNAL _tr_tally(deflate_state *s, unsigned dist, unsigned lc) {
 #ifdef LIT_MEM
     s->d_buf[s->sym_next] = (ush)dist;
     s->l_buf[s->sym_next++] = (uch)lc;
-#else
+#નહીંતર
     s->sym_buf[s->sym_next++] = (uch)dist;
     s->sym_buf[s->sym_next++] = (uch)(dist >> 8);
     s->sym_buf[s->sym_next++] = (uch)lc;
 #endif
-    if (dist == 0) {
+    જો (dist == 0) {
         /* lc is the unmatched char */
         s->dyn_ltree[lc].Freq++;
-    } else {
+    } નહીંતર {
         s->matches++;
         /* Here, lc is the match length - MIN_MATCH */
         dist--;             /* dist = match distance - 1 */
@@ -1115,5 +1115,5 @@ int ZLIB_INTERNAL _tr_tally(deflate_state *s, unsigned dist, unsigned lc) {
         s->dyn_ltree[_length_code[lc] + LITERALS + 1].Freq++;
         s->dyn_dtree[d_code(dist)].Freq++;
     }
-    return (s->sym_next == s->sym_end);
+    પાછા (s->sym_next == s->sym_end);
 }

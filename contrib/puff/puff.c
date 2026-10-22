@@ -79,10 +79,10 @@
  * 2.3  21 Jan 2013     - Check for invalid code length codes in dynamic blocks
  */
 
-#include <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
-#include "puff.h"               /* prototype for puff() */
+#અન્તર્ભાવ <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
+#અન્તર્ભાવ "puff.h"               /* prototype for puff() */
 
-#define local static            /* for local function definitions */
+#define local સ્થિર            /* for local function definitions */
 
 /*
  * Maximums for allocations and loops.  It is not useful to change these --
@@ -95,18 +95,18 @@
 #define FIXLCODES 288           /* number of fixed literal/length codes */
 
 /* input and output state */
-struct state {
+સંરચના state {
     /* output state */
-    unsigned char *out;         /* output buffer */
+    unsigned અક્ષર *out;         /* output buffer */
     unsigned long outlen;       /* available space at out */
     unsigned long outcnt;       /* bytes written to out so far */
 
     /* input state */
-    const unsigned char *in;    /* input buffer */
+    અચલ unsigned અક્ષર *in;    /* input buffer */
     unsigned long inlen;        /* available input at in */
     unsigned long incnt;        /* bytes read so far */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    પૂર્ણાંક bitbuf;                 /* bit buffer */
+    પૂર્ણાંક bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
@@ -123,25 +123,25 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local પૂર્ણાંક bits(સંરચના state *s, પૂર્ણાંક need)
 {
     long val;           /* bit accumulator (can use up to 20 bits) */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->incnt == s->inlen)
+    જ્યારે (s->bitcnt < need) {
+        જો (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
         val |= (long)(s->in[s->incnt++]) << s->bitcnt;  /* load eight bits */
         s->bitcnt += 8;
     }
 
     /* drop need bits and update buffer, always zero to seven bits left */
-    s->bitbuf = (int)(val >> need);
+    s->bitbuf = (પૂર્ણાંક)(val >> need);
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return (int)(val & ((1L << need) - 1));
+    પાછા (પૂર્ણાંક)(val & ((1L << need) - 1));
 }
 
 /*
@@ -161,7 +161,7 @@ local int bits(struct state *s, int need)
  * - A stored block can have zero length.  This is sometimes used to byte-align
  *   subsets of the compressed data for random access or partial recovery.
  */
-local int stored(struct state *s)
+local પૂર્ણાંક stored(સંરચના state *s)
 {
     unsigned len;       /* length of stored block */
 
@@ -170,30 +170,30 @@ local int stored(struct state *s)
     s->bitcnt = 0;
 
     /* get length and check against its one's complement */
-    if (s->incnt + 4 > s->inlen)
-        return 2;                               /* not enough input */
+    જો (s->incnt + 4 > s->inlen)
+        પાછા 2;                               /* not enough input */
     len = s->in[s->incnt++];
     len |= s->in[s->incnt++] << 8;
-    if (s->in[s->incnt++] != (~len & 0xff) ||
+    જો (s->in[s->incnt++] != (~len & 0xff) ||
         s->in[s->incnt++] != ((~len >> 8) & 0xff))
-        return -2;                              /* didn't match complement! */
+        પાછા -2;                              /* didn't match complement! */
 
     /* copy len bytes from in to out */
-    if (s->incnt + len > s->inlen)
-        return 2;                               /* not enough input */
-    if (s->out != NIL) {
-        if (s->outcnt + len > s->outlen)
-            return 1;                           /* not enough output space */
-        while (len--)
+    જો (s->incnt + len > s->inlen)
+        પાછા 2;                               /* not enough input */
+    જો (s->out != NIL) {
+        જો (s->outcnt + len > s->outlen)
+            પાછા 1;                           /* not enough output space */
+        જ્યારે (len--)
             s->out[s->outcnt++] = s->in[s->incnt++];
     }
-    else {                                      /* just scanning */
+    નહીંતર {                                      /* just scanning */
         s->outcnt += len;
         s->incnt += len;
     }
 
     /* done with a valid stored block */
-    return 0;
+    પાછા 0;
 }
 
 /*
@@ -203,9 +203,9 @@ local int stored(struct state *s)
  * entries is the sum of the counts in count[].  The decoding process can be
  * seen in the function decode() below.
  */
-struct huffman {
-    short *count;       /* number of symbols of each length */
-    short *symbol;      /* canonically ordered symbols */
+સંરચના huffman {
+    short *ગણતરી;       /* number of symbols of each length */
+    short *પ્રતીક;      /* canonically ordered symbols */
 };
 
 /*
@@ -232,26 +232,26 @@ struct huffman {
  *   in the deflate format.  See the format notes for fixed() and dynamic().
  */
 #ifdef SLOW
-local int decode(struct state *s, const struct huffman *h)
+local પૂર્ણાંક decode(સંરચના state *s, અચલ સંરચના huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
+    પૂર્ણાંક len;            /* current number of bits in code */
+    પૂર્ણાંક code;           /* len bits being decoded */
+    પૂર્ણાંક first;          /* first code of length len */
+    પૂર્ણાંક ગણતરી;          /* number of codes of length len */
+    પૂર્ણાંક index;          /* index of first code of length len in symbol table */
 
     code = first = index = 0;
-    for (len = 1; len <= MAXBITS; len++) {
+    માટે (len = 1; len <= MAXBITS; len++) {
         code |= bits(s, 1);             /* get next bit */
-        count = h->count[len];
-        if (code - count < first)       /* if length len, return symbol */
-            return h->symbol[index + (code - first)];
-        index += count;                 /* else update for next length */
-        first += count;
+        ગણતરી = h->ગણતરી[len];
+        જો (code - ગણતરી < first)       /* if length len, return symbol */
+            પાછા h->પ્રતીક[index + (code - first)];
+        index += ગણતરી;                 /* else update for next length */
+        first += ગણતરી;
         first <<= 1;
         code <<= 1;
     }
-    return -10;                         /* ran out of codes */
+    પાછા -10;                         /* ran out of codes */
 }
 
 /*
@@ -259,49 +259,49 @@ local int decode(struct state *s, const struct huffman *h)
  * as readable, but it makes puff() twice as fast.  And it only makes the code
  * a few percent larger.
  */
-#else /* !SLOW */
-local int decode(struct state *s, const struct huffman *h)
+#નહીંતર /* !SLOW */
+local પૂર્ણાંક decode(સંરચના state *s, અચલ સંરચના huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    પૂર્ણાંક len;            /* current number of bits in code */
+    પૂર્ણાંક code;           /* len bits being decoded */
+    પૂર્ણાંક first;          /* first code of length len */
+    પૂર્ણાંક ગણતરી;          /* number of codes of length len */
+    પૂર્ણાંક index;          /* index of first code of length len in symbol table */
+    પૂર્ણાંક bitbuf;         /* bits from stream */
+    પૂર્ણાંક ડાબું;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
-    left = s->bitcnt;
+    ડાબું = s->bitcnt;
     code = first = index = 0;
     len = 1;
-    next = h->count + 1;
-    while (1) {
-        while (left--) {
+    next = h->ગણતરી + 1;
+    જ્યારે (1) {
+        જ્યારે (ડાબું--) {
             code |= bitbuf & 1;
             bitbuf >>= 1;
-            count = *next++;
-            if (code - count < first) { /* if length len, return symbol */
+            ગણતરી = *next++;
+            જો (code - ગણતરી < first) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                પાછા h->પ્રતીક[index + (code - first)];
             }
-            index += count;             /* else update for next length */
-            first += count;
+            index += ગણતરી;             /* else update for next length */
+            first += ગણતરી;
             first <<= 1;
             code <<= 1;
             len++;
         }
-        left = (MAXBITS+1) - len;
-        if (left == 0)
-            break;
-        if (s->incnt == s->inlen)
+        ડાબું = (MAXBITS+1) - len;
+        જો (ડાબું == 0)
+            તોડો;
+        જો (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
         bitbuf = s->in[s->incnt++];
-        if (left > 8)
-            left = 8;
+        જો (ડાબું > 8)
+            ડાબું = 8;
     }
-    return -10;                         /* ran out of codes */
+    પાછા -10;                         /* ran out of codes */
 }
 #endif /* SLOW */
 
@@ -337,45 +337,45 @@ local int decode(struct state *s, const struct huffman *h)
  * - Within a given code length, the symbols are kept in ascending order for
  *   the code bits definition.
  */
-local int construct(struct huffman *h, const short *length, int n)
+local પૂર્ણાંક construct(સંરચના huffman *h, અચલ short *length, પૂર્ણાંક n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    પૂર્ણાંક પ્રતીક;         /* current symbol when stepping through length[] */
+    પૂર્ણાંક len;            /* current length when stepping through h->count[] */
+    પૂર્ણાંક ડાબું;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
 
     /* count number of codes of each length */
-    for (len = 0; len <= MAXBITS; len++)
-        h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
-        (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    માટે (len = 0; len <= MAXBITS; len++)
+        h->ગણતરી[len] = 0;
+    માટે (પ્રતીક = 0; પ્રતીક < n; પ્રતીક++)
+        (h->ગણતરી[length[પ્રતીક]])++;   /* assumes lengths are within bounds */
+    જો (h->ગણતરી[0] == n)               /* no codes! */
+        પાછા 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;                           /* one possible code of zero length */
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;                     /* one more bit, double codes left */
-        left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0)
-            return left;                /* over-subscribed--return negative */
+    ડાબું = 1;                           /* one possible code of zero length */
+    માટે (len = 1; len <= MAXBITS; len++) {
+        ડાબું <<= 1;                     /* one more bit, double codes left */
+        ડાબું -= h->ગણતરી[len];          /* deduct count from possible codes */
+        જો (ડાબું < 0)
+            પાછા ડાબું;                /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + h->count[len];
+    માટે (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + h->ગણતરી[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
-            h->symbol[offs[length[symbol]]++] = symbol;
+    માટે (પ્રતીક = 0; પ્રતીક < n; પ્રતીક++)
+        જો (length[પ્રતીક] != 0)
+            h->પ્રતીક[offs[length[પ્રતીક]]++] = પ્રતીક;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    પાછા ડાબું;
 }
 
 /*
@@ -433,64 +433,64 @@ local int construct(struct huffman *h, const short *length, int n)
  *   since though their behavior -is- defined for overlapping arrays, it is
  *   defined to do the wrong thing in this case.
  */
-local int codes(struct state *s,
-                const struct huffman *lencode,
-                const struct huffman *distcode)
+local પૂર્ણાંક codes(સંરચના state *s,
+                અચલ સંરચના huffman *lencode,
+                અચલ સંરચના huffman *distcode)
 {
-    int symbol;         /* decoded symbol */
-    int len;            /* length for copy */
+    પૂર્ણાંક પ્રતીક;         /* decoded symbol */
+    પૂર્ણાંક len;            /* length for copy */
     unsigned dist;      /* distance for copy */
-    static const short lens[29] = { /* Size base for length codes 257..285 */
+    સ્થિર અચલ short lens[29] = { /* Size base for length codes 257..285 */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
         35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258};
-    static const short lext[29] = { /* Extra bits for length codes 257..285 */
+    સ્થિર અચલ short lext[29] = { /* Extra bits for length codes 257..285 */
         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
         3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0};
-    static const short dists[30] = { /* Offset base for distance codes 0..29 */
+    સ્થિર અચલ short dists[30] = { /* Offset base for distance codes 0..29 */
         1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
         257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
         8193, 12289, 16385, 24577};
-    static const short dext[30] = { /* Extra bits for distance codes 0..29 */
+    સ્થિર અચલ short dext[30] = { /* Extra bits for distance codes 0..29 */
         0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
         7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
         12, 12, 13, 13};
 
     /* decode literals and length/distance pairs */
-    do {
-        symbol = decode(s, lencode);
-        if (symbol < 0)
-            return symbol;              /* invalid symbol */
-        if (symbol < 256) {             /* literal: symbol is the byte */
+    કરો {
+        પ્રતીક = decode(s, lencode);
+        જો (પ્રતીક < 0)
+            પાછા પ્રતીક;              /* invalid symbol */
+        જો (પ્રતીક < 256) {             /* literal: symbol is the byte */
             /* write out the literal */
-            if (s->out != NIL) {
-                if (s->outcnt == s->outlen)
-                    return 1;
-                s->out[s->outcnt] = symbol;
+            જો (s->out != NIL) {
+                જો (s->outcnt == s->outlen)
+                    પાછા 1;
+                s->out[s->outcnt] = પ્રતીક;
             }
             s->outcnt++;
         }
-        else if (symbol > 256) {        /* length */
+        નહીંતર જો (પ્રતીક > 256) {        /* length */
             /* get and compute length */
-            symbol -= 257;
-            if (symbol >= 29)
-                return -10;             /* invalid fixed code */
-            len = lens[symbol] + bits(s, lext[symbol]);
+            પ્રતીક -= 257;
+            જો (પ્રતીક >= 29)
+                પાછા -10;             /* invalid fixed code */
+            len = lens[પ્રતીક] + bits(s, lext[પ્રતીક]);
 
             /* get and check distance */
-            symbol = decode(s, distcode);
-            if (symbol < 0)
-                return symbol;          /* invalid symbol */
-            dist = dists[symbol] + bits(s, dext[symbol]);
+            પ્રતીક = decode(s, distcode);
+            જો (પ્રતીક < 0)
+                પાછા પ્રતીક;          /* invalid symbol */
+            dist = dists[પ્રતીક] + bits(s, dext[પ્રતીક]);
 #ifndef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-            if (dist > s->outcnt)
-                return -11;     /* distance too far back */
+            જો (dist > s->outcnt)
+                પાછા -11;     /* distance too far back */
 #endif
 
             /* copy length bytes from distance bytes back */
-            if (s->out != NIL) {
-                if (s->outcnt + len > s->outlen)
-                    return 1;
-                while (len--) {
+            જો (s->out != NIL) {
+                જો (s->outcnt + len > s->outlen)
+                    પાછા 1;
+                જ્યારે (len--) {
                     s->out[s->outcnt] =
 #ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
                         dist > s->outcnt ?
@@ -500,13 +500,13 @@ local int codes(struct state *s,
                     s->outcnt++;
                 }
             }
-            else
+            નહીંતર
                 s->outcnt += len;
         }
-    } while (symbol != 256);            /* end of block symbol */
+    } જ્યારે (પ્રતીક != 256);            /* end of block symbol */
 
     /* done with a valid fixed or dynamic block */
-    return 0;
+    પાછા 0;
 }
 
 /*
@@ -533,38 +533,38 @@ local int codes(struct state *s,
  *   length, this can be implemented as an incomplete code.  Then the invalid
  *   codes are detected while decoding.
  */
-local int fixed(struct state *s)
+local પૂર્ણાંક fixed(સંરચના state *s)
 {
-    static int virgin = 1;
-    static short lencnt[MAXBITS+1], lensym[FIXLCODES];
-    static short distcnt[MAXBITS+1], distsym[MAXDCODES];
-    static struct huffman lencode, distcode;
+    સ્થિર પૂર્ણાંક virgin = 1;
+    સ્થિર short lencnt[MAXBITS+1], lensym[FIXLCODES];
+    સ્થિર short distcnt[MAXBITS+1], distsym[MAXDCODES];
+    સ્થિર સંરચના huffman lencode, distcode;
 
     /* build fixed huffman tables if first call (may not be thread safe) */
-    if (virgin) {
-        int symbol;
+    જો (virgin) {
+        પૂર્ણાંક પ્રતીક;
         short lengths[FIXLCODES];
 
         /* construct lencode and distcode */
-        lencode.count = lencnt;
-        lencode.symbol = lensym;
-        distcode.count = distcnt;
-        distcode.symbol = distsym;
+        lencode.ગણતરી = lencnt;
+        lencode.પ્રતીક = lensym;
+        distcode.ગણતરી = distcnt;
+        distcode.પ્રતીક = distsym;
 
         /* literal/length table */
-        for (symbol = 0; symbol < 144; symbol++)
-            lengths[symbol] = 8;
-        for (; symbol < 256; symbol++)
-            lengths[symbol] = 9;
-        for (; symbol < 280; symbol++)
-            lengths[symbol] = 7;
-        for (; symbol < FIXLCODES; symbol++)
-            lengths[symbol] = 8;
+        માટે (પ્રતીક = 0; પ્રતીક < 144; પ્રતીક++)
+            lengths[પ્રતીક] = 8;
+        માટે (; પ્રતીક < 256; પ્રતીક++)
+            lengths[પ્રતીક] = 9;
+        માટે (; પ્રતીક < 280; પ્રતીક++)
+            lengths[પ્રતીક] = 7;
+        માટે (; પ્રતીક < FIXLCODES; પ્રતીક++)
+            lengths[પ્રતીક] = 8;
         construct(&lencode, lengths, FIXLCODES);
 
         /* distance table */
-        for (symbol = 0; symbol < MAXDCODES; symbol++)
-            lengths[symbol] = 5;
+        માટે (પ્રતીક = 0; પ્રતીક < MAXDCODES; પ્રતીક++)
+            lengths[પ્રતીક] = 5;
         construct(&distcode, lengths, MAXDCODES);
 
         /* do this just once */
@@ -572,7 +572,7 @@ local int fixed(struct state *s)
     }
 
     /* decode data until end-of-block code */
-    return codes(s, &lencode, &distcode);
+    પાછા codes(s, &lencode, &distcode);
 }
 
 /*
@@ -662,88 +662,88 @@ local int fixed(struct state *s)
  * - For reference, a "typical" size for the code description in a dynamic
  *   block is around 80 bytes.
  */
-local int dynamic(struct state *s)
+local પૂર્ણાંક dynamic(સંરચના state *s)
 {
-    int nlen, ndist, ncode;             /* number of lengths in descriptor */
-    int index;                          /* index of lengths[] */
-    int err;                            /* construct() return value */
+    પૂર્ણાંક nlen, ndist, ncode;             /* number of lengths in descriptor */
+    પૂર્ણાંક index;                          /* index of lengths[] */
+    પૂર્ણાંક err;                            /* construct() return value */
     short lengths[MAXCODES];            /* descriptor code lengths */
     short lencnt[MAXBITS+1], lensym[MAXLCODES];         /* lencode memory */
     short distcnt[MAXBITS+1], distsym[MAXDCODES];       /* distcode memory */
-    struct huffman lencode, distcode;   /* length and distance codes */
-    static const short order[19] =      /* permutation of code length codes */
+    સંરચના huffman lencode, distcode;   /* length and distance codes */
+    સ્થિર અચલ short order[19] =      /* permutation of code length codes */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
     /* construct lencode and distcode */
-    lencode.count = lencnt;
-    lencode.symbol = lensym;
-    distcode.count = distcnt;
-    distcode.symbol = distsym;
+    lencode.ગણતરી = lencnt;
+    lencode.પ્રતીક = lensym;
+    distcode.ગણતરી = distcnt;
+    distcode.પ્રતીક = distsym;
 
     /* get number of lengths in each table, check lengths */
     nlen = bits(s, 5) + 257;
     ndist = bits(s, 5) + 1;
     ncode = bits(s, 4) + 4;
-    if (nlen > MAXLCODES || ndist > MAXDCODES)
-        return -3;                      /* bad counts */
+    જો (nlen > MAXLCODES || ndist > MAXDCODES)
+        પાછા -3;                      /* bad counts */
 
     /* read code length code lengths (really), missing lengths are zero */
-    for (index = 0; index < ncode; index++)
+    માટે (index = 0; index < ncode; index++)
         lengths[order[index]] = bits(s, 3);
-    for (; index < 19; index++)
+    માટે (; index < 19; index++)
         lengths[order[index]] = 0;
 
     /* build huffman table for code lengths codes (use lencode temporarily) */
     err = construct(&lencode, lengths, 19);
-    if (err != 0)               /* require complete code set here */
-        return -4;
+    જો (err != 0)               /* require complete code set here */
+        પાછા -4;
 
     /* read length/literal and distance code length tables */
     index = 0;
-    while (index < nlen + ndist) {
-        int symbol;             /* decoded value */
-        int len;                /* last length to repeat */
+    જ્યારે (index < nlen + ndist) {
+        પૂર્ણાંક પ્રતીક;             /* decoded value */
+        પૂર્ણાંક len;                /* last length to repeat */
 
-        symbol = decode(s, &lencode);
-        if (symbol < 0)
-            return symbol;          /* invalid symbol */
-        if (symbol < 16)                /* length in 0..15 */
-            lengths[index++] = symbol;
-        else {                          /* repeat instruction */
+        પ્રતીક = decode(s, &lencode);
+        જો (પ્રતીક < 0)
+            પાછા પ્રતીક;          /* invalid symbol */
+        જો (પ્રતીક < 16)                /* length in 0..15 */
+            lengths[index++] = પ્રતીક;
+        નહીંતર {                          /* repeat instruction */
             len = 0;                    /* assume repeating zeros */
-            if (symbol == 16) {         /* repeat last length 3..6 times */
-                if (index == 0)
-                    return -5;          /* no last length! */
+            જો (પ્રતીક == 16) {         /* repeat last length 3..6 times */
+                જો (index == 0)
+                    પાછા -5;          /* no last length! */
                 len = lengths[index - 1];       /* last length */
-                symbol = 3 + bits(s, 2);
+                પ્રતીક = 3 + bits(s, 2);
             }
-            else if (symbol == 17)      /* repeat zero 3..10 times */
-                symbol = 3 + bits(s, 3);
-            else                        /* == 18, repeat zero 11..138 times */
-                symbol = 11 + bits(s, 7);
-            if (index + symbol > nlen + ndist)
-                return -6;              /* too many lengths! */
-            while (symbol--)            /* repeat last or zero symbol times */
+            નહીંતર જો (પ્રતીક == 17)      /* repeat zero 3..10 times */
+                પ્રતીક = 3 + bits(s, 3);
+            નહીંતર                        /* == 18, repeat zero 11..138 times */
+                પ્રતીક = 11 + bits(s, 7);
+            જો (index + પ્રતીક > nlen + ndist)
+                પાછા -6;              /* too many lengths! */
+            જ્યારે (પ્રતીક--)            /* repeat last or zero symbol times */
                 lengths[index++] = len;
         }
     }
 
     /* check for end-of-block code -- there better be one! */
-    if (lengths[256] == 0)
-        return -9;
+    જો (lengths[256] == 0)
+        પાછા -9;
 
     /* build huffman table for literal/length codes */
     err = construct(&lencode, lengths, nlen);
-    if (err && (err < 0 || nlen != lencode.count[0] + lencode.count[1]))
-        return -7;      /* incomplete code ok only for single length 1 code */
+    જો (err && (err < 0 || nlen != lencode.ગણતરી[0] + lencode.ગણતરી[1]))
+        પાછા -7;      /* incomplete code ok only for single length 1 code */
 
     /* build huffman table for distance codes */
     err = construct(&distcode, lengths + nlen, ndist);
-    if (err && (err < 0 || ndist != distcode.count[0] + distcode.count[1]))
-        return -8;      /* incomplete code ok only for single length 1 code */
+    જો (err && (err < 0 || ndist != distcode.ગણતરી[0] + distcode.ગણતરી[1]))
+        પાછા -8;      /* incomplete code ok only for single length 1 code */
 
     /* decode data until end-of-block code */
-    return codes(s, &lencode, &distcode);
+    પાછા codes(s, &lencode, &distcode);
 }
 
 /*
@@ -790,14 +790,14 @@ local int dynamic(struct state *s)
  *   block (if it was a fixed or dynamic block) are undefined and have no
  *   expected values to check.
  */
-int puff(unsigned char *dest,           /* pointer to destination pointer */
+પૂર્ણાંક puff(unsigned અક્ષર *dest,           /* pointer to destination pointer */
          unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
+         અચલ unsigned અક્ષર *source,   /* pointer to source data pointer */
          unsigned long *sourcelen)      /* amount of input available */
 {
-    struct state s;             /* input/output state */
-    int last, type;             /* block information */
-    int err;                    /* return value */
+    સંરચના state s;             /* input/output state */
+    પૂર્ણાંક last, type;             /* block information */
+    પૂર્ણાંક err;                    /* return value */
 
     /* initialize output state */
     s.out = dest;
@@ -812,11 +812,11 @@ int puff(unsigned char *dest,           /* pointer to destination pointer */
     s.bitcnt = 0;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp() */
+    જો (setjmp(s.env) != 0)             /* if came back here via longjmp() */
         err = 2;                        /* then skip do-loop, return error */
-    else {
+    નહીંતર {
         /* process blocks until last block or error */
-        do {
+        કરો {
             last = bits(&s, 1);         /* one if last block */
             type = bits(&s, 2);         /* block type 0..3 */
             err = type == 0 ?
@@ -826,15 +826,15 @@ int puff(unsigned char *dest,           /* pointer to destination pointer */
                         (type == 2 ?
                             dynamic(&s) :
                             -1));       /* type == 3, invalid */
-            if (err != 0)
-                break;                  /* return with error */
-        } while (!last);
+            જો (err != 0)
+                તોડો;                  /* return with error */
+        } જ્યારે (!last);
     }
 
     /* update the lengths and return */
-    if (err <= 0) {
+    જો (err <= 0) {
         *destlen = s.outcnt;
         *sourcelen = s.incnt;
     }
-    return err;
+    પાછા err;
 }
