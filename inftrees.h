@@ -21,11 +21,11 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
-    unsigned short val;         /* offset in table or code value */
-} code;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ op;           /* operation, extra bits, table bits */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ ਬਿੱਟ;         /* bits in this part of the code */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ val;         /* offset in table or code value */
+} ਕੋਡ;
 
 /* op values as set by inflate_table():
     00000000 - literal
@@ -46,25 +46,25 @@ typedef struct {
    inflate_table() calls in inflate.c and infback.c.  If the root table size is
    changed, then these maximum sizes would be need to be recalculated and
    updated. */
-#ifndef PKZIP_BUG_WORKAROUND
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ PKZIP_BUG_WORKAROUND
 #  define ENOUGH_LENS 852
 #  define ENOUGH_DISTS 592
-#else
+#ਨਹੀਂਤਾਂ
 /* That workaround permits 288 literal/length codes and 32 distance codes. */
 #  define ENOUGH_LENS 854
 #  define ENOUGH_DISTS 594
-#endif
-#define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
+#ਜੇ_ਅੰਤ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table() */
-typedef enum {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਗਿਣਤੀ {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
-                                unsigned codes, code FAR * FAR *table,
-                                unsigned FAR *bits, unsigned short FAR *work);
-struct inflate_state;
-void ZLIB_INTERNAL inflate_fixed(struct inflate_state FAR *state);
+ਪੂਰਨ ZLIB_ਅੰਦਰੂਨੀ inflate_ਸਾਰਣੀ(codetype type, ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ FAR *lens,
+                                ਬਿਨਾਨਿਸ਼ਾਨੀ codes, ਕੋਡ FAR * FAR *ਸਾਰਣੀ_2,
+                                ਬਿਨਾਨਿਸ਼ਾਨੀ FAR *ਬਿੱਟ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ FAR *work);
+ਬਣਤਰ inflate_state;
+ਖਾਲੀ ZLIB_ਅੰਦਰੂਨੀ inflate_fixed(ਬਣਤਰ inflate_state FAR *state);

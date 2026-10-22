@@ -25,11 +25,11 @@
 /*
  * See puff.c for purpose and usage.
  */
-#ifndef NIL
-#  define NIL ((unsigned char *)0)      /* for no output option */
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NIL
+#  define NIL ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)0)      /* for no output option */
+#ਜੇ_ਅੰਤ
 
-int puff(unsigned char *dest,           /* pointer to destination pointer */
-         unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
-         unsigned long *sourcelen);     /* amount of input available */
+ਪੂਰਨ puff(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *dest,           /* pointer to destination pointer */
+         ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *destlen,        /* amount of output space */
+         ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਸਰੋਤ,   /* pointer to source data pointer */
+         ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *sourcelen);     /* amount of input available */

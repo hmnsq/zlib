@@ -1,9 +1,9 @@
-#ifndef CRC32_VX_HOOKS_H
-#define CRC32_VX_HOOKS_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ਚੱਕਰੀ_ਜਾਂਚ_32_VX_HOOKS_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਚੱਕਰੀ_ਜਾਂਚ_32_VX_HOOKS_H
 
 /**
  * CRC HOOKS
  */
-ZLIB_INTERNAL extern unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len);
+ZLIB_ਅੰਦਰੂਨੀ ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ (*ਚੱਕਰੀ_ਜਾਂਚ_32_z_hook)(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਚੱਕਰੀ_ਜਾਂਚ, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ FAR *buf, z_ਮਾਪ_t len);
 
-#endif /* CRC32_VX_HOOKS_H */
+#ਜੇ_ਅੰਤ /* CRC32_VX_HOOKS_H */

@@ -3,12 +3,12 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "zutil.h"
-#include "inftree9.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "zutil.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "inftree9.h"
 
-#define MAXBITS 15
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAXBITS 15
 
-const char inflate9_copyright[] =
+ਅਚਲ ਅੱਖਰ inflate9_copyright[] =
    " inflate9 1.3.2.1 Copyright 1995-2026 Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -29,42 +29,42 @@ const char inflate9_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
-                   code FAR * FAR *table, unsigned FAR *bits,
-                   unsigned short FAR *work) {
-    unsigned len;               /* a code's length in bits */
-    unsigned sym;               /* index of code symbols */
-    unsigned min, max;          /* minimum and maximum code lengths */
-    unsigned root;              /* number of index bits for root table */
-    unsigned curr;              /* number of index bits for current table */
-    unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
-    unsigned used;              /* code entries in table used */
-    unsigned huff;              /* Huffman code */
-    unsigned incr;              /* for incrementing code, index */
-    unsigned fill;              /* index for replicating entries */
-    unsigned low;               /* low bits for current root entry */
-    unsigned mask;              /* mask for low root bits */
-    code this;                  /* table entry for duplication */
-    code FAR *next;             /* next available space in table */
-    const unsigned short FAR *base;     /* base value table to use */
-    const unsigned short FAR *extra;    /* extra bits table to use */
-    int end;                    /* use base and extra for symbol > end */
-    unsigned short count[MAXBITS+1];    /* number of codes of each length */
-    unsigned short offs[MAXBITS+1];     /* offsets in table for each length */
-    static const unsigned short lbase[31] = { /* Length codes 257..285 base */
+ਪੂਰਨ inflate_table9(codetype type, ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ FAR *lens, ਬਿਨਾਨਿਸ਼ਾਨੀ codes,
+                   ਕੋਡ FAR * FAR *ਸਾਰਣੀ_2, ਬਿਨਾਨਿਸ਼ਾਨੀ FAR *ਬਿੱਟ,
+                   ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ FAR *work) {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ len;               /* a code's length in bits */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ sym;               /* index of code symbols */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ min, max;          /* minimum and maximum code lengths */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਜੜ੍ਹ;              /* number of index bits for root table */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ curr;              /* number of index bits for current table */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ drop;              /* code bits to drop for sub-table */
+    ਪੂਰਨ ਖੱਬਾ;                   /* number of prefix codes available */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਵਰਤਿਆ;              /* code entries in table used */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ huff;              /* Huffman code */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ incr;              /* for incrementing code, index */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ fill;              /* index for replicating entries */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਨੀਵਾਂ;               /* low bits for current root entry */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਨਕਾਬ;              /* mask for low root bits */
+    ਕੋਡ this;                  /* table entry for duplication */
+    ਕੋਡ FAR *ਅਗਲਾ;             /* next available space in table */
+    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ FAR *ਅਧਾਰ_2;     /* base value table to use */
+    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ FAR *extra;    /* extra bits table to use */
+    ਪੂਰਨ ਸਿਰਾ;                    /* use base and extra for symbol > end */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ ਗਿਣਤੀ_2[MAXBITS+1];    /* number of codes of each length */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ offs[MAXBITS+1];     /* offsets in table for each length */
+    ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ lbase[31] = { /* Length codes 257..285 base */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17,
         19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115,
         131, 163, 195, 227, 3, 0, 0};
-    static const unsigned short lext[31] = { /* Length codes 257..285 extra */
+    ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ lext[31] = { /* Length codes 257..285 extra */
         128, 128, 128, 128, 128, 128, 128, 128, 129, 129, 129, 129,
         130, 130, 130, 130, 131, 131, 131, 131, 132, 132, 132, 132,
         133, 133, 133, 133, 144, 68, 193};
-    static const unsigned short dbase[32] = { /* Distance codes 0..31 base */
+    ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ dbase[32] = { /* Distance codes 0..31 base */
         1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49,
         65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073,
         4097, 6145, 8193, 12289, 16385, 24577, 32769, 49153};
-    static const unsigned short dext[32] = { /* Distance codes 0..31 extra */
+    ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ dext[32] = { /* Distance codes 0..31 extra */
         128, 128, 128, 128, 129, 129, 130, 130, 131, 131, 132, 132,
         133, 133, 134, 134, 135, 135, 136, 136, 137, 137, 138, 138,
         139, 139, 140, 140, 141, 141, 142, 142};
@@ -101,39 +101,39 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
      */
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    for (len = 0; len <= MAXBITS; len++)
-        count[len] = 0;
-    for (sym = 0; sym < codes; sym++)
-        count[lens[sym]]++;
+    ਲਈ (len = 0; len <= MAXBITS; len++)
+        ਗਿਣਤੀ_2[len] = 0;
+    ਲਈ (sym = 0; sym < codes; sym++)
+        ਗਿਣਤੀ_2[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
-    root = *bits;
-    for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) return -1;            /* no codes! */
-    for (min = 1; min <= MAXBITS; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+    ਜੜ੍ਹ = *ਬਿੱਟ;
+    ਲਈ (max = MAXBITS; max >= 1; max--)
+        ਜੇ (ਗਿਣਤੀ_2[max] != 0) ਰੋਕੋ;
+    ਜੇ (ਜੜ੍ਹ > max) ਜੜ੍ਹ = max;
+    ਜੇ (max == 0) ਵਾਪਸ -1;            /* no codes! */
+    ਲਈ (min = 1; min <= MAXBITS; min++)
+        ਜੇ (ਗਿਣਤੀ_2[min] != 0) ਰੋਕੋ;
+    ਜੇ (ਜੜ੍ਹ < min) ਜੜ੍ਹ = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;
-        left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+    ਖੱਬਾ = 1;
+    ਲਈ (len = 1; len <= MAXBITS; len++) {
+        ਖੱਬਾ <<= 1;
+        ਖੱਬਾ -= ਗਿਣਤੀ_2[len];
+        ਜੇ (ਖੱਬਾ < 0) ਵਾਪਸ -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    ਜੇ (ਖੱਬਾ > 0 && (type == CODES || max != 1))
+        ਵਾਪਸ -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + count[len];
+    ਲਈ (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + ਗਿਣਤੀ_2[len];
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+    ਲਈ (sym = 0; sym < codes; sym++)
+        ਜੇ (lens[sym] != 0) work[offs[lens[sym]]++] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -167,113 +167,113 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
      */
 
     /* set up for code type */
-    switch (type) {
-    case CODES:
-        base = extra = work;    /* dummy value--not used */
-        end = 19;
-        break;
-    case LENS:
-        base = lbase;
-        base -= 257;
+    ਚੋਣ (type) {
+    ਹਾਲਤ CODES:
+        ਅਧਾਰ_2 = extra = work;    /* dummy value--not used */
+        ਸਿਰਾ = 19;
+        ਰੋਕੋ;
+    ਹਾਲਤ LENS:
+        ਅਧਾਰ_2 = lbase;
+        ਅਧਾਰ_2 -= 257;
         extra = lext;
         extra -= 257;
-        end = 256;
-        break;
-    default:            /* DISTS */
-        base = dbase;
+        ਸਿਰਾ = 256;
+        ਰੋਕੋ;
+    ਮੂਲ:            /* DISTS */
+        ਅਧਾਰ_2 = dbase;
         extra = dext;
-        end = -1;
+        ਸਿਰਾ = -1;
     }
 
     /* initialize state for loop */
     huff = 0;                   /* starting code */
     sym = 0;                    /* starting code symbol */
     len = min;                  /* starting code length */
-    next = *table;              /* current table to fill in */
-    curr = root;                /* current table index bits */
+    ਅਗਲਾ = *ਸਾਰਣੀ_2;              /* current table to fill in */
+    curr = ਜੜ੍ਹ;                /* current table index bits */
     drop = 0;                   /* current bits to drop from code for index */
-    low = (unsigned)(-1);       /* trigger new sub-table when len > root */
-    used = 1U << root;          /* use root table entries */
-    mask = used - 1;            /* mask for comparing low */
+    ਨੀਵਾਂ = (ਬਿਨਾਨਿਸ਼ਾਨੀ)(-1);       /* trigger new sub-table when len > root */
+    ਵਰਤਿਆ = 1U << ਜੜ੍ਹ;          /* use root table entries */
+    ਨਕਾਬ = ਵਰਤਿਆ - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used >= ENOUGH_LENS) ||
-        (type == DISTS && used >= ENOUGH_DISTS))
-        return 1;
+    ਜੇ ((type == LENS && ਵਰਤਿਆ >= ENOUGH_LENS) ||
+        (type == DISTS && ਵਰਤਿਆ >= ENOUGH_DISTS))
+        ਵਾਪਸ 1;
 
     /* process all codes and make table entries */
-    for (;;) {
+    ਲਈ (;;) {
         /* create table entry */
-        this.bits = (unsigned char)(len - drop);
-        if ((int)(work[sym]) < end) {
-            this.op = (unsigned char)0;
+        this.ਬਿੱਟ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(len - drop);
+        ਜੇ ((ਪੂਰਨ)(work[sym]) < ਸਿਰਾ) {
+            this.op = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)0;
             this.val = work[sym];
         }
-        else if ((int)(work[sym]) > end) {
-            this.op = (unsigned char)(extra[work[sym]]);
-            this.val = base[work[sym]];
+        ਨਹੀਂਤਾਂ ਜੇ ((ਪੂਰਨ)(work[sym]) > ਸਿਰਾ) {
+            this.op = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(extra[work[sym]]);
+            this.val = ਅਧਾਰ_2[work[sym]];
         }
-        else {
-            this.op = (unsigned char)(32 + 64);         /* end of block */
+        ਨਹੀਂਤਾਂ {
+            this.op = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(32 + 64);         /* end of block */
             this.val = 0;
         }
 
         /* replicate for those indices with low len bits equal to huff */
         incr = 1U << (len - drop);
         fill = 1U << curr;
-        do {
+        ਕਰੋ {
             fill -= incr;
-            next[(huff >> drop) + fill] = this;
-        } while (fill != 0);
+            ਅਗਲਾ[(huff >> drop) + fill] = this;
+        } ਜਦੋਂ (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        ਜਦੋਂ (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        ਜੇ (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        ਨਹੀਂਤਾਂ
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        ਜੇ (--(ਗਿਣਤੀ_2[len]) == 0) {
+            ਜੇ (len == max) ਰੋਕੋ;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        ਜੇ (len > ਜੜ੍ਹ && (huff & ਨਕਾਬ) != ਨੀਵਾਂ) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
-                drop = root;
+            ਜੇ (drop == 0)
+                drop = ਜੜ੍ਹ;
 
             /* increment past last table */
-            next += 1U << curr;
+            ਅਗਲਾ += 1U << curr;
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
-                left -= count[curr + drop];
-                if (left <= 0) break;
+            ਖੱਬਾ = (ਪੂਰਨ)(1 << curr);
+            ਜਦੋਂ (curr + drop < max) {
+                ਖੱਬਾ -= ਗਿਣਤੀ_2[curr + drop];
+                ਜੇ (ਖੱਬਾ <= 0) ਰੋਕੋ;
                 curr++;
-                left <<= 1;
+                ਖੱਬਾ <<= 1;
             }
 
             /* check for enough space */
-            used += 1U << curr;
-            if ((type == LENS && used >= ENOUGH_LENS) ||
-                (type == DISTS && used >= ENOUGH_DISTS))
-                return 1;
+            ਵਰਤਿਆ += 1U << curr;
+            ਜੇ ((type == LENS && ਵਰਤਿਆ >= ENOUGH_LENS) ||
+                (type == DISTS && ਵਰਤਿਆ >= ENOUGH_DISTS))
+                ਵਾਪਸ 1;
 
             /* point entry in root table to sub-table */
-            low = huff & mask;
-            (*table)[low].op = (unsigned char)curr;
-            (*table)[low].bits = (unsigned char)root;
-            (*table)[low].val = (unsigned short)(next - *table);
+            ਨੀਵਾਂ = huff & ਨਕਾਬ;
+            (*ਸਾਰਣੀ_2)[ਨੀਵਾਂ].op = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)curr;
+            (*ਸਾਰਣੀ_2)[ਨੀਵਾਂ].ਬਿੱਟ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)ਜੜ੍ਹ;
+            (*ਸਾਰਣੀ_2)[ਨੀਵਾਂ].val = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ)(ਅਗਲਾ - *ਸਾਰਣੀ_2);
         }
     }
 
@@ -284,36 +284,36 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
        through high index bits.  When the current sub-table is filled, the loop
        drops back to the root table to fill in any remaining entries there.
      */
-    this.op = (unsigned char)64;                /* invalid code marker */
-    this.bits = (unsigned char)(len - drop);
-    this.val = (unsigned short)0;
-    while (huff != 0) {
+    this.op = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)64;                /* invalid code marker */
+    this.ਬਿੱਟ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)(len - drop);
+    this.val = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ)0;
+    ਜਦੋਂ (huff != 0) {
         /* when done with sub-table, drop back to root table */
-        if (drop != 0 && (huff & mask) != low) {
+        ਜੇ (drop != 0 && (huff & ਨਕਾਬ) != ਨੀਵਾਂ) {
             drop = 0;
-            len = root;
-            next = *table;
-            curr = root;
-            this.bits = (unsigned char)len;
+            len = ਜੜ੍ਹ;
+            ਅਗਲਾ = *ਸਾਰਣੀ_2;
+            curr = ਜੜ੍ਹ;
+            this.ਬਿੱਟ = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)len;
         }
 
         /* put invalid code marker in table */
-        next[huff >> drop] = this;
+        ਅਗਲਾ[huff >> drop] = this;
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        ਜਦੋਂ (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        ਜੇ (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        ਨਹੀਂਤਾਂ
             huff = 0;
     }
 
     /* set return parameters */
-    *table += used;
-    *bits = root;
-    return 0;
+    *ਸਾਰਣੀ_2 += ਵਰਤਿਆ;
+    *ਬਿੱਟ = ਜੜ੍ਹ;
+    ਵਾਪਸ 0;
 }

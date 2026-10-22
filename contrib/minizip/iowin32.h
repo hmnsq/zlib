@@ -10,18 +10,18 @@
 
 */
 
-#include <windows.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <windows.h>
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __cplusplus
+ਬਾਹਰੀ "C" {
+#ਜੇ_ਅੰਤ
 
-void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def);
-void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def);
-void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def);
-void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def);
+ਖਾਲੀ fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def);
+ਖਾਲੀ fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def);
+ਖਾਲੀ fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def);
+ਖਾਲੀ fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def);
 
-#ifdef __cplusplus
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __cplusplus
 }
-#endif
+#ਜੇ_ਅੰਤ

@@ -18,107 +18,107 @@
 
 */
 
-#ifndef ZLIBIOAPI64_H
-#define ZLIBIOAPI64_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ZLIBIOAPI64_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIBIOAPI64_H
 
-#if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__)) && (!(defined(__ANDROID_API__) || __ANDROID_API__ >= 24))
+#ਜੇ (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__)) && (!(defined(__ANDROID_API__) || __ANDROID_API__ >= 24))
 
   /* Linux needs this to support file operation on files larger then 4+GB */
   /* But might need better if/def to select just the platforms that needs them.*/
 
-        #ifndef __USE_FILE_OFFSET64
-                #define __USE_FILE_OFFSET64
-        #endif
-        #ifndef __USE_LARGEFILE64
-                #define __USE_LARGEFILE64
-        #endif
-        #ifndef _LARGEFILE64_SOURCE
-                #define _LARGEFILE64_SOURCE
-        #endif
-        #ifndef _FILE_OFFSET_BIT
-                #define _FILE_OFFSET_BIT 64
-        #endif
+        #ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ __USE_FILE_OFFSET64
+                #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __USE_FILE_OFFSET64
+        #ਜੇ_ਅੰਤ
+        #ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ __USE_LARGEFILE64
+                #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __USE_LARGEFILE64
+        #ਜੇ_ਅੰਤ
+        #ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ LARGEFILE64_ਸਰੋਤ
+                #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LARGEFILE64_ਸਰੋਤ
+        #ਜੇ_ਅੰਤ
+        #ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FILE_ਵਿੱਥ_ਦੋਆਧਾਰੀ_ਅੰਕ
+                #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FILE_ਵਿੱਥ_ਦੋਆਧਾਰੀ_ਅੰਕ 64
+        #ਜੇ_ਅੰਤ
 
-#endif
+#ਜੇ_ਅੰਤ
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "zlib.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "zlib.h"
 
-#if defined(USE_FILE32API)
-#define fopen64 fopen
-#define ftello64 ftell
-#define fseeko64 fseek
-#else
-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
-#define fopen64 fopen
-#define ftello64 ftello
-#define fseeko64 fseeko
-#endif
-#ifdef _MSC_VER
- #define fopen64 fopen
- #if (_MSC_VER >= 1400) && (!(defined(NO_MSCVER_FILE64_FUNC)))
-  #define ftello64 _ftelli64
-  #define fseeko64 _fseeki64
- #else // old MSC
-  #define ftello64 ftell
-  #define fseeko64 fseek
- #endif
-#endif
-#endif
+#ਜੇ defined(USE_FILE32API)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ fopen64 fopen
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ftello64 ftell
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ fseeko64 fseek
+#ਨਹੀਂਤਾਂ
+#ਜੇ defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ fopen64 fopen
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ftello64 ftello
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ fseeko64 fseeko
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _MSC_VER
+ #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ fopen64 fopen
+ #ਜੇ (_MSC_VER >= 1400) && (!(defined(NO_MSCVER_FILE64_FUNC)))
+  #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ftello64 _ftelli64
+  #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ fseeko64 _fseeki64
+ #ਨਹੀਂਤਾਂ // old MSC
+  #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ftello64 ftell
+  #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ fseeko64 fseek
+ #ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
-#ifdef HAVE_MINIZIP64_CONF_H
-#include "mz64conf.h"
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_MINIZIP64_CONF_H
+#ਅਨ੍ਤਰ੍ਭਾਵ "mz64conf.h"
+#ਜੇ_ਅੰਤ
 
-#include "ints.h"
-typedef ui64_t ZPOS64_T;
+#ਅਨ੍ਤਰ੍ਭਾਵ "ints.h"
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ui64_t ZPOS64_T;
 
 /* Maximum unsigned 32-bit value used as placeholder for zip64 */
-#ifndef MAXU32
-#define MAXU32 (0xffffffff)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ MAXU32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAXU32 (0xffffffff)
+#ਜੇ_ਅੰਤ
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-#define ZLIB_FILEFUNC_SEEK_CUR (1)
-#define ZLIB_FILEFUNC_SEEK_END (2)
-#define ZLIB_FILEFUNC_SEEK_SET (0)
-
-#define ZLIB_FILEFUNC_MODE_READ      (1)
-#define ZLIB_FILEFUNC_MODE_WRITE     (2)
-#define ZLIB_FILEFUNC_MODE_READWRITEFILTER (3)
-
-#define ZLIB_FILEFUNC_MODE_EXISTING (4)
-#define ZLIB_FILEFUNC_MODE_CREATE   (8)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __cplusplus
+ਬਾਹਰੀ "C" {
+#ਜੇ_ਅੰਤ
 
 
-#ifndef ZCALLBACK
- #if (defined(WIN32) || defined(_WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
-   #define ZCALLBACK CALLBACK
- #else
-   #define ZCALLBACK
- #endif
-#endif
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_FILEFUNC_SEEK_CUR (1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_FILEFUNC_SEEK_ਸਿਰਾ (2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_FILEFUNC_SEEK_ਸੈੱਟ (0)
+
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_FILEFUNC_ਬਹੁਲਕ_READ      (1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_FILEFUNC_ਬਹੁਲਕ_WRITE     (2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_FILEFUNC_ਬਹੁਲਕ_READWRITEFILTER (3)
+
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_FILEFUNC_ਬਹੁਲਕ_EXISTING (4)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_FILEFUNC_ਬਹੁਲਕ_CREATE   (8)
+
+
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ZCALLBACK
+ #ਜੇ (defined(WIN32) || defined(_WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
+   #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZCALLBACK CALLBACK
+ #ਨਹੀਂਤਾਂ
+   #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZCALLBACK
+ #ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
 
 
 
-typedef voidpf   (ZCALLBACK *open_file_func)      (voidpf opaque, const char* filename, int mode);
-typedef uLong    (ZCALLBACK *read_file_func)      (voidpf opaque, voidpf stream, void* buf, uLong size);
-typedef uLong    (ZCALLBACK *write_file_func)     (voidpf opaque, voidpf stream, const void* buf, uLong size);
-typedef int      (ZCALLBACK *close_file_func)     (voidpf opaque, voidpf stream);
-typedef int      (ZCALLBACK *testerror_file_func) (voidpf opaque, voidpf stream);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ voidpf   (ZCALLBACK *open_file_func)      (voidpf opaque, ਅਚਲ ਅੱਖਰ* filename, ਪੂਰਨ ਬਹੁਲਕ);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ uLong    (ZCALLBACK *read_file_func)      (voidpf opaque, voidpf ਧਾਰਾ, ਖਾਲੀ* buf, uLong ਮਾਪ);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ uLong    (ZCALLBACK *write_file_func)     (voidpf opaque, voidpf ਧਾਰਾ, ਅਚਲ ਖਾਲੀ* buf, uLong ਮਾਪ);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ      (ZCALLBACK *close_file_func)     (voidpf opaque, voidpf ਧਾਰਾ);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ      (ZCALLBACK *testerror_file_func) (voidpf opaque, voidpf ਧਾਰਾ);
 
-typedef long     (ZCALLBACK *tell_file_func)      (voidpf opaque, voidpf stream);
-typedef long     (ZCALLBACK *seek_file_func)      (voidpf opaque, voidpf stream, uLong offset, int origin);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਲੰਮਾ     (ZCALLBACK *tell_file_func)      (voidpf opaque, voidpf ਧਾਰਾ);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਲੰਮਾ     (ZCALLBACK *seek_file_func)      (voidpf opaque, voidpf ਧਾਰਾ, uLong ਵਿੱਥ, ਪੂਰਨ origin);
 
 
 /* here is the "old" 32 bits structure */
-typedef struct zlib_filefunc_def_s
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ zlib_filefunc_def_s
 {
     open_file_func      zopen_file;
     read_file_func      zread_file;
@@ -130,11 +130,11 @@ typedef struct zlib_filefunc_def_s
     voidpf              opaque;
 } zlib_filefunc_def;
 
-typedef ZPOS64_T (ZCALLBACK *tell64_file_func)    (voidpf opaque, voidpf stream);
-typedef long     (ZCALLBACK *seek64_file_func)    (voidpf opaque, voidpf stream, ZPOS64_T offset, int origin);
-typedef voidpf   (ZCALLBACK *open64_file_func)    (voidpf opaque, const void* filename, int mode);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ZPOS64_T (ZCALLBACK *tell64_file_func)    (voidpf opaque, voidpf ਧਾਰਾ);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਲੰਮਾ     (ZCALLBACK *seek64_file_func)    (voidpf opaque, voidpf ਧਾਰਾ, ZPOS64_T ਵਿੱਥ, ਪੂਰਨ origin);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ voidpf   (ZCALLBACK *open64_file_func)    (voidpf opaque, ਅਚਲ ਖਾਲੀ* filename, ਪੂਰਨ ਬਹੁਲਕ);
 
-typedef struct zlib_filefunc64_def_s
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ zlib_filefunc64_def_s
 {
     open64_file_func    zopen64_file;
     read_file_func      zread_file;
@@ -146,11 +146,11 @@ typedef struct zlib_filefunc64_def_s
     voidpf              opaque;
 } zlib_filefunc64_def;
 
-void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def);
-void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def);
+ਖਾਲੀ fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def);
+ਖਾਲੀ fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def);
 
 /* now internal definition, only for zip.c and unzip.h */
-typedef struct zlib_filefunc64_32_def_s
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ zlib_filefunc64_32_def_s
 {
     zlib_filefunc64_def zfile_func64;
     open_file_func      zopen32_file;
@@ -159,25 +159,25 @@ typedef struct zlib_filefunc64_32_def_s
 } zlib_filefunc64_32_def;
 
 
-#define ZREAD64(filefunc,filestream,buf,size)     ((*((filefunc).zfile_func64.zread_file))   ((filefunc).zfile_func64.opaque,filestream,buf,size))
-#define ZWRITE64(filefunc,filestream,buf,size)    ((*((filefunc).zfile_func64.zwrite_file))  ((filefunc).zfile_func64.opaque,filestream,buf,size))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZREAD64(filefunc,filestream,buf,ਮਾਪ)     ((*((filefunc).zfile_func64.zread_file))   ((filefunc).zfile_func64.opaque,filestream,buf,ਮਾਪ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZWRITE64(filefunc,filestream,buf,ਮਾਪ)    ((*((filefunc).zfile_func64.zwrite_file))  ((filefunc).zfile_func64.opaque,filestream,buf,ਮਾਪ))
 /*#define ZTELL64(filefunc,filestream)            ((*((filefunc).ztell64_file)) ((filefunc).opaque,filestream)) */
 /*#define ZSEEK64(filefunc,filestream,pos,mode)   ((*((filefunc).zseek64_file)) ((filefunc).opaque,filestream,pos,mode)) */
-#define ZCLOSE64(filefunc,filestream)             ((*((filefunc).zfile_func64.zclose_file))  ((filefunc).zfile_func64.opaque,filestream))
-#define ZERROR64(filefunc,filestream)             ((*((filefunc).zfile_func64.zerror_file))  ((filefunc).zfile_func64.opaque,filestream))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZCLOSE64(filefunc,filestream)             ((*((filefunc).zfile_func64.zclose_file))  ((filefunc).zfile_func64.opaque,filestream))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZERROR64(filefunc,filestream)             ((*((filefunc).zfile_func64.zerror_file))  ((filefunc).zfile_func64.opaque,filestream))
 
-voidpf call_zopen64(const zlib_filefunc64_32_def* pfilefunc,const void*filename,int mode);
-long call_zseek64(const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, int origin);
-ZPOS64_T call_ztell64(const zlib_filefunc64_32_def* pfilefunc,voidpf filestream);
+voidpf call_zopen64(ਅਚਲ zlib_filefunc64_32_def* pfilefunc,ਅਚਲ ਖਾਲੀ*filename,ਪੂਰਨ ਬਹੁਲਕ);
+ਲੰਮਾ call_zseek64(ਅਚਲ zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T ਵਿੱਥ, ਪੂਰਨ origin);
+ZPOS64_T call_ztell64(ਅਚਲ zlib_filefunc64_32_def* pfilefunc,voidpf filestream);
 
-void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32,const zlib_filefunc_def* p_filefunc32);
+ਖਾਲੀ fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32,ਅਚਲ zlib_filefunc_def* p_filefunc32);
 
-#define ZOPEN64(filefunc,filename,mode)         (call_zopen64((&(filefunc)),(filename),(mode)))
-#define ZTELL64(filefunc,filestream)            (call_ztell64((&(filefunc)),(filestream)))
-#define ZSEEK64(filefunc,filestream,pos,mode)   (call_zseek64((&(filefunc)),(filestream),(pos),(mode)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZOPEN64(filefunc,filename,ਬਹੁਲਕ)         (call_zopen64((&(filefunc)),(filename),(ਬਹੁਲਕ)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZTELL64(filefunc,filestream)            (call_ztell64((&(filefunc)),(filestream)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZSEEK64(filefunc,filestream,pos,ਬਹੁਲਕ)   (call_zseek64((&(filefunc)),(filestream),(pos),(ਬਹੁਲਕ)))
 
-#ifdef __cplusplus
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __cplusplus
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#endif
+#ਜੇ_ਅੰਤ

@@ -79,7 +79,7 @@ check_include_file(unistd.h HAVE_UNISTD_H)
 #
 # Check to see if we have large file support
 #
-set(CMAKE_REQUIRED_DEFINITIONS -D_LARGEFILE64_SOURCE=1)
+set(CMAKE_REQUIRED_DEFINITIONS -DLARGEFILE64_ਸਰੋਤ=1)
 check_type_size(off64_t OFF64_T)
 unset(CMAKE_REQUIRED_DEFINITIONS) # clear variable
 

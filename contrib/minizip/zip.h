@@ -36,86 +36,86 @@
 
  */
 
-#ifndef _zip12_H
-#define _zip12_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _zip12_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _zip12_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __cplusplus
+ਬਾਹਰੀ "C" {
+#ਜੇ_ਅੰਤ
 
 /* #define HAVE_BZIP2 */
 
-#ifndef _ZLIB_H
-#include "zlib.h"
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _ZLIB_H
+#ਅਨ੍ਤਰ੍ਭਾਵ "zlib.h"
+#ਜੇ_ਅੰਤ
 
-#ifndef _ZLIBIOAPI_H
-#include "ioapi.h"
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _ZLIBIOAPI_H
+#ਅਨ੍ਤਰ੍ਭਾਵ "ioapi.h"
+#ਜੇ_ਅੰਤ
 
-#ifdef HAVE_BZIP2
-#include "bzlib.h"
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_BZIP2
+#ਅਨ੍ਤਰ੍ਭਾਵ "bzlib.h"
+#ਜੇ_ਅੰਤ
 
-#define Z_BZIP2ED 12
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ Z_BZIP2ED 12
 
-#if defined(STRICTZIP) || defined(STRICTZIPUNZIP)
+#ਜੇ defined(STRICTZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
-typedef struct TagzipFile__ { int unused; } zipFile__;
-typedef zipFile__ *zipFile;
-#else
-typedef voidp zipFile;
-#endif
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ TagzipFile__ { ਪੂਰਨ ਅਣਵਰਤਿਆ; } zipFile__;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ zipFile__ *zipFile;
+#ਨਹੀਂਤਾਂ
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ voidp zipFile;
+#ਜੇ_ਅੰਤ
 
-extern const char zip_copyright[];
+ਬਾਹਰੀ ਅਚਲ ਅੱਖਰ zip_copyright[];
 
-#define ZIP_OK                          (0)
-#define ZIP_EOF                         (0)
-#define ZIP_ERRNO                       (Z_ERRNO)
-#define ZIP_PARAMERROR                  (-102)
-#define ZIP_BADZIPFILE                  (-103)
-#define ZIP_INTERNALERROR               (-104)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZIP_OK                          (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZIP_EOF                         (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZIP_ERRNO                       (Z_ERRNO)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZIP_PARAMERROR                  (-102)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZIP_BADZIPFILE                  (-103)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZIP_INTERNALERROR               (-104)
 
-#ifndef DEF_MEM_LEVEL
-#  if MAX_MEM_LEVEL >= 8
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ DEF_MEM_LEVEL
+#  ਜੇ MAX_MEM_LEVEL >= 8
 #    define DEF_MEM_LEVEL 8
-#  else
+#  ਨਹੀਂਤਾਂ
 #    define DEF_MEM_LEVEL  MAX_MEM_LEVEL
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 /* default memLevel */
 
 /* tm_zip contain date/time info */
-typedef struct tm_zip_s
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ tm_zip_s
 {
-    int tm_sec;             /* seconds after the minute - [0,59] */
-    int tm_min;             /* minutes after the hour - [0,59] */
-    int tm_hour;            /* hours since midnight - [0,23] */
-    int tm_mday;            /* day of the month - [1,31] */
-    int tm_mon;             /* months since January - [0,11] */
-    int tm_year;            /* years - [1980..2044] */
+    ਪੂਰਨ tm_sec;             /* seconds after the minute - [0,59] */
+    ਪੂਰਨ tm_min;             /* minutes after the hour - [0,59] */
+    ਪੂਰਨ tm_hour;            /* hours since midnight - [0,23] */
+    ਪੂਰਨ tm_mday;            /* day of the month - [1,31] */
+    ਪੂਰਨ tm_mon;             /* months since January - [0,11] */
+    ਪੂਰਨ tm_year;            /* years - [1980..2044] */
 } tm_zip;
 
-typedef struct
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ
 {
     tm_zip      tmz_date;       /* date in understandable format           */
     uLong       dosDate;       /* if dos_date == 0, tmu_date is used      */
 /*    uLong       flag;        */   /* general purpose bit flag        2 bytes */
 
-    uLong       internal_fa;    /* internal file attributes        2 bytes */
+    uLong       ਅੰਦਰੂਨੀ_fa;    /* internal file attributes        2 bytes */
     uLong       external_fa;    /* external file attributes        4 bytes */
 } zip_fileinfo;
 
-typedef const char* zipcharpc;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਅਚਲ ਅੱਖਰ* zipcharpc;
 
 
-#define APPEND_STATUS_CREATE        (0)
-#define APPEND_STATUS_CREATEAFTER   (1)
-#define APPEND_STATUS_ADDINZIP      (2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ APPEND_ਸਥਿਤੀ_CREATE        (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ APPEND_ਸਥਿਤੀ_CREATEAFTER   (1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ APPEND_ਸਥਿਤੀ_ADDINZIP      (2)
 
-extern zipFile ZEXPORT zipOpen(const char *pathname, int append);
-extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
+ਬਾਹਰੀ zipFile ZEXPORT zipOpen(ਅਚਲ ਅੱਖਰ *pathname, ਪੂਰਨ append);
+ਬਾਹਰੀ zipFile ZEXPORT zipOpen64(ਅਚਲ ਖਾਲੀ *pathname, ਪੂਰਨ append);
 /*
   Create a zipfile.
      pathname contain on Windows XP a filename like "c:\\zlib\\zlib113.zip" or on
@@ -135,43 +135,43 @@ extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
    Of course, you can use RAW reading and writing to copy the file you did not want delete
  */
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname,
-                                int append,
+ਬਾਹਰੀ zipFile ZEXPORT zipOpen2(ਅਚਲ ਅੱਖਰ *pathname,
+                                ਪੂਰਨ append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname,
-                                   int append,
+ਬਾਹਰੀ zipFile ZEXPORT zipOpen2_64(ਅਚਲ ਖਾਲੀ *pathname,
+                                   ਪੂਰਨ append,
                                    zipcharpc* globalcomment,
                                    zlib_filefunc64_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen3(const void *pathname,
-                                int append,
+ਬਾਹਰੀ zipFile ZEXPORT zipOpen3(ਅਚਲ ਖਾਲੀ *pathname,
+                                ਪੂਰਨ append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc64_32_def* pzlib_filefunc64_32_def);
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file,
-                                       const char* filename,
-                                       const zip_fileinfo* zipfi,
-                                       const void* extrafield_local,
-                                       uInt size_extrafield_local,
-                                       const void* extrafield_global,
-                                       uInt size_extrafield_global,
-                                       const char* comment,
-                                       int method,
-                                       int level);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Open_New_File_ਵਿੱਚ_Zip(zipFile file,
+                                       ਅਚਲ ਅੱਖਰ* filename,
+                                       ਅਚਲ zip_fileinfo* zipfi,
+                                       ਅਚਲ ਖਾਲੀ* extrafield_local,
+                                       uInt ਮਾਪ_extrafield_local,
+                                       ਅਚਲ ਖਾਲੀ* extrafield_global,
+                                       uInt ਮਾਪ_extrafield_global,
+                                       ਅਚਲ ਅੱਖਰ* comment,
+                                       ਪੂਰਨ ਵਿਧੀ_2,
+                                       ਪੂਰਨ level);
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
-                                         const char* filename,
-                                         const zip_fileinfo* zipfi,
-                                         const void* extrafield_local,
-                                         uInt size_extrafield_local,
-                                         const void* extrafield_global,
-                                         uInt size_extrafield_global,
-                                         const char* comment,
-                                         int method,
-                                         int level,
-                                         int zip64);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Open_New_File_ਵਿੱਚ_Zip64(zipFile file,
+                                         ਅਚਲ ਅੱਖਰ* filename,
+                                         ਅਚਲ zip_fileinfo* zipfi,
+                                         ਅਚਲ ਖਾਲੀ* extrafield_local,
+                                         uInt ਮਾਪ_extrafield_local,
+                                         ਅਚਲ ਖਾਲੀ* extrafield_global,
+                                         uInt ਮਾਪ_extrafield_global,
+                                         ਅਚਲ ਅੱਖਰ* comment,
+                                         ਪੂਰਨ ਵਿਧੀ_2,
+                                         ਪੂਰਨ level,
+                                         ਪੂਰਨ zip64);
 
 /*
   Open a file in the ZIP for writing.
@@ -190,69 +190,69 @@ extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
  */
 
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
-                                        uInt size_extrafield_local,
-                                        const void* extrafield_global,
-                                        uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Open_New_File_ਵਿੱਚ_Zip2(zipFile file,
+                                        ਅਚਲ ਅੱਖਰ* filename,
+                                        ਅਚਲ zip_fileinfo* zipfi,
+                                        ਅਚਲ ਖਾਲੀ* extrafield_local,
+                                        uInt ਮਾਪ_extrafield_local,
+                                        ਅਚਲ ਖਾਲੀ* extrafield_global,
+                                        uInt ਮਾਪ_extrafield_global,
+                                        ਅਚਲ ਅੱਖਰ* comment,
+                                        ਪੂਰਨ ਵਿਧੀ_2,
+                                        ਪੂਰਨ level,
+                                        ਪੂਰਨ raw);
 
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
-                                           uInt size_extrafield_local,
-                                           const void* extrafield_global,
-                                           uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int zip64);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Open_New_File_ਵਿੱਚ_Zip2_64(zipFile file,
+                                           ਅਚਲ ਅੱਖਰ* filename,
+                                           ਅਚਲ zip_fileinfo* zipfi,
+                                           ਅਚਲ ਖਾਲੀ* extrafield_local,
+                                           uInt ਮਾਪ_extrafield_local,
+                                           ਅਚਲ ਖਾਲੀ* extrafield_global,
+                                           uInt ਮਾਪ_extrafield_global,
+                                           ਅਚਲ ਅੱਖਰ* comment,
+                                           ਪੂਰਨ ਵਿਧੀ_2,
+                                           ਪੂਰਨ level,
+                                           ਪੂਰਨ raw,
+                                           ਪੂਰਨ zip64);
 /*
   Same than zipOpenNewFileInZip, except if raw=1, we write raw file
  */
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
-                                        uInt size_extrafield_local,
-                                        const void* extrafield_global,
-                                        uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
-                                        uLong crcForCrypting);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Open_New_File_ਵਿੱਚ_Zip3(zipFile file,
+                                        ਅਚਲ ਅੱਖਰ* filename,
+                                        ਅਚਲ zip_fileinfo* zipfi,
+                                        ਅਚਲ ਖਾਲੀ* extrafield_local,
+                                        uInt ਮਾਪ_extrafield_local,
+                                        ਅਚਲ ਖਾਲੀ* extrafield_global,
+                                        uInt ਮਾਪ_extrafield_global,
+                                        ਅਚਲ ਅੱਖਰ* comment,
+                                        ਪੂਰਨ ਵਿਧੀ_2,
+                                        ਪੂਰਨ level,
+                                        ਪੂਰਨ raw,
+                                        ਪੂਰਨ ਖਿੜਕੀ_ਬਿੱਟ,
+                                        ਪੂਰਨ memLevel,
+                                        ਪੂਰਨ strategy,
+                                        ਅਚਲ ਅੱਖਰ* password,
+                                        uLong ਚੱਕਰੀ_ਜਾਂਚ_For_Crypting);
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
-                                           uInt size_extrafield_local,
-                                           const void* extrafield_global,
-                                           uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
-                                           uLong crcForCrypting,
-                                           int zip64);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Open_New_File_ਵਿੱਚ_Zip3_64(zipFile file,
+                                           ਅਚਲ ਅੱਖਰ* filename,
+                                           ਅਚਲ zip_fileinfo* zipfi,
+                                           ਅਚਲ ਖਾਲੀ* extrafield_local,
+                                           uInt ਮਾਪ_extrafield_local,
+                                           ਅਚਲ ਖਾਲੀ* extrafield_global,
+                                           uInt ਮਾਪ_extrafield_global,
+                                           ਅਚਲ ਅੱਖਰ* comment,
+                                           ਪੂਰਨ ਵਿਧੀ_2,
+                                           ਪੂਰਨ level,
+                                           ਪੂਰਨ raw,
+                                           ਪੂਰਨ ਖਿੜਕੀ_ਬਿੱਟ,
+                                           ਪੂਰਨ memLevel,
+                                           ਪੂਰਨ strategy,
+                                           ਅਚਲ ਅੱਖਰ* password,
+                                           uLong ਚੱਕਰੀ_ਜਾਂਚ_For_Crypting,
+                                           ਪੂਰਨ zip64);
 
 /*
   Same than zipOpenNewFileInZip2, except
@@ -261,45 +261,45 @@ extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
     crcForCrypting : crc of file to compress (needed for crypting)
  */
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
-                                        uInt size_extrafield_local,
-                                        const void* extrafield_global,
-                                        uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
-                                        uLong crcForCrypting,
-                                        uLong versionMadeBy,
-                                        uLong flagBase);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Open_New_File_ਵਿੱਚ_Zip4(zipFile file,
+                                        ਅਚਲ ਅੱਖਰ* filename,
+                                        ਅਚਲ zip_fileinfo* zipfi,
+                                        ਅਚਲ ਖਾਲੀ* extrafield_local,
+                                        uInt ਮਾਪ_extrafield_local,
+                                        ਅਚਲ ਖਾਲੀ* extrafield_global,
+                                        uInt ਮਾਪ_extrafield_global,
+                                        ਅਚਲ ਅੱਖਰ* comment,
+                                        ਪੂਰਨ ਵਿਧੀ_2,
+                                        ਪੂਰਨ level,
+                                        ਪੂਰਨ raw,
+                                        ਪੂਰਨ ਖਿੜਕੀ_ਬਿੱਟ,
+                                        ਪੂਰਨ memLevel,
+                                        ਪੂਰਨ strategy,
+                                        ਅਚਲ ਅੱਖਰ* password,
+                                        uLong ਚੱਕਰੀ_ਜਾਂਚ_For_Crypting,
+                                        uLong ਸੰਸਕਰਣ_Made_By_2,
+                                        uLong flag_ਅਧਾਰ);
 
 
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
-                                           uInt size_extrafield_local,
-                                           const void* extrafield_global,
-                                           uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
-                                           uLong crcForCrypting,
-                                           uLong versionMadeBy,
-                                           uLong flagBase,
-                                           int zip64);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Open_New_File_ਵਿੱਚ_Zip4_64(zipFile file,
+                                           ਅਚਲ ਅੱਖਰ* filename,
+                                           ਅਚਲ zip_fileinfo* zipfi,
+                                           ਅਚਲ ਖਾਲੀ* extrafield_local,
+                                           uInt ਮਾਪ_extrafield_local,
+                                           ਅਚਲ ਖਾਲੀ* extrafield_global,
+                                           uInt ਮਾਪ_extrafield_global,
+                                           ਅਚਲ ਅੱਖਰ* comment,
+                                           ਪੂਰਨ ਵਿਧੀ_2,
+                                           ਪੂਰਨ level,
+                                           ਪੂਰਨ raw,
+                                           ਪੂਰਨ ਖਿੜਕੀ_ਬਿੱਟ,
+                                           ਪੂਰਨ memLevel,
+                                           ਪੂਰਨ strategy,
+                                           ਅਚਲ ਅੱਖਰ* password,
+                                           uLong ਚੱਕਰੀ_ਜਾਂਚ_For_Crypting,
+                                           uLong ਸੰਸਕਰਣ_Made_By_2,
+                                           uLong flag_ਅਧਾਰ,
+                                           ਪੂਰਨ zip64);
 /*
   Same than zipOpenNewFileInZip4, except
     versionMadeBy : value for Version made by field
@@ -307,28 +307,28 @@ extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
  */
 
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file,
-                                       const void* buf,
-                                       unsigned len);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Write_ਵਿੱਚ_File_ਵਿੱਚ_Zip(zipFile file,
+                                       ਅਚਲ ਖਾਲੀ* buf,
+                                       ਬਿਨਾਨਿਸ਼ਾਨੀ len);
 /*
   Write data in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Close_File_ਵਿੱਚ_Zip(zipFile file);
 /*
   Close the current file in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file,
-                                        uLong uncompressed_size,
-                                        uLong crc32);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Close_File_ਵਿੱਚ_Zip_Raw(zipFile file,
+                                        uLong uncompressed_ਮਾਪ,
+                                        uLong ਚੱਕਰੀ_ਜਾਂਚ_32_2);
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file,
-                                          ZPOS64_T uncompressed_size,
-                                          uLong crc32);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Close_File_ਵਿੱਚ_Zip_Raw64(zipFile file,
+                                          ZPOS64_T uncompressed_ਮਾਪ,
+                                          uLong ਚੱਕਰੀ_ਜਾਂਚ_32_2);
 
-extern int ZEXPORT zipAlreadyThere(zipFile file,
-                                   char const* name);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zipAlreadyThere(zipFile file,
+                                   ਅੱਖਰ ਅਚਲ* name);
 /*
   See if name is already in file's central directory.
  */
@@ -339,14 +339,14 @@ extern int ZEXPORT zipAlreadyThere(zipFile file,
   uncompressed_size and crc32 are value for the uncompressed size
  */
 
-extern int ZEXPORT zipClose(zipFile file,
-                            const char* global_comment);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zipClose(zipFile file,
+                            ਅਚਲ ਅੱਖਰ* global_comment);
 /*
   Close the zipfile
  */
 
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader);
+ਬਾਹਰੀ ਪੂਰਨ ZEXPORT zip_Remove_Extra_Info_ਖੰਡ(ਅੱਖਰ* p_ਅੰਕੜੇ, ਪੂਰਨ* ਅੰਕੜੇ_Len, ਛੋਟਾ s_ਸਿਰਲੇਖ);
 /*
   zipRemoveExtraInfoBlock -  Added by Mathias Svensson
 
@@ -364,8 +364,8 @@ extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHea
         zipRemoveExtraInfoBlock(pLocalHeaderExtraFieldData, &nLocalHeaderExtraFieldDataLen, 0x0001);
  */
 
-#ifdef __cplusplus
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __cplusplus
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#endif /* _zip64_H */
+#ਜੇ_ਅੰਤ /* _zip64_H */

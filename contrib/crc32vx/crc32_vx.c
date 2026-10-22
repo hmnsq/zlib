@@ -11,31 +11,31 @@
  * <brueckner@linux.vnet.ibm.com> for use in the Linux kernel and has been
  * relicensed under the zlib license.
  */
-#define Z_ONCE
-#include "../../zutil.h"
-#include "crc32_vx_hooks.h"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ Z_ONCE
+#ਅਨ੍ਤਰ੍ਭਾਵ "../../zutil.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "crc32_vx_hooks.h"
 
-#include <stdint.h>
-#include <stdio.h>
-#include <vecintrin.h>
-#include <sys/auxv.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <vecintrin.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/auxv.h>
 
-#ifdef __clang__
-#  if ((__clang_major__ == 18) || (__clang_major__ == 19 && (__clang_minor__ < 1 || (__clang_minor__ == 1 && __clang_patchlevel__ < 2))))
-# error crc32_vx optimizations are broken due to compiler bug in Clang versions: 18.0.0 <= clang_version < 19.1.2. \
-        Either disable the zlib crc32_vx optimization, or switch to another compiler/compiler version.
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __clang__
+#  ਜੇ ((__clang_major__ == 18) || (__clang_major__ == 19 && (__clang_minor__ < 1 || (__clang_minor__ == 1 && __clang_patchlevel__ < 2))))
+# error ਚੱਕਰੀ_ਜਾਂਚ_32_vx optimizations are broken due ਮੰਜ਼ਿਲ compiler bug ਵਿੱਚ Clang versions: 18.0.0 <= clang_ਸੰਸਕਰਣ < 19.1.2. \
+        Either disable the zlib ਚੱਕਰੀ_ਜਾਂਚ_32_vx optimization, or ਚੋਣ ਮੰਜ਼ਿਲ another compiler/compiler ਸੰਸਕਰਣ.
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#define VX_MIN_LEN 64
-#define VX_ALIGNMENT 16L
-#define VX_ALIGN_MASK (VX_ALIGNMENT - 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ VX_MIN_LEN 64
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ VX_ALIGNMENT 16L
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ VX_ALIGN_ਨਕਾਬ (VX_ALIGNMENT - 1)
 
-typedef unsigned char uv16qi __attribute__((vector_size(16)));
-typedef unsigned int uv4si __attribute__((vector_size(16)));
-typedef unsigned long long uv2di __attribute__((vector_size(16)));
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ uv16qi __attribute__((ਸਦਿਸ਼_ਮਾਪ(16)));
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ uv4si __attribute__((ਸਦਿਸ਼_ਮਾਪ(16)));
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ uv2di __attribute__((ਸਦਿਸ਼_ਮਾਪ(16)));
 
-local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t len) {
+local uint32_t ਚੱਕਰੀ_ਜਾਂਚ_32_le_vgfm_16(uint32_t ਚੱਕਰੀ_ਜਾਂਚ, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *buf, size_t len) {
     /*
      * The CRC-32 constant block contains reduction constants to fold and
      * process particular chunks of the input data stream in parallel.
@@ -61,12 +61,12 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      *      P(x)  = 0x04C11DB7
      *      P'(x) = 0xEDB88320
      */
-    const uv16qi perm_le2be = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};  /* BE->LE mask */
-    const uv2di r2r1 = {0x1C6E41596, 0x154442BD4};                                     /* R2, R1 */
-    const uv2di r4r3 = {0x0CCAA009E, 0x1751997D0};                                     /* R4, R3 */
-    const uv2di r5 = {0, 0x163CD6124};                                                 /* R5 */
-    const uv2di ru_poly = {0, 0x1F7011641};                                            /* u' */
-    const uv2di crc_poly = {0, 0x1DB710641};                                           /* P'(x) << 1 */
+    ਅਚਲ uv16qi perm_le2be = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};  /* BE->LE mask */
+    ਅਚਲ uv2di r2r1 = {0x1C6E41596, 0x154442BD4};                                     /* R2, R1 */
+    ਅਚਲ uv2di r4r3 = {0x0CCAA009E, 0x1751997D0};                                     /* R4, R3 */
+    ਅਚਲ uv2di r5 = {0, 0x163CD6124};                                                 /* R5 */
+    ਅਚਲ uv2di ru_poly = {0, 0x1F7011641};                                            /* u' */
+    ਅਚਲ uv2di ਚੱਕਰੀ_ਜਾਂਚ_poly = {0, 0x1DB710641};                                           /* P'(x) << 1 */
 
     /*
      * Load the initial CRC value.
@@ -76,7 +76,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * of the loaded input data.
      */
     uv2di v0 = {0, 0};
-    v0 = (uv2di)vec_insert(crc, (uv4si)v0, 3);
+    v0 = (uv2di)vec_ਪਾਓ(ਚੱਕਰੀ_ਜਾਂਚ, (uv4si)v0, 3);
 
     /* Load a 64-byte data chunk and XOR with CRC */
     uv2di v1 = vec_perm(((uv2di *)buf)[0], ((uv2di *)buf)[0], perm_le2be);
@@ -88,7 +88,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     buf += 64;
     len -= 64;
 
-    while (len >= 64) {
+    ਜਦੋਂ (len >= 64) {
         /* Load the next 64-byte data chunk */
         uv16qi part1 = vec_perm(((uv16qi *)buf)[0], ((uv16qi *)buf)[0], perm_le2be);
         uv16qi part2 = vec_perm(((uv16qi *)buf)[1], ((uv16qi *)buf)[1], perm_le2be);
@@ -120,7 +120,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     v1 = (uv2di)vec_gfmsum_accum_128(r4r3, v1, (uv16qi)v3);
     v1 = (uv2di)vec_gfmsum_accum_128(r4r3, v1, (uv16qi)v4);
 
-    while (len >= 16) {
+    ਜਦੋਂ (len >= 16) {
         /* Load next data chunk */
         v2 = vec_perm(*(uv2di *)buf, *(uv2di *)buf, perm_le2be);
 
@@ -138,7 +138,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * Shift by 4 bytes: 0x20
      */
     uv16qi v9 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    v9 = vec_insert((unsigned char)0x40, v9, 7);
+    v9 = vec_ਪਾਓ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)0x40, v9, 7);
 
     /*
      * Prepare V0 for the next GF(2) multiplication: shift V0 by 8 bytes
@@ -169,7 +169,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * rightmost doubleword and the leftmost doubleword is zero to ignore
      * the leftmost product of V1.
      */
-    v9 = vec_insert((unsigned char)0x20, v9, 7);
+    v9 = vec_ਪਾਓ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)0x20, v9, 7);
     v2 = vec_srb(v1, (uv2di)v9);
     v1 = vec_unpackl((uv4si)v1);  /* Split rightmost doubleword */
     v1 = (uv2di)vec_gfmsum_accum_128(r5, v1, (uv16qi)v2);
@@ -203,52 +203,52 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * The final result is stored in word element 2 of V2.
      */
     v2 = vec_unpackl((uv4si)v2);
-    v2 = (uv2di)vec_gfmsum_accum_128(crc_poly, v2, (uv16qi)v1);
+    v2 = (uv2di)vec_gfmsum_accum_128(ਚੱਕਰੀ_ਜਾਂਚ_poly, v2, (uv16qi)v1);
 
-    return ((uv4si)v2)[2];
+    ਵਾਪਸ ((uv4si)v2)[2];
 }
 
 
-local unsigned long s390_crc32_vx(unsigned long crc, const unsigned char FAR *buf, z_size_t len)
+local ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ s390_ਚੱਕਰੀ_ਜਾਂਚ_32_vx(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਚੱਕਰੀ_ਜਾਂਚ, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ FAR *buf, z_ਮਾਪ_t len)
 {
-    uintptr_t prealign, aligned, remaining;
+    uintptr_t prealign, aligned, ਬਚਿਆ;
 
-    if (buf == Z_NULL) return 0UL;
+    ਜੇ (buf == Z_NULL) ਵਾਪਸ 0UL;
 
-    if (len < VX_MIN_LEN + VX_ALIGN_MASK)
-        return crc32_z(crc, buf, len);
+    ਜੇ (len < VX_MIN_LEN + VX_ALIGN_ਨਕਾਬ)
+        ਵਾਪਸ ਚੱਕਰੀ_ਜਾਂਚ_32_z(ਚੱਕਰੀ_ਜਾਂਚ, buf, len);
 
-    if ((uintptr_t)buf & VX_ALIGN_MASK) {
-        prealign = VX_ALIGNMENT - ((uintptr_t)buf & VX_ALIGN_MASK);
+    ਜੇ ((uintptr_t)buf & VX_ALIGN_ਨਕਾਬ) {
+        prealign = VX_ALIGNMENT - ((uintptr_t)buf & VX_ALIGN_ਨਕਾਬ);
         len -= prealign;
-        crc = crc32_z(crc, buf, prealign);
+        ਚੱਕਰੀ_ਜਾਂਚ = ਚੱਕਰੀ_ਜਾਂਚ_32_z(ਚੱਕਰੀ_ਜਾਂਚ, buf, prealign);
         buf += prealign;
     }
-    aligned = len & ~VX_ALIGN_MASK;
-    remaining = len & VX_ALIGN_MASK;
+    aligned = len & ~VX_ALIGN_ਨਕਾਬ;
+    ਬਚਿਆ = len & VX_ALIGN_ਨਕਾਬ;
 
-    crc = crc32_le_vgfm_16(crc ^ 0xffffffff, buf, (size_t)aligned) ^ 0xffffffff;
+    ਚੱਕਰੀ_ਜਾਂਚ = ਚੱਕਰੀ_ਜਾਂਚ_32_le_vgfm_16(ਚੱਕਰੀ_ਜਾਂਚ ^ 0xffffffff, buf, (size_t)aligned) ^ 0xffffffff;
 
-    if (remaining)
-        crc = crc32_z(crc, buf + aligned, remaining);
+    ਜੇ (ਬਚਿਆ)
+        ਚੱਕਰੀ_ਜਾਂਚ = ਚੱਕਰੀ_ਜਾਂਚ_32_z(ਚੱਕਰੀ_ਜਾਂਚ, buf + aligned, ਬਚਿਆ);
 
-    return crc;
+    ਵਾਪਸ ਚੱਕਰੀ_ਜਾਂਚ;
 }
 
-local z_once_t s390_crc32_made = Z_ONCE_INIT;
-local void s390_crc32_setup() {
-    unsigned long hwcap = getauxval(AT_HWCAP);
+local z_once_t s390_ਚੱਕਰੀ_ਜਾਂਚ_32_made = Z_ONCE_INIT;
+local ਖਾਲੀ s390_ਚੱਕਰੀ_ਜਾਂਚ_32_ਤਿਆਰੀ() {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ hwcap = getauxval(AT_HWCAP);
 
-    if (hwcap & HWCAP_S390_VX)
-        crc32_z_hook = s390_crc32_vx;
-    else
-        crc32_z_hook = crc32_z;
+    ਜੇ (hwcap & HWCAP_S390_VX)
+        ਚੱਕਰੀ_ਜਾਂਚ_32_z_hook = s390_ਚੱਕਰੀ_ਜਾਂਚ_32_vx;
+    ਨਹੀਂਤਾਂ
+        ਚੱਕਰੀ_ਜਾਂਚ_32_z_hook = ਚੱਕਰੀ_ਜਾਂਚ_32_z;
 }
 
-local unsigned long s390_crc32_init(unsigned long crc, const unsigned char FAR *buf, z_size_t len)
+local ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ s390_ਚੱਕਰੀ_ਜਾਂਚ_32_init(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਚੱਕਰੀ_ਜਾਂਚ, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ FAR *buf, z_ਮਾਪ_t len)
 {
-    z_once(&s390_crc32_made,s390_crc32_setup);
-    return crc32_z_hook(crc, buf, len);
+    z_once(&s390_ਚੱਕਰੀ_ਜਾਂਚ_32_made,s390_ਚੱਕਰੀ_ਜਾਂਚ_32_ਤਿਆਰੀ);
+    ਵਾਪਸ ਚੱਕਰੀ_ਜਾਂਚ_32_z_hook(ਚੱਕਰੀ_ਜਾਂਚ, buf, len);
 }
 
-ZLIB_INTERNAL unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len) = s390_crc32_init;
+ZLIB_ਅੰਦਰੂਨੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ (*ਚੱਕਰੀ_ਜਾਂਚ_32_z_hook)(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਚੱਕਰੀ_ਜਾਂਚ, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ FAR *buf, z_ਮਾਪ_t len) = s390_ਚੱਕਰੀ_ਜਾਂਚ_32_init;

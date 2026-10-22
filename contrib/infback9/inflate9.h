@@ -9,14 +9,14 @@
  */
 
 /* Possible inflate modes between inflate() calls */
-typedef enum {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਗਿਣਤੀ {
         TYPE,       /* i: waiting for type bits, including last-flag bit */
         STORED,     /* i: waiting for stored size (length and complement) */
-        TABLE,      /* i: waiting for dynamic block table lengths */
+        ਸਾਰਣੀ,      /* i: waiting for dynamic block table lengths */
             LEN,        /* i: waiting for length/lit code */
-    DONE,       /* finished check, done -- remain here until reset */
+    ਪੂਰਾ,       /* finished check, done -- remain here until reset */
     BAD         /* got a data error -- remain here until reset */
-} inflate_mode;
+} inflate_ਬਹੁਲਕ;
 
 /*
     State transitions between above modes -
@@ -32,16 +32,16 @@ typedef enum {
  */
 
 /* state maintained between inflate() calls.  Approximately 7K bytes. */
-struct inflate_state {
+ਬਣਤਰ inflate_state {
         /* sliding window */
-    unsigned char FAR *window;  /* allocated sliding window, if needed */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ FAR *ਖਿੜਕੀ;  /* allocated sliding window, if needed */
         /* dynamic table building */
-    unsigned ncode;             /* number of code length code lengths */
-    unsigned nlen;              /* number of length code lengths */
-    unsigned ndist;             /* number of distance code lengths */
-    unsigned have;              /* number of code lengths in lens[] */
-    code FAR *next;             /* next available space in codes[] */
-    unsigned short lens[320];   /* temporary storage for code lengths */
-    unsigned short work[288];   /* work area for code table building */
-    code codes[ENOUGH];         /* space for code tables */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ncode;             /* number of code length code lengths */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ nlen;              /* number of length code lengths */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ndist;             /* number of distance code lengths */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ have;              /* number of code lengths in lens[] */
+    ਕੋਡ FAR *ਅਗਲਾ;             /* next available space in codes[] */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ lens[320];   /* temporary storage for code lengths */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ work[288];   /* work area for code table building */
+    ਕੋਡ codes[ENOUGH];         /* space for code tables */
 };

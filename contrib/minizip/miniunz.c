@@ -11,63 +11,63 @@
          Copyright (C) 2009-2010 Mathias Svensson ( https://result42.com )
 */
 
-#if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
-        #ifndef __USE_FILE_OFFSET64
-                #define __USE_FILE_OFFSET64
-        #endif
-        #ifndef __USE_LARGEFILE64
-                #define __USE_LARGEFILE64
-        #endif
-        #ifndef _LARGEFILE64_SOURCE
-                #define _LARGEFILE64_SOURCE
-        #endif
-        #ifndef _FILE_OFFSET_BIT
-                #define _FILE_OFFSET_BIT 64
-        #endif
-#endif
+#ਜੇ (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
+        #ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ __USE_FILE_OFFSET64
+                #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __USE_FILE_OFFSET64
+        #ਜੇ_ਅੰਤ
+        #ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ __USE_LARGEFILE64
+                #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __USE_LARGEFILE64
+        #ਜੇ_ਅੰਤ
+        #ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ LARGEFILE64_ਸਰੋਤ
+                #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LARGEFILE64_ਸਰੋਤ
+        #ਜੇ_ਅੰਤ
+        #ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FILE_ਵਿੱਥ_ਦੋਆਧਾਰੀ_ਅੰਕ
+                #ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FILE_ਵਿੱਥ_ਦੋਆਧਾਰੀ_ਅੰਕ 64
+        #ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
-#if defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
+#ਜੇ defined(__APPLE__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
 // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
-#define FOPEN_FUNC(filename, mode) fopen(filename, mode)
-#define FTELLO_FUNC(stream) ftello(stream)
-#define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
-#else
-#define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
-#define FTELLO_FUNC(stream) ftello64(stream)
-#define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
-#endif
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FOPEN_FUNC(filename, ਬਹੁਲਕ) fopen(filename, ਬਹੁਲਕ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FTELLO_FUNC(ਧਾਰਾ) ftello(ਧਾਰਾ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FSEEKO_FUNC(ਧਾਰਾ, ਵਿੱਥ, origin) fseeko(ਧਾਰਾ, ਵਿੱਥ, origin)
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FOPEN_FUNC(filename, ਬਹੁਲਕ) fopen64(filename, ਬਹੁਲਕ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FTELLO_FUNC(ਧਾਰਾ) ftello64(ਧਾਰਾ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FSEEKO_FUNC(ਧਾਰਾ, ਵਿੱਥ, origin) fseeko64(ਧਾਰਾ, ਵਿੱਥ, origin)
+#ਜੇ_ਅੰਤ
 
 
-#ifndef _CRT_SECURE_NO_WARNINGS
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _CRT_SECURE_NO_WARNINGS
 #  define _CRT_SECURE_NO_WARNINGS
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <sys/stat.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
 
-#ifdef _WIN32
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _WIN32
 # include <direct.h>
 # include <io.h>
-#else
+#ਨਹੀਂਤਾਂ
 # include <unistd.h>
 # include <utime.h>
-#endif
+#ਜੇ_ਅੰਤ
 
 
-#include "unzip.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "unzip.h"
 
-#define CASESENSITIVITY (0)
-#define WRITEBUFFERSIZE (8192)
-#define MAXFILENAME (256)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CASESENSITIVITY (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WRITEBUFFERSIZE (8192)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAXFILENAME (256)
 
-#ifdef _WIN32
-#define USEWIN32IOAPI
-#include "iowin32.h"
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _WIN32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USEWIN32IOAPI
+#ਅਨ੍ਤਰ੍ਭਾਵ "iowin32.h"
+#ਜੇ_ਅੰਤ
 /*
   mini unzip, demo of unzip package
 
@@ -83,114 +83,114 @@
     filename : the filename of the file where date/time must be modified
     dosdate : the new date at the MSDOS format (4 bytes)
     tmu_date : the SAME new date at the tm_unz format */
-static void change_file_date(const char *filename, uLong dosdate, tm_unz tmu_date) {
-#ifdef _WIN32
-  (void)tmu_date;
+ਸਥਿਰ ਖਾਲੀ change_file_date(ਅਚਲ ਅੱਖਰ *filename, uLong dosdate, tm_unz tmu_date) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _WIN32
+  (ਖਾਲੀ)tmu_date;
   HANDLE hFile;
-  FILETIME ftm,ftLocal,ftCreate,ftLastAcc,ftLastWrite;
+  FILETIME ftm,ftLocal,ftCreate,ft_ਆਖਰੀ_Acc,ft_ਆਖਰੀ_Write;
 
   hFile = CreateFileA(filename,GENERIC_READ | GENERIC_WRITE,
-                      0,NULL,OPEN_EXISTING,0,NULL);
-  GetFileTime(hFile,&ftCreate,&ftLastAcc,&ftLastWrite);
-  DosDateTimeToFileTime((WORD)(dosdate>>16),(WORD)dosdate,&ftLocal);
-  LocalFileTimeToFileTime(&ftLocal,&ftm);
-  SetFileTime(hFile,&ftm,&ftLastAcc,&ftm);
+                      0,ਨਿਰਾ,OPEN_EXISTING,0,ਨਿਰਾ);
+  Get_File_ਸਮਾਂ(hFile,&ftCreate,&ft_ਆਖਰੀ_Acc,&ft_ਆਖਰੀ_Write);
+  Dos_Date_ਸਮਾਂ_ਮੰਜ਼ਿਲ_File_ਸਮਾਂ((ਸ਼ਬਦ_2)(dosdate>>16),(ਸ਼ਬਦ_2)dosdate,&ftLocal);
+  Local_File_ਸਮਾਂ_ਮੰਜ਼ਿਲ_File_ਸਮਾਂ(&ftLocal,&ftm);
+  ਸੈੱਟ_File_ਸਮਾਂ(hFile,&ftm,&ft_ਆਖਰੀ_Acc,&ftm);
   CloseHandle(hFile);
-#elif defined(__unix__) || defined(__unix) || defined(__APPLE__)
-  (void)dosdate;
-  struct utimbuf ut;
-  struct tm newdate;
+#ਜਾਂਜੇ defined(__unix__) || defined(__unix) || defined(__APPLE__)
+  (ਖਾਲੀ)dosdate;
+  ਬਣਤਰ utimbuf ut;
+  ਬਣਤਰ tm newdate;
   newdate.tm_sec = tmu_date.tm_sec;
   newdate.tm_min=tmu_date.tm_min;
   newdate.tm_hour=tmu_date.tm_hour;
   newdate.tm_mday=tmu_date.tm_mday;
   newdate.tm_mon=tmu_date.tm_mon;
-  if (tmu_date.tm_year > 1900)
+  ਜੇ (tmu_date.tm_year > 1900)
       newdate.tm_year=tmu_date.tm_year - 1900;
-  else
+  ਨਹੀਂਤਾਂ
       newdate.tm_year=tmu_date.tm_year ;
   newdate.tm_isdst=-1;
 
   ut.actime=ut.modtime=mktime(&newdate);
   utime(filename,&ut);
-#else
-  (void)filename;
-  (void)dosdate;
-  (void)tmu_date;
-#endif
+#ਨਹੀਂਤਾਂ
+  (ਖਾਲੀ)filename;
+  (ਖਾਲੀ)dosdate;
+  (ਖਾਲੀ)tmu_date;
+#ਜੇ_ਅੰਤ
 }
 
 
 /* mymkdir and change_file_date are not 100 % portable
    As I don't know well Unix, I wait feedback for the unix portion */
 
-static int mymkdir(const char* dirname) {
-    int ret=0;
-#ifdef _WIN32
+ਸਥਿਰ ਪੂਰਨ mymkdir(ਅਚਲ ਅੱਖਰ* dirname) {
+    ਪੂਰਨ ret=0;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _WIN32
     ret = _mkdir(dirname);
-#elif defined(__unix__) || defined(__unix) || defined(__APPLE__)
+#ਜਾਂਜੇ defined(__unix__) || defined(__unix) || defined(__APPLE__)
     ret = mkdir (dirname,0775);
-#else
-    (void)dirname;
-#endif
-    return ret;
+#ਨਹੀਂਤਾਂ
+    (ਖਾਲੀ)dirname;
+#ਜੇ_ਅੰਤ
+    ਵਾਪਸ ret;
 }
 
-static int makedir(const char *newdir) {
-  char *buffer ;
-  char *p;
-  size_t len = strlen(newdir);
+ਸਥਿਰ ਪੂਰਨ makedir(ਅਚਲ ਅੱਖਰ *newdir) {
+  ਅੱਖਰ *ਬਫਰ ;
+  ਅੱਖਰ *p;
+  size_t len = ਲੜੀ_ਲੰਬਾਈ(newdir);
 
-  if (len == 0)
-    return 0;
+  ਜੇ (len == 0)
+    ਵਾਪਸ 0;
 
-  buffer = (char*)malloc(len+1);
-        if (buffer==NULL)
+  ਬਫਰ = (ਅੱਖਰ*)ਸਮ੍ਰਿਤੀ_ਦਿਓ(len+1);
+        ਜੇ (ਬਫਰ==ਨਿਰਾ)
         {
-                printf("Error allocating memory\n");
-                return UNZ_INTERNALERROR;
+                ਲਿਖੋ("Error allocating memory\n");
+                ਵਾਪਸ UNZ_INTERNALERROR;
         }
-  memcpy(buffer,newdir,len+1);
+  ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਬਫਰ,newdir,len+1);
 
-  if (buffer[len-1] == '/') {
-    buffer[len-1] = '\0';
+  ਜੇ (ਬਫਰ[len-1] == '/') {
+    ਬਫਰ[len-1] = '\0';
   }
-  if (mymkdir(buffer) == 0)
+  ਜੇ (mymkdir(ਬਫਰ) == 0)
     {
-      free(buffer);
-      return 1;
+      ਮੁਕਤ(ਬਫਰ);
+      ਵਾਪਸ 1;
     }
 
-  p = buffer+1;
-  while (1)
+  p = ਬਫਰ+1;
+  ਜਦੋਂ (1)
     {
-      char hold;
+      ਅੱਖਰ hold;
 
-      while(*p && *p != '\\' && *p != '/')
+      ਜਦੋਂ(*p && *p != '\\' && *p != '/')
         p++;
       hold = *p;
       *p = 0;
-      if ((mymkdir(buffer) == -1) && (errno == ENOENT))
+      ਜੇ ((mymkdir(ਬਫਰ) == -1) && (errno == ENOENT))
         {
-          printf("couldn't create directory %s\n",buffer);
-          free(buffer);
-          return 0;
+          ਲਿਖੋ("couldn't create directory %s\n",ਬਫਰ);
+          ਮੁਕਤ(ਬਫਰ);
+          ਵਾਪਸ 0;
         }
-      if (hold == 0)
-        break;
+      ਜੇ (hold == 0)
+        ਰੋਕੋ;
       *p++ = hold;
     }
-  free(buffer);
-  return 1;
+  ਮੁਕਤ(ਬਫਰ);
+  ਵਾਪਸ 1;
 }
 
-static void do_banner(void) {
-    printf("MiniUnz 1.1, demo of zLib + Unz package written by Gilles Vollant\n");
-    printf("more info at https://www.winimage.com/zLibDll/unzip.html\n\n");
+ਸਥਿਰ ਖਾਲੀ do_banner(ਖਾਲੀ) {
+    ਲਿਖੋ("MiniUnz 1.1, demo of zLib + Unz package written by Gilles Vollant\n");
+    ਲਿਖੋ("more info at https://www.winimage.com/zLibDll/unzip.html\n\n");
 }
 
-static void do_help(void) {
-    printf("Usage : miniunz [-e] [-x] [-v] [-l] [-o] [-p password] file.zip [file_to_extr.] [-d extractdir]\n\n" \
+ਸਥਿਰ ਖਾਲੀ do_help(ਖਾਲੀ) {
+    ਲਿਖੋ("Usage : miniunz [-e] [-x] [-v] [-l] [-o] [-p password] file.zip [file_to_extr.] [-d extractdir]\n\n" \
            "  -e  Extract without pathname (junk paths)\n" \
            "  -x  Extract with pathname\n" \
            "  -v  list files\n" \
@@ -200,393 +200,393 @@ static void do_help(void) {
            "  -p  extract encrypted file using password\n\n");
 }
 
-static void Display64BitsSize(ZPOS64_T n, int size_char) {
+ਸਥਿਰ ਖਾਲੀ Display64_ਬਿੱਟ_ਮਾਪ(ZPOS64_T n, ਪੂਰਨ ਮਾਪ_char) {
   /* to avoid compatibility problem , we do here the conversion */
-  char number[21];
-  int offset=19;
-  int pos_string = 19;
-  number[20]=0;
-  for (;;) {
-      number[offset]=(char)((n%10)+'0');
-      if (number[offset] != '0')
-          pos_string=offset;
+  ਅੱਖਰ ਸੰਖਿਆ[21];
+  ਪੂਰਨ ਵਿੱਥ=19;
+  ਪੂਰਨ pos_string = 19;
+  ਸੰਖਿਆ[20]=0;
+  ਲਈ (;;) {
+      ਸੰਖਿਆ[ਵਿੱਥ]=(ਅੱਖਰ)((n%10)+'0');
+      ਜੇ (ਸੰਖਿਆ[ਵਿੱਥ] != '0')
+          pos_string=ਵਿੱਥ;
       n/=10;
-      if (offset==0)
-          break;
-      offset--;
+      ਜੇ (ਵਿੱਥ==0)
+          ਰੋਕੋ;
+      ਵਿੱਥ--;
   }
   {
-      int size_display_string = 19-pos_string;
-      while (size_char > size_display_string)
+      ਪੂਰਨ ਮਾਪ_display_string = 19-pos_string;
+      ਜਦੋਂ (ਮਾਪ_char > ਮਾਪ_display_string)
       {
-          size_char--;
-          printf(" ");
+          ਮਾਪ_char--;
+          ਲਿਖੋ(" ");
       }
   }
 
-  printf("%s",&number[pos_string]);
+  ਲਿਖੋ("%s",&ਸੰਖਿਆ[pos_string]);
 }
 
-static int do_list(unzFile uf) {
+ਸਥਿਰ ਪੂਰਨ do_list(unzFile uf) {
     uLong i;
     unz_global_info64 gi;
-    int err;
+    ਪੂਰਨ err;
 
     err = unzGetGlobalInfo64(uf,&gi);
-    if (err!=UNZ_OK)
-        printf("error %d with zipfile in unzGetGlobalInfo\n",err);
-    printf("  Length  Method     Size Ratio   Date    Time   CRC-32     Name\n");
-    printf("  ------  ------     ---- -----   ----    ----   ------     ----\n");
-    for (i=0;i<gi.number_entry;i++)
+    ਜੇ (err!=UNZ_OK)
+        ਲਿਖੋ("error %d with zipfile in unzGetGlobalInfo\n",err);
+    ਲਿਖੋ("  Length  Method     Size Ratio   Date    Time   CRC-32     Name\n");
+    ਲਿਖੋ("  ------  ------     ---- -----   ----    ----   ------     ----\n");
+    ਲਈ (i=0;i<gi.ਸੰਖਿਆ_ਇੰਦਰਾਜ;i++)
     {
-        char filename_inzip[65536+1];
+        ਅੱਖਰ filename_inzip[65536+1];
         unz_file_info64 file_info;
-        uLong ratio=0;
-        const char *string_method = "";
-        char charCrypt=' ';
-        err = unzGetCurrentFileInfo64(uf,&file_info,filename_inzip,sizeof(filename_inzip),NULL,0,NULL,0);
-        if (err!=UNZ_OK)
+        uLong ਅਨੁਪਾਤ=0;
+        ਅਚਲ ਅੱਖਰ *string_ਵਿਧੀ = "";
+        ਅੱਖਰ charCrypt=' ';
+        err = unzGetCurrentFileInfo64(uf,&file_info,filename_inzip,ਆਕਾਰ(filename_inzip),ਨਿਰਾ,0,ਨਿਰਾ,0);
+        ਜੇ (err!=UNZ_OK)
         {
-            printf("error %d with zipfile in unzGetCurrentFileInfo\n",err);
-            break;
+            ਲਿਖੋ("error %d with zipfile in unzGetCurrentFileInfo\n",err);
+            ਰੋਕੋ;
         }
-        if (file_info.uncompressed_size>0)
-            ratio = (uLong)((file_info.compressed_size*100)/file_info.uncompressed_size);
+        ਜੇ (file_info.uncompressed_ਮਾਪ>0)
+            ਅਨੁਪਾਤ = (uLong)((file_info.compressed_ਮਾਪ*100)/file_info.uncompressed_ਮਾਪ);
 
         /* display a '*' if the file is encrypted */
-        if ((file_info.flag & 1) != 0)
+        ਜੇ ((file_info.flag & 1) != 0)
             charCrypt='*';
 
-        if (file_info.compression_method==0)
-            string_method="Stored";
-        else
-        if (file_info.compression_method==Z_DEFLATED)
+        ਜੇ (file_info.compression_ਵਿਧੀ==0)
+            string_ਵਿਧੀ="Stored";
+        ਨਹੀਂਤਾਂ
+        ਜੇ (file_info.compression_ਵਿਧੀ==Z_DEFLATED)
         {
             uInt iLevel=(uInt)((file_info.flag & 0x6)/2);
-            if (iLevel==0)
-              string_method="Defl:N";
-            else if (iLevel==1)
-              string_method="Defl:X";
-            else if ((iLevel==2) || (iLevel==3))
-              string_method="Defl:F"; /* 2:fast , 3 : extra fast*/
+            ਜੇ (iLevel==0)
+              string_ਵਿਧੀ="Defl:N";
+            ਨਹੀਂਤਾਂ ਜੇ (iLevel==1)
+              string_ਵਿਧੀ="Defl:X";
+            ਨਹੀਂਤਾਂ ਜੇ ((iLevel==2) || (iLevel==3))
+              string_ਵਿਧੀ="Defl:F"; /* 2:fast , 3 : extra fast*/
         }
-        else
-        if (file_info.compression_method==Z_BZIP2ED)
+        ਨਹੀਂਤਾਂ
+        ਜੇ (file_info.compression_ਵਿਧੀ==Z_BZIP2ED)
         {
-              string_method="BZip2 ";
+              string_ਵਿਧੀ="BZip2 ";
         }
-        else
-            string_method="Unkn. ";
+        ਨਹੀਂਤਾਂ
+            string_ਵਿਧੀ="Unkn. ";
 
-        Display64BitsSize(file_info.uncompressed_size,7);
-        printf("  %6s%c",string_method,charCrypt);
-        Display64BitsSize(file_info.compressed_size,7);
-        printf(" %3lu%%  %2.2lu-%2.2lu-%2.2lu  %2.2lu:%2.2lu  %8.8lx   %s\n",
-                ratio,
+        Display64_ਬਿੱਟ_ਮਾਪ(file_info.uncompressed_ਮਾਪ,7);
+        ਲਿਖੋ("  %6s%c",string_ਵਿਧੀ,charCrypt);
+        Display64_ਬਿੱਟ_ਮਾਪ(file_info.compressed_ਮਾਪ,7);
+        ਲਿਖੋ(" %3lu%%  %2.2lu-%2.2lu-%2.2lu  %2.2lu:%2.2lu  %8.8lx   %s\n",
+                ਅਨੁਪਾਤ,
                 (uLong)file_info.tmu_date.tm_mon + 1,
                 (uLong)file_info.tmu_date.tm_mday,
                 (uLong)file_info.tmu_date.tm_year % 100,
                 (uLong)file_info.tmu_date.tm_hour,(uLong)file_info.tmu_date.tm_min,
-                (uLong)file_info.crc,filename_inzip);
-        if ((i+1)<gi.number_entry)
+                (uLong)file_info.ਚੱਕਰੀ_ਜਾਂਚ,filename_inzip);
+        ਜੇ ((i+1)<gi.ਸੰਖਿਆ_ਇੰਦਰਾਜ)
         {
-            err = unzGoToNextFile(uf);
-            if (err!=UNZ_OK)
+            err = unz_Go_ਮੰਜ਼ਿਲ_ਅਗਲਾ_File(uf);
+            ਜੇ (err!=UNZ_OK)
             {
-                printf("error %d with zipfile in unzGoToNextFile\n",err);
-                break;
+                ਲਿਖੋ("error %d with zipfile in unzGoToNextFile\n",err);
+                ਰੋਕੋ;
             }
         }
     }
 
-    return 0;
+    ਵਾਪਸ 0;
 }
 
 
-static int do_extract_currentfile(unzFile uf, const int* popt_extract_without_path, int* popt_overwrite, const char* password) {
-    char filename_inzip[65536+1];
-    char* filename_withoutpath;
-    char* p;
-    int err=UNZ_OK;
-    FILE *fout=NULL;
-    void* buf;
-    uInt size_buf;
+ਸਥਿਰ ਪੂਰਨ do_ਕੱਢੋ_currentfile(unzFile uf, ਅਚਲ ਪੂਰਨ* popt_ਕੱਢੋ_without_ਰਸਤਾ, ਪੂਰਨ* popt_overwrite, ਅਚਲ ਅੱਖਰ* password) {
+    ਅੱਖਰ filename_inzip[65536+1];
+    ਅੱਖਰ* filename_withoutpath;
+    ਅੱਖਰ* p;
+    ਪੂਰਨ err=UNZ_OK;
+    FILE *fout=ਨਿਰਾ;
+    ਖਾਲੀ* buf;
+    uInt ਮਾਪ_buf;
 
     unz_file_info64 file_info;
-    err = unzGetCurrentFileInfo64(uf,&file_info,filename_inzip,sizeof(filename_inzip),NULL,0,NULL,0);
+    err = unzGetCurrentFileInfo64(uf,&file_info,filename_inzip,ਆਕਾਰ(filename_inzip),ਨਿਰਾ,0,ਨਿਰਾ,0);
 
-    if (err!=UNZ_OK)
+    ਜੇ (err!=UNZ_OK)
     {
-        printf("error %d with zipfile in unzGetCurrentFileInfo\n",err);
-        return err;
+        ਲਿਖੋ("error %d with zipfile in unzGetCurrentFileInfo\n",err);
+        ਵਾਪਸ err;
     }
 
-    size_buf = WRITEBUFFERSIZE;
-    buf = (void*)malloc(size_buf);
-    if (buf==NULL)
+    ਮਾਪ_buf = WRITEBUFFERSIZE;
+    buf = (ਖਾਲੀ*)ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਮਾਪ_buf);
+    ਜੇ (buf==ਨਿਰਾ)
     {
-        printf("Error allocating memory\n");
-        return UNZ_INTERNALERROR;
+        ਲਿਖੋ("Error allocating memory\n");
+        ਵਾਪਸ UNZ_INTERNALERROR;
     }
 
     p = filename_withoutpath = filename_inzip;
-    while ((*p) != '\0')
+    ਜਦੋਂ ((*p) != '\0')
     {
-        if (((*p)=='/') || ((*p)=='\\'))
+        ਜੇ (((*p)=='/') || ((*p)=='\\'))
             filename_withoutpath = p+1;
         p++;
     }
 
-    if ((*filename_withoutpath)=='\0')
+    ਜੇ ((*filename_withoutpath)=='\0')
     {
-        if ((*popt_extract_without_path)==0)
+        ਜੇ ((*popt_ਕੱਢੋ_without_ਰਸਤਾ)==0)
         {
-            printf("creating directory: %s\n",filename_inzip);
+            ਲਿਖੋ("creating directory: %s\n",filename_inzip);
             mymkdir(filename_inzip);
         }
     }
-    else
+    ਨਹੀਂਤਾਂ
     {
-        const char* write_filename;
-        int skip=0;
+        ਅਚਲ ਅੱਖਰ* write_filename;
+        ਪੂਰਨ skip=0;
 
-        if ((*popt_extract_without_path)==0)
+        ਜੇ ((*popt_ਕੱਢੋ_without_ਰਸਤਾ)==0)
             write_filename = filename_inzip;
-        else
+        ਨਹੀਂਤਾਂ
             write_filename = filename_withoutpath;
 
-        if (write_filename[0]!='\0')
+        ਜੇ (write_filename[0]!='\0')
         {
-            const char* relative_check = write_filename;
-            while (relative_check[1]!='\0')
+            ਅਚਲ ਅੱਖਰ* relative_check = write_filename;
+            ਜਦੋਂ (relative_check[1]!='\0')
             {
-                if (relative_check[0]=='.' && relative_check[1]=='.')
+                ਜੇ (relative_check[0]=='.' && relative_check[1]=='.')
                     write_filename = relative_check;
                 relative_check++;
             }
         }
 
-        while (write_filename[0]=='/' || write_filename[0]=='.')
+        ਜਦੋਂ (write_filename[0]=='/' || write_filename[0]=='.')
             write_filename++;
 
         err = unzOpenCurrentFilePassword(uf,password);
-        if (err!=UNZ_OK)
+        ਜੇ (err!=UNZ_OK)
         {
-            printf("error %d with zipfile in unzOpenCurrentFilePassword\n",err);
+            ਲਿਖੋ("error %d with zipfile in unzOpenCurrentFilePassword\n",err);
         }
 
-        if (((*popt_overwrite)==0) && (err==UNZ_OK))
+        ਜੇ (((*popt_overwrite)==0) && (err==UNZ_OK))
         {
-            char rep=0;
+            ਅੱਖਰ rep=0;
             FILE* ftestexist;
             ftestexist = FOPEN_FUNC(write_filename,"rb");
-            if (ftestexist!=NULL)
+            ਜੇ (ftestexist!=ਨਿਰਾ)
             {
                 fclose(ftestexist);
-                do
+                ਕਰੋ
                 {
-                    char answer[128];
-                    int ret;
+                    ਅੱਖਰ answer[128];
+                    ਪੂਰਨ ret;
 
-                    printf("The file %s exists. Overwrite ? [y]es, [n]o, [A]ll: ",write_filename);
+                    ਲਿਖੋ("The file %s exists. Overwrite ? [y]es, [n]o, [A]ll: ",write_filename);
                     ret = scanf("%1s",answer);
-                    if (ret != 1)
+                    ਜੇ (ret != 1)
                     {
-                       exit(EXIT_FAILURE);
+                       ਬਾਹਰ_ਨਿਕਲੋ(EXIT_FAILURE);
                     }
                     rep = answer[0] ;
-                    if ((rep>='a') && (rep<='z'))
+                    ਜੇ ((rep>='a') && (rep<='z'))
                         rep -= 0x20;
                 }
-                while ((rep!='Y') && (rep!='N') && (rep!='A'));
+                ਜਦੋਂ ((rep!='Y') && (rep!='N') && (rep!='A'));
             }
 
-            if (rep == 'N')
+            ਜੇ (rep == 'N')
                 skip = 1;
 
-            if (rep == 'A')
+            ਜੇ (rep == 'A')
                 *popt_overwrite=1;
         }
 
-        if ((skip==0) && (err==UNZ_OK))
+        ਜੇ ((skip==0) && (err==UNZ_OK))
         {
             fout=FOPEN_FUNC(write_filename,"wb");
             /* some zipfile don't contain directory alone before file */
-            if ((fout==NULL) && ((*popt_extract_without_path)==0) &&
-                                (filename_withoutpath!=(char*)filename_inzip))
+            ਜੇ ((fout==ਨਿਰਾ) && ((*popt_ਕੱਢੋ_without_ਰਸਤਾ)==0) &&
+                                (filename_withoutpath!=(ਅੱਖਰ*)filename_inzip))
             {
-                char c=*(filename_withoutpath-1);
+                ਅੱਖਰ c=*(filename_withoutpath-1);
                 *(filename_withoutpath-1)='\0';
                 makedir(write_filename);
                 *(filename_withoutpath-1)=c;
                 fout=FOPEN_FUNC(write_filename,"wb");
             }
 
-            if (fout==NULL)
+            ਜੇ (fout==ਨਿਰਾ)
             {
-                printf("error opening %s\n",write_filename);
+                ਲਿਖੋ("error opening %s\n",write_filename);
             }
         }
 
-        if (fout!=NULL)
+        ਜੇ (fout!=ਨਿਰਾ)
         {
-            printf(" extracting: %s\n",write_filename);
+            ਲਿਖੋ(" extracting: %s\n",write_filename);
 
-            do
+            ਕਰੋ
             {
-                err = unzReadCurrentFile(uf,buf,size_buf);
-                if (err<0)
+                err = unzReadCurrentFile(uf,buf,ਮਾਪ_buf);
+                ਜੇ (err<0)
                 {
-                    printf("error %d with zipfile in unzReadCurrentFile\n",err);
-                    break;
+                    ਲਿਖੋ("error %d with zipfile in unzReadCurrentFile\n",err);
+                    ਰੋਕੋ;
                 }
-                if (err>0)
-                    if (fwrite(buf,(unsigned)err,1,fout)!=1)
+                ਜੇ (err>0)
+                    ਜੇ (fwrite(buf,(ਬਿਨਾਨਿਸ਼ਾਨੀ)err,1,fout)!=1)
                     {
-                        printf("error in writing extracted file\n");
+                        ਲਿਖੋ("error in writing extracted file\n");
                         err=UNZ_ERRNO;
-                        break;
+                        ਰੋਕੋ;
                     }
             }
-            while (err>0);
-            if (fout)
+            ਜਦੋਂ (err>0);
+            ਜੇ (fout)
                     fclose(fout);
 
-            if (err==0)
+            ਜੇ (err==0)
                 change_file_date(write_filename,file_info.dosDate,
                                  file_info.tmu_date);
         }
 
-        if (err==UNZ_OK)
+        ਜੇ (err==UNZ_OK)
         {
             err = unzCloseCurrentFile (uf);
-            if (err!=UNZ_OK)
+            ਜੇ (err!=UNZ_OK)
             {
-                printf("error %d with zipfile in unzCloseCurrentFile\n",err);
+                ਲਿਖੋ("error %d with zipfile in unzCloseCurrentFile\n",err);
             }
         }
-        else
+        ਨਹੀਂਤਾਂ
             unzCloseCurrentFile(uf); /* don't lose the error */
     }
 
-    free(buf);
-    return err;
+    ਮੁਕਤ(buf);
+    ਵਾਪਸ err;
 }
 
 
-static int do_extract(unzFile uf, int opt_extract_without_path, int opt_overwrite, const char* password) {
+ਸਥਿਰ ਪੂਰਨ do_ਕੱਢੋ(unzFile uf, ਪੂਰਨ opt_ਕੱਢੋ_without_ਰਸਤਾ, ਪੂਰਨ opt_overwrite, ਅਚਲ ਅੱਖਰ* password) {
     uLong i;
     unz_global_info64 gi;
-    int err;
+    ਪੂਰਨ err;
 
     err = unzGetGlobalInfo64(uf,&gi);
-    if (err!=UNZ_OK)
+    ਜੇ (err!=UNZ_OK)
     {
-        printf("error %d with zipfile in unzGetGlobalInfo\n",err);
-        return err;
+        ਲਿਖੋ("error %d with zipfile in unzGetGlobalInfo\n",err);
+        ਵਾਪਸ err;
     }
 
-    for (i=0;i<gi.number_entry;i++)
+    ਲਈ (i=0;i<gi.ਸੰਖਿਆ_ਇੰਦਰਾਜ;i++)
     {
-        err = do_extract_currentfile(uf,&opt_extract_without_path,
+        err = do_ਕੱਢੋ_currentfile(uf,&opt_ਕੱਢੋ_without_ਰਸਤਾ,
                                       &opt_overwrite,
                                       password);
-        if (err != UNZ_OK)
-            break;
+        ਜੇ (err != UNZ_OK)
+            ਰੋਕੋ;
 
-        if ((i+1)<gi.number_entry)
+        ਜੇ ((i+1)<gi.ਸੰਖਿਆ_ਇੰਦਰਾਜ)
         {
-            err = unzGoToNextFile(uf);
-            if (err!=UNZ_OK)
+            err = unz_Go_ਮੰਜ਼ਿਲ_ਅਗਲਾ_File(uf);
+            ਜੇ (err!=UNZ_OK)
             {
-                printf("error %d with zipfile in unzGoToNextFile\n",err);
-                break;
+                ਲਿਖੋ("error %d with zipfile in unzGoToNextFile\n",err);
+                ਰੋਕੋ;
             }
         }
     }
 
-    return err;
+    ਵਾਪਸ err;
 }
 
-static int do_extract_onefile(unzFile uf, const char* filename, int opt_extract_without_path, int opt_overwrite, const char* password) {
-    if (unzLocateFile(uf,filename,CASESENSITIVITY)!=UNZ_OK)
+ਸਥਿਰ ਪੂਰਨ do_ਕੱਢੋ_onefile(unzFile uf, ਅਚਲ ਅੱਖਰ* filename, ਪੂਰਨ opt_ਕੱਢੋ_without_ਰਸਤਾ, ਪੂਰਨ opt_overwrite, ਅਚਲ ਅੱਖਰ* password) {
+    ਜੇ (unzLocateFile(uf,filename,CASESENSITIVITY)!=UNZ_OK)
     {
-        printf("file %s not found in the zipfile\n",filename);
-        return 2;
+        ਲਿਖੋ("file %s not found in the zipfile\n",filename);
+        ਵਾਪਸ 2;
     }
 
-    return do_extract_currentfile(uf,&opt_extract_without_path,
+    ਵਾਪਸ do_ਕੱਢੋ_currentfile(uf,&opt_ਕੱਢੋ_without_ਰਸਤਾ,
                                       &opt_overwrite,
                                       password);
 }
 
 
-int main(int argc, char *argv[]) {
-    const char *zipfilename=NULL;
-    const char *filename_to_extract=NULL;
-    const char *password=NULL;
-    char filename_try[MAXFILENAME+16] = "";
-    int i;
-    int ret_value=0;
-    int opt_do_list=0;
-    int opt_do_extract=1;
-    int opt_do_extract_withoutpath=0;
-    int opt_overwrite=0;
-    int opt_extractdir=0;
-    const char *dirname=NULL;
-    unzFile uf=NULL;
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ *argv[]) {
+    ਅਚਲ ਅੱਖਰ *zipfilename=ਨਿਰਾ;
+    ਅਚਲ ਅੱਖਰ *filename_ਮੰਜ਼ਿਲ_ਕੱਢੋ=ਨਿਰਾ;
+    ਅਚਲ ਅੱਖਰ *password=ਨਿਰਾ;
+    ਅੱਖਰ filename_try[MAXFILENAME+16] = "";
+    ਪੂਰਨ i;
+    ਪੂਰਨ ret_ਮੁੱਲ=0;
+    ਪੂਰਨ opt_do_list=0;
+    ਪੂਰਨ opt_do_ਕੱਢੋ=1;
+    ਪੂਰਨ opt_do_ਕੱਢੋ_withoutpath=0;
+    ਪੂਰਨ opt_overwrite=0;
+    ਪੂਰਨ opt_extractdir=0;
+    ਅਚਲ ਅੱਖਰ *dirname=ਨਿਰਾ;
+    unzFile uf=ਨਿਰਾ;
 
     do_banner();
-    if (argc==1)
+    ਜੇ (argc==1)
     {
         do_help();
-        return 0;
+        ਵਾਪਸ 0;
     }
-    else
+    ਨਹੀਂਤਾਂ
     {
-        for (i=1;i<argc;i++)
+        ਲਈ (i=1;i<argc;i++)
         {
-            if ((*argv[i])=='-')
+            ਜੇ ((*argv[i])=='-')
             {
-                const char *p=argv[i]+1;
+                ਅਚਲ ਅੱਖਰ *p=argv[i]+1;
 
-                while ((*p)!='\0')
+                ਜਦੋਂ ((*p)!='\0')
                 {
-                    char c=*(p++);
-                    if ((c=='l') || (c=='L'))
+                    ਅੱਖਰ c=*(p++);
+                    ਜੇ ((c=='l') || (c=='L'))
                         opt_do_list = 1;
-                    if ((c=='v') || (c=='V'))
+                    ਜੇ ((c=='v') || (c=='V'))
                         opt_do_list = 1;
-                    if ((c=='x') || (c=='X'))
-                        opt_do_extract = 1;
-                    if ((c=='e') || (c=='E'))
-                        opt_do_extract = opt_do_extract_withoutpath = 1;
-                    if ((c=='o') || (c=='O'))
+                    ਜੇ ((c=='x') || (c=='X'))
+                        opt_do_ਕੱਢੋ = 1;
+                    ਜੇ ((c=='e') || (c=='E'))
+                        opt_do_ਕੱਢੋ = opt_do_ਕੱਢੋ_withoutpath = 1;
+                    ਜੇ ((c=='o') || (c=='O'))
                         opt_overwrite=1;
-                    if ((c=='d') || (c=='D'))
+                    ਜੇ ((c=='d') || (c=='D'))
                     {
                         opt_extractdir=1;
                         dirname=argv[i+1];
                     }
 
-                    if (((c=='p') || (c=='P')) && (i+1<argc))
+                    ਜੇ (((c=='p') || (c=='P')) && (i+1<argc))
                     {
                         password=argv[i+1];
                         i++;
                     }
                 }
             }
-            else
+            ਨਹੀਂਤਾਂ
             {
-                if (zipfilename == NULL)
+                ਜੇ (zipfilename == ਨਿਰਾ)
                     zipfilename = argv[i];
-                else if ((filename_to_extract==NULL) && (!opt_extractdir))
-                        filename_to_extract = argv[i] ;
+                ਨਹੀਂਤਾਂ ਜੇ ((filename_ਮੰਜ਼ਿਲ_ਕੱਢੋ==ਨਿਰਾ) && (!opt_extractdir))
+                        filename_ਮੰਜ਼ਿਲ_ਕੱਢੋ = argv[i] ;
             }
         }
     }
 
-    if (zipfilename!=NULL)
+    ਜੇ (zipfilename!=ਨਿਰਾ)
     {
 
 #        ifdef USEWIN32IOAPI
@@ -600,48 +600,48 @@ int main(int argc, char *argv[]) {
 #        ifdef USEWIN32IOAPI
         fill_win32_filefunc64A(&ffunc);
         uf = unzOpen2_64(zipfilename,&ffunc);
-#        else
+#        ਨਹੀਂਤਾਂ
         uf = unzOpen64(zipfilename);
 #        endif
-        if (uf==NULL)
+        ਜੇ (uf==ਨਿਰਾ)
         {
             strcat(filename_try,".zip");
 #            ifdef USEWIN32IOAPI
             uf = unzOpen2_64(filename_try,&ffunc);
-#            else
+#            ਨਹੀਂਤਾਂ
             uf = unzOpen64(filename_try);
 #            endif
         }
     }
 
-    if (uf==NULL)
+    ਜੇ (uf==ਨਿਰਾ)
     {
-        printf("Cannot open %s or %s.zip\n",zipfilename,zipfilename);
-        return 1;
+        ਲਿਖੋ("Cannot open %s or %s.zip\n",zipfilename,zipfilename);
+        ਵਾਪਸ 1;
     }
-    printf("%s opened\n",filename_try);
+    ਲਿਖੋ("%s opened\n",filename_try);
 
-    if (opt_do_list==1)
-        ret_value = do_list(uf);
-    else if (opt_do_extract==1)
+    ਜੇ (opt_do_list==1)
+        ret_ਮੁੱਲ = do_list(uf);
+    ਨਹੀਂਤਾਂ ਜੇ (opt_do_ਕੱਢੋ==1)
     {
-#ifdef _WIN32
-        if (opt_extractdir && _chdir(dirname))
-#else
-        if (opt_extractdir && chdir(dirname))
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _WIN32
+        ਜੇ (opt_extractdir && _chdir(dirname))
+#ਨਹੀਂਤਾਂ
+        ਜੇ (opt_extractdir && chdir(dirname))
+#ਜੇ_ਅੰਤ
         {
-          printf("Error changing into %s, aborting\n", dirname);
-          exit(-1);
+          ਲਿਖੋ("Error changing into %s, aborting\n", dirname);
+          ਬਾਹਰ_ਨਿਕਲੋ(-1);
         }
 
-        if (filename_to_extract == NULL)
-            ret_value = do_extract(uf, opt_do_extract_withoutpath, opt_overwrite, password);
-        else
-            ret_value = do_extract_onefile(uf, filename_to_extract, opt_do_extract_withoutpath, opt_overwrite, password);
+        ਜੇ (filename_ਮੰਜ਼ਿਲ_ਕੱਢੋ == ਨਿਰਾ)
+            ret_ਮੁੱਲ = do_ਕੱਢੋ(uf, opt_do_ਕੱਢੋ_withoutpath, opt_overwrite, password);
+        ਨਹੀਂਤਾਂ
+            ret_ਮੁੱਲ = do_ਕੱਢੋ_onefile(uf, filename_ਮੰਜ਼ਿਲ_ਕੱਢੋ, opt_do_ਕੱਢੋ_withoutpath, opt_overwrite, password);
     }
 
     unzClose(uf);
 
-    return ret_value;
+    ਵਾਪਸ ret_ਮੁੱਲ;
 }

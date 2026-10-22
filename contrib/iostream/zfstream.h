@@ -1,128 +1,128 @@
 
-#ifndef zfstream_h
-#define zfstream_h
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ zfstream_h
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ zfstream_h
 
-#include <fstream.h>
-#include "zlib.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <fstream.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "zlib.h"
 
-class gzfilebuf : public streambuf {
+class gzfilebuf : ਜਨਤਕ streambuf {
 
-public:
+ਜਨਤਕ:
 
   gzfilebuf( );
-  virtual ~gzfilebuf();
+  ਆਭਾਸੀ ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ io_ਬਹੁਲਕ );
+  gzfilebuf *attach( ਪੂਰਨ file_descriptor, ਪੂਰਨ io_ਬਹੁਲਕ );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  ਪੂਰਨ setcompressionlevel( ਪੂਰਨ comp_level );
+  ਪੂਰਨ setcompressionstrategy( ਪੂਰਨ comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  ਸਤਰਅੰਦਰ ਪੂਰਨ is_open() ਅਚਲ { ਵਾਪਸ (file !=ਨਿਰਾ); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  ਆਭਾਸੀ streampos seekoff( streamoff, ios::seek_dir, ਪੂਰਨ );
 
-  virtual int sync();
+  ਆਭਾਸੀ ਪੂਰਨ sync();
 
-protected:
+ਸੁਰੱਖਿਅਤ:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  ਆਭਾਸੀ ਪੂਰਨ underflow();
+  ਆਭਾਸੀ ਪੂਰਨ ਉਛਾਲ( ਪੂਰਨ = EOF );
 
-private:
+ਨਿਜੀ:
 
   gzFile file;
-  short mode;
-  short own_file_descriptor;
+  ਛੋਟਾ ਬਹੁਲਕ;
+  ਛੋਟਾ own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  ਪੂਰਨ flushbuf();
+  ਪੂਰਨ fillbuf();
 
 };
 
-class gzfilestream_common : virtual public ios {
+class gzfilestream_common : ਆਭਾਸੀ ਜਨਤਕ ios {
 
-  friend class gzifstream;
-  friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  ਮਿੱਤਰ class gzifstream;
+  ਮਿੱਤਰ class gzofstream;
+  ਮਿੱਤਰ gzofstream &setcompressionlevel( gzofstream &, ਪੂਰਨ );
+  ਮਿੱਤਰ gzofstream &setcompressionstrategy( gzofstream &, ਪੂਰਨ );
 
-public:
-  virtual ~gzfilestream_common();
+ਜਨਤਕ:
+  ਆਭਾਸੀ ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
-  void close();
+  ਖਾਲੀ attach( ਪੂਰਨ fd, ਪੂਰਨ io_ਬਹੁਲਕ );
+  ਖਾਲੀ open( ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ io_ਬਹੁਲਕ );
+  ਖਾਲੀ close();
 
-protected:
+ਸੁਰੱਖਿਅਤ:
   gzfilestream_common();
 
-private:
+ਨਿਜੀ:
   gzfilebuf *rdbuf();
 
-  gzfilebuf buffer;
+  gzfilebuf ਬਫਰ;
 
 };
 
-class gzifstream : public gzfilestream_common, public istream {
+class gzifstream : ਜਨਤਕ gzfilestream_common, ਜਨਤਕ istream {
 
-public:
+ਜਨਤਕ:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ io_ਬਹੁਲਕ = ios::ਵਿੱਚ );
+  gzifstream( ਪੂਰਨ fd, ਪੂਰਨ io_ਬਹੁਲਕ = ios::ਵਿੱਚ );
 
-  virtual ~gzifstream();
+  ਆਭਾਸੀ ~gzifstream();
 
 };
 
-class gzofstream : public gzfilestream_common, public ostream {
+class gzofstream : ਜਨਤਕ gzfilestream_common, ਜਨਤਕ ostream {
 
-public:
+ਜਨਤਕ:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ io_ਬਹੁਲਕ = ios::ਬਾਹਰਲਾ );
+  gzofstream( ਪੂਰਨ fd, ਪੂਰਨ io_ਬਹੁਲਕ = ios::ਬਾਹਰਲਾ );
 
-  virtual ~gzofstream();
+  ਆਭਾਸੀ ~gzofstream();
 
 };
 
-template<class T> class gzomanip {
-  friend gzofstream &operator<<(gzofstream &, const gzomanip<T> &);
-public:
+ਸਾਂਚਾ<class T> class gzomanip {
+  ਮਿੱਤਰ gzofstream &ਸੰਚਾਲਕ<<(gzofstream &, ਅਚਲ gzomanip<T> &);
+ਜਨਤਕ:
   gzomanip(gzofstream &(*f)(gzofstream &, T), T v) : func(f), val(v) { }
-private:
+ਨਿਜੀ:
   gzofstream &(*func)(gzofstream &, T);
   T val;
 };
 
-template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
+ਸਾਂਚਾ<class T> gzofstream &ਸੰਚਾਲਕ<<(gzofstream &s, ਅਚਲ gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  ਵਾਪਸ (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+ਸਤਰਅੰਦਰ gzofstream &setcompressionlevel( gzofstream &s, ਪੂਰਨ l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  ਵਾਪਸ s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+ਸਤਰਅੰਦਰ gzofstream &setcompressionstrategy( gzofstream &s, ਪੂਰਨ l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  ਵਾਪਸ s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+ਸਤਰਅੰਦਰ gzomanip<ਪੂਰਨ> setcompressionlevel(ਪੂਰਨ l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  ਵਾਪਸ gzomanip<ਪੂਰਨ>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+ਸਤਰਅੰਦਰ gzomanip<ਪੂਰਨ> setcompressionstrategy(ਪੂਰਨ l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  ਵਾਪਸ gzomanip<ਪੂਰਨ>(&setcompressionstrategy,l);
 }
 
-#endif
+#ਜੇ_ਅੰਤ

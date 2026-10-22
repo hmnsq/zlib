@@ -21,11 +21,11 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
-    unsigned short val;         /* offset in table or code value */
-} code;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ op;           /* operation, extra bits, table bits */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ ਬਿੱਟ;         /* bits in this part of the code */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ val;         /* offset in table or code value */
+} ਕੋਡ;
 
 /* op values as set by inflate_table():
     00000000 - literal
@@ -45,17 +45,17 @@ typedef struct {
    initial root table size (9 or 6) is found in the fifth argument of the
    inflate_table() calls in infback9.c.  If the root table size is changed,
    then these maximum sizes would be need to be recalculated and updated. */
-#define ENOUGH_LENS 852
-#define ENOUGH_DISTS 594
-#define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENOUGH_LENS 852
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENOUGH_DISTS 594
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table9() */
-typedef enum {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਗਿਣਤੀ {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-extern int inflate_table9(codetype type, unsigned short FAR *lens,
-                          unsigned codes, code FAR * FAR *table,
-                          unsigned FAR *bits, unsigned short FAR *work);
+ਬਾਹਰੀ ਪੂਰਨ inflate_table9(codetype type, ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ FAR *lens,
+                          ਬਿਨਾਨਿਸ਼ਾਨੀ codes, ਕੋਡ FAR * FAR *ਸਾਰਣੀ_2,
+                          ਬਿਨਾਨਿਸ਼ਾਨੀ FAR *ਬਿੱਟ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ FAR *work);

@@ -57,58 +57,58 @@
  */
 
 /* external functions and related types and constants */
-#include <stdio.h>          /* fprintf() */
-#include <stdlib.h>         /* malloc(), free() */
-#include <string.h>         /* strerror(), strcmp(), strlen(), memcpy() */
-#include <errno.h>          /* errno */
-#include <fcntl.h>          /* open() */
-#include <unistd.h>         /* read(), write(), close(), chown(), unlink() */
-#include <sys/types.h>
-#include <sys/stat.h>       /* stat(), chmod() */
-#include <utime.h>          /* utime() */
-#include "zlib.h"           /* inflateBackInit(), inflateBack(), */
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>          /* fprintf() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>         /* malloc(), free() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>         /* strerror(), strcmp(), strlen(), memcpy() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>          /* errno */
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>          /* open() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>         /* read(), write(), close(), chown(), unlink() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>       /* stat(), chmod() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <utime.h>          /* utime() */
+#ਅਨ੍ਤਰ੍ਭਾਵ "zlib.h"           /* inflateBackInit(), inflateBack(), */
                             /* inflateBackEnd(), crc32() */
 
 /* function declaration */
-#define local static
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ local ਸਥਿਰ
 
 /* buffer constants */
-#define SIZE 32768U         /* input and output buffer sizes */
-#define PIECE 16384         /* limits i/o chunks for 16-bit int case */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਮਾਪ_2 32768U         /* input and output buffer sizes */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PIECE 16384         /* limits i/o chunks for 16-bit int case */
 
 /* structure for infback() to pass to input function in() -- it maintains the
    input file and a buffer of size SIZE */
-struct ind {
-    int infile;
-    unsigned char *inbuf;
+ਬਣਤਰ ind {
+    ਪੂਰਨ infile;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *inbuf;
 };
 
 /* Load input buffer, assumed to be empty, and return bytes loaded and a
    pointer to them.  read() is called until the buffer is full, or until it
    returns end-of-file or error.  Return 0 on error. */
-local unsigned in(void *in_desc, z_const unsigned char **buf)
+local ਬਿਨਾਨਿਸ਼ਾਨੀ ਵਿੱਚ(ਖਾਲੀ *ਵਿੱਚ_desc, z_const ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ **buf)
 {
-    int ret;
-    unsigned len;
-    unsigned char *next;
-    struct ind *me = (struct ind *)in_desc;
+    ਪੂਰਨ ret;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ len;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅਗਲਾ;
+    ਬਣਤਰ ind *me = (ਬਣਤਰ ind *)ਵਿੱਚ_desc;
 
-    next = me->inbuf;
-    *buf = next;
+    ਅਗਲਾ = me->inbuf;
+    *buf = ਅਗਲਾ;
     len = 0;
-    do {
+    ਕਰੋ {
         ret = PIECE;
-        if ((unsigned)ret > SIZE - len)
-            ret = (int)(SIZE - len);
-        ret = (int)read(me->infile, next, ret);
-        if (ret == -1) {
+        ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ)ret > ਮਾਪ_2 - len)
+            ret = (ਪੂਰਨ)(ਮਾਪ_2 - len);
+        ret = (ਪੂਰਨ)ਪਠ(me->infile, ਅਗਲਾ, ret);
+        ਜੇ (ret == -1) {
             len = 0;
-            break;
+            ਰੋਕੋ;
         }
-        next += ret;
+        ਅਗਲਾ += ret;
         len += ret;
-    } while (ret != 0 && len < SIZE);
-    return len;
+    } ਜਦੋਂ (ret != 0 && len < ਮਾਪ_2);
+    ਵਾਪਸ len;
 }
 
 /* structure for infback() to pass to output function out() -- it maintains the
@@ -116,11 +116,11 @@ local unsigned in(void *in_desc, z_const unsigned char **buf)
    bytes output, both for checking against the gzip trailer.  (The length in
    the gzip trailer is stored modulo 2^32, so it's ok if a long is 32 bits and
    the output is greater than 4 GB.) */
-struct outd {
-    int outfile;
-    int check;                  /* true if checking crc and total */
-    unsigned long crc;
-    unsigned long total;
+ਬਣਤਰ outd {
+    ਪੂਰਨ outfile;
+    ਪੂਰਨ check;                  /* true if checking crc and total */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਚੱਕਰੀ_ਜਾਂਚ;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਕੁੱਲ;
 };
 
 /* Write output buffer and update the CRC-32 and total bytes written.  write()
@@ -128,65 +128,65 @@ struct outd {
    On success out() returns 0.  For a write failure, out() returns 1.  If the
    output file descriptor is -1, then nothing is written.
  */
-local int out(void *out_desc, unsigned char *buf, unsigned len)
+local ਪੂਰਨ ਬਾਹਰਲਾ(ਖਾਲੀ *ਬਾਹਰਲਾ_desc, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *buf, ਬਿਨਾਨਿਸ਼ਾਨੀ len)
 {
-    int ret;
-    struct outd *me = (struct outd *)out_desc;
+    ਪੂਰਨ ret;
+    ਬਣਤਰ outd *me = (ਬਣਤਰ outd *)ਬਾਹਰਲਾ_desc;
 
-    if (me->check) {
-        me->crc = crc32(me->crc, buf, len);
-        me->total += len;
+    ਜੇ (me->check) {
+        me->ਚੱਕਰੀ_ਜਾਂਚ = ਚੱਕਰੀ_ਜਾਂਚ_32_2(me->ਚੱਕਰੀ_ਜਾਂਚ, buf, len);
+        me->ਕੁੱਲ += len;
     }
-    if (me->outfile != -1)
-        do {
+    ਜੇ (me->outfile != -1)
+        ਕਰੋ {
             ret = PIECE;
-            if ((unsigned)ret > len)
-                ret = (int)len;
-            ret = (int)write(me->outfile, buf, ret);
-            if (ret == -1)
-                return 1;
+            ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ)ret > len)
+                ret = (ਪੂਰਨ)len;
+            ret = (ਪੂਰਨ)ਲਿਖ(me->outfile, buf, ret);
+            ਜੇ (ret == -1)
+                ਵਾਪਸ 1;
             buf += ret;
             len -= ret;
-        } while (len != 0);
-    return 0;
+        } ਜਦੋਂ (len != 0);
+    ਵਾਪਸ 0;
 }
 
 /* next input byte macro for use inside lunpipe() and gunpipe() */
-#define NEXT() (have ? 0 : (have = in(indp, &next)), \
-                last = have ? (have--, (int)(*next++)) : -1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਅਗਲਾ_2() (have ? 0 : (have = ਵਿੱਚ(indp, &ਅਗਲਾ)), \
+                ਆਖਰੀ = have ? (have--, (ਪੂਰਨ)(*ਅਗਲਾ++)) : -1)
 
 /* memory for gunpipe() and lunpipe() --
    the first 256 entries of prefix[] and suffix[] are never used, could
    have offset the index, but it's faster to waste the memory */
-unsigned char inbuf[SIZE];              /* input buffer */
-unsigned char outbuf[SIZE];             /* output buffer */
-unsigned short prefix[65536];           /* index to LZW prefix string */
-unsigned char suffix[65536];            /* one-character LZW suffix */
-unsigned char match[65280 + 2];         /* buffer for reversed match or gzip
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ inbuf[ਮਾਪ_2];              /* input buffer */
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ outbuf[ਮਾਪ_2];             /* output buffer */
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ ਅਗੇਤਰ[65536];           /* index to LZW prefix string */
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ suffix[65536];            /* one-character LZW suffix */
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ ਮੇਲ[65280 + 2];         /* buffer for reversed match or gzip
                                            32K sliding window */
 
 /* throw out what's left in the current bits byte buffer (this is a vestigial
    aspect of the compressed data format derived from an implementation that
    made use of a special VAX machine instruction!) */
-#define FLUSHCODE() \
-    do { \
-        left = 0; \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FLUSHCODE() \
+    ਕਰੋ { \
+        ਖੱਬਾ = 0; \
         rem = 0; \
-        if (chunk > have) { \
+        ਜੇ (chunk > have) { \
             chunk -= have; \
             have = 0; \
-            if (NEXT() == -1) \
-                break; \
+            ਜੇ (ਅਗਲਾ_2() == -1) \
+                ਰੋਕੋ; \
             chunk--; \
-            if (chunk > have) { \
+            ਜੇ (chunk > have) { \
                 chunk = have = 0; \
-                break; \
+                ਰੋਕੋ; \
             } \
         } \
         have -= chunk; \
-        next += chunk; \
+        ਅਗਲਾ += chunk; \
         chunk = 0; \
-    } while (0)
+    } ਜਦੋਂ (0)
 
 /* Decompress a compress (LZW) file from indp to outfile.  The compress magic
    header (two bytes) has already been read and verified.  There are have bytes
@@ -197,119 +197,119 @@ unsigned char match[65280 + 2];         /* buffer for reversed match or gzip
    file, read error, or write error (a write error indicated by strm->next_in
    not equal to Z_NULL), or Z_DATA_ERROR for invalid input.
  */
-local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
-                  int outfile, z_stream *strm)
+local ਪੂਰਨ lunpipe(ਬਿਨਾਨਿਸ਼ਾਨੀ have, z_const ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅਗਲਾ, ਬਣਤਰ ind *indp,
+                  ਪੂਰਨ outfile, z_ਧਾਰਾ *strm)
 {
-    int last;                   /* last byte read by NEXT(), or -1 if EOF */
-    unsigned chunk;             /* bytes left in current chunk */
-    int left;                   /* bits left in rem */
-    unsigned rem;               /* unused bits from input */
-    int bits;                   /* current bits per code */
-    unsigned code;              /* code, table traversal index */
-    unsigned mask;              /* mask for current bits codes */
-    int max;                    /* maximum bits per code for this stream */
-    unsigned flags;             /* compress flags, then block compress flag */
-    unsigned end;               /* last valid entry in prefix/suffix tables */
-    unsigned temp;              /* current code */
-    unsigned prev;              /* previous code */
-    unsigned final;             /* last character written for previous code */
-    unsigned stack;             /* next position for reversed string */
-    unsigned outcnt;            /* bytes in output buffer */
-    struct outd outd;           /* output structure */
-    unsigned char *p;
+    ਪੂਰਨ ਆਖਰੀ;                   /* last byte read by NEXT(), or -1 if EOF */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ chunk;             /* bytes left in current chunk */
+    ਪੂਰਨ ਖੱਬਾ;                   /* bits left in rem */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ rem;               /* unused bits from input */
+    ਪੂਰਨ ਬਿੱਟ;                   /* current bits per code */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਕੋਡ;              /* code, table traversal index */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਨਕਾਬ;              /* mask for current bits codes */
+    ਪੂਰਨ max;                    /* maximum bits per code for this stream */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ flags;             /* compress flags, then block compress flag */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਸਿਰਾ;               /* last valid entry in prefix/suffix tables */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਆਰਜ਼ੀ;              /* current code */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ prev;              /* previous code */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ final;             /* last character written for previous code */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਢੇਰ_2;             /* next position for reversed string */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ outcnt;            /* bytes in output buffer */
+    ਬਣਤਰ outd outd;           /* output structure */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *p;
 
     /* set up output */
     outd.outfile = outfile;
     outd.check = 0;
 
     /* process remainder of compress header -- a flags byte */
-    flags = NEXT();
-    if (last == -1)
-        return Z_BUF_ERROR;
-    if (flags & 0x60) {
-        strm->msg = (z_const char *)"unknown lzw flags set";
-        return Z_DATA_ERROR;
+    flags = ਅਗਲਾ_2();
+    ਜੇ (ਆਖਰੀ == -1)
+        ਵਾਪਸ Z_BUF_ERROR;
+    ਜੇ (flags & 0x60) {
+        strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"unknown lzw flags set";
+        ਵਾਪਸ Z_ਅੰਕੜੇ_ERROR;
     }
     max = flags & 0x1f;
-    if (max < 9 || max > 16) {
-        strm->msg = (z_const char *)"lzw bits out of range";
-        return Z_DATA_ERROR;
+    ਜੇ (max < 9 || max > 16) {
+        strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"lzw bits out of range";
+        ਵਾਪਸ Z_ਅੰਕੜੇ_ERROR;
     }
-    if (max == 9)                           /* 9 doesn't really mean 9 */
+    ਜੇ (max == 9)                           /* 9 doesn't really mean 9 */
         max = 10;
     flags &= 0x80;                          /* true if block compress */
 
     /* clear table */
-    bits = 9;
-    mask = 0x1ff;
-    end = flags ? 256 : 255;
+    ਬਿੱਟ = 9;
+    ਨਕਾਬ = 0x1ff;
+    ਸਿਰਾ = flags ? 256 : 255;
 
     /* set up: get first 9-bit code, which is the first decompressed byte, but
        don't create a table entry until the next code */
-    if (NEXT() == -1)                       /* no compressed data is ok */
-        return Z_OK;
-    final = prev = (unsigned)last;          /* low 8 bits of code */
-    if (NEXT() == -1)                       /* missing a bit */
-        return Z_BUF_ERROR;
-    if (last & 1) {                         /* code must be < 256 */
-        strm->msg = (z_const char *)"invalid lzw code";
-        return Z_DATA_ERROR;
+    ਜੇ (ਅਗਲਾ_2() == -1)                       /* no compressed data is ok */
+        ਵਾਪਸ Z_OK;
+    final = prev = (ਬਿਨਾਨਿਸ਼ਾਨੀ)ਆਖਰੀ;          /* low 8 bits of code */
+    ਜੇ (ਅਗਲਾ_2() == -1)                       /* missing a bit */
+        ਵਾਪਸ Z_BUF_ERROR;
+    ਜੇ (ਆਖਰੀ & 1) {                         /* code must be < 256 */
+        strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"invalid lzw code";
+        ਵਾਪਸ Z_ਅੰਕੜੇ_ERROR;
     }
-    rem = (unsigned)last >> 1;              /* remaining 7 bits */
-    left = 7;
-    chunk = bits - 2;                       /* 7 bytes left in this chunk */
-    outbuf[0] = (unsigned char)final;       /* write first decompressed byte */
+    rem = (ਬਿਨਾਨਿਸ਼ਾਨੀ)ਆਖਰੀ >> 1;              /* remaining 7 bits */
+    ਖੱਬਾ = 7;
+    chunk = ਬਿੱਟ - 2;                       /* 7 bytes left in this chunk */
+    outbuf[0] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)final;       /* write first decompressed byte */
     outcnt = 1;
 
     /* decode codes */
-    stack = 0;
-    for (;;) {
+    ਢੇਰ_2 = 0;
+    ਲਈ (;;) {
         /* if the table will be full after this, increment the code size */
-        if (end >= mask && bits < max) {
+        ਜੇ (ਸਿਰਾ >= ਨਕਾਬ && ਬਿੱਟ < max) {
             FLUSHCODE();
-            bits++;
-            mask <<= 1;
-            mask++;
+            ਬਿੱਟ++;
+            ਨਕਾਬ <<= 1;
+            ਨਕਾਬ++;
         }
 
         /* get a code of length bits */
-        if (chunk == 0)                     /* decrement chunk modulo bits */
-            chunk = bits;
-        code = rem;                         /* low bits of code */
-        if (NEXT() == -1) {                 /* EOF is end of compressed data */
+        ਜੇ (chunk == 0)                     /* decrement chunk modulo bits */
+            chunk = ਬਿੱਟ;
+        ਕੋਡ = rem;                         /* low bits of code */
+        ਜੇ (ਅਗਲਾ_2() == -1) {                 /* EOF is end of compressed data */
             /* write remaining buffered output */
-            if (outcnt && out(&outd, outbuf, outcnt)) {
-                strm->next_in = outbuf;     /* signal write error */
-                return Z_BUF_ERROR;
+            ਜੇ (outcnt && ਬਾਹਰਲਾ(&outd, outbuf, outcnt)) {
+                strm->ਅਗਲਾ_ਵਿੱਚ = outbuf;     /* signal write error */
+                ਵਾਪਸ Z_BUF_ERROR;
             }
-            return Z_OK;
+            ਵਾਪਸ Z_OK;
         }
-        code += (unsigned)last << left;     /* middle (or high) bits of code */
-        left += 8;
+        ਕੋਡ += (ਬਿਨਾਨਿਸ਼ਾਨੀ)ਆਖਰੀ << ਖੱਬਾ;     /* middle (or high) bits of code */
+        ਖੱਬਾ += 8;
         chunk--;
-        if (bits > left) {                  /* need more bits */
-            if (NEXT() == -1)               /* can't end in middle of code */
-                return Z_BUF_ERROR;
-            code += (unsigned)last << left; /* high bits of code */
-            left += 8;
+        ਜੇ (ਬਿੱਟ > ਖੱਬਾ) {                  /* need more bits */
+            ਜੇ (ਅਗਲਾ_2() == -1)               /* can't end in middle of code */
+                ਵਾਪਸ Z_BUF_ERROR;
+            ਕੋਡ += (ਬਿਨਾਨਿਸ਼ਾਨੀ)ਆਖਰੀ << ਖੱਬਾ; /* high bits of code */
+            ਖੱਬਾ += 8;
             chunk--;
         }
-        code &= mask;                       /* mask to current code length */
-        left -= bits;                       /* number of unused bits */
-        rem = (unsigned)last >> (8 - left); /* unused bits from last byte */
+        ਕੋਡ &= ਨਕਾਬ;                       /* mask to current code length */
+        ਖੱਬਾ -= ਬਿੱਟ;                       /* number of unused bits */
+        rem = (ਬਿਨਾਨਿਸ਼ਾਨੀ)ਆਖਰੀ >> (8 - ਖੱਬਾ); /* unused bits from last byte */
 
         /* process clear code (256) */
-        if (code == 256 && flags) {
+        ਜੇ (ਕੋਡ == 256 && flags) {
             FLUSHCODE();
-            bits = 9;                       /* initialize bits and mask */
-            mask = 0x1ff;
-            end = 255;                      /* empty table */
-            continue;                       /* get next code */
+            ਬਿੱਟ = 9;                       /* initialize bits and mask */
+            ਨਕਾਬ = 0x1ff;
+            ਸਿਰਾ = 255;                      /* empty table */
+            ਜਾਰੀ;                       /* get next code */
         }
 
         /* special code to reuse last match */
-        temp = code;                        /* save the current code */
-        if (code > end) {
+        ਆਰਜ਼ੀ = ਕੋਡ;                        /* save the current code */
+        ਜੇ (ਕੋਡ > ਸਿਰਾ) {
             /* Be picky on the allowed code here, and make sure that the code
                we drop through (prev) will be a valid index so that random
                input does not cause an exception.  The code != end + 1 check is
@@ -318,49 +318,49 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
                removed.  Leaving this check in greatly improves gun's ability
                to detect random or corrupted input after a compress header.
                In any case, the prev > end check must be retained. */
-            if (code != end + 1 || prev > end) {
-                strm->msg = (z_const char *)"invalid lzw code";
-                return Z_DATA_ERROR;
+            ਜੇ (ਕੋਡ != ਸਿਰਾ + 1 || prev > ਸਿਰਾ) {
+                strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"invalid lzw code";
+                ਵਾਪਸ Z_ਅੰਕੜੇ_ERROR;
             }
-            match[stack++] = (unsigned char)final;
-            code = prev;
+            ਮੇਲ[ਢੇਰ_2++] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)final;
+            ਕੋਡ = prev;
         }
 
         /* walk through linked list to generate output in reverse order */
-        p = match + stack;
-        while (code >= 256) {
-            *p++ = suffix[code];
-            code = prefix[code];
+        p = ਮੇਲ + ਢੇਰ_2;
+        ਜਦੋਂ (ਕੋਡ >= 256) {
+            *p++ = suffix[ਕੋਡ];
+            ਕੋਡ = ਅਗੇਤਰ[ਕੋਡ];
         }
-        stack = p - match;
-        match[stack++] = (unsigned char)code;
-        final = code;
+        ਢੇਰ_2 = p - ਮੇਲ;
+        ਮੇਲ[ਢੇਰ_2++] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)ਕੋਡ;
+        final = ਕੋਡ;
 
         /* link new table entry */
-        if (end < mask) {
-            end++;
-            prefix[end] = (unsigned short)prev;
-            suffix[end] = (unsigned char)final;
+        ਜੇ (ਸਿਰਾ < ਨਕਾਬ) {
+            ਸਿਰਾ++;
+            ਅਗੇਤਰ[ਸਿਰਾ] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਛੋਟਾ)prev;
+            suffix[ਸਿਰਾ] = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)final;
         }
 
         /* set previous code for next iteration */
-        prev = temp;
+        prev = ਆਰਜ਼ੀ;
 
         /* write output in forward order */
-        while (stack > SIZE - outcnt) {
-            while (outcnt < SIZE)
-                outbuf[outcnt++] = match[--stack];
-            if (out(&outd, outbuf, outcnt)) {
-                strm->next_in = outbuf; /* signal write error */
-                return Z_BUF_ERROR;
+        ਜਦੋਂ (ਢੇਰ_2 > ਮਾਪ_2 - outcnt) {
+            ਜਦੋਂ (outcnt < ਮਾਪ_2)
+                outbuf[outcnt++] = ਮੇਲ[--ਢੇਰ_2];
+            ਜੇ (ਬਾਹਰਲਾ(&outd, outbuf, outcnt)) {
+                strm->ਅਗਲਾ_ਵਿੱਚ = outbuf; /* signal write error */
+                ਵਾਪਸ Z_BUF_ERROR;
             }
             outcnt = 0;
         }
-        p = match + stack;
-        do {
+        p = ਮੇਲ + ਢੇਰ_2;
+        ਕਰੋ {
             outbuf[outcnt++] = *--p;
-        } while (p > match);
-        stack = 0;
+        } ਜਦੋਂ (p > ਮੇਲ);
+        ਢੇਰ_2 = 0;
 
         /* loop for next code with final and prev as the last match, rem and
            left provide the first 0..7 bits of the next code, end is the last
@@ -380,13 +380,13 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
    prematurely or a write error occurs, or Z_ERRNO if junk (not a another gzip
    stream) follows a valid gzip stream.
  */
-local int gunpipe(z_stream *strm, int infile, int outfile)
+local ਪੂਰਨ gunpipe(z_ਧਾਰਾ *strm, ਪੂਰਨ infile, ਪੂਰਨ outfile)
 {
-    int ret, first, last;
-    unsigned have, flags, len;
-    z_const unsigned char *next = NULL;
-    struct ind ind, *indp;
-    struct outd outd;
+    ਪੂਰਨ ret, ਪਹਿਲਾ, ਆਖਰੀ;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ have, flags, len;
+    z_const ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅਗਲਾ = ਨਿਰਾ;
+    ਬਣਤਰ ind ind, *indp;
+    ਬਣਤਰ outd outd;
 
     /* setup input buffer */
     ind.infile = infile;
@@ -395,144 +395,144 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
 
     /* decompress concatenated gzip streams */
     have = 0;                               /* no input data read in yet */
-    first = 1;                              /* looking for first gzip header */
-    strm->next_in = Z_NULL;                 /* so Z_BUF_ERROR means EOF */
-    for (;;) {
+    ਪਹਿਲਾ = 1;                              /* looking for first gzip header */
+    strm->ਅਗਲਾ_ਵਿੱਚ = Z_NULL;                 /* so Z_BUF_ERROR means EOF */
+    ਲਈ (;;) {
         /* look for the two magic header bytes for a gzip stream */
-        if (NEXT() == -1) {
+        ਜੇ (ਅਗਲਾ_2() == -1) {
             ret = Z_OK;
-            break;                          /* empty gzip stream is ok */
+            ਰੋਕੋ;                          /* empty gzip stream is ok */
         }
-        if (last != 31 || (NEXT() != 139 && last != 157)) {
-            strm->msg = (z_const char *)"incorrect header check";
-            ret = first ? Z_DATA_ERROR : Z_ERRNO;
-            break;                          /* not a gzip or compress header */
+        ਜੇ (ਆਖਰੀ != 31 || (ਅਗਲਾ_2() != 139 && ਆਖਰੀ != 157)) {
+            strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"incorrect header check";
+            ret = ਪਹਿਲਾ ? Z_ਅੰਕੜੇ_ERROR : Z_ERRNO;
+            ਰੋਕੋ;                          /* not a gzip or compress header */
         }
-        first = 0;                          /* next non-header is junk */
+        ਪਹਿਲਾ = 0;                          /* next non-header is junk */
 
         /* process a compress (LZW) file -- can't be concatenated after this */
-        if (last == 157) {
-            ret = lunpipe(have, next, indp, outfile, strm);
-            break;
+        ਜੇ (ਆਖਰੀ == 157) {
+            ret = lunpipe(have, ਅਗਲਾ, indp, outfile, strm);
+            ਰੋਕੋ;
         }
 
         /* process remainder of gzip header */
         ret = Z_BUF_ERROR;
-        if (NEXT() != 8) {                  /* only deflate method allowed */
-            if (last == -1) break;
-            strm->msg = (z_const char *)"unknown compression method";
-            ret = Z_DATA_ERROR;
-            break;
+        ਜੇ (ਅਗਲਾ_2() != 8) {                  /* only deflate method allowed */
+            ਜੇ (ਆਖਰੀ == -1) ਰੋਕੋ;
+            strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"unknown compression method";
+            ret = Z_ਅੰਕੜੇ_ERROR;
+            ਰੋਕੋ;
         }
-        flags = NEXT();                     /* header flags */
-        NEXT();                             /* discard mod time, xflgs, os */
-        NEXT();
-        NEXT();
-        NEXT();
-        NEXT();
-        NEXT();
-        if (last == -1) break;
-        if (flags & 0xe0) {
-            strm->msg = (z_const char *)"unknown header flags set";
-            ret = Z_DATA_ERROR;
-            break;
+        flags = ਅਗਲਾ_2();                     /* header flags */
+        ਅਗਲਾ_2();                             /* discard mod time, xflgs, os */
+        ਅਗਲਾ_2();
+        ਅਗਲਾ_2();
+        ਅਗਲਾ_2();
+        ਅਗਲਾ_2();
+        ਅਗਲਾ_2();
+        ਜੇ (ਆਖਰੀ == -1) ਰੋਕੋ;
+        ਜੇ (flags & 0xe0) {
+            strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"unknown header flags set";
+            ret = Z_ਅੰਕੜੇ_ERROR;
+            ਰੋਕੋ;
         }
-        if (flags & 4) {                    /* extra field */
-            len = NEXT();
-            len += (unsigned)(NEXT()) << 8;
-            if (last == -1) break;
-            while (len > have) {
+        ਜੇ (flags & 4) {                    /* extra field */
+            len = ਅਗਲਾ_2();
+            len += (ਬਿਨਾਨਿਸ਼ਾਨੀ)(ਅਗਲਾ_2()) << 8;
+            ਜੇ (ਆਖਰੀ == -1) ਰੋਕੋ;
+            ਜਦੋਂ (len > have) {
                 len -= have;
                 have = 0;
-                if (NEXT() == -1) break;
+                ਜੇ (ਅਗਲਾ_2() == -1) ਰੋਕੋ;
                 len--;
             }
-            if (last == -1) break;
+            ਜੇ (ਆਖਰੀ == -1) ਰੋਕੋ;
             have -= len;
-            next += len;
+            ਅਗਲਾ += len;
         }
-        if (flags & 8)                      /* file name */
-            while (NEXT() != 0 && last != -1)
+        ਜੇ (flags & 8)                      /* file name */
+            ਜਦੋਂ (ਅਗਲਾ_2() != 0 && ਆਖਰੀ != -1)
                 ;
-        if (flags & 16)                     /* comment */
-            while (NEXT() != 0 && last != -1)
+        ਜੇ (flags & 16)                     /* comment */
+            ਜਦੋਂ (ਅਗਲਾ_2() != 0 && ਆਖਰੀ != -1)
                 ;
-        if (flags & 2) {                    /* header crc */
-            NEXT();
-            NEXT();
+        ਜੇ (flags & 2) {                    /* header crc */
+            ਅਗਲਾ_2();
+            ਅਗਲਾ_2();
         }
-        if (last == -1) break;
+        ਜੇ (ਆਖਰੀ == -1) ਰੋਕੋ;
 
         /* set up output */
         outd.outfile = outfile;
         outd.check = 1;
-        outd.crc = crc32(0L, Z_NULL, 0);
-        outd.total = 0;
+        outd.ਚੱਕਰੀ_ਜਾਂਚ = ਚੱਕਰੀ_ਜਾਂਚ_32_2(0L, Z_NULL, 0);
+        outd.ਕੁੱਲ = 0;
 
         /* decompress data to output */
-        strm->next_in = next;
-        strm->avail_in = have;
-        ret = inflateBack(strm, in, indp, out, &outd);
-        if (ret != Z_STREAM_END) break;
-        next = strm->next_in;
-        have = strm->avail_in;
-        strm->next_in = Z_NULL;             /* so Z_BUF_ERROR means EOF */
+        strm->ਅਗਲਾ_ਵਿੱਚ = ਅਗਲਾ;
+        strm->avail_ਵਿੱਚ = have;
+        ret = inflate_ਪਿੱਠ(strm, ਵਿੱਚ, indp, ਬਾਹਰਲਾ, &outd);
+        ਜੇ (ret != Z_ਧਾਰਾ_ਸਿਰਾ) ਰੋਕੋ;
+        ਅਗਲਾ = strm->ਅਗਲਾ_ਵਿੱਚ;
+        have = strm->avail_ਵਿੱਚ;
+        strm->ਅਗਲਾ_ਵਿੱਚ = Z_NULL;             /* so Z_BUF_ERROR means EOF */
 
         /* check trailer */
         ret = Z_BUF_ERROR;
-        if (NEXT() != (int)(outd.crc & 0xff) ||
-            NEXT() != (int)((outd.crc >> 8) & 0xff) ||
-            NEXT() != (int)((outd.crc >> 16) & 0xff) ||
-            NEXT() != (int)((outd.crc >> 24) & 0xff)) {
+        ਜੇ (ਅਗਲਾ_2() != (ਪੂਰਨ)(outd.ਚੱਕਰੀ_ਜਾਂਚ & 0xff) ||
+            ਅਗਲਾ_2() != (ਪੂਰਨ)((outd.ਚੱਕਰੀ_ਜਾਂਚ >> 8) & 0xff) ||
+            ਅਗਲਾ_2() != (ਪੂਰਨ)((outd.ਚੱਕਰੀ_ਜਾਂਚ >> 16) & 0xff) ||
+            ਅਗਲਾ_2() != (ਪੂਰਨ)((outd.ਚੱਕਰੀ_ਜਾਂਚ >> 24) & 0xff)) {
             /* crc error */
-            if (last != -1) {
-                strm->msg = (z_const char *)"incorrect data check";
-                ret = Z_DATA_ERROR;
+            ਜੇ (ਆਖਰੀ != -1) {
+                strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"incorrect data check";
+                ret = Z_ਅੰਕੜੇ_ERROR;
             }
-            break;
+            ਰੋਕੋ;
         }
-        if (NEXT() != (int)(outd.total & 0xff) ||
-            NEXT() != (int)((outd.total >> 8) & 0xff) ||
-            NEXT() != (int)((outd.total >> 16) & 0xff) ||
-            NEXT() != (int)((outd.total >> 24) & 0xff)) {
+        ਜੇ (ਅਗਲਾ_2() != (ਪੂਰਨ)(outd.ਕੁੱਲ & 0xff) ||
+            ਅਗਲਾ_2() != (ਪੂਰਨ)((outd.ਕੁੱਲ >> 8) & 0xff) ||
+            ਅਗਲਾ_2() != (ਪੂਰਨ)((outd.ਕੁੱਲ >> 16) & 0xff) ||
+            ਅਗਲਾ_2() != (ਪੂਰਨ)((outd.ਕੁੱਲ >> 24) & 0xff)) {
             /* length error */
-            if (last != -1) {
-                strm->msg = (z_const char *)"incorrect length check";
-                ret = Z_DATA_ERROR;
+            ਜੇ (ਆਖਰੀ != -1) {
+                strm->ਸੁਨੇਹਾ = (z_const ਅੱਖਰ *)"incorrect length check";
+                ret = Z_ਅੰਕੜੇ_ERROR;
             }
-            break;
+            ਰੋਕੋ;
         }
 
         /* go back and look for another gzip stream */
     }
 
     /* clean up and return */
-    return ret;
+    ਵਾਪਸ ret;
 }
 
 /* Copy file attributes, from -> to, as best we can.  This is best effort, so
    no errors are reported.  The mode bits, including suid, sgid, and the sticky
    bit are copied (if allowed), the owner's user id and group id are copied
    (again if allowed), and the access and modify times are copied. */
-local void copymeta(char *from, char *to)
+local ਖਾਲੀ copymeta(ਅੱਖਰ *from, ਅੱਖਰ *ਮੰਜ਼ਿਲ)
 {
-    struct stat was;
-    struct utimbuf when;
+    ਬਣਤਰ stat was;
+    ਬਣਤਰ utimbuf when;
 
     /* get all of from's Unix meta data, return if not a regular file */
-    if (stat(from, &was) != 0 || (was.st_mode & S_IFMT) != S_IFREG)
-        return;
+    ਜੇ (stat(from, &was) != 0 || (was.st_mode & S_IFMT) != S_IFREG)
+        ਵਾਪਸ;
 
     /* set to's mode bits, ignore errors */
-    (void)chmod(to, was.st_mode & 07777);
+    (ਖਾਲੀ)chmod(ਮੰਜ਼ਿਲ, was.st_mode & 07777);
 
     /* copy owner's user and group, ignore errors */
-    (void)chown(to, was.st_uid, was.st_gid);
+    (ਖਾਲੀ)chown(ਮੰਜ਼ਿਲ, was.st_uid, was.st_gid);
 
     /* copy access and modify times, ignore errors */
     when.actime = was.st_atime;
     when.modtime = was.st_mtime;
-    (void)utime(to, &when);
+    (ਖਾਲੀ)utime(ਮੰਜ਼ਿਲ, &when);
 }
 
 /* Decompress the file inname to the file outnname, of if test is true, just
@@ -545,158 +545,158 @@ local void copymeta(char *from, char *to)
    gunzip() returns 1 if there is an out-of-memory error or an unexpected
    return code from gunpipe().  Otherwise it returns 0.
  */
-local int gunzip(z_stream *strm, char *inname, char *outname, int test)
+local ਪੂਰਨ gunzip(z_ਧਾਰਾ *strm, ਅੱਖਰ *inname, ਅੱਖਰ *outname, ਪੂਰਨ test)
 {
-    int ret;
-    int infile, outfile;
+    ਪੂਰਨ ret;
+    ਪੂਰਨ infile, outfile;
 
     /* open files */
-    if (inname == NULL || *inname == 0) {
+    ਜੇ (inname == ਨਿਰਾ || *inname == 0) {
         inname = "-";
         infile = 0;     /* stdin */
     }
-    else {
+    ਨਹੀਂਤਾਂ {
         infile = open(inname, O_RDONLY, 0);
-        if (infile == -1) {
+        ਜੇ (infile == -1) {
             fprintf(stderr, "gun cannot open %s\n", inname);
-            return 0;
+            ਵਾਪਸ 0;
         }
     }
-    if (test)
+    ਜੇ (test)
         outfile = -1;
-    else if (outname == NULL || *outname == 0) {
+    ਨਹੀਂਤਾਂ ਜੇ (outname == ਨਿਰਾ || *outname == 0) {
         outname = "-";
         outfile = 1;    /* stdout */
     }
-    else {
+    ਨਹੀਂਤਾਂ {
         outfile = open(outname, O_CREAT | O_TRUNC | O_WRONLY, 0666);
-        if (outfile == -1) {
+        ਜੇ (outfile == -1) {
             close(infile);
             fprintf(stderr, "gun cannot create %s\n", outname);
-            return 0;
+            ਵਾਪਸ 0;
         }
     }
     errno = 0;
 
     /* decompress */
     ret = gunpipe(strm, infile, outfile);
-    if (outfile > 2) close(outfile);
-    if (infile > 2) close(infile);
+    ਜੇ (outfile > 2) close(outfile);
+    ਜੇ (infile > 2) close(infile);
 
     /* interpret result */
-    switch (ret) {
-    case Z_OK:
-    case Z_ERRNO:
-        if (infile > 2 && outfile > 2) {
+    ਚੋਣ (ret) {
+    ਹਾਲਤ Z_OK:
+    ਹਾਲਤ Z_ERRNO:
+        ਜੇ (infile > 2 && outfile > 2) {
             copymeta(inname, outname);          /* copy attributes */
             unlink(inname);
         }
-        if (ret == Z_ERRNO)
+        ਜੇ (ret == Z_ERRNO)
             fprintf(stderr, "gun warning: trailing garbage ignored in %s\n",
                     inname);
-        break;
-    case Z_DATA_ERROR:
-        if (outfile > 2) unlink(outname);
-        fprintf(stderr, "gun data error on %s: %s\n", inname, strm->msg);
-        break;
-    case Z_MEM_ERROR:
-        if (outfile > 2) unlink(outname);
+        ਰੋਕੋ;
+    ਹਾਲਤ Z_ਅੰਕੜੇ_ERROR:
+        ਜੇ (outfile > 2) unlink(outname);
+        fprintf(stderr, "gun data error on %s: %s\n", inname, strm->ਸੁਨੇਹਾ);
+        ਰੋਕੋ;
+    ਹਾਲਤ Z_MEM_ERROR:
+        ਜੇ (outfile > 2) unlink(outname);
         fprintf(stderr, "gun out of memory error--aborting\n");
-        return 1;
-    case Z_BUF_ERROR:
-        if (outfile > 2) unlink(outname);
-        if (strm->next_in != Z_NULL) {
+        ਵਾਪਸ 1;
+    ਹਾਲਤ Z_BUF_ERROR:
+        ਜੇ (outfile > 2) unlink(outname);
+        ਜੇ (strm->ਅਗਲਾ_ਵਿੱਚ != Z_NULL) {
             fprintf(stderr, "gun write error on %s: %s\n",
                     outname, strerror(errno));
         }
-        else if (errno) {
+        ਨਹੀਂਤਾਂ ਜੇ (errno) {
             fprintf(stderr, "gun read error on %s: %s\n",
                     inname, strerror(errno));
         }
-        else {
+        ਨਹੀਂਤਾਂ {
             fprintf(stderr, "gun unexpected end of file on %s\n",
                     inname);
         }
-        break;
-    default:
-        if (outfile > 2) unlink(outname);
+        ਰੋਕੋ;
+    ਮੂਲ:
+        ਜੇ (outfile > 2) unlink(outname);
         fprintf(stderr, "gun internal error--aborting\n");
-        return 1;
+        ਵਾਪਸ 1;
     }
-    return 0;
+    ਵਾਪਸ 0;
 }
 
 /* Process the gun command line arguments.  See the command syntax near the
    beginning of this source file. */
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-    int ret, len, test;
-    char *outname;
-    unsigned char *window;
-    z_stream strm;
+    ਪੂਰਨ ret, len, test;
+    ਅੱਖਰ *outname;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਖਿੜਕੀ;
+    z_ਧਾਰਾ strm;
 
     /* initialize inflateBack state for repeated use */
-    window = match;                         /* reuse LZW match buffer */
+    ਖਿੜਕੀ = ਮੇਲ;                         /* reuse LZW match buffer */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
-    ret = inflateBackInit(&strm, 15, window);
-    if (ret != Z_OK) {
+    ret = inflate_ਪਿੱਠ_Init(&strm, 15, ਖਿੜਕੀ);
+    ਜੇ (ret != Z_OK) {
         fprintf(stderr, "gun out of memory error--aborting\n");
-        return 1;
+        ਵਾਪਸ 1;
     }
 
     /* decompress each file to the same name with the suffix removed */
     argc--;
     argv++;
     test = 0;
-    if (argc && strcmp(*argv, "-h") == 0) {
+    ਜੇ (argc && strcmp(*argv, "-h") == 0) {
         fprintf(stderr, "gun 1.6 (17 Jan 2010)\n");
         fprintf(stderr, "Copyright (C) 2003-2010 Mark Adler\n");
         fprintf(stderr, "usage: gun [-t] [file1.gz [file2.Z ...]]\n");
-        return 0;
+        ਵਾਪਸ 0;
     }
-    if (argc && strcmp(*argv, "-t") == 0) {
+    ਜੇ (argc && strcmp(*argv, "-t") == 0) {
         test = 1;
         argc--;
         argv++;
     }
-    if (argc)
-        do {
-            if (test)
-                outname = NULL;
-            else {
-                len = (int)strlen(*argv);
-                if (strcmp(*argv + len - 3, ".gz") == 0 ||
+    ਜੇ (argc)
+        ਕਰੋ {
+            ਜੇ (test)
+                outname = ਨਿਰਾ;
+            ਨਹੀਂਤਾਂ {
+                len = (ਪੂਰਨ)ਲੜੀ_ਲੰਬਾਈ(*argv);
+                ਜੇ (strcmp(*argv + len - 3, ".gz") == 0 ||
                     strcmp(*argv + len - 3, "-gz") == 0)
                     len -= 3;
-                else if (strcmp(*argv + len - 2, ".z") == 0 ||
+                ਨਹੀਂਤਾਂ ਜੇ (strcmp(*argv + len - 2, ".z") == 0 ||
                     strcmp(*argv + len - 2, "-z") == 0 ||
                     strcmp(*argv + len - 2, "_z") == 0 ||
                     strcmp(*argv + len - 2, ".Z") == 0)
                     len -= 2;
-                else {
+                ਨਹੀਂਤਾਂ {
                     fprintf(stderr, "gun error: no gz type on %s--skipping\n",
                             *argv);
-                    continue;
+                    ਜਾਰੀ;
                 }
-                outname = malloc(len + 1);
-                if (outname == NULL) {
+                outname = ਸਮ੍ਰਿਤੀ_ਦਿਓ(len + 1);
+                ਜੇ (outname == ਨਿਰਾ) {
                     fprintf(stderr, "gun out of memory error--aborting\n");
                     ret = 1;
-                    break;
+                    ਰੋਕੋ;
                 }
-                memcpy(outname, *argv, len);
+                ਸਮ੍ਰਿਤੀ_ਨਕਲ(outname, *argv, len);
                 outname[len] = 0;
             }
             ret = gunzip(&strm, *argv, outname, test);
-            if (outname != NULL) free(outname);
-            if (ret) break;
-        } while (argv++, --argc);
-    else
-        ret = gunzip(&strm, NULL, NULL, test);
+            ਜੇ (outname != ਨਿਰਾ) ਮੁਕਤ(outname);
+            ਜੇ (ret) ਰੋਕੋ;
+        } ਜਦੋਂ (argv++, --argc);
+    ਨਹੀਂਤਾਂ
+        ret = gunzip(&strm, ਨਿਰਾ, ਨਿਰਾ, test);
 
     /* clean up */
-    inflateBackEnd(&strm);
-    return ret;
+    inflate_ਪਿੱਠ_ਸਿਰਾ(&strm);
+    ਵਾਪਸ ret;
 }

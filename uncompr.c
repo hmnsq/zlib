@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#define ZLIB_INTERNAL
-#include "zlib.h"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ZLIB_ਅੰਦਰੂਨੀ
+#ਅਨ੍ਤਰ੍ਭਾਵ "zlib.h"
 
 /* ===========================================================================
      Decompresses the source buffer into the destination buffer.  *sourceLen is
@@ -26,76 +26,76 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                          z_size_t *sourceLen) {
-    z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t len, left;
+ਪੂਰਨ ZEXPORT uncompress2_z(Bytef *dest, z_ਮਾਪ_t *destLen, ਅਚਲ Bytef *ਸਰੋਤ,
+                          z_ਮਾਪ_t *ਸਰੋਤ_Len) {
+    z_ਧਾਰਾ ਧਾਰਾ;
+    ਪੂਰਨ err;
+    ਅਚਲ uInt max = (uInt)-1;
+    z_ਮਾਪ_t len, ਖੱਬਾ;
 
-    if (sourceLen == NULL || (*sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    ਜੇ (ਸਰੋਤ_Len == ਨਿਰਾ || (*ਸਰੋਤ_Len > 0 && ਸਰੋਤ == ਨਿਰਾ) ||
+        destLen == ਨਿਰਾ || (*destLen > 0 && dest == ਨਿਰਾ))
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
 
-    len = *sourceLen;
-    left = *destLen;
-    if (left == 0 && dest == Z_NULL)
-        dest = (Bytef *)&stream.reserved;       /* next_out cannot be NULL */
+    len = *ਸਰੋਤ_Len;
+    ਖੱਬਾ = *destLen;
+    ਜੇ (ਖੱਬਾ == 0 && dest == Z_NULL)
+        dest = (Bytef *)&ਧਾਰਾ.reserved;       /* next_out cannot be NULL */
 
-    stream.next_in = (z_const Bytef *)source;
-    stream.avail_in = 0;
-    stream.zalloc = (alloc_func)0;
-    stream.zfree = (free_func)0;
-    stream.opaque = (voidpf)0;
+    ਧਾਰਾ.ਅਗਲਾ_ਵਿੱਚ = (z_const Bytef *)ਸਰੋਤ;
+    ਧਾਰਾ.avail_ਵਿੱਚ = 0;
+    ਧਾਰਾ.zalloc = (alloc_func)0;
+    ਧਾਰਾ.zfree = (free_func)0;
+    ਧਾਰਾ.opaque = (voidpf)0;
 
-    err = inflateInit(&stream);
-    if (err != Z_OK) return err;
+    err = inflateInit(&ਧਾਰਾ);
+    ਜੇ (err != Z_OK) ਵਾਪਸ err;
 
-    stream.next_out = dest;
-    stream.avail_out = 0;
+    ਧਾਰਾ.ਅਗਲਾ_ਬਾਹਰਲਾ = dest;
+    ਧਾਰਾ.avail_ਬਾਹਰਲਾ = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    ਕਰੋ {
+        ਜੇ (ਧਾਰਾ.avail_ਬਾਹਰਲਾ == 0) {
+            ਧਾਰਾ.avail_ਬਾਹਰਲਾ = ਖੱਬਾ > (z_ਮਾਪ_t)max ? max : (uInt)ਖੱਬਾ;
+            ਖੱਬਾ -= ਧਾਰਾ.avail_ਬਾਹਰਲਾ;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = len > (z_size_t)max ? max : (uInt)len;
-            len -= stream.avail_in;
+        ਜੇ (ਧਾਰਾ.avail_ਵਿੱਚ == 0) {
+            ਧਾਰਾ.avail_ਵਿੱਚ = len > (z_ਮਾਪ_t)max ? max : (uInt)len;
+            len -= ਧਾਰਾ.avail_ਵਿੱਚ;
         }
-        err = inflate(&stream, Z_NO_FLUSH);
-    } while (err == Z_OK);
+        err = inflate(&ਧਾਰਾ, Z_NO_FLUSH);
+    } ਜਦੋਂ (err == Z_OK);
 
     /* Set len and left to the unused input data and unused output space. Set
        *sourceLen to the amount of input consumed. Set *destLen to the amount
        of data produced. */
-    len += stream.avail_in;
-    left += stream.avail_out;
-    *sourceLen -= len;
-    *destLen -= left;
+    len += ਧਾਰਾ.avail_ਵਿੱਚ;
+    ਖੱਬਾ += ਧਾਰਾ.avail_ਬਾਹਰਲਾ;
+    *ਸਰੋਤ_Len -= len;
+    *destLen -= ਖੱਬਾ;
 
-    inflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK :
-           err == Z_NEED_DICT ? Z_DATA_ERROR  :
-           err == Z_BUF_ERROR && len == 0 ? Z_DATA_ERROR :
+    inflate_ਸਿਰਾ(&ਧਾਰਾ);
+    ਵਾਪਸ err == Z_ਧਾਰਾ_ਸਿਰਾ ? Z_OK :
+           err == Z_NEED_DICT ? Z_ਅੰਕੜੇ_ERROR  :
+           err == Z_BUF_ERROR && len == 0 ? Z_ਅੰਕੜੇ_ERROR :
            err;
 }
-int ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                        uLong *sourceLen) {
-    int ret;
-    z_size_t got = *destLen, used = *sourceLen;
-    ret = uncompress2_z(dest, &got, source, &used);
-    *sourceLen = (uLong)used;
+ਪੂਰਨ ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, ਅਚਲ Bytef *ਸਰੋਤ,
+                        uLong *ਸਰੋਤ_Len) {
+    ਪੂਰਨ ret;
+    z_ਮਾਪ_t got = *destLen, ਵਰਤਿਆ = *ਸਰੋਤ_Len;
+    ret = uncompress2_z(dest, &got, ਸਰੋਤ, &ਵਰਤਿਆ);
+    *ਸਰੋਤ_Len = (uLong)ਵਰਤਿਆ;
     *destLen = (uLong)got;
-    return ret;
+    ਵਾਪਸ ret;
 }
-int ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                         z_size_t sourceLen) {
-    z_size_t used = sourceLen;
-    return uncompress2_z(dest, destLen, source, &used);
+ਪੂਰਨ ZEXPORT uncompress_z(Bytef *dest, z_ਮਾਪ_t *destLen, ਅਚਲ Bytef *ਸਰੋਤ,
+                         z_ਮਾਪ_t ਸਰੋਤ_Len) {
+    z_ਮਾਪ_t ਵਰਤਿਆ = ਸਰੋਤ_Len;
+    ਵਾਪਸ uncompress2_z(dest, destLen, ਸਰੋਤ, &ਵਰਤਿਆ);
 }
-int ZEXPORT uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                       uLong sourceLen) {
-    uLong used = sourceLen;
-    return uncompress2(dest, destLen, source, &used);
+ਪੂਰਨ ZEXPORT uncompress(Bytef *dest, uLongf *destLen, ਅਚਲ Bytef *ਸਰੋਤ,
+                       uLong ਸਰੋਤ_Len) {
+    uLong ਵਰਤਿਆ = ਸਰੋਤ_Len;
+    ਵਾਪਸ uncompress2(dest, destLen, ਸਰੋਤ, &ਵਰਤਿਆ);
 }

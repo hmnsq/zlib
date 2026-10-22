@@ -49,9 +49,9 @@
 
 /* @(#) $Id$ */
 
-#include "deflate.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "deflate.h"
 
-const char deflate_copyright[] =
+ਅਚਲ ਅੱਖਰ deflate_copyright[] =
    " deflate 1.3.2.1 Copyright 1995-2026 Jean-loup Gailly and Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -60,34 +60,34 @@ const char deflate_copyright[] =
   copyright string in the executable of your product.
  */
 
-typedef enum {
-    need_more,      /* block not completed, need more input or more output */
-    block_done,     /* block flush performed */
-    finish_started, /* finish started, need only more output at next deflate */
-    finish_done     /* finish done, accept no more input or output */
-} block_state;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਗਿਣਤੀ {
+    need_ਹੋਰ,      /* block not completed, need more input or more output */
+    ਖੰਡ_ਪੂਰਾ,     /* block flush performed */
+    ਅੰਤ_started, /* finish started, need only more output at next deflate */
+    ਅੰਤ_ਪੂਰਾ     /* finish done, accept no more input or output */
+} ਖੰਡ_state;
 
-typedef block_state (*compress_func)(deflate_state *s, int flush);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਖੰਡ_state (*compress_func)(deflate_state *s, ਪੂਰਨ flush);
 /* Compression function. Returns the block state after the call. */
 
-local block_state deflate_stored(deflate_state *s, int flush);
-local block_state deflate_fast(deflate_state *s, int flush);
-#ifndef FASTEST
-local block_state deflate_slow(deflate_state *s, int flush);
-#endif
-local block_state deflate_rle(deflate_state *s, int flush);
-local block_state deflate_huff(deflate_state *s, int flush);
+local ਖੰਡ_state deflate_stored(deflate_state *s, ਪੂਰਨ flush);
+local ਖੰਡ_state deflate_fast(deflate_state *s, ਪੂਰਨ flush);
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FASTEST
+local ਖੰਡ_state deflate_slow(deflate_state *s, ਪੂਰਨ flush);
+#ਜੇ_ਅੰਤ
+local ਖੰਡ_state deflate_rle(deflate_state *s, ਪੂਰਨ flush);
+local ਖੰਡ_state deflate_huff(deflate_state *s, ਪੂਰਨ flush);
 
 /* ===========================================================================
  * Local data
  */
 
-#define NIL 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NIL 0
 /* Tail of hash chains */
 
-#ifndef TOO_FAR
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ TOO_FAR
 #  define TOO_FAR 4096
-#endif
+#ਜੇ_ਅੰਤ
 /* Matches of length 3 are discarded if their distance exceeds TOO_FAR */
 
 /* Values for max_lazy_match, good_match and max_chain_length, depending on
@@ -95,21 +95,21 @@ local block_state deflate_huff(deflate_state *s, int flush);
  * exclude worst case performance for pathological files. Better values may be
  * found for specific files.
  */
-typedef struct config_s {
-   ush good_length; /* reduce lazy search above this match length */
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ config_s {
+   ush good_ਲੰਮਾਈ; /* reduce lazy search above this match length */
    ush max_lazy;    /* do not perform lazy search above this match length */
-   ush nice_length; /* quit search above this match length */
+   ush nice_ਲੰਮਾਈ; /* quit search above this match length */
    ush max_chain;
    compress_func func;
 } config;
 
-#ifdef FASTEST
-local const config configuration_table[2] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ FASTEST
+local ਅਚਲ config configuration_ਸਾਰਣੀ[2] = {
 /*      good lazy nice chain */
 /* 0 */ {0,    0,  0,    0, deflate_stored},  /* store only */
 /* 1 */ {4,    4,  8,    4, deflate_fast}}; /* max speed, no lazy matches */
-#else
-local const config configuration_table[10] = {
+#ਨਹੀਂਤਾਂ
+local ਅਚਲ config configuration_ਸਾਰਣੀ[10] = {
 /*      good lazy nice chain */
 /* 0 */ {0,    0,  0,    0, deflate_stored},  /* store only */
 /* 1 */ {4,    4,  8,    4, deflate_fast}, /* max speed, no lazy matches */
@@ -122,7 +122,7 @@ local const config configuration_table[10] = {
 /* 7 */ {8,   32, 128, 256, deflate_slow},
 /* 8 */ {32, 128, 258, 1024, deflate_slow},
 /* 9 */ {32, 258, 258, 4096, deflate_slow}}; /* max compression */
-#endif
+#ਜੇ_ਅੰਤ
 
 /* Note: the deflate() code requires max_lazy >= MIN_MATCH and max_chain >= 4
  * For deflate_fast() (levels <= 3) good is ignored and lazy has a different
@@ -130,7 +130,7 @@ local const config configuration_table[10] = {
  */
 
 /* rank Z_BLOCK between Z_NO_FLUSH and Z_PARTIAL_FLUSH */
-#define RANK(f) (((f) * 2) - ((f) > 4 ? 9 : 0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RANK(f) (((f) * 2) - ((f) > 4 ? 9 : 0))
 
 /* ===========================================================================
  * Update a hash value with the given input byte
@@ -138,7 +138,7 @@ local const config configuration_table[10] = {
  *    characters, so that a running hash key can be computed from the previous
  *    key instead of complete recalculation each time.
  */
-#define UPDATE_HASH(s,h,c) (h = (((h) << s->hash_shift) ^ (c)) & s->hash_mask)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UPDATE_HASH(s,h,c) (h = (((h) << s->hash_ਖਿਸਕਾਓ) ^ (c)) & s->hash_ਨਕਾਬ)
 
 
 /* ===========================================================================
@@ -151,61 +151,61 @@ local const config configuration_table[10] = {
  *    characters and the first MIN_MATCH bytes of str are valid (except for
  *    the last MIN_MATCH-1 bytes of the input file).
  */
-#ifdef FASTEST
-#define INSERT_STRING(s, str, match_head) \
-   (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
-    match_head = s->head[s->ins_h], \
-    s->head[s->ins_h] = (Pos)(str))
-#else
-#define INSERT_STRING(s, str, match_head) \
-   (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
-    match_head = s->prev[(str) & s->w_mask] = s->head[s->ins_h], \
-    s->head[s->ins_h] = (Pos)(str))
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ FASTEST
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਪਾਓ_STRING(s, str, ਮੇਲ_ਸਿਰ) \
+   (UPDATE_HASH(s, s->ins_h, s->ਖਿੜਕੀ[(str) + (MIN_ਮੇਲ-1)]), \
+    ਮੇਲ_ਸਿਰ = s->ਸਿਰ[s->ins_h], \
+    s->ਸਿਰ[s->ins_h] = (Pos)(str))
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਪਾਓ_STRING(s, str, ਮੇਲ_ਸਿਰ) \
+   (UPDATE_HASH(s, s->ins_h, s->ਖਿੜਕੀ[(str) + (MIN_ਮੇਲ-1)]), \
+    ਮੇਲ_ਸਿਰ = s->prev[(str) & s->w_ਨਕਾਬ] = s->ਸਿਰ[s->ins_h], \
+    s->ਸਿਰ[s->ins_h] = (Pos)(str))
+#ਜੇ_ਅੰਤ
 
 /* ===========================================================================
  * Initialize the hash table (avoiding 64K overflow for 16 bit systems).
  * prev[] will be initialized on the fly.
  */
-#define CLEAR_HASH(s) \
-    do { \
-        s->head[s->hash_size - 1] = NIL; \
-        zmemzero(s->head, (unsigned)(s->hash_size - 1)*sizeof(*s->head)); \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CLEAR_HASH(s) \
+    ਕਰੋ { \
+        s->ਸਿਰ[s->hash_ਮਾਪ - 1] = NIL; \
+        zmemzero(s->ਸਿਰ, (ਬਿਨਾਨਿਸ਼ਾਨੀ)(s->hash_ਮਾਪ - 1)*ਆਕਾਰ(*s->ਸਿਰ)); \
         s->slid = 0; \
-    } while (0)
+    } ਜਦੋਂ (0)
 
 /* ===========================================================================
  * Slide the hash table when sliding the window down (could be avoided with 32
  * bit values at the expense of memory usage). We slide even when level == 0 to
  * keep the hash table consistent if we switch back to level > 0 later.
  */
-#if defined(__has_feature)
-#  if __has_feature(memory_sanitizer)
+#ਜੇ defined(__has_feature)
+#  ਜੇ __has_feature(ਸਮ੍ਰਿਤੀ_sanitizer)
      __attribute__((no_sanitize("memory")))
 #  endif
-#endif
-local void slide_hash(deflate_state *s) {
-    unsigned n, m;
+#ਜੇ_ਅੰਤ
+local ਖਾਲੀ slide_hash(deflate_state *s) {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ n, m;
     Posf *p;
-    uInt wsize = s->w_size;
+    uInt wsize = s->w_ਮਾਪ;
 
-    n = s->hash_size;
-    p = &s->head[n];
-    do {
+    n = s->hash_ਮਾਪ;
+    p = &s->ਸਿਰ[n];
+    ਕਰੋ {
         m = *--p;
         *p = (Pos)(m >= wsize ? m - wsize : NIL);
-    } while (--n);
-#ifndef FASTEST
+    } ਜਦੋਂ (--n);
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FASTEST
     n = wsize;
     p = &s->prev[n];
-    do {
+    ਕਰੋ {
         m = *--p;
         *p = (Pos)(m >= wsize ? m - wsize : NIL);
         /* If n is not on any hash chain, prev[n] is garbage but
          * its value will never be used.
          */
-    } while (--n);
-#endif
+    } ਜਦੋਂ (--n);
+#ਜੇ_ਅੰਤ
     s->slid = 1;
 }
 
@@ -216,27 +216,27 @@ local void slide_hash(deflate_state *s) {
  * allocating a large strm->next_in buffer and copying from it.
  * (See also flush_pending()).
  */
-local unsigned read_buf(z_streamp strm, Bytef *buf, unsigned size) {
-    unsigned len = strm->avail_in;
+local ਬਿਨਾਨਿਸ਼ਾਨੀ read_buf(z_streamp strm, Bytef *buf, ਬਿਨਾਨਿਸ਼ਾਨੀ ਮਾਪ) {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ len = strm->avail_ਵਿੱਚ;
 
-    if (len > size) len = size;
-    if (len == 0) return 0;
+    ਜੇ (len > ਮਾਪ) len = ਮਾਪ;
+    ਜੇ (len == 0) ਵਾਪਸ 0;
 
-    strm->avail_in  -= len;
+    strm->avail_ਵਿੱਚ  -= len;
 
-    zmemcpy(buf, strm->next_in, len);
-    if (strm->state->wrap == 1) {
+    zmemcpy(buf, strm->ਅਗਲਾ_ਵਿੱਚ, len);
+    ਜੇ (strm->state->wrap == 1) {
         strm->adler = adler32(strm->adler, buf, len);
     }
-#ifdef GZIP
-    else if (strm->state->wrap == 2) {
-        strm->adler = crc32(strm->adler, buf, len);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GZIP
+    ਨਹੀਂਤਾਂ ਜੇ (strm->state->wrap == 2) {
+        strm->adler = ਚੱਕਰੀ_ਜਾਂਚ_32_2(strm->adler, buf, len);
     }
-#endif
-    strm->next_in  += len;
-    strm->total_in += len;
+#ਜੇ_ਅੰਤ
+    strm->ਅਗਲਾ_ਵਿੱਚ  += len;
+    strm->ਕੁੱਲ_ਵਿੱਚ += len;
 
-    return len;
+    ਵਾਪਸ len;
 }
 
 /* ===========================================================================
@@ -249,51 +249,51 @@ local unsigned read_buf(z_streamp strm, Bytef *buf, unsigned size) {
  *    performed for at least two bytes (required for the zip translate_eol
  *    option -- not supported here).
  */
-local void fill_window(deflate_state *s) {
-    unsigned n;
-    unsigned more;    /* Amount of free space at the end of the window. */
-    uInt wsize = s->w_size;
+local ਖਾਲੀ fill_ਖਿੜਕੀ(deflate_state *s) {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ n;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਹੋਰ;    /* Amount of free space at the end of the window. */
+    uInt wsize = s->w_ਮਾਪ;
 
     Assert(s->lookahead < MIN_LOOKAHEAD, "already enough lookahead");
 
-    do {
-        more = (unsigned)(s->window_size -(ulg)s->lookahead -(ulg)s->strstart);
+    ਕਰੋ {
+        ਹੋਰ = (ਬਿਨਾਨਿਸ਼ਾਨੀ)(s->ਖਿੜਕੀ_ਮਾਪ -(ulg)s->lookahead -(ulg)s->strstart);
 
         /* Deal with !@#$% 64K limit: */
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4127)
-#endif
-        if (sizeof(int) <= 2) {
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-            if (more == 0 && s->strstart == 0 && s->lookahead == 0) {
-                more = wsize;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _MSC_VER
+#ਹਦਾਇਤ warning(ਧੱਕੋ)
+#ਹਦਾਇਤ warning(disable: 4127)
+#ਜੇ_ਅੰਤ
+        ਜੇ (ਆਕਾਰ(ਪੂਰਨ) <= 2) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _MSC_VER
+#ਹਦਾਇਤ warning(ਕੱਢੋ)
+#ਜੇ_ਅੰਤ
+            ਜੇ (ਹੋਰ == 0 && s->strstart == 0 && s->lookahead == 0) {
+                ਹੋਰ = wsize;
 
-            } else if (more == (unsigned)(-1)) {
+            } ਨਹੀਂਤਾਂ ਜੇ (ਹੋਰ == (ਬਿਨਾਨਿਸ਼ਾਨੀ)(-1)) {
                 /* Very unlikely, but possible on 16 bit machine if
                  * strstart == 0 && lookahead == 1 (input done a byte at time)
                  */
-                more--;
+                ਹੋਰ--;
             }
         }
 
         /* If the window is almost full and there is insufficient lookahead,
          * move the upper half to the lower one to make room in the upper half.
          */
-        if (s->strstart >= wsize + MAX_DIST(s)) {
+        ਜੇ (s->strstart >= wsize + MAX_DIST(s)) {
 
-            zmemcpy(s->window, s->window + wsize, (unsigned)wsize - more);
-            s->match_start -= wsize;
+            zmemcpy(s->ਖਿੜਕੀ, s->ਖਿੜਕੀ + wsize, (ਬਿਨਾਨਿਸ਼ਾਨੀ)wsize - ਹੋਰ);
+            s->ਮੇਲ_ਸ਼ੁਰੂ -= wsize;
             s->strstart    -= wsize; /* we now have strstart >= MAX_DIST */
-            s->block_start -= (long) wsize;
-            if (s->insert > s->strstart)
-                s->insert = s->strstart;
+            s->ਖੰਡ_ਸ਼ੁਰੂ -= (ਲੰਮਾ) wsize;
+            ਜੇ (s->ਪਾਓ > s->strstart)
+                s->ਪਾਓ = s->strstart;
             slide_hash(s);
-            more += wsize;
+            ਹੋਰ += wsize;
         }
-        if (s->strm->avail_in == 0) break;
+        ਜੇ (s->strm->avail_ਵਿੱਚ == 0) ਰੋਕੋ;
 
         /* If there was no sliding:
          *    strstart <= WSIZE+MAX_DIST-1 && lookahead <= MIN_LOOKAHEAD - 1 &&
@@ -306,36 +306,36 @@ local void fill_window(deflate_state *s) {
          * Otherwise, window_size == 2*WSIZE so more >= 2.
          * If there was sliding, more >= WSIZE. So in all cases, more >= 2.
          */
-        Assert(more >= 2, "more < 2");
+        Assert(ਹੋਰ >= 2, "more < 2");
 
-        n = read_buf(s->strm, s->window + s->strstart + s->lookahead, more);
+        n = read_buf(s->strm, s->ਖਿੜਕੀ + s->strstart + s->lookahead, ਹੋਰ);
         s->lookahead += n;
 
         /* Initialize the hash value now that we have some input: */
-        if (s->lookahead + s->insert >= MIN_MATCH) {
-            uInt str = s->strstart - s->insert;
-            s->ins_h = s->window[str];
-            UPDATE_HASH(s, s->ins_h, s->window[str + 1]);
-#if MIN_MATCH != 3
-            Call UPDATE_HASH() MIN_MATCH-3 more times
-#endif
-            while (s->insert) {
-                UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
-#ifndef FASTEST
-                s->prev[str & s->w_mask] = s->head[s->ins_h];
-#endif
-                s->head[s->ins_h] = (Pos)str;
+        ਜੇ (s->lookahead + s->ਪਾਓ >= MIN_ਮੇਲ) {
+            uInt str = s->strstart - s->ਪਾਓ;
+            s->ins_h = s->ਖਿੜਕੀ[str];
+            UPDATE_HASH(s, s->ins_h, s->ਖਿੜਕੀ[str + 1]);
+#ਜੇ MIN_ਮੇਲ != 3
+            Call UPDATE_HASH() MIN_ਮੇਲ-3 ਹੋਰ times
+#ਜੇ_ਅੰਤ
+            ਜਦੋਂ (s->ਪਾਓ) {
+                UPDATE_HASH(s, s->ins_h, s->ਖਿੜਕੀ[str + MIN_ਮੇਲ-1]);
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FASTEST
+                s->prev[str & s->w_ਨਕਾਬ] = s->ਸਿਰ[s->ins_h];
+#ਜੇ_ਅੰਤ
+                s->ਸਿਰ[s->ins_h] = (Pos)str;
                 str++;
-                s->insert--;
-                if (s->lookahead + s->insert < MIN_MATCH)
-                    break;
+                s->ਪਾਓ--;
+                ਜੇ (s->lookahead + s->ਪਾਓ < MIN_ਮੇਲ)
+                    ਰੋਕੋ;
             }
         }
         /* If the whole input has less than MIN_MATCH bytes, ins_h is garbage,
          * but this is not important since only literal bytes will be emitted.
          */
 
-    } while (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_in != 0);
+    } ਜਦੋਂ (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_ਵਿੱਚ != 0);
 
     /* If the WIN_INIT bytes after the end of the current data have never been
      * written, then zero those bytes in order to avoid memory check reports of
@@ -344,121 +344,121 @@ local void fill_window(deflate_state *s) {
      * time through here.  WIN_INIT is set to MAX_MATCH since the longest match
      * routines allow scanning to strstart + MAX_MATCH, ignoring lookahead.
      */
-    if (s->high_water < s->window_size) {
+    ਜੇ (s->ਉੱਚਾ_water < s->ਖਿੜਕੀ_ਮਾਪ) {
         ulg curr = s->strstart + (ulg)(s->lookahead);
         ulg init;
 
-        if (s->high_water < curr) {
+        ਜੇ (s->ਉੱਚਾ_water < curr) {
             /* Previous high water mark below current data -- zero WIN_INIT
              * bytes or up to end of window, whichever is less.
              */
-            init = s->window_size - curr;
-            if (init > WIN_INIT)
+            init = s->ਖਿੜਕੀ_ਮਾਪ - curr;
+            ਜੇ (init > WIN_INIT)
                 init = WIN_INIT;
-            zmemzero(s->window + curr, (unsigned)init);
-            s->high_water = curr + init;
+            zmemzero(s->ਖਿੜਕੀ + curr, (ਬਿਨਾਨਿਸ਼ਾਨੀ)init);
+            s->ਉੱਚਾ_water = curr + init;
         }
-        else if (s->high_water < (ulg)curr + WIN_INIT) {
+        ਨਹੀਂਤਾਂ ਜੇ (s->ਉੱਚਾ_water < (ulg)curr + WIN_INIT) {
             /* High water mark at or above current data, but below current data
              * plus WIN_INIT -- zero out to current data plus WIN_INIT, or up
              * to end of window, whichever is less.
              */
-            init = (ulg)curr + WIN_INIT - s->high_water;
-            if (init > s->window_size - s->high_water)
-                init = s->window_size - s->high_water;
-            zmemzero(s->window + s->high_water, (unsigned)init);
-            s->high_water += init;
+            init = (ulg)curr + WIN_INIT - s->ਉੱਚਾ_water;
+            ਜੇ (init > s->ਖਿੜਕੀ_ਮਾਪ - s->ਉੱਚਾ_water)
+                init = s->ਖਿੜਕੀ_ਮਾਪ - s->ਉੱਚਾ_water;
+            zmemzero(s->ਖਿੜਕੀ + s->ਉੱਚਾ_water, (ਬਿਨਾਨਿਸ਼ਾਨੀ)init);
+            s->ਉੱਚਾ_water += init;
         }
     }
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->ਖਿੜਕੀ_ਮਾਪ - MIN_LOOKAHEAD,
            "not enough room for search");
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateInit_(z_streamp strm, int level, const char *version,
-                         int stream_size) {
-    return deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
-                         Z_DEFAULT_STRATEGY, version, stream_size);
+ਪੂਰਨ ZEXPORT deflateInit_(z_streamp strm, ਪੂਰਨ level, ਅਚਲ ਅੱਖਰ *ਸੰਸਕਰਣ,
+                         ਪੂਰਨ ਧਾਰਾ_ਮਾਪ) {
+    ਵਾਪਸ deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
+                         Z_DEFAULT_STRATEGY, ਸੰਸਕਰਣ, ਧਾਰਾ_ਮਾਪ);
     /* To do: ignore strm->next_in if we use it as window */
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
-                          int windowBits, int memLevel, int strategy,
-                          const char *version, int stream_size) {
+ਪੂਰਨ ZEXPORT deflateInit2_(z_streamp strm, ਪੂਰਨ level, ਪੂਰਨ ਵਿਧੀ_2,
+                          ਪੂਰਨ ਖਿੜਕੀ_ਬਿੱਟ, ਪੂਰਨ memLevel, ਪੂਰਨ strategy,
+                          ਅਚਲ ਅੱਖਰ *ਸੰਸਕਰਣ, ਪੂਰਨ ਧਾਰਾ_ਮਾਪ) {
     deflate_state *s;
-    int wrap = 1;
-    static const char my_version[] = ZLIB_VERSION;
+    ਪੂਰਨ wrap = 1;
+    ਸਥਿਰ ਅਚਲ ਅੱਖਰ my_ਸੰਸਕਰਣ[] = ZLIB_ਸੰਸਕਰਣ;
 
-    if (version == Z_NULL || version[0] != my_version[0] ||
-        stream_size != sizeof(z_stream)) {
-        return Z_VERSION_ERROR;
+    ਜੇ (ਸੰਸਕਰਣ == Z_NULL || ਸੰਸਕਰਣ[0] != my_ਸੰਸਕਰਣ[0] ||
+        ਧਾਰਾ_ਮਾਪ != ਆਕਾਰ(z_ਧਾਰਾ)) {
+        ਵਾਪਸ Z_ਸੰਸਕਰਣ_ERROR;
     }
-    if (strm == Z_NULL) return Z_STREAM_ERROR;
+    ਜੇ (strm == Z_NULL) ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
 
-    strm->msg = Z_NULL;
-    if (strm->zalloc == (alloc_func)0) {
-#ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+    strm->ਸੁਨੇਹਾ = Z_NULL;
+    ਜੇ (strm->zalloc == (alloc_func)0) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ Z_SOLO
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
+#ਨਹੀਂਤਾਂ
         strm->zalloc = zcalloc;
         strm->opaque = (voidpf)0;
-#endif
+#ਜੇ_ਅੰਤ
     }
-    if (strm->zfree == (free_func)0)
-#ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+    ਜੇ (strm->zfree == (free_func)0)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ Z_SOLO
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
+#ਨਹੀਂਤਾਂ
         strm->zfree = zcfree;
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef FASTEST
-    if (level != 0) level = 1;
-#else
-    if (level == Z_DEFAULT_COMPRESSION) level = 6;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ FASTEST
+    ਜੇ (level != 0) level = 1;
+#ਨਹੀਂਤਾਂ
+    ਜੇ (level == Z_DEFAULT_COMPRESSION) level = 6;
+#ਜੇ_ਅੰਤ
 
-    if (windowBits < 0) { /* suppress zlib wrapper */
+    ਜੇ (ਖਿੜਕੀ_ਬਿੱਟ < 0) { /* suppress zlib wrapper */
         wrap = 0;
-        if (windowBits < -15)
-            return Z_STREAM_ERROR;
-        windowBits = -windowBits;
+        ਜੇ (ਖਿੜਕੀ_ਬਿੱਟ < -15)
+            ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
+        ਖਿੜਕੀ_ਬਿੱਟ = -ਖਿੜਕੀ_ਬਿੱਟ;
     }
-#ifdef GZIP
-    else if (windowBits > 15) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GZIP
+    ਨਹੀਂਤਾਂ ਜੇ (ਖਿੜਕੀ_ਬਿੱਟ > 15) {
         wrap = 2;       /* write gzip wrapper instead */
-        windowBits -= 16;
+        ਖਿੜਕੀ_ਬਿੱਟ -= 16;
     }
-#endif
-    if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != Z_DEFLATED ||
-        windowBits < 8 || windowBits > 15 || level < 0 || level > 9 ||
-        strategy < 0 || strategy > Z_FIXED || (windowBits == 8 && wrap != 1)) {
-        return Z_STREAM_ERROR;
+#ਜੇ_ਅੰਤ
+    ਜੇ (memLevel < 1 || memLevel > MAX_MEM_LEVEL || ਵਿਧੀ_2 != Z_DEFLATED ||
+        ਖਿੜਕੀ_ਬਿੱਟ < 8 || ਖਿੜਕੀ_ਬਿੱਟ > 15 || level < 0 || level > 9 ||
+        strategy < 0 || strategy > Z_FIXED || (ਖਿੜਕੀ_ਬਿੱਟ == 8 && wrap != 1)) {
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     }
-    if (windowBits == 8) windowBits = 9;  /* until 256-byte window bug fixed */
-    s = (deflate_state *) ZALLOC(strm, 1, sizeof(deflate_state));
-    if (s == Z_NULL) return Z_MEM_ERROR;
-    zmemzero(s, sizeof(deflate_state));
-    strm->state = (struct internal_state FAR *)s;
+    ਜੇ (ਖਿੜਕੀ_ਬਿੱਟ == 8) ਖਿੜਕੀ_ਬਿੱਟ = 9;  /* until 256-byte window bug fixed */
+    s = (deflate_state *) ZALLOC(strm, 1, ਆਕਾਰ(deflate_state));
+    ਜੇ (s == Z_NULL) ਵਾਪਸ Z_MEM_ERROR;
+    zmemzero(s, ਆਕਾਰ(deflate_state));
+    strm->state = (ਬਣਤਰ ਅੰਦਰੂਨੀ_state FAR *)s;
     s->strm = strm;
-    s->status = INIT_STATE;     /* to pass state test in deflateReset() */
+    s->ਸਥਿਤੀ = INIT_STATE;     /* to pass state test in deflateReset() */
 
     s->wrap = wrap;
-    s->w_bits = (uInt)windowBits;
-    s->w_size = 1 << s->w_bits;
-    s->w_mask = s->w_size - 1;
+    s->w_ਬਿੱਟ = (uInt)ਖਿੜਕੀ_ਬਿੱਟ;
+    s->w_ਮਾਪ = 1 << s->w_ਬਿੱਟ;
+    s->w_ਨਕਾਬ = s->w_ਮਾਪ - 1;
 
-    s->hash_bits = (uInt)memLevel + 7;
-    s->hash_size = 1 << s->hash_bits;
-    s->hash_mask = s->hash_size - 1;
-    s->hash_shift =  ((s->hash_bits + MIN_MATCH-1) / MIN_MATCH);
+    s->hash_ਬਿੱਟ = (uInt)memLevel + 7;
+    s->hash_ਮਾਪ = 1 << s->hash_ਬਿੱਟ;
+    s->hash_ਨਕਾਬ = s->hash_ਮਾਪ - 1;
+    s->hash_ਖਿਸਕਾਓ =  ((s->hash_ਬਿੱਟ + MIN_ਮੇਲ-1) / MIN_ਮੇਲ);
 
-    s->window = (Bytef *) ZALLOC(strm, s->w_size, 2*sizeof(Byte));
-    s->prev   = (Posf *)  ZALLOC(strm, s->w_size, sizeof(Pos));
-    s->head   = (Posf *)  ZALLOC(strm, s->hash_size, sizeof(Pos));
+    s->ਖਿੜਕੀ = (Bytef *) ZALLOC(strm, s->w_ਮਾਪ, 2*ਆਕਾਰ(Byte));
+    s->prev   = (Posf *)  ZALLOC(strm, s->w_ਮਾਪ, ਆਕਾਰ(Pos));
+    s->ਸਿਰ   = (Posf *)  ZALLOC(strm, s->hash_ਮਾਪ, ਆਕਾਰ(Pos));
 
-    s->high_water = 0;      /* nothing written to s->window yet */
+    s->ਉੱਚਾ_water = 0;      /* nothing written to s->window yet */
 
     s->lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */
 
@@ -502,23 +502,23 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
      */
 
     s->pending_buf = (uchf *) ZALLOC(strm, s->lit_bufsize, LIT_BUFS);
-    s->pending_buf_size = (ulg)s->lit_bufsize * 4;
+    s->pending_buf_ਮਾਪ = (ulg)s->lit_bufsize * 4;
 
-    if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
+    ਜੇ (s->ਖਿੜਕੀ == Z_NULL || s->prev == Z_NULL || s->ਸਿਰ == Z_NULL ||
         s->pending_buf == Z_NULL) {
-        s->status = FINISH_STATE;
-        strm->msg = ERR_MSG(Z_MEM_ERROR);
-        deflateEnd (strm);
-        return Z_MEM_ERROR;
+        s->ਸਥਿਤੀ = ਅੰਤ_STATE;
+        strm->ਸੁਨੇਹਾ = ERR_ਸੁਨੇਹਾ(Z_MEM_ERROR);
+        deflate_ਸਿਰਾ (strm);
+        ਵਾਪਸ Z_MEM_ERROR;
     }
-#ifdef LIT_MEM
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LIT_MEM
     s->d_buf = (ushf *)(s->pending_buf + (s->lit_bufsize << 1));
     s->l_buf = s->pending_buf + (s->lit_bufsize << 2);
-    s->sym_end = s->lit_bufsize - 1;
-#else
+    s->sym_ਸਿਰਾ = s->lit_bufsize - 1;
+#ਨਹੀਂਤਾਂ
     s->sym_buf = s->pending_buf + s->lit_bufsize;
-    s->sym_end = (s->lit_bufsize - 1) * 3;
-#endif
+    s->sym_ਸਿਰਾ = (s->lit_bufsize - 1) * 3;
+#ਜੇ_ਅੰਤ
     /* We avoid equality with lit_bufsize*3 because of wraparound at 64K
      * on 16 bit machines and because stored blocks are restricted to
      * 64K-1 bytes.
@@ -526,308 +526,308 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
 
     s->level = level;
     s->strategy = strategy;
-    s->method = (Byte)method;
+    s->ਵਿਧੀ_2 = (Byte)ਵਿਧੀ_2;
 
-    return deflateReset(strm);
+    ਵਾਪਸ deflateReset(strm);
 }
 
 /* =========================================================================
  * Check for a valid deflate stream state. Return 0 if ok, 1 if not.
  */
-local int deflateStateCheck(z_streamp strm) {
+local ਪੂਰਨ deflateStateCheck(z_streamp strm) {
     deflate_state *s;
-    if (strm == Z_NULL ||
+    ਜੇ (strm == Z_NULL ||
         strm->zalloc == (alloc_func)0 || strm->zfree == (free_func)0)
-        return 1;
+        ਵਾਪਸ 1;
     s = strm->state;
-    if (s == Z_NULL || s->strm != strm || (s->status != INIT_STATE &&
-#ifdef GZIP
-                                           s->status != GZIP_STATE &&
-#endif
-                                           s->status != EXTRA_STATE &&
-                                           s->status != NAME_STATE &&
-                                           s->status != COMMENT_STATE &&
-                                           s->status != HCRC_STATE &&
-                                           s->status != BUSY_STATE &&
-                                           s->status != FINISH_STATE))
-        return 1;
-    return 0;
+    ਜੇ (s == Z_NULL || s->strm != strm || (s->ਸਥਿਤੀ != INIT_STATE &&
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GZIP
+                                           s->ਸਥਿਤੀ != GZIP_STATE &&
+#ਜੇ_ਅੰਤ
+                                           s->ਸਥਿਤੀ != EXTRA_STATE &&
+                                           s->ਸਥਿਤੀ != NAME_STATE &&
+                                           s->ਸਥਿਤੀ != COMMENT_STATE &&
+                                           s->ਸਥਿਤੀ != HCRC_STATE &&
+                                           s->ਸਥਿਤੀ != BUSY_STATE &&
+                                           s->ਸਥਿਤੀ != ਅੰਤ_STATE))
+        ਵਾਪਸ 1;
+    ਵਾਪਸ 0;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateSetDictionary(z_streamp strm, const Bytef *dictionary,
-                                 uInt  dictLength) {
+ਪੂਰਨ ZEXPORT deflate_ਸੈੱਟ_Dictionary(z_streamp strm, ਅਚਲ Bytef *dictionary,
+                                 uInt  dict_ਲੰਮਾਈ) {
     deflate_state *s;
     uInt str, n;
-    int wrap;
-    unsigned avail;
-    z_const unsigned char *next;
+    ਪੂਰਨ wrap;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ avail;
+    z_const ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅਗਲਾ;
 
-    if (deflateStateCheck(strm) || dictionary == Z_NULL)
-        return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(strm) || dictionary == Z_NULL)
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     s = strm->state;
     wrap = s->wrap;
-    if (wrap == 2 || (wrap == 1 && s->status != INIT_STATE) || s->lookahead)
-        return Z_STREAM_ERROR;
+    ਜੇ (wrap == 2 || (wrap == 1 && s->ਸਥਿਤੀ != INIT_STATE) || s->lookahead)
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
 
     /* when using zlib wrappers, compute Adler-32 for provided dictionary */
-    if (wrap == 1)
-        strm->adler = adler32(strm->adler, dictionary, dictLength);
+    ਜੇ (wrap == 1)
+        strm->adler = adler32(strm->adler, dictionary, dict_ਲੰਮਾਈ);
     s->wrap = 0;                    /* avoid computing Adler-32 in read_buf */
 
     /* if dictionary would fill window, just replace the history */
-    if (dictLength >= s->w_size) {
-        if (wrap == 0) {            /* already empty otherwise */
+    ਜੇ (dict_ਲੰਮਾਈ >= s->w_ਮਾਪ) {
+        ਜੇ (wrap == 0) {            /* already empty otherwise */
             CLEAR_HASH(s);
             s->strstart = 0;
-            s->block_start = 0L;
-            s->insert = 0;
+            s->ਖੰਡ_ਸ਼ੁਰੂ = 0L;
+            s->ਪਾਓ = 0;
         }
-        dictionary += dictLength - s->w_size;  /* use the tail */
-        dictLength = s->w_size;
+        dictionary += dict_ਲੰਮਾਈ - s->w_ਮਾਪ;  /* use the tail */
+        dict_ਲੰਮਾਈ = s->w_ਮਾਪ;
     }
 
     /* insert dictionary into window and hash */
-    avail = strm->avail_in;
-    next = strm->next_in;
-    strm->avail_in = dictLength;
-    strm->next_in = (z_const Bytef *)dictionary;
-    fill_window(s);
-    while (s->lookahead >= MIN_MATCH) {
+    avail = strm->avail_ਵਿੱਚ;
+    ਅਗਲਾ = strm->ਅਗਲਾ_ਵਿੱਚ;
+    strm->avail_ਵਿੱਚ = dict_ਲੰਮਾਈ;
+    strm->ਅਗਲਾ_ਵਿੱਚ = (z_const Bytef *)dictionary;
+    fill_ਖਿੜਕੀ(s);
+    ਜਦੋਂ (s->lookahead >= MIN_ਮੇਲ) {
         str = s->strstart;
-        n = s->lookahead - (MIN_MATCH-1);
-        do {
-            UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
-#ifndef FASTEST
-            s->prev[str & s->w_mask] = s->head[s->ins_h];
-#endif
-            s->head[s->ins_h] = (Pos)str;
+        n = s->lookahead - (MIN_ਮੇਲ-1);
+        ਕਰੋ {
+            UPDATE_HASH(s, s->ins_h, s->ਖਿੜਕੀ[str + MIN_ਮੇਲ-1]);
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FASTEST
+            s->prev[str & s->w_ਨਕਾਬ] = s->ਸਿਰ[s->ins_h];
+#ਜੇ_ਅੰਤ
+            s->ਸਿਰ[s->ins_h] = (Pos)str;
             str++;
-        } while (--n);
+        } ਜਦੋਂ (--n);
         s->strstart = str;
-        s->lookahead = MIN_MATCH-1;
-        fill_window(s);
+        s->lookahead = MIN_ਮੇਲ-1;
+        fill_ਖਿੜਕੀ(s);
     }
     s->strstart += s->lookahead;
-    s->block_start = (long)s->strstart;
-    s->insert = s->lookahead;
+    s->ਖੰਡ_ਸ਼ੁਰੂ = (ਲੰਮਾ)s->strstart;
+    s->ਪਾਓ = s->lookahead;
     s->lookahead = 0;
-    s->match_length = s->prev_length = MIN_MATCH-1;
-    s->match_available = 0;
-    strm->next_in = next;
-    strm->avail_in = avail;
+    s->ਮੇਲ_ਲੰਮਾਈ = s->prev_ਲੰਮਾਈ = MIN_ਮੇਲ-1;
+    s->ਮੇਲ_ਉਪਲਬਧ = 0;
+    strm->ਅਗਲਾ_ਵਿੱਚ = ਅਗਲਾ;
+    strm->avail_ਵਿੱਚ = avail;
     s->wrap = wrap;
-    return Z_OK;
+    ਵਾਪਸ Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateGetDictionary(z_streamp strm, Bytef *dictionary,
-                                 uInt *dictLength) {
+ਪੂਰਨ ZEXPORT deflateGetDictionary(z_streamp strm, Bytef *dictionary,
+                                 uInt *dict_ਲੰਮਾਈ) {
     deflate_state *s;
     uInt len;
 
-    if (deflateStateCheck(strm))
-        return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(strm))
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     s = strm->state;
     len = s->strstart + s->lookahead;
-    if (len > s->w_size)
-        len = s->w_size;
-    if (dictionary != Z_NULL && len)
-        zmemcpy(dictionary, s->window + s->strstart + s->lookahead - len, len);
-    if (dictLength != Z_NULL)
-        *dictLength = len;
-    return Z_OK;
+    ਜੇ (len > s->w_ਮਾਪ)
+        len = s->w_ਮਾਪ;
+    ਜੇ (dictionary != Z_NULL && len)
+        zmemcpy(dictionary, s->ਖਿੜਕੀ + s->strstart + s->lookahead - len, len);
+    ਜੇ (dict_ਲੰਮਾਈ != Z_NULL)
+        *dict_ਲੰਮਾਈ = len;
+    ਵਾਪਸ Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateResetKeep(z_streamp strm) {
+ਪੂਰਨ ZEXPORT deflateResetKeep(z_streamp strm) {
     deflate_state *s;
 
-    if (deflateStateCheck(strm)) {
-        return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(strm)) {
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     }
 
-    strm->total_in = strm->total_out = 0;
-    strm->msg = Z_NULL; /* use zfree if we ever allocate msg dynamically */
-    strm->data_type = Z_UNKNOWN;
+    strm->ਕੁੱਲ_ਵਿੱਚ = strm->ਕੁੱਲ_ਬਾਹਰਲਾ = 0;
+    strm->ਸੁਨੇਹਾ = Z_NULL; /* use zfree if we ever allocate msg dynamically */
+    strm->ਅੰਕੜੇ_type = Z_UNKNOWN;
 
     s = (deflate_state *)strm->state;
     s->pending = 0;
-    s->pending_out = s->pending_buf;
+    s->pending_ਬਾਹਰਲਾ = s->pending_buf;
 
-    if (s->wrap < 0) {
+    ਜੇ (s->wrap < 0) {
         s->wrap = -s->wrap; /* was made negative by deflate(..., Z_FINISH); */
     }
-    s->status =
-#ifdef GZIP
+    s->ਸਥਿਤੀ =
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GZIP
         s->wrap == 2 ? GZIP_STATE :
-#endif
+#ਜੇ_ਅੰਤ
         INIT_STATE;
     strm->adler =
-#ifdef GZIP
-        s->wrap == 2 ? crc32(0L, Z_NULL, 0) :
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GZIP
+        s->wrap == 2 ? ਚੱਕਰੀ_ਜਾਂਚ_32_2(0L, Z_NULL, 0) :
+#ਜੇ_ਅੰਤ
         adler32(0L, Z_NULL, 0);
-    s->last_flush = -2;
+    s->ਆਖਰੀ_flush = -2;
 
     s->gzhead = Z_NULL;
 
     _tr_init(s);
 
-    return Z_OK;
+    ਵਾਪਸ Z_OK;
 }
 
 /* ===========================================================================
  * Initialize the "longest match" routines for a new zlib stream
  */
-local void lm_init(deflate_state *s) {
-    s->window_size = (ulg)2L*s->w_size;
+local ਖਾਲੀ lm_init(deflate_state *s) {
+    s->ਖਿੜਕੀ_ਮਾਪ = (ulg)2L*s->w_ਮਾਪ;
 
     CLEAR_HASH(s);
 
     /* Set the default configuration parameters:
      */
-    s->max_lazy_match   = configuration_table[s->level].max_lazy;
-    s->good_match       = configuration_table[s->level].good_length;
-    s->nice_match       = configuration_table[s->level].nice_length;
-    s->max_chain_length = configuration_table[s->level].max_chain;
+    s->max_lazy_ਮੇਲ   = configuration_ਸਾਰਣੀ[s->level].max_lazy;
+    s->good_ਮੇਲ       = configuration_ਸਾਰਣੀ[s->level].good_ਲੰਮਾਈ;
+    s->nice_ਮੇਲ       = configuration_ਸਾਰਣੀ[s->level].nice_ਲੰਮਾਈ;
+    s->max_chain_ਲੰਮਾਈ = configuration_ਸਾਰਣੀ[s->level].max_chain;
 
     s->strstart = 0;
-    s->block_start = 0L;
+    s->ਖੰਡ_ਸ਼ੁਰੂ = 0L;
     s->lookahead = 0;
-    s->insert = 0;
-    s->match_length = s->prev_length = MIN_MATCH-1;
-    s->match_available = 0;
+    s->ਪਾਓ = 0;
+    s->ਮੇਲ_ਲੰਮਾਈ = s->prev_ਲੰਮਾਈ = MIN_ਮੇਲ-1;
+    s->ਮੇਲ_ਉਪਲਬਧ = 0;
     s->ins_h = 0;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateReset(z_streamp strm) {
-    int ret;
+ਪੂਰਨ ZEXPORT deflateReset(z_streamp strm) {
+    ਪੂਰਨ ret;
 
     ret = deflateResetKeep(strm);
-    if (ret == Z_OK)
+    ਜੇ (ret == Z_OK)
         lm_init(strm->state);
-    return ret;
+    ਵਾਪਸ ret;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateSetHeader(z_streamp strm, gz_headerp head) {
-    if (deflateStateCheck(strm) || strm->state->wrap != 2)
-        return Z_STREAM_ERROR;
-    strm->state->gzhead = head;
-    return Z_OK;
+ਪੂਰਨ ZEXPORT deflate_ਸੈੱਟ_ਸਿਰਲੇਖ(z_streamp strm, gz_headerp ਸਿਰ) {
+    ਜੇ (deflateStateCheck(strm) || strm->state->wrap != 2)
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
+    strm->state->gzhead = ਸਿਰ;
+    ਵਾਪਸ Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflatePending(z_streamp strm, unsigned *pending, int *bits) {
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
-    if (bits != Z_NULL)
-        *bits = strm->state->bi_valid;
-    if (pending != Z_NULL) {
-        *pending = (unsigned)strm->state->pending;
-        if (*pending != strm->state->pending) {
-            *pending = (unsigned)-1;
-            return Z_BUF_ERROR;
+ਪੂਰਨ ZEXPORT deflatePending(z_streamp strm, ਬਿਨਾਨਿਸ਼ਾਨੀ *pending, ਪੂਰਨ *ਬਿੱਟ) {
+    ਜੇ (deflateStateCheck(strm)) ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
+    ਜੇ (ਬਿੱਟ != Z_NULL)
+        *ਬਿੱਟ = strm->state->bi_valid;
+    ਜੇ (pending != Z_NULL) {
+        *pending = (ਬਿਨਾਨਿਸ਼ਾਨੀ)strm->state->pending;
+        ਜੇ (*pending != strm->state->pending) {
+            *pending = (ਬਿਨਾਨਿਸ਼ਾਨੀ)-1;
+            ਵਾਪਸ Z_BUF_ERROR;
         }
     }
-    return Z_OK;
+    ਵਾਪਸ Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateUsed(z_streamp strm, int *bits) {
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
-    if (bits != Z_NULL)
-        *bits = strm->state->bi_used;
-    return Z_OK;
+ਪੂਰਨ ZEXPORT deflate_ਵਰਤਿਆ(z_streamp strm, ਪੂਰਨ *ਬਿੱਟ) {
+    ਜੇ (deflateStateCheck(strm)) ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
+    ਜੇ (ਬਿੱਟ != Z_NULL)
+        *ਬਿੱਟ = strm->state->bi_ਵਰਤਿਆ;
+    ਵਾਪਸ Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflatePrime(z_streamp strm, int bits, int value) {
+ਪੂਰਨ ZEXPORT deflate_ਅਭਾਜ(z_streamp strm, ਪੂਰਨ ਬਿੱਟ, ਪੂਰਨ ਮੁੱਲ) {
     deflate_state *s;
-    int put;
+    ਪੂਰਨ put;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(strm)) ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     s = strm->state;
-#ifdef LIT_MEM
-    if (bits < 0 || bits > 16 ||
-        (uchf *)s->d_buf < s->pending_out + ((Buf_size + 7) >> 3))
-        return Z_BUF_ERROR;
-#else
-    if (bits < 0 || bits > 16 ||
-        s->sym_buf < s->pending_out + ((Buf_size + 7) >> 3))
-        return Z_BUF_ERROR;
-#endif
-    do {
-        put = Buf_size - s->bi_valid;
-        if (put > bits)
-            put = bits;
-        s->bi_buf |= (ush)((value & ((1 << put) - 1)) << s->bi_valid);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LIT_MEM
+    ਜੇ (ਬਿੱਟ < 0 || ਬਿੱਟ > 16 ||
+        (uchf *)s->d_buf < s->pending_ਬਾਹਰਲਾ + ((Buf_ਮਾਪ + 7) >> 3))
+        ਵਾਪਸ Z_BUF_ERROR;
+#ਨਹੀਂਤਾਂ
+    ਜੇ (ਬਿੱਟ < 0 || ਬਿੱਟ > 16 ||
+        s->sym_buf < s->pending_ਬਾਹਰਲਾ + ((Buf_ਮਾਪ + 7) >> 3))
+        ਵਾਪਸ Z_BUF_ERROR;
+#ਜੇ_ਅੰਤ
+    ਕਰੋ {
+        put = Buf_ਮਾਪ - s->bi_valid;
+        ਜੇ (put > ਬਿੱਟ)
+            put = ਬਿੱਟ;
+        s->bi_buf |= (ush)((ਮੁੱਲ & ((1 << put) - 1)) << s->bi_valid);
         s->bi_valid += put;
-        _tr_flush_bits(s);
-        value >>= put;
-        bits -= put;
-    } while (bits);
-    return Z_OK;
+        tr_flush_ਬਿੱਟ(s);
+        ਮੁੱਲ >>= put;
+        ਬਿੱਟ -= put;
+    } ਜਦੋਂ (ਬਿੱਟ);
+    ਵਾਪਸ Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateParams(z_streamp strm, int level, int strategy) {
+ਪੂਰਨ ZEXPORT deflateParams(z_streamp strm, ਪੂਰਨ level, ਪੂਰਨ strategy) {
     deflate_state *s;
     compress_func func;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(strm)) ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     s = strm->state;
 
-#ifdef FASTEST
-    if (level != 0) level = 1;
-#else
-    if (level == Z_DEFAULT_COMPRESSION) level = 6;
-#endif
-    if (level < 0 || level > 9 || strategy < 0 || strategy > Z_FIXED) {
-        return Z_STREAM_ERROR;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ FASTEST
+    ਜੇ (level != 0) level = 1;
+#ਨਹੀਂਤਾਂ
+    ਜੇ (level == Z_DEFAULT_COMPRESSION) level = 6;
+#ਜੇ_ਅੰਤ
+    ਜੇ (level < 0 || level > 9 || strategy < 0 || strategy > Z_FIXED) {
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     }
-    func = configuration_table[s->level].func;
+    func = configuration_ਸਾਰਣੀ[s->level].func;
 
-    if ((strategy != s->strategy || func != configuration_table[level].func) &&
-        s->last_flush != -2) {
+    ਜੇ ((strategy != s->strategy || func != configuration_ਸਾਰਣੀ[level].func) &&
+        s->ਆਖਰੀ_flush != -2) {
         /* Flush the last buffer: */
-        int err = deflate(strm, Z_BLOCK);
-        if (err == Z_STREAM_ERROR)
-            return err;
-        if (strm->avail_in || (s->strstart - s->block_start) + s->lookahead)
-            return Z_BUF_ERROR;
+        ਪੂਰਨ err = deflate(strm, Z_ਖੰਡ);
+        ਜੇ (err == Z_ਧਾਰਾ_ERROR)
+            ਵਾਪਸ err;
+        ਜੇ (strm->avail_ਵਿੱਚ || (s->strstart - s->ਖੰਡ_ਸ਼ੁਰੂ) + s->lookahead)
+            ਵਾਪਸ Z_BUF_ERROR;
     }
-    if (s->level != level) {
-        if (s->level == 0 && s->matches != 0) {
-            if (s->matches == 1)
+    ਜੇ (s->level != level) {
+        ਜੇ (s->level == 0 && s->matches != 0) {
+            ਜੇ (s->matches == 1)
                 slide_hash(s);
-            else
+            ਨਹੀਂਤਾਂ
                 CLEAR_HASH(s);
             s->matches = 0;
         }
         s->level = level;
-        s->max_lazy_match   = configuration_table[level].max_lazy;
-        s->good_match       = configuration_table[level].good_length;
-        s->nice_match       = configuration_table[level].nice_length;
-        s->max_chain_length = configuration_table[level].max_chain;
+        s->max_lazy_ਮੇਲ   = configuration_ਸਾਰਣੀ[level].max_lazy;
+        s->good_ਮੇਲ       = configuration_ਸਾਰਣੀ[level].good_ਲੰਮਾਈ;
+        s->nice_ਮੇਲ       = configuration_ਸਾਰਣੀ[level].nice_ਲੰਮਾਈ;
+        s->max_chain_ਲੰਮਾਈ = configuration_ਸਾਰਣੀ[level].max_chain;
     }
     s->strategy = strategy;
-    return Z_OK;
+    ਵਾਪਸ Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateTune(z_streamp strm, int good_length, int max_lazy,
-                        int nice_length, int max_chain) {
+ਪੂਰਨ ZEXPORT deflateTune(z_streamp strm, ਪੂਰਨ good_ਲੰਮਾਈ, ਪੂਰਨ max_lazy,
+                        ਪੂਰਨ nice_ਲੰਮਾਈ, ਪੂਰਨ max_chain) {
     deflate_state *s;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(strm)) ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     s = strm->state;
-    s->good_match = (uInt)good_length;
-    s->max_lazy_match = (uInt)max_lazy;
-    s->nice_match = nice_length;
-    s->max_chain_length = (uInt)max_chain;
-    return Z_OK;
+    s->good_ਮੇਲ = (uInt)good_ਲੰਮਾਈ;
+    s->max_lazy_ਮੇਲ = (uInt)max_lazy;
+    s->nice_ਮੇਲ = nice_ਲੰਮਾਈ;
+    s->max_chain_ਲੰਮਾਈ = (uInt)max_chain;
+    ਵਾਪਸ Z_OK;
 }
 
 /* =========================================================================
@@ -854,82 +854,82 @@ int ZEXPORT deflateTune(z_streamp strm, int good_length, int max_lazy,
  *
  * Shifts are used to approximate divisions, for speed.
  */
-z_size_t ZEXPORT deflateBound_z(z_streamp strm, z_size_t sourceLen) {
+z_ਮਾਪ_t ZEXPORT deflateBound_z(z_streamp strm, z_ਮਾਪ_t ਸਰੋਤ_Len) {
     deflate_state *s;
-    z_size_t fixedlen, storelen, wraplen, bound;
+    z_ਮਾਪ_t fixedlen, storelen, wraplen, bound;
 
     /* upper bound for fixed blocks with 9-bit literals and length 255
        (memLevel == 2, which is the lowest that may not use stored blocks) --
        ~13% overhead plus a small constant */
-    fixedlen = sourceLen + (sourceLen >> 3) + (sourceLen >> 8) +
-               (sourceLen >> 9) + 4;
-    if (fixedlen < sourceLen)
-        fixedlen = (z_size_t)-1;
+    fixedlen = ਸਰੋਤ_Len + (ਸਰੋਤ_Len >> 3) + (ਸਰੋਤ_Len >> 8) +
+               (ਸਰੋਤ_Len >> 9) + 4;
+    ਜੇ (fixedlen < ਸਰੋਤ_Len)
+        fixedlen = (z_ਮਾਪ_t)-1;
 
     /* upper bound for stored blocks with length 127 (memLevel == 1) --
        ~4% overhead plus a small constant */
-    storelen = sourceLen + (sourceLen >> 5) + (sourceLen >> 7) +
-               (sourceLen >> 11) + 7;
-    if (storelen < sourceLen)
-        storelen = (z_size_t)-1;
+    storelen = ਸਰੋਤ_Len + (ਸਰੋਤ_Len >> 5) + (ਸਰੋਤ_Len >> 7) +
+               (ਸਰੋਤ_Len >> 11) + 7;
+    ਜੇ (storelen < ਸਰੋਤ_Len)
+        storelen = (z_ਮਾਪ_t)-1;
 
     /* if can't get parameters, return larger bound plus a wrapper */
-    if (deflateStateCheck(strm)) {
+    ਜੇ (deflateStateCheck(strm)) {
         bound = fixedlen > storelen ? fixedlen : storelen;
-        return bound + 18 < bound ? (z_size_t)-1 : bound + 18;
+        ਵਾਪਸ bound + 18 < bound ? (z_ਮਾਪ_t)-1 : bound + 18;
     }
 
     /* compute wrapper length */
     s = strm->state;
-    switch (s->wrap < 0 ? -s->wrap : s->wrap) {
-    case 0:                                 /* raw deflate */
+    ਚੋਣ (s->wrap < 0 ? -s->wrap : s->wrap) {
+    ਹਾਲਤ 0:                                 /* raw deflate */
         wraplen = 0;
-        break;
-    case 1:                                 /* zlib wrapper */
+        ਰੋਕੋ;
+    ਹਾਲਤ 1:                                 /* zlib wrapper */
         wraplen = 6 + (s->strstart ? 4 : 0);
-        break;
-#ifdef GZIP
-    case 2:                                 /* gzip wrapper */
+        ਰੋਕੋ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GZIP
+    ਹਾਲਤ 2:                                 /* gzip wrapper */
         wraplen = 18;
-        if (s->gzhead != Z_NULL) {          /* user-supplied gzip header */
+        ਜੇ (s->gzhead != Z_NULL) {          /* user-supplied gzip header */
             Bytef *str;
-            if (s->gzhead->extra != Z_NULL)
+            ਜੇ (s->gzhead->extra != Z_NULL)
                 wraplen += 2 + s->gzhead->extra_len;
             str = s->gzhead->name;
-            if (str != Z_NULL)
-                do {
+            ਜੇ (str != Z_NULL)
+                ਕਰੋ {
                     wraplen++;
-                } while (*str++);
+                } ਜਦੋਂ (*str++);
             str = s->gzhead->comment;
-            if (str != Z_NULL)
-                do {
+            ਜੇ (str != Z_NULL)
+                ਕਰੋ {
                     wraplen++;
-                } while (*str++);
-            if (s->gzhead->hcrc)
+                } ਜਦੋਂ (*str++);
+            ਜੇ (s->gzhead->hcrc)
                 wraplen += 2;
         }
-        break;
-#endif
-    default:                                /* for compiler happiness */
+        ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
+    ਮੂਲ:                                /* for compiler happiness */
         wraplen = 18;
     }
 
     /* if not default parameters, return one of the conservative bounds */
-    if (s->w_bits != 15 || s->hash_bits != 8 + 7) {
-        bound = s->w_bits <= s->hash_bits && s->level ? fixedlen :
+    ਜੇ (s->w_ਬਿੱਟ != 15 || s->hash_ਬਿੱਟ != 8 + 7) {
+        bound = s->w_ਬਿੱਟ <= s->hash_ਬਿੱਟ && s->level ? fixedlen :
                                                         storelen;
-        return bound + wraplen < bound ? (z_size_t)-1 : bound + wraplen;
+        ਵਾਪਸ bound + wraplen < bound ? (z_ਮਾਪ_t)-1 : bound + wraplen;
     }
 
     /* default settings: return tight bound for that case -- ~0.03% overhead
        plus a small constant */
-    bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
-            (sourceLen >> 25) + 13 - 6 + wraplen;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+    bound = ਸਰੋਤ_Len + (ਸਰੋਤ_Len >> 12) + (ਸਰੋਤ_Len >> 14) +
+            (ਸਰੋਤ_Len >> 25) + 13 - 6 + wraplen;
+    ਵਾਪਸ bound < ਸਰੋਤ_Len ? (z_ਮਾਪ_t)-1 : bound;
 }
-uLong ZEXPORT deflateBound(z_streamp strm, uLong sourceLen) {
-    z_size_t bound = deflateBound_z(strm, sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+uLong ZEXPORT deflateBound(z_streamp strm, uLong ਸਰੋਤ_Len) {
+    z_ਮਾਪ_t bound = deflateBound_z(strm, ਸਰੋਤ_Len);
+    ਵਾਪਸ (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }
 
 /* =========================================================================
@@ -937,7 +937,7 @@ uLong ZEXPORT deflateBound(z_streamp strm, uLong sourceLen) {
  * IN assertion: the stream state is correct and there is enough room in
  * pending_buf.
  */
-local void putShortMSB(deflate_state *s, uInt b) {
+local ਖਾਲੀ putShortMSB(deflate_state *s, uInt b) {
     put_byte(s, (Byte)(b >> 8));
     put_byte(s, (Byte)(b & 0xff));
 }
@@ -948,129 +948,129 @@ local void putShortMSB(deflate_state *s, uInt b) {
  * applications may wish to modify it to avoid allocating a large
  * strm->next_out buffer and copying into it. (See also read_buf()).
  */
-local void flush_pending(z_streamp strm) {
-    unsigned len;
+local ਖਾਲੀ flush_pending(z_streamp strm) {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ len;
     deflate_state *s = strm->state;
 
-    _tr_flush_bits(s);
-    len = s->pending > strm->avail_out ? strm->avail_out :
-                                         (unsigned)s->pending;
-    if (len == 0) return;
+    tr_flush_ਬਿੱਟ(s);
+    len = s->pending > strm->avail_ਬਾਹਰਲਾ ? strm->avail_ਬਾਹਰਲਾ :
+                                         (ਬਿਨਾਨਿਸ਼ਾਨੀ)s->pending;
+    ਜੇ (len == 0) ਵਾਪਸ;
 
-    zmemcpy(strm->next_out, s->pending_out, len);
-    strm->next_out  += len;
-    s->pending_out  += len;
-    strm->total_out += len;
-    strm->avail_out -= len;
+    zmemcpy(strm->ਅਗਲਾ_ਬਾਹਰਲਾ, s->pending_ਬਾਹਰਲਾ, len);
+    strm->ਅਗਲਾ_ਬਾਹਰਲਾ  += len;
+    s->pending_ਬਾਹਰਲਾ  += len;
+    strm->ਕੁੱਲ_ਬਾਹਰਲਾ += len;
+    strm->avail_ਬਾਹਰਲਾ -= len;
     s->pending      -= len;
-    if (s->pending == 0) {
-        s->pending_out = s->pending_buf;
+    ਜੇ (s->pending == 0) {
+        s->pending_ਬਾਹਰਲਾ = s->pending_buf;
     }
 }
 
 /* ===========================================================================
  * Update the header CRC with the bytes s->pending_buf[beg..s->pending - 1].
  */
-#define HCRC_UPDATE(beg) \
-    do { \
-        if (s->gzhead->hcrc && s->pending > (beg)) \
-            strm->adler = crc32_z(strm->adler, s->pending_buf + (beg), \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HCRC_UPDATE(beg) \
+    ਕਰੋ { \
+        ਜੇ (s->gzhead->hcrc && s->pending > (beg)) \
+            strm->adler = ਚੱਕਰੀ_ਜਾਂਚ_32_z(strm->adler, s->pending_buf + (beg), \
                                   s->pending - (beg)); \
-    } while (0)
+    } ਜਦੋਂ (0)
 
 /* ========================================================================= */
-int ZEXPORT deflate(z_streamp strm, int flush) {
-    int old_flush; /* value of flush param for previous deflate call */
+ਪੂਰਨ ZEXPORT deflate(z_streamp strm, ਪੂਰਨ flush) {
+    ਪੂਰਨ old_flush; /* value of flush param for previous deflate call */
     deflate_state *s;
 
-    if (deflateStateCheck(strm) || flush > Z_BLOCK || flush < 0) {
-        return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(strm) || flush > Z_ਖੰਡ || flush < 0) {
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     }
     s = strm->state;
 
-    if (strm->next_out == Z_NULL ||
-        (strm->avail_in != 0 && strm->next_in == Z_NULL) ||
-        (s->status == FINISH_STATE && flush != Z_FINISH)) {
-        ERR_RETURN(strm, Z_STREAM_ERROR);
+    ਜੇ (strm->ਅਗਲਾ_ਬਾਹਰਲਾ == Z_NULL ||
+        (strm->avail_ਵਿੱਚ != 0 && strm->ਅਗਲਾ_ਵਿੱਚ == Z_NULL) ||
+        (s->ਸਥਿਤੀ == ਅੰਤ_STATE && flush != Z_ਅੰਤ)) {
+        ERR_RETURN(strm, Z_ਧਾਰਾ_ERROR);
     }
-    if (strm->avail_out == 0) ERR_RETURN(strm, Z_BUF_ERROR);
+    ਜੇ (strm->avail_ਬਾਹਰਲਾ == 0) ERR_RETURN(strm, Z_BUF_ERROR);
 
-    old_flush = s->last_flush;
-    s->last_flush = flush;
+    old_flush = s->ਆਖਰੀ_flush;
+    s->ਆਖਰੀ_flush = flush;
 
     /* Flush as much pending output as possible */
-    if (s->pending != 0) {
+    ਜੇ (s->pending != 0) {
         flush_pending(strm);
-        if (strm->avail_out == 0) {
+        ਜੇ (strm->avail_ਬਾਹਰਲਾ == 0) {
             /* Since avail_out is 0, deflate will be called again with
              * more output space, but possibly with both pending and
              * avail_in equal to zero. There won't be anything to do,
              * but this is not an error situation so make sure we
              * return OK instead of BUF_ERROR at next call of deflate:
              */
-            s->last_flush = -1;
-            return Z_OK;
+            s->ਆਖਰੀ_flush = -1;
+            ਵਾਪਸ Z_OK;
         }
 
     /* Make sure there is something to do and avoid duplicate consecutive
      * flushes. For repeated and useless calls with Z_FINISH, we keep
      * returning Z_STREAM_END instead of Z_BUF_ERROR.
      */
-    } else if (strm->avail_in == 0 && RANK(flush) <= RANK(old_flush) &&
-               flush != Z_FINISH) {
+    } ਨਹੀਂਤਾਂ ਜੇ (strm->avail_ਵਿੱਚ == 0 && RANK(flush) <= RANK(old_flush) &&
+               flush != Z_ਅੰਤ) {
         ERR_RETURN(strm, Z_BUF_ERROR);
     }
 
     /* User must not provide more input after the first FINISH: */
-    if (s->status == FINISH_STATE && strm->avail_in != 0) {
+    ਜੇ (s->ਸਥਿਤੀ == ਅੰਤ_STATE && strm->avail_ਵਿੱਚ != 0) {
         ERR_RETURN(strm, Z_BUF_ERROR);
     }
 
     /* Write the header */
-    if (s->status == INIT_STATE && s->wrap == 0)
-        s->status = BUSY_STATE;
-    if (s->status == INIT_STATE) {
+    ਜੇ (s->ਸਥਿਤੀ == INIT_STATE && s->wrap == 0)
+        s->ਸਥਿਤੀ = BUSY_STATE;
+    ਜੇ (s->ਸਥਿਤੀ == INIT_STATE) {
         /* zlib header */
-        uInt header = (Z_DEFLATED + ((s->w_bits - 8) << 4)) << 8;
+        uInt ਸਿਰਲੇਖ = (Z_DEFLATED + ((s->w_ਬਿੱਟ - 8) << 4)) << 8;
         uInt level_flags;
 
-        if (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
+        ਜੇ (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
             level_flags = 0;
-        else if (s->level < 6)
+        ਨਹੀਂਤਾਂ ਜੇ (s->level < 6)
             level_flags = 1;
-        else if (s->level == 6)
+        ਨਹੀਂਤਾਂ ਜੇ (s->level == 6)
             level_flags = 2;
-        else
+        ਨਹੀਂਤਾਂ
             level_flags = 3;
-        header |= (level_flags << 6);
-        if (s->strstart != 0) header |= PRESET_DICT;
-        header += 31 - (header % 31);
+        ਸਿਰਲੇਖ |= (level_flags << 6);
+        ਜੇ (s->strstart != 0) ਸਿਰਲੇਖ |= PRESET_DICT;
+        ਸਿਰਲੇਖ += 31 - (ਸਿਰਲੇਖ % 31);
 
-        putShortMSB(s, header);
+        putShortMSB(s, ਸਿਰਲੇਖ);
 
         /* Save the adler32 of the preset dictionary: */
-        if (s->strstart != 0) {
+        ਜੇ (s->strstart != 0) {
             putShortMSB(s, (uInt)(strm->adler >> 16));
             putShortMSB(s, (uInt)(strm->adler & 0xffff));
         }
         strm->adler = adler32(0L, Z_NULL, 0);
-        s->status = BUSY_STATE;
+        s->ਸਥਿਤੀ = BUSY_STATE;
 
         /* Compression must start with an empty pending buffer */
         flush_pending(strm);
-        if (s->pending != 0) {
-            s->last_flush = -1;
-            return Z_OK;
+        ਜੇ (s->pending != 0) {
+            s->ਆਖਰੀ_flush = -1;
+            ਵਾਪਸ Z_OK;
         }
     }
-#ifdef GZIP
-    if (s->status == GZIP_STATE) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GZIP
+    ਜੇ (s->ਸਥਿਤੀ == GZIP_STATE) {
         /* gzip header */
-        strm->adler = crc32(0L, Z_NULL, 0);
+        strm->adler = ਚੱਕਰੀ_ਜਾਂਚ_32_2(0L, Z_NULL, 0);
         put_byte(s, 31);
         put_byte(s, 139);
         put_byte(s, 8);
-        if (s->gzhead == Z_NULL) {
+        ਜੇ (s->gzhead == Z_NULL) {
             put_byte(s, 0);
             put_byte(s, 0);
             put_byte(s, 0);
@@ -1079,18 +1079,18 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
             put_byte(s, s->level == 9 ? 2 :
                      (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2 ?
                       4 : 0));
-            put_byte(s, OS_CODE);
-            s->status = BUSY_STATE;
+            put_byte(s, OS_ਕੋਡ);
+            s->ਸਥਿਤੀ = BUSY_STATE;
 
             /* Compression must start with an empty pending buffer */
             flush_pending(strm);
-            if (s->pending != 0) {
-                s->last_flush = -1;
-                return Z_OK;
+            ਜੇ (s->pending != 0) {
+                s->ਆਖਰੀ_flush = -1;
+                ਵਾਪਸ Z_OK;
             }
         }
-        else {
-            put_byte(s, (s->gzhead->text ? 1 : 0) +
+        ਨਹੀਂਤਾਂ {
+            put_byte(s, (s->gzhead->ਪਾਠ ? 1 : 0) +
                      (s->gzhead->hcrc ? 2 : 0) +
                      (s->gzhead->extra == Z_NULL ? 0 : 4) +
                      (s->gzhead->name == Z_NULL ? 0 : 8) +
@@ -1104,130 +1104,130 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
                      (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2 ?
                       4 : 0));
             put_byte(s, s->gzhead->os & 0xff);
-            if (s->gzhead->extra != Z_NULL) {
+            ਜੇ (s->gzhead->extra != Z_NULL) {
                 put_byte(s, s->gzhead->extra_len & 0xff);
                 put_byte(s, (s->gzhead->extra_len >> 8) & 0xff);
             }
-            if (s->gzhead->hcrc)
-                strm->adler = crc32_z(strm->adler, s->pending_buf,
+            ਜੇ (s->gzhead->hcrc)
+                strm->adler = ਚੱਕਰੀ_ਜਾਂਚ_32_z(strm->adler, s->pending_buf,
                                       s->pending);
             s->gzindex = 0;
-            s->status = EXTRA_STATE;
+            s->ਸਥਿਤੀ = EXTRA_STATE;
         }
     }
-    if (s->status == EXTRA_STATE) {
-        if (s->gzhead->extra != Z_NULL) {
+    ਜੇ (s->ਸਥਿਤੀ == EXTRA_STATE) {
+        ਜੇ (s->gzhead->extra != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            ulg left = (s->gzhead->extra_len & 0xffff) - s->gzindex;
-            while (s->pending + left > s->pending_buf_size) {
-                ulg copy = s->pending_buf_size - s->pending;
+            ulg ਖੱਬਾ = (s->gzhead->extra_len & 0xffff) - s->gzindex;
+            ਜਦੋਂ (s->pending + ਖੱਬਾ > s->pending_buf_ਮਾਪ) {
+                ulg copy = s->pending_buf_ਮਾਪ - s->pending;
                 zmemcpy(s->pending_buf + s->pending,
                         s->gzhead->extra + s->gzindex, copy);
-                s->pending = s->pending_buf_size;
+                s->pending = s->pending_buf_ਮਾਪ;
                 HCRC_UPDATE(beg);
                 s->gzindex += copy;
                 flush_pending(strm);
-                if (s->pending != 0) {
-                    s->last_flush = -1;
-                    return Z_OK;
+                ਜੇ (s->pending != 0) {
+                    s->ਆਖਰੀ_flush = -1;
+                    ਵਾਪਸ Z_OK;
                 }
                 beg = 0;
-                left -= copy;
+                ਖੱਬਾ -= copy;
             }
             zmemcpy(s->pending_buf + s->pending,
-                    s->gzhead->extra + s->gzindex, left);
-            s->pending += left;
+                    s->gzhead->extra + s->gzindex, ਖੱਬਾ);
+            s->pending += ਖੱਬਾ;
             HCRC_UPDATE(beg);
             s->gzindex = 0;
         }
-        s->status = NAME_STATE;
+        s->ਸਥਿਤੀ = NAME_STATE;
     }
-    if (s->status == NAME_STATE) {
-        if (s->gzhead->name != Z_NULL) {
+    ਜੇ (s->ਸਥਿਤੀ == NAME_STATE) {
+        ਜੇ (s->gzhead->name != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            int val;
-            do {
-                if (s->pending == s->pending_buf_size) {
+            ਪੂਰਨ val;
+            ਕਰੋ {
+                ਜੇ (s->pending == s->pending_buf_ਮਾਪ) {
                     HCRC_UPDATE(beg);
                     flush_pending(strm);
-                    if (s->pending != 0) {
-                        s->last_flush = -1;
-                        return Z_OK;
+                    ਜੇ (s->pending != 0) {
+                        s->ਆਖਰੀ_flush = -1;
+                        ਵਾਪਸ Z_OK;
                     }
                     beg = 0;
                 }
                 val = s->gzhead->name[s->gzindex++];
                 put_byte(s, val);
-            } while (val != 0);
+            } ਜਦੋਂ (val != 0);
             HCRC_UPDATE(beg);
             s->gzindex = 0;
         }
-        s->status = COMMENT_STATE;
+        s->ਸਥਿਤੀ = COMMENT_STATE;
     }
-    if (s->status == COMMENT_STATE) {
-        if (s->gzhead->comment != Z_NULL) {
+    ਜੇ (s->ਸਥਿਤੀ == COMMENT_STATE) {
+        ਜੇ (s->gzhead->comment != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            int val;
-            do {
-                if (s->pending == s->pending_buf_size) {
+            ਪੂਰਨ val;
+            ਕਰੋ {
+                ਜੇ (s->pending == s->pending_buf_ਮਾਪ) {
                     HCRC_UPDATE(beg);
                     flush_pending(strm);
-                    if (s->pending != 0) {
-                        s->last_flush = -1;
-                        return Z_OK;
+                    ਜੇ (s->pending != 0) {
+                        s->ਆਖਰੀ_flush = -1;
+                        ਵਾਪਸ Z_OK;
                     }
                     beg = 0;
                 }
                 val = s->gzhead->comment[s->gzindex++];
                 put_byte(s, val);
-            } while (val != 0);
+            } ਜਦੋਂ (val != 0);
             HCRC_UPDATE(beg);
         }
-        s->status = HCRC_STATE;
+        s->ਸਥਿਤੀ = HCRC_STATE;
     }
-    if (s->status == HCRC_STATE) {
-        if (s->gzhead->hcrc) {
-            if (s->pending + 2 > s->pending_buf_size) {
+    ਜੇ (s->ਸਥਿਤੀ == HCRC_STATE) {
+        ਜੇ (s->gzhead->hcrc) {
+            ਜੇ (s->pending + 2 > s->pending_buf_ਮਾਪ) {
                 flush_pending(strm);
-                if (s->pending != 0) {
-                    s->last_flush = -1;
-                    return Z_OK;
+                ਜੇ (s->pending != 0) {
+                    s->ਆਖਰੀ_flush = -1;
+                    ਵਾਪਸ Z_OK;
                 }
             }
             put_byte(s, (Byte)(strm->adler & 0xff));
             put_byte(s, (Byte)((strm->adler >> 8) & 0xff));
-            strm->adler = crc32(0L, Z_NULL, 0);
+            strm->adler = ਚੱਕਰੀ_ਜਾਂਚ_32_2(0L, Z_NULL, 0);
         }
-        s->status = BUSY_STATE;
+        s->ਸਥਿਤੀ = BUSY_STATE;
 
         /* Compression must start with an empty pending buffer */
         flush_pending(strm);
-        if (s->pending != 0) {
-            s->last_flush = -1;
-            return Z_OK;
+        ਜੇ (s->pending != 0) {
+            s->ਆਖਰੀ_flush = -1;
+            ਵਾਪਸ Z_OK;
         }
     }
-#endif
+#ਜੇ_ਅੰਤ
 
     /* Start a new block or continue the current one.
      */
-    if (strm->avail_in != 0 || s->lookahead != 0 ||
-        (flush != Z_NO_FLUSH && s->status != FINISH_STATE)) {
-        block_state bstate;
+    ਜੇ (strm->avail_ਵਿੱਚ != 0 || s->lookahead != 0 ||
+        (flush != Z_NO_FLUSH && s->ਸਥਿਤੀ != ਅੰਤ_STATE)) {
+        ਖੰਡ_state bstate;
 
         bstate = s->level == 0 ? deflate_stored(s, flush) :
                  s->strategy == Z_HUFFMAN_ONLY ? deflate_huff(s, flush) :
                  s->strategy == Z_RLE ? deflate_rle(s, flush) :
-                 (*(configuration_table[s->level].func))(s, flush);
+                 (*(configuration_ਸਾਰਣੀ[s->level].func))(s, flush);
 
-        if (bstate == finish_started || bstate == finish_done) {
-            s->status = FINISH_STATE;
+        ਜੇ (bstate == ਅੰਤ_started || bstate == ਅੰਤ_ਪੂਰਾ) {
+            s->ਸਥਿਤੀ = ਅੰਤ_STATE;
         }
-        if (bstate == need_more || bstate == finish_started) {
-            if (strm->avail_out == 0) {
-                s->last_flush = -1; /* avoid BUF_ERROR next call, see above */
+        ਜੇ (bstate == need_ਹੋਰ || bstate == ਅੰਤ_started) {
+            ਜੇ (strm->avail_ਬਾਹਰਲਾ == 0) {
+                s->ਆਖਰੀ_flush = -1; /* avoid BUF_ERROR next call, see above */
             }
-            return Z_OK;
+            ਵਾਪਸ Z_OK;
             /* If flush != Z_NO_FLUSH && avail_out == 0, the next call
              * of deflate should use the same flush parameter to make sure
              * that the flush is complete. So we don't have to output an
@@ -1236,48 +1236,48 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
              * one empty block.
              */
         }
-        if (bstate == block_done) {
-            if (flush == Z_PARTIAL_FLUSH) {
+        ਜੇ (bstate == ਖੰਡ_ਪੂਰਾ) {
+            ਜੇ (flush == Z_PARTIAL_FLUSH) {
                 _tr_align(s);
-            } else if (flush != Z_BLOCK) { /* FULL_FLUSH or SYNC_FLUSH */
-                _tr_stored_block(s, (char*)0, 0L, 0);
+            } ਨਹੀਂਤਾਂ ਜੇ (flush != Z_ਖੰਡ) { /* FULL_FLUSH or SYNC_FLUSH */
+                tr_stored_ਖੰਡ(s, (ਅੱਖਰ*)0, 0L, 0);
                 /* For a full flush, this empty block will be recognized
                  * as a special marker by inflate_sync().
                  */
-                if (flush == Z_FULL_FLUSH) {
+                ਜੇ (flush == Z_ਭਰਿਆ_FLUSH) {
                     CLEAR_HASH(s);             /* forget history */
-                    if (s->lookahead == 0) {
+                    ਜੇ (s->lookahead == 0) {
                         s->strstart = 0;
-                        s->block_start = 0L;
-                        s->insert = 0;
+                        s->ਖੰਡ_ਸ਼ੁਰੂ = 0L;
+                        s->ਪਾਓ = 0;
                     }
                 }
             }
             flush_pending(strm);
-            if (strm->avail_out == 0) {
-              s->last_flush = -1; /* avoid BUF_ERROR at next call, see above */
-              return Z_OK;
+            ਜੇ (strm->avail_ਬਾਹਰਲਾ == 0) {
+              s->ਆਖਰੀ_flush = -1; /* avoid BUF_ERROR at next call, see above */
+              ਵਾਪਸ Z_OK;
             }
         }
     }
 
-    if (flush != Z_FINISH) return Z_OK;
-    if (s->wrap <= 0) return Z_STREAM_END;
+    ਜੇ (flush != Z_ਅੰਤ) ਵਾਪਸ Z_OK;
+    ਜੇ (s->wrap <= 0) ਵਾਪਸ Z_ਧਾਰਾ_ਸਿਰਾ;
 
     /* Write the trailer */
-#ifdef GZIP
-    if (s->wrap == 2) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GZIP
+    ਜੇ (s->wrap == 2) {
         put_byte(s, (Byte)(strm->adler & 0xff));
         put_byte(s, (Byte)((strm->adler >> 8) & 0xff));
         put_byte(s, (Byte)((strm->adler >> 16) & 0xff));
         put_byte(s, (Byte)((strm->adler >> 24) & 0xff));
-        put_byte(s, (Byte)(strm->total_in & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 8) & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 16) & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 24) & 0xff));
+        put_byte(s, (Byte)(strm->ਕੁੱਲ_ਵਿੱਚ & 0xff));
+        put_byte(s, (Byte)((strm->ਕੁੱਲ_ਵਿੱਚ >> 8) & 0xff));
+        put_byte(s, (Byte)((strm->ਕੁੱਲ_ਵਿੱਚ >> 16) & 0xff));
+        put_byte(s, (Byte)((strm->ਕੁੱਲ_ਵਿੱਚ >> 24) & 0xff));
     }
-    else
-#endif
+    ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
     {
         putShortMSB(s, (uInt)(strm->adler >> 16));
         putShortMSB(s, (uInt)(strm->adler & 0xffff));
@@ -1286,28 +1286,28 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
     /* If avail_out is zero, the application will call deflate again
      * to flush the rest.
      */
-    if (s->wrap > 0) s->wrap = -s->wrap; /* write the trailer only once! */
-    return s->pending != 0 ? Z_OK : Z_STREAM_END;
+    ਜੇ (s->wrap > 0) s->wrap = -s->wrap; /* write the trailer only once! */
+    ਵਾਪਸ s->pending != 0 ? Z_OK : Z_ਧਾਰਾ_ਸਿਰਾ;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateEnd(z_streamp strm) {
-    int status;
+ਪੂਰਨ ZEXPORT deflate_ਸਿਰਾ(z_streamp strm) {
+    ਪੂਰਨ ਸਥਿਤੀ;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(strm)) ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
 
-    status = strm->state->status;
+    ਸਥਿਤੀ = strm->state->ਸਥਿਤੀ;
 
     /* Deallocate in reverse order of allocations: */
     TRY_FREE(strm, strm->state->pending_buf);
-    TRY_FREE(strm, strm->state->head);
+    TRY_FREE(strm, strm->state->ਸਿਰ);
     TRY_FREE(strm, strm->state->prev);
-    TRY_FREE(strm, strm->state->window);
+    TRY_FREE(strm, strm->state->ਖਿੜਕੀ);
 
     ZFREE(strm, strm->state);
     strm->state = Z_NULL;
 
-    return status == BUSY_STATE ? Z_DATA_ERROR : Z_OK;
+    ਵਾਪਸ ਸਥਿਤੀ == BUSY_STATE ? Z_ਅੰਕੜੇ_ERROR : Z_OK;
 }
 
 /* =========================================================================
@@ -1315,69 +1315,69 @@ int ZEXPORT deflateEnd(z_streamp strm) {
  * To simplify the source, this is not supported for 16-bit MSDOS (which
  * doesn't have enough memory anyway to duplicate compression states).
  */
-int ZEXPORT deflateCopy(z_streamp dest, z_streamp source) {
-#ifdef MAXSEG_64K
-    (void)dest;
-    (void)source;
-    return Z_STREAM_ERROR;
-#else
+ਪੂਰਨ ZEXPORT deflateCopy(z_streamp dest, z_streamp ਸਰੋਤ) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ MAXSEG_64K
+    (ਖਾਲੀ)dest;
+    (ਖਾਲੀ)ਸਰੋਤ;
+    ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
+#ਨਹੀਂਤਾਂ
     deflate_state *ds;
     deflate_state *ss;
 
 
-    if (deflateStateCheck(source) || dest == Z_NULL) {
-        return Z_STREAM_ERROR;
+    ਜੇ (deflateStateCheck(ਸਰੋਤ) || dest == Z_NULL) {
+        ਵਾਪਸ Z_ਧਾਰਾ_ERROR;
     }
 
-    ss = source->state;
+    ss = ਸਰੋਤ->state;
 
-    zmemcpy(dest, source, sizeof(z_stream));
+    zmemcpy(dest, ਸਰੋਤ, ਆਕਾਰ(z_ਧਾਰਾ));
 
-    ds = (deflate_state *) ZALLOC(dest, 1, sizeof(deflate_state));
-    if (ds == Z_NULL) return Z_MEM_ERROR;
-    zmemzero(ds, sizeof(deflate_state));
-    dest->state = (struct internal_state FAR *) ds;
-    zmemcpy(ds, ss, sizeof(deflate_state));
+    ds = (deflate_state *) ZALLOC(dest, 1, ਆਕਾਰ(deflate_state));
+    ਜੇ (ds == Z_NULL) ਵਾਪਸ Z_MEM_ERROR;
+    zmemzero(ds, ਆਕਾਰ(deflate_state));
+    dest->state = (ਬਣਤਰ ਅੰਦਰੂਨੀ_state FAR *) ds;
+    zmemcpy(ds, ss, ਆਕਾਰ(deflate_state));
     ds->strm = dest;
 
-    ds->window = (Bytef *) ZALLOC(dest, ds->w_size, 2*sizeof(Byte));
-    ds->prev   = (Posf *)  ZALLOC(dest, ds->w_size, sizeof(Pos));
-    ds->head   = (Posf *)  ZALLOC(dest, ds->hash_size, sizeof(Pos));
+    ds->ਖਿੜਕੀ = (Bytef *) ZALLOC(dest, ds->w_ਮਾਪ, 2*ਆਕਾਰ(Byte));
+    ds->prev   = (Posf *)  ZALLOC(dest, ds->w_ਮਾਪ, ਆਕਾਰ(Pos));
+    ds->ਸਿਰ   = (Posf *)  ZALLOC(dest, ds->hash_ਮਾਪ, ਆਕਾਰ(Pos));
     ds->pending_buf = (uchf *) ZALLOC(dest, ds->lit_bufsize, LIT_BUFS);
 
-    if (ds->window == Z_NULL || ds->prev == Z_NULL || ds->head == Z_NULL ||
+    ਜੇ (ds->ਖਿੜਕੀ == Z_NULL || ds->prev == Z_NULL || ds->ਸਿਰ == Z_NULL ||
         ds->pending_buf == Z_NULL) {
-        deflateEnd (dest);
-        return Z_MEM_ERROR;
+        deflate_ਸਿਰਾ (dest);
+        ਵਾਪਸ Z_MEM_ERROR;
     }
     /* following zmemcpy's do not work for 16-bit MSDOS */
-    zmemcpy(ds->window, ss->window, ss->high_water);
+    zmemcpy(ds->ਖਿੜਕੀ, ss->ਖਿੜਕੀ, ss->ਉੱਚਾ_water);
     zmemcpy(ds->prev, ss->prev,
-            (ss->slid || ss->strstart - ss->insert > ds->w_size ? ds->w_size :
-                ss->strstart - ss->insert) * sizeof(Pos));
-    zmemcpy(ds->head, ss->head, ds->hash_size * sizeof(Pos));
+            (ss->slid || ss->strstart - ss->ਪਾਓ > ds->w_ਮਾਪ ? ds->w_ਮਾਪ :
+                ss->strstart - ss->ਪਾਓ) * ਆਕਾਰ(Pos));
+    zmemcpy(ds->ਸਿਰ, ss->ਸਿਰ, ds->hash_ਮਾਪ * ਆਕਾਰ(Pos));
 
-    ds->pending_out = ds->pending_buf + (ss->pending_out - ss->pending_buf);
-    zmemcpy(ds->pending_out, ss->pending_out, ss->pending);
-#ifdef LIT_MEM
+    ds->pending_ਬਾਹਰਲਾ = ds->pending_buf + (ss->pending_ਬਾਹਰਲਾ - ss->pending_buf);
+    zmemcpy(ds->pending_ਬਾਹਰਲਾ, ss->pending_ਬਾਹਰਲਾ, ss->pending);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LIT_MEM
     ds->d_buf = (ushf *)(ds->pending_buf + (ds->lit_bufsize << 1));
     ds->l_buf = ds->pending_buf + (ds->lit_bufsize << 2);
-    zmemcpy(ds->d_buf, ss->d_buf, ss->sym_next * sizeof(ush));
-    zmemcpy(ds->l_buf, ss->l_buf, ss->sym_next);
-#else
+    zmemcpy(ds->d_buf, ss->d_buf, ss->sym_ਅਗਲਾ * ਆਕਾਰ(ush));
+    zmemcpy(ds->l_buf, ss->l_buf, ss->sym_ਅਗਲਾ);
+#ਨਹੀਂਤਾਂ
     ds->sym_buf = ds->pending_buf + ds->lit_bufsize;
-    zmemcpy(ds->sym_buf, ss->sym_buf, ss->sym_next);
-#endif
+    zmemcpy(ds->sym_buf, ss->sym_buf, ss->sym_ਅਗਲਾ);
+#ਜੇ_ਅੰਤ
 
-    ds->l_desc.dyn_tree = ds->dyn_ltree;
-    ds->d_desc.dyn_tree = ds->dyn_dtree;
-    ds->bl_desc.dyn_tree = ds->bl_tree;
+    ds->l_desc.dyn_ਰੁੱਖ = ds->dyn_ltree;
+    ds->d_desc.dyn_ਰੁੱਖ = ds->dyn_dtree;
+    ds->bl_desc.dyn_ਰੁੱਖ = ds->bl_ਰੁੱਖ;
 
-    return Z_OK;
-#endif /* MAXSEG_64K */
+    ਵਾਪਸ Z_OK;
+#ਜੇ_ਅੰਤ /* MAXSEG_64K */
 }
 
-#ifndef FASTEST
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FASTEST
 /* ===========================================================================
  * Set match_start to the longest match starting at the given string and
  * return its length. Matches shorter or equal to prev_length are discarded,
@@ -1387,54 +1387,54 @@ int ZEXPORT deflateCopy(z_streamp dest, z_streamp source) {
  *   string (strstart) and its distance is <= MAX_DIST, and prev_length >= 1
  * OUT assertion: the match length is not greater than s->lookahead.
  */
-local uInt longest_match(deflate_state *s, IPos cur_match) {
-    unsigned chain_length = s->max_chain_length;/* max hash chain length */
-    Bytef *scan = s->window + s->strstart;      /* current string */
-    Bytef *match;                               /* matched string */
-    int len;                                    /* length of current match */
-    int best_len = (int)s->prev_length;         /* best match length so far */
-    int nice_match = s->nice_match;             /* stop if match long enough */
-    IPos limit = s->strstart > (IPos)MAX_DIST(s) ?
+local uInt longest_ਮੇਲ(deflate_state *s, IPos cur_ਮੇਲ) {
+    ਬਿਨਾਨਿਸ਼ਾਨੀ chain_ਲੰਮਾਈ = s->max_chain_ਲੰਮਾਈ;/* max hash chain length */
+    Bytef *ਜਾਂਚ = s->ਖਿੜਕੀ + s->strstart;      /* current string */
+    Bytef *ਮੇਲ;                               /* matched string */
+    ਪੂਰਨ len;                                    /* length of current match */
+    ਪੂਰਨ ਉੱਤਮ_len = (ਪੂਰਨ)s->prev_ਲੰਮਾਈ;         /* best match length so far */
+    ਪੂਰਨ nice_ਮੇਲ = s->nice_ਮੇਲ;             /* stop if match long enough */
+    IPos ਹੱਦਬੰਦੀ = s->strstart > (IPos)MAX_DIST(s) ?
         s->strstart - (IPos)MAX_DIST(s) : NIL;
     /* Stop when cur_match becomes <= limit. To simplify the code,
      * we prevent matches with the string of window index 0.
      */
     Posf *prev = s->prev;
-    uInt wmask = s->w_mask;
+    uInt wmask = s->w_ਨਕਾਬ;
 
-#ifdef UNALIGNED_OK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ UNALIGNED_OK
     /* Compare two bytes at a time. Note: this is not always beneficial.
      * Try with and without -DUNALIGNED_OK to check.
      */
-    Bytef *strend = s->window + s->strstart + MAX_MATCH - 1;
-    ush scan_start = *(ushf*)scan;
-    ush scan_end   = *(ushf*)(scan + best_len - 1);
-#else
-    Bytef *strend = s->window + s->strstart + MAX_MATCH;
-    Byte scan_end1  = scan[best_len - 1];
-    Byte scan_end   = scan[best_len];
-#endif
+    Bytef *strend = s->ਖਿੜਕੀ + s->strstart + MAX_ਮੇਲ - 1;
+    ush ਜਾਂਚ_ਸ਼ੁਰੂ = *(ushf*)ਜਾਂਚ;
+    ush ਜਾਂਚ_ਸਿਰਾ   = *(ushf*)(ਜਾਂਚ + ਉੱਤਮ_len - 1);
+#ਨਹੀਂਤਾਂ
+    Bytef *strend = s->ਖਿੜਕੀ + s->strstart + MAX_ਮੇਲ;
+    Byte ਜਾਂਚ_end1  = ਜਾਂਚ[ਉੱਤਮ_len - 1];
+    Byte ਜਾਂਚ_ਸਿਰਾ   = ਜਾਂਚ[ਉੱਤਮ_len];
+#ਜੇ_ਅੰਤ
 
     /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
      * It is easy to get rid of this optimization if necessary.
      */
-    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+    Assert(s->hash_ਬਿੱਟ >= 8 && MAX_ਮੇਲ == 258, "Code too clever");
 
     /* Do not waste too much time if we already have a good match: */
-    if (s->prev_length >= s->good_match) {
-        chain_length >>= 2;
+    ਜੇ (s->prev_ਲੰਮਾਈ >= s->good_ਮੇਲ) {
+        chain_ਲੰਮਾਈ >>= 2;
     }
     /* Do not look for matches beyond the end of the input. This is necessary
      * to make deflate deterministic.
      */
-    if ((uInt)nice_match > s->lookahead) nice_match = (int)s->lookahead;
+    ਜੇ ((uInt)nice_ਮੇਲ > s->lookahead) nice_ਮੇਲ = (ਪੂਰਨ)s->lookahead;
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->ਖਿੜਕੀ_ਮਾਪ - MIN_LOOKAHEAD,
            "need lookahead");
 
-    do {
-        Assert(cur_match < s->strstart, "no future");
-        match = s->window + cur_match;
+    ਕਰੋ {
+        Assert(cur_ਮੇਲ < s->strstart, "no future");
+        ਮੇਲ = s->ਖਿੜਕੀ + cur_ਮੇਲ;
 
         /* Skip to next match if the match length cannot increase
          * or if the match length is less than 2.  Note that the checks below
@@ -1444,12 +1444,12 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * However the length of the match is limited to the lookahead, so
          * the output of deflate is not affected by the uninitialized values.
          */
-#if (defined(UNALIGNED_OK) && MAX_MATCH == 258)
+#ਜੇ (defined(UNALIGNED_OK) && MAX_ਮੇਲ == 258)
         /* This code assumes sizeof(unsigned short) == 2. Do not use
          * UNALIGNED_OK if your compiler uses a different size.
          */
-        if (*(ushf*)(match + best_len - 1) != scan_end ||
-            *(ushf*)match != scan_start) continue;
+        ਜੇ (*(ushf*)(ਮੇਲ + ਉੱਤਮ_len - 1) != ਜਾਂਚ_ਸਿਰਾ ||
+            *(ushf*)ਮੇਲ != ਜਾਂਚ_ਸ਼ੁਰੂ) ਜਾਰੀ;
 
         /* It is not necessary to compare scan[2] and match[2] since they are
          * always equal when the other bytes match, given that the hash keys
@@ -1460,30 +1460,30 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * necessary to put more guard bytes at the end of the window, or
          * to check more often for insufficient lookahead.
          */
-        Assert(scan[2] == match[2], "scan[2]?");
-        scan++, match++;
-        do {
-        } while (*(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 scan < strend);
+        Assert(ਜਾਂਚ[2] == ਮੇਲ[2], "scan[2]?");
+        ਜਾਂਚ++, ਮੇਲ++;
+        ਕਰੋ {
+        } ਜਦੋਂ (*(ushf*)(ਜਾਂਚ += 2) == *(ushf*)(ਮੇਲ += 2) &&
+                 *(ushf*)(ਜਾਂਚ += 2) == *(ushf*)(ਮੇਲ += 2) &&
+                 *(ushf*)(ਜਾਂਚ += 2) == *(ushf*)(ਮੇਲ += 2) &&
+                 *(ushf*)(ਜਾਂਚ += 2) == *(ushf*)(ਮੇਲ += 2) &&
+                 ਜਾਂਚ < strend);
         /* The funny "do {}" generates better code on most compilers */
 
         /* Here, scan <= window + strstart + 257 */
-        Assert(scan <= s->window + (unsigned)(s->window_size - 1),
+        Assert(ਜਾਂਚ <= s->ਖਿੜਕੀ + (ਬਿਨਾਨਿਸ਼ਾਨੀ)(s->ਖਿੜਕੀ_ਮਾਪ - 1),
                "wild scan");
-        if (*scan == *match) scan++;
+        ਜੇ (*ਜਾਂਚ == *ਮੇਲ) ਜਾਂਚ++;
 
-        len = (MAX_MATCH - 1) - (int)(strend - scan);
-        scan = strend - (MAX_MATCH-1);
+        len = (MAX_ਮੇਲ - 1) - (ਪੂਰਨ)(strend - ਜਾਂਚ);
+        ਜਾਂਚ = strend - (MAX_ਮੇਲ-1);
 
-#else /* UNALIGNED_OK */
+#ਨਹੀਂਤਾਂ /* UNALIGNED_OK */
 
-        if (match[best_len]     != scan_end  ||
-            match[best_len - 1] != scan_end1 ||
-            *match              != *scan     ||
-            *++match            != scan[1])      continue;
+        ਜੇ (ਮੇਲ[ਉੱਤਮ_len]     != ਜਾਂਚ_ਸਿਰਾ  ||
+            ਮੇਲ[ਉੱਤਮ_len - 1] != ਜਾਂਚ_end1 ||
+            *ਮੇਲ              != *ਜਾਂਚ     ||
+            *++ਮੇਲ            != ਜਾਂਚ[1])      ਜਾਰੀ;
 
         /* The check at best_len - 1 can be removed because it will be made
          * again later. (This heuristic is not always a win.)
@@ -1491,71 +1491,71 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * are always equal when the other bytes match, given that
          * the hash keys are equal and that HASH_BITS >= 8.
          */
-        scan += 2, match++;
-        Assert(*scan == *match, "match[2]?");
+        ਜਾਂਚ += 2, ਮੇਲ++;
+        Assert(*ਜਾਂਚ == *ਮੇਲ, "match[2]?");
 
         /* We check for insufficient lookahead only every 8th comparison;
          * the 256th check will be made at strstart + 258.
          */
-        do {
-        } while (*++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 scan < strend);
+        ਕਰੋ {
+        } ਜਦੋਂ (*++ਜਾਂਚ == *++ਮੇਲ && *++ਜਾਂਚ == *++ਮੇਲ &&
+                 *++ਜਾਂਚ == *++ਮੇਲ && *++ਜਾਂਚ == *++ਮੇਲ &&
+                 *++ਜਾਂਚ == *++ਮੇਲ && *++ਜਾਂਚ == *++ਮੇਲ &&
+                 *++ਜਾਂਚ == *++ਮੇਲ && *++ਜਾਂਚ == *++ਮੇਲ &&
+                 ਜਾਂਚ < strend);
 
-        Assert(scan <= s->window + (unsigned)(s->window_size - 1),
+        Assert(ਜਾਂਚ <= s->ਖਿੜਕੀ + (ਬਿਨਾਨਿਸ਼ਾਨੀ)(s->ਖਿੜਕੀ_ਮਾਪ - 1),
                "wild scan");
 
-        len = MAX_MATCH - (int)(strend - scan);
-        scan = strend - MAX_MATCH;
+        len = MAX_ਮੇਲ - (ਪੂਰਨ)(strend - ਜਾਂਚ);
+        ਜਾਂਚ = strend - MAX_ਮੇਲ;
 
-#endif /* UNALIGNED_OK */
+#ਜੇ_ਅੰਤ /* UNALIGNED_OK */
 
-        if (len > best_len) {
-            s->match_start = cur_match;
-            best_len = len;
-            if (len >= nice_match) break;
-#ifdef UNALIGNED_OK
-            scan_end = *(ushf*)(scan + best_len - 1);
-#else
-            scan_end1  = scan[best_len - 1];
-            scan_end   = scan[best_len];
-#endif
+        ਜੇ (len > ਉੱਤਮ_len) {
+            s->ਮੇਲ_ਸ਼ੁਰੂ = cur_ਮੇਲ;
+            ਉੱਤਮ_len = len;
+            ਜੇ (len >= nice_ਮੇਲ) ਰੋਕੋ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ UNALIGNED_OK
+            ਜਾਂਚ_ਸਿਰਾ = *(ushf*)(ਜਾਂਚ + ਉੱਤਮ_len - 1);
+#ਨਹੀਂਤਾਂ
+            ਜਾਂਚ_end1  = ਜਾਂਚ[ਉੱਤਮ_len - 1];
+            ਜਾਂਚ_ਸਿਰਾ   = ਜਾਂਚ[ਉੱਤਮ_len];
+#ਜੇ_ਅੰਤ
         }
-    } while ((cur_match = prev[cur_match & wmask]) > limit
-             && --chain_length != 0);
+    } ਜਦੋਂ ((cur_ਮੇਲ = prev[cur_ਮੇਲ & wmask]) > ਹੱਦਬੰਦੀ
+             && --chain_ਲੰਮਾਈ != 0);
 
-    if ((uInt)best_len <= s->lookahead) return (uInt)best_len;
-    return s->lookahead;
+    ਜੇ ((uInt)ਉੱਤਮ_len <= s->lookahead) ਵਾਪਸ (uInt)ਉੱਤਮ_len;
+    ਵਾਪਸ s->lookahead;
 }
 
-#else /* FASTEST */
+#ਨਹੀਂਤਾਂ /* FASTEST */
 
 /* ---------------------------------------------------------------------------
  * Optimized version for FASTEST only
  */
-local uInt longest_match(deflate_state *s, IPos cur_match) {
-    Bytef *scan = s->window + s->strstart;      /* current string */
-    Bytef *match;                               /* matched string */
-    int len;                                    /* length of current match */
-    Bytef *strend = s->window + s->strstart + MAX_MATCH;
+local uInt longest_ਮੇਲ(deflate_state *s, IPos cur_ਮੇਲ) {
+    Bytef *ਜਾਂਚ = s->ਖਿੜਕੀ + s->strstart;      /* current string */
+    Bytef *ਮੇਲ;                               /* matched string */
+    ਪੂਰਨ len;                                    /* length of current match */
+    Bytef *strend = s->ਖਿੜਕੀ + s->strstart + MAX_ਮੇਲ;
 
     /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
      * It is easy to get rid of this optimization if necessary.
      */
-    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+    Assert(s->hash_ਬਿੱਟ >= 8 && MAX_ਮੇਲ == 258, "Code too clever");
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->ਖਿੜਕੀ_ਮਾਪ - MIN_LOOKAHEAD,
            "need lookahead");
 
-    Assert(cur_match < s->strstart, "no future");
+    Assert(cur_ਮੇਲ < s->strstart, "no future");
 
-    match = s->window + cur_match;
+    ਮੇਲ = s->ਖਿੜਕੀ + cur_ਮੇਲ;
 
     /* Return failure if the match length is less than 2:
      */
-    if (match[0] != scan[0] || match[1] != scan[1]) return MIN_MATCH-1;
+    ਜੇ (ਮੇਲ[0] != ਜਾਂਚ[0] || ਮੇਲ[1] != ਜਾਂਚ[1]) ਵਾਪਸ MIN_ਮੇਲ-1;
 
     /* The check at best_len - 1 can be removed because it will be made
      * again later. (This heuristic is not always a win.)
@@ -1563,93 +1563,93 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
      * are always equal when the other bytes match, given that
      * the hash keys are equal and that HASH_BITS >= 8.
      */
-    scan += 2, match += 2;
-    Assert(*scan == *match, "match[2]?");
+    ਜਾਂਚ += 2, ਮੇਲ += 2;
+    Assert(*ਜਾਂਚ == *ਮੇਲ, "match[2]?");
 
     /* We check for insufficient lookahead only every 8th comparison;
      * the 256th check will be made at strstart + 258.
      */
-    do {
-    } while (*++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             scan < strend);
+    ਕਰੋ {
+    } ਜਦੋਂ (*++ਜਾਂਚ == *++ਮੇਲ && *++ਜਾਂਚ == *++ਮੇਲ &&
+             *++ਜਾਂਚ == *++ਮੇਲ && *++ਜਾਂਚ == *++ਮੇਲ &&
+             *++ਜਾਂਚ == *++ਮੇਲ && *++ਜਾਂਚ == *++ਮੇਲ &&
+             *++ਜਾਂਚ == *++ਮੇਲ && *++ਜਾਂਚ == *++ਮੇਲ &&
+             ਜਾਂਚ < strend);
 
-    Assert(scan <= s->window + (unsigned)(s->window_size - 1), "wild scan");
+    Assert(ਜਾਂਚ <= s->ਖਿੜਕੀ + (ਬਿਨਾਨਿਸ਼ਾਨੀ)(s->ਖਿੜਕੀ_ਮਾਪ - 1), "wild scan");
 
-    len = MAX_MATCH - (int)(strend - scan);
+    len = MAX_ਮੇਲ - (ਪੂਰਨ)(strend - ਜਾਂਚ);
 
-    if (len < MIN_MATCH) return MIN_MATCH - 1;
+    ਜੇ (len < MIN_ਮੇਲ) ਵਾਪਸ MIN_ਮੇਲ - 1;
 
-    s->match_start = cur_match;
-    return (uInt)len <= s->lookahead ? (uInt)len : s->lookahead;
+    s->ਮੇਲ_ਸ਼ੁਰੂ = cur_ਮੇਲ;
+    ਵਾਪਸ (uInt)len <= s->lookahead ? (uInt)len : s->lookahead;
 }
 
-#endif /* FASTEST */
+#ਜੇ_ਅੰਤ /* FASTEST */
 
-#ifdef ZLIB_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ZLIB_DEBUG
 
-#define EQUAL 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EQUAL 0
 /* result of memcmp for equal strings */
 
 /* ===========================================================================
  * Check that the match at match_start is indeed a match.
  */
-local void check_match(deflate_state *s, IPos start, IPos match, int length) {
+local ਖਾਲੀ check_ਮੇਲ(deflate_state *s, IPos ਸ਼ੁਰੂ, IPos ਮੇਲ, ਪੂਰਨ ਲੰਮਾਈ) {
     /* check that the match is indeed a match */
-    Bytef *back = s->window + (int)match, *here = s->window + start;
-    IPos len = (IPos)length;
-    if (match == (IPos)-1) {
+    Bytef *ਪਿੱਠ = s->ਖਿੜਕੀ + (ਪੂਰਨ)ਮੇਲ, *ਇੱਥੇ = s->ਖਿੜਕੀ + ਸ਼ੁਰੂ;
+    IPos len = (IPos)ਲੰਮਾਈ;
+    ਜੇ (ਮੇਲ == (IPos)-1) {
         /* match starts one byte before the current window -- just compare the
            subsequent length-1 bytes */
-        back++;
-        here++;
+        ਪਿੱਠ++;
+        ਇੱਥੇ++;
         len--;
     }
-    if (zmemcmp(back, here, len) != EQUAL) {
+    ਜੇ (zmemcmp(ਪਿੱਠ, ਇੱਥੇ, len) != EQUAL) {
         fprintf(stderr, " start %u, match %d, length %d\n",
-                start, (int)match, length);
-        do {
-            fprintf(stderr, "(%02x %02x)", *back++, *here++);
-        } while (--len != 0);
+                ਸ਼ੁਰੂ, (ਪੂਰਨ)ਮੇਲ, ਲੰਮਾਈ);
+        ਕਰੋ {
+            fprintf(stderr, "(%02x %02x)", *ਪਿੱਠ++, *ਇੱਥੇ++);
+        } ਜਦੋਂ (--len != 0);
         z_error("invalid match");
     }
-    if (z_verbose > 1) {
-        fprintf(stderr,"\\[%d,%d]", start - match, length);
-        do { putc(s->window[start++], stderr); } while (--length != 0);
+    ਜੇ (z_verbose > 1) {
+        fprintf(stderr,"\\[%d,%d]", ਸ਼ੁਰੂ - ਮੇਲ, ਲੰਮਾਈ);
+        ਕਰੋ { putc(s->ਖਿੜਕੀ[ਸ਼ੁਰੂ++], stderr); } ਜਦੋਂ (--ਲੰਮਾਈ != 0);
     }
 }
-#else
-#  define check_match(s, start, match, length)
-#endif /* ZLIB_DEBUG */
+#ਨਹੀਂਤਾਂ
+#  define check_ਮੇਲ(s, ਸ਼ੁਰੂ, ਮੇਲ, ਲੰਮਾਈ)
+#ਜੇ_ਅੰਤ /* ZLIB_DEBUG */
 
 /* ===========================================================================
  * Flush the current block, with given end-of-file flag.
  * IN assertion: strstart is set to the end of the current match.
  */
-#define FLUSH_BLOCK_ONLY(s, last) { \
-   _tr_flush_block(s, (s->block_start >= 0L ? \
-                   (charf *)&s->window[(unsigned)s->block_start] : \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FLUSH_ਖੰਡ_ONLY(s, ਆਖਰੀ) { \
+   tr_flush_ਖੰਡ(s, (s->ਖੰਡ_ਸ਼ੁਰੂ >= 0L ? \
+                   (charf *)&s->ਖਿੜਕੀ[(ਬਿਨਾਨਿਸ਼ਾਨੀ)s->ਖੰਡ_ਸ਼ੁਰੂ] : \
                    (charf *)Z_NULL), \
-                (ulg)((long)s->strstart - s->block_start), \
-                (last)); \
-   s->block_start = s->strstart; \
+                (ulg)((ਲੰਮਾ)s->strstart - s->ਖੰਡ_ਸ਼ੁਰੂ), \
+                (ਆਖਰੀ)); \
+   s->ਖੰਡ_ਸ਼ੁਰੂ = s->strstart; \
    flush_pending(s->strm); \
    Tracev((stderr,"[FLUSH]")); \
 }
 
 /* Same but force premature exit if necessary. */
-#define FLUSH_BLOCK(s, last) { \
-   FLUSH_BLOCK_ONLY(s, last); \
-   if (s->strm->avail_out == 0) return (last) ? finish_started : need_more; \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FLUSH_ਖੰਡ(s, ਆਖਰੀ) { \
+   FLUSH_ਖੰਡ_ONLY(s, ਆਖਰੀ); \
+   ਜੇ (s->strm->avail_ਬਾਹਰਲਾ == 0) ਵਾਪਸ (ਆਖਰੀ) ? ਅੰਤ_started : need_ਹੋਰ; \
 }
 
 /* Maximum stored block length in deflate format (not including header). */
-#define MAX_STORED 65535
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_STORED 65535
 
 /* Minimum of a and b. */
-#define MIN(a, b) ((a) > (b) ? (b) : (a))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MIN(a, b) ((a) > (b) ? (b) : (a))
 
 /* ===========================================================================
  * Copy without compression as much as possible from the input stream, return
@@ -1666,35 +1666,35 @@ local void check_match(deflate_state *s, IPos start, IPos match, int length) {
  * copied. It is most efficient with large input and output buffers, which
  * maximizes the opportunities to have a single copy from next_in to next_out.
  */
-local block_state deflate_stored(deflate_state *s, int flush) {
+local ਖੰਡ_state deflate_stored(deflate_state *s, ਪੂਰਨ flush) {
     /* Smallest worthy block size when not flushing or finishing. By default
      * this is 32K. This can be as small as 507 bytes for memLevel == 1. For
      * large input and output buffers, the stored block size will be larger.
      */
-    unsigned min_block = (unsigned)(MIN(s->pending_buf_size - 5, s->w_size));
+    ਬਿਨਾਨਿਸ਼ਾਨੀ min_ਖੰਡ = (ਬਿਨਾਨਿਸ਼ਾਨੀ)(MIN(s->pending_buf_ਮਾਪ - 5, s->w_ਮਾਪ));
 
     /* Copy as many min_block or larger stored blocks directly to next_out as
      * possible. If flushing, copy the remaining available input to next_out as
      * stored blocks, if there is enough space.
      */
-    int last = 0;
-    unsigned len, left, have;
-    unsigned used = s->strm->avail_in;
-    do {
+    ਪੂਰਨ ਆਖਰੀ = 0;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ len, ਖੱਬਾ, have;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਵਰਤਿਆ = s->strm->avail_ਵਿੱਚ;
+    ਕਰੋ {
         /* Set len to the maximum size block that we can copy directly with the
          * available input data and output space. Set left to how much of that
          * would be copied from what's left in the window.
          */
         len = MAX_STORED;       /* maximum deflate stored block length */
-        have = ((unsigned)s->bi_valid + 42) >> 3;   /* bytes in header */
-        if (s->strm->avail_out < have)          /* need room for header */
-            break;
+        have = ((ਬਿਨਾਨਿਸ਼ਾਨੀ)s->bi_valid + 42) >> 3;   /* bytes in header */
+        ਜੇ (s->strm->avail_ਬਾਹਰਲਾ < have)          /* need room for header */
+            ਰੋਕੋ;
             /* maximum stored block length that will fit in avail_out: */
-        have = s->strm->avail_out - have;
-        left = (unsigned)(s->strstart - s->block_start);    /* window bytes */
-        if (len > (ulg)left + s->strm->avail_in)
-            len = left + s->strm->avail_in;     /* limit len to the input */
-        if (len > have)
+        have = s->strm->avail_ਬਾਹਰਲਾ - have;
+        ਖੱਬਾ = (ਬਿਨਾਨਿਸ਼ਾਨੀ)(s->strstart - s->ਖੰਡ_ਸ਼ੁਰੂ);    /* window bytes */
+        ਜੇ (len > (ulg)ਖੱਬਾ + s->strm->avail_ਵਿੱਚ)
+            len = ਖੱਬਾ + s->strm->avail_ਵਿੱਚ;     /* limit len to the input */
+        ਜੇ (len > have)
             len = have;                         /* limit len to the output */
 
         /* If the stored block would be less than min_block in length, or if
@@ -1702,16 +1702,16 @@ local block_state deflate_stored(deflate_state *s, int flush) {
          * copying to the window and the pending buffer instead. Also don't
          * write an empty block when flushing -- deflate() does that.
          */
-        if (len < min_block && ((len == 0 && flush != Z_FINISH) ||
+        ਜੇ (len < min_ਖੰਡ && ((len == 0 && flush != Z_ਅੰਤ) ||
                                 flush == Z_NO_FLUSH ||
-                                len != left + s->strm->avail_in))
-            break;
+                                len != ਖੱਬਾ + s->strm->avail_ਵਿੱਚ))
+            ਰੋਕੋ;
 
         /* Make a dummy stored block in pending to get the header bytes,
          * including any pending bits. This also updates the debugging counts.
          */
-        last = flush == Z_FINISH && len == left + s->strm->avail_in ? 1 : 0;
-        _tr_stored_block(s, (char *)0, 0L, last);
+        ਆਖਰੀ = flush == Z_ਅੰਤ && len == ਖੱਬਾ + s->strm->avail_ਵਿੱਚ ? 1 : 0;
+        tr_stored_ਖੰਡ(s, (ਅੱਖਰ *)0, 0L, ਆਖਰੀ);
 
         /* Replace the lengths in the dummy stored block with len. */
         s->pending_buf[s->pending - 4] = (Bytef)len;
@@ -1722,34 +1722,34 @@ local block_state deflate_stored(deflate_state *s, int flush) {
         /* Write the stored block header bytes. */
         flush_pending(s->strm);
 
-#ifdef ZLIB_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ZLIB_DEBUG
         /* Update debugging counts for the data about to be copied. */
         s->compressed_len += len << 3;
-        s->bits_sent += len << 3;
-#endif
+        s->ਬਿੱਟ_ਭੇਜਿਆ += len << 3;
+#ਜੇ_ਅੰਤ
 
         /* Copy uncompressed bytes from the window to next_out. */
-        if (left) {
-            if (left > len)
-                left = len;
-            zmemcpy(s->strm->next_out, s->window + s->block_start, left);
-            s->strm->next_out += left;
-            s->strm->avail_out -= left;
-            s->strm->total_out += left;
-            s->block_start += left;
-            len -= left;
+        ਜੇ (ਖੱਬਾ) {
+            ਜੇ (ਖੱਬਾ > len)
+                ਖੱਬਾ = len;
+            zmemcpy(s->strm->ਅਗਲਾ_ਬਾਹਰਲਾ, s->ਖਿੜਕੀ + s->ਖੰਡ_ਸ਼ੁਰੂ, ਖੱਬਾ);
+            s->strm->ਅਗਲਾ_ਬਾਹਰਲਾ += ਖੱਬਾ;
+            s->strm->avail_ਬਾਹਰਲਾ -= ਖੱਬਾ;
+            s->strm->ਕੁੱਲ_ਬਾਹਰਲਾ += ਖੱਬਾ;
+            s->ਖੰਡ_ਸ਼ੁਰੂ += ਖੱਬਾ;
+            len -= ਖੱਬਾ;
         }
 
         /* Copy uncompressed bytes directly from next_in to next_out, updating
          * the check value.
          */
-        if (len) {
-            read_buf(s->strm, s->strm->next_out, len);
-            s->strm->next_out += len;
-            s->strm->avail_out -= len;
-            s->strm->total_out += len;
+        ਜੇ (len) {
+            read_buf(s->strm, s->strm->ਅਗਲਾ_ਬਾਹਰਲਾ, len);
+            s->strm->ਅਗਲਾ_ਬਾਹਰਲਾ += len;
+            s->strm->avail_ਬਾਹਰਲਾ -= len;
+            s->strm->ਕੁੱਲ_ਬਾਹਰਲਾ += len;
         }
-    } while (last == 0);
+    } ਜਦੋਂ (ਆਖਰੀ == 0);
 
     /* Update the sliding window with the last s->w_size bytes of the copied
      * data, or append all of the copied data to the existing window if less
@@ -1757,95 +1757,95 @@ local block_state deflate_stored(deflate_state *s, int flush) {
      * insert in the hash tables, in the event that deflateParams() switches to
      * a non-zero compression level.
      */
-    used -= s->strm->avail_in;      /* number of input bytes directly copied */
-    if (used) {
+    ਵਰਤਿਆ -= s->strm->avail_ਵਿੱਚ;      /* number of input bytes directly copied */
+    ਜੇ (ਵਰਤਿਆ) {
         /* If any input was used, then no unused input remains in the window,
          * therefore s->block_start == s->strstart.
          */
-        if (used >= s->w_size) {    /* supplant the previous history */
+        ਜੇ (ਵਰਤਿਆ >= s->w_ਮਾਪ) {    /* supplant the previous history */
             s->matches = 2;         /* clear hash */
-            zmemcpy(s->window, s->strm->next_in - s->w_size, s->w_size);
-            s->strstart = s->w_size;
-            s->insert = s->strstart;
+            zmemcpy(s->ਖਿੜਕੀ, s->strm->ਅਗਲਾ_ਵਿੱਚ - s->w_ਮਾਪ, s->w_ਮਾਪ);
+            s->strstart = s->w_ਮਾਪ;
+            s->ਪਾਓ = s->strstart;
         }
-        else {
-            if (s->window_size - s->strstart <= used) {
+        ਨਹੀਂਤਾਂ {
+            ਜੇ (s->ਖਿੜਕੀ_ਮਾਪ - s->strstart <= ਵਰਤਿਆ) {
                 /* Slide the window down. */
-                s->strstart -= s->w_size;
-                zmemcpy(s->window, s->window + s->w_size, s->strstart);
-                if (s->matches < 2)
+                s->strstart -= s->w_ਮਾਪ;
+                zmemcpy(s->ਖਿੜਕੀ, s->ਖਿੜਕੀ + s->w_ਮਾਪ, s->strstart);
+                ਜੇ (s->matches < 2)
                     s->matches++;   /* add a pending slide_hash() */
-                if (s->insert > s->strstart)
-                    s->insert = s->strstart;
+                ਜੇ (s->ਪਾਓ > s->strstart)
+                    s->ਪਾਓ = s->strstart;
             }
-            zmemcpy(s->window + s->strstart, s->strm->next_in - used, used);
-            s->strstart += used;
-            s->insert += MIN(used, s->w_size - s->insert);
+            zmemcpy(s->ਖਿੜਕੀ + s->strstart, s->strm->ਅਗਲਾ_ਵਿੱਚ - ਵਰਤਿਆ, ਵਰਤਿਆ);
+            s->strstart += ਵਰਤਿਆ;
+            s->ਪਾਓ += MIN(ਵਰਤਿਆ, s->w_ਮਾਪ - s->ਪਾਓ);
         }
-        s->block_start = s->strstart;
+        s->ਖੰਡ_ਸ਼ੁਰੂ = s->strstart;
     }
-    if (s->high_water < s->strstart)
-        s->high_water = s->strstart;
+    ਜੇ (s->ਉੱਚਾ_water < s->strstart)
+        s->ਉੱਚਾ_water = s->strstart;
 
     /* If the last block was written to next_out, then done. */
-    if (last) {
-        s->bi_used = 8;
-        return finish_done;
+    ਜੇ (ਆਖਰੀ) {
+        s->bi_ਵਰਤਿਆ = 8;
+        ਵਾਪਸ ਅੰਤ_ਪੂਰਾ;
     }
 
     /* If flushing and all input has been consumed, then done. */
-    if (flush != Z_NO_FLUSH && flush != Z_FINISH &&
-        s->strm->avail_in == 0 && (long)s->strstart == s->block_start)
-        return block_done;
+    ਜੇ (flush != Z_NO_FLUSH && flush != Z_ਅੰਤ &&
+        s->strm->avail_ਵਿੱਚ == 0 && (ਲੰਮਾ)s->strstart == s->ਖੰਡ_ਸ਼ੁਰੂ)
+        ਵਾਪਸ ਖੰਡ_ਪੂਰਾ;
 
     /* Fill the window with any remaining input. */
-    have = (unsigned)(s->window_size - s->strstart);
-    if (s->strm->avail_in > have && s->block_start >= (long)s->w_size) {
+    have = (ਬਿਨਾਨਿਸ਼ਾਨੀ)(s->ਖਿੜਕੀ_ਮਾਪ - s->strstart);
+    ਜੇ (s->strm->avail_ਵਿੱਚ > have && s->ਖੰਡ_ਸ਼ੁਰੂ >= (ਲੰਮਾ)s->w_ਮਾਪ) {
         /* Slide the window down. */
-        s->block_start -= s->w_size;
-        s->strstart -= s->w_size;
-        zmemcpy(s->window, s->window + s->w_size, s->strstart);
-        if (s->matches < 2)
+        s->ਖੰਡ_ਸ਼ੁਰੂ -= s->w_ਮਾਪ;
+        s->strstart -= s->w_ਮਾਪ;
+        zmemcpy(s->ਖਿੜਕੀ, s->ਖਿੜਕੀ + s->w_ਮਾਪ, s->strstart);
+        ਜੇ (s->matches < 2)
             s->matches++;           /* add a pending slide_hash() */
-        have += s->w_size;          /* more space now */
-        if (s->insert > s->strstart)
-            s->insert = s->strstart;
+        have += s->w_ਮਾਪ;          /* more space now */
+        ਜੇ (s->ਪਾਓ > s->strstart)
+            s->ਪਾਓ = s->strstart;
     }
-    if (have > s->strm->avail_in)
-        have = s->strm->avail_in;
-    if (have) {
-        read_buf(s->strm, s->window + s->strstart, have);
+    ਜੇ (have > s->strm->avail_ਵਿੱਚ)
+        have = s->strm->avail_ਵਿੱਚ;
+    ਜੇ (have) {
+        read_buf(s->strm, s->ਖਿੜਕੀ + s->strstart, have);
         s->strstart += have;
-        s->insert += MIN(have, s->w_size - s->insert);
+        s->ਪਾਓ += MIN(have, s->w_ਮਾਪ - s->ਪਾਓ);
     }
-    if (s->high_water < s->strstart)
-        s->high_water = s->strstart;
+    ਜੇ (s->ਉੱਚਾ_water < s->strstart)
+        s->ਉੱਚਾ_water = s->strstart;
 
     /* There was not enough avail_out to write a complete worthy or flushed
      * stored block to next_out. Write a stored block to pending instead, if we
      * have enough input for a worthy block, or if flushing and there is enough
      * room for the remaining input as a stored block in the pending buffer.
      */
-    have = ((unsigned)s->bi_valid + 42) >> 3;   /* bytes in header */
+    have = ((ਬਿਨਾਨਿਸ਼ਾਨੀ)s->bi_valid + 42) >> 3;   /* bytes in header */
         /* maximum stored block length that will fit in pending: */
-    have = (unsigned)MIN(s->pending_buf_size - have, MAX_STORED);
-    min_block = MIN(have, s->w_size);
-    left = (unsigned)(s->strstart - s->block_start);
-    if (left >= min_block ||
-        ((left || flush == Z_FINISH) && flush != Z_NO_FLUSH &&
-         s->strm->avail_in == 0 && left <= have)) {
-        len = MIN(left, have);
-        last = flush == Z_FINISH && s->strm->avail_in == 0 &&
-               len == left ? 1 : 0;
-        _tr_stored_block(s, (charf *)s->window + s->block_start, len, last);
-        s->block_start += len;
+    have = (ਬਿਨਾਨਿਸ਼ਾਨੀ)MIN(s->pending_buf_ਮਾਪ - have, MAX_STORED);
+    min_ਖੰਡ = MIN(have, s->w_ਮਾਪ);
+    ਖੱਬਾ = (ਬਿਨਾਨਿਸ਼ਾਨੀ)(s->strstart - s->ਖੰਡ_ਸ਼ੁਰੂ);
+    ਜੇ (ਖੱਬਾ >= min_ਖੰਡ ||
+        ((ਖੱਬਾ || flush == Z_ਅੰਤ) && flush != Z_NO_FLUSH &&
+         s->strm->avail_ਵਿੱਚ == 0 && ਖੱਬਾ <= have)) {
+        len = MIN(ਖੱਬਾ, have);
+        ਆਖਰੀ = flush == Z_ਅੰਤ && s->strm->avail_ਵਿੱਚ == 0 &&
+               len == ਖੱਬਾ ? 1 : 0;
+        tr_stored_ਖੰਡ(s, (charf *)s->ਖਿੜਕੀ + s->ਖੰਡ_ਸ਼ੁਰੂ, len, ਆਖਰੀ);
+        s->ਖੰਡ_ਸ਼ੁਰੂ += len;
         flush_pending(s->strm);
     }
 
     /* We've done all we can with the available input and output. */
-    if (last)
-        s->bi_used = 8;
-    return last ? finish_started : need_more;
+    ਜੇ (ਆਖਰੀ)
+        s->bi_ਵਰਤਿਆ = 8;
+    ਵਾਪਸ ਆਖਰੀ ? ਅੰਤ_started : need_ਹੋਰ;
 }
 
 /* ===========================================================================
@@ -1855,332 +1855,332 @@ local block_state deflate_stored(deflate_state *s, int flush) {
  * new strings in the dictionary only for unmatched strings or for short
  * matches. It is used only for the fast compression options.
  */
-local block_state deflate_fast(deflate_state *s, int flush) {
-    IPos hash_head;       /* head of the hash chain */
-    int bflush;           /* set if current block must be flushed */
+local ਖੰਡ_state deflate_fast(deflate_state *s, ਪੂਰਨ flush) {
+    IPos hash_ਸਿਰ;       /* head of the hash chain */
+    ਪੂਰਨ bflush;           /* set if current block must be flushed */
 
-    for (;;) {
+    ਲਈ (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the next match, plus MIN_MATCH bytes to insert the
          * string following the next match.
          */
-        if (s->lookahead < MIN_LOOKAHEAD) {
-            fill_window(s);
-            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
-                return need_more;
+        ਜੇ (s->lookahead < MIN_LOOKAHEAD) {
+            fill_ਖਿੜਕੀ(s);
+            ਜੇ (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                ਵਾਪਸ need_ਹੋਰ;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            ਜੇ (s->lookahead == 0) ਰੋਕੋ; /* flush the current block */
         }
 
         /* Insert the string window[strstart .. strstart + 2] in the
          * dictionary, and set hash_head to the head of the hash chain:
          */
-        hash_head = NIL;
-        if (s->lookahead >= MIN_MATCH) {
-            INSERT_STRING(s, s->strstart, hash_head);
+        hash_ਸਿਰ = NIL;
+        ਜੇ (s->lookahead >= MIN_ਮੇਲ) {
+            ਪਾਓ_STRING(s, s->strstart, hash_ਸਿਰ);
         }
 
         /* Find the longest match, discarding those <= prev_length.
          * At this point we have always match_length < MIN_MATCH
          */
-        if (hash_head != NIL && s->strstart - hash_head <= MAX_DIST(s)) {
+        ਜੇ (hash_ਸਿਰ != NIL && s->strstart - hash_ਸਿਰ <= MAX_DIST(s)) {
             /* To simplify the code, we prevent matches with the string
              * of window index 0 (in particular we have to avoid a match
              * of the string with itself at the start of the input file).
              */
-            s->match_length = longest_match (s, hash_head);
+            s->ਮੇਲ_ਲੰਮਾਈ = longest_ਮੇਲ (s, hash_ਸਿਰ);
             /* longest_match() sets match_start */
         }
-        if (s->match_length >= MIN_MATCH) {
-            check_match(s, s->strstart, s->match_start, (int)s->match_length);
+        ਜੇ (s->ਮੇਲ_ਲੰਮਾਈ >= MIN_ਮੇਲ) {
+            check_ਮੇਲ(s, s->strstart, s->ਮੇਲ_ਸ਼ੁਰੂ, (ਪੂਰਨ)s->ਮੇਲ_ਲੰਮਾਈ);
 
-            _tr_tally_dist(s, s->strstart - s->match_start,
-                           s->match_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, s->strstart - s->ਮੇਲ_ਸ਼ੁਰੂ,
+                           s->ਮੇਲ_ਲੰਮਾਈ - MIN_ਮੇਲ, bflush);
 
-            s->lookahead -= s->match_length;
+            s->lookahead -= s->ਮੇਲ_ਲੰਮਾਈ;
 
             /* Insert new strings in the hash table only if the match length
              * is not too large. This saves time but degrades compression.
              */
-#ifndef FASTEST
-            if (s->match_length <= s->max_insert_length &&
-                s->lookahead >= MIN_MATCH) {
-                s->match_length--; /* string at strstart already in table */
-                do {
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FASTEST
+            ਜੇ (s->ਮੇਲ_ਲੰਮਾਈ <= s->max_ਪਾਓ_ਲੰਮਾਈ &&
+                s->lookahead >= MIN_ਮੇਲ) {
+                s->ਮੇਲ_ਲੰਮਾਈ--; /* string at strstart already in table */
+                ਕਰੋ {
                     s->strstart++;
-                    INSERT_STRING(s, s->strstart, hash_head);
+                    ਪਾਓ_STRING(s, s->strstart, hash_ਸਿਰ);
                     /* strstart never exceeds WSIZE-MAX_MATCH, so there are
                      * always MIN_MATCH bytes ahead.
                      */
-                } while (--s->match_length != 0);
+                } ਜਦੋਂ (--s->ਮੇਲ_ਲੰਮਾਈ != 0);
                 s->strstart++;
-            } else
-#endif
+            } ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
             {
-                s->strstart += s->match_length;
-                s->match_length = 0;
-                s->ins_h = s->window[s->strstart];
-                UPDATE_HASH(s, s->ins_h, s->window[s->strstart + 1]);
-#if MIN_MATCH != 3
-                Call UPDATE_HASH() MIN_MATCH-3 more times
-#endif
+                s->strstart += s->ਮੇਲ_ਲੰਮਾਈ;
+                s->ਮੇਲ_ਲੰਮਾਈ = 0;
+                s->ins_h = s->ਖਿੜਕੀ[s->strstart];
+                UPDATE_HASH(s, s->ins_h, s->ਖਿੜਕੀ[s->strstart + 1]);
+#ਜੇ MIN_ਮੇਲ != 3
+                Call UPDATE_HASH() MIN_ਮੇਲ-3 ਹੋਰ times
+#ਜੇ_ਅੰਤ
                 /* If lookahead < MIN_MATCH, ins_h is garbage, but it does not
                  * matter since it will be recomputed at next deflate call.
                  */
             }
-        } else {
+        } ਨਹੀਂਤਾਂ {
             /* No match, output a literal byte */
-            Tracevv((stderr,"%c", s->window[s->strstart]));
-            _tr_tally_lit(s, s->window[s->strstart], bflush);
+            Tracevv((stderr,"%c", s->ਖਿੜਕੀ[s->strstart]));
+            _tr_tally_lit(s, s->ਖਿੜਕੀ[s->strstart], bflush);
             s->lookahead--;
             s->strstart++;
         }
-        if (bflush) FLUSH_BLOCK(s, 0);
+        ਜੇ (bflush) FLUSH_ਖੰਡ(s, 0);
     }
-    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->ਪਾਓ = s->strstart < MIN_ਮੇਲ-1 ? s->strstart : MIN_ਮੇਲ-1;
+    ਜੇ (flush == Z_ਅੰਤ) {
+        FLUSH_ਖੰਡ(s, 1);
+        ਵਾਪਸ ਅੰਤ_ਪੂਰਾ;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    ਜੇ (s->sym_ਅਗਲਾ)
+        FLUSH_ਖੰਡ(s, 0);
+    ਵਾਪਸ ਖੰਡ_ਪੂਰਾ;
 }
 
-#ifndef FASTEST
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FASTEST
 /* ===========================================================================
  * Same as above, but achieves better compression. We use a lazy
  * evaluation for matches: a match is finally adopted only if there is
  * no better match at the next window position.
  */
-local block_state deflate_slow(deflate_state *s, int flush) {
-    IPos hash_head;          /* head of hash chain */
-    int bflush;              /* set if current block must be flushed */
+local ਖੰਡ_state deflate_slow(deflate_state *s, ਪੂਰਨ flush) {
+    IPos hash_ਸਿਰ;          /* head of hash chain */
+    ਪੂਰਨ bflush;              /* set if current block must be flushed */
 
     /* Process the input block. */
-    for (;;) {
+    ਲਈ (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the next match, plus MIN_MATCH bytes to insert the
          * string following the next match.
          */
-        if (s->lookahead < MIN_LOOKAHEAD) {
-            fill_window(s);
-            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
-                return need_more;
+        ਜੇ (s->lookahead < MIN_LOOKAHEAD) {
+            fill_ਖਿੜਕੀ(s);
+            ਜੇ (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                ਵਾਪਸ need_ਹੋਰ;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            ਜੇ (s->lookahead == 0) ਰੋਕੋ; /* flush the current block */
         }
 
         /* Insert the string window[strstart .. strstart + 2] in the
          * dictionary, and set hash_head to the head of the hash chain:
          */
-        hash_head = NIL;
-        if (s->lookahead >= MIN_MATCH) {
-            INSERT_STRING(s, s->strstart, hash_head);
+        hash_ਸਿਰ = NIL;
+        ਜੇ (s->lookahead >= MIN_ਮੇਲ) {
+            ਪਾਓ_STRING(s, s->strstart, hash_ਸਿਰ);
         }
 
         /* Find the longest match, discarding those <= prev_length.
          */
-        s->prev_length = s->match_length, s->prev_match = s->match_start;
-        s->match_length = MIN_MATCH-1;
+        s->prev_ਲੰਮਾਈ = s->ਮੇਲ_ਲੰਮਾਈ, s->prev_ਮੇਲ = s->ਮੇਲ_ਸ਼ੁਰੂ;
+        s->ਮੇਲ_ਲੰਮਾਈ = MIN_ਮੇਲ-1;
 
-        if (hash_head != NIL && s->prev_length < s->max_lazy_match &&
-            s->strstart - hash_head <= MAX_DIST(s)) {
+        ਜੇ (hash_ਸਿਰ != NIL && s->prev_ਲੰਮਾਈ < s->max_lazy_ਮੇਲ &&
+            s->strstart - hash_ਸਿਰ <= MAX_DIST(s)) {
             /* To simplify the code, we prevent matches with the string
              * of window index 0 (in particular we have to avoid a match
              * of the string with itself at the start of the input file).
              */
-            s->match_length = longest_match (s, hash_head);
+            s->ਮੇਲ_ਲੰਮਾਈ = longest_ਮੇਲ (s, hash_ਸਿਰ);
             /* longest_match() sets match_start */
 
-            if (s->match_length <= 5 && (s->strategy == Z_FILTERED
-#if TOO_FAR <= 32767
-                || (s->match_length == MIN_MATCH &&
-                    s->strstart - s->match_start > TOO_FAR)
-#endif
+            ਜੇ (s->ਮੇਲ_ਲੰਮਾਈ <= 5 && (s->strategy == Z_FILTERED
+#ਜੇ TOO_FAR <= 32767
+                || (s->ਮੇਲ_ਲੰਮਾਈ == MIN_ਮੇਲ &&
+                    s->strstart - s->ਮੇਲ_ਸ਼ੁਰੂ > TOO_FAR)
+#ਜੇ_ਅੰਤ
                 )) {
 
                 /* If prev_match is also MIN_MATCH, match_start is garbage
                  * but we will ignore the current match anyway.
                  */
-                s->match_length = MIN_MATCH-1;
+                s->ਮੇਲ_ਲੰਮਾਈ = MIN_ਮੇਲ-1;
             }
         }
         /* If there was a match at the previous step and the current
          * match is not better, output the previous match:
          */
-        if (s->prev_length >= MIN_MATCH && s->match_length <= s->prev_length) {
-            uInt max_insert = s->strstart + s->lookahead - MIN_MATCH;
+        ਜੇ (s->prev_ਲੰਮਾਈ >= MIN_ਮੇਲ && s->ਮੇਲ_ਲੰਮਾਈ <= s->prev_ਲੰਮਾਈ) {
+            uInt max_ਪਾਓ = s->strstart + s->lookahead - MIN_ਮੇਲ;
             /* Do not insert strings in hash table beyond this. */
 
-            check_match(s, s->strstart - 1, s->prev_match, (int)s->prev_length);
+            check_ਮੇਲ(s, s->strstart - 1, s->prev_ਮੇਲ, (ਪੂਰਨ)s->prev_ਲੰਮਾਈ);
 
-            _tr_tally_dist(s, s->strstart - 1 - s->prev_match,
-                           s->prev_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, s->strstart - 1 - s->prev_ਮੇਲ,
+                           s->prev_ਲੰਮਾਈ - MIN_ਮੇਲ, bflush);
 
             /* Insert in hash table all strings up to the end of the match.
              * strstart - 1 and strstart are already inserted. If there is not
              * enough lookahead, the last two strings are not inserted in
              * the hash table.
              */
-            s->lookahead -= s->prev_length - 1;
-            s->prev_length -= 2;
-            do {
-                if (++s->strstart <= max_insert) {
-                    INSERT_STRING(s, s->strstart, hash_head);
+            s->lookahead -= s->prev_ਲੰਮਾਈ - 1;
+            s->prev_ਲੰਮਾਈ -= 2;
+            ਕਰੋ {
+                ਜੇ (++s->strstart <= max_ਪਾਓ) {
+                    ਪਾਓ_STRING(s, s->strstart, hash_ਸਿਰ);
                 }
-            } while (--s->prev_length != 0);
-            s->match_available = 0;
-            s->match_length = MIN_MATCH-1;
+            } ਜਦੋਂ (--s->prev_ਲੰਮਾਈ != 0);
+            s->ਮੇਲ_ਉਪਲਬਧ = 0;
+            s->ਮੇਲ_ਲੰਮਾਈ = MIN_ਮੇਲ-1;
             s->strstart++;
 
-            if (bflush) FLUSH_BLOCK(s, 0);
+            ਜੇ (bflush) FLUSH_ਖੰਡ(s, 0);
 
-        } else if (s->match_available) {
+        } ਨਹੀਂਤਾਂ ਜੇ (s->ਮੇਲ_ਉਪਲਬਧ) {
             /* If there was no match at the previous position, output a
              * single literal. If there was a match but the current match
              * is longer, truncate the previous match to a single literal.
              */
-            Tracevv((stderr,"%c", s->window[s->strstart - 1]));
-            _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
-            if (bflush) {
-                FLUSH_BLOCK_ONLY(s, 0);
+            Tracevv((stderr,"%c", s->ਖਿੜਕੀ[s->strstart - 1]));
+            _tr_tally_lit(s, s->ਖਿੜਕੀ[s->strstart - 1], bflush);
+            ਜੇ (bflush) {
+                FLUSH_ਖੰਡ_ONLY(s, 0);
             }
             s->strstart++;
             s->lookahead--;
-            if (s->strm->avail_out == 0) return need_more;
-        } else {
+            ਜੇ (s->strm->avail_ਬਾਹਰਲਾ == 0) ਵਾਪਸ need_ਹੋਰ;
+        } ਨਹੀਂਤਾਂ {
             /* There is no previous match to compare with, wait for
              * the next step to decide.
              */
-            s->match_available = 1;
+            s->ਮੇਲ_ਉਪਲਬਧ = 1;
             s->strstart++;
             s->lookahead--;
         }
     }
     Assert (flush != Z_NO_FLUSH, "no flush?");
-    if (s->match_available) {
-        Tracevv((stderr,"%c", s->window[s->strstart - 1]));
-        _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
-        s->match_available = 0;
+    ਜੇ (s->ਮੇਲ_ਉਪਲਬਧ) {
+        Tracevv((stderr,"%c", s->ਖਿੜਕੀ[s->strstart - 1]));
+        _tr_tally_lit(s, s->ਖਿੜਕੀ[s->strstart - 1], bflush);
+        s->ਮੇਲ_ਉਪਲਬਧ = 0;
     }
-    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->ਪਾਓ = s->strstart < MIN_ਮੇਲ-1 ? s->strstart : MIN_ਮੇਲ-1;
+    ਜੇ (flush == Z_ਅੰਤ) {
+        FLUSH_ਖੰਡ(s, 1);
+        ਵਾਪਸ ਅੰਤ_ਪੂਰਾ;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    ਜੇ (s->sym_ਅਗਲਾ)
+        FLUSH_ਖੰਡ(s, 0);
+    ਵਾਪਸ ਖੰਡ_ਪੂਰਾ;
 }
-#endif /* FASTEST */
+#ਜੇ_ਅੰਤ /* FASTEST */
 
 /* ===========================================================================
  * For Z_RLE, simply look for runs of bytes, generate matches only of distance
  * one.  Do not maintain a hash table.  (It will be regenerated if this run of
  * deflate switches away from Z_RLE.)
  */
-local block_state deflate_rle(deflate_state *s, int flush) {
-    int bflush;             /* set if current block must be flushed */
+local ਖੰਡ_state deflate_rle(deflate_state *s, ਪੂਰਨ flush) {
+    ਪੂਰਨ bflush;             /* set if current block must be flushed */
     uInt prev;              /* byte at distance one to match */
-    Bytef *scan, *strend;   /* scan goes up to strend for length of run */
+    Bytef *ਜਾਂਚ, *strend;   /* scan goes up to strend for length of run */
 
-    for (;;) {
+    ਲਈ (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the longest run, plus one for the unrolled loop.
          */
-        if (s->lookahead <= MAX_MATCH) {
-            fill_window(s);
-            if (s->lookahead <= MAX_MATCH && flush == Z_NO_FLUSH) {
-                return need_more;
+        ਜੇ (s->lookahead <= MAX_ਮੇਲ) {
+            fill_ਖਿੜਕੀ(s);
+            ਜੇ (s->lookahead <= MAX_ਮੇਲ && flush == Z_NO_FLUSH) {
+                ਵਾਪਸ need_ਹੋਰ;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            ਜੇ (s->lookahead == 0) ਰੋਕੋ; /* flush the current block */
         }
 
         /* See how many times the previous byte repeats */
-        s->match_length = 0;
-        if (s->lookahead >= MIN_MATCH && s->strstart > 0) {
-            scan = s->window + s->strstart - 1;
-            prev = *scan;
-            if (prev == *++scan && prev == *++scan && prev == *++scan) {
-                strend = s->window + s->strstart + MAX_MATCH;
-                do {
-                } while (prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         scan < strend);
-                s->match_length = MAX_MATCH - (uInt)(strend - scan);
-                if (s->match_length > s->lookahead)
-                    s->match_length = s->lookahead;
+        s->ਮੇਲ_ਲੰਮਾਈ = 0;
+        ਜੇ (s->lookahead >= MIN_ਮੇਲ && s->strstart > 0) {
+            ਜਾਂਚ = s->ਖਿੜਕੀ + s->strstart - 1;
+            prev = *ਜਾਂਚ;
+            ਜੇ (prev == *++ਜਾਂਚ && prev == *++ਜਾਂਚ && prev == *++ਜਾਂਚ) {
+                strend = s->ਖਿੜਕੀ + s->strstart + MAX_ਮੇਲ;
+                ਕਰੋ {
+                } ਜਦੋਂ (prev == *++ਜਾਂਚ && prev == *++ਜਾਂਚ &&
+                         prev == *++ਜਾਂਚ && prev == *++ਜਾਂਚ &&
+                         prev == *++ਜਾਂਚ && prev == *++ਜਾਂਚ &&
+                         prev == *++ਜਾਂਚ && prev == *++ਜਾਂਚ &&
+                         ਜਾਂਚ < strend);
+                s->ਮੇਲ_ਲੰਮਾਈ = MAX_ਮੇਲ - (uInt)(strend - ਜਾਂਚ);
+                ਜੇ (s->ਮੇਲ_ਲੰਮਾਈ > s->lookahead)
+                    s->ਮੇਲ_ਲੰਮਾਈ = s->lookahead;
             }
-            Assert(scan <= s->window + (uInt)(s->window_size - 1),
+            Assert(ਜਾਂਚ <= s->ਖਿੜਕੀ + (uInt)(s->ਖਿੜਕੀ_ਮਾਪ - 1),
                    "wild scan");
         }
 
         /* Emit match if have run of MIN_MATCH or longer, else emit literal */
-        if (s->match_length >= MIN_MATCH) {
-            check_match(s, s->strstart, s->strstart - 1, (int)s->match_length);
+        ਜੇ (s->ਮੇਲ_ਲੰਮਾਈ >= MIN_ਮੇਲ) {
+            check_ਮੇਲ(s, s->strstart, s->strstart - 1, (ਪੂਰਨ)s->ਮੇਲ_ਲੰਮਾਈ);
 
-            _tr_tally_dist(s, 1, s->match_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, 1, s->ਮੇਲ_ਲੰਮਾਈ - MIN_ਮੇਲ, bflush);
 
-            s->lookahead -= s->match_length;
-            s->strstart += s->match_length;
-            s->match_length = 0;
-        } else {
+            s->lookahead -= s->ਮੇਲ_ਲੰਮਾਈ;
+            s->strstart += s->ਮੇਲ_ਲੰਮਾਈ;
+            s->ਮੇਲ_ਲੰਮਾਈ = 0;
+        } ਨਹੀਂਤਾਂ {
             /* No match, output a literal byte */
-            Tracevv((stderr,"%c", s->window[s->strstart]));
-            _tr_tally_lit(s, s->window[s->strstart], bflush);
+            Tracevv((stderr,"%c", s->ਖਿੜਕੀ[s->strstart]));
+            _tr_tally_lit(s, s->ਖਿੜਕੀ[s->strstart], bflush);
             s->lookahead--;
             s->strstart++;
         }
-        if (bflush) FLUSH_BLOCK(s, 0);
+        ਜੇ (bflush) FLUSH_ਖੰਡ(s, 0);
     }
-    s->insert = 0;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->ਪਾਓ = 0;
+    ਜੇ (flush == Z_ਅੰਤ) {
+        FLUSH_ਖੰਡ(s, 1);
+        ਵਾਪਸ ਅੰਤ_ਪੂਰਾ;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    ਜੇ (s->sym_ਅਗਲਾ)
+        FLUSH_ਖੰਡ(s, 0);
+    ਵਾਪਸ ਖੰਡ_ਪੂਰਾ;
 }
 
 /* ===========================================================================
  * For Z_HUFFMAN_ONLY, do not look for matches.  Do not maintain a hash table.
  * (It will be regenerated if this run of deflate switches away from Huffman.)
  */
-local block_state deflate_huff(deflate_state *s, int flush) {
-    int bflush;             /* set if current block must be flushed */
+local ਖੰਡ_state deflate_huff(deflate_state *s, ਪੂਰਨ flush) {
+    ਪੂਰਨ bflush;             /* set if current block must be flushed */
 
-    for (;;) {
+    ਲਈ (;;) {
         /* Make sure that we have a literal to write. */
-        if (s->lookahead == 0) {
-            fill_window(s);
-            if (s->lookahead == 0) {
-                if (flush == Z_NO_FLUSH)
-                    return need_more;
-                break;      /* flush the current block */
+        ਜੇ (s->lookahead == 0) {
+            fill_ਖਿੜਕੀ(s);
+            ਜੇ (s->lookahead == 0) {
+                ਜੇ (flush == Z_NO_FLUSH)
+                    ਵਾਪਸ need_ਹੋਰ;
+                ਰੋਕੋ;      /* flush the current block */
             }
         }
 
         /* Output a literal byte */
-        s->match_length = 0;
-        Tracevv((stderr,"%c", s->window[s->strstart]));
-        _tr_tally_lit(s, s->window[s->strstart], bflush);
+        s->ਮੇਲ_ਲੰਮਾਈ = 0;
+        Tracevv((stderr,"%c", s->ਖਿੜਕੀ[s->strstart]));
+        _tr_tally_lit(s, s->ਖਿੜਕੀ[s->strstart], bflush);
         s->lookahead--;
         s->strstart++;
-        if (bflush) FLUSH_BLOCK(s, 0);
+        ਜੇ (bflush) FLUSH_ਖੰਡ(s, 0);
     }
-    s->insert = 0;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->ਪਾਓ = 0;
+    ਜੇ (flush == Z_ਅੰਤ) {
+        FLUSH_ਖੰਡ(s, 1);
+        ਵਾਪਸ ਅੰਤ_ਪੂਰਾ;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    ਜੇ (s->sym_ਅਗਲਾ)
+        FLUSH_ਖੰਡ(s, 0);
+    ਵਾਪਸ ਖੰਡ_ਪੂਰਾ;
 }

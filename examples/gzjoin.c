@@ -53,219 +53,219 @@
    versions of zlib earlier than 1.2.3.
  */
 
-#include <stdio.h>      /* fputs(), fprintf(), fwrite(), putc() */
-#include <stdlib.h>     /* exit(), malloc(), free() */
-#include <fcntl.h>      /* open() */
-#include <unistd.h>     /* close(), read(), lseek() */
-#include "zlib.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>      /* fputs(), fprintf(), fwrite(), putc() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>     /* exit(), malloc(), free() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>      /* open() */
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>     /* close(), read(), lseek() */
+#ਅਨ੍ਤਰ੍ਭਾਵ "zlib.h"
     /* crc32(), crc32_combine(), inflateInit2(), inflate(), inflateEnd() */
 
-#define local static
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ local ਸਥਿਰ
 
 /* exit with an error (return a value to allow use in an expression) */
-local int bail(char *why1, char *why2)
+local ਪੂਰਨ bail(ਅੱਖਰ *why1, ਅੱਖਰ *why2)
 {
     fprintf(stderr, "gzjoin error: %s%s, output incomplete\n", why1, why2);
-    exit(1);
-    return 0;
+    ਬਾਹਰ_ਨਿਕਲੋ(1);
+    ਵਾਪਸ 0;
 }
 
 /* -- simple buffered file input with access to the buffer -- */
 
-#define CHUNK 32768         /* must be a power of two and fit in unsigned */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHUNK 32768         /* must be a power of two and fit in unsigned */
 
 /* bin buffered input file type */
-typedef struct {
-    char *name;             /* name of file for error messages */
-    int fd;                 /* file descriptor */
-    unsigned left;          /* bytes remaining at next */
-    unsigned char *next;    /* next byte to read */
-    unsigned char *buf;     /* allocated buffer of length CHUNK */
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ਅੱਖਰ *name;             /* name of file for error messages */
+    ਪੂਰਨ fd;                 /* file descriptor */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਖੱਬਾ;          /* bytes remaining at next */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਅਗਲਾ;    /* next byte to read */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *buf;     /* allocated buffer of length CHUNK */
 } bin;
 
 /* close a buffered file and free allocated memory */
-local void bclose(bin *in)
+local ਖਾਲੀ bclose(bin *ਵਿੱਚ)
 {
-    if (in != NULL) {
-        if (in->fd != -1)
-            close(in->fd);
-        if (in->buf != NULL)
-            free(in->buf);
-        free(in);
+    ਜੇ (ਵਿੱਚ != ਨਿਰਾ) {
+        ਜੇ (ਵਿੱਚ->fd != -1)
+            close(ਵਿੱਚ->fd);
+        ਜੇ (ਵਿੱਚ->buf != ਨਿਰਾ)
+            ਮੁਕਤ(ਵਿੱਚ->buf);
+        ਮੁਕਤ(ਵਿੱਚ);
     }
 }
 
 /* open a buffered file for input, return a pointer to type bin, or NULL on
    failure */
-local bin *bopen(char *name)
+local bin *bopen(ਅੱਖਰ *name)
 {
-    bin *in;
+    bin *ਵਿੱਚ;
 
-    in = malloc(sizeof(bin));
-    if (in == NULL)
-        return NULL;
-    in->buf = malloc(CHUNK);
-    in->fd = open(name, O_RDONLY, 0);
-    if (in->buf == NULL || in->fd == -1) {
-        bclose(in);
-        return NULL;
+    ਵਿੱਚ = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਆਕਾਰ(bin));
+    ਜੇ (ਵਿੱਚ == ਨਿਰਾ)
+        ਵਾਪਸ ਨਿਰਾ;
+    ਵਿੱਚ->buf = ਸਮ੍ਰਿਤੀ_ਦਿਓ(CHUNK);
+    ਵਿੱਚ->fd = open(name, O_RDONLY, 0);
+    ਜੇ (ਵਿੱਚ->buf == ਨਿਰਾ || ਵਿੱਚ->fd == -1) {
+        bclose(ਵਿੱਚ);
+        ਵਾਪਸ ਨਿਰਾ;
     }
-    in->left = 0;
-    in->next = in->buf;
-    in->name = name;
-    return in;
+    ਵਿੱਚ->ਖੱਬਾ = 0;
+    ਵਿੱਚ->ਅਗਲਾ = ਵਿੱਚ->buf;
+    ਵਿੱਚ->name = name;
+    ਵਾਪਸ ਵਿੱਚ;
 }
 
 /* load buffer from file, return -1 on read error, 0 or 1 on success, with
    1 indicating that end-of-file was reached */
-local int bload(bin *in)
+local ਪੂਰਨ bload(bin *ਵਿੱਚ)
 {
-    long len;
+    ਲੰਮਾ len;
 
-    if (in == NULL)
-        return -1;
-    if (in->left != 0)
-        return 0;
-    in->next = in->buf;
-    do {
-        len = (long)read(in->fd, in->buf + in->left, CHUNK - in->left);
-        if (len < 0)
-            return -1;
-        in->left += (unsigned)len;
-    } while (len != 0 && in->left < CHUNK);
-    return len == 0 ? 1 : 0;
+    ਜੇ (ਵਿੱਚ == ਨਿਰਾ)
+        ਵਾਪਸ -1;
+    ਜੇ (ਵਿੱਚ->ਖੱਬਾ != 0)
+        ਵਾਪਸ 0;
+    ਵਿੱਚ->ਅਗਲਾ = ਵਿੱਚ->buf;
+    ਕਰੋ {
+        len = (ਲੰਮਾ)ਪਠ(ਵਿੱਚ->fd, ਵਿੱਚ->buf + ਵਿੱਚ->ਖੱਬਾ, CHUNK - ਵਿੱਚ->ਖੱਬਾ);
+        ਜੇ (len < 0)
+            ਵਾਪਸ -1;
+        ਵਿੱਚ->ਖੱਬਾ += (ਬਿਨਾਨਿਸ਼ਾਨੀ)len;
+    } ਜਦੋਂ (len != 0 && ਵਿੱਚ->ਖੱਬਾ < CHUNK);
+    ਵਾਪਸ len == 0 ? 1 : 0;
 }
 
 /* get a byte from the file, bail if end of file */
-#define bget(in) (in->left ? 0 : bload(in), \
-                  in->left ? (in->left--, *(in->next)++) : \
-                    bail("unexpected end of file on ", in->name))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ bget(ਵਿੱਚ) (ਵਿੱਚ->ਖੱਬਾ ? 0 : bload(ਵਿੱਚ), \
+                  ਵਿੱਚ->ਖੱਬਾ ? (ਵਿੱਚ->ਖੱਬਾ--, *(ਵਿੱਚ->ਅਗਲਾ)++) : \
+                    bail("unexpected end of file on ", ਵਿੱਚ->name))
 
 /* get a four-byte little-endian unsigned integer from file */
-local unsigned long bget4(bin *in)
+local ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ bget4(bin *ਵਿੱਚ)
 {
-    unsigned long val;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ val;
 
-    val = bget(in);
-    val += (unsigned long)(bget(in)) << 8;
-    val += (unsigned long)(bget(in)) << 16;
-    val += (unsigned long)(bget(in)) << 24;
-    return val;
+    val = bget(ਵਿੱਚ);
+    val += (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)(bget(ਵਿੱਚ)) << 8;
+    val += (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)(bget(ਵਿੱਚ)) << 16;
+    val += (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)(bget(ਵਿੱਚ)) << 24;
+    ਵਾਪਸ val;
 }
 
 /* skip bytes in file */
-local void bskip(bin *in, unsigned skip)
+local ਖਾਲੀ bskip(bin *ਵਿੱਚ, ਬਿਨਾਨਿਸ਼ਾਨੀ skip)
 {
     /* check pointer */
-    if (in == NULL)
-        return;
+    ਜੇ (ਵਿੱਚ == ਨਿਰਾ)
+        ਵਾਪਸ;
 
     /* easy case -- skip bytes in buffer */
-    if (skip <= in->left) {
-        in->left -= skip;
-        in->next += skip;
-        return;
+    ਜੇ (skip <= ਵਿੱਚ->ਖੱਬਾ) {
+        ਵਿੱਚ->ਖੱਬਾ -= skip;
+        ਵਿੱਚ->ਅਗਲਾ += skip;
+        ਵਾਪਸ;
     }
 
     /* skip what's in buffer, discard buffer contents */
-    skip -= in->left;
-    in->left = 0;
+    skip -= ਵਿੱਚ->ਖੱਬਾ;
+    ਵਿੱਚ->ਖੱਬਾ = 0;
 
     /* seek past multiples of CHUNK bytes */
-    if (skip > CHUNK) {
-        unsigned left;
+    ਜੇ (skip > CHUNK) {
+        ਬਿਨਾਨਿਸ਼ਾਨੀ ਖੱਬਾ;
 
-        left = skip & (CHUNK - 1);
-        if (left == 0) {
+        ਖੱਬਾ = skip & (CHUNK - 1);
+        ਜੇ (ਖੱਬਾ == 0) {
             /* exact number of chunks: seek all the way minus one byte to check
                for end-of-file with a read */
-            lseek(in->fd, skip - 1, SEEK_CUR);
-            if (read(in->fd, in->buf, 1) != 1)
-                bail("unexpected end of file on ", in->name);
-            return;
+            lseek(ਵਿੱਚ->fd, skip - 1, SEEK_CUR);
+            ਜੇ (ਪਠ(ਵਿੱਚ->fd, ਵਿੱਚ->buf, 1) != 1)
+                bail("unexpected end of file on ", ਵਿੱਚ->name);
+            ਵਾਪਸ;
         }
 
         /* skip the integral chunks, update skip with remainder */
-        lseek(in->fd, skip - left, SEEK_CUR);
-        skip = left;
+        lseek(ਵਿੱਚ->fd, skip - ਖੱਬਾ, SEEK_CUR);
+        skip = ਖੱਬਾ;
     }
 
     /* read more input and skip remainder */
-    bload(in);
-    if (skip > in->left)
-        bail("unexpected end of file on ", in->name);
-    in->left -= skip;
-    in->next += skip;
+    bload(ਵਿੱਚ);
+    ਜੇ (skip > ਵਿੱਚ->ਖੱਬਾ)
+        bail("unexpected end of file on ", ਵਿੱਚ->name);
+    ਵਿੱਚ->ਖੱਬਾ -= skip;
+    ਵਿੱਚ->ਅਗਲਾ += skip;
 }
 
 /* -- end of buffered input functions -- */
 
 /* skip the gzip header from file in */
-local void gzhead(bin *in)
+local ਖਾਲੀ gzhead(bin *ਵਿੱਚ)
 {
-    int flags;
+    ਪੂਰਨ flags;
 
     /* verify gzip magic header and compression method */
-    if (bget(in) != 0x1f || bget(in) != 0x8b || bget(in) != 8)
-        bail(in->name, " is not a valid gzip file");
+    ਜੇ (bget(ਵਿੱਚ) != 0x1f || bget(ਵਿੱਚ) != 0x8b || bget(ਵਿੱਚ) != 8)
+        bail(ਵਿੱਚ->name, " is not a valid gzip file");
 
     /* get and verify flags */
-    flags = bget(in);
-    if ((flags & 0xe0) != 0)
-        bail("unknown reserved bits set in ", in->name);
+    flags = bget(ਵਿੱਚ);
+    ਜੇ ((flags & 0xe0) != 0)
+        bail("unknown reserved bits set in ", ਵਿੱਚ->name);
 
     /* skip modification time, extra flags, and os */
-    bskip(in, 6);
+    bskip(ਵਿੱਚ, 6);
 
     /* skip extra field if present */
-    if (flags & 4) {
-        unsigned len;
+    ਜੇ (flags & 4) {
+        ਬਿਨਾਨਿਸ਼ਾਨੀ len;
 
-        len = bget(in);
-        len += (unsigned)(bget(in)) << 8;
-        bskip(in, len);
+        len = bget(ਵਿੱਚ);
+        len += (ਬਿਨਾਨਿਸ਼ਾਨੀ)(bget(ਵਿੱਚ)) << 8;
+        bskip(ਵਿੱਚ, len);
     }
 
     /* skip file name if present */
-    if (flags & 8)
-        while (bget(in) != 0)
+    ਜੇ (flags & 8)
+        ਜਦੋਂ (bget(ਵਿੱਚ) != 0)
             ;
 
     /* skip comment if present */
-    if (flags & 16)
-        while (bget(in) != 0)
+    ਜੇ (flags & 16)
+        ਜਦੋਂ (bget(ਵਿੱਚ) != 0)
             ;
 
     /* skip header crc if present */
-    if (flags & 2)
-        bskip(in, 2);
+    ਜੇ (flags & 2)
+        bskip(ਵਿੱਚ, 2);
 }
 
 /* write a four-byte little-endian unsigned integer to out */
-local void put4(unsigned long val, FILE *out)
+local ਖਾਲੀ put4(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ val, FILE *ਬਾਹਰਲਾ)
 {
-    putc(val & 0xff, out);
-    putc((val >> 8) & 0xff, out);
-    putc((val >> 16) & 0xff, out);
-    putc((val >> 24) & 0xff, out);
+    putc(val & 0xff, ਬਾਹਰਲਾ);
+    putc((val >> 8) & 0xff, ਬਾਹਰਲਾ);
+    putc((val >> 16) & 0xff, ਬਾਹਰਲਾ);
+    putc((val >> 24) & 0xff, ਬਾਹਰਲਾ);
 }
 
 /* Load up zlib stream from buffered input, bail if end of file */
-local void zpull(z_streamp strm, bin *in)
+local ਖਾਲੀ zpull(z_streamp strm, bin *ਵਿੱਚ)
 {
-    if (in->left == 0)
-        bload(in);
-    if (in->left == 0)
-        bail("unexpected end of file on ", in->name);
-    strm->avail_in = in->left;
-    strm->next_in = in->next;
+    ਜੇ (ਵਿੱਚ->ਖੱਬਾ == 0)
+        bload(ਵਿੱਚ);
+    ਜੇ (ਵਿੱਚ->ਖੱਬਾ == 0)
+        bail("unexpected end of file on ", ਵਿੱਚ->name);
+    strm->avail_ਵਿੱਚ = ਵਿੱਚ->ਖੱਬਾ;
+    strm->ਅਗਲਾ_ਵਿੱਚ = ਵਿੱਚ->ਅਗਲਾ;
 }
 
 /* Write header for gzip file to out and initialize trailer. */
-local void gzinit(unsigned long *crc, unsigned long *tot, FILE *out)
+local ਖਾਲੀ gzinit(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਚੱਕਰੀ_ਜਾਂਚ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *tot, FILE *ਬਾਹਰਲਾ)
 {
-    fwrite("\x1f\x8b\x08\0\0\0\0\0\0\xff", 1, 10, out);
-    *crc = crc32(0L, Z_NULL, 0);
+    fwrite("\x1f\x8b\x08\0\0\0\0\0\0\xff", 1, 10, ਬਾਹਰਲਾ);
+    *ਚੱਕਰੀ_ਜਾਂਚ = ਚੱਕਰੀ_ਜਾਂਚ_32_2(0L, Z_NULL, 0);
     *tot = 0;
 }
 
@@ -276,174 +276,174 @@ local void gzinit(unsigned long *crc, unsigned long *tot, FILE *out)
    crc and length (modulo 2^32) of the output for the trailer.  The resulting
    gzip file is written to out.  gzinit() must be called before the first call
    of gzcopy() to write the gzip header and to initialize crc and tot. */
-local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
-                  FILE *out)
+local ਖਾਲੀ gzcopy(ਅੱਖਰ *name, ਪੂਰਨ clr, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਚੱਕਰੀ_ਜਾਂਚ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *tot,
+                  FILE *ਬਾਹਰਲਾ)
 {
-    int ret;                /* return value from zlib functions */
-    int pos;                /* where the "last block" bit is in byte */
-    int last;               /* true if processing the last block */
-    bin *in;                /* buffered input file */
-    unsigned char *start;   /* start of compressed data in buffer */
-    unsigned char *junk;    /* buffer for uncompressed data -- discarded */
+    ਪੂਰਨ ret;                /* return value from zlib functions */
+    ਪੂਰਨ pos;                /* where the "last block" bit is in byte */
+    ਪੂਰਨ ਆਖਰੀ;               /* true if processing the last block */
+    bin *ਵਿੱਚ;                /* buffered input file */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਸ਼ੁਰੂ;   /* start of compressed data in buffer */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *junk;    /* buffer for uncompressed data -- discarded */
     z_off_t len;            /* length of uncompressed data (support > 4 GB) */
-    z_stream strm;          /* zlib inflate stream */
+    z_ਧਾਰਾ strm;          /* zlib inflate stream */
 
     /* open gzip file and skip header */
-    in = bopen(name);
-    if (in == NULL)
+    ਵਿੱਚ = bopen(name);
+    ਜੇ (ਵਿੱਚ == ਨਿਰਾ)
         bail("could not open ", name);
-    gzhead(in);
+    gzhead(ਵਿੱਚ);
 
     /* allocate buffer for uncompressed data and initialize raw inflate
-       stream */
-    junk = malloc(CHUNK);
+ਧਾਰਾ*/
+    junk = ਸਮ੍ਰਿਤੀ_ਦਿਓ(CHUNK);
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
+    strm.avail_ਵਿੱਚ = 0;
+    strm.ਅਗਲਾ_ਵਿੱਚ = Z_NULL;
     ret = inflateInit2(&strm, -15);
-    if (junk == NULL || ret != Z_OK)
+    ਜੇ (junk == ਨਿਰਾ || ret != Z_OK)
         bail("out of memory", "");
 
     /* inflate and copy compressed data, clear last-block bit if requested */
     len = 0;
-    zpull(&strm, in);
-    start = in->next;
-    last = start[0] & 1;
-    if (last && clr)
-        start[0] &= ~1;
-    strm.avail_out = 0;
-    for (;;) {
+    zpull(&strm, ਵਿੱਚ);
+    ਸ਼ੁਰੂ = ਵਿੱਚ->ਅਗਲਾ;
+    ਆਖਰੀ = ਸ਼ੁਰੂ[0] & 1;
+    ਜੇ (ਆਖਰੀ && clr)
+        ਸ਼ੁਰੂ[0] &= ~1;
+    strm.avail_ਬਾਹਰਲਾ = 0;
+    ਲਈ (;;) {
         /* if input used and output done, write used input and get more */
-        if (strm.avail_in == 0 && strm.avail_out != 0) {
-            fwrite(start, 1, strm.next_in - start, out);
-            start = in->buf;
-            in->left = 0;
-            zpull(&strm, in);
+        ਜੇ (strm.avail_ਵਿੱਚ == 0 && strm.avail_ਬਾਹਰਲਾ != 0) {
+            fwrite(ਸ਼ੁਰੂ, 1, strm.ਅਗਲਾ_ਵਿੱਚ - ਸ਼ੁਰੂ, ਬਾਹਰਲਾ);
+            ਸ਼ੁਰੂ = ਵਿੱਚ->buf;
+            ਵਿੱਚ->ਖੱਬਾ = 0;
+            zpull(&strm, ਵਿੱਚ);
         }
 
         /* decompress -- return early when end-of-block reached */
-        strm.avail_out = CHUNK;
-        strm.next_out = junk;
-        ret = inflate(&strm, Z_BLOCK);
-        switch (ret) {
-        case Z_MEM_ERROR:
+        strm.avail_ਬਾਹਰਲਾ = CHUNK;
+        strm.ਅਗਲਾ_ਬਾਹਰਲਾ = junk;
+        ret = inflate(&strm, Z_ਖੰਡ);
+        ਚੋਣ (ret) {
+        ਹਾਲਤ Z_MEM_ERROR:
             bail("out of memory", "");
-        case Z_DATA_ERROR:
-            bail("invalid compressed data in ", in->name);
+        ਹਾਲਤ Z_ਅੰਕੜੇ_ERROR:
+            bail("invalid compressed data in ", ਵਿੱਚ->name);
         }
 
         /* update length of uncompressed data */
-        len += CHUNK - strm.avail_out;
+        len += CHUNK - strm.avail_ਬਾਹਰਲਾ;
 
         /* check for block boundary (only get this when block copied out) */
-        if (strm.data_type & 128) {
+        ਜੇ (strm.ਅੰਕੜੇ_type & 128) {
             /* if that was the last block, then done */
-            if (last)
-                break;
+            ਜੇ (ਆਖਰੀ)
+                ਰੋਕੋ;
 
             /* number of unused bits in last byte */
-            pos = strm.data_type & 7;
+            pos = strm.ਅੰਕੜੇ_type & 7;
 
             /* find the next last-block bit */
-            if (pos != 0) {
+            ਜੇ (pos != 0) {
                 /* next last-block bit is in last used byte */
                 pos = 0x100 >> pos;
-                last = strm.next_in[-1] & pos;
-                if (last && clr)
-                    in->buf[strm.next_in - in->buf - 1] &= ~pos;
+                ਆਖਰੀ = strm.ਅਗਲਾ_ਵਿੱਚ[-1] & pos;
+                ਜੇ (ਆਖਰੀ && clr)
+                    ਵਿੱਚ->buf[strm.ਅਗਲਾ_ਵਿੱਚ - ਵਿੱਚ->buf - 1] &= ~pos;
             }
-            else {
+            ਨਹੀਂਤਾਂ {
                 /* next last-block bit is in next unused byte */
-                if (strm.avail_in == 0) {
+                ਜੇ (strm.avail_ਵਿੱਚ == 0) {
                     /* don't have that byte yet -- get it */
-                    fwrite(start, 1, strm.next_in - start, out);
-                    start = in->buf;
-                    in->left = 0;
-                    zpull(&strm, in);
+                    fwrite(ਸ਼ੁਰੂ, 1, strm.ਅਗਲਾ_ਵਿੱਚ - ਸ਼ੁਰੂ, ਬਾਹਰਲਾ);
+                    ਸ਼ੁਰੂ = ਵਿੱਚ->buf;
+                    ਵਿੱਚ->ਖੱਬਾ = 0;
+                    zpull(&strm, ਵਿੱਚ);
                 }
-                last = strm.next_in[0] & 1;
-                if (last && clr)
-                    in->buf[strm.next_in - in->buf] &= ~1;
+                ਆਖਰੀ = strm.ਅਗਲਾ_ਵਿੱਚ[0] & 1;
+                ਜੇ (ਆਖਰੀ && clr)
+                    ਵਿੱਚ->buf[strm.ਅਗਲਾ_ਵਿੱਚ - ਵਿੱਚ->buf] &= ~1;
             }
         }
     }
 
     /* update buffer with unused input */
-    in->left = strm.avail_in;
-    in->next = in->buf + (strm.next_in - in->buf);
+    ਵਿੱਚ->ਖੱਬਾ = strm.avail_ਵਿੱਚ;
+    ਵਿੱਚ->ਅਗਲਾ = ਵਿੱਚ->buf + (strm.ਅਗਲਾ_ਵਿੱਚ - ਵਿੱਚ->buf);
 
     /* copy used input, write empty blocks to get to byte boundary */
-    pos = strm.data_type & 7;
-    fwrite(start, 1, in->next - start - 1, out);
-    last = in->next[-1];
-    if (pos == 0 || !clr)
+    pos = strm.ਅੰਕੜੇ_type & 7;
+    fwrite(ਸ਼ੁਰੂ, 1, ਵਿੱਚ->ਅਗਲਾ - ਸ਼ੁਰੂ - 1, ਬਾਹਰਲਾ);
+    ਆਖਰੀ = ਵਿੱਚ->ਅਗਲਾ[-1];
+    ਜੇ (pos == 0 || !clr)
         /* already at byte boundary, or last file: write last byte */
-        putc(last, out);
-    else {
+        putc(ਆਖਰੀ, ਬਾਹਰਲਾ);
+    ਨਹੀਂਤਾਂ {
         /* append empty blocks to last byte */
-        last &= ((0x100 >> pos) - 1);       /* assure unused bits are zero */
-        if (pos & 1) {
+        ਆਖਰੀ &= ((0x100 >> pos) - 1);       /* assure unused bits are zero */
+        ਜੇ (pos & 1) {
             /* odd -- append an empty stored block */
-            putc(last, out);
-            if (pos == 1)
-                putc(0, out);               /* two more bits in block header */
-            fwrite("\0\0\xff\xff", 1, 4, out);
+            putc(ਆਖਰੀ, ਬਾਹਰਲਾ);
+            ਜੇ (pos == 1)
+                putc(0, ਬਾਹਰਲਾ);               /* two more bits in block header */
+            fwrite("\0\0\xff\xff", 1, 4, ਬਾਹਰਲਾ);
         }
-        else {
+        ਨਹੀਂਤਾਂ {
             /* even -- append 1, 2, or 3 empty fixed blocks */
-            switch (pos) {
-            case 6:
-                putc(last | 8, out);
-                last = 0;
-            case 4:
-                putc(last | 0x20, out);
-                last = 0;
-            case 2:
-                putc(last | 0x80, out);
-                putc(0, out);
+            ਚੋਣ (pos) {
+            ਹਾਲਤ 6:
+                putc(ਆਖਰੀ | 8, ਬਾਹਰਲਾ);
+                ਆਖਰੀ = 0;
+            ਹਾਲਤ 4:
+                putc(ਆਖਰੀ | 0x20, ਬਾਹਰਲਾ);
+                ਆਖਰੀ = 0;
+            ਹਾਲਤ 2:
+                putc(ਆਖਰੀ | 0x80, ਬਾਹਰਲਾ);
+                putc(0, ਬਾਹਰਲਾ);
             }
         }
     }
 
     /* update crc and tot */
-    *crc = crc32_combine(*crc, bget4(in), len);
-    *tot += (unsigned long)len;
+    *ਚੱਕਰੀ_ਜਾਂਚ = ਚੱਕਰੀ_ਜਾਂਚ_32_combine(*ਚੱਕਰੀ_ਜਾਂਚ, bget4(ਵਿੱਚ), len);
+    *tot += (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)len;
 
     /* clean up */
-    inflateEnd(&strm);
-    free(junk);
-    bclose(in);
+    inflate_ਸਿਰਾ(&strm);
+    ਮੁਕਤ(junk);
+    bclose(ਵਿੱਚ);
 
     /* write trailer if this is the last gzip file */
-    if (!clr) {
-        put4(*crc, out);
-        put4(*tot, out);
+    ਜੇ (!clr) {
+        put4(*ਚੱਕਰੀ_ਜਾਂਚ, ਬਾਹਰਲਾ);
+        put4(*tot, ਬਾਹਰਲਾ);
     }
 }
 
 /* join the gzip files on the command line, write result to stdout */
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-    unsigned long crc, tot;     /* running crc and total uncompressed length */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਚੱਕਰੀ_ਜਾਂਚ, tot;     /* running crc and total uncompressed length */
 
     /* skip command name */
     argc--;
     argv++;
 
     /* show usage if no arguments */
-    if (argc == 0) {
+    ਜੇ (argc == 0) {
         fputs("gzjoin usage: gzjoin f1.gz [f2.gz [f3.gz ...]] > fjoin.gz\n",
               stderr);
-        return 0;
+        ਵਾਪਸ 0;
     }
 
     /* join gzip files on command line and write to stdout */
-    gzinit(&crc, &tot, stdout);
-    while (argc--)
-        gzcopy(*argv++, argc, &crc, &tot, stdout);
+    gzinit(&ਚੱਕਰੀ_ਜਾਂਚ, &tot, stdout);
+    ਜਦੋਂ (argc--)
+        gzcopy(*argv++, argc, &ਚੱਕਰੀ_ਜਾਂਚ, &tot, stdout);
 
-    /* done */
-    return 0;
+    /*ਪੂਰਾ*/
+    ਵਾਪਸ 0;
 }

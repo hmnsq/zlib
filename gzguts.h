@@ -3,23 +3,23 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#ifdef _LARGEFILE64_SOURCE
-#  ifndef _LARGEFILE_SOURCE
-#    define _LARGEFILE_SOURCE 1
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LARGEFILE64_ਸਰੋਤ
+#  ifndef LARGEFILE_ਸਰੋਤ
+#    define LARGEFILE_ਸਰੋਤ 1
 #  endif
-#  undef _FILE_OFFSET_BITS
-#  undef _TIME_BITS
-#endif
+#  undef FILE_ਵਿੱਥ_ਬਿੱਟ
+#  undef ਸਮਾਂ_ਬਿੱਟ
+#ਜੇ_ਅੰਤ
 
-#ifdef HAVE_HIDDEN
-#  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
-#else
-#  define ZLIB_INTERNAL
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_HIDDEN
+#  define ZLIB_ਅੰਦਰੂਨੀ __attribute__((visibility ("hidden")))
+#ਨਹੀਂਤਾਂ
+#  define ZLIB_ਅੰਦਰੂਨੀ
+#ਜੇ_ਅੰਤ
 
-#if defined(_WIN32)
-#  ifndef WIN32_LEAN_AND_MEAN
-#    define WIN32_LEAN_AND_MEAN
+#ਜੇ defined(_WIN32)
+#  ifndef WIN32_LEAN_AND_ਔਸਤ
+#    define WIN32_LEAN_AND_ਔਸਤ
 #  endif
 #  ifndef _CRT_SECURE_NO_WARNINGS
 #    define _CRT_SECURE_NO_WARNINGS
@@ -27,58 +27,58 @@
 #  ifndef _CRT_NONSTDC_NO_DEPRECATE
 #    define _CRT_NONSTDC_NO_DEPRECATE
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#include <stdio.h>
-#include "zlib.h"
-#ifdef STDC
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "zlib.h"
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ STDC
 #  include <string.h>
 #  include <stdlib.h>
 #  include <limits.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef _POSIX_C_SOURCE
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _POSIX_C_SOURCE
 #  define _POSIX_C_SOURCE 200112L
-#endif
-#include <fcntl.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
 
-#ifdef _WIN32
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ _WIN32
 #  include <stddef.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-#if defined(__TURBOC__) || defined(_MSC_VER) || defined(_WIN32)
+#ਜੇ defined(__TURBOC__) || defined(_MSC_VER) || defined(_WIN32)
 #  include <io.h>
 #  include <sys/stat.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-#if defined(_WIN32) && !defined(WIDECHAR)
+#ਜੇ defined(_WIN32) && !defined(WIDECHAR)
 #  define WIDECHAR
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef NO_DEFLATE       /* for compatibility with old definition */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ NO_DEFLATE       /* for compatibility with old definition */
 #  define NO_GZCOMPRESS
-#endif
+#ਜੇ_ਅੰਤ
 
-#if defined(STDC99) || (defined(__TURBOC__) && __TURBOC__ >= 0x550)
+#ਜੇ defined(STDC99) || (defined(__TURBOC__) && __TURBOC__ >= 0x550)
 #  ifndef HAVE_VSNPRINTF
 #    define HAVE_VSNPRINTF
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#if defined(__CYGWIN__)
+#ਜੇ defined(__CYGWIN__)
 #  ifndef HAVE_VSNPRINTF
 #    define HAVE_VSNPRINTF
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#if defined(MSDOS) && defined(__BORLANDC__) && (BORLANDC > 0x410)
+#ਜੇ defined(MSDOS) && defined(__BORLANDC__) && (BORLANDC > 0x410)
 #  ifndef HAVE_VSNPRINTF
 #    define HAVE_VSNPRINTF
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_VSNPRINTF
-#  if !defined(NO_vsnprintf) && \
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_VSNPRINTF
+#  ਜੇ !defined(NO_vsnprintf) && \
       (defined(MSDOS) || defined(__TURBOC__) || defined(__SASC) || \
        defined(VMS) || defined(__OS400) || defined(__MVS__))
 /* vsnprintf may exist on some MS-DOS compilers (DJGPP?),
@@ -87,7 +87,7 @@
 #  endif
 #  ifdef WIN32
 /* In Win32, vsnprintf is available as the "non-ANSI" _vsnprintf. */
-#    if !defined(_MSC_VER) || ( defined(_MSC_VER) && _MSC_VER < 1500 )
+#    ਜੇ !defined(_MSC_VER) || ( defined(_MSC_VER) && _MSC_VER < 1500 )
 #      ifndef vsnprintf
 #        define vsnprintf _vsnprintf
 #      endif
@@ -101,137 +101,137 @@
 #      define NO_vsnprintf
 #    endif
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 
 /* unlike snprintf (which is required in C99), _snprintf does not guarantee
    null termination of the result -- however this is only used in gzlib.c where
    the result is assured to fit in the space provided */
-#if defined(_MSC_VER) && _MSC_VER < 1900
+#ਜੇ defined(_MSC_VER) && _MSC_VER < 1900
 #  define snprintf _snprintf
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef local
-#  define local static
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ local
+#  define local ਸਥਿਰ
+#ਜੇ_ਅੰਤ
 /* since "static" is used to mean two completely different things in C, we
    define "local" for the non-static meaning of "static", for readability
    (compile with -Dlocal if your debugger can't find static symbols) */
 
 /* gz* functions always use library allocation functions */
-#ifndef STDC
-  extern voidp  malloc(uInt size);
-  extern void   free(voidpf ptr);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ STDC
+  ਬਾਹਰੀ voidp  ਸਮ੍ਰਿਤੀ_ਦਿਓ(uInt ਮਾਪ);
+  ਬਾਹਰੀ ਖਾਲੀ   ਮੁਕਤ(voidpf ptr);
+#ਜੇ_ਅੰਤ
 
 /* get errno and strerror definition */
-#if defined UNDER_CE
+#ਜੇ defined UNDER_CE
 #  include <windows.h>
-#  define zstrerror() gz_strwinerror((DWORD)GetLastError())
-#else
+#  define zstrerror() gz_strwinerror((DWORD)Get_ਆਖਰੀ_Error())
+#ਨਹੀਂਤਾਂ
 #  ifndef NO_STRERROR
 #    include <errno.h>
 #    define zstrerror() strerror(errno)
-#  else
+#  ਨਹੀਂਤਾਂ
 #    define zstrerror() "stdio error (consult errno)"
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef EAGAIN
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ EAGAIN
 #  ifdef EWOULDBLOCK
 #    define BLOCKED(e) ((e) == EAGAIN || (e) == EWOULDBLOCK)
-#  else
+#  ਨਹੀਂਤਾਂ
 #    define BLOCKED(e) ((e) == EAGAIN)
 #  endif
-#else
+#ਨਹੀਂਤਾਂ
 #  ifdef EWOULDBLOCK
 #    define BLOCKED(e) ((e) == EWOULDBLOCK)
-#  else
+#  ਨਹੀਂਤਾਂ
 #    define BLOCKED(e) (0)
 #  endif
-#endif
+#ਜੇ_ਅੰਤ
 
 /* provide prototypes for these when building zlib without LFS */
-#if !defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0
-    ZEXTERN gzFile ZEXPORT gzopen64(const char *, const char *);
-    ZEXTERN z_off64_t ZEXPORT gzseek64(gzFile, z_off64_t, int);
+#ਜੇ !defined(LARGEFILE64_ਸਰੋਤ) || _LFS64_LARGEFILE-0 == 0
+    ZEXTERN gzFile ZEXPORT gzopen64(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *);
+    ZEXTERN z_off64_t ZEXPORT gzseek64(gzFile, z_off64_t, ਪੂਰਨ);
     ZEXTERN z_off64_t ZEXPORT gztell64(gzFile);
     ZEXTERN z_off64_t ZEXPORT gzoffset64(gzFile);
-#endif
+#ਜੇ_ਅੰਤ
 
 /* default memLevel */
-#if MAX_MEM_LEVEL >= 8
+#ਜੇ MAX_MEM_LEVEL >= 8
 #  define DEF_MEM_LEVEL 8
-#else
+#ਨਹੀਂਤਾਂ
 #  define DEF_MEM_LEVEL  MAX_MEM_LEVEL
-#endif
+#ਜੇ_ਅੰਤ
 
 /* default i/o buffer size -- double this for output when reading (this and
    twice this must be able to fit in an unsigned type) */
-#define GZBUFSIZE 8192
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GZBUFSIZE 8192
 
 /* gzip modes, also provide a little integrity check on the passed structure */
-#define GZ_NONE 0
-#define GZ_READ 7247
-#define GZ_WRITE 31153
-#define GZ_APPEND 1     /* mode set to GZ_WRITE after the file is opened */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GZ_NONE 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GZ_READ 7247
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GZ_WRITE 31153
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GZ_APPEND 1     /* mode set to GZ_WRITE after the file is opened */
 
 /* values for gz_state how */
-#define LOOK 0      /* look for a gzip header */
-#define COPY 1      /* copy input directly */
-#define GZIP 2      /* decompress a gzip stream */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LOOK 0      /* look for a gzip header */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ COPY 1      /* copy input directly */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GZIP 2      /* decompress a gzip stream */
 
 /* internal gzip file state data structure */
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
         /* exposed contents for gzgetc() macro */
-    struct gzFile_s x;      /* "x" for exposed */
+    ਬਣਤਰ gzFile_s x;      /* "x" for exposed */
                             /* x.have: number of bytes available at x.next */
                             /* x.next: next output data to deliver or write */
                             /* x.pos: current position in uncompressed data */
         /* used for both reading and writing */
-    int mode;               /* see gzip modes above */
-    int fd;                 /* file descriptor */
-    char *path;             /* path or fd for error messages */
-    unsigned size;          /* buffer size, zero if not allocated yet */
-    unsigned want;          /* requested buffer size, default is GZBUFSIZE */
-    unsigned char *in;      /* input buffer (double-sized when writing) */
-    unsigned char *out;     /* output buffer (double-sized when reading) */
-    int direct;             /* 0 if processing gzip, 1 if transparent */
+    ਪੂਰਨ ਬਹੁਲਕ;               /* see gzip modes above */
+    ਪੂਰਨ fd;                 /* file descriptor */
+    ਅੱਖਰ *ਰਸਤਾ;             /* path or fd for error messages */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਮਾਪ;          /* buffer size, zero if not allocated yet */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ want;          /* requested buffer size, default is GZBUFSIZE */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਵਿੱਚ;      /* input buffer (double-sized when writing) */
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਬਾਹਰਲਾ;     /* output buffer (double-sized when reading) */
+    ਪੂਰਨ ਸਿੱਧਾ;             /* 0 if processing gzip, 1 if transparent */
         /* just for reading */
-    int junk;               /* -1 = start, 1 = junk candidate, 0 = in gzip */
-    int how;                /* 0: get header, 1: copy, 2: decompress */
-    int again;              /* true if EAGAIN or EWOULDBLOCK on last i/o */
-    z_off64_t start;        /* where the gzip data started, for rewinding */
-    int eof;                /* true if end of input file reached */
-    int past;               /* true if read requested past end */
+    ਪੂਰਨ junk;               /* -1 = start, 1 = junk candidate, 0 = in gzip */
+    ਪੂਰਨ how;                /* 0: get header, 1: copy, 2: decompress */
+    ਪੂਰਨ again;              /* true if EAGAIN or EWOULDBLOCK on last i/o */
+    z_off64_t ਸ਼ੁਰੂ;        /* where the gzip data started, for rewinding */
+    ਪੂਰਨ eof;                /* true if end of input file reached */
+    ਪੂਰਨ past;               /* true if read requested past end */
         /* just for writing */
-    int level;              /* compression level */
-    int strategy;           /* compression strategy */
-    int reset;              /* true if a reset is pending after a Z_FINISH */
+    ਪੂਰਨ level;              /* compression level */
+    ਪੂਰਨ strategy;           /* compression strategy */
+    ਪੂਰਨ reset;              /* true if a reset is pending after a Z_FINISH */
         /* seek request */
     z_off64_t skip;         /* amount to skip (already rewound if backwards) */
         /* error information */
-    int err;                /* error code */
-    char *msg;              /* error message */
+    ਪੂਰਨ err;                /* error code */
+    ਅੱਖਰ *ਸੁਨੇਹਾ;              /* error message */
         /* zlib inflate or deflate stream */
-    z_stream strm;          /* stream structure in-place (not a pointer) */
+    z_ਧਾਰਾ strm;          /* stream structure in-place (not a pointer) */
 } gz_state;
-typedef gz_state FAR *gz_statep;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ gz_state FAR *gz_statep;
 
 /* shared functions */
-void ZLIB_INTERNAL gz_error(gz_statep, int, const char *);
-#if defined UNDER_CE
-char ZLIB_INTERNAL *gz_strwinerror(DWORD error);
-#endif
+ਖਾਲੀ ZLIB_ਅੰਦਰੂਨੀ gz_error(gz_statep, ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *);
+#ਜੇ defined UNDER_CE
+ਅੱਖਰ ZLIB_ਅੰਦਰੂਨੀ *gz_strwinerror(DWORD error);
+#ਜੇ_ਅੰਤ
 
 /* GT_OFF(x), where x is an unsigned value, is true if x > maximum z_off64_t
    value -- needed when comparing unsigned to z_off64_t, which is signed
    (possible z_off64_t types off_t, off64_t, and long are all signed) */
-unsigned ZLIB_INTERNAL gz_intmax(void);
-#define GT_OFF(x) (sizeof(int) == sizeof(z_off64_t) && (x) > gz_intmax())
+ਬਿਨਾਨਿਸ਼ਾਨੀ ZLIB_ਅੰਦਰੂਨੀ gz_intmax(ਖਾਲੀ);
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GT_OFF(x) (ਆਕਾਰ(ਪੂਰਨ) == ਆਕਾਰ(z_off64_t) && (x) > gz_intmax())
 
 /* largest value representable in z_off64_t */
-#ifndef CHAR_BIT
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CHAR_BIT
 #  define CHAR_BIT 8
-#endif
-#define GZ_OFF_MAX \
-    ((((z_off64_t)1 << (sizeof(z_off64_t) * CHAR_BIT - 2)) - 1) * 2 + 1)
+#ਜੇ_ਅੰਤ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ GZ_OFF_MAX \
+    ((((z_off64_t)1 << (ਆਕਾਰ(z_off64_t) * CHAR_BIT - 2)) - 1) * 2 + 1)
