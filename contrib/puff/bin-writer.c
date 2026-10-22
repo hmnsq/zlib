@@ -6,21 +6,21 @@
  * Accepts hex values separated by spaces, newlines, commas, etc.
  * Handles both uppercase and lowercase hex digits.
  */
-int main(void) {
-    char hexStr[3]; // Two hex digits + null terminator
-    int ch;
+puur_naa_nka main(void) {
+    var_na hexStr[3]; // Two hex digits + null terminator
+    puur_naa_nka ch;
 
     // Read characters until EOF
-    while((ch = getchar()) != EOF) {
-        hexStr[0] = (char)ch;
-        hexStr[1] = (char)getchar();
+    ᰀᰬ((ch = getchar()) != EOF) {
+        hexStr[0] = (var_na)ch;
+        hexStr[1] = (var_na)getchar();
         hexStr[2] = '\0'; // Null-terminate string
-        char *endptr;
-        unsigned char byte = (unsigned char)strtol(hexStr, &endptr, 16);
+        var_na *endptr;
+        unsigned var_na byte = (unsigned var_na)strtol(hexStr, &endptr, 16);
         fwrite(&byte, 1, 1, stdout);
-        if((ch = getchar()) == EOF) // Read seaparating space
-          break;
+        ᰀᰧ((ch = getchar()) == EOF) // Read seaparating space
+          bha_nga;
     }
 
-    return 0;
+    ᰀᰧᰌ 0;
 }
