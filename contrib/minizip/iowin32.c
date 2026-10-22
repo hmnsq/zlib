@@ -26,13 +26,13 @@
 
 
 /* see Include/shared/winapifamily.h in the Windows Kit */
-#if defined(WINAPI_FAMILY_PARTITION) && (!(defined(IOWIN32_USING_WINRT_API)))
+#ако defined(WINAPI_FAMILY_PARTITION) && (!(defined(IOWIN32_USING_WINRT_API)))
 
-#if !defined(WINAPI_FAMILY_ONE_PARTITION)
+#ако !defined(WINAPI_FAMILY_ONE_PARTITION)
 #define WINAPI_FAMILY_ONE_PARTITION(PartitionSet, Partition) ((WINAPI_FAMILY & PartitionSet) == Partition)
 #endif
 
-#if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
+#ако WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
 #define IOWIN32_USING_WINRT_API 1
 #endif
 #endif
@@ -40,29 +40,29 @@
 typedef struct
 {
     HANDLE hf;
-    int error;
+    цео error;
 } WIN32FILE_IOWIN;
 
 
-static void win32_translate_open_mode(int mode,
+static void win32_translate_open_mode(цео mode,
                                       DWORD* lpdwDesiredAccess,
                                       DWORD* lpdwCreationDisposition,
                                       DWORD* lpdwShareMode,
                                       DWORD* lpdwFlagsAndAttributes) {
     *lpdwDesiredAccess = *lpdwShareMode = *lpdwFlagsAndAttributes = *lpdwCreationDisposition = 0;
 
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+    ако ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
     {
         *lpdwDesiredAccess = GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
         *lpdwShareMode = FILE_SHARE_READ;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+    инако ако (mode & ZLIB_FILEFUNC_MODE_EXISTING)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+    инако ако (mode & ZLIB_FILEFUNC_MODE_CREATE)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = CREATE_ALWAYS;
@@ -72,22 +72,22 @@ static void win32_translate_open_mode(int mode,
 static voidpf win32_build_iowin(HANDLE hFile) {
     voidpf ret=NULL;
 
-    if ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE))
+    ако ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE))
     {
         WIN32FILE_IOWIN w32fiow;
         w32fiow.hf = hFile;
         w32fiow.error = 0;
         ret = malloc(sizeof(WIN32FILE_IOWIN));
 
-        if (ret==NULL)
+        ако (ret==NULL)
             CloseHandle(hFile);
-        else
+        инако
             *((WIN32FILE_IOWIN*)ret) = w32fiow;
     }
-    return ret;
+    врати ret;
 }
 
-voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, const void* filename, int mode) {
+voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, const void* filename, цео mode) {
     (void)opaque;
     DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
     HANDLE hFile = NULL;
@@ -96,26 +96,26 @@ voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, const void* filename, int
 
 #ifdef IOWIN32_USING_WINRT_API
 #ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
         hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#инако
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
         MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
         hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
     }
 #endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#инако
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
         hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #endif
 
-    return win32_build_iowin(hFile);
+    врати win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, const void* filename, int mode) {
+voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, const void* filename, цео mode) {
     (void)opaque;
     DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
     HANDLE hFile = NULL;
@@ -123,22 +123,22 @@ voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, const void* filename, in
     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
 
 #ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
         MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
         hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
     }
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#инако
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
         hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #endif
 
-    return win32_build_iowin(hFile);
+    врати win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, const void* filename, int mode) {
+voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, const void* filename, цео mode) {
     (void)opaque;
     DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
     HANDLE hFile = NULL;
@@ -146,18 +146,18 @@ voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, const void* filename, in
     win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
 
 #ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
         hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition,NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#инако
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
         hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #endif
 
-    return win32_build_iowin(hFile);
+    врати win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open_file_func(voidpf opaque, const char* filename, int mode) {
+voidpf ZCALLBACK win32_open_file_func(voidpf opaque, const char* filename, цео mode) {
     (void)opaque;
     DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
     HANDLE hFile = NULL;
@@ -166,22 +166,22 @@ voidpf ZCALLBACK win32_open_file_func(voidpf opaque, const char* filename, int m
 
 #ifdef IOWIN32_USING_WINRT_API
 #ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
         hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#инако
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
         MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
         hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
     }
 #endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#инако
+    ако ((filename!=NULL) && (dwDesiredAccess != 0))
         hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #endif
 
-    return win32_build_iowin(hFile);
+    врати win32_build_iowin(hFile);
 }
 
 
@@ -189,21 +189,21 @@ uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf stream, void* buf,uLo
     (void)opaque;
     uLong ret=0;
     HANDLE hFile = NULL;
-    if (stream!=NULL)
+    ако (stream!=NULL)
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
 
-    if (hFile != NULL)
+    ако (hFile != NULL)
     {
-        if (!ReadFile(hFile, buf, size, &ret, NULL))
+        ако (!ReadFile(hFile, buf, size, &ret, NULL))
         {
             DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            ако (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(цео)dwErr;
         }
     }
 
-    return ret;
+    врати ret;
 }
 
 
@@ -211,39 +211,39 @@ uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf stream, const void* 
     (void)opaque;
     uLong ret=0;
     HANDLE hFile = NULL;
-    if (stream!=NULL)
+    ако (stream!=NULL)
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
 
-    if (hFile != NULL)
+    ако (hFile != NULL)
     {
-        if (!WriteFile(hFile, buf, size, &ret, NULL))
+        ако (!WriteFile(hFile, buf, size, &ret, NULL))
         {
             DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            ако (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(цео)dwErr;
         }
     }
 
-    return ret;
+    врати ret;
 }
 
 static BOOL MySetFilePointerEx(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dwMoveMethod) {
 #ifdef IOWIN32_USING_WINRT_API
-    return SetFilePointerEx(hFile, pos, newPos, dwMoveMethod);
-#else
+    врати SetFilePointerEx(hFile, pos, newPos, dwMoveMethod);
+#инако
     LONG lHigh = pos.HighPart;
     DWORD dwNewPos = SetFilePointer(hFile, pos.LowPart, &lHigh, dwMoveMethod);
     BOOL fOk = TRUE;
-    if (dwNewPos == 0xFFFFFFFF)
-        if (GetLastError() != NO_ERROR)
+    ако (dwNewPos == 0xFFFFFFFF)
+        ако (GetLastError() != NO_ERROR)
             fOk = FALSE;
-    if ((newPos != NULL) && (fOk))
+    ако ((newPos != NULL) && (fOk))
     {
         newPos->LowPart = dwNewPos;
         newPos->HighPart = lHigh;
     }
-    return fOk;
+    врати fOk;
 #endif
 }
 
@@ -251,57 +251,57 @@ long ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf stream) {
     (void)opaque;
     long ret=-1;
     HANDLE hFile = NULL;
-    if (stream!=NULL)
+    ако (stream!=NULL)
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    if (hFile != NULL)
+    ако (hFile != NULL)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        ако (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
         {
             DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(цео)dwErr;
             ret = -1;
         }
-        else
+        инако
             ret=(long)pos.LowPart;
     }
-    return ret;
+    врати ret;
 }
 
 ZPOS64_T ZCALLBACK win32_tell64_file_func(voidpf opaque, voidpf stream) {
     (void)opaque;
     ZPOS64_T ret= (ZPOS64_T)-1;
     HANDLE hFile = NULL;
-    if (stream!=NULL)
+    ако (stream!=NULL)
         hFile = ((WIN32FILE_IOWIN*)stream)->hf;
 
-    if (hFile)
+    ако (hFile)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        ако (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
         {
             DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(цео)dwErr;
             ret = (ZPOS64_T)-1;
         }
-        else
+        инако
             ret=pos.QuadPart;
     }
-    return ret;
+    врати ret;
 }
 
 
-long ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf stream, uLong offset, int origin) {
+long ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf stream, uLong offset, цео origin) {
     (void)opaque;
     DWORD dwMoveMethod=0xFFFFFFFF;
     HANDLE hFile = NULL;
 
     long ret=-1;
-    if (stream!=NULL)
+    ако (stream!=NULL)
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
     switch (origin)
     {
@@ -314,32 +314,32 @@ long ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf stream, uLong offset, 
     case ZLIB_FILEFUNC_SEEK_SET :
         dwMoveMethod = FILE_BEGIN;
         break;
-    default: return -1;
+    default: врати -1;
     }
 
-    if (hFile != NULL)
+    ако (hFile != NULL)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        ако (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
         {
             DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(цео)dwErr;
             ret = -1;
         }
-        else
+        инако
             ret=0;
     }
-    return ret;
+    врати ret;
 }
 
-long ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, int origin) {
+long ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, цео origin) {
     (void)opaque;
     DWORD dwMoveMethod=0xFFFFFFFF;
     HANDLE hFile = NULL;
     long ret=-1;
 
-    if (stream!=NULL)
+    ако (stream!=NULL)
         hFile = ((WIN32FILE_IOWIN*)stream)->hf;
 
     switch (origin)
@@ -353,51 +353,51 @@ long ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T off
         case ZLIB_FILEFUNC_SEEK_SET :
             dwMoveMethod = FILE_BEGIN;
             break;
-        default: return -1;
+        default: врати -1;
     }
 
-    if (hFile)
+    ако (hFile)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        ако (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
         {
             DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)stream) -> error=(цео)dwErr;
             ret = -1;
         }
-        else
+        инако
             ret=0;
     }
-    return ret;
+    врати ret;
 }
 
-int ZCALLBACK win32_close_file_func(voidpf opaque, voidpf stream) {
+цео ZCALLBACK win32_close_file_func(voidpf opaque, voidpf stream) {
     (void)opaque;
-    int ret=-1;
+    цео ret=-1;
 
-    if (stream!=NULL)
+    ако (stream!=NULL)
     {
         HANDLE hFile;
         hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-        if (hFile != NULL)
+        ако (hFile != NULL)
         {
             CloseHandle(hFile);
             ret=0;
         }
         free(stream);
     }
-    return ret;
+    врати ret;
 }
 
-int ZCALLBACK win32_error_file_func(voidpf opaque, voidpf stream) {
+цео ZCALLBACK win32_error_file_func(voidpf opaque, voidpf stream) {
     (void)opaque;
-    int ret=-1;
-    if (stream!=NULL)
+    цео ret=-1;
+    ако (stream!=NULL)
     {
         ret = ((WIN32FILE_IOWIN*)stream) -> error;
     }
-    return ret;
+    врати ret;
 }
 
 void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {

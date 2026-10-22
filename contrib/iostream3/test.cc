@@ -8,7 +8,7 @@
 #include "zfstream.h"
 #include <iostream>      // for cout
 
-int main() {
+цео main() {
 
   gzofstream outf;
   gzifstream inf;
@@ -24,7 +24,7 @@ int main() {
 
   std::cout << "\nReading 'test1.txt.gz' (buffered) produces:\n";
   inf.open("test1.txt.gz");
-  while (inf.getline(buf,80,'\n')) {
+  док (inf.getline(buf,80,'\n')) {
     std::cout << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
   }
   inf.close();
@@ -40,11 +40,11 @@ int main() {
   std::cout << "\nReading 'test2.txt.gz' (unbuffered) produces:\n";
   inf.rdbuf()->pubsetbuf(0,0);
   inf.open("test2.txt.gz");
-  while (inf.getline(buf,80,'\n')) {
+  док (inf.getline(buf,80,'\n')) {
     std::cout << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
   }
   inf.close();
 
-  return 0;
+  врати 0;
 
 }

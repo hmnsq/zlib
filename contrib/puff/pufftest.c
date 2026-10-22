@@ -15,7 +15,7 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#ако defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
@@ -23,11 +23,11 @@
 #include <stdlib.h>
 #include "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#ако defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#инако
 #  define SET_BINARY_MODE(file)
 #endif
 
@@ -39,19 +39,19 @@
    to keep reallocations less than ~33% over the actual data. */
 local size_t bythirds(size_t size)
 {
-    int n;
+    цео n;
     size_t m;
 
     m = size;
-    for (n = 0; m; n++)
+    за (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    ако (n < 3)
+        врати size + 1;
     n -= 3;
     m = size >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    врати m > size ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -68,15 +68,15 @@ local void *load(const char *name, size_t *len)
 
     *len = 0;
     buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
+    ако (buf == NULL)
+        врати NULL;
     in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
+    ако (in != NULL) {
+        за (;;) {
             *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
+            ако (*len < size) break;
             size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
+            ако (size == *len || (swap = realloc(buf, size)) == NULL) {
                 free(buf);
                 buf = NULL;
                 break;
@@ -85,12 +85,12 @@ local void *load(const char *name, size_t *len)
         }
         fclose(in);
     }
-    return buf;
+    врати buf;
 }
 
-int main(int argc, char **argv)
+цео main(цео argc, char **argv)
 {
-    int ret, put = 0, fail = 0;
+    цео ret, put = 0, fail = 0;
     unsigned skip = 0;
     char *arg, *name = NULL;
     unsigned char *source = NULL, *dest;
@@ -98,63 +98,63 @@ int main(int argc, char **argv)
     unsigned long sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    док (arg = *++argv, --argc)
+        ако (arg[0] == '-') {
+            ако (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            инако ако (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
+            инако ако (arg[1] >= '0' && arg[1] <= '9')
                 skip = (unsigned)atoi(arg + 1);
-            else {
+            инако {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                врати 3;
             }
         }
-        else if (name != NULL) {
+        инако ако (name != NULL) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            врати 3;
         }
-        else
+        инако
             name = arg;
     source = load(name, &len);
-    if (source == NULL) {
+    ако (source == NULL) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        врати 4;
     }
-    if (len == 0) {
+    ако (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
                 name == NULL ? "<stdin>" : name);
         free(source);
-        return 3;
+        врати 3;
     }
-    if (skip >= len) {
+    ако (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
         free(source);
-        return 3;
+        врати 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
     sourcelen = (unsigned long)len;
     ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    ако (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    инако {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        ако (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    ако (put && ret == 0) {
+        ако (fail)
             destlen >>= 1;
         dest = malloc(destlen);
-        if (dest == NULL) {
+        ако (dest == NULL) {
             fprintf(stderr, "memory allocation failure\n");
             free(source);
-            return 4;
+            врати 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
         SET_BINARY_MODE(stdout);
@@ -164,5 +164,5 @@ int main(int argc, char **argv)
 
     /* clean up */
     free(source);
-    return ret;
+    врати ret;
 }

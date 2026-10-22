@@ -11,32 +11,32 @@ local unsigned inf(void *how, unsigned char **buf)
     static unsigned char hold[CHUNK];
 
     *buf = hold;
-    return fread(hold, 1, CHUNK, (FILE *)how);
+    врати fread(hold, 1, CHUNK, (FILE *)how);
 }
 
-local int outf(void *how, unsigned char *buf, unsigned len)
+local цео outf(void *how, unsigned char *buf, unsigned len)
 {
-    return fwrite(buf, 1, len, (FILE *)how) != len;
+    врати fwrite(buf, 1, len, (FILE *)how) != len;
 }
 
 /* Decompress a PKWare Compression Library stream from stdin to stdout */
-int main(void)
+цео main(void)
 {
-    int ret;
+    цео ret;
     unsigned left;
 
     /* decompress to stdout */
     left = 0;
     ret = blast(inf, stdin, outf, stdout, &left, NULL);
-    if (ret != 0)
+    ако (ret != 0)
         fprintf(stderr, "blast error: %d\n", ret);
 
     /* count any leftover bytes */
-    while (getchar() != EOF)
+    док (getchar() != EOF)
         left++;
-    if (left)
+    ако (left)
         fprintf(stderr, "blast warning: %u unused bytes of input\n", left);
 
     /* return blast() error code */
-    return ret;
+    врати ret;
 }

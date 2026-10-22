@@ -82,11 +82,11 @@ typedef enum {
 struct inflate_state {
     z_streamp strm;             /* pointer back to this zlib stream */
     inflate_mode mode;          /* current inflate mode */
-    int last;                   /* true if processing last block */
-    int wrap;                   /* bit 0 true for zlib, bit 1 true for gzip,
+    цео last;                   /* true if processing last block */
+    цео wrap;                   /* bit 0 true for zlib, bit 1 true for gzip,
                                    bit 2 true to validate check value */
-    int havedict;               /* true if dictionary provided */
-    int flags;                  /* gzip header method and flags, 0 if zlib, or
+    цео havedict;               /* true if dictionary provided */
+    цео flags;                  /* gzip header method and flags, 0 if zlib, or
                                    -1 if raw or no header yet */
     unsigned dmax;              /* zlib header max distance (INFLATE_STRICT) */
     unsigned long check;        /* protected copy of check value */
@@ -120,7 +120,7 @@ struct inflate_state {
     unsigned short lens[320];   /* temporary storage for code lengths */
     unsigned short work[288];   /* work area for code table building */
     code codes[ENOUGH];         /* space for code tables */
-    int sane;                   /* if false, allow invalid distance too far */
-    int back;                   /* bits back of last unprocessed length/lit */
+    цео sane;                   /* if false, allow invalid distance too far */
+    цео back;                   /* bits back of last unprocessed length/lit */
     unsigned was;               /* initial length of match */
 };

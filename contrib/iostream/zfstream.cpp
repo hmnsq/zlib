@@ -10,98 +10,98 @@ gzfilebuf::gzfilebuf() :
 gzfilebuf::~gzfilebuf() {
 
   sync();
-  if ( own_file_descriptor )
+  ако ( own_file_descriptor )
     close();
 
 }
 
 gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+                            цео io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ако ( is_open() )
+    врати NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ако ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } инако ако ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } инако {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ако ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ако ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  ако ( (file = gzopen(name, char_mode)) == NULL )
+    врати NULL;
 
   own_file_descriptor = 1;
 
-  return this;
+  врати this;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( цео file_descriptor,
+                              цео io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ако ( is_open() )
+    врати NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ако ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } инако ако ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } инако {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ако ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ако ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  ако ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
+    врати NULL;
 
   own_file_descriptor = 0;
 
-  return this;
+  врати this;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  ако ( is_open() ) {
 
     sync();
     gzclose( file );
@@ -109,145 +109,145 @@ gzfilebuf *gzfilebuf::close() {
 
   }
 
-  return this;
+  врати this;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+цео gzfilebuf::setcompressionlevel( цео comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  врати gzsetparams(file, comp_level, -2);
 
 }
 
+цео gzfilebuf::setcompressionstrategy( цео comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  врати gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, цео which ) {
+
+  врати streampos(EOF);
+
+}
+
+цео gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  ако ( !is_open() || !(mode & ios::in) )
+    врати EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  ако ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    ако ( (allocate()) == EOF )
+      врати EOF;
     setp(0,0);
 
-  } else {
+  } инако {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    ако ( in_avail() )
+      врати (unsigned char) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    ако ( out_waiting() ) {
+      ако ( flushbuf() == EOF )
+        врати EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  цео result = fillbuf();
+  ако ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    врати EOF;
   }
 
-  return (unsigned char) *gptr();
+  врати (unsigned char) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+цео gzfilebuf::overflow( цео c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  ако ( !is_open() || !(mode & ios::out) )
+    врати EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  ако ( !base() ) {
+    ако ( allocate() == EOF )
+      врати EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } инако {
+    ако (in_avail()) {
+        врати EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    ако (out_waiting()) {
+      ако (flushbuf() == EOF)
+        врати EOF;
     }
   }
 
-  int bl = blen();
+  цео bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  ако ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  врати 0;
 
 }
 
-int gzfilebuf::sync() {
+цео gzfilebuf::sync() {
 
-  if ( !is_open() )
-    return EOF;
+  ако ( !is_open() )
+    врати EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  ако ( out_waiting() )
+    врати flushbuf();
 
-  return 0;
+  врати 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+цео gzfilebuf::flushbuf() {
 
-  int n;
+  цео n;
   char *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  ако ( gzwrite( file, q, n) < n )
+    врати EOF;
 
   setp(0,0);
 
-  return 0;
+  врати 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+цео gzfilebuf::fillbuf() {
 
-  int required;
+  цео required;
   char *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  цео t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  ако ( t <= 0) врати EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  врати t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+void gzfilestream_common::attach( цео fd, цео io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  ако ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  инако
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+void gzfilestream_common::open( const char *name, цео io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  ако ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  инако
     clear();
 
 }
 
 void gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  ако ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  врати &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( const char *name, цео io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( цео fd, цео io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( const char *name, цео io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( цео fd, цео io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );

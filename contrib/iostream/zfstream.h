@@ -12,23 +12,23 @@ public:
   gzfilebuf( );
   virtual ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( const char *name, цео io_mode );
+  gzfilebuf *attach( цео file_descriptor, цео io_mode );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  цео setcompressionlevel( цео comp_level );
+  цео setcompressionstrategy( цео comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  inline цео is_open() const { врати (file !=NULL); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  virtual streampos seekoff( streamoff, ios::seek_dir, цео );
 
-  virtual int sync();
+  virtual цео sync();
 
 protected:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  virtual цео underflow();
+  virtual цео overflow( цео = EOF );
 
 private:
 
@@ -36,8 +36,8 @@ private:
   short mode;
   short own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  цео flushbuf();
+  цео fillbuf();
 
 };
 
@@ -45,14 +45,14 @@ class gzfilestream_common : virtual public ios {
 
   friend class gzifstream;
   friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  friend gzofstream &setcompressionlevel( gzofstream &, цео );
+  friend gzofstream &setcompressionstrategy( gzofstream &, цео );
 
 public:
   virtual ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
+  void attach( цео fd, цео io_mode );
+  void open( const char *name, цео io_mode );
   void close();
 
 protected:
@@ -70,8 +70,8 @@ class gzifstream : public gzfilestream_common, public istream {
 public:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( const char *name, цео io_mode = ios::in );
+  gzifstream( цео fd, цео io_mode = ios::in );
 
   virtual ~gzifstream();
 
@@ -82,8 +82,8 @@ class gzofstream : public gzfilestream_common, public ostream {
 public:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( const char *name, цео io_mode = ios::out );
+  gzofstream( цео fd, цео io_mode = ios::out );
 
   virtual ~gzofstream();
 
@@ -100,29 +100,29 @@ private:
 
 template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  врати (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+inline gzofstream &setcompressionlevel( gzofstream &s, цео l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  врати s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+inline gzofstream &setcompressionstrategy( gzofstream &s, цео l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  врати s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+inline gzomanip<цео> setcompressionlevel(цео l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  врати gzomanip<цео>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+inline gzomanip<цео> setcompressionstrategy(цео l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  врати gzomanip<цео>(&setcompressionstrategy,l);
 }
 
 #endif

@@ -10,15 +10,15 @@
 typedef struct point {
     off_t out;          // offset in uncompressed data
     off_t in;           // offset in compressed file of first full byte
-    int bits;           // 0, or number of bits (1-7) from byte at in-1
+    цео bits;           // 0, or number of bits (1-7) from byte at in-1
     unsigned dict;      // number of bytes in window to use as a dictionary
     unsigned char *window;  // preceding 32K (or less) of uncompressed data
 } point_t;
 
 // Access point list.
 struct deflate_index {
-    int have;           // number of access points in list
-    int mode;           // -15 for raw, 15 for zlib, or 31 for gzip
+    цео have;           // number of access points in list
+    цео mode;           // -15 for raw, 15 for zlib, or 31 for gzip
     off_t length;       // total length of uncompressed data
     point_t *list;      // allocated list of access points
     z_stream strm;      // re-usable inflate engine for extraction
@@ -33,7 +33,7 @@ struct deflate_index {
 // memory, Z_BUF_ERROR for a premature end of input, Z_DATA_ERROR for a format
 // or verification error in the input file, or Z_ERRNO for a file read error.
 // On success, *built points to the resulting index, otherwise it's NULL.
-int deflate_index_build(FILE *in, off_t span, struct deflate_index **built);
+цео deflate_index_build(FILE *in, off_t span, struct deflate_index **built);
 
 // Use the index to read len bytes from offset into buf. Return the number of
 // bytes read or a negative error code. If data is requested past the end of

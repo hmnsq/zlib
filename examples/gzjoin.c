@@ -63,11 +63,11 @@
 #define local static
 
 /* exit with an error (return a value to allow use in an expression) */
-local int bail(char *why1, char *why2)
+local цео bail(char *why1, char *why2)
 {
     fprintf(stderr, "gzjoin error: %s%s, output incomplete\n", why1, why2);
     exit(1);
-    return 0;
+    врати 0;
 }
 
 /* -- simple buffered file input with access to the buffer -- */
@@ -77,7 +77,7 @@ local int bail(char *why1, char *why2)
 /* bin buffered input file type */
 typedef struct {
     char *name;             /* name of file for error messages */
-    int fd;                 /* file descriptor */
+    цео fd;                 /* file descriptor */
     unsigned left;          /* bytes remaining at next */
     unsigned char *next;    /* next byte to read */
     unsigned char *buf;     /* allocated buffer of length CHUNK */
@@ -86,10 +86,10 @@ typedef struct {
 /* close a buffered file and free allocated memory */
 local void bclose(bin *in)
 {
-    if (in != NULL) {
-        if (in->fd != -1)
+    ако (in != NULL) {
+        ако (in->fd != -1)
             close(in->fd);
-        if (in->buf != NULL)
+        ако (in->buf != NULL)
             free(in->buf);
         free(in);
     }
@@ -102,38 +102,38 @@ local bin *bopen(char *name)
     bin *in;
 
     in = malloc(sizeof(bin));
-    if (in == NULL)
-        return NULL;
+    ако (in == NULL)
+        врати NULL;
     in->buf = malloc(CHUNK);
     in->fd = open(name, O_RDONLY, 0);
-    if (in->buf == NULL || in->fd == -1) {
+    ако (in->buf == NULL || in->fd == -1) {
         bclose(in);
-        return NULL;
+        врати NULL;
     }
     in->left = 0;
     in->next = in->buf;
     in->name = name;
-    return in;
+    врати in;
 }
 
 /* load buffer from file, return -1 on read error, 0 or 1 on success, with
    1 indicating that end-of-file was reached */
-local int bload(bin *in)
+local цео bload(bin *in)
 {
     long len;
 
-    if (in == NULL)
-        return -1;
-    if (in->left != 0)
-        return 0;
+    ако (in == NULL)
+        врати -1;
+    ако (in->left != 0)
+        врати 0;
     in->next = in->buf;
     do {
         len = (long)read(in->fd, in->buf + in->left, CHUNK - in->left);
-        if (len < 0)
-            return -1;
+        ако (len < 0)
+            врати -1;
         in->left += (unsigned)len;
-    } while (len != 0 && in->left < CHUNK);
-    return len == 0 ? 1 : 0;
+    } док (len != 0 && in->left < CHUNK);
+    врати len == 0 ? 1 : 0;
 }
 
 /* get a byte from the file, bail if end of file */
@@ -150,21 +150,21 @@ local unsigned long bget4(bin *in)
     val += (unsigned long)(bget(in)) << 8;
     val += (unsigned long)(bget(in)) << 16;
     val += (unsigned long)(bget(in)) << 24;
-    return val;
+    врати val;
 }
 
 /* skip bytes in file */
 local void bskip(bin *in, unsigned skip)
 {
     /* check pointer */
-    if (in == NULL)
-        return;
+    ако (in == NULL)
+        врати;
 
     /* easy case -- skip bytes in buffer */
-    if (skip <= in->left) {
+    ако (skip <= in->left) {
         in->left -= skip;
         in->next += skip;
-        return;
+        врати;
     }
 
     /* skip what's in buffer, discard buffer contents */
@@ -172,17 +172,17 @@ local void bskip(bin *in, unsigned skip)
     in->left = 0;
 
     /* seek past multiples of CHUNK bytes */
-    if (skip > CHUNK) {
+    ако (skip > CHUNK) {
         unsigned left;
 
         left = skip & (CHUNK - 1);
-        if (left == 0) {
+        ако (left == 0) {
             /* exact number of chunks: seek all the way minus one byte to check
                for end-of-file with a read */
             lseek(in->fd, skip - 1, SEEK_CUR);
-            if (read(in->fd, in->buf, 1) != 1)
+            ако (read(in->fd, in->buf, 1) != 1)
                 bail("unexpected end of file on ", in->name);
-            return;
+            врати;
         }
 
         /* skip the integral chunks, update skip with remainder */
@@ -192,7 +192,7 @@ local void bskip(bin *in, unsigned skip)
 
     /* read more input and skip remainder */
     bload(in);
-    if (skip > in->left)
+    ако (skip > in->left)
         bail("unexpected end of file on ", in->name);
     in->left -= skip;
     in->next += skip;
@@ -203,22 +203,22 @@ local void bskip(bin *in, unsigned skip)
 /* skip the gzip header from file in */
 local void gzhead(bin *in)
 {
-    int flags;
+    цео flags;
 
     /* verify gzip magic header and compression method */
-    if (bget(in) != 0x1f || bget(in) != 0x8b || bget(in) != 8)
+    ако (bget(in) != 0x1f || bget(in) != 0x8b || bget(in) != 8)
         bail(in->name, " is not a valid gzip file");
 
     /* get and verify flags */
     flags = bget(in);
-    if ((flags & 0xe0) != 0)
+    ако ((flags & 0xe0) != 0)
         bail("unknown reserved bits set in ", in->name);
 
     /* skip modification time, extra flags, and os */
     bskip(in, 6);
 
     /* skip extra field if present */
-    if (flags & 4) {
+    ако (flags & 4) {
         unsigned len;
 
         len = bget(in);
@@ -227,17 +227,17 @@ local void gzhead(bin *in)
     }
 
     /* skip file name if present */
-    if (flags & 8)
-        while (bget(in) != 0)
+    ако (flags & 8)
+        док (bget(in) != 0)
             ;
 
     /* skip comment if present */
-    if (flags & 16)
-        while (bget(in) != 0)
+    ако (flags & 16)
+        док (bget(in) != 0)
             ;
 
     /* skip header crc if present */
-    if (flags & 2)
+    ако (flags & 2)
         bskip(in, 2);
 }
 
@@ -253,9 +253,9 @@ local void put4(unsigned long val, FILE *out)
 /* Load up zlib stream from buffered input, bail if end of file */
 local void zpull(z_streamp strm, bin *in)
 {
-    if (in->left == 0)
+    ако (in->left == 0)
         bload(in);
-    if (in->left == 0)
+    ако (in->left == 0)
         bail("unexpected end of file on ", in->name);
     strm->avail_in = in->left;
     strm->next_in = in->next;
@@ -276,12 +276,12 @@ local void gzinit(unsigned long *crc, unsigned long *tot, FILE *out)
    crc and length (modulo 2^32) of the output for the trailer.  The resulting
    gzip file is written to out.  gzinit() must be called before the first call
    of gzcopy() to write the gzip header and to initialize crc and tot. */
-local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
+local void gzcopy(char *name, цео clr, unsigned long *crc, unsigned long *tot,
                   FILE *out)
 {
-    int ret;                /* return value from zlib functions */
-    int pos;                /* where the "last block" bit is in byte */
-    int last;               /* true if processing the last block */
+    цео ret;                /* return value from zlib functions */
+    цео pos;                /* where the "last block" bit is in byte */
+    цео last;               /* true if processing the last block */
     bin *in;                /* buffered input file */
     unsigned char *start;   /* start of compressed data in buffer */
     unsigned char *junk;    /* buffer for uncompressed data -- discarded */
@@ -290,7 +290,7 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
 
     /* open gzip file and skip header */
     in = bopen(name);
-    if (in == NULL)
+    ако (in == NULL)
         bail("could not open ", name);
     gzhead(in);
 
@@ -303,7 +303,7 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
     ret = inflateInit2(&strm, -15);
-    if (junk == NULL || ret != Z_OK)
+    ако (junk == NULL || ret != Z_OK)
         bail("out of memory", "");
 
     /* inflate and copy compressed data, clear last-block bit if requested */
@@ -311,12 +311,12 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
     zpull(&strm, in);
     start = in->next;
     last = start[0] & 1;
-    if (last && clr)
+    ако (last && clr)
         start[0] &= ~1;
     strm.avail_out = 0;
-    for (;;) {
+    за (;;) {
         /* if input used and output done, write used input and get more */
-        if (strm.avail_in == 0 && strm.avail_out != 0) {
+        ако (strm.avail_in == 0 && strm.avail_out != 0) {
             fwrite(start, 1, strm.next_in - start, out);
             start = in->buf;
             in->left = 0;
@@ -338,25 +338,25 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
         len += CHUNK - strm.avail_out;
 
         /* check for block boundary (only get this when block copied out) */
-        if (strm.data_type & 128) {
+        ако (strm.data_type & 128) {
             /* if that was the last block, then done */
-            if (last)
+            ако (last)
                 break;
 
             /* number of unused bits in last byte */
             pos = strm.data_type & 7;
 
             /* find the next last-block bit */
-            if (pos != 0) {
+            ако (pos != 0) {
                 /* next last-block bit is in last used byte */
                 pos = 0x100 >> pos;
                 last = strm.next_in[-1] & pos;
-                if (last && clr)
+                ако (last && clr)
                     in->buf[strm.next_in - in->buf - 1] &= ~pos;
             }
-            else {
+            инако {
                 /* next last-block bit is in next unused byte */
-                if (strm.avail_in == 0) {
+                ако (strm.avail_in == 0) {
                     /* don't have that byte yet -- get it */
                     fwrite(start, 1, strm.next_in - start, out);
                     start = in->buf;
@@ -364,7 +364,7 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
                     zpull(&strm, in);
                 }
                 last = strm.next_in[0] & 1;
-                if (last && clr)
+                ако (last && clr)
                     in->buf[strm.next_in - in->buf] &= ~1;
             }
         }
@@ -378,20 +378,20 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
     pos = strm.data_type & 7;
     fwrite(start, 1, in->next - start - 1, out);
     last = in->next[-1];
-    if (pos == 0 || !clr)
+    ако (pos == 0 || !clr)
         /* already at byte boundary, or last file: write last byte */
         putc(last, out);
-    else {
+    инако {
         /* append empty blocks to last byte */
         last &= ((0x100 >> pos) - 1);       /* assure unused bits are zero */
-        if (pos & 1) {
+        ако (pos & 1) {
             /* odd -- append an empty stored block */
             putc(last, out);
-            if (pos == 1)
+            ако (pos == 1)
                 putc(0, out);               /* two more bits in block header */
             fwrite("\0\0\xff\xff", 1, 4, out);
         }
-        else {
+        инако {
             /* even -- append 1, 2, or 3 empty fixed blocks */
             switch (pos) {
             case 6:
@@ -417,14 +417,14 @@ local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
     bclose(in);
 
     /* write trailer if this is the last gzip file */
-    if (!clr) {
+    ако (!clr) {
         put4(*crc, out);
         put4(*tot, out);
     }
 }
 
 /* join the gzip files on the command line, write result to stdout */
-int main(int argc, char **argv)
+цео main(цео argc, char **argv)
 {
     unsigned long crc, tot;     /* running crc and total uncompressed length */
 
@@ -433,17 +433,17 @@ int main(int argc, char **argv)
     argv++;
 
     /* show usage if no arguments */
-    if (argc == 0) {
+    ако (argc == 0) {
         fputs("gzjoin usage: gzjoin f1.gz [f2.gz [f3.gz ...]] > fjoin.gz\n",
               stderr);
-        return 0;
+        врати 0;
     }
 
     /* join gzip files on command line and write to stdout */
     gzinit(&crc, &tot, stdout);
-    while (argc--)
+    док (argc--)
         gzcopy(*argv++, argc, &crc, &tot, stdout);
 
     /* done */
-    return 0;
+    врати 0;
 }
