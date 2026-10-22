@@ -3,7 +3,7 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "gzguts.h"
+#ଅନ୍ତର୍ଭାଵ "gzguts.h"
 
 /* Use read() to load a buffer -- return -1 on error, otherwise 0.  Read from
    state->fd, and update state->eof, state->err, and state->msg as appropriate.
@@ -15,35 +15,35 @@
    no data has been read. Either way, state->again is set true to indicate a
    non-blocking event. If errno is non-zero on return, then there was an error
    signaled from read().  *have is set to the number of bytes read. */
-local int gz_load(gz_statep state, unsigned char *buf, unsigned len,
+local ପୂର୍ଣ୍ଣସଂଖ୍ୟା gz_load(gz_statep state, unsigned ଅକ୍ଷର *buf, unsigned len,
                   unsigned *have) {
-    int ret;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
     unsigned get, max = ((unsigned)-1 >> 2) + 1;
 
     state->again = 0;
     errno = 0;
     *have = 0;
-    do {
+    କର {
         get = len - *have;
-        if (get > max)
+        ଯଦି (get > max)
             get = max;
-        ret = (int)read(state->fd, buf + *have, get);
-        if (ret <= 0)
-            break;
+        ret = (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)ପଠ(state->fd, buf + *have, get);
+        ଯଦି (ret <= 0)
+            ଭାଙ୍ଗ;
         *have += (unsigned)ret;
-    } while (*have < len);
-    if (ret < 0) {
-        if (BLOCKED(errno)) {
+    } ଯେତେବେଳେ (*have < len);
+    ଯଦି (ret < 0) {
+        ଯଦି (BLOCKED(errno)) {
             state->again = 1;
-            if (*have != 0)
-                return 0;
+            ଯଦି (*have != 0)
+                ଫେରନ୍ତୁ 0;
         }
         gz_error(state, Z_ERRNO, zstrerror());
-        return -1;
+        ଫେରନ୍ତୁ -1;
     }
-    if (ret == 0)
+    ଯଦି (ret == 0)
         state->eof = 1;
-    return 0;
+    ଫେରନ୍ତୁ 0;
 }
 
 /* Load up input buffer and set eof flag if last data loaded -- return -1 on
@@ -53,32 +53,32 @@ local int gz_load(gz_statep state, unsigned char *buf, unsigned len,
    If strm->avail_in != 0, then the current data is moved to the beginning of
    the input buffer, and then the remainder of the buffer is loaded with the
    available data from the input file. */
-local int gz_avail(gz_statep state) {
+local ପୂର୍ଣ୍ଣସଂଖ୍ୟା gz_avail(gz_statep state) {
     unsigned got;
     z_streamp strm = &(state->strm);
 
-    if (state->err != Z_OK && state->err != Z_BUF_ERROR)
-        return -1;
-    if (state->eof == 0) {
-        if (strm->avail_in) {       /* copy what's there to the start */
-            unsigned char *p = state->in;
-            unsigned const char *q = strm->next_in;
+    ଯଦି (state->err != Z_OK && state->err != Z_BUF_ERROR)
+        ଫେରନ୍ତୁ -1;
+    ଯଦି (state->eof == 0) {
+        ଯଦି (strm->avail_in) {       /* copy what's there to the start */
+            unsigned ଅକ୍ଷର *p = state->in;
+            unsigned ଅଚଳ ଅକ୍ଷର *q = strm->next_in;
 
-            if (q != p) {
+            ଯଦି (q != p) {
                 unsigned n = strm->avail_in;
 
-                do {
+                କର {
                     *p++ = *q++;
-                } while (--n);
+                } ଯେତେବେଳେ (--n);
             }
         }
-        if (gz_load(state, state->in + strm->avail_in,
+        ଯଦି (gz_load(state, state->in + strm->avail_in,
                     state->size - strm->avail_in, &got) == -1)
-            return -1;
+            ଫେରନ୍ତୁ -1;
         strm->avail_in += got;
         strm->next_in = state->in;
     }
-    return 0;
+    ଫେରନ୍ତୁ 0;
 }
 
 /* Look for gzip header, set up for inflate or copy.  state->x.have must be 0.
@@ -90,19 +90,19 @@ local int gz_avail(gz_statep state) {
    case, all further file reads will be directly to either the output buffer or
    a user buffer.  If decompressing, the inflate state will be initialized.
    gz_look() will return 0 on success or -1 on failure. */
-local int gz_look(gz_statep state) {
+local ପୂର୍ଣ୍ଣସଂଖ୍ୟା gz_look(gz_statep state) {
     z_streamp strm = &(state->strm);
 
     /* allocate read buffers and inflate memory */
-    if (state->size == 0) {
+    ଯଦି (state->size == 0) {
         /* allocate buffers */
-        state->in = (unsigned char *)malloc(state->want);
-        state->out = (unsigned char *)malloc(state->want << 1);
-        if (state->in == NULL || state->out == NULL) {
-            free(state->out);
-            free(state->in);
+        state->in = (unsigned ଅକ୍ଷର *)malloc(state->want);
+        state->out = (unsigned ଅକ୍ଷର *)malloc(state->want << 1);
+        ଯଦି (state->in == ଖାଲି || state->out == ଖାଲି) {
+            ମୁକ୍ତ(state->out);
+            ମୁକ୍ତ(state->in);
             gz_error(state, Z_MEM_ERROR, "out of memory");
-            return -1;
+            ଫେରନ୍ତୁ -1;
         }
         state->size = state->want;
 
@@ -112,31 +112,31 @@ local int gz_look(gz_statep state) {
         state->strm.opaque = Z_NULL;
         state->strm.avail_in = 0;
         state->strm.next_in = Z_NULL;
-        if (inflateInit2(&(state->strm), 15 + 16) != Z_OK) {    /* gunzip */
-            free(state->out);
-            free(state->in);
+        ଯଦି (inflateInit2(&(state->strm), 15 + 16) != Z_OK) {    /* gunzip */
+            ମୁକ୍ତ(state->out);
+            ମୁକ୍ତ(state->in);
             state->size = 0;
             gz_error(state, Z_MEM_ERROR, "out of memory");
-            return -1;
+            ଫେରନ୍ତୁ -1;
         }
     }
 
     /* if transparent reading is disabled, which would only be at the start, or
        if we're looking for a gzip member after the first one, which is not at
        the start, then proceed directly to look for a gzip member next */
-    if (state->direct == -1 || state->junk == 0) {
+    ଯଦି (state->direct == -1 || state->junk == 0) {
         /* wait for input before committing to another gzip member */
-        if (state->junk == 0 && strm->avail_in == 0) {
-            if (gz_avail(state) == -1)
-                return -1;
-            if (strm->avail_in == 0)
-                return 0;
+        ଯଦି (state->junk == 0 && strm->avail_in == 0) {
+            ଯଦି (gz_avail(state) == -1)
+                ଫେରନ୍ତୁ -1;
+            ଯଦି (strm->avail_in == 0)
+                ଫେରନ୍ତୁ 0;
         }
         inflateReset(strm);
         state->how = GZIP;
         state->junk = state->junk != -1;
         state->direct = 0;
-        return 0;
+        ଫେରନ୍ତୁ 0;
     }
 
     /* otherwise we're at the start with auto-detect -- we check to see if the
@@ -145,24 +145,24 @@ local int gz_look(gz_statep state) {
 
     /* load any header bytes into the input buffer -- if the input is empty,
        then it's not an error as this is a transparent read of zero bytes */
-    if (gz_avail(state) == -1)
-        return -1;
-    if (strm->avail_in == 0 || (state->again && strm->avail_in < 4))
+    ଯଦି (gz_avail(state) == -1)
+        ଫେରନ୍ତୁ -1;
+    ଯଦି (strm->avail_in == 0 || (state->again && strm->avail_in < 4))
         /* if non-blocking input stalled before getting four bytes, then
            return and wait until a later call has accumulated enough */
-        return 0;
+        ଫେରନ୍ତୁ 0;
 
     /* see if this is (likely) gzip input -- if the first four bytes are
        consistent with a gzip header, then go look for the first gzip member,
        otherwise proceed to copy the input transparently */
-    if (strm->avail_in > 3 &&
+    ଯଦି (strm->avail_in > 3 &&
             strm->next_in[0] == 31 && strm->next_in[1] == 139 &&
             strm->next_in[2] == 8 && strm->next_in[3] < 32) {
         inflateReset(strm);
         state->how = GZIP;
         state->junk = 1;
         state->direct = 0;
-        return 0;
+        ଫେରନ୍ତୁ 0;
     }
 
     /* doing raw i/o: copy any leftover input to output -- this assumes that
@@ -173,7 +173,7 @@ local int gz_look(gz_statep state) {
     state->x.have = strm->avail_in;
     strm->avail_in = 0;
     state->how = COPY;
-    return 0;
+    ଫେରନ୍ତୁ 0;
 }
 
 /* Decompress from input to the provided next_out and avail_out in the state.
@@ -184,66 +184,66 @@ local int gz_look(gz_statep state) {
    complete the gzip member, then an unexpected end of file error is raised.
    If there is no more input, but state->again is true, then EOF has not been
    reached, and no error is raised. */
-local int gz_decomp(gz_statep state) {
-    int ret = Z_OK;
+local ପୂର୍ଣ୍ଣସଂଖ୍ୟା gz_decomp(gz_statep state) {
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = Z_OK;
     unsigned had;
     z_streamp strm = &(state->strm);
 
     /* fill output buffer up to end of deflate stream */
     had = strm->avail_out;
-    do {
+    କର {
         /* get more input for inflate() */
-        if (strm->avail_in == 0 && gz_avail(state) == -1) {
+        ଯଦି (strm->avail_in == 0 && gz_avail(state) == -1) {
             ret = state->err;
-            break;
+            ଭାଙ୍ଗ;
         }
-        if (strm->avail_in == 0) {
-            if (!state->again)
+        ଯଦି (strm->avail_in == 0) {
+            ଯଦି (!state->again)
                 gz_error(state, Z_BUF_ERROR, "unexpected end of file");
-            break;
+            ଭାଙ୍ଗ;
         }
 
         /* decompress and handle errors */
         ret = inflate(strm, Z_NO_FLUSH);
-        if (strm->avail_out < had)
+        ଯଦି (strm->avail_out < had)
             /* any decompressed data marks this as a real gzip stream */
             state->junk = 0;
-        if (ret == Z_STREAM_ERROR || ret == Z_NEED_DICT) {
+        ଯଦି (ret == Z_STREAM_ERROR || ret == Z_NEED_DICT) {
             gz_error(state, Z_STREAM_ERROR,
                      "internal error: inflate stream corrupt");
-            break;
+            ଭାଙ୍ଗ;
         }
-        if (ret == Z_MEM_ERROR) {
+        ଯଦି (ret == Z_MEM_ERROR) {
             gz_error(state, Z_MEM_ERROR, "out of memory");
-            break;
+            ଭାଙ୍ଗ;
         }
-        if (ret == Z_DATA_ERROR) {              /* deflate stream invalid */
-            if (state->junk == 1) {             /* trailing garbage is ok */
+        ଯଦି (ret == Z_DATA_ERROR) {              /* deflate stream invalid */
+            ଯଦି (state->junk == 1) {             /* trailing garbage is ok */
                 strm->avail_in = 0;
                 state->eof = 1;
                 state->how = LOOK;
                 ret = Z_OK;
-                break;
+                ଭାଙ୍ଗ;
             }
             gz_error(state, Z_DATA_ERROR,
-                     strm->msg == NULL ? "compressed data error" : strm->msg);
-            break;
+                     strm->ସନ୍ଦେଶ == ଖାଲି ? "compressed data error" : strm->ସନ୍ଦେଶ);
+            ଭାଙ୍ଗ;
         }
-    } while (strm->avail_out && ret != Z_STREAM_END);
+    } ଯେତେବେଳେ (strm->avail_out && ret != Z_STREAM_END);
 
     /* update available output */
     state->x.have = had - strm->avail_out;
     state->x.next = strm->next_out - state->x.have;
 
     /* if the gzip stream completed successfully, look for another */
-    if (ret == Z_STREAM_END) {
+    ଯଦି (ret == Z_STREAM_END) {
         state->junk = 0;
         state->how = LOOK;
-        return 0;
+        ଫେରନ୍ତୁ 0;
     }
 
     /* return decompression status */
-    return ret != Z_OK ? -1 : 0;
+    ଫେରନ୍ତୁ ret != Z_OK ? -1 : 0;
 }
 
 /* Fetch data and put it in the output buffer.  Assumes state->x.have is 0.
@@ -252,46 +252,46 @@ local int gz_decomp(gz_statep state) {
    looked for to determine whether to copy or decompress.  Returns -1 on error,
    otherwise 0.  gz_fetch() will leave state->how as COPY or GZIP unless the
    end of the input file has been reached and all data has been processed.  */
-local int gz_fetch(gz_statep state) {
+local ପୂର୍ଣ୍ଣସଂଖ୍ୟା gz_fetch(gz_statep state) {
     z_streamp strm = &(state->strm);
 
-    do {
-        switch(state->how) {
-        case LOOK:      /* -> LOOK, COPY (only if never GZIP), or GZIP */
-            if (gz_look(state) == -1)
-                return -1;
-            if (state->how == LOOK)
-                return 0;
-            break;
-        case COPY:      /* -> COPY */
-            if (gz_load(state, state->out, state->size << 1, &(state->x.have))
+    କର {
+        ବାଛ(state->how) {
+        ସ୍ଥିତି LOOK:      /* -> LOOK, COPY (only if never GZIP), or GZIP */
+            ଯଦି (gz_look(state) == -1)
+                ଫେରନ୍ତୁ -1;
+            ଯଦି (state->how == LOOK)
+                ଫେରନ୍ତୁ 0;
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି COPY:      /* -> COPY */
+            ଯଦି (gz_load(state, state->out, state->size << 1, &(state->x.have))
                     == -1)
-                return -1;
+                ଫେରନ୍ତୁ -1;
             state->x.next = state->out;
-            return 0;
-        case GZIP:      /* -> GZIP or LOOK (if end of gzip stream) */
+            ଫେରନ୍ତୁ 0;
+        ସ୍ଥିତି GZIP:      /* -> GZIP or LOOK (if end of gzip stream) */
             strm->avail_out = state->size << 1;
             strm->next_out = state->out;
-            if (gz_decomp(state) == -1)
-                return -1;
-            break;
-        default:
+            ଯଦି (gz_decomp(state) == -1)
+                ଫେରନ୍ତୁ -1;
+            ଭାଙ୍ଗ;
+        ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
             gz_error(state, Z_STREAM_ERROR, "state corrupt");
-            return -1;
+            ଫେରନ୍ତୁ -1;
         }
-    } while (state->x.have == 0 && (!state->eof || strm->avail_in));
-    return 0;
+    } ଯେତେବେଳେ (state->x.have == 0 && (!state->eof || strm->avail_in));
+    ଫେରନ୍ତୁ 0;
 }
 
 /* Skip state->skip (> 0) uncompressed bytes of output.  Return -1 on error, 0
    on success. */
-local int gz_skip(gz_statep state) {
+local ପୂର୍ଣ୍ଣସଂଖ୍ୟା gz_skip(gz_statep state) {
     unsigned n;
 
     /* skip over len bytes or reach end-of-file, whichever comes first */
-    do {
+    କର {
         /* skip over whatever is in output buffer */
-        if (state->x.have) {
+        ଯଦି (state->x.have) {
             n = GT_OFF(state->x.have) ||
                 (z_off64_t)state->x.have > state->skip ?
                 (unsigned)state->skip : state->x.have;
@@ -302,20 +302,20 @@ local int gz_skip(gz_statep state) {
         }
 
         /* output buffer empty -- return if we're at the end of the input */
-        else if (state->eof && state->strm.avail_in == 0) {
-            if (state->how == GZIP && state->err == Z_OK)
+        ଅନ୍ୟଥା ଯଦି (state->eof && state->strm.avail_in == 0) {
+            ଯଦି (state->how == GZIP && state->err == Z_OK)
                 gz_error(state, Z_BUF_ERROR, "unexpected end of file");
-            break;
+            ଭାଙ୍ଗ;
         }
 
         /* need more data to skip -- load up output buffer */
-        else {
+        ଅନ୍ୟଥା {
             /* get more output, looking for header if required */
-            if (gz_fetch(state) == -1)
-                return -1;
+            ଯଦି (gz_fetch(state) == -1)
+                ଫେରନ୍ତୁ -1;
         }
-    } while (state->skip);
-    return 0;
+    } ଯେତେବେଳେ (state->skip);
+    ଫେରନ୍ତୁ 0;
 }
 
 /* Read len bytes into buf from file, or less than len up to the end of the
@@ -327,64 +327,64 @@ local int gz_skip(gz_statep state) {
 local z_size_t gz_read(gz_statep state, voidp buf, z_size_t len) {
     z_size_t got;
     unsigned n;
-    int err;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା err;
 
     /* if len is zero, avoid unnecessary operations */
-    if (len == 0)
-        return 0;
+    ଯଦି (len == 0)
+        ଫେରନ୍ତୁ 0;
 
     /* process a skip request */
-    if (state->skip && gz_skip(state) == -1)
-        return 0;
+    ଯଦି (state->skip && gz_skip(state) == -1)
+        ଫେରନ୍ତୁ 0;
 
     /* get len bytes to buf, or less than len if at the end */
     got = 0;
     err = 0;
-    do {
+    କର {
         /* set n to the maximum amount of len that fits in an unsigned int */
         n = (unsigned)-1;
-        if (n > len)
+        ଯଦି (n > len)
             n = (unsigned)len;
 
         /* first just try copying data from the output buffer */
-        if (state->x.have) {
-            if (state->x.have < n)
+        ଯଦି (state->x.have) {
+            ଯଦି (state->x.have < n)
                 n = state->x.have;
             memcpy(buf, state->x.next, n);
             state->x.next += n;
             state->x.have -= n;
-            if (state->err != Z_OK)
+            ଯଦି (state->err != Z_OK)
                 /* caught deferred error from gz_fetch() */
                 err = -1;
         }
 
         /* output buffer empty -- return if we're at the end of the input */
-        else if (state->eof && state->strm.avail_in == 0) {
-            if (state->how == GZIP && state->err == Z_OK)
+        ଅନ୍ୟଥା ଯଦି (state->eof && state->strm.avail_in == 0) {
+            ଯଦି (state->how == GZIP && state->err == Z_OK)
                 gz_error(state, Z_BUF_ERROR, "unexpected end of file");
-            break;
+            ଭାଙ୍ଗ;
         }
 
         /* need output data -- for small len or new stream load up our output
            buffer, so that gzgetc() can be fast */
-        else if (state->how == LOOK || n < (state->size << 1)) {
+        ଅନ୍ୟଥା ଯଦି (state->how == LOOK || n < (state->size << 1)) {
             /* get more output, looking for header if required */
-            if (gz_fetch(state) == -1 && state->x.have == 0)
+            ଯଦି (gz_fetch(state) == -1 && state->x.have == 0)
                 /* if state->x.have != 0, error will be caught after copy */
                 err = -1;
-            continue;       /* no progress yet -- go back to copy above */
+            ଜାରି;       /* no progress yet -- go back to copy above */
             /* the copy above assures that we will leave with space in the
                output buffer, allowing at least one gzungetc() to succeed */
         }
 
         /* large len -- read directly into user buffer */
-        else if (state->how == COPY)        /* read directly */
-            err = gz_load(state, (unsigned char *)buf, n, &n);
+        ଅନ୍ୟଥା ଯଦି (state->how == COPY)        /* read directly */
+            err = gz_load(state, (unsigned ଅକ୍ଷର *)buf, n, &n);
 
         /* large len -- decompress directly into user buffer */
-        else {  /* state->how == GZIP */
+        ଅନ୍ୟଥା {  /* state->how == GZIP */
             state->strm.avail_out = n;
-            state->strm.next_out = (unsigned char *)buf;
+            state->strm.next_out = (unsigned ଅକ୍ଷର *)buf;
             err = gz_decomp(state);
             n = state->x.have;
             state->x.have = 0;
@@ -392,61 +392,61 @@ local z_size_t gz_read(gz_statep state, voidp buf, z_size_t len) {
 
         /* update progress */
         len -= n;
-        buf = (char *)buf + n;
+        buf = (ଅକ୍ଷର *)buf + n;
         got += n;
         state->x.pos += n;
-    } while (len && !err);
+    } ଯେତେବେଳେ (len && !err);
 
     /* note read past eof */
-    if (len && state->eof)
+    ଯଦି (len && state->eof)
         state->past = 1;
 
     /* return number of bytes read into user buffer */
-    return got;
+    ଫେରନ୍ତୁ got;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzread(gzFile file, voidp buf, unsigned len) {
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ZEXPORT gzread(gzFile file, voidp buf, unsigned len) {
     gz_statep state;
 
     /* get internal structure and check that it's for reading */
-    if (file == NULL)
-        return -1;
+    ଯଦି (file == ଖାଲି)
+        ଫେରନ୍ତୁ -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ)
-        return -1;
+    ଯଦି (state->mode != GZ_READ)
+        ଫେରନ୍ତୁ -1;
 
     /* check that there was no (serious) error */
-    if (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
-        return -1;
-    if (state->again)
-        gz_error(state, Z_OK, NULL);
+    ଯଦି (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
+        ଫେରନ୍ତୁ -1;
+    ଯଦି (state->again)
+        gz_error(state, Z_OK, ଖାଲି);
 
     /* since an int is returned, make sure len fits in one, otherwise return
        with an error (this avoids a flaw in the interface) */
-    if ((int)len < 0) {
+    ଯଦି ((ପୂର୍ଣ୍ଣସଂଖ୍ୟା)len < 0) {
         gz_error(state, Z_STREAM_ERROR, "request does not fit in an int");
-        return -1;
+        ଫେରନ୍ତୁ -1;
     }
 
     /* read len or fewer bytes to buf */
     len = (unsigned)gz_read(state, buf, len);
 
     /* check for an error */
-    if (len == 0) {
-        if (state->err != Z_OK && state->err != Z_BUF_ERROR)
-            return -1;
-        if (state->again) {
+    ଯଦି (len == 0) {
+        ଯଦି (state->err != Z_OK && state->err != Z_BUF_ERROR)
+            ଫେରନ୍ତୁ -1;
+        ଯଦି (state->again) {
             /* non-blocking input stalled after some input was read, but no
                uncompressed bytes were produced -- let the application know
                this isn't EOF */
             gz_error(state, Z_ERRNO, zstrerror());
-            return -1;
+            ଫେରନ୍ତୁ -1;
         }
     }
 
     /* return the number of bytes read */
-    return (int)len;
+    ଫେରନ୍ତୁ (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)len;
 }
 
 /* -- see zlib.h -- */
@@ -456,171 +456,171 @@ z_size_t ZEXPORT gzfread(voidp buf, z_size_t size, z_size_t nitems,
     gz_statep state;
 
     /* get internal structure and check that it's for reading */
-    if (file == NULL)
-        return 0;
+    ଯଦି (file == ଖାଲି)
+        ଫେରନ୍ତୁ 0;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ)
-        return 0;
+    ଯଦି (state->mode != GZ_READ)
+        ଫେରନ୍ତୁ 0;
 
     /* check that there was no (serious) error */
-    if (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
-        return 0;
-    if (state->again)
-        gz_error(state, Z_OK, NULL);
+    ଯଦି (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
+        ଫେରନ୍ତୁ 0;
+    ଯଦି (state->again)
+        gz_error(state, Z_OK, ଖାଲି);
 
     /* compute bytes to read -- error on overflow */
     len = nitems * size;
-    if (size && len / size != nitems) {
+    ଯଦି (size && len / size != nitems) {
         gz_error(state, Z_STREAM_ERROR, "request does not fit in a size_t");
-        return 0;
+        ଫେରନ୍ତୁ 0;
     }
 
     /* read len or fewer bytes to buf, return the number of full items read */
-    return len ? gz_read(state, buf, len) / size : 0;
+    ଫେରନ୍ତୁ len ? gz_read(state, buf, len) / size : 0;
 }
 
 /* -- see zlib.h -- */
 #ifdef Z_PREFIX_SET
 #  undef z_gzgetc
-#else
+#ଅନ୍ୟଥା
 #  undef gzgetc
 #endif
-int ZEXPORT gzgetc(gzFile file) {
-    unsigned char buf[1];
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ZEXPORT gzgetc(gzFile file) {
+    unsigned ଅକ୍ଷର buf[1];
     gz_statep state;
 
     /* get internal structure and check that it's for reading */
-    if (file == NULL)
-        return -1;
+    ଯଦି (file == ଖାଲି)
+        ଫେରନ୍ତୁ -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ)
-        return -1;
+    ଯଦି (state->mode != GZ_READ)
+        ଫେରନ୍ତୁ -1;
 
     /* check that there was no (serious) error */
-    if (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
-        return -1;
-    if (state->again)
-        gz_error(state, Z_OK, NULL);
+    ଯଦି (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
+        ଫେରନ୍ତୁ -1;
+    ଯଦି (state->again)
+        gz_error(state, Z_OK, ଖାଲି);
 
     /* try output buffer (no need to check for skip request) */
-    if (state->x.have) {
+    ଯଦି (state->x.have) {
         state->x.have--;
         state->x.pos++;
-        return *(state->x.next)++;
+        ଫେରନ୍ତୁ *(state->x.next)++;
     }
 
     /* nothing there -- try gz_read() */
-    return gz_read(state, buf, 1) < 1 ? -1 : buf[0];
+    ଫେରନ୍ତୁ gz_read(state, buf, 1) < 1 ? -1 : buf[0];
 }
 
-int ZEXPORT gzgetc_(gzFile file) {
-    return gzgetc(file);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ZEXPORT gzgetc_(gzFile file) {
+    ଫେରନ୍ତୁ gzgetc(file);
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzungetc(int c, gzFile file) {
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ZEXPORT gzungetc(ପୂର୍ଣ୍ଣସଂଖ୍ୟା c, gzFile file) {
     gz_statep state;
 
     /* get internal structure and check that it's for reading */
-    if (file == NULL)
-        return -1;
+    ଯଦି (file == ଖାଲି)
+        ଫେରନ୍ତୁ -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ)
-        return -1;
+    ଯଦି (state->mode != GZ_READ)
+        ଫେରନ୍ତୁ -1;
 
     /* in case this was just opened, set up the input buffer */
-    if (state->how == LOOK && state->x.have == 0)
-        (void)gz_look(state);
+    ଯଦି (state->how == LOOK && state->x.have == 0)
+        (ଶୂନ୍ୟ)gz_look(state);
 
     /* check that there was no (serious) error */
-    if (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
-        return -1;
-    if (state->again)
-        gz_error(state, Z_OK, NULL);
+    ଯଦି (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
+        ଫେରନ୍ତୁ -1;
+    ଯଦି (state->again)
+        gz_error(state, Z_OK, ଖାଲି);
 
     /* process a skip request */
-    if (state->skip && gz_skip(state) == -1)
-        return -1;
+    ଯଦି (state->skip && gz_skip(state) == -1)
+        ଫେରନ୍ତୁ -1;
 
     /* can't push EOF */
-    if (c < 0)
-        return -1;
+    ଯଦି (c < 0)
+        ଫେରନ୍ତୁ -1;
 
     /* if output buffer empty, put byte at end (allows more pushing) */
-    if (state->x.have == 0) {
+    ଯଦି (state->x.have == 0) {
         state->x.have = 1;
         state->x.next = state->out + (state->size << 1) - 1;
-        state->x.next[0] = (unsigned char)c;
+        state->x.next[0] = (unsigned ଅକ୍ଷର)c;
         state->x.pos--;
         state->past = 0;
-        return c;
+        ଫେରନ୍ତୁ c;
     }
 
     /* if no room, give up (must have already done a gzungetc()) */
-    if (state->x.have == (state->size << 1)) {
+    ଯଦି (state->x.have == (state->size << 1)) {
         gz_error(state, Z_DATA_ERROR, "out of room to push characters");
-        return -1;
+        ଫେରନ୍ତୁ -1;
     }
 
     /* slide output data if needed and insert byte before existing data */
-    if (state->x.next == state->out) {
-        unsigned char *src = state->out + state->x.have;
-        unsigned char *dest = state->out + (state->size << 1);
+    ଯଦି (state->x.next == state->out) {
+        unsigned ଅକ୍ଷର *src = state->out + state->x.have;
+        unsigned ଅକ୍ଷର *dest = state->out + (state->size << 1);
 
-        while (src > state->out)
+        ଯେତେବେଳେ (src > state->out)
             *--dest = *--src;
         state->x.next = dest;
     }
     state->x.have++;
     state->x.next--;
-    state->x.next[0] = (unsigned char)c;
+    state->x.next[0] = (unsigned ଅକ୍ଷର)c;
     state->x.pos--;
     state->past = 0;
-    return c;
+    ଫେରନ୍ତୁ c;
 }
 
 /* -- see zlib.h -- */
-char * ZEXPORT gzgets(gzFile file, char *buf, int len) {
-    unsigned left, n;
-    char *str;
-    unsigned char *eol;
+ଅକ୍ଷର * ZEXPORT gzgets(gzFile file, ଅକ୍ଷର *buf, ପୂର୍ଣ୍ଣସଂଖ୍ୟା len) {
+    unsigned ବାମ, n;
+    ଅକ୍ଷର *str;
+    unsigned ଅକ୍ଷର *eol;
     gz_statep state;
 
     /* check parameters, get internal structure, and check that it's for
        reading */
-    if (file == NULL || buf == NULL || len < 1)
-        return NULL;
+    ଯଦି (file == ଖାଲି || buf == ଖାଲି || len < 1)
+        ଫେରନ୍ତୁ ଖାଲି;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ)
-        return NULL;
+    ଯଦି (state->mode != GZ_READ)
+        ଫେରନ୍ତୁ ଖାଲି;
 
     /* check that there was no (serious) error */
-    if (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
-        return NULL;
-    if (state->again)
-        gz_error(state, Z_OK, NULL);
+    ଯଦି (state->err != Z_OK && state->err != Z_BUF_ERROR && !state->again)
+        ଫେରନ୍ତୁ ଖାଲି;
+    ଯଦି (state->again)
+        gz_error(state, Z_OK, ଖାଲି);
 
     /* process a skip request */
-    if (state->skip && gz_skip(state) == -1)
-        return NULL;
+    ଯଦି (state->skip && gz_skip(state) == -1)
+        ଫେରନ୍ତୁ ଖାଲି;
 
     /* copy output up to a new line, len-1 bytes, or there is no more output,
        whichever comes first */
     str = buf;
-    left = (unsigned)len - 1;
-    if (left) do {
+    ବାମ = (unsigned)len - 1;
+    ଯଦି (ବାମ) କର {
         /* assure that something is in the output buffer */
-        if (state->x.have == 0 && gz_fetch(state) == -1)
-            break;                      /* error */
-        if (state->x.have == 0) {       /* end of file */
+        ଯଦି (state->x.have == 0 && gz_fetch(state) == -1)
+            ଭାଙ୍ଗ;                      /* error */
+        ଯଦି (state->x.have == 0) {       /* end of file */
             state->past = 1;            /* read past end */
-            break;                      /* return what we have */
+            ଭାଙ୍ଗ;                      /* return what we have */
         }
 
         /* look for end-of-line in current output buffer */
-        n = state->x.have > left ? left : state->x.have;
-        eol = (unsigned char *)memchr(state->x.next, '\n', n);
-        if (eol != NULL)
+        n = state->x.have > ବାମ ? ବାମ : state->x.have;
+        eol = (unsigned ଅକ୍ଷର *)memchr(state->x.next, '\n', n);
+        ଯଦି (eol != ଖାଲି)
             n = (unsigned)(eol - state->x.next) + 1;
 
         /* copy through end-of-line, or remainder if not found */
@@ -628,59 +628,59 @@ char * ZEXPORT gzgets(gzFile file, char *buf, int len) {
         state->x.have -= n;
         state->x.next += n;
         state->x.pos += n;
-        left -= n;
+        ବାମ -= n;
         buf += n;
-    } while (left && eol == NULL);
+    } ଯେତେବେଳେ (ବାମ && eol == ଖାଲି);
 
     /* append a terminating zero to the string (we don't check for a zero in
        the contents, let the user worry about that) -- return the terminated
        string, or if nothing was read, NULL */
-    if (buf == str)
-        return NULL;
+    ଯଦି (buf == str)
+        ଫେରନ୍ତୁ ଖାଲି;
     buf[0] = 0;
-    return str;
+    ଫେରନ୍ତୁ str;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzdirect(gzFile file) {
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ZEXPORT gzdirect(gzFile file) {
     gz_statep state;
 
     /* get internal structure */
-    if (file == NULL)
-        return 0;
+    ଯଦି (file == ଖାଲି)
+        ଫେରନ୍ତୁ 0;
     state = (gz_statep)file;
 
     /* if the state is not known, but we can find out, then do so (this is
        mainly for right after a gzopen() or gzdopen()) */
-    if (state->mode == GZ_READ && state->how == LOOK && state->x.have == 0)
-        (void)gz_look(state);
+    ଯଦି (state->mode == GZ_READ && state->how == LOOK && state->x.have == 0)
+        (ଶୂନ୍ୟ)gz_look(state);
 
     /* return 1 if transparent, 0 if processing a gzip stream */
-    return state->direct == 1;
+    ଫେରନ୍ତୁ state->direct == 1;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzclose_r(gzFile file) {
-    int ret, err;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ZEXPORT gzclose_r(gzFile file) {
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret, err;
     gz_statep state;
 
     /* get internal structure and check that it's for reading */
-    if (file == NULL)
-        return Z_STREAM_ERROR;
+    ଯଦି (file == ଖାଲି)
+        ଫେରନ୍ତୁ Z_STREAM_ERROR;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ)
-        return Z_STREAM_ERROR;
+    ଯଦି (state->mode != GZ_READ)
+        ଫେରନ୍ତୁ Z_STREAM_ERROR;
 
     /* free memory and close file */
-    if (state->size) {
+    ଯଦି (state->size) {
         inflateEnd(&(state->strm));
-        free(state->out);
-        free(state->in);
+        ମୁକ୍ତ(state->out);
+        ମୁକ୍ତ(state->in);
     }
     err = state->err == Z_BUF_ERROR ? Z_BUF_ERROR : Z_OK;
-    gz_error(state, Z_OK, NULL);
-    free(state->path);
+    gz_error(state, Z_OK, ଖାଲି);
+    ମୁକ୍ତ(state->path);
     ret = close(state->fd);
-    free(state);
-    return ret ? Z_ERRNO : err;
+    ମୁକ୍ତ(state);
+    ଫେରନ୍ତୁ ret ? Z_ERRNO : err;
 }

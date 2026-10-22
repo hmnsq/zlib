@@ -61,24 +61,24 @@
 // use of pointers in the state. The approach here allows for storage of the
 // index in a file.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "zlib.h"
-#include "zran.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ "zlib.h"
+#ଅନ୍ତର୍ଭାଵ "zran.h"
 
 #define WINSIZE 32768U      // sliding window size
 #define CHUNK 16384         // file input buffer size
 
 // See comments in zran.h.
-void deflate_index_free(struct deflate_index *index) {
-    if (index != NULL) {
-        while (index->have)
-            free(index->list[--index->have].window);
-        free(index->list);
-        index->list = NULL;
+ଶୂନ୍ୟ deflate_index_free(ସଂରଚନା deflate_index *index) {
+    ଯଦି (index != ଖାଲି) {
+        ଯେତେବେଳେ (index->have)
+            ମୁକ୍ତ(index->list[--index->have].window);
+        ମୁକ୍ତ(index->list);
+        index->list = ଖାଲି;
         inflateEnd(&index->strm);
-        free(index);
+        ମୁକ୍ତ(index);
     }
 }
 
@@ -86,30 +86,30 @@ void deflate_index_free(struct deflate_index *index) {
 // is temporarily the allocated number of access points, until it is time for
 // deflate_index_build() to return. Then index->mode is set to the mode of
 // inflation.
-static struct deflate_index *add_point(struct deflate_index *index, off_t in,
+ସ୍ଥିର ସଂରଚନା deflate_index *add_point(ସଂରଚନା deflate_index *index, off_t in,
                                        off_t out, off_t beg,
-                                       unsigned char *window) {
-    if (index->have == index->mode) {
+                                       unsigned ଅକ୍ଷର *window) {
+    ଯଦି (index->have == index->mode) {
         // The list is full. Make it bigger.
         index->mode = index->mode ? index->mode << 1 : 8;
-        point_t *next = realloc(index->list, sizeof(point_t) * index->mode);
-        if (next == NULL)
-            return NULL;
+        point_t *next = realloc(index->list, ଆକାର(point_t) * index->mode);
+        ଯଦି (next == ଖାଲି)
+            ଫେରନ୍ତୁ ଖାଲି;
         index->list = next;
     }
 
     // Fill in the access point and increment how many we have.
     point_t *next = (point_t *)(index->list) + index->have++;
-    if (index->have < 0)
+    ଯଦି (index->have < 0)
         // Overflowed the int!
-        return NULL;
+        ଫେରନ୍ତୁ ଖାଲି;
     next->out = out;
     next->in = in;
     next->bits = index->strm.data_type & 7;
     next->dict = out - beg > WINSIZE ? WINSIZE : (unsigned)(out - beg);
     next->window = malloc(next->dict);
-    if (next->window == NULL)
-        return NULL;
+    ଯଦି (next->window == ଖାଲି)
+        ଫେରନ୍ତୁ ଖାଲି;
     unsigned recent = WINSIZE - index->strm.avail_out;
     unsigned copy = recent > next->dict ? next->dict : recent;
     memcpy(next->window + next->dict - copy, window + recent - copy, copy);
@@ -117,7 +117,7 @@ static struct deflate_index *add_point(struct deflate_index *index, off_t in,
     memcpy(next->window, window + WINSIZE - copy, copy);
 
     // Return the index, which may have been newly allocated or destroyed.
-    return index;
+    ଫେରନ୍ତୁ index;
 }
 
 // Decompression modes. These are the inflateInit2() windowBits parameter.
@@ -126,45 +126,45 @@ static struct deflate_index *add_point(struct deflate_index *index, off_t in,
 #define GZIP 31
 
 // See comments in zran.h.
-int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା deflate_index_build(FILE *in, off_t span, ସଂରଚନା deflate_index **built) {
     // If this returns with an error, any attempt to use the index will cleanly
     // return an error.
-    *built = NULL;
+    *built = ଖାଲି;
 
     // Create and initialize the index list.
-    struct deflate_index *index = malloc(sizeof(struct deflate_index));
-    if (index == NULL)
-        return Z_MEM_ERROR;
+    ସଂରଚନା deflate_index *index = malloc(ଆକାର(ସଂରଚନା deflate_index));
+    ଯଦି (index == ଖାଲି)
+        ଫେରନ୍ତୁ Z_MEM_ERROR;
     index->have = 0;
     index->mode = 0;            // entries in index->list allocation
-    index->list = NULL;
+    index->list = ଖାଲି;
     index->strm.state = Z_NULL; // so inflateEnd() can work
 
     // Set up the inflation state.
     index->strm.avail_in = 0;
     index->strm.avail_out = 0;
-    unsigned char buf[CHUNK];   // input buffer
-    unsigned char win[WINSIZE] = {0};   // output sliding window
+    unsigned ଅକ୍ଷର buf[CHUNK];   // input buffer
+    unsigned ଅକ୍ଷର win[WINSIZE] = {0};   // output sliding window
     off_t totin = 0;            // total bytes read from input
     off_t totout = 0;           // total bytes uncompressed
     off_t beg = 0;              // starting offset of last history reset
-    int mode = 0;               // mode: RAW, ZLIB, or GZIP (0 => not set yet)
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା mode = 0;               // mode: RAW, ZLIB, or GZIP (0 => not set yet)
 
     // Decompress from in, generating access points along the way.
-    int ret;                    // the return value from zlib, or Z_ERRNO
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;                    // the return value from zlib, or Z_ERRNO
     off_t last;                 // last access point uncompressed offset
-    do {
+    କର {
         // Assure available input, at least until reaching EOF.
-        if (index->strm.avail_in == 0) {
-            index->strm.avail_in = fread(buf, 1, sizeof(buf), in);
+        ଯଦି (index->strm.avail_in == 0) {
+            index->strm.avail_in = fread(buf, 1, ଆକାର(buf), in);
             totin += index->strm.avail_in;
             index->strm.next_in = buf;
-            if (index->strm.avail_in < sizeof(buf) && ferror(in)) {
+            ଯଦି (index->strm.avail_in < ଆକାର(buf) && ferror(in)) {
                 ret = Z_ERRNO;
-                break;
+                ଭାଙ୍ଗ;
             }
 
-            if (mode == 0) {
+            ଯଦି (mode == 0) {
                 // At the start of the input -- determine the type. Assume raw
                 // if it is neither zlib nor gzip. This could in theory result
                 // in a false positive for zlib, but in practice the fill bits
@@ -178,31 +178,31 @@ int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
                 index->strm.zfree = Z_NULL;
                 index->strm.opaque = Z_NULL;
                 ret = inflateInit2(&index->strm, mode);
-                if (ret != Z_OK)
-                    break;
+                ଯଦି (ret != Z_OK)
+                    ଭାଙ୍ଗ;
             }
         }
 
         // Assure available output. This rotates the output through, for use as
         // a sliding window on the uncompressed data.
-        if (index->strm.avail_out == 0) {
-            index->strm.avail_out = sizeof(win);
+        ଯଦି (index->strm.avail_out == 0) {
+            index->strm.avail_out = ଆକାର(win);
             index->strm.next_out = win;
         }
 
-        if (mode == RAW && index->have == 0)
+        ଯଦି (mode == RAW && index->have == 0)
             // We skip the inflate() call at the start of raw deflate data in
             // order generate an access point there. Set data_type to imitate
             // the end of a header.
             index->strm.data_type = 0x80;
-        else {
+        ଅନ୍ୟଥା {
             // Inflate and update the number of uncompressed bytes.
             unsigned before = index->strm.avail_out;
             ret = inflate(&index->strm, Z_BLOCK);
             totout += before - index->strm.avail_out;
         }
 
-        if ((index->strm.data_type & 0xc0) == 0x80 &&
+        ଯଦି ((index->strm.data_type & 0xc0) == 0x80 &&
             (index->have == 0 || totout - last >= span)) {
             // We are at the end of a header or a non-last deflate block, so we
             // can add an access point here. Furthermore, we are either at the
@@ -211,14 +211,14 @@ int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
             // to add an access point here.
             index = add_point(index, totin - index->strm.avail_in, totout, beg,
                               win);
-            if (index == NULL) {
+            ଯଦି (index == ଖାଲି) {
                 ret = Z_MEM_ERROR;
-                break;
+                ଭାଙ୍ଗ;
             }
             last = totout;
         }
 
-        if (ret == Z_STREAM_END && mode == GZIP &&
+        ଯଦି (ret == Z_STREAM_END && mode == GZIP &&
             (index->strm.avail_in || ungetc(getc(in), in) != EOF)) {
             // There is more input after the end of a gzip member. Reset the
             // inflate state to read another gzip member. On success, this will
@@ -229,20 +229,20 @@ int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
 
         // Keep going until Z_STREAM_END or error. If the compressed data ends
         // prematurely without a file read error, Z_BUF_ERROR is returned.
-    } while (ret == Z_OK);
+    } ଯେତେବେଳେ (ret == Z_OK);
 
-    if (ret != Z_STREAM_END) {
+    ଯଦି (ret != Z_STREAM_END) {
         // An error was encountered. Discard the index and return a negative
         // error code.
         deflate_index_free(index);
-        return ret == Z_NEED_DICT ? Z_DATA_ERROR : ret;
+        ଫେରନ୍ତୁ ret == Z_NEED_DICT ? Z_DATA_ERROR : ret;
     }
 
     // Return the index.
     index->mode = mode;
     index->length = totout;
     *built = index;
-    return index->have;
+    ଫେରନ୍ତୁ index->have;
 }
 
 #ifdef NOPRIME
@@ -256,21 +256,21 @@ int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
 // This assumes that any bits above the *have bits in the last byte are zeros.
 // That assumption is preserved on return, as any bits above *have + bits in
 // the last byte written will be set to zeros.
-static inline void append_bits(unsigned value, int bits,
-                               unsigned char *in, int *have) {
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ append_bits(unsigned ମୂଲ୍ୟ, ପୂର୍ଣ୍ଣସଂଖ୍ୟା bits,
+                               unsigned ଅକ୍ଷର *in, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *have) {
     in += *have >> 3;           // where the first bits from value will go
-    int k = *have & 7;          // the number of bits already there
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା k = *have & 7;          // the number of bits already there
     *have += bits;
-    if (k)
-        *in |= value << k;      // write value above the low k bits
-    else
-        *in = value;
+    ଯଦି (k)
+        *in |= ମୂଲ୍ୟ << k;      // write value above the low k bits
+    ଅନ୍ୟଥା
+        *in = ମୂଲ୍ୟ;
     k = 8 - k;                  // the number of bits just appended
-    while (bits > k) {
-        value >>= k;            // drop the bits appended
+    ଯେତେବେଳେ (bits > k) {
+        ମୂଲ୍ୟ >>= k;            // drop the bits appended
         bits -= k;
         k = 8;                  // now at a byte boundary
-        *++in = value;
+        *++in = ମୂଲ୍ୟ;
     }
 }
 
@@ -280,39 +280,39 @@ static inline void append_bits(unsigned value, int bits,
 // a negative value of bits is not supported. bits must be in 0..16. If the
 // arguments are invalid, Z_STREAM_ERROR is returned. Otherwise the return
 // value from inflate() is returned.
-static int inflatePreface(z_stream *strm, int bits, int value) {
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା inflatePreface(z_stream *strm, ପୂର୍ଣ୍ଣସଂଖ୍ୟା bits, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୂଲ୍ୟ) {
     // Check input.
-    if (strm == Z_NULL || bits < 0 || bits > 16)
-        return Z_STREAM_ERROR;
-    if (bits == 0)
-        return Z_OK;
-    value &= (2 << (bits - 1)) - 1;
+    ଯଦି (strm == Z_NULL || bits < 0 || bits > 16)
+        ଫେରନ୍ତୁ Z_STREAM_ERROR;
+    ଯଦି (bits == 0)
+        ଫେରନ୍ତୁ Z_OK;
+    ମୂଲ୍ୟ &= (2 << (bits - 1)) - 1;
 
     // An empty dynamic block with an odd number of bits (95). The high bit of
     // the last byte is unused.
-    static const unsigned char dyn[] = {
+    ସ୍ଥିର ଅଚଳ unsigned ଅକ୍ଷର dyn[] = {
         4, 0xe0, 0x81, 8, 0, 0, 0, 0, 0x20, 0xa8, 0xab, 0x1f
     };
-    const int dynlen = 95;          // number of bits in the block
+    ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା dynlen = 95;          // number of bits in the block
 
     // Build an input buffer for inflate that is a multiple of eight bits in
     // length, and that ends with the low bits bits of value.
-    unsigned char in[(dynlen + 3 * 10 + 16 + 7) / 8];
-    int have = 0;
-    if (bits & 1) {
+    unsigned ଅକ୍ଷର in[(dynlen + 3 * 10 + 16 + 7) / 8];
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା have = 0;
+    ଯଦି (bits & 1) {
         // Insert an empty dynamic block to get to an odd number of bits, so
         // when bits bits from value are appended, we are at an even number of
         // bits.
-        memcpy(in, dyn, sizeof(dyn));
+        memcpy(in, dyn, ଆକାର(dyn));
         have = dynlen;
     }
-    while ((have + bits) & 7)
+    ଯେତେବେଳେ ((have + bits) & 7)
         // Insert empty fixed blocks until appending bits bits would put us on
         // a byte boundary. This will insert at most three fixed blocks.
         append_bits(2, 10, in, &have);
 
     // Append the bits bits from value, which takes us to a byte boundary.
-    append_bits(value, bits, in, &have);
+    append_bits(ମୂଲ୍ୟ, bits, in, &have);
 
     // Deliver the input to inflate(). There is no output space provided, but
     // inflate() can't get stuck waiting on output not ingesting all of the
@@ -326,144 +326,144 @@ static int inflatePreface(z_stream *strm, int bits, int value) {
     strm->next_in = in;
     strm->avail_out = 0;
     strm->next_out = in;                // not used, but can't be NULL
-    return inflate(strm, Z_NO_FLUSH);
+    ଫେରନ୍ତୁ inflate(strm, Z_NO_FLUSH);
 }
 
-#else
-#  define INFLATEPRIME inflatePrime
+#ଅନ୍ୟଥା
+#  define INFLATEPRIME inflate_ମୌଳିକ
 #endif
 
 // See comments in zran.h.
-ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
-                                off_t offset, unsigned char *buf, size_t len) {
+ptrdiff_t deflate_index_extract(FILE *in, ସଂରଚନା deflate_index *index,
+                                off_t offset, unsigned ଅକ୍ଷର *buf, size_t len) {
     // Do a quick sanity check on the index.
-    if (index == NULL || index->have < 1 || index->list[0].out != 0 ||
+    ଯଦି (index == ଖାଲି || index->have < 1 || index->list[0].out != 0 ||
         index->strm.state == Z_NULL)
-        return Z_STREAM_ERROR;
+        ଫେରନ୍ତୁ Z_STREAM_ERROR;
 
     // If nothing to extract, return zero bytes extracted.
-    if (len == 0 || offset < 0 || offset >= index->length)
-        return 0;
+    ଯଦି (len == 0 || offset < 0 || offset >= index->length)
+        ଫେରନ୍ତୁ 0;
 
     // Find the access point closest to but not after offset.
-    int lo = -1, hi = index->have;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା lo = -1, hi = index->have;
     point_t *point = index->list;
-    while (hi - lo > 1) {
-        int mid = (lo + hi) >> 1;
-        if (offset < point[mid].out)
+    ଯେତେବେଳେ (hi - lo > 1) {
+        ପୂର୍ଣ୍ଣସଂଖ୍ୟା mid = (lo + hi) >> 1;
+        ଯଦି (offset < point[mid].out)
             hi = mid;
-        else
+        ଅନ୍ୟଥା
             lo = mid;
     }
     point += lo;
 
     // Initialize the input file and prime the inflate engine to start there.
-    int ret = fseeko(in, point->in - (point->bits ? 1 : 0), SEEK_SET);
-    if (ret == -1)
-        return Z_ERRNO;
-    int ch = 0;
-    if (point->bits && (ch = getc(in)) == EOF)
-        return ferror(in) ? Z_ERRNO : Z_BUF_ERROR;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = fseeko(in, point->in - (point->bits ? 1 : 0), SEEK_SET);
+    ଯଦି (ret == -1)
+        ଫେରନ୍ତୁ Z_ERRNO;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ch = 0;
+    ଯଦି (point->bits && (ch = getc(in)) == EOF)
+        ଫେରନ୍ତୁ ferror(in) ? Z_ERRNO : Z_BUF_ERROR;
     index->strm.avail_in = 0;
     ret = inflateReset2(&index->strm, RAW);
-    if (ret != Z_OK)
-        return ret;
-    if (point->bits)
+    ଯଦି (ret != Z_OK)
+        ଫେରନ୍ତୁ ret;
+    ଯଦି (point->bits)
         INFLATEPRIME(&index->strm, point->bits, ch >> (8 - point->bits));
     inflateSetDictionary(&index->strm, point->window, point->dict);
 
     // Skip uncompressed bytes until offset reached, then satisfy request.
-    unsigned char input[CHUNK];
-    unsigned char discard[WINSIZE];
+    unsigned ଅକ୍ଷର ନିବେଶ[CHUNK];
+    unsigned ଅକ୍ଷର discard[WINSIZE];
     offset -= point->out;       // number of bytes to skip to get to offset
-    size_t left = len;          // number of bytes left to read after offset
-    do {
-        if (offset) {
+    size_t ବାମ = len;          // number of bytes left to read after offset
+    କର {
+        ଯଦି (offset) {
             // Discard up to offset uncompressed bytes.
             index->strm.avail_out = offset < WINSIZE ? (unsigned)offset :
                                                        WINSIZE;
             index->strm.next_out = discard;
         }
-        else {
+        ଅନ୍ୟଥା {
             // Uncompress up to left bytes into buf.
-            index->strm.avail_out = left < (unsigned)-1 ? (unsigned)left :
+            index->strm.avail_out = ବାମ < (unsigned)-1 ? (unsigned)ବାମ :
                                                           (unsigned)-1;
-            index->strm.next_out = buf + len - left;
+            index->strm.next_out = buf + len - ବାମ;
         }
 
         // Uncompress, setting got to the number of bytes uncompressed.
-        if (index->strm.avail_in == 0) {
+        ଯଦି (index->strm.avail_in == 0) {
             // Assure available input.
-            index->strm.avail_in = fread(input, 1, CHUNK, in);
-            if (index->strm.avail_in < CHUNK && ferror(in)) {
+            index->strm.avail_in = fread(ନିବେଶ, 1, CHUNK, in);
+            ଯଦି (index->strm.avail_in < CHUNK && ferror(in)) {
                 ret = Z_ERRNO;
-                break;
+                ଭାଙ୍ଗ;
             }
-            index->strm.next_in = input;
+            index->strm.next_in = ନିବେଶ;
         }
         unsigned got = index->strm.avail_out;
         ret = inflate(&index->strm, Z_NO_FLUSH);
         got -= index->strm.avail_out;
 
         // Update the appropriate count.
-        if (offset)
+        ଯଦି (offset)
             offset -= got;
-        else {
-            left -= got;
-            if (left == 0)
+        ଅନ୍ୟଥା {
+            ବାମ -= got;
+            ଯଦି (ବାମ == 0)
                 // Request satisfied.
-                break;
+                ଭାଙ୍ଗ;
         }
 
         // If we're at the end of a gzip member and there's more to read,
         // continue to the next gzip member.
-        if (ret == Z_STREAM_END && index->mode == GZIP) {
+        ଯଦି (ret == Z_STREAM_END && index->mode == GZIP) {
             // Discard the gzip trailer.
             unsigned drop = 8;              // length of gzip trailer
-            if (index->strm.avail_in >= drop) {
+            ଯଦି (index->strm.avail_in >= drop) {
                 index->strm.avail_in -= drop;
                 index->strm.next_in += drop;
             }
-            else {
+            ଅନ୍ୟଥା {
                 // Read and discard the remainder of the gzip trailer.
                 drop -= index->strm.avail_in;
                 index->strm.avail_in = 0;
-                do {
-                    if (getc(in) == EOF)
+                କର {
+                    ଯଦି (getc(in) == EOF)
                         // The input does not have a complete trailer.
-                        return ferror(in) ? Z_ERRNO : Z_BUF_ERROR;
-                } while (--drop);
+                        ଫେରନ୍ତୁ ferror(in) ? Z_ERRNO : Z_BUF_ERROR;
+                } ଯେତେବେଳେ (--drop);
             }
 
-            if (index->strm.avail_in || ungetc(getc(in), in) != EOF) {
+            ଯଦି (index->strm.avail_in || ungetc(getc(in), in) != EOF) {
                 // There's more after the gzip trailer. Use inflate to skip the
                 // gzip header and resume the raw inflate there.
                 inflateReset2(&index->strm, GZIP);
-                do {
-                    if (index->strm.avail_in == 0) {
-                        index->strm.avail_in = fread(input, 1, CHUNK, in);
-                        if (index->strm.avail_in < CHUNK && ferror(in)) {
+                କର {
+                    ଯଦି (index->strm.avail_in == 0) {
+                        index->strm.avail_in = fread(ନିବେଶ, 1, CHUNK, in);
+                        ଯଦି (index->strm.avail_in < CHUNK && ferror(in)) {
                             ret = Z_ERRNO;
-                            break;
+                            ଭାଙ୍ଗ;
                         }
-                        index->strm.next_in = input;
+                        index->strm.next_in = ନିବେଶ;
                     }
                     index->strm.avail_out = WINSIZE;
                     index->strm.next_out = discard;
                     ret = inflate(&index->strm, Z_BLOCK);  // stop after header
-                } while (ret == Z_OK && (index->strm.data_type & 0x80) == 0);
-                if (ret != Z_OK)
-                    break;
+                } ଯେତେବେଳେ (ret == Z_OK && (index->strm.data_type & 0x80) == 0);
+                ଯଦି (ret != Z_OK)
+                    ଭାଙ୍ଗ;
                 inflateReset2(&index->strm, RAW);
             }
         }
 
         // Continue until we have the requested data, the deflate data has
         // ended, or an error is encountered.
-    } while (ret == Z_OK);
+    } ଯେତେବେଳେ (ret == Z_OK);
 
     // Return the number of uncompressed bytes read into buf, or the error.
-    return ret == Z_OK || ret == Z_STREAM_END ? len - left : ret;
+    ଫେରନ୍ତୁ ret == Z_OK || ret == Z_STREAM_END ? len - ବାମ : ret;
 }
 
 #ifdef TEST
@@ -476,63 +476,63 @@ ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
 // from 2/3rds of the way through the uncompressed output, writing that to
 // stdout. An offset can be provided as the second argument, in which case the
 // data is extracted from there instead.
-int main(int argc, char **argv) {
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) {
     // Open the input file.
-    if (argc < 2 || argc > 3) {
+    ଯଦି (argc < 2 || argc > 3) {
         fprintf(stderr, "usage: zran file.raw [offset]\n");
-        return 1;
+        ଫେରନ୍ତୁ 1;
     }
     FILE *in = fopen(argv[1], "rb");
-    if (in == NULL) {
+    ଯଦି (in == ଖାଲି) {
         fprintf(stderr, "zran: could not open %s for reading\n", argv[1]);
-        return 1;
+        ଫେରନ୍ତୁ 1;
     }
 
     // Get optional offset.
     off_t offset = -1;
-    if (argc == 3) {
-        char *end;
+    ଯଦି (argc == 3) {
+        ଅକ୍ଷର *end;
         offset = strtoll(argv[2], &end, 10);
-        if (*end || offset < 0) {
+        ଯଦି (*end || offset < 0) {
             fprintf(stderr, "zran: %s is not a valid offset\n", argv[2]);
-            return 1;
+            ଫେରନ୍ତୁ 1;
         }
     }
 
     // Build index.
-    struct deflate_index *index = NULL;
-    int len = deflate_index_build(in, SPAN, &index);
-    if (len < 0) {
+    ସଂରଚନା deflate_index *index = ଖାଲି;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା len = deflate_index_build(in, SPAN, &index);
+    ଯଦି (len < 0) {
         fclose(in);
-        switch (len) {
-        case Z_MEM_ERROR:
+        ବାଛ (len) {
+        ସ୍ଥିତି Z_MEM_ERROR:
             fprintf(stderr, "zran: out of memory\n");
-            break;
-        case Z_BUF_ERROR:
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି Z_BUF_ERROR:
             fprintf(stderr, "zran: %s ended prematurely\n", argv[1]);
-            break;
-        case Z_DATA_ERROR:
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି Z_DATA_ERROR:
             fprintf(stderr, "zran: compressed data error in %s\n", argv[1]);
-            break;
-        case Z_ERRNO:
+            ଭାଙ୍ଗ;
+        ସ୍ଥିତି Z_ERRNO:
             fprintf(stderr, "zran: read error on %s\n", argv[1]);
-            break;
-        default:
+            ଭାଙ୍ଗ;
+        ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
             fprintf(stderr, "zran: error %d while building index\n", len);
         }
-        return 1;
+        ଫେରନ୍ତୁ 1;
     }
     fprintf(stderr, "zran: built index with %d access points\n", len);
 
     // Use index by reading some bytes from an arbitrary offset.
-    unsigned char buf[LEN];
-    if (offset == -1)
+    unsigned ଅକ୍ଷର buf[LEN];
+    ଯଦି (offset == -1)
         offset = ((index->length + 1) << 1) / 3;
     ptrdiff_t got = deflate_index_extract(in, index, offset, buf, LEN);
-    if (got < 0)
+    ଯଦି (got < 0)
         fprintf(stderr, "zran: extraction failed: %s error\n",
                 got == Z_MEM_ERROR ? "out of memory" : "input corrupted");
-    else {
+    ଅନ୍ୟଥା {
         fwrite(buf, 1, got, stdout);
         fprintf(stderr, "zran: extracted %ld bytes at %lld\n", got, offset);
     }
@@ -540,7 +540,7 @@ int main(int argc, char **argv) {
     // Clean up and exit.
     deflate_index_free(index);
     fclose(in);
-    return 0;
+    ଫେରନ୍ତୁ 0;
 }
 
 #endif

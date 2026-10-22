@@ -26,10 +26,10 @@
  * See puff.c for purpose and usage.
  */
 #ifndef NIL
-#  define NIL ((unsigned char *)0)      /* for no output option */
+#  define NIL ((unsigned ଅକ୍ଷର *)0)      /* for no output option */
 #endif
 
-int puff(unsigned char *dest,           /* pointer to destination pointer */
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା puff(unsigned ଅକ୍ଷର *dest,           /* pointer to destination pointer */
          unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
+         ଅଚଳ unsigned ଅକ୍ଷର *source,   /* pointer to source data pointer */
          unsigned long *sourcelen);     /* amount of input available */

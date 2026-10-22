@@ -1,7 +1,7 @@
 
-#include "zfstream.h"
+#ଅନ୍ତର୍ଭାଵ "zfstream.h"
 
-int main() {
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ() {
 
   // Construct a stream object with this filebuffer.  Anything sent
   // to this stream will go to standard out.
@@ -19,6 +19,6 @@ int main() {
 
   os.close();
 
-  return 0;
+  ଫେରନ୍ତୁ 0;
 
 }

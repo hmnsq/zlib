@@ -13,17 +13,17 @@
    1.5  11 Feb 2026  Use underscores for Windows POSIX names
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include "zlib.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <assert.h>
+#ଅନ୍ତର୍ଭାଵ "zlib.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#ଯଦି defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) _setmode(_fileno(file), _O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
+#  define SET_ଦ୍ୱିମିକ_MODE(file) _setmode(_fileno(file), O_ଦ୍ୱିମିକ_2)
+#ଅନ୍ୟଥା
+#  define SET_ଦ୍ୱିମିକ_MODE(file)
 #endif
 
 #define CHUNK 16384
@@ -34,54 +34,54 @@
    level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
    version of the library linked do not match, or Z_ERRNO if there is
    an error reading or writing the files. */
-int def(FILE *source, FILE *dest, int level)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା def(FILE *source, FILE *dest, ପୂର୍ଣ୍ଣସଂଖ୍ୟା level)
 {
-    int ret, flush;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret, flush;
     unsigned have;
     z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    unsigned ଅକ୍ଷର in[CHUNK];
+    unsigned ଅକ୍ଷର out[CHUNK];
 
     /* allocate deflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
     ret = deflateInit(&strm, level);
-    if (ret != Z_OK)
-        return ret;
+    ଯଦି (ret != Z_OK)
+        ଫେରନ୍ତୁ ret;
 
     /* compress until end of file */
-    do {
+    କର {
         strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
-            (void)deflateEnd(&strm);
-            return Z_ERRNO;
+        ଯଦି (ferror(source)) {
+            (ଶୂନ୍ୟ)deflateEnd(&strm);
+            ଫେରନ୍ତୁ Z_ERRNO;
         }
         flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
         strm.next_in = in;
 
         /* run deflate() on input until output buffer not full, finish
            compression if all of source has been read in */
-        do {
+        କର {
             strm.avail_out = CHUNK;
             strm.next_out = out;
             ret = deflate(&strm, flush);    /* no bad return value */
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+            ପ୍ରତିଜ୍ଞା(ret != Z_STREAM_ERROR);  /* state not clobbered */
             have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)deflateEnd(&strm);
-                return Z_ERRNO;
+            ଯଦି (fwrite(out, 1, have, dest) != have || ferror(dest)) {
+                (ଶୂନ୍ୟ)deflateEnd(&strm);
+                ଫେରନ୍ତୁ Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
-        assert(strm.avail_in == 0);     /* all input will be used */
+        } ଯେତେବେଳେ (strm.avail_out == 0);
+        ପ୍ରତିଜ୍ଞା(strm.avail_in == 0);     /* all input will be used */
 
         /* done when last data in file processed */
-    } while (flush != Z_FINISH);
-    assert(ret == Z_STREAM_END);        /* stream will be complete */
+    } ଯେତେବେଳେ (flush != Z_FINISH);
+    ପ୍ରତିଜ୍ଞା(ret == Z_STREAM_END);        /* stream will be complete */
 
     /* clean up and return */
-    (void)deflateEnd(&strm);
-    return Z_OK;
+    (ଶୂନ୍ୟ)deflateEnd(&strm);
+    ଫେରନ୍ତୁ Z_OK;
 }
 
 /* Decompress from file source to file dest until stream ends or EOF.
@@ -90,13 +90,13 @@ int def(FILE *source, FILE *dest, int level)
    invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
    the version of the library linked do not match, or Z_ERRNO if there
    is an error reading or writing the files. */
-int inf(FILE *source, FILE *dest)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା inf(FILE *source, FILE *dest)
 {
-    int ret;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
     unsigned have;
     z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    unsigned ଅକ୍ଷର in[CHUNK];
+    unsigned ଅକ୍ଷର out[CHUNK];
 
     /* allocate inflate state */
     strm.zalloc = Z_NULL;
@@ -105,102 +105,102 @@ int inf(FILE *source, FILE *dest)
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
     ret = inflateInit(&strm);
-    if (ret != Z_OK)
-        return ret;
+    ଯଦି (ret != Z_OK)
+        ଫେରନ୍ତୁ ret;
 
     /* decompress until deflate stream ends or end of file */
-    do {
+    କର {
         strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
-            (void)inflateEnd(&strm);
-            return Z_ERRNO;
+        ଯଦି (ferror(source)) {
+            (ଶୂନ୍ୟ)inflateEnd(&strm);
+            ଫେରନ୍ତୁ Z_ERRNO;
         }
-        if (strm.avail_in == 0)
-            break;
+        ଯଦି (strm.avail_in == 0)
+            ଭାଙ୍ଗ;
         strm.next_in = in;
 
         /* run inflate() on input until output buffer not full */
-        do {
+        କର {
             strm.avail_out = CHUNK;
             strm.next_out = out;
             ret = inflate(&strm, Z_NO_FLUSH);
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            switch (ret) {
-            case Z_NEED_DICT:
+            ପ୍ରତିଜ୍ଞା(ret != Z_STREAM_ERROR);  /* state not clobbered */
+            ବାଛ (ret) {
+            ସ୍ଥିତି Z_NEED_DICT:
                 ret = Z_DATA_ERROR;     /* and fall through */
-            case Z_DATA_ERROR:
-            case Z_MEM_ERROR:
-                (void)inflateEnd(&strm);
-                return ret;
+            ସ୍ଥିତି Z_DATA_ERROR:
+            ସ୍ଥିତି Z_MEM_ERROR:
+                (ଶୂନ୍ୟ)inflateEnd(&strm);
+                ଫେରନ୍ତୁ ret;
             }
             have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)inflateEnd(&strm);
-                return Z_ERRNO;
+            ଯଦି (fwrite(out, 1, have, dest) != have || ferror(dest)) {
+                (ଶୂନ୍ୟ)inflateEnd(&strm);
+                ଫେରନ୍ତୁ Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
+        } ଯେତେବେଳେ (strm.avail_out == 0);
 
         /* done when inflate() says it's done */
-    } while (ret != Z_STREAM_END);
+    } ଯେତେବେଳେ (ret != Z_STREAM_END);
 
     /* clean up and return */
-    (void)inflateEnd(&strm);
-    return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+    (ଶୂନ୍ୟ)inflateEnd(&strm);
+    ଫେରନ୍ତୁ ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
 
 /* report a zlib or i/o error */
-void zerr(int ret)
+ଶୂନ୍ୟ zerr(ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret)
 {
     fputs("zpipe: ", stderr);
-    switch (ret) {
-    case Z_ERRNO:
-        if (ferror(stdin))
+    ବାଛ (ret) {
+    ସ୍ଥିତି Z_ERRNO:
+        ଯଦି (ferror(stdin))
             fputs("error reading stdin\n", stderr);
-        if (ferror(stdout))
+        ଯଦି (ferror(stdout))
             fputs("error writing stdout\n", stderr);
-        break;
-    case Z_STREAM_ERROR:
+        ଭାଙ୍ଗ;
+    ସ୍ଥିତି Z_STREAM_ERROR:
         fputs("invalid compression level\n", stderr);
-        break;
-    case Z_DATA_ERROR:
+        ଭାଙ୍ଗ;
+    ସ୍ଥିତି Z_DATA_ERROR:
         fputs("invalid or incomplete deflate data\n", stderr);
-        break;
-    case Z_MEM_ERROR:
+        ଭାଙ୍ଗ;
+    ସ୍ଥିତି Z_MEM_ERROR:
         fputs("out of memory\n", stderr);
-        break;
-    case Z_VERSION_ERROR:
+        ଭାଙ୍ଗ;
+    ସ୍ଥିତି Z_VERSION_ERROR:
         fputs("zlib version mismatch!\n", stderr);
     }
 }
 
 /* compress or decompress from stdin to stdout */
-int main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
-    int ret;
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
     /* avoid end-of-line conversions */
-    SET_BINARY_MODE(stdin);
-    SET_BINARY_MODE(stdout);
+    SET_ଦ୍ୱିମିକ_MODE(stdin);
+    SET_ଦ୍ୱିମିକ_MODE(stdout);
 
     /* do compression if no arguments */
-    if (argc == 1) {
+    ଯଦି (argc == 1) {
         ret = def(stdin, stdout, Z_DEFAULT_COMPRESSION);
-        if (ret != Z_OK)
+        ଯଦି (ret != Z_OK)
             zerr(ret);
-        return ret;
+        ଫେରନ୍ତୁ ret;
     }
 
     /* do decompression if -d specified */
-    else if (argc == 2 && strcmp(argv[1], "-d") == 0) {
+    ଅନ୍ୟଥା ଯଦି (argc == 2 && strcmp(argv[1], "-d") == 0) {
         ret = inf(stdin, stdout);
-        if (ret != Z_OK)
+        ଯଦି (ret != Z_OK)
             zerr(ret);
-        return ret;
+        ଫେରନ୍ତୁ ret;
     }
 
     /* otherwise, report usage */
-    else {
+    ଅନ୍ୟଥା {
         fputs("zpipe usage: zpipe [-d] < source > dest\n", stderr);
-        return 1;
+        ଫେରନ୍ତୁ 1;
     }
 }

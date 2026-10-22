@@ -10,66 +10,66 @@
 
 */
 
-#if defined(_WIN32) && (!(defined(_CRT_SECURE_NO_WARNINGS)))
+#ଯଦି defined(_WIN32) && (!(defined(_CRT_SECURE_NO_WARNINGS)))
         #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#if defined(__APPLE__) || defined(IOAPI_NO_64) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64) || (defined(__ANDROID_API__) && __ANDROID_API__ < 24)
+#ଯଦି defined(__APPLE__) || defined(IOAPI_NO_64) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64) || (defined(__ANDROID_API__) && __ANDROID_API__ < 24)
 /* In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions */
 #define FOPEN_FUNC(filename, mode) fopen(filename, mode)
 #define FTELLO_FUNC(stream) ftello(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
-#else
+#ଅନ୍ୟଥା
 #define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
 #define FTELLO_FUNC(stream) ftello64(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
 #endif
 
 
-#include "ioapi.h"
+#ଅନ୍ତର୍ଭାଵ "ioapi.h"
 
-voidpf call_zopen64 (const zlib_filefunc64_32_def* pfilefunc, const void*filename, int mode) {
-    if (pfilefunc->zfile_func64.zopen64_file != NULL)
-        return (*(pfilefunc->zfile_func64.zopen64_file)) (pfilefunc->zfile_func64.opaque,filename,mode);
-    else
+voidpf call_zopen64 (ଅଚଳ zlib_filefunc64_32_def* pfilefunc, ଅଚଳ ଶୂନ୍ୟ*filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା mode) {
+    ଯଦି (pfilefunc->zfile_func64.zopen64_file != ଖାଲି)
+        ଫେରନ୍ତୁ (*(pfilefunc->zfile_func64.zopen64_file)) (pfilefunc->zfile_func64.opaque,filename,mode);
+    ଅନ୍ୟଥା
     {
-        return (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque,(const char*)filename,mode);
+        ଫେରନ୍ତୁ (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque,(ଅଚଳ ଅକ୍ଷର*)filename,mode);
     }
 }
 
-long call_zseek64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, int origin) {
-    if (pfilefunc->zfile_func64.zseek64_file != NULL)
-        return (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,offset,origin);
-    else
+long call_zseek64 (ଅଚଳ zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, ପୂର୍ଣ୍ଣସଂଖ୍ୟା origin) {
+    ଯଦି (pfilefunc->zfile_func64.zseek64_file != ଖାଲି)
+        ଫେରନ୍ତୁ (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,offset,origin);
+    ଅନ୍ୟଥା
     {
         uLong offsetTruncated = (uLong)offset;
-        if (offsetTruncated != offset)
-            return -1;
-        else
-            return (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,filestream,offsetTruncated,origin);
+        ଯଦି (offsetTruncated != offset)
+            ଫେରନ୍ତୁ -1;
+        ଅନ୍ୟଥା
+            ଫେରନ୍ତୁ (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,filestream,offsetTruncated,origin);
     }
 }
 
-ZPOS64_T call_ztell64 (const zlib_filefunc64_32_def* pfilefunc, voidpf filestream) {
-    if (pfilefunc->zfile_func64.zseek64_file != NULL)
-        return (*(pfilefunc->zfile_func64.ztell64_file)) (pfilefunc->zfile_func64.opaque,filestream);
-    else
+ZPOS64_T call_ztell64 (ଅଚଳ zlib_filefunc64_32_def* pfilefunc, voidpf filestream) {
+    ଯଦି (pfilefunc->zfile_func64.zseek64_file != ଖାଲି)
+        ଫେରନ୍ତୁ (*(pfilefunc->zfile_func64.ztell64_file)) (pfilefunc->zfile_func64.opaque,filestream);
+    ଅନ୍ୟଥା
     {
         uLong tell_uLong = (uLong)(*(pfilefunc->ztell32_file))(pfilefunc->zfile_func64.opaque,filestream);
-        if ((tell_uLong) == MAXU32)
-            return (ZPOS64_T)-1;
-        else
-            return tell_uLong;
+        ଯଦି ((tell_uLong) == MAXU32)
+            ଫେରନ୍ତୁ (ZPOS64_T)-1;
+        ଅନ୍ୟଥା
+            ଫେରନ୍ତୁ tell_uLong;
     }
 }
 
-void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32, const zlib_filefunc_def* p_filefunc32) {
-    p_filefunc64_32->zfile_func64.zopen64_file = NULL;
+ଶୂନ୍ୟ fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32, ଅଚଳ zlib_filefunc_def* p_filefunc32) {
+    p_filefunc64_32->zfile_func64.zopen64_file = ଖାଲି;
     p_filefunc64_32->zopen32_file = p_filefunc32->zopen_file;
     p_filefunc64_32->zfile_func64.zread_file = p_filefunc32->zread_file;
     p_filefunc64_32->zfile_func64.zwrite_file = p_filefunc32->zwrite_file;
-    p_filefunc64_32->zfile_func64.ztell64_file = NULL;
-    p_filefunc64_32->zfile_func64.zseek64_file = NULL;
+    p_filefunc64_32->zfile_func64.ztell64_file = ଖାଲି;
+    p_filefunc64_32->zfile_func64.zseek64_file = ଖାଲି;
     p_filefunc64_32->zfile_func64.zclose_file = p_filefunc32->zclose_file;
     p_filefunc64_32->zfile_func64.zerror_file = p_filefunc32->zerror_file;
     p_filefunc64_32->zfile_func64.opaque = p_filefunc32->opaque;
@@ -79,136 +79,136 @@ void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filef
 
 
 
-static voidpf ZCALLBACK fopen_file_func(voidpf opaque, const char* filename, int mode) {
-    FILE* file = NULL;
-    const char* mode_fopen = NULL;
-    (void)opaque;
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+ସ୍ଥିର voidpf ZCALLBACK fopen_file_func(voidpf opaque, ଅଚଳ ଅକ୍ଷର* filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା mode) {
+    FILE* file = ଖାଲି;
+    ଅଚଳ ଅକ୍ଷର* mode_fopen = ଖାଲି;
+    (ଶୂନ୍ୟ)opaque;
+    ଯଦି ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
         mode_fopen = "rb";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+    ଅନ୍ୟଥା
+    ଯଦି (mode & ZLIB_FILEFUNC_MODE_EXISTING)
         mode_fopen = "r+b";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+    ଅନ୍ୟଥା
+    ଯଦି (mode & ZLIB_FILEFUNC_MODE_CREATE)
         mode_fopen = "wb";
 
-    if ((filename!=NULL) && (mode_fopen != NULL))
+    ଯଦି ((filename!=ଖାଲି) && (mode_fopen != ଖାଲି))
         file = fopen(filename, mode_fopen);
-    return file;
+    ଫେରନ୍ତୁ file;
 }
 
-static voidpf ZCALLBACK fopen64_file_func(voidpf opaque, const void* filename, int mode) {
-    FILE* file = NULL;
-    const char* mode_fopen = NULL;
-    (void)opaque;
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+ସ୍ଥିର voidpf ZCALLBACK fopen64_file_func(voidpf opaque, ଅଚଳ ଶୂନ୍ୟ* filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା mode) {
+    FILE* file = ଖାଲି;
+    ଅଚଳ ଅକ୍ଷର* mode_fopen = ଖାଲି;
+    (ଶୂନ୍ୟ)opaque;
+    ଯଦି ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
         mode_fopen = "rb";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+    ଅନ୍ୟଥା
+    ଯଦି (mode & ZLIB_FILEFUNC_MODE_EXISTING)
         mode_fopen = "r+b";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+    ଅନ୍ୟଥା
+    ଯଦି (mode & ZLIB_FILEFUNC_MODE_CREATE)
         mode_fopen = "wb";
 
-    if ((filename!=NULL) && (mode_fopen != NULL))
-        file = FOPEN_FUNC((const char*)filename, mode_fopen);
-    return file;
+    ଯଦି ((filename!=ଖାଲି) && (mode_fopen != ଖାଲି))
+        file = FOPEN_FUNC((ଅଚଳ ଅକ୍ଷର*)filename, mode_fopen);
+    ଫେରନ୍ତୁ file;
 }
 
 
-static uLong ZCALLBACK fread_file_func(voidpf opaque, voidpf stream, void* buf, uLong size) {
+ସ୍ଥିର uLong ZCALLBACK fread_file_func(voidpf opaque, voidpf stream, ଶୂନ୍ୟ* buf, uLong size) {
     uLong ret;
-    (void)opaque;
+    (ଶୂନ୍ୟ)opaque;
     ret = (uLong)fread(buf, 1, (size_t)size, (FILE *)stream);
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
-static uLong ZCALLBACK fwrite_file_func(voidpf opaque, voidpf stream, const void* buf, uLong size) {
+ସ୍ଥିର uLong ZCALLBACK fwrite_file_func(voidpf opaque, voidpf stream, ଅଚଳ ଶୂନ୍ୟ* buf, uLong size) {
     uLong ret;
-    (void)opaque;
+    (ଶୂନ୍ୟ)opaque;
     ret = (uLong)fwrite(buf, 1, (size_t)size, (FILE *)stream);
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
-static long ZCALLBACK ftell_file_func(voidpf opaque, voidpf stream) {
+ସ୍ଥିର long ZCALLBACK ftell_file_func(voidpf opaque, voidpf stream) {
     long ret;
-    (void)opaque;
+    (ଶୂନ୍ୟ)opaque;
     ret = ftell((FILE *)stream);
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
 
-static ZPOS64_T ZCALLBACK ftell64_file_func(voidpf opaque, voidpf stream) {
+ସ୍ଥିର ZPOS64_T ZCALLBACK ftell64_file_func(voidpf opaque, voidpf stream) {
     ZPOS64_T ret;
-    (void)opaque;
+    (ଶୂନ୍ୟ)opaque;
     ret = (ZPOS64_T)FTELLO_FUNC((FILE *)stream);
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
-static long ZCALLBACK fseek_file_func(voidpf opaque, voidpf stream, uLong offset, int origin) {
-    int fseek_origin=0;
+ସ୍ଥିର long ZCALLBACK fseek_file_func(voidpf opaque, voidpf stream, uLong offset, ପୂର୍ଣ୍ଣସଂଖ୍ୟା origin) {
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା fseek_origin=0;
     long ret;
-    (void)opaque;
-    switch (origin)
+    (ଶୂନ୍ୟ)opaque;
+    ବାଛ (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
+    ସ୍ଥିତି ZLIB_FILEFUNC_SEEK_CUR :
         fseek_origin = SEEK_CUR;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
+        ଭାଙ୍ଗ;
+    ସ୍ଥିତି ZLIB_FILEFUNC_SEEK_END :
         fseek_origin = SEEK_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
+        ଭାଙ୍ଗ;
+    ସ୍ଥିତି ZLIB_FILEFUNC_SEEK_SET :
         fseek_origin = SEEK_SET;
-        break;
-    default: return -1;
+        ଭାଙ୍ଗ;
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ: ଫେରନ୍ତୁ -1;
     }
     ret = 0;
-    if (fseek((FILE *)stream, (long)offset, fseek_origin) != 0)
+    ଯଦି (fseek((FILE *)stream, (long)offset, fseek_origin) != 0)
         ret = -1;
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
-static long ZCALLBACK fseek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, int origin) {
-    int fseek_origin=0;
+ସ୍ଥିର long ZCALLBACK fseek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, ପୂର୍ଣ୍ଣସଂଖ୍ୟା origin) {
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା fseek_origin=0;
     long ret;
-    (void)opaque;
-    switch (origin)
+    (ଶୂନ୍ୟ)opaque;
+    ବାଛ (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
+    ସ୍ଥିତି ZLIB_FILEFUNC_SEEK_CUR :
         fseek_origin = SEEK_CUR;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
+        ଭାଙ୍ଗ;
+    ସ୍ଥିତି ZLIB_FILEFUNC_SEEK_END :
         fseek_origin = SEEK_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
+        ଭାଙ୍ଗ;
+    ସ୍ଥିତି ZLIB_FILEFUNC_SEEK_SET :
         fseek_origin = SEEK_SET;
-        break;
-    default: return -1;
+        ଭାଙ୍ଗ;
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ: ଫେରନ୍ତୁ -1;
     }
     ret = 0;
 
-    if(FSEEKO_FUNC((FILE *)stream, (z_off64_t)offset, fseek_origin) != 0)
+    ଯଦି(FSEEKO_FUNC((FILE *)stream, (z_off64_t)offset, fseek_origin) != 0)
                         ret = -1;
 
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
 
-static int ZCALLBACK fclose_file_func(voidpf opaque, voidpf stream) {
-    int ret;
-    (void)opaque;
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା ZCALLBACK fclose_file_func(voidpf opaque, voidpf stream) {
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
+    (ଶୂନ୍ୟ)opaque;
     ret = fclose((FILE *)stream);
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
-static int ZCALLBACK ferror_file_func(voidpf opaque, voidpf stream) {
-    int ret;
-    (void)opaque;
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା ZCALLBACK ferror_file_func(voidpf opaque, voidpf stream) {
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
+    (ଶୂନ୍ୟ)opaque;
     ret = ferror((FILE *)stream);
-    return ret;
+    ଫେରନ୍ତୁ ret;
 }
 
-void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
+ଶୂନ୍ୟ fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen_file = fopen_file_func;
     pzlib_filefunc_def->zread_file = fread_file_func;
     pzlib_filefunc_def->zwrite_file = fwrite_file_func;
@@ -216,10 +216,10 @@ void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek_file = fseek_file_func;
     pzlib_filefunc_def->zclose_file = fclose_file_func;
     pzlib_filefunc_def->zerror_file = ferror_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ଖାଲି;
 }
 
-void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
+ଶୂନ୍ୟ fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = fopen64_file_func;
     pzlib_filefunc_def->zread_file = fread_file_func;
     pzlib_filefunc_def->zwrite_file = fwrite_file_func;
@@ -227,5 +227,5 @@ void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = fseek64_file_func;
     pzlib_filefunc_def->zclose_file = fclose_file_func;
     pzlib_filefunc_def->zerror_file = ferror_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ଖାଲି;
 }
