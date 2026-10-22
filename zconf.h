@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#ifndef ZCONF_H
-#define ZCONF_H
+#که_نه_تعریف_شوی ZCONF_H
+#تعریف_کړه ZCONF_H
 
 /*
  * If you *really* need a unique prefix for all types and library functions,
@@ -14,17 +14,17 @@
  * Even better than compiling with -DZ_PREFIX would be to use configure to set
  * this permanently in zconf.h using "./configure --zprefix".
  */
-#ifdef Z_PREFIX     /* may be set to #if 1 by ./configure */
-#  define Z_PREFIX_SET
+#که_تعریف_شوی Z_مختاړی     /* may be set to #if 1 by ./configure */
+#  define Z_مختاړی_سېټ
 
 /* all linked symbols and init macros */
-#  define _dist_code            z__dist_code
-#  define _length_code          z__length_code
+#  define dist_کوډ            z_dist_کوډ
+#  define اوږدتیا_کوډ          z_اوږدتیا_کوډ
 #  define _tr_align             z__tr_align
-#  define _tr_flush_bits        z__tr_flush_bits
-#  define _tr_flush_block       z__tr_flush_block
+#  define tr_flush_بټونه        z_tr_flush_بټونه
+#  define tr_flush_بلاک       z_tr_flush_بلاک
 #  define _tr_init              z__tr_init
-#  define _tr_stored_block      z__tr_stored_block
+#  define tr_stored_بلاک      z_tr_stored_بلاک
 #  define _tr_tally             z__tr_tally
 #  define adler32               z_adler32
 #  define adler32_combine       z_adler32_combine
@@ -38,18 +38,18 @@
 #    define compressBound         z_compressBound
 #    define compressBound_z       z_compressBound_z
 #  endif
-#  define crc32                 z_crc32
-#  define crc32_combine         z_crc32_combine
-#  define crc32_combine64       z_crc32_combine64
-#  define crc32_combine_gen     z_crc32_combine_gen
-#  define crc32_combine_gen64   z_crc32_combine_gen64
-#  define crc32_combine_op      z_crc32_combine_op
-#  define crc32_z               z_crc32_z
+#  define دوراني_ازموینه_32_2                 z_دوراني_ازموینه_32
+#  define دوراني_ازموینه_32_combine         z_دوراني_ازموینه_32_combine
+#  define دوراني_ازموینه_32_combine64       z_دوراني_ازموینه_32_combine64
+#  define دوراني_ازموینه_32_combine_gen     z_دوراني_ازموینه_32_combine_gen
+#  define دوراني_ازموینه_32_combine_gen64   z_دوراني_ازموینه_32_combine_gen64
+#  define دوراني_ازموینه_32_combine_op      z_دوراني_ازموینه_32_combine_op
+#  define دوراني_ازموینه_32_z               z_دوراني_ازموینه_32_z
 #  define deflate               z_deflate
 #  define deflateBound          z_deflateBound
 #  define deflateBound_z        z_deflateBound_z
 #  define deflateCopy           z_deflateCopy
-#  define deflateEnd            z_deflateEnd
+#  define deflate_پای_ټکی            z_deflate_پای_ټکی
 #  define deflateGetDictionary  z_deflateGetDictionary
 #  define deflateInit           z_deflateInit
 #  define deflateInit2          z_deflateInit2
@@ -57,15 +57,15 @@
 #  define deflateInit_          z_deflateInit_
 #  define deflateParams         z_deflateParams
 #  define deflatePending        z_deflatePending
-#  define deflatePrime          z_deflatePrime
+#  define deflate_اولي          z_deflate_اولي
 #  define deflateReset          z_deflateReset
 #  define deflateResetKeep      z_deflateResetKeep
-#  define deflateSetDictionary  z_deflateSetDictionary
-#  define deflateSetHeader      z_deflateSetHeader
+#  define deflate_سېټ_Dictionary  z_deflate_سېټ_Dictionary
+#  define deflate_سېټ_سرلیک      z_deflate_سېټ_سرلیک
 #  define deflateTune           z_deflateTune
-#  define deflateUsed           z_deflateUsed
+#  define deflate_کارول_شوی           z_deflate_کارول_شوی
 #  define deflate_copyright     z_deflate_copyright
-#  define get_crc_table         z_get_crc_table
+#  define get_دوراني_ازموینه_جدول         z_get_دوراني_ازموینه_جدول
 #  ifndef Z_SOLO
 #    define gz_error              z_gz_error
 #    define gz_intmax             z_gz_intmax
@@ -107,32 +107,32 @@
 #    define gzwrite               z_gzwrite
 #  endif
 #  define inflate               z_inflate
-#  define inflateBack           z_inflateBack
-#  define inflateBackEnd        z_inflateBackEnd
-#  define inflateBackInit       z_inflateBackInit
-#  define inflateBackInit_      z_inflateBackInit_
-#  define inflateCodesUsed      z_inflateCodesUsed
+#  define inflate_شا           z_inflate_شا
+#  define inflate_شا_پای_ټکی        z_inflate_شا_پای_ټکی
+#  define inflate_شا_Init       z_inflate_شا_Init
+#  define inflate_شا_Init_2      z_inflate_شا_Init_2
+#  define inflate_Codes_کارول_شوی      z_inflate_Codes_کارول_شوی
 #  define inflateCopy           z_inflateCopy
-#  define inflateEnd            z_inflateEnd
+#  define inflate_پای_ټکی            z_inflate_پای_ټکی
 #  define inflateGetDictionary  z_inflateGetDictionary
-#  define inflateGetHeader      z_inflateGetHeader
+#  define inflate_Get_سرلیک      z_inflate_Get_سرلیک
 #  define inflateInit           z_inflateInit
 #  define inflateInit2          z_inflateInit2
 #  define inflateInit2_         z_inflateInit2_
 #  define inflateInit_          z_inflateInit_
 #  define inflateMark           z_inflateMark
-#  define inflatePrime          z_inflatePrime
+#  define inflate_اولي          z_inflate_اولي
 #  define inflateReset          z_inflateReset
 #  define inflateReset2         z_inflateReset2
 #  define inflateResetKeep      z_inflateResetKeep
-#  define inflateSetDictionary  z_inflateSetDictionary
+#  define inflate_سېټ_Dictionary  z_inflate_سېټ_Dictionary
 #  define inflateSync           z_inflateSync
-#  define inflateSyncPoint      z_inflateSyncPoint
+#  define inflate_Sync_ټکی      z_inflate_Sync_ټکی
 #  define inflateUndermine      z_inflateUndermine
 #  define inflateValidate       z_inflateValidate
 #  define inflate_copyright     z_inflate_copyright
 #  define inflate_fast          z_inflate_fast
-#  define inflate_table         z_inflate_table
+#  define inflate_جدول         z_inflate_جدول
 #  define inflate_fixed         z_inflate_fixed
 #  ifndef Z_SOLO
 #    define uncompress            z_uncompress
@@ -146,7 +146,7 @@
 #    define zcfree                z_zcfree
 #  endif
 #  define zlibCompileFlags      z_zlibCompileFlags
-#  define zlibVersion           z_zlibVersion
+#  define zlib_نسخه           z_zlib_نسخه
 
 /* all zlib typedefs in zlib.h and zconf.h */
 #  define Byte                  z_Byte
@@ -157,11 +157,11 @@
 #  ifndef Z_SOLO
 #    define gzFile                z_gzFile
 #  endif
-#  define gz_header             z_gz_header
+#  define gz_سرلیک             z_gz_سرلیک
 #  define gz_headerp            z_gz_headerp
-#  define in_func               z_in_func
+#  define دننه_func               z_دننه_func
 #  define intf                  z_intf
-#  define out_func              z_out_func
+#  define بهر_func              z_بهر_func
 #  define uInt                  z_uInt
 #  define uIntf                 z_uIntf
 #  define uLong                 z_uLong
@@ -171,121 +171,121 @@
 #  define voidpf                z_voidpf
 
 /* all zlib structs in zlib.h and zconf.h */
-#  define gz_header_s           z_gz_header_s
-#  define internal_state        z_internal_state
+#  define gz_سرلیک_s           z_gz_سرلیک_s
+#  define دننی_state        z_دننی_state
 
-#endif
+#د_که_پای
 
-#if defined(__MSDOS__) && !defined(MSDOS)
+#إذا defined(__MSDOS__) && !defined(MSDOS)
 #  define MSDOS
-#endif
-#if (defined(OS_2) || defined(__OS2__)) && !defined(OS2)
+#د_که_پای
+#إذا (defined(OS_2) || defined(__OS2__)) && !defined(OS2)
 #  define OS2
-#endif
-#if defined(_WINDOWS) && !defined(WINDOWS)
+#د_که_پای
+#إذا defined(_WINDOWS) && !defined(WINDOWS)
 #  define WINDOWS
-#endif
-#if defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
+#د_که_پای
+#إذا defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
 #  ifndef WIN32
 #    define WIN32
 #  endif
-#endif
-#if (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
-#  if !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
-#    ifndef SYS16BIT
-#      define SYS16BIT
+#د_که_پای
+#إذا (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
+#  إذا !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
+#    ifndef SYS16_بټ
+#      define SYS16_بټ
 #    endif
 #  endif
-#endif
+#د_که_پای
 
 /*
  * Compile with -DMAXSEG_64K if the alloc function cannot allocate more
  * than 64k bytes at a time (needed on systems with 16-bit int).
  */
-#ifdef SYS16BIT
+#که_تعریف_شوی SYS16_بټ
 #  define MAXSEG_64K
-#endif
-#ifdef MSDOS
+#د_که_پای
+#که_تعریف_شوی MSDOS
 #  define UNALIGNED_OK
-#endif
+#د_که_پای
 
-#ifdef __STDC_VERSION__
+#که_تعریف_شوی __STDC_VERSION__
 #  ifndef STDC
 #    define STDC
 #  endif
-#  if __STDC_VERSION__ >= 199901L
+#  إذا __STDC_VERSION__ >= 199901L
 #    ifndef STDC99
 #      define STDC99
 #    endif
 #  endif
-#endif
-#if !defined(STDC) && (defined(__STDC__) || defined(__cplusplus))
+#د_که_پای
+#إذا !defined(STDC) && (defined(__STDC__) || defined(__cplusplus))
 #  define STDC
-#endif
-#if !defined(STDC) && (defined(__GNUC__) || defined(__BORLANDC__))
+#د_که_پای
+#إذا !defined(STDC) && (defined(__GNUC__) || defined(__BORLANDC__))
 #  define STDC
-#endif
-#if !defined(STDC) && (defined(MSDOS) || defined(WINDOWS) || defined(WIN32))
+#د_که_پای
+#إذا !defined(STDC) && (defined(MSDOS) || defined(WINDOWS) || defined(WIN32))
 #  define STDC
-#endif
-#if !defined(STDC) && (defined(OS2) || defined(__HOS_AIX__))
+#د_که_پای
+#إذا !defined(STDC) && (defined(OS2) || defined(__HOS_AIX__))
 #  define STDC
-#endif
+#د_که_پای
 
-#if defined(__OS400__) && !defined(STDC)    /* iSeries (formerly AS/400). */
+#إذا defined(__OS400__) && !defined(STDC)    /* iSeries (formerly AS/400). */
 #  define STDC
-#endif
+#د_که_پای
 
-#ifndef STDC
-#  ifndef const /* cannot use !defined(STDC) && !defined(const) on Mac */
-#    define const       /* note: need a more gentle solution here */
+#که_نه_تعریف_شوی STDC
+#  ifndef ثابت /* cannot use !defined(STDC) && !defined(const) on Mac */
+#    define ثابت       /* note: need a more gentle solution here */
 #  endif
-#endif
+#د_که_پای
 
-#ifndef z_const
+#که_نه_تعریف_شوی z_const
 #  ifdef ZLIB_CONST
-#    define z_const const
-#  else
+#    define z_const ثابت
+#  وإلا
 #    define z_const
 #  endif
-#endif
+#د_که_پای
 
-#ifdef Z_SOLO
+#که_تعریف_شوی Z_SOLO
 #  ifdef _WIN64
-     typedef unsigned long long z_size_t;
-#  else
-     typedef unsigned long z_size_t;
+     تعريفنوع بینښه اوږد اوږد z_اندازه_t;
+#  وإلا
+     تعريفنوع بینښه اوږد z_اندازه_t;
 #  endif
-#else
-#  define z_longlong long long
-#  if defined(NO_SIZE_T)
-     typedef unsigned NO_SIZE_T z_size_t;
+#وإلا
+#  define z_longlong اوږد اوږد
+#  إذا defined(NO_اندازه_T)
+     تعريفنوع بینښه NO_اندازه_T z_اندازه_t;
 #  elif defined(STDC)
 #    include <stddef.h>
-     typedef size_t z_size_t;
-#  else
-     typedef unsigned long z_size_t;
+     تعريفنوع size_t z_اندازه_t;
+#  وإلا
+     تعريفنوع بینښه اوږد z_اندازه_t;
 #  endif
 #  undef z_longlong
-#endif
+#د_که_پای
 
 /* Maximum value for memLevel in deflateInit2 */
-#ifndef MAX_MEM_LEVEL
+#که_نه_تعریف_شوی MAX_MEM_LEVEL
 #  ifdef MAXSEG_64K
 #    define MAX_MEM_LEVEL 8
-#  else
+#  وإلا
 #    define MAX_MEM_LEVEL 9
 #  endif
-#endif
+#د_که_پای
 
 /* Maximum value for windowBits in deflateInit2 and inflateInit2.
  * WARNING: reducing MAX_WBITS makes minigzip unable to extract .gz files
  * created by gzip. (Files created by minigzip can still be extracted by
  * gzip.)
  */
-#ifndef MAX_WBITS
+#که_نه_تعریف_شوی MAX_WBITS
 #  define MAX_WBITS   15 /* 32K LZ77 window */
-#endif
+#د_که_پای
 
 /* The memory requirements for deflate are (in bytes):
             (1 << (windowBits+2)) +  (1 << (memLevel+9))
@@ -302,13 +302,13 @@
 
                         /* Type declarations */
 
-#ifndef OF /* function prototypes */
+#که_نه_تعریف_شوی د /* function prototypes */
 #  ifdef STDC
-#    define OF(args)  args
-#  else
-#    define OF(args)  ()
+#    define د(دلیلونه)  دلیلونه
+#  وإلا
+#    define د(دلیلونه)  ()
 #  endif
-#endif
+#د_که_پای
 
 /* The following definitions for FAR are needed only for MSDOS mixed
  * model programming (small or medium model with some far allocations).
@@ -316,37 +316,37 @@
  * to define NO_MEMCPY in zutil.h.  If you don't need the mixed model,
  * just define FAR to be empty.
  */
-#ifdef SYS16BIT
-#  if defined(M_I86SM) || defined(M_I86MM)
+#که_تعریف_شوی SYS16_بټ
+#  إذا defined(M_I86SM) || defined(M_I86MM)
      /* MSC small or medium model */
 #    define SMALL_MEDIUM
 #    ifdef _MSC_VER
 #      define FAR _far
-#    else
+#    وإلا
 #      define FAR far
 #    endif
 #  endif
-#  if (defined(__SMALL__) || defined(__MEDIUM__))
+#  إذا (defined(__SMALL__) || defined(__MEDIUM__))
      /* Turbo C small or medium model */
 #    define SMALL_MEDIUM
 #    ifdef __BORLANDC__
 #      define FAR _far
-#    else
+#    وإلا
 #      define FAR far
 #    endif
 #  endif
-#endif
+#د_که_پای
 
-#if defined(WINDOWS) || defined(WIN32)
+#إذا defined(WINDOWS) || defined(WIN32)
    /* If building or using zlib as a DLL, define ZLIB_DLL.
     * This is not mandatory, but it offers a little performance increase.
     */
 #  ifdef ZLIB_DLL
-#    if defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
-#      ifdef ZLIB_INTERNAL
-#        define ZEXTERN extern __declspec(dllexport)
-#      else
-#        define ZEXTERN extern __declspec(dllimport)
+#    إذا defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
+#      ifdef ZLIB_دننی
+#        define ZEXTERN خارجي __declspec(dllexport)
+#      وإلا
+#        define ZEXTERN خارجي __declspec(dllimport)
 #      endif
 #    endif
 #  endif  /* ZLIB_DLL */
@@ -358,8 +358,8 @@
 #    ifdef FAR
 #      undef FAR
 #    endif
-#    ifndef WIN32_LEAN_AND_MEAN
-#      define WIN32_LEAN_AND_MEAN
+#    ifndef WIN32_LEAN_AND_منځنۍ
+#      define WIN32_LEAN_AND_منځنۍ
 #    endif
 #    include <windows.h>
      /* No need for _export, use ZLIB.DEF instead. */
@@ -367,107 +367,107 @@
 #    define ZEXPORT WINAPI
 #    ifdef WIN32
 #      define ZEXPORTVA WINAPIV
-#    else
+#    وإلا
 #      define ZEXPORTVA FAR CDECL
 #    endif
 #  endif
-#endif
+#د_که_پای
 
-#if defined (__BEOS__)
+#إذا defined (__BEOS__)
 #  ifdef ZLIB_DLL
-#    ifdef ZLIB_INTERNAL
+#    ifdef ZLIB_دننی
 #      define ZEXPORT   __declspec(dllexport)
 #      define ZEXPORTVA __declspec(dllexport)
-#    else
+#    وإلا
 #      define ZEXPORT   __declspec(dllimport)
 #      define ZEXPORTVA __declspec(dllimport)
 #    endif
 #  endif
-#endif
+#د_که_پای
 
-#ifndef ZEXTERN
-#  define ZEXTERN extern
-#endif
-#ifndef ZEXPORT
+#که_نه_تعریف_شوی ZEXTERN
+#  define ZEXTERN خارجي
+#د_که_پای
+#که_نه_تعریف_شوی ZEXPORT
 #  define ZEXPORT
-#endif
-#ifndef ZEXPORTVA
+#د_که_پای
+#که_نه_تعریف_شوی ZEXPORTVA
 #  define ZEXPORTVA
-#endif
+#د_که_پای
 
-#ifndef FAR
+#که_نه_تعریف_شوی FAR
 #  define FAR
-#endif
+#د_که_پای
 
-#if !defined(__MACTYPES__)
-typedef unsigned char  Byte;  /* 8 bits */
-#endif
-typedef unsigned int   uInt;  /* 16 bits or more */
-typedef unsigned long  uLong; /* 32 bits or more */
+#إذا !defined(__MACTYPES__)
+تعريفنوع بینښه حرف  Byte;  /* 8 bits */
+#د_که_پای
+تعريفنوع بینښه صحيح   uInt;  /* 16 bits or more */
+تعريفنوع بینښه اوږد  uLong; /* 32 bits or more */
 
-#ifdef SMALL_MEDIUM
+#که_تعریف_شوی SMALL_MEDIUM
    /* Borland C/C++ and some old MSC versions ignore FAR inside typedef */
 #  define Bytef Byte FAR
-#else
-   typedef Byte  FAR Bytef;
-#endif
-typedef char  FAR charf;
-typedef int   FAR intf;
-typedef uInt  FAR uIntf;
-typedef uLong FAR uLongf;
+#وإلا
+   تعريفنوع Byte  FAR Bytef;
+#د_که_پای
+تعريفنوع حرف  FAR charf;
+تعريفنوع صحيح   FAR intf;
+تعريفنوع uInt  FAR uIntf;
+تعريفنوع uLong FAR uLongf;
 
-#ifdef STDC
-   typedef void const *voidpc;
-   typedef void FAR   *voidpf;
-   typedef void       *voidp;
-#else
-   typedef Byte const *voidpc;
-   typedef Byte FAR   *voidpf;
-   typedef Byte       *voidp;
-#endif
+#که_تعریف_شوی STDC
+   تعريفنوع فراغ ثابت *voidpc;
+   تعريفنوع فراغ FAR   *voidpf;
+   تعريفنوع فراغ       *voidp;
+#وإلا
+   تعريفنوع Byte ثابت *voidpc;
+   تعريفنوع Byte FAR   *voidpf;
+   تعريفنوع Byte       *voidp;
+#د_که_پای
 
-#if !defined(Z_U4) && !defined(Z_SOLO) && defined(STDC)
+#إذا !defined(Z_U4) && !defined(Z_SOLO) && defined(STDC)
 #  include <limits.h>
-#  if (UINT_MAX == 0xffffffffUL)
-#    define Z_U4 unsigned
+#  إذا (UINT_MAX == 0xffffffffUL)
+#    define Z_U4 بینښه
 #  elif (ULONG_MAX == 0xffffffffUL)
-#    define Z_U4 unsigned long
+#    define Z_U4 بینښه اوږد
 #  elif (USHRT_MAX == 0xffffffffUL)
-#    define Z_U4 unsigned short
+#    define Z_U4 بینښه لنډ
 #  endif
-#endif
+#د_که_پای
 
-#ifdef Z_U4
-   typedef Z_U4 z_crc_t;
-#else
-   typedef unsigned long z_crc_t;
-#endif
+#که_تعریف_شوی Z_U4
+   تعريفنوع Z_U4 z_دوراني_ازموینه_t;
+#وإلا
+   تعريفنوع بینښه اوږد z_دوراني_ازموینه_t;
+#د_که_پای
 
-#if HAVE_UNISTD_H-0     /* may be set to #if 1 by ./configure */
+#إذا HAVE_UNISTD_H-0     /* may be set to #if 1 by ./configure */
 #  define Z_HAVE_UNISTD_H
-#endif
+#د_که_پای
 
-#if HAVE_STDARG_H-0     /* may be set to #if 1 by ./configure */
+#إذا HAVE_STDARG_H-0     /* may be set to #if 1 by ./configure */
 #  define Z_HAVE_STDARG_H
-#endif
+#د_که_پای
 
-#ifdef STDC
+#که_تعریف_شوی STDC
 #  ifndef Z_SOLO
 #    include <sys/types.h>      /* for off_t */
 #  endif
-#endif
+#د_که_پای
 
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+#إذا defined(STDC) || defined(Z_HAVE_STDARG_H)
 #  ifndef Z_SOLO
 #    include <stdarg.h>         /* for va_list */
 #  endif
-#endif
+#د_که_پای
 
-#ifdef _WIN32
+#که_تعریف_شوی _WIN32
 #  ifndef Z_SOLO
 #    include <stddef.h>         /* for wchar_t */
 #  endif
-#endif
+#د_که_پای
 
 /* a little trick to accommodate both "#define _LARGEFILE64_SOURCE" and
  * "#define _LARGEFILE64_SOURCE 1" as requesting 64-bit operations, (even
@@ -475,18 +475,18 @@ typedef uLong FAR uLongf;
  * both "#undef _LARGEFILE64_SOURCE" and "#define _LARGEFILE64_SOURCE 0" as
  * equivalently requesting no 64-bit operations
  */
-#if defined(_LARGEFILE64_SOURCE) && -_LARGEFILE64_SOURCE - -1 == 1
-#  undef _LARGEFILE64_SOURCE
-#endif
+#إذا defined(LARGEFILE64_سرچینه) && -LARGEFILE64_سرچینه - -1 == 1
+#  undef LARGEFILE64_سرچینه
+#د_که_پای
 
-#ifndef Z_HAVE_UNISTD_H
-#  if defined(__WATCOMC__) || defined(__GO32__) || \
-      (defined(_LARGEFILE64_SOURCE) && !defined(_WIN32))
+#که_نه_تعریف_شوی Z_HAVE_UNISTD_H
+#  إذا defined(__WATCOMC__) || defined(__GO32__) || \
+      (defined(LARGEFILE64_سرچینه) && !defined(_WIN32))
 #    define Z_HAVE_UNISTD_H
 #  endif
-#endif
-#ifndef Z_SOLO
-#  if defined(Z_HAVE_UNISTD_H)
+#د_که_پای
+#که_نه_تعریف_شوی Z_SOLO
+#  إذا defined(Z_HAVE_UNISTD_H)
 #    include <unistd.h>         /* for SEEK_*, off_t, and _LFS64_LARGEFILE */
 #    ifdef VMS
 #      include <unixio.h>       /* for off_t */
@@ -495,57 +495,57 @@ typedef uLong FAR uLongf;
 #      define z_off_t off_t
 #    endif
 #  endif
-#endif
+#د_که_پای
 
-#if defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
+#إذا defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
 #  define Z_LFS64
-#endif
+#د_که_پای
 
-#if defined(_LARGEFILE64_SOURCE) && defined(Z_LFS64)
+#إذا defined(LARGEFILE64_سرچینه) && defined(Z_LFS64)
 #  define Z_LARGE64
-#endif
+#د_که_پای
 
-#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64 && defined(Z_LFS64)
+#إذا defined(FILE_دننه_واټن_بټونه) && FILE_دننه_واټن_بټونه-0 == 64 && defined(Z_LFS64)
 #  define Z_WANT64
-#endif
+#د_که_پای
 
-#if !defined(SEEK_SET) && !defined(Z_SOLO)
+#إذا !defined(SEEK_SET) && !defined(Z_SOLO)
 #  define SEEK_SET        0       /* Seek from beginning of file.  */
 #  define SEEK_CUR        1       /* Seek from current position.  */
 #  define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
-#endif
+#د_که_پای
 
-#ifndef z_off_t
-#  define z_off_t long long
-#endif
+#که_نه_تعریف_شوی z_off_t
+#  define z_off_t اوږد اوږد
+#د_که_پای
 
-#if !defined(_WIN32) && defined(Z_LARGE64)
+#إذا !defined(_WIN32) && defined(Z_LARGE64)
 #  define z_off64_t off64_t
-#elif defined(__MINGW32__)
-#  define z_off64_t long long
-#elif defined(_WIN32) && !defined(__GNUC__)
+#وإلاإذا defined(__MINGW32__)
+#  define z_off64_t اوږد اوږد
+#وإلاإذا defined(_WIN32) && !defined(__GNUC__)
 #  define z_off64_t __int64
-#elif defined(__GO32__)
-#  define z_off64_t offset_t
-#else
+#وإلاإذا defined(__GO32__)
+#  define z_off64_t دننه_واټن_t
+#وإلا
 #  define z_off64_t z_off_t
-#endif
+#د_که_پای
 
 /* MVS linker does not support external names larger than 8 bytes */
-#if defined(__MVS__)
-  #pragma map(deflateInit_,"DEIN")
-  #pragma map(deflateInit2_,"DEIN2")
-  #pragma map(deflateEnd,"DEEND")
-  #pragma map(deflateBound,"DEBND")
-  #pragma map(inflateInit_,"ININ")
-  #pragma map(inflateInit2_,"ININ2")
-  #pragma map(inflateEnd,"INEND")
-  #pragma map(inflateSync,"INSY")
-  #pragma map(inflateSetDictionary,"INSEDI")
-  #pragma map(compressBound,"CMBND")
-  #pragma map(inflate_table,"INTABL")
-  #pragma map(inflate_fast,"INFA")
-  #pragma map(inflate_copyright,"INCOPY")
-#endif
+#إذا defined(__MVS__)
+  #لارښوونه map(deflateInit_,"DEIN")
+  #لارښوونه map(deflateInit2_,"DEIN2")
+  #لارښوونه map(deflate_پای_ټکی,"DEEND")
+  #لارښوونه map(deflateBound,"DEBND")
+  #لارښوونه map(inflateInit_,"ININ")
+  #لارښوونه map(inflateInit2_,"ININ2")
+  #لارښوونه map(inflate_پای_ټکی,"INEND")
+  #لارښوونه map(inflateSync,"INSY")
+  #لارښوونه map(inflate_سېټ_Dictionary,"INSEDI")
+  #لارښوونه map(compressBound,"CMBND")
+  #لارښوونه map(inflate_جدول,"INTABL")
+  #لارښوونه map(inflate_fast,"INFA")
+  #لارښوونه map(inflate_copyright,"INCOPY")
+#د_که_پای
 
-#endif /* ZCONF_H */
+#د_که_پای /* ZCONF_H */

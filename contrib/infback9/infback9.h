@@ -16,22 +16,22 @@
  * zlib.h must be included before this header file.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#که_تعریف_شوی __cplusplus
+خارجي "C" {
+#د_که_پای
 
-ZEXTERN int ZEXPORT inflateBack9(z_stream FAR *strm,
-                                 in_func in, void FAR *in_desc,
-                                 out_func out, void FAR *out_desc);
-ZEXTERN int ZEXPORT inflateBack9End(z_stream FAR *strm);
-ZEXTERN int ZEXPORT inflateBack9Init_(z_stream FAR *strm,
-                                      unsigned char FAR *window,
-                                      const char *version,
-                                      int stream_size);
-#define inflateBack9Init(strm, window) \
-        inflateBack9Init_((strm), (window), \
-        ZLIB_VERSION, sizeof(z_stream))
+ZEXTERN صحيح ZEXPORT inflateBack9(z_بهیر FAR *strm,
+                                 دننه_func دننه, فراغ FAR *دننه_desc,
+                                 بهر_func بهر, فراغ FAR *بهر_desc);
+ZEXTERN صحيح ZEXPORT inflate_Back9_پای_ټکی(z_بهیر FAR *strm);
+ZEXTERN صحيح ZEXPORT inflateBack9Init_(z_بهیر FAR *strm,
+                                      بینښه حرف FAR *کړکۍ,
+                                      ثابت حرف *نسخه,
+                                      صحيح بهیر_اندازه);
+#تعریف_کړه inflateBack9Init(strm, کړکۍ) \
+        inflateBack9Init_((strm), (کړکۍ), \
+        ZLIB_نسخه, حجم(z_بهیر))
 
-#ifdef __cplusplus
+#که_تعریف_شوی __cplusplus
 }
-#endif
+#د_که_پای

@@ -5,27 +5,27 @@
  * original version by Kevin Ruland <kevin@rodin.wustl.edu>
  */
 
-#include "zfstream.h"
-#include <iostream>      // for cout
+#ضمن "zfstream.h"
+#ضمن <iostream>      // for cout
 
-int main() {
+صحيح اصلي() {
 
   gzofstream outf;
   gzifstream inf;
-  char buf[80];
+  حرف buf[80];
 
   outf.open("test1.txt.gz");
   outf << "The quick brown fox sidestepped the lazy canine\n"
-       << 1.3 << "\nPlan " << 9 << std::endl;
+       << 1.3 << "\nPlan " << 9 << std::کرښه_پای;
   outf.close();
-  std::cout << "Wrote the following message to 'test1.txt.gz' (check with zcat or zless):\n"
+  std::وتنه << "Wrote the following message to 'test1.txt.gz' (check with zcat or zless):\n"
             << "The quick brown fox sidestepped the lazy canine\n"
-            << 1.3 << "\nPlan " << 9 << std::endl;
+            << 1.3 << "\nPlan " << 9 << std::کرښه_پای;
 
-  std::cout << "\nReading 'test1.txt.gz' (buffered) produces:\n";
+  std::وتنه << "\nReading 'test1.txt.gz' (buffered) produces:\n";
   inf.open("test1.txt.gz");
-  while (inf.getline(buf,80,'\n')) {
-    std::cout << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
+  طالما (inf.getline(buf,80,'\n')) {
+    std::وتنه << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
   }
   inf.close();
 
@@ -33,18 +33,18 @@ int main() {
   outf.open("test2.txt.gz");
   outf << setcompression(Z_NO_COMPRESSION)
        << "The quick brown fox sidestepped the lazy canine\n"
-       << 1.3 << "\nPlan " << 9 << std::endl;
+       << 1.3 << "\nPlan " << 9 << std::کرښه_پای;
   outf.close();
-  std::cout << "\nWrote the same message to 'test2.txt.gz' in uncompressed form";
+  std::وتنه << "\nWrote the same message to 'test2.txt.gz' in uncompressed form";
 
-  std::cout << "\nReading 'test2.txt.gz' (unbuffered) produces:\n";
+  std::وتنه << "\nReading 'test2.txt.gz' (unbuffered) produces:\n";
   inf.rdbuf()->pubsetbuf(0,0);
   inf.open("test2.txt.gz");
-  while (inf.getline(buf,80,'\n')) {
-    std::cout << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
+  طالما (inf.getline(buf,80,'\n')) {
+    std::وتنه << buf << "\t(" << inf.rdbuf()->in_avail() << " chars left in buffer)\n";
   }
   inf.close();
 
-  return 0;
+  أرجع 0;
 
 }

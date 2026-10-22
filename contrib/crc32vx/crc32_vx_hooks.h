@@ -1,9 +1,9 @@
-#ifndef CRC32_VX_HOOKS_H
-#define CRC32_VX_HOOKS_H
+#که_نه_تعریف_شوی دوراني_ازموینه_32_VX_HOOKS_H
+#تعریف_کړه دوراني_ازموینه_32_VX_HOOKS_H
 
 /**
  * CRC HOOKS
  */
-ZLIB_INTERNAL extern unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len);
+ZLIB_دننی خارجي بینښه اوږد (*دوراني_ازموینه_32_z_hook)(بینښه اوږد دوراني_ازموینه, ثابت بینښه حرف FAR *buf, z_اندازه_t len);
 
-#endif /* CRC32_VX_HOOKS_H */
+#د_که_پای /* CRC32_VX_HOOKS_H */

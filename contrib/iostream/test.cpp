@@ -1,7 +1,7 @@
 
-#include "zfstream.h"
+#ضمن "zfstream.h"
 
-int main() {
+صحيح اصلي() {
 
   // Construct a stream object with this filebuffer.  Anything sent
   // to this stream will go to standard out.
@@ -9,16 +9,16 @@ int main() {
 
   // This text is getting compressed and sent to stdout.
   // To prove this, run 'test | zcat'.
-  os << "Hello, Mommy" << endl;
+  os << "Hello, Mommy" << کرښه_پای;
 
   os << setcompressionlevel( Z_NO_COMPRESSION );
-  os << "hello, hello, hi, ho!" << endl;
+  os << "hello, hello, hi, ho!" << کرښه_پای;
 
   setcompressionlevel( os, Z_DEFAULT_COMPRESSION )
-    << "I'm compressing again" << endl;
+    << "I'm compressing again" << کرښه_پای;
 
   os.close();
 
-  return 0;
+  أرجع 0;
 
 }

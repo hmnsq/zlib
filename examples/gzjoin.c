@@ -53,219 +53,219 @@
    versions of zlib earlier than 1.2.3.
  */
 
-#include <stdio.h>      /* fputs(), fprintf(), fwrite(), putc() */
-#include <stdlib.h>     /* exit(), malloc(), free() */
-#include <fcntl.h>      /* open() */
-#include <unistd.h>     /* close(), read(), lseek() */
-#include "zlib.h"
+#ضمن <stdio.h>      /* fputs(), fprintf(), fwrite(), putc() */
+#ضمن <stdlib.h>     /* exit(), malloc(), free() */
+#ضمن <fcntl.h>      /* open() */
+#ضمن <unistd.h>     /* close(), read(), lseek() */
+#ضمن "zlib.h"
     /* crc32(), crc32_combine(), inflateInit2(), inflate(), inflateEnd() */
 
-#define local static
+#تعریف_کړه local ساكن
 
 /* exit with an error (return a value to allow use in an expression) */
-local int bail(char *why1, char *why2)
+local صحيح bail(حرف *why1, حرف *why2)
 {
     fprintf(stderr, "gzjoin error: %s%s, output incomplete\n", why1, why2);
-    exit(1);
-    return 0;
+    وتل(1);
+    أرجع 0;
 }
 
 /* -- simple buffered file input with access to the buffer -- */
 
-#define CHUNK 32768         /* must be a power of two and fit in unsigned */
+#تعریف_کړه CHUNK 32768         /* must be a power of two and fit in unsigned */
 
 /* bin buffered input file type */
-typedef struct {
-    char *name;             /* name of file for error messages */
-    int fd;                 /* file descriptor */
-    unsigned left;          /* bytes remaining at next */
-    unsigned char *next;    /* next byte to read */
-    unsigned char *buf;     /* allocated buffer of length CHUNK */
+تعريفنوع بنية {
+    حرف *name;             /* name of file for error messages */
+    صحيح fd;                 /* file descriptor */
+    بینښه کیڼ;          /* bytes remaining at next */
+    بینښه حرف *بل;    /* next byte to read */
+    بینښه حرف *buf;     /* allocated buffer of length CHUNK */
 } bin;
 
 /* close a buffered file and free allocated memory */
-local void bclose(bin *in)
+local فراغ bclose(bin *دننه)
 {
-    if (in != NULL) {
-        if (in->fd != -1)
-            close(in->fd);
-        if (in->buf != NULL)
-            free(in->buf);
-        free(in);
+    إذا (دننه != عدم) {
+        إذا (دننه->fd != -1)
+            close(دننه->fd);
+        إذا (دننه->buf != عدم)
+            حرر(دننه->buf);
+        حرر(دننه);
     }
 }
 
 /* open a buffered file for input, return a pointer to type bin, or NULL on
    failure */
-local bin *bopen(char *name)
+local bin *bopen(حرف *name)
 {
-    bin *in;
+    bin *دننه;
 
-    in = malloc(sizeof(bin));
-    if (in == NULL)
-        return NULL;
-    in->buf = malloc(CHUNK);
-    in->fd = open(name, O_RDONLY, 0);
-    if (in->buf == NULL || in->fd == -1) {
-        bclose(in);
-        return NULL;
+    دننه = حافظه_ورکړه(حجم(bin));
+    إذا (دننه == عدم)
+        أرجع عدم;
+    دننه->buf = حافظه_ورکړه(CHUNK);
+    دننه->fd = open(name, O_RDONLY, 0);
+    إذا (دننه->buf == عدم || دننه->fd == -1) {
+        bclose(دننه);
+        أرجع عدم;
     }
-    in->left = 0;
-    in->next = in->buf;
-    in->name = name;
-    return in;
+    دننه->کیڼ = 0;
+    دننه->بل = دننه->buf;
+    دننه->name = name;
+    أرجع دننه;
 }
 
 /* load buffer from file, return -1 on read error, 0 or 1 on success, with
    1 indicating that end-of-file was reached */
-local int bload(bin *in)
+local صحيح bload(bin *دننه)
 {
-    long len;
+    اوږد len;
 
-    if (in == NULL)
-        return -1;
-    if (in->left != 0)
-        return 0;
-    in->next = in->buf;
-    do {
-        len = (long)read(in->fd, in->buf + in->left, CHUNK - in->left);
-        if (len < 0)
-            return -1;
-        in->left += (unsigned)len;
-    } while (len != 0 && in->left < CHUNK);
-    return len == 0 ? 1 : 0;
+    إذا (دننه == عدم)
+        أرجع -1;
+    إذا (دننه->کیڼ != 0)
+        أرجع 0;
+    دننه->بل = دننه->buf;
+    افعل {
+        len = (اوږد)اقرأ(دننه->fd, دننه->buf + دننه->کیڼ, CHUNK - دننه->کیڼ);
+        إذا (len < 0)
+            أرجع -1;
+        دننه->کیڼ += (بینښه)len;
+    } طالما (len != 0 && دننه->کیڼ < CHUNK);
+    أرجع len == 0 ? 1 : 0;
 }
 
 /* get a byte from the file, bail if end of file */
-#define bget(in) (in->left ? 0 : bload(in), \
-                  in->left ? (in->left--, *(in->next)++) : \
-                    bail("unexpected end of file on ", in->name))
+#تعریف_کړه bget(دننه) (دننه->کیڼ ? 0 : bload(دننه), \
+                  دننه->کیڼ ? (دننه->کیڼ--, *(دننه->بل)++) : \
+                    bail("unexpected end of file on ", دننه->name))
 
 /* get a four-byte little-endian unsigned integer from file */
-local unsigned long bget4(bin *in)
+local بینښه اوږد bget4(bin *دننه)
 {
-    unsigned long val;
+    بینښه اوږد val;
 
-    val = bget(in);
-    val += (unsigned long)(bget(in)) << 8;
-    val += (unsigned long)(bget(in)) << 16;
-    val += (unsigned long)(bget(in)) << 24;
-    return val;
+    val = bget(دننه);
+    val += (بینښه اوږد)(bget(دننه)) << 8;
+    val += (بینښه اوږد)(bget(دننه)) << 16;
+    val += (بینښه اوږد)(bget(دننه)) << 24;
+    أرجع val;
 }
 
 /* skip bytes in file */
-local void bskip(bin *in, unsigned skip)
+local فراغ bskip(bin *دننه, بینښه skip)
 {
     /* check pointer */
-    if (in == NULL)
-        return;
+    إذا (دننه == عدم)
+        أرجع;
 
     /* easy case -- skip bytes in buffer */
-    if (skip <= in->left) {
-        in->left -= skip;
-        in->next += skip;
-        return;
+    إذا (skip <= دننه->کیڼ) {
+        دننه->کیڼ -= skip;
+        دننه->بل += skip;
+        أرجع;
     }
 
     /* skip what's in buffer, discard buffer contents */
-    skip -= in->left;
-    in->left = 0;
+    skip -= دننه->کیڼ;
+    دننه->کیڼ = 0;
 
     /* seek past multiples of CHUNK bytes */
-    if (skip > CHUNK) {
-        unsigned left;
+    إذا (skip > CHUNK) {
+        بینښه کیڼ;
 
-        left = skip & (CHUNK - 1);
-        if (left == 0) {
+        کیڼ = skip & (CHUNK - 1);
+        إذا (کیڼ == 0) {
             /* exact number of chunks: seek all the way minus one byte to check
                for end-of-file with a read */
-            lseek(in->fd, skip - 1, SEEK_CUR);
-            if (read(in->fd, in->buf, 1) != 1)
-                bail("unexpected end of file on ", in->name);
-            return;
+            lseek(دننه->fd, skip - 1, SEEK_CUR);
+            إذا (اقرأ(دننه->fd, دننه->buf, 1) != 1)
+                bail("unexpected end of file on ", دننه->name);
+            أرجع;
         }
 
         /* skip the integral chunks, update skip with remainder */
-        lseek(in->fd, skip - left, SEEK_CUR);
-        skip = left;
+        lseek(دننه->fd, skip - کیڼ, SEEK_CUR);
+        skip = کیڼ;
     }
 
     /* read more input and skip remainder */
-    bload(in);
-    if (skip > in->left)
-        bail("unexpected end of file on ", in->name);
-    in->left -= skip;
-    in->next += skip;
+    bload(دننه);
+    إذا (skip > دننه->کیڼ)
+        bail("unexpected end of file on ", دننه->name);
+    دننه->کیڼ -= skip;
+    دننه->بل += skip;
 }
 
 /* -- end of buffered input functions -- */
 
 /* skip the gzip header from file in */
-local void gzhead(bin *in)
+local فراغ gzhead(bin *دننه)
 {
-    int flags;
+    صحيح flags;
 
     /* verify gzip magic header and compression method */
-    if (bget(in) != 0x1f || bget(in) != 0x8b || bget(in) != 8)
-        bail(in->name, " is not a valid gzip file");
+    إذا (bget(دننه) != 0x1f || bget(دننه) != 0x8b || bget(دننه) != 8)
+        bail(دننه->name, " is not a valid gzip file");
 
     /* get and verify flags */
-    flags = bget(in);
-    if ((flags & 0xe0) != 0)
-        bail("unknown reserved bits set in ", in->name);
+    flags = bget(دننه);
+    إذا ((flags & 0xe0) != 0)
+        bail("unknown reserved bits set in ", دننه->name);
 
     /* skip modification time, extra flags, and os */
-    bskip(in, 6);
+    bskip(دننه, 6);
 
     /* skip extra field if present */
-    if (flags & 4) {
-        unsigned len;
+    إذا (flags & 4) {
+        بینښه len;
 
-        len = bget(in);
-        len += (unsigned)(bget(in)) << 8;
-        bskip(in, len);
+        len = bget(دننه);
+        len += (بینښه)(bget(دننه)) << 8;
+        bskip(دننه, len);
     }
 
     /* skip file name if present */
-    if (flags & 8)
-        while (bget(in) != 0)
+    إذا (flags & 8)
+        طالما (bget(دننه) != 0)
             ;
 
     /* skip comment if present */
-    if (flags & 16)
-        while (bget(in) != 0)
+    إذا (flags & 16)
+        طالما (bget(دننه) != 0)
             ;
 
     /* skip header crc if present */
-    if (flags & 2)
-        bskip(in, 2);
+    إذا (flags & 2)
+        bskip(دننه, 2);
 }
 
 /* write a four-byte little-endian unsigned integer to out */
-local void put4(unsigned long val, FILE *out)
+local فراغ put4(بینښه اوږد val, FILE *بهر)
 {
-    putc(val & 0xff, out);
-    putc((val >> 8) & 0xff, out);
-    putc((val >> 16) & 0xff, out);
-    putc((val >> 24) & 0xff, out);
+    putc(val & 0xff, بهر);
+    putc((val >> 8) & 0xff, بهر);
+    putc((val >> 16) & 0xff, بهر);
+    putc((val >> 24) & 0xff, بهر);
 }
 
 /* Load up zlib stream from buffered input, bail if end of file */
-local void zpull(z_streamp strm, bin *in)
+local فراغ zpull(z_streamp strm, bin *دننه)
 {
-    if (in->left == 0)
-        bload(in);
-    if (in->left == 0)
-        bail("unexpected end of file on ", in->name);
-    strm->avail_in = in->left;
-    strm->next_in = in->next;
+    إذا (دننه->کیڼ == 0)
+        bload(دننه);
+    إذا (دننه->کیڼ == 0)
+        bail("unexpected end of file on ", دننه->name);
+    strm->avail_دننه = دننه->کیڼ;
+    strm->بل_دننه = دننه->بل;
 }
 
 /* Write header for gzip file to out and initialize trailer. */
-local void gzinit(unsigned long *crc, unsigned long *tot, FILE *out)
+local فراغ gzinit(بینښه اوږد *دوراني_ازموینه, بینښه اوږد *tot, FILE *بهر)
 {
-    fwrite("\x1f\x8b\x08\0\0\0\0\0\0\xff", 1, 10, out);
-    *crc = crc32(0L, Z_NULL, 0);
+    fwrite("\x1f\x8b\x08\0\0\0\0\0\0\xff", 1, 10, بهر);
+    *دوراني_ازموینه = دوراني_ازموینه_32_2(0L, Z_NULL, 0);
     *tot = 0;
 }
 
@@ -276,174 +276,174 @@ local void gzinit(unsigned long *crc, unsigned long *tot, FILE *out)
    crc and length (modulo 2^32) of the output for the trailer.  The resulting
    gzip file is written to out.  gzinit() must be called before the first call
    of gzcopy() to write the gzip header and to initialize crc and tot. */
-local void gzcopy(char *name, int clr, unsigned long *crc, unsigned long *tot,
-                  FILE *out)
+local فراغ gzcopy(حرف *name, صحيح clr, بینښه اوږد *دوراني_ازموینه, بینښه اوږد *tot,
+                  FILE *بهر)
 {
-    int ret;                /* return value from zlib functions */
-    int pos;                /* where the "last block" bit is in byte */
-    int last;               /* true if processing the last block */
-    bin *in;                /* buffered input file */
-    unsigned char *start;   /* start of compressed data in buffer */
-    unsigned char *junk;    /* buffer for uncompressed data -- discarded */
+    صحيح ret;                /* return value from zlib functions */
+    صحيح pos;                /* where the "last block" bit is in byte */
+    صحيح وروستی;               /* true if processing the last block */
+    bin *دننه;                /* buffered input file */
+    بینښه حرف *پیل;   /* start of compressed data in buffer */
+    بینښه حرف *junk;    /* buffer for uncompressed data -- discarded */
     z_off_t len;            /* length of uncompressed data (support > 4 GB) */
-    z_stream strm;          /* zlib inflate stream */
+    z_بهیر strm;          /* zlib inflate stream */
 
     /* open gzip file and skip header */
-    in = bopen(name);
-    if (in == NULL)
+    دننه = bopen(name);
+    إذا (دننه == عدم)
         bail("could not open ", name);
-    gzhead(in);
+    gzhead(دننه);
 
     /* allocate buffer for uncompressed data and initialize raw inflate
-       stream */
-    junk = malloc(CHUNK);
+بهیر*/
+    junk = حافظه_ورکړه(CHUNK);
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
+    strm.avail_دننه = 0;
+    strm.بل_دننه = Z_NULL;
     ret = inflateInit2(&strm, -15);
-    if (junk == NULL || ret != Z_OK)
+    إذا (junk == عدم || ret != Z_OK)
         bail("out of memory", "");
 
     /* inflate and copy compressed data, clear last-block bit if requested */
     len = 0;
-    zpull(&strm, in);
-    start = in->next;
-    last = start[0] & 1;
-    if (last && clr)
-        start[0] &= ~1;
-    strm.avail_out = 0;
-    for (;;) {
+    zpull(&strm, دننه);
+    پیل = دننه->بل;
+    وروستی = پیل[0] & 1;
+    إذا (وروستی && clr)
+        پیل[0] &= ~1;
+    strm.avail_بهر = 0;
+    لكل (;;) {
         /* if input used and output done, write used input and get more */
-        if (strm.avail_in == 0 && strm.avail_out != 0) {
-            fwrite(start, 1, strm.next_in - start, out);
-            start = in->buf;
-            in->left = 0;
-            zpull(&strm, in);
+        إذا (strm.avail_دننه == 0 && strm.avail_بهر != 0) {
+            fwrite(پیل, 1, strm.بل_دننه - پیل, بهر);
+            پیل = دننه->buf;
+            دننه->کیڼ = 0;
+            zpull(&strm, دننه);
         }
 
         /* decompress -- return early when end-of-block reached */
-        strm.avail_out = CHUNK;
-        strm.next_out = junk;
-        ret = inflate(&strm, Z_BLOCK);
-        switch (ret) {
-        case Z_MEM_ERROR:
+        strm.avail_بهر = CHUNK;
+        strm.بل_بهر = junk;
+        ret = inflate(&strm, Z_بلاک);
+        بدل (ret) {
+        حالة Z_MEM_ERROR:
             bail("out of memory", "");
-        case Z_DATA_ERROR:
-            bail("invalid compressed data in ", in->name);
+        حالة Z_معلومات_ERROR:
+            bail("invalid compressed data in ", دننه->name);
         }
 
         /* update length of uncompressed data */
-        len += CHUNK - strm.avail_out;
+        len += CHUNK - strm.avail_بهر;
 
         /* check for block boundary (only get this when block copied out) */
-        if (strm.data_type & 128) {
+        إذا (strm.معلومات_type & 128) {
             /* if that was the last block, then done */
-            if (last)
-                break;
+            إذا (وروستی)
+                اكسر;
 
             /* number of unused bits in last byte */
-            pos = strm.data_type & 7;
+            pos = strm.معلومات_type & 7;
 
             /* find the next last-block bit */
-            if (pos != 0) {
+            إذا (pos != 0) {
                 /* next last-block bit is in last used byte */
                 pos = 0x100 >> pos;
-                last = strm.next_in[-1] & pos;
-                if (last && clr)
-                    in->buf[strm.next_in - in->buf - 1] &= ~pos;
+                وروستی = strm.بل_دننه[-1] & pos;
+                إذا (وروستی && clr)
+                    دننه->buf[strm.بل_دننه - دننه->buf - 1] &= ~pos;
             }
-            else {
+            وإلا {
                 /* next last-block bit is in next unused byte */
-                if (strm.avail_in == 0) {
+                إذا (strm.avail_دننه == 0) {
                     /* don't have that byte yet -- get it */
-                    fwrite(start, 1, strm.next_in - start, out);
-                    start = in->buf;
-                    in->left = 0;
-                    zpull(&strm, in);
+                    fwrite(پیل, 1, strm.بل_دننه - پیل, بهر);
+                    پیل = دننه->buf;
+                    دننه->کیڼ = 0;
+                    zpull(&strm, دننه);
                 }
-                last = strm.next_in[0] & 1;
-                if (last && clr)
-                    in->buf[strm.next_in - in->buf] &= ~1;
+                وروستی = strm.بل_دننه[0] & 1;
+                إذا (وروستی && clr)
+                    دننه->buf[strm.بل_دننه - دننه->buf] &= ~1;
             }
         }
     }
 
     /* update buffer with unused input */
-    in->left = strm.avail_in;
-    in->next = in->buf + (strm.next_in - in->buf);
+    دننه->کیڼ = strm.avail_دننه;
+    دننه->بل = دننه->buf + (strm.بل_دننه - دننه->buf);
 
     /* copy used input, write empty blocks to get to byte boundary */
-    pos = strm.data_type & 7;
-    fwrite(start, 1, in->next - start - 1, out);
-    last = in->next[-1];
-    if (pos == 0 || !clr)
+    pos = strm.معلومات_type & 7;
+    fwrite(پیل, 1, دننه->بل - پیل - 1, بهر);
+    وروستی = دننه->بل[-1];
+    إذا (pos == 0 || !clr)
         /* already at byte boundary, or last file: write last byte */
-        putc(last, out);
-    else {
+        putc(وروستی, بهر);
+    وإلا {
         /* append empty blocks to last byte */
-        last &= ((0x100 >> pos) - 1);       /* assure unused bits are zero */
-        if (pos & 1) {
+        وروستی &= ((0x100 >> pos) - 1);       /* assure unused bits are zero */
+        إذا (pos & 1) {
             /* odd -- append an empty stored block */
-            putc(last, out);
-            if (pos == 1)
-                putc(0, out);               /* two more bits in block header */
-            fwrite("\0\0\xff\xff", 1, 4, out);
+            putc(وروستی, بهر);
+            إذا (pos == 1)
+                putc(0, بهر);               /* two more bits in block header */
+            fwrite("\0\0\xff\xff", 1, 4, بهر);
         }
-        else {
+        وإلا {
             /* even -- append 1, 2, or 3 empty fixed blocks */
-            switch (pos) {
-            case 6:
-                putc(last | 8, out);
-                last = 0;
-            case 4:
-                putc(last | 0x20, out);
-                last = 0;
-            case 2:
-                putc(last | 0x80, out);
-                putc(0, out);
+            بدل (pos) {
+            حالة 6:
+                putc(وروستی | 8, بهر);
+                وروستی = 0;
+            حالة 4:
+                putc(وروستی | 0x20, بهر);
+                وروستی = 0;
+            حالة 2:
+                putc(وروستی | 0x80, بهر);
+                putc(0, بهر);
             }
         }
     }
 
     /* update crc and tot */
-    *crc = crc32_combine(*crc, bget4(in), len);
-    *tot += (unsigned long)len;
+    *دوراني_ازموینه = دوراني_ازموینه_32_combine(*دوراني_ازموینه, bget4(دننه), len);
+    *tot += (بینښه اوږد)len;
 
     /* clean up */
-    inflateEnd(&strm);
-    free(junk);
-    bclose(in);
+    inflate_پای_ټکی(&strm);
+    حرر(junk);
+    bclose(دننه);
 
     /* write trailer if this is the last gzip file */
-    if (!clr) {
-        put4(*crc, out);
-        put4(*tot, out);
+    إذا (!clr) {
+        put4(*دوراني_ازموینه, بهر);
+        put4(*tot, بهر);
     }
 }
 
 /* join the gzip files on the command line, write result to stdout */
-int main(int argc, char **argv)
+صحيح اصلي(صحيح argc, حرف **argv)
 {
-    unsigned long crc, tot;     /* running crc and total uncompressed length */
+    بینښه اوږد دوراني_ازموینه, tot;     /* running crc and total uncompressed length */
 
     /* skip command name */
     argc--;
     argv++;
 
     /* show usage if no arguments */
-    if (argc == 0) {
+    إذا (argc == 0) {
         fputs("gzjoin usage: gzjoin f1.gz [f2.gz [f3.gz ...]] > fjoin.gz\n",
               stderr);
-        return 0;
+        أرجع 0;
     }
 
     /* join gzip files on command line and write to stdout */
-    gzinit(&crc, &tot, stdout);
-    while (argc--)
-        gzcopy(*argv++, argc, &crc, &tot, stdout);
+    gzinit(&دوراني_ازموینه, &tot, stdout);
+    طالما (argc--)
+        gzcopy(*argv++, argc, &دوراني_ازموینه, &tot, stdout);
 
-    /* done */
-    return 0;
+    /*بشپړ*/
+    أرجع 0;
 }

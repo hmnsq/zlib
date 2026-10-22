@@ -4,156 +4,156 @@
   License: Same as ZLIB (www.gzip.org)
 */
 
-/* Code */
-#ifndef _CRT_SECURE_NO_WARNINGS
+/*کوډ*/
+#که_نه_تعریف_شوی _CRT_SECURE_NO_WARNINGS
 #  define _CRT_SECURE_NO_WARNINGS
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "zlib.h"
-#include "unzip.h"
+#د_که_پای
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن "zlib.h"
+#ضمن "unzip.h"
 
-#define READ_8(adr)  ((unsigned char)*(adr))
-#define READ_16(adr) ( READ_8(adr) | (READ_8(adr+1) << 8) )
-#define READ_32(adr) ( READ_16(adr) | (READ_16((adr)+2) << 16) )
+#تعریف_کړه READ_8(adr)  ((بینښه حرف)*(adr))
+#تعریف_کړه READ_16(adr) ( READ_8(adr) | (READ_8(adr+1) << 8) )
+#تعریف_کړه READ_32(adr) ( READ_16(adr) | (READ_16((adr)+2) << 16) )
 
-#define WRITE_8(buff, n) do { \
-  *((unsigned char*)(buff)) = (unsigned char) ((n) & 0xff); \
-} while(0)
-#define WRITE_16(buff, n) do { \
-  WRITE_8((unsigned char*)(buff), n); \
-  WRITE_8(((unsigned char*)(buff)) + 1, (n) >> 8); \
-} while(0)
-#define WRITE_32(buff, n) do { \
-  WRITE_16((unsigned char*)(buff), (n) & 0xffff); \
-  WRITE_16((unsigned char*)(buff) + 2, (n) >> 16); \
-} while(0)
+#تعریف_کړه WRITE_8(buff, n) افعل { \
+  *((بینښه حرف*)(buff)) = (بینښه حرف) ((n) & 0xff); \
+} طالما(0)
+#تعریف_کړه WRITE_16(buff, n) افعل { \
+  WRITE_8((بینښه حرف*)(buff), n); \
+  WRITE_8(((بینښه حرف*)(buff)) + 1, (n) >> 8); \
+} طالما(0)
+#تعریف_کړه WRITE_32(buff, n) افعل { \
+  WRITE_16((بینښه حرف*)(buff), (n) & 0xffff); \
+  WRITE_16((بینښه حرف*)(buff) + 2, (n) >> 16); \
+} طالما(0)
 
-extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
-  int err = Z_OK;
+خارجي صحيح ZEXPORT unzRepair(ثابت حرف* file, ثابت حرف* file_بهر, ثابت حرف* file_بهر_Tmp, uLong* nRecovered, uLong* بایټونه_Recovered) {
+  صحيح err = Z_OK;
   FILE* fpZip = fopen(file, "rb");
-  FILE* fpOut = fopen(fileOut, "wb");
-  FILE* fpOutCD = fopen(fileOutTmp, "wb");
-  if (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
-    int entries = 0;
-    uLong totalBytes = 0;
-    char header[30];
-    char filename[1024];
-    char extra[1024];
-    int offset = 0;
-    int offsetCD = 0;
-    while ( fread(header, 1, 30, fpZip) == 30 ) {
-      int currentOffset = offset;
+  FILE* fp_بهر = fopen(file_بهر, "wb");
+  FILE* fp_بهر_CD = fopen(file_بهر_Tmp, "wb");
+  إذا (fpZip != عدم && fp_بهر != عدم && fp_بهر_CD != عدم ) {
+    صحيح entries = 0;
+    uLong ټول_بایټونه = 0;
+    حرف سرلیک[30];
+    حرف filename[1024];
+    حرف extra[1024];
+    صحيح دننه_واټن = 0;
+    صحيح دننه_واټن_CD = 0;
+    طالما ( fread(سرلیک, 1, 30, fpZip) == 30 ) {
+      صحيح current_دننه_واټن = دننه_واټن;
 
       /* File entry */
-      if (READ_32(header) == 0x04034b50) {
-        unsigned int version = READ_16(header + 4);
-        unsigned int gpflag = READ_16(header + 6);
-        unsigned int method = READ_16(header + 8);
-        unsigned int filetime = READ_16(header + 10);
-        unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+      إذا (READ_32(سرلیک) == 0x04034b50) {
+        بینښه صحيح نسخه = READ_16(سرلیک + 4);
+        بینښه صحيح gpflag = READ_16(سرلیک + 6);
+        بینښه صحيح لاره = READ_16(سرلیک + 8);
+        بینښه صحيح filetime = READ_16(سرلیک + 10);
+        بینښه صحيح filedate = READ_16(سرلیک + 12);
+        بینښه صحيح دوراني_ازموینه = READ_32(سرلیک + 14); /*دوراني_ازموینه*/
+        بینښه صحيح cpsize = READ_32(سرلیک + 18); /* compressed size */
+        بینښه صحيح uncpsize = READ_32(سرلیک + 22); /* uncompressed sz */
+        بینښه صحيح fnsize = READ_16(سرلیک + 26); /* file name length */
+        بینښه صحيح extsize = READ_16(سرلیک + 28); /* extra field length */
         filename[0] = extra[0] = '\0';
 
-        /* Header */
-        if (fwrite(header, 1, 30, fpOut) == 30) {
-          offset += 30;
-        } else {
+        /*سرلیک*/
+        إذا (fwrite(سرلیک, 1, 30, fp_بهر) == 30) {
+          دننه_واټن += 30;
+        } وإلا {
           err = Z_ERRNO;
-          break;
+          اكسر;
         }
 
         /* Filename */
-        if (fnsize > 0) {
-          if (fnsize < sizeof(filename)) {
-            if (fread(filename, 1, fnsize, fpZip) == fnsize) {
-                if (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
-                offset += fnsize;
-              } else {
+        إذا (fnsize > 0) {
+          إذا (fnsize < حجم(filename)) {
+            إذا (fread(filename, 1, fnsize, fpZip) == fnsize) {
+                إذا (fwrite(filename, 1, fnsize, fp_بهر) == fnsize) {
+                دننه_واټن += fnsize;
+              } وإلا {
                 err = Z_ERRNO;
-                break;
+                اكسر;
               }
-            } else {
+            } وإلا {
               err = Z_ERRNO;
-              break;
+              اكسر;
             }
-          } else {
+          } وإلا {
             err = Z_ERRNO;
-            break;
+            اكسر;
           }
-        } else {
-          err = Z_STREAM_ERROR;
-          break;
+        } وإلا {
+          err = Z_بهیر_ERROR;
+          اكسر;
         }
 
         /* Extra field */
-        if (extsize > 0) {
-          if (extsize < sizeof(extra)) {
-            if (fread(extra, 1, extsize, fpZip) == extsize) {
-              if (fwrite(extra, 1, extsize, fpOut) == extsize) {
-                offset += extsize;
-                } else {
+        إذا (extsize > 0) {
+          إذا (extsize < حجم(extra)) {
+            إذا (fread(extra, 1, extsize, fpZip) == extsize) {
+              إذا (fwrite(extra, 1, extsize, fp_بهر) == extsize) {
+                دننه_واټن += extsize;
+                } وإلا {
                 err = Z_ERRNO;
-                break;
+                اكسر;
               }
-            } else {
+            } وإلا {
               err = Z_ERRNO;
-              break;
+              اكسر;
             }
-          } else {
+          } وإلا {
             err = Z_ERRNO;
-            break;
+            اكسر;
           }
         }
 
-        /* Data */
+        /*معلومات*/
         {
-          int dataSize = cpsize;
-          if (dataSize == 0) {
-            dataSize = uncpsize;
+          صحيح معلومات_اندازه = cpsize;
+          إذا (معلومات_اندازه == 0) {
+            معلومات_اندازه = uncpsize;
           }
-          if (dataSize > 0) {
-            char* data = malloc(dataSize);
-            if (data != NULL) {
-              if ((int)fread(data, 1, dataSize, fpZip) == dataSize) {
-                if ((int)fwrite(data, 1, dataSize, fpOut) == dataSize) {
-                  offset += dataSize;
-                  totalBytes += dataSize;
-                } else {
+          إذا (معلومات_اندازه > 0) {
+            حرف* معلومات = حافظه_ورکړه(معلومات_اندازه);
+            إذا (معلومات != عدم) {
+              إذا ((صحيح)fread(معلومات, 1, معلومات_اندازه, fpZip) == معلومات_اندازه) {
+                إذا ((صحيح)fwrite(معلومات, 1, معلومات_اندازه, fp_بهر) == معلومات_اندازه) {
+                  دننه_واټن += معلومات_اندازه;
+                  ټول_بایټونه += معلومات_اندازه;
+                } وإلا {
                   err = Z_ERRNO;
                 }
-              } else {
+              } وإلا {
                 err = Z_ERRNO;
               }
-              free(data);
-              if (err != Z_OK) {
-                break;
+              حرر(معلومات);
+              إذا (err != Z_OK) {
+                اكسر;
               }
-            } else {
+            } وإلا {
               err = Z_MEM_ERROR;
-              break;
+              اكسر;
             }
           }
         }
 
         /* Central directory entry */
         {
-          char central[46];
-          char* comment = "";
-          int comsize = (int) strlen(comment);
+          حرف central[46];
+          حرف* comment = "";
+          صحيح comsize = (صحيح) مزي_اوږدوالی(comment);
           WRITE_32(central, 0x02014b50);
-          WRITE_16(central + 4, version);
-          WRITE_16(central + 6, version);
+          WRITE_16(central + 4, نسخه);
+          WRITE_16(central + 6, نسخه);
           WRITE_16(central + 8, gpflag);
-          WRITE_16(central + 10, method);
+          WRITE_16(central + 10, لاره);
           WRITE_16(central + 12, filetime);
           WRITE_16(central + 14, filedate);
-          WRITE_32(central + 16, crc);
+          WRITE_32(central + 16, دوراني_ازموینه);
           WRITE_32(central + 20, cpsize);
           WRITE_32(central + 24, uncpsize);
           WRITE_16(central + 28, fnsize);
@@ -162,133 +162,133 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
           WRITE_16(central + 34, 0);    /* disk # */
           WRITE_16(central + 36, 0);    /* int attrb */
           WRITE_32(central + 38, 0);    /* ext attrb */
-          WRITE_32(central + 42, currentOffset);
-          /* Header */
-          if (fwrite(central, 1, 46, fpOutCD) == 46) {
-            offsetCD += 46;
+          WRITE_32(central + 42, current_دننه_واټن);
+          /*سرلیک*/
+          إذا (fwrite(central, 1, 46, fp_بهر_CD) == 46) {
+            دننه_واټن_CD += 46;
 
             /* Filename */
-            if (fnsize > 0) {
-              if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
-                offsetCD += fnsize;
-              } else {
+            إذا (fnsize > 0) {
+              إذا (fwrite(filename, 1, fnsize, fp_بهر_CD) == fnsize) {
+                دننه_واټن_CD += fnsize;
+              } وإلا {
                 err = Z_ERRNO;
-                break;
+                اكسر;
               }
-            } else {
-              err = Z_STREAM_ERROR;
-              break;
+            } وإلا {
+              err = Z_بهیر_ERROR;
+              اكسر;
             }
 
             /* Extra field */
-            if (extsize > 0) {
-              if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
-                offsetCD += extsize;
-              } else {
+            إذا (extsize > 0) {
+              إذا (fwrite(extra, 1, extsize, fp_بهر_CD) == extsize) {
+                دننه_واټن_CD += extsize;
+              } وإلا {
                 err = Z_ERRNO;
-                break;
+                اكسر;
               }
             }
 
             /* Comment field */
-            if (comsize > 0) {
-              if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
-                offsetCD += comsize;
-              } else {
+            إذا (comsize > 0) {
+              إذا ((صحيح)fwrite(comment, 1, comsize, fp_بهر_CD) == comsize) {
+                دننه_واټن_CD += comsize;
+              } وإلا {
                 err = Z_ERRNO;
-                break;
+                اكسر;
               }
             }
 
 
-          } else {
+          } وإلا {
             err = Z_ERRNO;
-            break;
+            اكسر;
           }
         }
 
         /* Success */
         entries++;
 
-      } else {
-        break;
+      } وإلا {
+        اكسر;
       }
     }
 
     /* Final central directory  */
     {
-      int entriesZip = entries;
-      char end[22];
-      char* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
-      int comsize = (int) strlen(comment);
-      if (entriesZip > 0xffff) {
+      صحيح entriesZip = entries;
+      حرف پای_ټکی[22];
+      حرف* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
+      صحيح comsize = (صحيح) مزي_اوږدوالی(comment);
+      إذا (entriesZip > 0xffff) {
         entriesZip = 0xffff;
       }
-      WRITE_32(end, 0x06054b50);
-      WRITE_16(end + 4, 0);         /* disk # */
-      WRITE_16(end + 6, 0);         /* disk # */
-      WRITE_16(end + 8, entriesZip);        /* hack */
-      WRITE_16(end + 10, entriesZip);       /* hack */
-      WRITE_32(end + 12, offsetCD);         /* size of CD */
-      WRITE_32(end + 16, offset);           /* offset to CD */
-      WRITE_16(end + 20, comsize);          /* comment */
+      WRITE_32(پای_ټکی, 0x06054b50);
+      WRITE_16(پای_ټکی + 4, 0);         /* disk # */
+      WRITE_16(پای_ټکی + 6, 0);         /* disk # */
+      WRITE_16(پای_ټکی + 8, entriesZip);        /* hack */
+      WRITE_16(پای_ټکی + 10, entriesZip);       /* hack */
+      WRITE_32(پای_ټکی + 12, دننه_واټن_CD);         /* size of CD */
+      WRITE_32(پای_ټکی + 16, دننه_واټن);           /* offset to CD */
+      WRITE_16(پای_ټکی + 20, comsize);          /* comment */
 
-      /* Header */
-      if (fwrite(end, 1, 22, fpOutCD) == 22) {
+      /*سرلیک*/
+      إذا (fwrite(پای_ټکی, 1, 22, fp_بهر_CD) == 22) {
 
         /* Comment field */
-        if (comsize > 0) {
-          if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
+        إذا (comsize > 0) {
+          إذا ((صحيح)fwrite(comment, 1, comsize, fp_بهر_CD) != comsize) {
             err = Z_ERRNO;
           }
         }
 
-      } else {
+      } وإلا {
         err = Z_ERRNO;
       }
     }
 
     /* Final merge (file + central directory) */
-    fclose(fpOutCD);
-    if (err == Z_OK) {
-      fpOutCD = fopen(fileOutTmp, "rb");
-      if (fpOutCD != NULL) {
-        int nRead;
-        char buffer[8192];
-        while ( (nRead = (int)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
-          if ((int)fwrite(buffer, 1, nRead, fpOut) != nRead) {
+    fclose(fp_بهر_CD);
+    إذا (err == Z_OK) {
+      fp_بهر_CD = fopen(file_بهر_Tmp, "rb");
+      إذا (fp_بهر_CD != عدم) {
+        صحيح nRead;
+        حرف بفر[8192];
+        طالما ( (nRead = (صحيح)fread(بفر, 1, حجم(بفر), fp_بهر_CD)) > 0) {
+          إذا ((صحيح)fwrite(بفر, 1, nRead, fp_بهر) != nRead) {
             err = Z_ERRNO;
-            break;
+            اكسر;
           }
         }
-        fclose(fpOutCD);
+        fclose(fp_بهر_CD);
       }
     }
 
     /* Close */
     fclose(fpZip);
-    fclose(fpOut);
+    fclose(fp_بهر);
 
     /* Wipe temporary file */
-    (void)remove(fileOutTmp);
+    (فراغ)remove(file_بهر_Tmp);
 
     /* Number of recovered entries */
-    if (err == Z_OK) {
-      if (nRecovered != NULL) {
+    إذا (err == Z_OK) {
+      إذا (nRecovered != عدم) {
         *nRecovered = entries;
       }
-      if (bytesRecovered != NULL) {
-        *bytesRecovered = totalBytes;
+      إذا (بایټونه_Recovered != عدم) {
+        *بایټونه_Recovered = ټول_بایټونه;
       }
     }
-  } else {
-    if (fpOutCD != NULL)
-      fclose(fpOutCD);
-    if (fpZip != NULL)
+  } وإلا {
+    إذا (fp_بهر_CD != عدم)
+      fclose(fp_بهر_CD);
+    إذا (fpZip != عدم)
       fclose(fpZip);
-    if (fpOut != NULL)
-      fclose(fpOut);
-    err = Z_STREAM_ERROR;
+    إذا (fp_بهر != عدم)
+      fclose(fp_بهر);
+    err = Z_بهیر_ERROR;
   }
-  return err;
+  أرجع err;
 }

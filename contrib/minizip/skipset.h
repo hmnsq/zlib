@@ -55,16 +55,16 @@
   - set_rand() returns 32 random bits (seeded by set_start())
  */
 
-#ifndef SKIPSET_H
-#define SKIPSET_H
+#که_نه_تعریف_شوی SKIPSET_H
+#تعریف_کړه SKIPSET_H
 
-#include <stdlib.h>     /* realloc(), free(), NULL, size_t */
-#include <stddef.h>     /* ptrdiff_t */
-#include <setjmp.h>     /* jmp_buf, longjmp() */
-#include <errno.h>      /* ENOMEM */
-#include <time.h>       /* time(), clock() */
-#include <assert.h>     /* assert.h */
-#include "ints.h"       /* i16_t, ui32_t, ui64_t */
+#ضمن <stdlib.h>     /* realloc(), free(), NULL, size_t */
+#ضمن <stddef.h>     /* ptrdiff_t */
+#ضمن <setjmp.h>     /* jmp_buf, longjmp() */
+#ضمن <errno.h>      /* ENOMEM */
+#ضمن <time.h>       /* time(), clock() */
+#ضمن <assert.h>     /* assert.h */
+#ضمن "ints.h"       /* i16_t, ui32_t, ui64_t */
 
 /*
   Structures and functions below noted as "--private--" should not be used by
@@ -81,152 +81,152 @@
   Licensed under Apache License 2.0 (NO WARRANTY, etc. see website)
   --private-- Random number generator state.
  */
-typedef struct {
+تعريفنوع بنية {
     ui64_t state;       /* 64-bit generator state */
     ui64_t inc;         /* 63-bit sequence id */
-} set_rand_t;
+} سېټ_rand_t;
 /* --private-- Initialize the state *gen using seed and seq. seed seeds the
    advancing 64-bit state. seq is a sequence selection constant. */
-static void set_seed(set_rand_t *gen, ui64_t seed, ui64_t seq) {
+ساكن فراغ سېټ_تخم(سېټ_rand_t *gen, ui64_t تخم, ui64_t seq) {
     gen->inc = (seq << 1) | 1;
-    gen->state = (seed + gen->inc) * 6364136223846793005ULL + gen->inc;
+    gen->state = (تخم + gen->inc) * 6364136223846793005ULL + gen->inc;
 }
 /* Start a unique random number sequence using bits from noise sources. */
-static void set_uniq(set_rand_t *gen, const void *ptr) {
-    set_seed(gen, ((ui64_t)(ptrdiff_t)ptr << 32) ^
-                  ((ui64_t)time(NULL) << 12) ^ clock(), 0);
+ساكن فراغ سېټ_uniq(سېټ_rand_t *gen, ثابت فراغ *ptr) {
+    سېټ_تخم(gen, ((ui64_t)(ptrdiff_t)ptr << 32) ^
+                  ((ui64_t)time(عدم) << 12) ^ clock(), 0);
 }
 /* Return 32 random bits, advancing the state *gen. */
-static ui32_t set_rand(set_rand_t *gen) {
+ساكن ui32_t سېټ_rand(سېټ_rand_t *gen) {
     ui32_t mix;
-    int rot;
+    صحيح rot;
     ui64_t state = gen->state;
     gen->state = state * 6364136223846793005ULL + gen->inc;
     mix = (ui32_t)(((state >> 18) ^ state) >> 27);
     rot = state >> 59;
-    return (mix >> rot) | (mix << ((-rot) & 31));
+    أرجع (mix >> rot) | (mix << ((-rot) & 31));
 }
 /* End of PCG32 code. */
 
 /* --private-- Linked-list node. */
-typedef struct set_node_s set_node_t;
-struct set_node_s {
-    set_key_t key;          /* the key (not used for head or path) */
-    i16_t size;             /* number of allocated pointers in right[] */
+تعريفنوع بنية سېټ_غوټه_s سېټ_غوټه_t;
+بنية سېټ_غوټه_s {
+    سېټ_کلی_t کلی;          /* the key (not used for head or path) */
+    i16_t اندازه;             /* number of allocated pointers in right[] */
     i16_t fill;             /* number of pointers in right[] filled in */
-    set_node_t **right;     /* pointer for each level, each to the right */
+    سېټ_غوټه_t **ښی_2;     /* pointer for each level, each to the right */
 };
 
 /* A set. The application sets env, may use gen with set_rand(), and may read
    allocs and memory. The remaining variables are --private-- . */
-typedef struct set_s {
-    set_node_t *head;       /* skiplist head -- no key, just links */
-    set_node_t *path;       /* right[] is path to key from set_found() */
-    set_node_t *node;       /* node under construction, in case of longjmp() */
-    i16_t depth;            /* maximum depth of the skiplist */
+تعريفنوع بنية سېټ_s {
+    سېټ_غوټه_t *سر;       /* skiplist head -- no key, just links */
+    سېټ_غوټه_t *لار;       /* right[] is path to key from set_found() */
+    سېټ_غوټه_t *غوټه;       /* node under construction, in case of longjmp() */
+    i16_t ژوروالی;            /* maximum depth of the skiplist */
     ui64_t ran;             /* a precious trove of random bits */
-    set_rand_t gen;         /* random number generator state */
+    سېټ_rand_t gen;         /* random number generator state */
     jmp_buf env;            /* setjmp() environment for allocation errors */
-#ifdef SET_TRACK
+#که_تعریف_شوی سېټ_TRACK
     size_t allocs;          /* number of allocations */
-    size_t memory;          /* total size of allocated memory (>= requests) */
-#endif
-} set_t;
+    size_t حافظه;          /* total size of allocated memory (>= requests) */
+#د_که_پای
+} سېټ_t;
 
 /* Memory allocation and deallocation. set_alloc(set, ptr, size) returns a
    pointer to an allocation of size bytes if ptr is NULL, or the previous
    allocation ptr resized to size bytes. set_alloc() will never return NULL.
    set_free(set, ptr) frees an allocation created by set_alloc(). These may be
    used by the application. e.g. if allocation tracking is desired. */
-#ifdef SET_TRACK
+#که_تعریف_شوی سېټ_TRACK
 /* Track the number of allocations and the total backing memory size. */
-#  if defined(_WIN32)
+#  إذا defined(_WIN32)
 #    include <malloc.h>
-#    define SET_ALLOC_SIZE(ptr) _msize(ptr)
+#    define سېټ_ALLOC_اندازه(ptr) _msize(ptr)
 #  elif defined(__MACH__)
 #    include <malloc/malloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_size(ptr)
+#    define سېټ_ALLOC_اندازه(ptr) malloc_اندازه(ptr)
 #  elif defined(__linux__)
 #    include <malloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
+#    define سېټ_ALLOC_اندازه(ptr) malloc_usable_اندازه(ptr)
 #  elif defined(__FreeBSD__)
 #    include <malloc_np.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
+#    define سېټ_ALLOC_اندازه(ptr) malloc_usable_اندازه(ptr)
 #  elif defined(__NetBSD__)
 #    include <jemalloc/jemalloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
-#  else     /* e.g. OpenBSD */
-#    define SET_ALLOC_SIZE(ptr) 0
+#    define سېټ_ALLOC_اندازه(ptr) malloc_usable_اندازه(ptr)
+#  وإلا     /* e.g. OpenBSD */
+#    define سېټ_ALLOC_اندازه(ptr) 0
 #  endif
 /* With tracking. */
-static void *set_alloc(set_t *set, void *ptr, size_t size) {
-    size_t had = ptr == NULL ? 0 : SET_ALLOC_SIZE(ptr);
-    void *mem = realloc(ptr, size);
-    if (mem == NULL)
-        longjmp(set->env, ENOMEM);
-    set->allocs += ptr == NULL;
-    set->memory += SET_ALLOC_SIZE(mem) - had;
-    return mem;
+ساكن فراغ *سېټ_alloc(سېټ_t *سېټ, فراغ *ptr, size_t اندازه) {
+    size_t had = ptr == عدم ? 0 : سېټ_ALLOC_اندازه(ptr);
+    فراغ *mem = realloc(ptr, اندازه);
+    إذا (mem == عدم)
+        longjmp(سېټ->env, ENOMEM);
+    سېټ->allocs += ptr == عدم;
+    سېټ->حافظه += سېټ_ALLOC_اندازه(mem) - had;
+    أرجع mem;
 }
-static void set_free(set_t *set, void *ptr) {
-    if (ptr != NULL) {
-        set->allocs--;
-        set->memory -= SET_ALLOC_SIZE(ptr);
-        free(ptr);
+ساكن فراغ سېټ_free(سېټ_t *سېټ, فراغ *ptr) {
+    إذا (ptr != عدم) {
+        سېټ->allocs--;
+        سېټ->حافظه -= سېټ_ALLOC_اندازه(ptr);
+        حرر(ptr);
     }
 }
-#else
+#وإلا
 /* Without tracking. */
-static void *set_alloc(set_t *set, void *ptr, size_t size) {
-    void *mem = realloc(ptr, size);
-    if (mem == NULL)
-        longjmp(set->env, ENOMEM);
-    return mem;
+ساكن فراغ *سېټ_alloc(سېټ_t *سېټ, فراغ *ptr, size_t اندازه) {
+    فراغ *mem = realloc(ptr, اندازه);
+    إذا (mem == عدم)
+        longjmp(سېټ->env, ENOMEM);
+    أرجع mem;
 }
-static void set_free(set_t *set, void *ptr) {
-    (void)set;
-    free(ptr);
+ساكن فراغ سېټ_free(سېټ_t *سېټ, فراغ *ptr) {
+    (فراغ)سېټ;
+    حرر(ptr);
 }
-#endif
+#د_که_پای
 
 /* --private-- Grow node's array right[] as needed to be able to hold at least
    want links. If fill is true, assure that the first want links are filled in,
    setting them to set->head if not previously filled in. Otherwise it is
    assumed that the first want links are about to be filled in. */
-static void set_grow(set_t *set, set_node_t *node, int want, int fill) {
-    int i;
-    if (node->size < want) {
-        int more = node->size ? node->size : 1;
-        while (more < want)
-            more <<= 1;
-        node->right = set_alloc(set, node->right,
-                                (size_t)more * sizeof(set_node_t *));
-        node->size = (i16_t)more;
+ساكن فراغ سېټ_grow(سېټ_t *سېټ, سېټ_غوټه_t *غوټه, صحيح want, صحيح fill) {
+    صحيح i;
+    إذا (غوټه->اندازه < want) {
+        صحيح نور = غوټه->اندازه ? غوټه->اندازه : 1;
+        طالما (نور < want)
+            نور <<= 1;
+        غوټه->ښی_2 = سېټ_alloc(سېټ, غوټه->ښی_2,
+                                (size_t)نور * حجم(سېټ_غوټه_t *));
+        غوټه->اندازه = (i16_t)نور;
     }
-    if (fill)
-        for (i = node->fill; i < want; i++)
-            node->right[i] = set->head;
-    node->fill = (i16_t)want;
+    إذا (fill)
+        لكل (i = غوټه->fill; i < want; i++)
+            غوټه->ښی_2[i] = سېټ->سر;
+    غوټه->fill = (i16_t)want;
 }
 
 /* --private-- Return a new node. key is left uninitialized. */
-static set_node_t *set_node(set_t *set) {
-    set_node_t *node = set_alloc(set, NULL, sizeof(set_node_t));
-    node->size = 0;
-    node->fill = 0;
-    node->right = NULL;
-    return node;
+ساكن سېټ_غوټه_t *سېټ_غوټه(سېټ_t *سېټ) {
+    سېټ_غوټه_t *غوټه = سېټ_alloc(سېټ, عدم, حجم(سېټ_غوټه_t));
+    غوټه->اندازه = 0;
+    غوټه->fill = 0;
+    غوټه->ښی_2 = عدم;
+    أرجع غوټه;
 }
 
 /* --private-- Free the list linked from head, along with the keys. */
-static void set_sweep(set_t *set) {
-    set_node_t *step = set->head->right[0];
-    while (step != set->head) {
-        set_node_t *next = step->right[0];      /* save link to next node */
-        set_drop(set, step->key);
-        set_free(set, step->right);
-        set_free(set, step);
-        step = next;
+ساكن فراغ سېټ_sweep(سېټ_t *سېټ) {
+    سېټ_غوټه_t *ګام = سېټ->سر->ښی_2[0];
+    طالما (ګام != سېټ->سر) {
+        سېټ_غوټه_t *بل = ګام->ښی_2[0];      /* save link to next node */
+        سېټ_drop(سېټ, ګام->کلی);
+        سېټ_free(سېټ, ګام->ښی_2);
+        سېټ_free(سېټ, ګام);
+        ګام = بل;
     }
 }
 
@@ -236,146 +236,146 @@ static void set_sweep(set_t *set) {
    errno.h.) The set can still be used if this happens, assuming that it didn't
    happen during set_start(). Whether set_start() completed or not, set_end()
    can be used to free the set's memory after a longjmp(). */
-SKIPSET_EXPORT void set_start(set_t *set) {
-#ifdef SET_TRACK
-    set->allocs = 0;
-    set->memory = 0;
-#endif
-    set->head = set->path = set->node = NULL;   /* in case set_node() fails */
-    set->path = set_node(set);
-    set->head = set_node(set);
-    set_grow(set, set->head, 1, 1); /* one link back to head for empty set */
-    *(unsigned char *)&set->head->key = 137;    /* set id */
-    set->depth = 0;
-    set_uniq(&set->gen, set);
-    set->ran = 1;
+SKIPSET_EXPORT فراغ سېټ_پیل(سېټ_t *سېټ) {
+#که_تعریف_شوی سېټ_TRACK
+    سېټ->allocs = 0;
+    سېټ->حافظه = 0;
+#د_که_پای
+    سېټ->سر = سېټ->لار = سېټ->غوټه = عدم;   /* in case set_node() fails */
+    سېټ->لار = سېټ_غوټه(سېټ);
+    سېټ->سر = سېټ_غوټه(سېټ);
+    سېټ_grow(سېټ, سېټ->سر, 1, 1); /* one link back to head for empty set */
+    *(بینښه حرف *)&سېټ->سر->کلی = 137;    /* set id */
+    سېټ->ژوروالی = 0;
+    سېټ_uniq(&سېټ->gen, سېټ);
+    سېټ->ran = 1;
 }
 
 /* Return true if *set appears to be in a usable state. If *set has been zeroed
    out, then set_ok(set) will be false and set_end(set) will be safe. */
-SKIPSET_EXPORT int set_ok(set_t *set) {
-    return set->head != NULL &&
-           set->head->right != NULL &&
-           *(unsigned char *)&set->head->key == 137;
+SKIPSET_EXPORT صحيح سېټ_ok(سېټ_t *سېټ) {
+    أرجع سېټ->سر != عدم &&
+           سېټ->سر->ښی_2 != عدم &&
+           *(بینښه حرف *)&سېټ->سر->کلی == 137;
 }
 
-#if 0       /* not used in minizip */
+#إذا 0       /* not used in minizip */
 /* Empty the set. This frees the memory used for the previous set contents.
    After set_clear(), *set is ready for use, as if after a set_start(). */
-SKIPSET_EXPORT void set_clear(set_t *set) {
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT فراغ سېټ_clear(سېټ_t *سېټ) {
+    أكد(سېټ_ok(سېټ) && "improper use");
 
     /* Free all the keys and their nodes. */
-    set_sweep(set);
+    سېټ_sweep(سېټ);
 
     /* Leave the head and path allocations as is. Clear their contents, with
        head pointing to itself and setting depth to zero, for an empty set. */
-    set->head->right[0] = set->head;
-    set->head->fill = 1;
-    set->path->fill = 0;
-    set->depth = 0;
+    سېټ->سر->ښی_2[0] = سېټ->سر;
+    سېټ->سر->fill = 1;
+    سېټ->لار->fill = 0;
+    سېټ->ژوروالی = 0;
 }
-#endif
+#د_که_پای
 
 /* Done using the set -- free all allocations. The only operation on *set
    permitted after this is set_start(). Though another set_end() would do no
    harm. This can be done at any time after a set_start(), or after a longjmp()
    on any allocation failure, including during a set_start(). */
-SKIPSET_EXPORT void set_end(set_t *set) {
-    if (set->head != NULL) {
+SKIPSET_EXPORT فراغ سېټ_پای_ټکی(سېټ_t *سېټ) {
+    إذا (سېټ->سر != عدم) {
         /* Empty the set and free the head node. */
-        if (set->head->right != NULL) {
-            set_sweep(set);
-            set_free(set, set->head->right);
+        إذا (سېټ->سر->ښی_2 != عدم) {
+            سېټ_sweep(سېټ);
+            سېټ_free(سېټ, سېټ->سر->ښی_2);
         }
-        set_free(set, set->head);
-        set->head = NULL;
+        سېټ_free(سېټ, سېټ->سر);
+        سېټ->سر = عدم;
     }
-    if (set->path != NULL) {
+    إذا (سېټ->لار != عدم) {
         /* Free the path work area. */
-        set_free(set, set->path->right);
-        set_free(set, set->path);
-        set->path = NULL;
+        سېټ_free(سېټ, سېټ->لار->ښی_2);
+        سېټ_free(سېټ, سېټ->لار);
+        سېټ->لار = عدم;
     }
-    if (set->node != NULL) {
+    إذا (سېټ->غوټه != عدم) {
         /* Free the node that was under construction when longjmp() hit. */
-        set_drop(set, set->node->key);
-        set_free(set, set->node->right);
-        set_free(set, set->node);
-        set->node = NULL;
+        سېټ_drop(سېټ, سېټ->غوټه->کلی);
+        سېټ_free(سېټ, سېټ->غوټه->ښی_2);
+        سېټ_free(سېټ, سېټ->غوټه);
+        سېټ->غوټه = عدم;
     }
 }
 
 /* Look for key. Return 1 if found or 0 if not. This also puts the path to get
    there in set->path, for use by set_insert(). */
-SKIPSET_EXPORT int set_found(set_t *set, set_key_t key) {
-    set_node_t *head, *here;
-    int i;
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT صحيح سېټ_وموندل(سېټ_t *سېټ, سېټ_کلی_t کلی) {
+    سېټ_غوټه_t *سر, *دلته;
+    صحيح i;
+    أكد(سېټ_ok(سېټ) && "improper use");
 
     /* Start at depth. Work down and right as determined by key comparisons. */
-    head = set->head;
-    here = head;
-    i = set->depth;
-    set_grow(set, set->path, i + 1, 0);
-    do {
-        while (here->right[i] != head &&
-               set_cmp(here->right[i]->key, key) < 0)
-            here = here->right[i];
-        set->path->right[i] = here;
-    } while (i--);
+    سر = سېټ->سر;
+    دلته = سر;
+    i = سېټ->ژوروالی;
+    سېټ_grow(سېټ, سېټ->لار, i + 1, 0);
+    افعل {
+        طالما (دلته->ښی_2[i] != سر &&
+               سېټ_cmp(دلته->ښی_2[i]->کلی, کلی) < 0)
+            دلته = دلته->ښی_2[i];
+        سېټ->لار->ښی_2[i] = دلته;
+    } طالما (i--);
 
     /* See if the key matches. */
-    here = here->right[0];
-    return here != head && set_cmp(here->key, key) == 0;
+    دلته = دلته->ښی_2[0];
+    أرجع دلته != سر && سېټ_cmp(دلته->کلی, کلی) == 0;
 }
 
 /* Insert the key key. Return 0 on success, or 1 if it's already in the set. */
-SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
-    int level = 0;
-    int bit;
-    int i;
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT صحيح سېټ_ورننباسه(سېټ_t *سېټ, سېټ_کلی_t کلی) {
+    صحيح level = 0;
+    صحيح بټ;
+    صحيح i;
+    أكد(سېټ_ok(سېټ) && "improper use");
 
-    if (set_found(set, key))
+    إذا (سېټ_وموندل(سېټ, کلی))
         /* That key is already in the set. */
-        return 1;
+        أرجع 1;
 
     /* Randomly generate a new level-- level 0 with probability 1/2, 1 with
        probability 1/4, 2 with probability 1/8, etc. */
-    for (;;) {
-        if (set->ran == 1)
+    لكل (;;) {
+        إذا (سېټ->ran == 1)
             /* Ran out. Get another 32 random bits. */
-            set->ran = set_rand(&set->gen) | (1ULL << 32);
-        bit = set->ran & 1;
-        set->ran >>= 1;
-        if (bit)
-            break;
-        assert(level < 32767 &&
+            سېټ->ran = سېټ_rand(&سېټ->gen) | (1ULL << 32);
+        بټ = سېټ->ran & 1;
+        سېټ->ran >>= 1;
+        إذا (بټ)
+            اكسر;
+        أكد(level < 32767 &&
                "Overhead, without any fuss, the stars were going out.");
         level++;
     }
-    if (level > set->depth) {
+    إذا (level > سېټ->ژوروالی) {
         /* The maximum depth is now deeper. Update the structures. */
-        set_grow(set, set->path, level + 1, 1);
-        set_grow(set, set->head, level + 1, 1);
-        set->depth = (i16_t)level;
+        سېټ_grow(سېټ, سېټ->لار, level + 1, 1);
+        سېټ_grow(سېټ, سېټ->سر, level + 1, 1);
+        سېټ->ژوروالی = (i16_t)level;
     }
 
     /* Make a new node for the provided key, and insert it in the lists up to
        and including level. */
-    set->node = set_node(set);
-    set->node->key = key;
-    set_grow(set, set->node, level + 1, 0);
-    for (i = 0; i <= level; i++) {
-        set->node->right[i] = set->path->right[i]->right[i];
-        set->path->right[i]->right[i] = set->node;
+    سېټ->غوټه = سېټ_غوټه(سېټ);
+    سېټ->غوټه->کلی = کلی;
+    سېټ_grow(سېټ, سېټ->غوټه, level + 1, 0);
+    لكل (i = 0; i <= level; i++) {
+        سېټ->غوټه->ښی_2[i] = سېټ->لار->ښی_2[i]->ښی_2[i];
+        سېټ->لار->ښی_2[i]->ښی_2[i] = سېټ->غوټه;
     }
-    set->node = NULL;
-    return 0;
+    سېټ->غوټه = عدم;
+    أرجع 0;
 }
 
-#else
-#error ** another skiplist set already created here
+#وإلا
+#تېروتنه ** another skiplist سېټ already created دلته
 /* Would need to implement a prefix in order to support multiple sets. */
-#endif
+#د_که_پای

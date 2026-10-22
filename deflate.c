@@ -49,9 +49,9 @@
 
 /* @(#) $Id$ */
 
-#include "deflate.h"
+#ضمن "deflate.h"
 
-const char deflate_copyright[] =
+ثابت حرف deflate_copyright[] =
    " deflate 1.3.2.1 Copyright 1995-2026 Jean-loup Gailly and Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -60,34 +60,34 @@ const char deflate_copyright[] =
   copyright string in the executable of your product.
  */
 
-typedef enum {
-    need_more,      /* block not completed, need more input or more output */
-    block_done,     /* block flush performed */
-    finish_started, /* finish started, need only more output at next deflate */
-    finish_done     /* finish done, accept no more input or output */
-} block_state;
+تعريفنوع تعداد {
+    need_نور,      /* block not completed, need more input or more output */
+    بلاک_بشپړ,     /* block flush performed */
+    پای_started, /* finish started, need only more output at next deflate */
+    پای_بشپړ     /* finish done, accept no more input or output */
+} بلاک_state;
 
-typedef block_state (*compress_func)(deflate_state *s, int flush);
+تعريفنوع بلاک_state (*compress_func)(deflate_state *s, صحيح flush);
 /* Compression function. Returns the block state after the call. */
 
-local block_state deflate_stored(deflate_state *s, int flush);
-local block_state deflate_fast(deflate_state *s, int flush);
-#ifndef FASTEST
-local block_state deflate_slow(deflate_state *s, int flush);
-#endif
-local block_state deflate_rle(deflate_state *s, int flush);
-local block_state deflate_huff(deflate_state *s, int flush);
+local بلاک_state deflate_stored(deflate_state *s, صحيح flush);
+local بلاک_state deflate_fast(deflate_state *s, صحيح flush);
+#که_نه_تعریف_شوی FASTEST
+local بلاک_state deflate_slow(deflate_state *s, صحيح flush);
+#د_که_پای
+local بلاک_state deflate_rle(deflate_state *s, صحيح flush);
+local بلاک_state deflate_huff(deflate_state *s, صحيح flush);
 
 /* ===========================================================================
  * Local data
  */
 
-#define NIL 0
+#تعریف_کړه NIL 0
 /* Tail of hash chains */
 
-#ifndef TOO_FAR
+#که_نه_تعریف_شوی TOO_FAR
 #  define TOO_FAR 4096
-#endif
+#د_که_پای
 /* Matches of length 3 are discarded if their distance exceeds TOO_FAR */
 
 /* Values for max_lazy_match, good_match and max_chain_length, depending on
@@ -95,21 +95,21 @@ local block_state deflate_huff(deflate_state *s, int flush);
  * exclude worst case performance for pathological files. Better values may be
  * found for specific files.
  */
-typedef struct config_s {
-   ush good_length; /* reduce lazy search above this match length */
+تعريفنوع بنية config_s {
+   ush good_اوږدتیا; /* reduce lazy search above this match length */
    ush max_lazy;    /* do not perform lazy search above this match length */
-   ush nice_length; /* quit search above this match length */
+   ush nice_اوږدتیا; /* quit search above this match length */
    ush max_chain;
    compress_func func;
 } config;
 
-#ifdef FASTEST
-local const config configuration_table[2] = {
+#که_تعریف_شوی FASTEST
+local ثابت config configuration_جدول[2] = {
 /*      good lazy nice chain */
 /* 0 */ {0,    0,  0,    0, deflate_stored},  /* store only */
 /* 1 */ {4,    4,  8,    4, deflate_fast}}; /* max speed, no lazy matches */
-#else
-local const config configuration_table[10] = {
+#وإلا
+local ثابت config configuration_جدول[10] = {
 /*      good lazy nice chain */
 /* 0 */ {0,    0,  0,    0, deflate_stored},  /* store only */
 /* 1 */ {4,    4,  8,    4, deflate_fast}, /* max speed, no lazy matches */
@@ -122,7 +122,7 @@ local const config configuration_table[10] = {
 /* 7 */ {8,   32, 128, 256, deflate_slow},
 /* 8 */ {32, 128, 258, 1024, deflate_slow},
 /* 9 */ {32, 258, 258, 4096, deflate_slow}}; /* max compression */
-#endif
+#د_که_پای
 
 /* Note: the deflate() code requires max_lazy >= MIN_MATCH and max_chain >= 4
  * For deflate_fast() (levels <= 3) good is ignored and lazy has a different
@@ -130,7 +130,7 @@ local const config configuration_table[10] = {
  */
 
 /* rank Z_BLOCK between Z_NO_FLUSH and Z_PARTIAL_FLUSH */
-#define RANK(f) (((f) * 2) - ((f) > 4 ? 9 : 0))
+#تعریف_کړه RANK(f) (((f) * 2) - ((f) > 4 ? 9 : 0))
 
 /* ===========================================================================
  * Update a hash value with the given input byte
@@ -138,7 +138,7 @@ local const config configuration_table[10] = {
  *    characters, so that a running hash key can be computed from the previous
  *    key instead of complete recalculation each time.
  */
-#define UPDATE_HASH(s,h,c) (h = (((h) << s->hash_shift) ^ (c)) & s->hash_mask)
+#تعریف_کړه UPDATE_HASH(s,h,c) (h = (((h) << s->hash_ښويدنه) ^ (c)) & s->hash_ماسک)
 
 
 /* ===========================================================================
@@ -151,61 +151,61 @@ local const config configuration_table[10] = {
  *    characters and the first MIN_MATCH bytes of str are valid (except for
  *    the last MIN_MATCH-1 bytes of the input file).
  */
-#ifdef FASTEST
-#define INSERT_STRING(s, str, match_head) \
-   (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
-    match_head = s->head[s->ins_h], \
-    s->head[s->ins_h] = (Pos)(str))
-#else
-#define INSERT_STRING(s, str, match_head) \
-   (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
-    match_head = s->prev[(str) & s->w_mask] = s->head[s->ins_h], \
-    s->head[s->ins_h] = (Pos)(str))
-#endif
+#که_تعریف_شوی FASTEST
+#تعریف_کړه ورننباسه_STRING(s, str, سمون_سر) \
+   (UPDATE_HASH(s, s->ins_h, s->کړکۍ[(str) + (MIN_سمون-1)]), \
+    سمون_سر = s->سر[s->ins_h], \
+    s->سر[s->ins_h] = (Pos)(str))
+#وإلا
+#تعریف_کړه ورننباسه_STRING(s, str, سمون_سر) \
+   (UPDATE_HASH(s, s->ins_h, s->کړکۍ[(str) + (MIN_سمون-1)]), \
+    سمون_سر = s->prev[(str) & s->w_ماسک] = s->سر[s->ins_h], \
+    s->سر[s->ins_h] = (Pos)(str))
+#د_که_پای
 
 /* ===========================================================================
  * Initialize the hash table (avoiding 64K overflow for 16 bit systems).
  * prev[] will be initialized on the fly.
  */
-#define CLEAR_HASH(s) \
-    do { \
-        s->head[s->hash_size - 1] = NIL; \
-        zmemzero(s->head, (unsigned)(s->hash_size - 1)*sizeof(*s->head)); \
+#تعریف_کړه CLEAR_HASH(s) \
+    افعل { \
+        s->سر[s->hash_اندازه - 1] = NIL; \
+        zmemzero(s->سر, (بینښه)(s->hash_اندازه - 1)*حجم(*s->سر)); \
         s->slid = 0; \
-    } while (0)
+    } طالما (0)
 
 /* ===========================================================================
  * Slide the hash table when sliding the window down (could be avoided with 32
  * bit values at the expense of memory usage). We slide even when level == 0 to
  * keep the hash table consistent if we switch back to level > 0 later.
  */
-#if defined(__has_feature)
-#  if __has_feature(memory_sanitizer)
+#إذا defined(__has_feature)
+#  إذا __has_feature(حافظه_sanitizer)
      __attribute__((no_sanitize("memory")))
 #  endif
-#endif
-local void slide_hash(deflate_state *s) {
-    unsigned n, m;
+#د_که_پای
+local فراغ slide_hash(deflate_state *s) {
+    بینښه n, m;
     Posf *p;
-    uInt wsize = s->w_size;
+    uInt wsize = s->w_اندازه;
 
-    n = s->hash_size;
-    p = &s->head[n];
-    do {
+    n = s->hash_اندازه;
+    p = &s->سر[n];
+    افعل {
         m = *--p;
         *p = (Pos)(m >= wsize ? m - wsize : NIL);
-    } while (--n);
-#ifndef FASTEST
+    } طالما (--n);
+#که_نه_تعریف_شوی FASTEST
     n = wsize;
     p = &s->prev[n];
-    do {
+    افعل {
         m = *--p;
         *p = (Pos)(m >= wsize ? m - wsize : NIL);
         /* If n is not on any hash chain, prev[n] is garbage but
          * its value will never be used.
          */
-    } while (--n);
-#endif
+    } طالما (--n);
+#د_که_پای
     s->slid = 1;
 }
 
@@ -216,27 +216,27 @@ local void slide_hash(deflate_state *s) {
  * allocating a large strm->next_in buffer and copying from it.
  * (See also flush_pending()).
  */
-local unsigned read_buf(z_streamp strm, Bytef *buf, unsigned size) {
-    unsigned len = strm->avail_in;
+local بینښه read_buf(z_streamp strm, Bytef *buf, بینښه اندازه) {
+    بینښه len = strm->avail_دننه;
 
-    if (len > size) len = size;
-    if (len == 0) return 0;
+    إذا (len > اندازه) len = اندازه;
+    إذا (len == 0) أرجع 0;
 
-    strm->avail_in  -= len;
+    strm->avail_دننه  -= len;
 
-    zmemcpy(buf, strm->next_in, len);
-    if (strm->state->wrap == 1) {
+    zmemcpy(buf, strm->بل_دننه, len);
+    إذا (strm->state->wrap == 1) {
         strm->adler = adler32(strm->adler, buf, len);
     }
-#ifdef GZIP
-    else if (strm->state->wrap == 2) {
-        strm->adler = crc32(strm->adler, buf, len);
+#که_تعریف_شوی GZIP
+    وإلا إذا (strm->state->wrap == 2) {
+        strm->adler = دوراني_ازموینه_32_2(strm->adler, buf, len);
     }
-#endif
-    strm->next_in  += len;
-    strm->total_in += len;
+#د_که_پای
+    strm->بل_دننه  += len;
+    strm->ټول_دننه += len;
 
-    return len;
+    أرجع len;
 }
 
 /* ===========================================================================
@@ -249,51 +249,51 @@ local unsigned read_buf(z_streamp strm, Bytef *buf, unsigned size) {
  *    performed for at least two bytes (required for the zip translate_eol
  *    option -- not supported here).
  */
-local void fill_window(deflate_state *s) {
-    unsigned n;
-    unsigned more;    /* Amount of free space at the end of the window. */
-    uInt wsize = s->w_size;
+local فراغ fill_کړکۍ(deflate_state *s) {
+    بینښه n;
+    بینښه نور;    /* Amount of free space at the end of the window. */
+    uInt wsize = s->w_اندازه;
 
     Assert(s->lookahead < MIN_LOOKAHEAD, "already enough lookahead");
 
-    do {
-        more = (unsigned)(s->window_size -(ulg)s->lookahead -(ulg)s->strstart);
+    افعل {
+        نور = (بینښه)(s->کړکۍ_اندازه -(ulg)s->lookahead -(ulg)s->strstart);
 
         /* Deal with !@#$% 64K limit: */
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4127)
-#endif
-        if (sizeof(int) <= 2) {
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-            if (more == 0 && s->strstart == 0 && s->lookahead == 0) {
-                more = wsize;
+#که_تعریف_شوی _MSC_VER
+#لارښوونه warning(ټېل)
+#لارښوونه warning(disable: 4127)
+#د_که_پای
+        إذا (حجم(صحيح) <= 2) {
+#که_تعریف_شوی _MSC_VER
+#لارښوونه warning(راوباسه)
+#د_که_پای
+            إذا (نور == 0 && s->strstart == 0 && s->lookahead == 0) {
+                نور = wsize;
 
-            } else if (more == (unsigned)(-1)) {
+            } وإلا إذا (نور == (بینښه)(-1)) {
                 /* Very unlikely, but possible on 16 bit machine if
                  * strstart == 0 && lookahead == 1 (input done a byte at time)
                  */
-                more--;
+                نور--;
             }
         }
 
         /* If the window is almost full and there is insufficient lookahead,
          * move the upper half to the lower one to make room in the upper half.
          */
-        if (s->strstart >= wsize + MAX_DIST(s)) {
+        إذا (s->strstart >= wsize + MAX_DIST(s)) {
 
-            zmemcpy(s->window, s->window + wsize, (unsigned)wsize - more);
-            s->match_start -= wsize;
+            zmemcpy(s->کړکۍ, s->کړکۍ + wsize, (بینښه)wsize - نور);
+            s->سمون_پیل -= wsize;
             s->strstart    -= wsize; /* we now have strstart >= MAX_DIST */
-            s->block_start -= (long) wsize;
-            if (s->insert > s->strstart)
-                s->insert = s->strstart;
+            s->بلاک_پیل -= (اوږد) wsize;
+            إذا (s->ورننباسه > s->strstart)
+                s->ورننباسه = s->strstart;
             slide_hash(s);
-            more += wsize;
+            نور += wsize;
         }
-        if (s->strm->avail_in == 0) break;
+        إذا (s->strm->avail_دننه == 0) اكسر;
 
         /* If there was no sliding:
          *    strstart <= WSIZE+MAX_DIST-1 && lookahead <= MIN_LOOKAHEAD - 1 &&
@@ -306,36 +306,36 @@ local void fill_window(deflate_state *s) {
          * Otherwise, window_size == 2*WSIZE so more >= 2.
          * If there was sliding, more >= WSIZE. So in all cases, more >= 2.
          */
-        Assert(more >= 2, "more < 2");
+        Assert(نور >= 2, "more < 2");
 
-        n = read_buf(s->strm, s->window + s->strstart + s->lookahead, more);
+        n = read_buf(s->strm, s->کړکۍ + s->strstart + s->lookahead, نور);
         s->lookahead += n;
 
         /* Initialize the hash value now that we have some input: */
-        if (s->lookahead + s->insert >= MIN_MATCH) {
-            uInt str = s->strstart - s->insert;
-            s->ins_h = s->window[str];
-            UPDATE_HASH(s, s->ins_h, s->window[str + 1]);
-#if MIN_MATCH != 3
-            Call UPDATE_HASH() MIN_MATCH-3 more times
-#endif
-            while (s->insert) {
-                UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
-#ifndef FASTEST
-                s->prev[str & s->w_mask] = s->head[s->ins_h];
-#endif
-                s->head[s->ins_h] = (Pos)str;
+        إذا (s->lookahead + s->ورننباسه >= MIN_سمون) {
+            uInt str = s->strstart - s->ورننباسه;
+            s->ins_h = s->کړکۍ[str];
+            UPDATE_HASH(s, s->ins_h, s->کړکۍ[str + 1]);
+#إذا MIN_سمون != 3
+            Call UPDATE_HASH() MIN_سمون-3 نور times
+#د_که_پای
+            طالما (s->ورننباسه) {
+                UPDATE_HASH(s, s->ins_h, s->کړکۍ[str + MIN_سمون-1]);
+#که_نه_تعریف_شوی FASTEST
+                s->prev[str & s->w_ماسک] = s->سر[s->ins_h];
+#د_که_پای
+                s->سر[s->ins_h] = (Pos)str;
                 str++;
-                s->insert--;
-                if (s->lookahead + s->insert < MIN_MATCH)
-                    break;
+                s->ورننباسه--;
+                إذا (s->lookahead + s->ورننباسه < MIN_سمون)
+                    اكسر;
             }
         }
         /* If the whole input has less than MIN_MATCH bytes, ins_h is garbage,
          * but this is not important since only literal bytes will be emitted.
          */
 
-    } while (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_in != 0);
+    } طالما (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_دننه != 0);
 
     /* If the WIN_INIT bytes after the end of the current data have never been
      * written, then zero those bytes in order to avoid memory check reports of
@@ -344,121 +344,121 @@ local void fill_window(deflate_state *s) {
      * time through here.  WIN_INIT is set to MAX_MATCH since the longest match
      * routines allow scanning to strstart + MAX_MATCH, ignoring lookahead.
      */
-    if (s->high_water < s->window_size) {
+    إذا (s->لوړ_water < s->کړکۍ_اندازه) {
         ulg curr = s->strstart + (ulg)(s->lookahead);
         ulg init;
 
-        if (s->high_water < curr) {
+        إذا (s->لوړ_water < curr) {
             /* Previous high water mark below current data -- zero WIN_INIT
              * bytes or up to end of window, whichever is less.
              */
-            init = s->window_size - curr;
-            if (init > WIN_INIT)
+            init = s->کړکۍ_اندازه - curr;
+            إذا (init > WIN_INIT)
                 init = WIN_INIT;
-            zmemzero(s->window + curr, (unsigned)init);
-            s->high_water = curr + init;
+            zmemzero(s->کړکۍ + curr, (بینښه)init);
+            s->لوړ_water = curr + init;
         }
-        else if (s->high_water < (ulg)curr + WIN_INIT) {
+        وإلا إذا (s->لوړ_water < (ulg)curr + WIN_INIT) {
             /* High water mark at or above current data, but below current data
              * plus WIN_INIT -- zero out to current data plus WIN_INIT, or up
              * to end of window, whichever is less.
              */
-            init = (ulg)curr + WIN_INIT - s->high_water;
-            if (init > s->window_size - s->high_water)
-                init = s->window_size - s->high_water;
-            zmemzero(s->window + s->high_water, (unsigned)init);
-            s->high_water += init;
+            init = (ulg)curr + WIN_INIT - s->لوړ_water;
+            إذا (init > s->کړکۍ_اندازه - s->لوړ_water)
+                init = s->کړکۍ_اندازه - s->لوړ_water;
+            zmemzero(s->کړکۍ + s->لوړ_water, (بینښه)init);
+            s->لوړ_water += init;
         }
     }
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->کړکۍ_اندازه - MIN_LOOKAHEAD,
            "not enough room for search");
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateInit_(z_streamp strm, int level, const char *version,
-                         int stream_size) {
-    return deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
-                         Z_DEFAULT_STRATEGY, version, stream_size);
+صحيح ZEXPORT deflateInit_(z_streamp strm, صحيح level, ثابت حرف *نسخه,
+                         صحيح بهیر_اندازه) {
+    أرجع deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
+                         Z_DEFAULT_STRATEGY, نسخه, بهیر_اندازه);
     /* To do: ignore strm->next_in if we use it as window */
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
-                          int windowBits, int memLevel, int strategy,
-                          const char *version, int stream_size) {
+صحيح ZEXPORT deflateInit2_(z_streamp strm, صحيح level, صحيح لاره,
+                          صحيح کړکۍ_بټونه, صحيح memLevel, صحيح strategy,
+                          ثابت حرف *نسخه, صحيح بهیر_اندازه) {
     deflate_state *s;
-    int wrap = 1;
-    static const char my_version[] = ZLIB_VERSION;
+    صحيح wrap = 1;
+    ساكن ثابت حرف my_نسخه[] = ZLIB_نسخه;
 
-    if (version == Z_NULL || version[0] != my_version[0] ||
-        stream_size != sizeof(z_stream)) {
-        return Z_VERSION_ERROR;
+    إذا (نسخه == Z_NULL || نسخه[0] != my_نسخه[0] ||
+        بهیر_اندازه != حجم(z_بهیر)) {
+        أرجع Z_نسخه_ERROR;
     }
-    if (strm == Z_NULL) return Z_STREAM_ERROR;
+    إذا (strm == Z_NULL) أرجع Z_بهیر_ERROR;
 
-    strm->msg = Z_NULL;
-    if (strm->zalloc == (alloc_func)0) {
-#ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+    strm->پیغام = Z_NULL;
+    إذا (strm->zalloc == (alloc_func)0) {
+#که_تعریف_شوی Z_SOLO
+        أرجع Z_بهیر_ERROR;
+#وإلا
         strm->zalloc = zcalloc;
         strm->opaque = (voidpf)0;
-#endif
+#د_که_پای
     }
-    if (strm->zfree == (free_func)0)
-#ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+    إذا (strm->zfree == (free_func)0)
+#که_تعریف_شوی Z_SOLO
+        أرجع Z_بهیر_ERROR;
+#وإلا
         strm->zfree = zcfree;
-#endif
+#د_که_پای
 
-#ifdef FASTEST
-    if (level != 0) level = 1;
-#else
-    if (level == Z_DEFAULT_COMPRESSION) level = 6;
-#endif
+#که_تعریف_شوی FASTEST
+    إذا (level != 0) level = 1;
+#وإلا
+    إذا (level == Z_DEFAULT_COMPRESSION) level = 6;
+#د_که_پای
 
-    if (windowBits < 0) { /* suppress zlib wrapper */
+    إذا (کړکۍ_بټونه < 0) { /* suppress zlib wrapper */
         wrap = 0;
-        if (windowBits < -15)
-            return Z_STREAM_ERROR;
-        windowBits = -windowBits;
+        إذا (کړکۍ_بټونه < -15)
+            أرجع Z_بهیر_ERROR;
+        کړکۍ_بټونه = -کړکۍ_بټونه;
     }
-#ifdef GZIP
-    else if (windowBits > 15) {
+#که_تعریف_شوی GZIP
+    وإلا إذا (کړکۍ_بټونه > 15) {
         wrap = 2;       /* write gzip wrapper instead */
-        windowBits -= 16;
+        کړکۍ_بټونه -= 16;
     }
-#endif
-    if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != Z_DEFLATED ||
-        windowBits < 8 || windowBits > 15 || level < 0 || level > 9 ||
-        strategy < 0 || strategy > Z_FIXED || (windowBits == 8 && wrap != 1)) {
-        return Z_STREAM_ERROR;
+#د_که_پای
+    إذا (memLevel < 1 || memLevel > MAX_MEM_LEVEL || لاره != Z_DEFLATED ||
+        کړکۍ_بټونه < 8 || کړکۍ_بټونه > 15 || level < 0 || level > 9 ||
+        strategy < 0 || strategy > Z_FIXED || (کړکۍ_بټونه == 8 && wrap != 1)) {
+        أرجع Z_بهیر_ERROR;
     }
-    if (windowBits == 8) windowBits = 9;  /* until 256-byte window bug fixed */
-    s = (deflate_state *) ZALLOC(strm, 1, sizeof(deflate_state));
-    if (s == Z_NULL) return Z_MEM_ERROR;
-    zmemzero(s, sizeof(deflate_state));
-    strm->state = (struct internal_state FAR *)s;
+    إذا (کړکۍ_بټونه == 8) کړکۍ_بټونه = 9;  /* until 256-byte window bug fixed */
+    s = (deflate_state *) ZALLOC(strm, 1, حجم(deflate_state));
+    إذا (s == Z_NULL) أرجع Z_MEM_ERROR;
+    zmemzero(s, حجم(deflate_state));
+    strm->state = (بنية دننی_state FAR *)s;
     s->strm = strm;
-    s->status = INIT_STATE;     /* to pass state test in deflateReset() */
+    s->حالت = INIT_STATE;     /* to pass state test in deflateReset() */
 
     s->wrap = wrap;
-    s->w_bits = (uInt)windowBits;
-    s->w_size = 1 << s->w_bits;
-    s->w_mask = s->w_size - 1;
+    s->w_بټونه = (uInt)کړکۍ_بټونه;
+    s->w_اندازه = 1 << s->w_بټونه;
+    s->w_ماسک = s->w_اندازه - 1;
 
-    s->hash_bits = (uInt)memLevel + 7;
-    s->hash_size = 1 << s->hash_bits;
-    s->hash_mask = s->hash_size - 1;
-    s->hash_shift =  ((s->hash_bits + MIN_MATCH-1) / MIN_MATCH);
+    s->hash_بټونه = (uInt)memLevel + 7;
+    s->hash_اندازه = 1 << s->hash_بټونه;
+    s->hash_ماسک = s->hash_اندازه - 1;
+    s->hash_ښويدنه =  ((s->hash_بټونه + MIN_سمون-1) / MIN_سمون);
 
-    s->window = (Bytef *) ZALLOC(strm, s->w_size, 2*sizeof(Byte));
-    s->prev   = (Posf *)  ZALLOC(strm, s->w_size, sizeof(Pos));
-    s->head   = (Posf *)  ZALLOC(strm, s->hash_size, sizeof(Pos));
+    s->کړکۍ = (Bytef *) ZALLOC(strm, s->w_اندازه, 2*حجم(Byte));
+    s->prev   = (Posf *)  ZALLOC(strm, s->w_اندازه, حجم(Pos));
+    s->سر   = (Posf *)  ZALLOC(strm, s->hash_اندازه, حجم(Pos));
 
-    s->high_water = 0;      /* nothing written to s->window yet */
+    s->لوړ_water = 0;      /* nothing written to s->window yet */
 
     s->lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */
 
@@ -502,23 +502,23 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
      */
 
     s->pending_buf = (uchf *) ZALLOC(strm, s->lit_bufsize, LIT_BUFS);
-    s->pending_buf_size = (ulg)s->lit_bufsize * 4;
+    s->pending_buf_اندازه = (ulg)s->lit_bufsize * 4;
 
-    if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
+    إذا (s->کړکۍ == Z_NULL || s->prev == Z_NULL || s->سر == Z_NULL ||
         s->pending_buf == Z_NULL) {
-        s->status = FINISH_STATE;
-        strm->msg = ERR_MSG(Z_MEM_ERROR);
-        deflateEnd (strm);
-        return Z_MEM_ERROR;
+        s->حالت = پای_STATE;
+        strm->پیغام = ERR_پیغام(Z_MEM_ERROR);
+        deflate_پای_ټکی (strm);
+        أرجع Z_MEM_ERROR;
     }
-#ifdef LIT_MEM
+#که_تعریف_شوی LIT_MEM
     s->d_buf = (ushf *)(s->pending_buf + (s->lit_bufsize << 1));
     s->l_buf = s->pending_buf + (s->lit_bufsize << 2);
-    s->sym_end = s->lit_bufsize - 1;
-#else
+    s->sym_پای_ټکی = s->lit_bufsize - 1;
+#وإلا
     s->sym_buf = s->pending_buf + s->lit_bufsize;
-    s->sym_end = (s->lit_bufsize - 1) * 3;
-#endif
+    s->sym_پای_ټکی = (s->lit_bufsize - 1) * 3;
+#د_که_پای
     /* We avoid equality with lit_bufsize*3 because of wraparound at 64K
      * on 16 bit machines and because stored blocks are restricted to
      * 64K-1 bytes.
@@ -526,308 +526,308 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
 
     s->level = level;
     s->strategy = strategy;
-    s->method = (Byte)method;
+    s->لاره = (Byte)لاره;
 
-    return deflateReset(strm);
+    أرجع deflateReset(strm);
 }
 
 /* =========================================================================
  * Check for a valid deflate stream state. Return 0 if ok, 1 if not.
  */
-local int deflateStateCheck(z_streamp strm) {
+local صحيح deflateStateCheck(z_streamp strm) {
     deflate_state *s;
-    if (strm == Z_NULL ||
+    إذا (strm == Z_NULL ||
         strm->zalloc == (alloc_func)0 || strm->zfree == (free_func)0)
-        return 1;
+        أرجع 1;
     s = strm->state;
-    if (s == Z_NULL || s->strm != strm || (s->status != INIT_STATE &&
-#ifdef GZIP
-                                           s->status != GZIP_STATE &&
-#endif
-                                           s->status != EXTRA_STATE &&
-                                           s->status != NAME_STATE &&
-                                           s->status != COMMENT_STATE &&
-                                           s->status != HCRC_STATE &&
-                                           s->status != BUSY_STATE &&
-                                           s->status != FINISH_STATE))
-        return 1;
-    return 0;
+    إذا (s == Z_NULL || s->strm != strm || (s->حالت != INIT_STATE &&
+#که_تعریف_شوی GZIP
+                                           s->حالت != GZIP_STATE &&
+#د_که_پای
+                                           s->حالت != EXTRA_STATE &&
+                                           s->حالت != NAME_STATE &&
+                                           s->حالت != COMMENT_STATE &&
+                                           s->حالت != HCRC_STATE &&
+                                           s->حالت != BUSY_STATE &&
+                                           s->حالت != پای_STATE))
+        أرجع 1;
+    أرجع 0;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateSetDictionary(z_streamp strm, const Bytef *dictionary,
-                                 uInt  dictLength) {
+صحيح ZEXPORT deflate_سېټ_Dictionary(z_streamp strm, ثابت Bytef *dictionary,
+                                 uInt  dict_اوږدتیا) {
     deflate_state *s;
     uInt str, n;
-    int wrap;
-    unsigned avail;
-    z_const unsigned char *next;
+    صحيح wrap;
+    بینښه avail;
+    z_const بینښه حرف *بل;
 
-    if (deflateStateCheck(strm) || dictionary == Z_NULL)
-        return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(strm) || dictionary == Z_NULL)
+        أرجع Z_بهیر_ERROR;
     s = strm->state;
     wrap = s->wrap;
-    if (wrap == 2 || (wrap == 1 && s->status != INIT_STATE) || s->lookahead)
-        return Z_STREAM_ERROR;
+    إذا (wrap == 2 || (wrap == 1 && s->حالت != INIT_STATE) || s->lookahead)
+        أرجع Z_بهیر_ERROR;
 
     /* when using zlib wrappers, compute Adler-32 for provided dictionary */
-    if (wrap == 1)
-        strm->adler = adler32(strm->adler, dictionary, dictLength);
+    إذا (wrap == 1)
+        strm->adler = adler32(strm->adler, dictionary, dict_اوږدتیا);
     s->wrap = 0;                    /* avoid computing Adler-32 in read_buf */
 
     /* if dictionary would fill window, just replace the history */
-    if (dictLength >= s->w_size) {
-        if (wrap == 0) {            /* already empty otherwise */
+    إذا (dict_اوږدتیا >= s->w_اندازه) {
+        إذا (wrap == 0) {            /* already empty otherwise */
             CLEAR_HASH(s);
             s->strstart = 0;
-            s->block_start = 0L;
-            s->insert = 0;
+            s->بلاک_پیل = 0L;
+            s->ورننباسه = 0;
         }
-        dictionary += dictLength - s->w_size;  /* use the tail */
-        dictLength = s->w_size;
+        dictionary += dict_اوږدتیا - s->w_اندازه;  /* use the tail */
+        dict_اوږدتیا = s->w_اندازه;
     }
 
     /* insert dictionary into window and hash */
-    avail = strm->avail_in;
-    next = strm->next_in;
-    strm->avail_in = dictLength;
-    strm->next_in = (z_const Bytef *)dictionary;
-    fill_window(s);
-    while (s->lookahead >= MIN_MATCH) {
+    avail = strm->avail_دننه;
+    بل = strm->بل_دننه;
+    strm->avail_دننه = dict_اوږدتیا;
+    strm->بل_دننه = (z_const Bytef *)dictionary;
+    fill_کړکۍ(s);
+    طالما (s->lookahead >= MIN_سمون) {
         str = s->strstart;
-        n = s->lookahead - (MIN_MATCH-1);
-        do {
-            UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
-#ifndef FASTEST
-            s->prev[str & s->w_mask] = s->head[s->ins_h];
-#endif
-            s->head[s->ins_h] = (Pos)str;
+        n = s->lookahead - (MIN_سمون-1);
+        افعل {
+            UPDATE_HASH(s, s->ins_h, s->کړکۍ[str + MIN_سمون-1]);
+#که_نه_تعریف_شوی FASTEST
+            s->prev[str & s->w_ماسک] = s->سر[s->ins_h];
+#د_که_پای
+            s->سر[s->ins_h] = (Pos)str;
             str++;
-        } while (--n);
+        } طالما (--n);
         s->strstart = str;
-        s->lookahead = MIN_MATCH-1;
-        fill_window(s);
+        s->lookahead = MIN_سمون-1;
+        fill_کړکۍ(s);
     }
     s->strstart += s->lookahead;
-    s->block_start = (long)s->strstart;
-    s->insert = s->lookahead;
+    s->بلاک_پیل = (اوږد)s->strstart;
+    s->ورننباسه = s->lookahead;
     s->lookahead = 0;
-    s->match_length = s->prev_length = MIN_MATCH-1;
-    s->match_available = 0;
-    strm->next_in = next;
-    strm->avail_in = avail;
+    s->سمون_اوږدتیا = s->prev_اوږدتیا = MIN_سمون-1;
+    s->سمون_شته = 0;
+    strm->بل_دننه = بل;
+    strm->avail_دننه = avail;
     s->wrap = wrap;
-    return Z_OK;
+    أرجع Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateGetDictionary(z_streamp strm, Bytef *dictionary,
-                                 uInt *dictLength) {
+صحيح ZEXPORT deflateGetDictionary(z_streamp strm, Bytef *dictionary,
+                                 uInt *dict_اوږدتیا) {
     deflate_state *s;
     uInt len;
 
-    if (deflateStateCheck(strm))
-        return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(strm))
+        أرجع Z_بهیر_ERROR;
     s = strm->state;
     len = s->strstart + s->lookahead;
-    if (len > s->w_size)
-        len = s->w_size;
-    if (dictionary != Z_NULL && len)
-        zmemcpy(dictionary, s->window + s->strstart + s->lookahead - len, len);
-    if (dictLength != Z_NULL)
-        *dictLength = len;
-    return Z_OK;
+    إذا (len > s->w_اندازه)
+        len = s->w_اندازه;
+    إذا (dictionary != Z_NULL && len)
+        zmemcpy(dictionary, s->کړکۍ + s->strstart + s->lookahead - len, len);
+    إذا (dict_اوږدتیا != Z_NULL)
+        *dict_اوږدتیا = len;
+    أرجع Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateResetKeep(z_streamp strm) {
+صحيح ZEXPORT deflateResetKeep(z_streamp strm) {
     deflate_state *s;
 
-    if (deflateStateCheck(strm)) {
-        return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(strm)) {
+        أرجع Z_بهیر_ERROR;
     }
 
-    strm->total_in = strm->total_out = 0;
-    strm->msg = Z_NULL; /* use zfree if we ever allocate msg dynamically */
-    strm->data_type = Z_UNKNOWN;
+    strm->ټول_دننه = strm->ټول_بهر = 0;
+    strm->پیغام = Z_NULL; /* use zfree if we ever allocate msg dynamically */
+    strm->معلومات_type = Z_UNKNOWN;
 
     s = (deflate_state *)strm->state;
     s->pending = 0;
-    s->pending_out = s->pending_buf;
+    s->pending_بهر = s->pending_buf;
 
-    if (s->wrap < 0) {
+    إذا (s->wrap < 0) {
         s->wrap = -s->wrap; /* was made negative by deflate(..., Z_FINISH); */
     }
-    s->status =
-#ifdef GZIP
+    s->حالت =
+#که_تعریف_شوی GZIP
         s->wrap == 2 ? GZIP_STATE :
-#endif
+#د_که_پای
         INIT_STATE;
     strm->adler =
-#ifdef GZIP
-        s->wrap == 2 ? crc32(0L, Z_NULL, 0) :
-#endif
+#که_تعریف_شوی GZIP
+        s->wrap == 2 ? دوراني_ازموینه_32_2(0L, Z_NULL, 0) :
+#د_که_پای
         adler32(0L, Z_NULL, 0);
-    s->last_flush = -2;
+    s->وروستی_flush = -2;
 
     s->gzhead = Z_NULL;
 
     _tr_init(s);
 
-    return Z_OK;
+    أرجع Z_OK;
 }
 
 /* ===========================================================================
  * Initialize the "longest match" routines for a new zlib stream
  */
-local void lm_init(deflate_state *s) {
-    s->window_size = (ulg)2L*s->w_size;
+local فراغ lm_init(deflate_state *s) {
+    s->کړکۍ_اندازه = (ulg)2L*s->w_اندازه;
 
     CLEAR_HASH(s);
 
     /* Set the default configuration parameters:
      */
-    s->max_lazy_match   = configuration_table[s->level].max_lazy;
-    s->good_match       = configuration_table[s->level].good_length;
-    s->nice_match       = configuration_table[s->level].nice_length;
-    s->max_chain_length = configuration_table[s->level].max_chain;
+    s->max_lazy_سمون   = configuration_جدول[s->level].max_lazy;
+    s->good_سمون       = configuration_جدول[s->level].good_اوږدتیا;
+    s->nice_سمون       = configuration_جدول[s->level].nice_اوږدتیا;
+    s->max_chain_اوږدتیا = configuration_جدول[s->level].max_chain;
 
     s->strstart = 0;
-    s->block_start = 0L;
+    s->بلاک_پیل = 0L;
     s->lookahead = 0;
-    s->insert = 0;
-    s->match_length = s->prev_length = MIN_MATCH-1;
-    s->match_available = 0;
+    s->ورننباسه = 0;
+    s->سمون_اوږدتیا = s->prev_اوږدتیا = MIN_سمون-1;
+    s->سمون_شته = 0;
     s->ins_h = 0;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateReset(z_streamp strm) {
-    int ret;
+صحيح ZEXPORT deflateReset(z_streamp strm) {
+    صحيح ret;
 
     ret = deflateResetKeep(strm);
-    if (ret == Z_OK)
+    إذا (ret == Z_OK)
         lm_init(strm->state);
-    return ret;
+    أرجع ret;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateSetHeader(z_streamp strm, gz_headerp head) {
-    if (deflateStateCheck(strm) || strm->state->wrap != 2)
-        return Z_STREAM_ERROR;
-    strm->state->gzhead = head;
-    return Z_OK;
+صحيح ZEXPORT deflate_سېټ_سرلیک(z_streamp strm, gz_headerp سر) {
+    إذا (deflateStateCheck(strm) || strm->state->wrap != 2)
+        أرجع Z_بهیر_ERROR;
+    strm->state->gzhead = سر;
+    أرجع Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflatePending(z_streamp strm, unsigned *pending, int *bits) {
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
-    if (bits != Z_NULL)
-        *bits = strm->state->bi_valid;
-    if (pending != Z_NULL) {
-        *pending = (unsigned)strm->state->pending;
-        if (*pending != strm->state->pending) {
-            *pending = (unsigned)-1;
-            return Z_BUF_ERROR;
+صحيح ZEXPORT deflatePending(z_streamp strm, بینښه *pending, صحيح *بټونه) {
+    إذا (deflateStateCheck(strm)) أرجع Z_بهیر_ERROR;
+    إذا (بټونه != Z_NULL)
+        *بټونه = strm->state->bi_valid;
+    إذا (pending != Z_NULL) {
+        *pending = (بینښه)strm->state->pending;
+        إذا (*pending != strm->state->pending) {
+            *pending = (بینښه)-1;
+            أرجع Z_BUF_ERROR;
         }
     }
-    return Z_OK;
+    أرجع Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateUsed(z_streamp strm, int *bits) {
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
-    if (bits != Z_NULL)
-        *bits = strm->state->bi_used;
-    return Z_OK;
+صحيح ZEXPORT deflate_کارول_شوی(z_streamp strm, صحيح *بټونه) {
+    إذا (deflateStateCheck(strm)) أرجع Z_بهیر_ERROR;
+    إذا (بټونه != Z_NULL)
+        *بټونه = strm->state->bi_کارول_شوی;
+    أرجع Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflatePrime(z_streamp strm, int bits, int value) {
+صحيح ZEXPORT deflate_اولي(z_streamp strm, صحيح بټونه, صحيح ارزښت) {
     deflate_state *s;
-    int put;
+    صحيح put;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(strm)) أرجع Z_بهیر_ERROR;
     s = strm->state;
-#ifdef LIT_MEM
-    if (bits < 0 || bits > 16 ||
-        (uchf *)s->d_buf < s->pending_out + ((Buf_size + 7) >> 3))
-        return Z_BUF_ERROR;
-#else
-    if (bits < 0 || bits > 16 ||
-        s->sym_buf < s->pending_out + ((Buf_size + 7) >> 3))
-        return Z_BUF_ERROR;
-#endif
-    do {
-        put = Buf_size - s->bi_valid;
-        if (put > bits)
-            put = bits;
-        s->bi_buf |= (ush)((value & ((1 << put) - 1)) << s->bi_valid);
+#که_تعریف_شوی LIT_MEM
+    إذا (بټونه < 0 || بټونه > 16 ||
+        (uchf *)s->d_buf < s->pending_بهر + ((Buf_اندازه + 7) >> 3))
+        أرجع Z_BUF_ERROR;
+#وإلا
+    إذا (بټونه < 0 || بټونه > 16 ||
+        s->sym_buf < s->pending_بهر + ((Buf_اندازه + 7) >> 3))
+        أرجع Z_BUF_ERROR;
+#د_که_پای
+    افعل {
+        put = Buf_اندازه - s->bi_valid;
+        إذا (put > بټونه)
+            put = بټونه;
+        s->bi_buf |= (ush)((ارزښت & ((1 << put) - 1)) << s->bi_valid);
         s->bi_valid += put;
-        _tr_flush_bits(s);
-        value >>= put;
-        bits -= put;
-    } while (bits);
-    return Z_OK;
+        tr_flush_بټونه(s);
+        ارزښت >>= put;
+        بټونه -= put;
+    } طالما (بټونه);
+    أرجع Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateParams(z_streamp strm, int level, int strategy) {
+صحيح ZEXPORT deflateParams(z_streamp strm, صحيح level, صحيح strategy) {
     deflate_state *s;
     compress_func func;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(strm)) أرجع Z_بهیر_ERROR;
     s = strm->state;
 
-#ifdef FASTEST
-    if (level != 0) level = 1;
-#else
-    if (level == Z_DEFAULT_COMPRESSION) level = 6;
-#endif
-    if (level < 0 || level > 9 || strategy < 0 || strategy > Z_FIXED) {
-        return Z_STREAM_ERROR;
+#که_تعریف_شوی FASTEST
+    إذا (level != 0) level = 1;
+#وإلا
+    إذا (level == Z_DEFAULT_COMPRESSION) level = 6;
+#د_که_پای
+    إذا (level < 0 || level > 9 || strategy < 0 || strategy > Z_FIXED) {
+        أرجع Z_بهیر_ERROR;
     }
-    func = configuration_table[s->level].func;
+    func = configuration_جدول[s->level].func;
 
-    if ((strategy != s->strategy || func != configuration_table[level].func) &&
-        s->last_flush != -2) {
+    إذا ((strategy != s->strategy || func != configuration_جدول[level].func) &&
+        s->وروستی_flush != -2) {
         /* Flush the last buffer: */
-        int err = deflate(strm, Z_BLOCK);
-        if (err == Z_STREAM_ERROR)
-            return err;
-        if (strm->avail_in || (s->strstart - s->block_start) + s->lookahead)
-            return Z_BUF_ERROR;
+        صحيح err = deflate(strm, Z_بلاک);
+        إذا (err == Z_بهیر_ERROR)
+            أرجع err;
+        إذا (strm->avail_دننه || (s->strstart - s->بلاک_پیل) + s->lookahead)
+            أرجع Z_BUF_ERROR;
     }
-    if (s->level != level) {
-        if (s->level == 0 && s->matches != 0) {
-            if (s->matches == 1)
+    إذا (s->level != level) {
+        إذا (s->level == 0 && s->matches != 0) {
+            إذا (s->matches == 1)
                 slide_hash(s);
-            else
+            وإلا
                 CLEAR_HASH(s);
             s->matches = 0;
         }
         s->level = level;
-        s->max_lazy_match   = configuration_table[level].max_lazy;
-        s->good_match       = configuration_table[level].good_length;
-        s->nice_match       = configuration_table[level].nice_length;
-        s->max_chain_length = configuration_table[level].max_chain;
+        s->max_lazy_سمون   = configuration_جدول[level].max_lazy;
+        s->good_سمون       = configuration_جدول[level].good_اوږدتیا;
+        s->nice_سمون       = configuration_جدول[level].nice_اوږدتیا;
+        s->max_chain_اوږدتیا = configuration_جدول[level].max_chain;
     }
     s->strategy = strategy;
-    return Z_OK;
+    أرجع Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateTune(z_streamp strm, int good_length, int max_lazy,
-                        int nice_length, int max_chain) {
+صحيح ZEXPORT deflateTune(z_streamp strm, صحيح good_اوږدتیا, صحيح max_lazy,
+                        صحيح nice_اوږدتیا, صحيح max_chain) {
     deflate_state *s;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(strm)) أرجع Z_بهیر_ERROR;
     s = strm->state;
-    s->good_match = (uInt)good_length;
-    s->max_lazy_match = (uInt)max_lazy;
-    s->nice_match = nice_length;
-    s->max_chain_length = (uInt)max_chain;
-    return Z_OK;
+    s->good_سمون = (uInt)good_اوږدتیا;
+    s->max_lazy_سمون = (uInt)max_lazy;
+    s->nice_سمون = nice_اوږدتیا;
+    s->max_chain_اوږدتیا = (uInt)max_chain;
+    أرجع Z_OK;
 }
 
 /* =========================================================================
@@ -854,82 +854,82 @@ int ZEXPORT deflateTune(z_streamp strm, int good_length, int max_lazy,
  *
  * Shifts are used to approximate divisions, for speed.
  */
-z_size_t ZEXPORT deflateBound_z(z_streamp strm, z_size_t sourceLen) {
+z_اندازه_t ZEXPORT deflateBound_z(z_streamp strm, z_اندازه_t سرچینه_Len) {
     deflate_state *s;
-    z_size_t fixedlen, storelen, wraplen, bound;
+    z_اندازه_t fixedlen, storelen, wraplen, bound;
 
     /* upper bound for fixed blocks with 9-bit literals and length 255
        (memLevel == 2, which is the lowest that may not use stored blocks) --
        ~13% overhead plus a small constant */
-    fixedlen = sourceLen + (sourceLen >> 3) + (sourceLen >> 8) +
-               (sourceLen >> 9) + 4;
-    if (fixedlen < sourceLen)
-        fixedlen = (z_size_t)-1;
+    fixedlen = سرچینه_Len + (سرچینه_Len >> 3) + (سرچینه_Len >> 8) +
+               (سرچینه_Len >> 9) + 4;
+    إذا (fixedlen < سرچینه_Len)
+        fixedlen = (z_اندازه_t)-1;
 
     /* upper bound for stored blocks with length 127 (memLevel == 1) --
        ~4% overhead plus a small constant */
-    storelen = sourceLen + (sourceLen >> 5) + (sourceLen >> 7) +
-               (sourceLen >> 11) + 7;
-    if (storelen < sourceLen)
-        storelen = (z_size_t)-1;
+    storelen = سرچینه_Len + (سرچینه_Len >> 5) + (سرچینه_Len >> 7) +
+               (سرچینه_Len >> 11) + 7;
+    إذا (storelen < سرچینه_Len)
+        storelen = (z_اندازه_t)-1;
 
     /* if can't get parameters, return larger bound plus a wrapper */
-    if (deflateStateCheck(strm)) {
+    إذا (deflateStateCheck(strm)) {
         bound = fixedlen > storelen ? fixedlen : storelen;
-        return bound + 18 < bound ? (z_size_t)-1 : bound + 18;
+        أرجع bound + 18 < bound ? (z_اندازه_t)-1 : bound + 18;
     }
 
     /* compute wrapper length */
     s = strm->state;
-    switch (s->wrap < 0 ? -s->wrap : s->wrap) {
-    case 0:                                 /* raw deflate */
+    بدل (s->wrap < 0 ? -s->wrap : s->wrap) {
+    حالة 0:                                 /* raw deflate */
         wraplen = 0;
-        break;
-    case 1:                                 /* zlib wrapper */
+        اكسر;
+    حالة 1:                                 /* zlib wrapper */
         wraplen = 6 + (s->strstart ? 4 : 0);
-        break;
-#ifdef GZIP
-    case 2:                                 /* gzip wrapper */
+        اكسر;
+#که_تعریف_شوی GZIP
+    حالة 2:                                 /* gzip wrapper */
         wraplen = 18;
-        if (s->gzhead != Z_NULL) {          /* user-supplied gzip header */
+        إذا (s->gzhead != Z_NULL) {          /* user-supplied gzip header */
             Bytef *str;
-            if (s->gzhead->extra != Z_NULL)
+            إذا (s->gzhead->extra != Z_NULL)
                 wraplen += 2 + s->gzhead->extra_len;
             str = s->gzhead->name;
-            if (str != Z_NULL)
-                do {
+            إذا (str != Z_NULL)
+                افعل {
                     wraplen++;
-                } while (*str++);
+                } طالما (*str++);
             str = s->gzhead->comment;
-            if (str != Z_NULL)
-                do {
+            إذا (str != Z_NULL)
+                افعل {
                     wraplen++;
-                } while (*str++);
-            if (s->gzhead->hcrc)
+                } طالما (*str++);
+            إذا (s->gzhead->hcrc)
                 wraplen += 2;
         }
-        break;
-#endif
-    default:                                /* for compiler happiness */
+        اكسر;
+#د_که_پای
+    افتراضي:                                /* for compiler happiness */
         wraplen = 18;
     }
 
     /* if not default parameters, return one of the conservative bounds */
-    if (s->w_bits != 15 || s->hash_bits != 8 + 7) {
-        bound = s->w_bits <= s->hash_bits && s->level ? fixedlen :
+    إذا (s->w_بټونه != 15 || s->hash_بټونه != 8 + 7) {
+        bound = s->w_بټونه <= s->hash_بټونه && s->level ? fixedlen :
                                                         storelen;
-        return bound + wraplen < bound ? (z_size_t)-1 : bound + wraplen;
+        أرجع bound + wraplen < bound ? (z_اندازه_t)-1 : bound + wraplen;
     }
 
     /* default settings: return tight bound for that case -- ~0.03% overhead
        plus a small constant */
-    bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
-            (sourceLen >> 25) + 13 - 6 + wraplen;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+    bound = سرچینه_Len + (سرچینه_Len >> 12) + (سرچینه_Len >> 14) +
+            (سرچینه_Len >> 25) + 13 - 6 + wraplen;
+    أرجع bound < سرچینه_Len ? (z_اندازه_t)-1 : bound;
 }
-uLong ZEXPORT deflateBound(z_streamp strm, uLong sourceLen) {
-    z_size_t bound = deflateBound_z(strm, sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+uLong ZEXPORT deflateBound(z_streamp strm, uLong سرچینه_Len) {
+    z_اندازه_t bound = deflateBound_z(strm, سرچینه_Len);
+    أرجع (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }
 
 /* =========================================================================
@@ -937,7 +937,7 @@ uLong ZEXPORT deflateBound(z_streamp strm, uLong sourceLen) {
  * IN assertion: the stream state is correct and there is enough room in
  * pending_buf.
  */
-local void putShortMSB(deflate_state *s, uInt b) {
+local فراغ putShortMSB(deflate_state *s, uInt b) {
     put_byte(s, (Byte)(b >> 8));
     put_byte(s, (Byte)(b & 0xff));
 }
@@ -948,129 +948,129 @@ local void putShortMSB(deflate_state *s, uInt b) {
  * applications may wish to modify it to avoid allocating a large
  * strm->next_out buffer and copying into it. (See also read_buf()).
  */
-local void flush_pending(z_streamp strm) {
-    unsigned len;
+local فراغ flush_pending(z_streamp strm) {
+    بینښه len;
     deflate_state *s = strm->state;
 
-    _tr_flush_bits(s);
-    len = s->pending > strm->avail_out ? strm->avail_out :
-                                         (unsigned)s->pending;
-    if (len == 0) return;
+    tr_flush_بټونه(s);
+    len = s->pending > strm->avail_بهر ? strm->avail_بهر :
+                                         (بینښه)s->pending;
+    إذا (len == 0) أرجع;
 
-    zmemcpy(strm->next_out, s->pending_out, len);
-    strm->next_out  += len;
-    s->pending_out  += len;
-    strm->total_out += len;
-    strm->avail_out -= len;
+    zmemcpy(strm->بل_بهر, s->pending_بهر, len);
+    strm->بل_بهر  += len;
+    s->pending_بهر  += len;
+    strm->ټول_بهر += len;
+    strm->avail_بهر -= len;
     s->pending      -= len;
-    if (s->pending == 0) {
-        s->pending_out = s->pending_buf;
+    إذا (s->pending == 0) {
+        s->pending_بهر = s->pending_buf;
     }
 }
 
 /* ===========================================================================
  * Update the header CRC with the bytes s->pending_buf[beg..s->pending - 1].
  */
-#define HCRC_UPDATE(beg) \
-    do { \
-        if (s->gzhead->hcrc && s->pending > (beg)) \
-            strm->adler = crc32_z(strm->adler, s->pending_buf + (beg), \
+#تعریف_کړه HCRC_UPDATE(beg) \
+    افعل { \
+        إذا (s->gzhead->hcrc && s->pending > (beg)) \
+            strm->adler = دوراني_ازموینه_32_z(strm->adler, s->pending_buf + (beg), \
                                   s->pending - (beg)); \
-    } while (0)
+    } طالما (0)
 
 /* ========================================================================= */
-int ZEXPORT deflate(z_streamp strm, int flush) {
-    int old_flush; /* value of flush param for previous deflate call */
+صحيح ZEXPORT deflate(z_streamp strm, صحيح flush) {
+    صحيح old_flush; /* value of flush param for previous deflate call */
     deflate_state *s;
 
-    if (deflateStateCheck(strm) || flush > Z_BLOCK || flush < 0) {
-        return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(strm) || flush > Z_بلاک || flush < 0) {
+        أرجع Z_بهیر_ERROR;
     }
     s = strm->state;
 
-    if (strm->next_out == Z_NULL ||
-        (strm->avail_in != 0 && strm->next_in == Z_NULL) ||
-        (s->status == FINISH_STATE && flush != Z_FINISH)) {
-        ERR_RETURN(strm, Z_STREAM_ERROR);
+    إذا (strm->بل_بهر == Z_NULL ||
+        (strm->avail_دننه != 0 && strm->بل_دننه == Z_NULL) ||
+        (s->حالت == پای_STATE && flush != Z_پای)) {
+        ERR_RETURN(strm, Z_بهیر_ERROR);
     }
-    if (strm->avail_out == 0) ERR_RETURN(strm, Z_BUF_ERROR);
+    إذا (strm->avail_بهر == 0) ERR_RETURN(strm, Z_BUF_ERROR);
 
-    old_flush = s->last_flush;
-    s->last_flush = flush;
+    old_flush = s->وروستی_flush;
+    s->وروستی_flush = flush;
 
     /* Flush as much pending output as possible */
-    if (s->pending != 0) {
+    إذا (s->pending != 0) {
         flush_pending(strm);
-        if (strm->avail_out == 0) {
+        إذا (strm->avail_بهر == 0) {
             /* Since avail_out is 0, deflate will be called again with
              * more output space, but possibly with both pending and
              * avail_in equal to zero. There won't be anything to do,
              * but this is not an error situation so make sure we
              * return OK instead of BUF_ERROR at next call of deflate:
              */
-            s->last_flush = -1;
-            return Z_OK;
+            s->وروستی_flush = -1;
+            أرجع Z_OK;
         }
 
     /* Make sure there is something to do and avoid duplicate consecutive
      * flushes. For repeated and useless calls with Z_FINISH, we keep
      * returning Z_STREAM_END instead of Z_BUF_ERROR.
      */
-    } else if (strm->avail_in == 0 && RANK(flush) <= RANK(old_flush) &&
-               flush != Z_FINISH) {
+    } وإلا إذا (strm->avail_دننه == 0 && RANK(flush) <= RANK(old_flush) &&
+               flush != Z_پای) {
         ERR_RETURN(strm, Z_BUF_ERROR);
     }
 
     /* User must not provide more input after the first FINISH: */
-    if (s->status == FINISH_STATE && strm->avail_in != 0) {
+    إذا (s->حالت == پای_STATE && strm->avail_دننه != 0) {
         ERR_RETURN(strm, Z_BUF_ERROR);
     }
 
     /* Write the header */
-    if (s->status == INIT_STATE && s->wrap == 0)
-        s->status = BUSY_STATE;
-    if (s->status == INIT_STATE) {
+    إذا (s->حالت == INIT_STATE && s->wrap == 0)
+        s->حالت = BUSY_STATE;
+    إذا (s->حالت == INIT_STATE) {
         /* zlib header */
-        uInt header = (Z_DEFLATED + ((s->w_bits - 8) << 4)) << 8;
+        uInt سرلیک = (Z_DEFLATED + ((s->w_بټونه - 8) << 4)) << 8;
         uInt level_flags;
 
-        if (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
+        إذا (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
             level_flags = 0;
-        else if (s->level < 6)
+        وإلا إذا (s->level < 6)
             level_flags = 1;
-        else if (s->level == 6)
+        وإلا إذا (s->level == 6)
             level_flags = 2;
-        else
+        وإلا
             level_flags = 3;
-        header |= (level_flags << 6);
-        if (s->strstart != 0) header |= PRESET_DICT;
-        header += 31 - (header % 31);
+        سرلیک |= (level_flags << 6);
+        إذا (s->strstart != 0) سرلیک |= PRESET_DICT;
+        سرلیک += 31 - (سرلیک % 31);
 
-        putShortMSB(s, header);
+        putShortMSB(s, سرلیک);
 
         /* Save the adler32 of the preset dictionary: */
-        if (s->strstart != 0) {
+        إذا (s->strstart != 0) {
             putShortMSB(s, (uInt)(strm->adler >> 16));
             putShortMSB(s, (uInt)(strm->adler & 0xffff));
         }
         strm->adler = adler32(0L, Z_NULL, 0);
-        s->status = BUSY_STATE;
+        s->حالت = BUSY_STATE;
 
         /* Compression must start with an empty pending buffer */
         flush_pending(strm);
-        if (s->pending != 0) {
-            s->last_flush = -1;
-            return Z_OK;
+        إذا (s->pending != 0) {
+            s->وروستی_flush = -1;
+            أرجع Z_OK;
         }
     }
-#ifdef GZIP
-    if (s->status == GZIP_STATE) {
+#که_تعریف_شوی GZIP
+    إذا (s->حالت == GZIP_STATE) {
         /* gzip header */
-        strm->adler = crc32(0L, Z_NULL, 0);
+        strm->adler = دوراني_ازموینه_32_2(0L, Z_NULL, 0);
         put_byte(s, 31);
         put_byte(s, 139);
         put_byte(s, 8);
-        if (s->gzhead == Z_NULL) {
+        إذا (s->gzhead == Z_NULL) {
             put_byte(s, 0);
             put_byte(s, 0);
             put_byte(s, 0);
@@ -1079,18 +1079,18 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
             put_byte(s, s->level == 9 ? 2 :
                      (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2 ?
                       4 : 0));
-            put_byte(s, OS_CODE);
-            s->status = BUSY_STATE;
+            put_byte(s, OS_کوډ);
+            s->حالت = BUSY_STATE;
 
             /* Compression must start with an empty pending buffer */
             flush_pending(strm);
-            if (s->pending != 0) {
-                s->last_flush = -1;
-                return Z_OK;
+            إذا (s->pending != 0) {
+                s->وروستی_flush = -1;
+                أرجع Z_OK;
             }
         }
-        else {
-            put_byte(s, (s->gzhead->text ? 1 : 0) +
+        وإلا {
+            put_byte(s, (s->gzhead->متن ? 1 : 0) +
                      (s->gzhead->hcrc ? 2 : 0) +
                      (s->gzhead->extra == Z_NULL ? 0 : 4) +
                      (s->gzhead->name == Z_NULL ? 0 : 8) +
@@ -1104,130 +1104,130 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
                      (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2 ?
                       4 : 0));
             put_byte(s, s->gzhead->os & 0xff);
-            if (s->gzhead->extra != Z_NULL) {
+            إذا (s->gzhead->extra != Z_NULL) {
                 put_byte(s, s->gzhead->extra_len & 0xff);
                 put_byte(s, (s->gzhead->extra_len >> 8) & 0xff);
             }
-            if (s->gzhead->hcrc)
-                strm->adler = crc32_z(strm->adler, s->pending_buf,
+            إذا (s->gzhead->hcrc)
+                strm->adler = دوراني_ازموینه_32_z(strm->adler, s->pending_buf,
                                       s->pending);
             s->gzindex = 0;
-            s->status = EXTRA_STATE;
+            s->حالت = EXTRA_STATE;
         }
     }
-    if (s->status == EXTRA_STATE) {
-        if (s->gzhead->extra != Z_NULL) {
+    إذا (s->حالت == EXTRA_STATE) {
+        إذا (s->gzhead->extra != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            ulg left = (s->gzhead->extra_len & 0xffff) - s->gzindex;
-            while (s->pending + left > s->pending_buf_size) {
-                ulg copy = s->pending_buf_size - s->pending;
+            ulg کیڼ = (s->gzhead->extra_len & 0xffff) - s->gzindex;
+            طالما (s->pending + کیڼ > s->pending_buf_اندازه) {
+                ulg copy = s->pending_buf_اندازه - s->pending;
                 zmemcpy(s->pending_buf + s->pending,
                         s->gzhead->extra + s->gzindex, copy);
-                s->pending = s->pending_buf_size;
+                s->pending = s->pending_buf_اندازه;
                 HCRC_UPDATE(beg);
                 s->gzindex += copy;
                 flush_pending(strm);
-                if (s->pending != 0) {
-                    s->last_flush = -1;
-                    return Z_OK;
+                إذا (s->pending != 0) {
+                    s->وروستی_flush = -1;
+                    أرجع Z_OK;
                 }
                 beg = 0;
-                left -= copy;
+                کیڼ -= copy;
             }
             zmemcpy(s->pending_buf + s->pending,
-                    s->gzhead->extra + s->gzindex, left);
-            s->pending += left;
+                    s->gzhead->extra + s->gzindex, کیڼ);
+            s->pending += کیڼ;
             HCRC_UPDATE(beg);
             s->gzindex = 0;
         }
-        s->status = NAME_STATE;
+        s->حالت = NAME_STATE;
     }
-    if (s->status == NAME_STATE) {
-        if (s->gzhead->name != Z_NULL) {
+    إذا (s->حالت == NAME_STATE) {
+        إذا (s->gzhead->name != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            int val;
-            do {
-                if (s->pending == s->pending_buf_size) {
+            صحيح val;
+            افعل {
+                إذا (s->pending == s->pending_buf_اندازه) {
                     HCRC_UPDATE(beg);
                     flush_pending(strm);
-                    if (s->pending != 0) {
-                        s->last_flush = -1;
-                        return Z_OK;
+                    إذا (s->pending != 0) {
+                        s->وروستی_flush = -1;
+                        أرجع Z_OK;
                     }
                     beg = 0;
                 }
                 val = s->gzhead->name[s->gzindex++];
                 put_byte(s, val);
-            } while (val != 0);
+            } طالما (val != 0);
             HCRC_UPDATE(beg);
             s->gzindex = 0;
         }
-        s->status = COMMENT_STATE;
+        s->حالت = COMMENT_STATE;
     }
-    if (s->status == COMMENT_STATE) {
-        if (s->gzhead->comment != Z_NULL) {
+    إذا (s->حالت == COMMENT_STATE) {
+        إذا (s->gzhead->comment != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            int val;
-            do {
-                if (s->pending == s->pending_buf_size) {
+            صحيح val;
+            افعل {
+                إذا (s->pending == s->pending_buf_اندازه) {
                     HCRC_UPDATE(beg);
                     flush_pending(strm);
-                    if (s->pending != 0) {
-                        s->last_flush = -1;
-                        return Z_OK;
+                    إذا (s->pending != 0) {
+                        s->وروستی_flush = -1;
+                        أرجع Z_OK;
                     }
                     beg = 0;
                 }
                 val = s->gzhead->comment[s->gzindex++];
                 put_byte(s, val);
-            } while (val != 0);
+            } طالما (val != 0);
             HCRC_UPDATE(beg);
         }
-        s->status = HCRC_STATE;
+        s->حالت = HCRC_STATE;
     }
-    if (s->status == HCRC_STATE) {
-        if (s->gzhead->hcrc) {
-            if (s->pending + 2 > s->pending_buf_size) {
+    إذا (s->حالت == HCRC_STATE) {
+        إذا (s->gzhead->hcrc) {
+            إذا (s->pending + 2 > s->pending_buf_اندازه) {
                 flush_pending(strm);
-                if (s->pending != 0) {
-                    s->last_flush = -1;
-                    return Z_OK;
+                إذا (s->pending != 0) {
+                    s->وروستی_flush = -1;
+                    أرجع Z_OK;
                 }
             }
             put_byte(s, (Byte)(strm->adler & 0xff));
             put_byte(s, (Byte)((strm->adler >> 8) & 0xff));
-            strm->adler = crc32(0L, Z_NULL, 0);
+            strm->adler = دوراني_ازموینه_32_2(0L, Z_NULL, 0);
         }
-        s->status = BUSY_STATE;
+        s->حالت = BUSY_STATE;
 
         /* Compression must start with an empty pending buffer */
         flush_pending(strm);
-        if (s->pending != 0) {
-            s->last_flush = -1;
-            return Z_OK;
+        إذا (s->pending != 0) {
+            s->وروستی_flush = -1;
+            أرجع Z_OK;
         }
     }
-#endif
+#د_که_پای
 
     /* Start a new block or continue the current one.
      */
-    if (strm->avail_in != 0 || s->lookahead != 0 ||
-        (flush != Z_NO_FLUSH && s->status != FINISH_STATE)) {
-        block_state bstate;
+    إذا (strm->avail_دننه != 0 || s->lookahead != 0 ||
+        (flush != Z_NO_FLUSH && s->حالت != پای_STATE)) {
+        بلاک_state bstate;
 
         bstate = s->level == 0 ? deflate_stored(s, flush) :
                  s->strategy == Z_HUFFMAN_ONLY ? deflate_huff(s, flush) :
                  s->strategy == Z_RLE ? deflate_rle(s, flush) :
-                 (*(configuration_table[s->level].func))(s, flush);
+                 (*(configuration_جدول[s->level].func))(s, flush);
 
-        if (bstate == finish_started || bstate == finish_done) {
-            s->status = FINISH_STATE;
+        إذا (bstate == پای_started || bstate == پای_بشپړ) {
+            s->حالت = پای_STATE;
         }
-        if (bstate == need_more || bstate == finish_started) {
-            if (strm->avail_out == 0) {
-                s->last_flush = -1; /* avoid BUF_ERROR next call, see above */
+        إذا (bstate == need_نور || bstate == پای_started) {
+            إذا (strm->avail_بهر == 0) {
+                s->وروستی_flush = -1; /* avoid BUF_ERROR next call, see above */
             }
-            return Z_OK;
+            أرجع Z_OK;
             /* If flush != Z_NO_FLUSH && avail_out == 0, the next call
              * of deflate should use the same flush parameter to make sure
              * that the flush is complete. So we don't have to output an
@@ -1236,48 +1236,48 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
              * one empty block.
              */
         }
-        if (bstate == block_done) {
-            if (flush == Z_PARTIAL_FLUSH) {
+        إذا (bstate == بلاک_بشپړ) {
+            إذا (flush == Z_PARTIAL_FLUSH) {
                 _tr_align(s);
-            } else if (flush != Z_BLOCK) { /* FULL_FLUSH or SYNC_FLUSH */
-                _tr_stored_block(s, (char*)0, 0L, 0);
+            } وإلا إذا (flush != Z_بلاک) { /* FULL_FLUSH or SYNC_FLUSH */
+                tr_stored_بلاک(s, (حرف*)0, 0L, 0);
                 /* For a full flush, this empty block will be recognized
                  * as a special marker by inflate_sync().
                  */
-                if (flush == Z_FULL_FLUSH) {
+                إذا (flush == Z_ډک_FLUSH) {
                     CLEAR_HASH(s);             /* forget history */
-                    if (s->lookahead == 0) {
+                    إذا (s->lookahead == 0) {
                         s->strstart = 0;
-                        s->block_start = 0L;
-                        s->insert = 0;
+                        s->بلاک_پیل = 0L;
+                        s->ورننباسه = 0;
                     }
                 }
             }
             flush_pending(strm);
-            if (strm->avail_out == 0) {
-              s->last_flush = -1; /* avoid BUF_ERROR at next call, see above */
-              return Z_OK;
+            إذا (strm->avail_بهر == 0) {
+              s->وروستی_flush = -1; /* avoid BUF_ERROR at next call, see above */
+              أرجع Z_OK;
             }
         }
     }
 
-    if (flush != Z_FINISH) return Z_OK;
-    if (s->wrap <= 0) return Z_STREAM_END;
+    إذا (flush != Z_پای) أرجع Z_OK;
+    إذا (s->wrap <= 0) أرجع Z_بهیر_پای_ټکی;
 
     /* Write the trailer */
-#ifdef GZIP
-    if (s->wrap == 2) {
+#که_تعریف_شوی GZIP
+    إذا (s->wrap == 2) {
         put_byte(s, (Byte)(strm->adler & 0xff));
         put_byte(s, (Byte)((strm->adler >> 8) & 0xff));
         put_byte(s, (Byte)((strm->adler >> 16) & 0xff));
         put_byte(s, (Byte)((strm->adler >> 24) & 0xff));
-        put_byte(s, (Byte)(strm->total_in & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 8) & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 16) & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 24) & 0xff));
+        put_byte(s, (Byte)(strm->ټول_دننه & 0xff));
+        put_byte(s, (Byte)((strm->ټول_دننه >> 8) & 0xff));
+        put_byte(s, (Byte)((strm->ټول_دننه >> 16) & 0xff));
+        put_byte(s, (Byte)((strm->ټول_دننه >> 24) & 0xff));
     }
-    else
-#endif
+    وإلا
+#د_که_پای
     {
         putShortMSB(s, (uInt)(strm->adler >> 16));
         putShortMSB(s, (uInt)(strm->adler & 0xffff));
@@ -1286,28 +1286,28 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
     /* If avail_out is zero, the application will call deflate again
      * to flush the rest.
      */
-    if (s->wrap > 0) s->wrap = -s->wrap; /* write the trailer only once! */
-    return s->pending != 0 ? Z_OK : Z_STREAM_END;
+    إذا (s->wrap > 0) s->wrap = -s->wrap; /* write the trailer only once! */
+    أرجع s->pending != 0 ? Z_OK : Z_بهیر_پای_ټکی;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateEnd(z_streamp strm) {
-    int status;
+صحيح ZEXPORT deflate_پای_ټکی(z_streamp strm) {
+    صحيح حالت;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(strm)) أرجع Z_بهیر_ERROR;
 
-    status = strm->state->status;
+    حالت = strm->state->حالت;
 
     /* Deallocate in reverse order of allocations: */
     TRY_FREE(strm, strm->state->pending_buf);
-    TRY_FREE(strm, strm->state->head);
+    TRY_FREE(strm, strm->state->سر);
     TRY_FREE(strm, strm->state->prev);
-    TRY_FREE(strm, strm->state->window);
+    TRY_FREE(strm, strm->state->کړکۍ);
 
     ZFREE(strm, strm->state);
     strm->state = Z_NULL;
 
-    return status == BUSY_STATE ? Z_DATA_ERROR : Z_OK;
+    أرجع حالت == BUSY_STATE ? Z_معلومات_ERROR : Z_OK;
 }
 
 /* =========================================================================
@@ -1315,69 +1315,69 @@ int ZEXPORT deflateEnd(z_streamp strm) {
  * To simplify the source, this is not supported for 16-bit MSDOS (which
  * doesn't have enough memory anyway to duplicate compression states).
  */
-int ZEXPORT deflateCopy(z_streamp dest, z_streamp source) {
-#ifdef MAXSEG_64K
-    (void)dest;
-    (void)source;
-    return Z_STREAM_ERROR;
-#else
+صحيح ZEXPORT deflateCopy(z_streamp dest, z_streamp سرچینه) {
+#که_تعریف_شوی MAXSEG_64K
+    (فراغ)dest;
+    (فراغ)سرچینه;
+    أرجع Z_بهیر_ERROR;
+#وإلا
     deflate_state *ds;
     deflate_state *ss;
 
 
-    if (deflateStateCheck(source) || dest == Z_NULL) {
-        return Z_STREAM_ERROR;
+    إذا (deflateStateCheck(سرچینه) || dest == Z_NULL) {
+        أرجع Z_بهیر_ERROR;
     }
 
-    ss = source->state;
+    ss = سرچینه->state;
 
-    zmemcpy(dest, source, sizeof(z_stream));
+    zmemcpy(dest, سرچینه, حجم(z_بهیر));
 
-    ds = (deflate_state *) ZALLOC(dest, 1, sizeof(deflate_state));
-    if (ds == Z_NULL) return Z_MEM_ERROR;
-    zmemzero(ds, sizeof(deflate_state));
-    dest->state = (struct internal_state FAR *) ds;
-    zmemcpy(ds, ss, sizeof(deflate_state));
+    ds = (deflate_state *) ZALLOC(dest, 1, حجم(deflate_state));
+    إذا (ds == Z_NULL) أرجع Z_MEM_ERROR;
+    zmemzero(ds, حجم(deflate_state));
+    dest->state = (بنية دننی_state FAR *) ds;
+    zmemcpy(ds, ss, حجم(deflate_state));
     ds->strm = dest;
 
-    ds->window = (Bytef *) ZALLOC(dest, ds->w_size, 2*sizeof(Byte));
-    ds->prev   = (Posf *)  ZALLOC(dest, ds->w_size, sizeof(Pos));
-    ds->head   = (Posf *)  ZALLOC(dest, ds->hash_size, sizeof(Pos));
+    ds->کړکۍ = (Bytef *) ZALLOC(dest, ds->w_اندازه, 2*حجم(Byte));
+    ds->prev   = (Posf *)  ZALLOC(dest, ds->w_اندازه, حجم(Pos));
+    ds->سر   = (Posf *)  ZALLOC(dest, ds->hash_اندازه, حجم(Pos));
     ds->pending_buf = (uchf *) ZALLOC(dest, ds->lit_bufsize, LIT_BUFS);
 
-    if (ds->window == Z_NULL || ds->prev == Z_NULL || ds->head == Z_NULL ||
+    إذا (ds->کړکۍ == Z_NULL || ds->prev == Z_NULL || ds->سر == Z_NULL ||
         ds->pending_buf == Z_NULL) {
-        deflateEnd (dest);
-        return Z_MEM_ERROR;
+        deflate_پای_ټکی (dest);
+        أرجع Z_MEM_ERROR;
     }
     /* following zmemcpy's do not work for 16-bit MSDOS */
-    zmemcpy(ds->window, ss->window, ss->high_water);
+    zmemcpy(ds->کړکۍ, ss->کړکۍ, ss->لوړ_water);
     zmemcpy(ds->prev, ss->prev,
-            (ss->slid || ss->strstart - ss->insert > ds->w_size ? ds->w_size :
-                ss->strstart - ss->insert) * sizeof(Pos));
-    zmemcpy(ds->head, ss->head, ds->hash_size * sizeof(Pos));
+            (ss->slid || ss->strstart - ss->ورننباسه > ds->w_اندازه ? ds->w_اندازه :
+                ss->strstart - ss->ورننباسه) * حجم(Pos));
+    zmemcpy(ds->سر, ss->سر, ds->hash_اندازه * حجم(Pos));
 
-    ds->pending_out = ds->pending_buf + (ss->pending_out - ss->pending_buf);
-    zmemcpy(ds->pending_out, ss->pending_out, ss->pending);
-#ifdef LIT_MEM
+    ds->pending_بهر = ds->pending_buf + (ss->pending_بهر - ss->pending_buf);
+    zmemcpy(ds->pending_بهر, ss->pending_بهر, ss->pending);
+#که_تعریف_شوی LIT_MEM
     ds->d_buf = (ushf *)(ds->pending_buf + (ds->lit_bufsize << 1));
     ds->l_buf = ds->pending_buf + (ds->lit_bufsize << 2);
-    zmemcpy(ds->d_buf, ss->d_buf, ss->sym_next * sizeof(ush));
-    zmemcpy(ds->l_buf, ss->l_buf, ss->sym_next);
-#else
+    zmemcpy(ds->d_buf, ss->d_buf, ss->sym_بل * حجم(ush));
+    zmemcpy(ds->l_buf, ss->l_buf, ss->sym_بل);
+#وإلا
     ds->sym_buf = ds->pending_buf + ds->lit_bufsize;
-    zmemcpy(ds->sym_buf, ss->sym_buf, ss->sym_next);
-#endif
+    zmemcpy(ds->sym_buf, ss->sym_buf, ss->sym_بل);
+#د_که_پای
 
-    ds->l_desc.dyn_tree = ds->dyn_ltree;
-    ds->d_desc.dyn_tree = ds->dyn_dtree;
-    ds->bl_desc.dyn_tree = ds->bl_tree;
+    ds->l_desc.dyn_ونه = ds->dyn_ltree;
+    ds->d_desc.dyn_ونه = ds->dyn_dtree;
+    ds->bl_desc.dyn_ونه = ds->bl_ونه;
 
-    return Z_OK;
-#endif /* MAXSEG_64K */
+    أرجع Z_OK;
+#د_که_پای /* MAXSEG_64K */
 }
 
-#ifndef FASTEST
+#که_نه_تعریف_شوی FASTEST
 /* ===========================================================================
  * Set match_start to the longest match starting at the given string and
  * return its length. Matches shorter or equal to prev_length are discarded,
@@ -1387,54 +1387,54 @@ int ZEXPORT deflateCopy(z_streamp dest, z_streamp source) {
  *   string (strstart) and its distance is <= MAX_DIST, and prev_length >= 1
  * OUT assertion: the match length is not greater than s->lookahead.
  */
-local uInt longest_match(deflate_state *s, IPos cur_match) {
-    unsigned chain_length = s->max_chain_length;/* max hash chain length */
-    Bytef *scan = s->window + s->strstart;      /* current string */
-    Bytef *match;                               /* matched string */
-    int len;                                    /* length of current match */
-    int best_len = (int)s->prev_length;         /* best match length so far */
-    int nice_match = s->nice_match;             /* stop if match long enough */
-    IPos limit = s->strstart > (IPos)MAX_DIST(s) ?
+local uInt longest_سمون(deflate_state *s, IPos cur_سمون) {
+    بینښه chain_اوږدتیا = s->max_chain_اوږدتیا;/* max hash chain length */
+    Bytef *لټون = s->کړکۍ + s->strstart;      /* current string */
+    Bytef *سمون;                               /* matched string */
+    صحيح len;                                    /* length of current match */
+    صحيح غوره_len = (صحيح)s->prev_اوږدتیا;         /* best match length so far */
+    صحيح nice_سمون = s->nice_سمون;             /* stop if match long enough */
+    IPos حد = s->strstart > (IPos)MAX_DIST(s) ?
         s->strstart - (IPos)MAX_DIST(s) : NIL;
     /* Stop when cur_match becomes <= limit. To simplify the code,
      * we prevent matches with the string of window index 0.
      */
     Posf *prev = s->prev;
-    uInt wmask = s->w_mask;
+    uInt wmask = s->w_ماسک;
 
-#ifdef UNALIGNED_OK
+#که_تعریف_شوی UNALIGNED_OK
     /* Compare two bytes at a time. Note: this is not always beneficial.
      * Try with and without -DUNALIGNED_OK to check.
      */
-    Bytef *strend = s->window + s->strstart + MAX_MATCH - 1;
-    ush scan_start = *(ushf*)scan;
-    ush scan_end   = *(ushf*)(scan + best_len - 1);
-#else
-    Bytef *strend = s->window + s->strstart + MAX_MATCH;
-    Byte scan_end1  = scan[best_len - 1];
-    Byte scan_end   = scan[best_len];
-#endif
+    Bytef *strend = s->کړکۍ + s->strstart + MAX_سمون - 1;
+    ush لټون_پیل = *(ushf*)لټون;
+    ush لټون_پای_ټکی   = *(ushf*)(لټون + غوره_len - 1);
+#وإلا
+    Bytef *strend = s->کړکۍ + s->strstart + MAX_سمون;
+    Byte لټون_end1  = لټون[غوره_len - 1];
+    Byte لټون_پای_ټکی   = لټون[غوره_len];
+#د_که_پای
 
     /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
      * It is easy to get rid of this optimization if necessary.
      */
-    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+    Assert(s->hash_بټونه >= 8 && MAX_سمون == 258, "Code too clever");
 
     /* Do not waste too much time if we already have a good match: */
-    if (s->prev_length >= s->good_match) {
-        chain_length >>= 2;
+    إذا (s->prev_اوږدتیا >= s->good_سمون) {
+        chain_اوږدتیا >>= 2;
     }
     /* Do not look for matches beyond the end of the input. This is necessary
      * to make deflate deterministic.
      */
-    if ((uInt)nice_match > s->lookahead) nice_match = (int)s->lookahead;
+    إذا ((uInt)nice_سمون > s->lookahead) nice_سمون = (صحيح)s->lookahead;
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->کړکۍ_اندازه - MIN_LOOKAHEAD,
            "need lookahead");
 
-    do {
-        Assert(cur_match < s->strstart, "no future");
-        match = s->window + cur_match;
+    افعل {
+        Assert(cur_سمون < s->strstart, "no future");
+        سمون = s->کړکۍ + cur_سمون;
 
         /* Skip to next match if the match length cannot increase
          * or if the match length is less than 2.  Note that the checks below
@@ -1444,12 +1444,12 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * However the length of the match is limited to the lookahead, so
          * the output of deflate is not affected by the uninitialized values.
          */
-#if (defined(UNALIGNED_OK) && MAX_MATCH == 258)
+#إذا (defined(UNALIGNED_OK) && MAX_سمون == 258)
         /* This code assumes sizeof(unsigned short) == 2. Do not use
          * UNALIGNED_OK if your compiler uses a different size.
          */
-        if (*(ushf*)(match + best_len - 1) != scan_end ||
-            *(ushf*)match != scan_start) continue;
+        إذا (*(ushf*)(سمون + غوره_len - 1) != لټون_پای_ټکی ||
+            *(ushf*)سمون != لټون_پیل) استمر;
 
         /* It is not necessary to compare scan[2] and match[2] since they are
          * always equal when the other bytes match, given that the hash keys
@@ -1460,30 +1460,30 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * necessary to put more guard bytes at the end of the window, or
          * to check more often for insufficient lookahead.
          */
-        Assert(scan[2] == match[2], "scan[2]?");
-        scan++, match++;
-        do {
-        } while (*(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 scan < strend);
+        Assert(لټون[2] == سمون[2], "scan[2]?");
+        لټون++, سمون++;
+        افعل {
+        } طالما (*(ushf*)(لټون += 2) == *(ushf*)(سمون += 2) &&
+                 *(ushf*)(لټون += 2) == *(ushf*)(سمون += 2) &&
+                 *(ushf*)(لټون += 2) == *(ushf*)(سمون += 2) &&
+                 *(ushf*)(لټون += 2) == *(ushf*)(سمون += 2) &&
+                 لټون < strend);
         /* The funny "do {}" generates better code on most compilers */
 
         /* Here, scan <= window + strstart + 257 */
-        Assert(scan <= s->window + (unsigned)(s->window_size - 1),
+        Assert(لټون <= s->کړکۍ + (بینښه)(s->کړکۍ_اندازه - 1),
                "wild scan");
-        if (*scan == *match) scan++;
+        إذا (*لټون == *سمون) لټون++;
 
-        len = (MAX_MATCH - 1) - (int)(strend - scan);
-        scan = strend - (MAX_MATCH-1);
+        len = (MAX_سمون - 1) - (صحيح)(strend - لټون);
+        لټون = strend - (MAX_سمون-1);
 
-#else /* UNALIGNED_OK */
+#وإلا /* UNALIGNED_OK */
 
-        if (match[best_len]     != scan_end  ||
-            match[best_len - 1] != scan_end1 ||
-            *match              != *scan     ||
-            *++match            != scan[1])      continue;
+        إذا (سمون[غوره_len]     != لټون_پای_ټکی  ||
+            سمون[غوره_len - 1] != لټون_end1 ||
+            *سمون              != *لټون     ||
+            *++سمون            != لټون[1])      استمر;
 
         /* The check at best_len - 1 can be removed because it will be made
          * again later. (This heuristic is not always a win.)
@@ -1491,71 +1491,71 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * are always equal when the other bytes match, given that
          * the hash keys are equal and that HASH_BITS >= 8.
          */
-        scan += 2, match++;
-        Assert(*scan == *match, "match[2]?");
+        لټون += 2, سمون++;
+        Assert(*لټون == *سمون, "match[2]?");
 
         /* We check for insufficient lookahead only every 8th comparison;
          * the 256th check will be made at strstart + 258.
          */
-        do {
-        } while (*++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 scan < strend);
+        افعل {
+        } طالما (*++لټون == *++سمون && *++لټون == *++سمون &&
+                 *++لټون == *++سمون && *++لټون == *++سمون &&
+                 *++لټون == *++سمون && *++لټون == *++سمون &&
+                 *++لټون == *++سمون && *++لټون == *++سمون &&
+                 لټون < strend);
 
-        Assert(scan <= s->window + (unsigned)(s->window_size - 1),
+        Assert(لټون <= s->کړکۍ + (بینښه)(s->کړکۍ_اندازه - 1),
                "wild scan");
 
-        len = MAX_MATCH - (int)(strend - scan);
-        scan = strend - MAX_MATCH;
+        len = MAX_سمون - (صحيح)(strend - لټون);
+        لټون = strend - MAX_سمون;
 
-#endif /* UNALIGNED_OK */
+#د_که_پای /* UNALIGNED_OK */
 
-        if (len > best_len) {
-            s->match_start = cur_match;
-            best_len = len;
-            if (len >= nice_match) break;
-#ifdef UNALIGNED_OK
-            scan_end = *(ushf*)(scan + best_len - 1);
-#else
-            scan_end1  = scan[best_len - 1];
-            scan_end   = scan[best_len];
-#endif
+        إذا (len > غوره_len) {
+            s->سمون_پیل = cur_سمون;
+            غوره_len = len;
+            إذا (len >= nice_سمون) اكسر;
+#که_تعریف_شوی UNALIGNED_OK
+            لټون_پای_ټکی = *(ushf*)(لټون + غوره_len - 1);
+#وإلا
+            لټون_end1  = لټون[غوره_len - 1];
+            لټون_پای_ټکی   = لټون[غوره_len];
+#د_که_پای
         }
-    } while ((cur_match = prev[cur_match & wmask]) > limit
-             && --chain_length != 0);
+    } طالما ((cur_سمون = prev[cur_سمون & wmask]) > حد
+             && --chain_اوږدتیا != 0);
 
-    if ((uInt)best_len <= s->lookahead) return (uInt)best_len;
-    return s->lookahead;
+    إذا ((uInt)غوره_len <= s->lookahead) أرجع (uInt)غوره_len;
+    أرجع s->lookahead;
 }
 
-#else /* FASTEST */
+#وإلا /* FASTEST */
 
 /* ---------------------------------------------------------------------------
  * Optimized version for FASTEST only
  */
-local uInt longest_match(deflate_state *s, IPos cur_match) {
-    Bytef *scan = s->window + s->strstart;      /* current string */
-    Bytef *match;                               /* matched string */
-    int len;                                    /* length of current match */
-    Bytef *strend = s->window + s->strstart + MAX_MATCH;
+local uInt longest_سمون(deflate_state *s, IPos cur_سمون) {
+    Bytef *لټون = s->کړکۍ + s->strstart;      /* current string */
+    Bytef *سمون;                               /* matched string */
+    صحيح len;                                    /* length of current match */
+    Bytef *strend = s->کړکۍ + s->strstart + MAX_سمون;
 
     /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
      * It is easy to get rid of this optimization if necessary.
      */
-    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+    Assert(s->hash_بټونه >= 8 && MAX_سمون == 258, "Code too clever");
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->کړکۍ_اندازه - MIN_LOOKAHEAD,
            "need lookahead");
 
-    Assert(cur_match < s->strstart, "no future");
+    Assert(cur_سمون < s->strstart, "no future");
 
-    match = s->window + cur_match;
+    سمون = s->کړکۍ + cur_سمون;
 
     /* Return failure if the match length is less than 2:
      */
-    if (match[0] != scan[0] || match[1] != scan[1]) return MIN_MATCH-1;
+    إذا (سمون[0] != لټون[0] || سمون[1] != لټون[1]) أرجع MIN_سمون-1;
 
     /* The check at best_len - 1 can be removed because it will be made
      * again later. (This heuristic is not always a win.)
@@ -1563,93 +1563,93 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
      * are always equal when the other bytes match, given that
      * the hash keys are equal and that HASH_BITS >= 8.
      */
-    scan += 2, match += 2;
-    Assert(*scan == *match, "match[2]?");
+    لټون += 2, سمون += 2;
+    Assert(*لټون == *سمون, "match[2]?");
 
     /* We check for insufficient lookahead only every 8th comparison;
      * the 256th check will be made at strstart + 258.
      */
-    do {
-    } while (*++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             scan < strend);
+    افعل {
+    } طالما (*++لټون == *++سمون && *++لټون == *++سمون &&
+             *++لټون == *++سمون && *++لټون == *++سمون &&
+             *++لټون == *++سمون && *++لټون == *++سمون &&
+             *++لټون == *++سمون && *++لټون == *++سمون &&
+             لټون < strend);
 
-    Assert(scan <= s->window + (unsigned)(s->window_size - 1), "wild scan");
+    Assert(لټون <= s->کړکۍ + (بینښه)(s->کړکۍ_اندازه - 1), "wild scan");
 
-    len = MAX_MATCH - (int)(strend - scan);
+    len = MAX_سمون - (صحيح)(strend - لټون);
 
-    if (len < MIN_MATCH) return MIN_MATCH - 1;
+    إذا (len < MIN_سمون) أرجع MIN_سمون - 1;
 
-    s->match_start = cur_match;
-    return (uInt)len <= s->lookahead ? (uInt)len : s->lookahead;
+    s->سمون_پیل = cur_سمون;
+    أرجع (uInt)len <= s->lookahead ? (uInt)len : s->lookahead;
 }
 
-#endif /* FASTEST */
+#د_که_پای /* FASTEST */
 
-#ifdef ZLIB_DEBUG
+#که_تعریف_شوی ZLIB_DEBUG
 
-#define EQUAL 0
+#تعریف_کړه EQUAL 0
 /* result of memcmp for equal strings */
 
 /* ===========================================================================
  * Check that the match at match_start is indeed a match.
  */
-local void check_match(deflate_state *s, IPos start, IPos match, int length) {
+local فراغ check_سمون(deflate_state *s, IPos پیل, IPos سمون, صحيح اوږدتیا) {
     /* check that the match is indeed a match */
-    Bytef *back = s->window + (int)match, *here = s->window + start;
-    IPos len = (IPos)length;
-    if (match == (IPos)-1) {
+    Bytef *شا = s->کړکۍ + (صحيح)سمون, *دلته = s->کړکۍ + پیل;
+    IPos len = (IPos)اوږدتیا;
+    إذا (سمون == (IPos)-1) {
         /* match starts one byte before the current window -- just compare the
            subsequent length-1 bytes */
-        back++;
-        here++;
+        شا++;
+        دلته++;
         len--;
     }
-    if (zmemcmp(back, here, len) != EQUAL) {
+    إذا (zmemcmp(شا, دلته, len) != EQUAL) {
         fprintf(stderr, " start %u, match %d, length %d\n",
-                start, (int)match, length);
-        do {
-            fprintf(stderr, "(%02x %02x)", *back++, *here++);
-        } while (--len != 0);
+                پیل, (صحيح)سمون, اوږدتیا);
+        افعل {
+            fprintf(stderr, "(%02x %02x)", *شا++, *دلته++);
+        } طالما (--len != 0);
         z_error("invalid match");
     }
-    if (z_verbose > 1) {
-        fprintf(stderr,"\\[%d,%d]", start - match, length);
-        do { putc(s->window[start++], stderr); } while (--length != 0);
+    إذا (z_verbose > 1) {
+        fprintf(stderr,"\\[%d,%d]", پیل - سمون, اوږدتیا);
+        افعل { putc(s->کړکۍ[پیل++], stderr); } طالما (--اوږدتیا != 0);
     }
 }
-#else
-#  define check_match(s, start, match, length)
-#endif /* ZLIB_DEBUG */
+#وإلا
+#  define check_سمون(s, پیل, سمون, اوږدتیا)
+#د_که_پای /* ZLIB_DEBUG */
 
 /* ===========================================================================
  * Flush the current block, with given end-of-file flag.
  * IN assertion: strstart is set to the end of the current match.
  */
-#define FLUSH_BLOCK_ONLY(s, last) { \
-   _tr_flush_block(s, (s->block_start >= 0L ? \
-                   (charf *)&s->window[(unsigned)s->block_start] : \
+#تعریف_کړه FLUSH_بلاک_ONLY(s, وروستی) { \
+   tr_flush_بلاک(s, (s->بلاک_پیل >= 0L ? \
+                   (charf *)&s->کړکۍ[(بینښه)s->بلاک_پیل] : \
                    (charf *)Z_NULL), \
-                (ulg)((long)s->strstart - s->block_start), \
-                (last)); \
-   s->block_start = s->strstart; \
+                (ulg)((اوږد)s->strstart - s->بلاک_پیل), \
+                (وروستی)); \
+   s->بلاک_پیل = s->strstart; \
    flush_pending(s->strm); \
    Tracev((stderr,"[FLUSH]")); \
 }
 
 /* Same but force premature exit if necessary. */
-#define FLUSH_BLOCK(s, last) { \
-   FLUSH_BLOCK_ONLY(s, last); \
-   if (s->strm->avail_out == 0) return (last) ? finish_started : need_more; \
+#تعریف_کړه FLUSH_بلاک(s, وروستی) { \
+   FLUSH_بلاک_ONLY(s, وروستی); \
+   إذا (s->strm->avail_بهر == 0) أرجع (وروستی) ? پای_started : need_نور; \
 }
 
 /* Maximum stored block length in deflate format (not including header). */
-#define MAX_STORED 65535
+#تعریف_کړه MAX_STORED 65535
 
 /* Minimum of a and b. */
-#define MIN(a, b) ((a) > (b) ? (b) : (a))
+#تعریف_کړه MIN(a, b) ((a) > (b) ? (b) : (a))
 
 /* ===========================================================================
  * Copy without compression as much as possible from the input stream, return
@@ -1666,35 +1666,35 @@ local void check_match(deflate_state *s, IPos start, IPos match, int length) {
  * copied. It is most efficient with large input and output buffers, which
  * maximizes the opportunities to have a single copy from next_in to next_out.
  */
-local block_state deflate_stored(deflate_state *s, int flush) {
+local بلاک_state deflate_stored(deflate_state *s, صحيح flush) {
     /* Smallest worthy block size when not flushing or finishing. By default
      * this is 32K. This can be as small as 507 bytes for memLevel == 1. For
      * large input and output buffers, the stored block size will be larger.
      */
-    unsigned min_block = (unsigned)(MIN(s->pending_buf_size - 5, s->w_size));
+    بینښه min_بلاک = (بینښه)(MIN(s->pending_buf_اندازه - 5, s->w_اندازه));
 
     /* Copy as many min_block or larger stored blocks directly to next_out as
      * possible. If flushing, copy the remaining available input to next_out as
      * stored blocks, if there is enough space.
      */
-    int last = 0;
-    unsigned len, left, have;
-    unsigned used = s->strm->avail_in;
-    do {
+    صحيح وروستی = 0;
+    بینښه len, کیڼ, have;
+    بینښه کارول_شوی = s->strm->avail_دننه;
+    افعل {
         /* Set len to the maximum size block that we can copy directly with the
          * available input data and output space. Set left to how much of that
          * would be copied from what's left in the window.
          */
         len = MAX_STORED;       /* maximum deflate stored block length */
-        have = ((unsigned)s->bi_valid + 42) >> 3;   /* bytes in header */
-        if (s->strm->avail_out < have)          /* need room for header */
-            break;
+        have = ((بینښه)s->bi_valid + 42) >> 3;   /* bytes in header */
+        إذا (s->strm->avail_بهر < have)          /* need room for header */
+            اكسر;
             /* maximum stored block length that will fit in avail_out: */
-        have = s->strm->avail_out - have;
-        left = (unsigned)(s->strstart - s->block_start);    /* window bytes */
-        if (len > (ulg)left + s->strm->avail_in)
-            len = left + s->strm->avail_in;     /* limit len to the input */
-        if (len > have)
+        have = s->strm->avail_بهر - have;
+        کیڼ = (بینښه)(s->strstart - s->بلاک_پیل);    /* window bytes */
+        إذا (len > (ulg)کیڼ + s->strm->avail_دننه)
+            len = کیڼ + s->strm->avail_دننه;     /* limit len to the input */
+        إذا (len > have)
             len = have;                         /* limit len to the output */
 
         /* If the stored block would be less than min_block in length, or if
@@ -1702,16 +1702,16 @@ local block_state deflate_stored(deflate_state *s, int flush) {
          * copying to the window and the pending buffer instead. Also don't
          * write an empty block when flushing -- deflate() does that.
          */
-        if (len < min_block && ((len == 0 && flush != Z_FINISH) ||
+        إذا (len < min_بلاک && ((len == 0 && flush != Z_پای) ||
                                 flush == Z_NO_FLUSH ||
-                                len != left + s->strm->avail_in))
-            break;
+                                len != کیڼ + s->strm->avail_دننه))
+            اكسر;
 
         /* Make a dummy stored block in pending to get the header bytes,
          * including any pending bits. This also updates the debugging counts.
          */
-        last = flush == Z_FINISH && len == left + s->strm->avail_in ? 1 : 0;
-        _tr_stored_block(s, (char *)0, 0L, last);
+        وروستی = flush == Z_پای && len == کیڼ + s->strm->avail_دننه ? 1 : 0;
+        tr_stored_بلاک(s, (حرف *)0, 0L, وروستی);
 
         /* Replace the lengths in the dummy stored block with len. */
         s->pending_buf[s->pending - 4] = (Bytef)len;
@@ -1722,34 +1722,34 @@ local block_state deflate_stored(deflate_state *s, int flush) {
         /* Write the stored block header bytes. */
         flush_pending(s->strm);
 
-#ifdef ZLIB_DEBUG
+#که_تعریف_شوی ZLIB_DEBUG
         /* Update debugging counts for the data about to be copied. */
         s->compressed_len += len << 3;
-        s->bits_sent += len << 3;
-#endif
+        s->بټونه_لېږل_شوی += len << 3;
+#د_که_پای
 
         /* Copy uncompressed bytes from the window to next_out. */
-        if (left) {
-            if (left > len)
-                left = len;
-            zmemcpy(s->strm->next_out, s->window + s->block_start, left);
-            s->strm->next_out += left;
-            s->strm->avail_out -= left;
-            s->strm->total_out += left;
-            s->block_start += left;
-            len -= left;
+        إذا (کیڼ) {
+            إذا (کیڼ > len)
+                کیڼ = len;
+            zmemcpy(s->strm->بل_بهر, s->کړکۍ + s->بلاک_پیل, کیڼ);
+            s->strm->بل_بهر += کیڼ;
+            s->strm->avail_بهر -= کیڼ;
+            s->strm->ټول_بهر += کیڼ;
+            s->بلاک_پیل += کیڼ;
+            len -= کیڼ;
         }
 
         /* Copy uncompressed bytes directly from next_in to next_out, updating
          * the check value.
          */
-        if (len) {
-            read_buf(s->strm, s->strm->next_out, len);
-            s->strm->next_out += len;
-            s->strm->avail_out -= len;
-            s->strm->total_out += len;
+        إذا (len) {
+            read_buf(s->strm, s->strm->بل_بهر, len);
+            s->strm->بل_بهر += len;
+            s->strm->avail_بهر -= len;
+            s->strm->ټول_بهر += len;
         }
-    } while (last == 0);
+    } طالما (وروستی == 0);
 
     /* Update the sliding window with the last s->w_size bytes of the copied
      * data, or append all of the copied data to the existing window if less
@@ -1757,95 +1757,95 @@ local block_state deflate_stored(deflate_state *s, int flush) {
      * insert in the hash tables, in the event that deflateParams() switches to
      * a non-zero compression level.
      */
-    used -= s->strm->avail_in;      /* number of input bytes directly copied */
-    if (used) {
+    کارول_شوی -= s->strm->avail_دننه;      /* number of input bytes directly copied */
+    إذا (کارول_شوی) {
         /* If any input was used, then no unused input remains in the window,
          * therefore s->block_start == s->strstart.
          */
-        if (used >= s->w_size) {    /* supplant the previous history */
+        إذا (کارول_شوی >= s->w_اندازه) {    /* supplant the previous history */
             s->matches = 2;         /* clear hash */
-            zmemcpy(s->window, s->strm->next_in - s->w_size, s->w_size);
-            s->strstart = s->w_size;
-            s->insert = s->strstart;
+            zmemcpy(s->کړکۍ, s->strm->بل_دننه - s->w_اندازه, s->w_اندازه);
+            s->strstart = s->w_اندازه;
+            s->ورننباسه = s->strstart;
         }
-        else {
-            if (s->window_size - s->strstart <= used) {
+        وإلا {
+            إذا (s->کړکۍ_اندازه - s->strstart <= کارول_شوی) {
                 /* Slide the window down. */
-                s->strstart -= s->w_size;
-                zmemcpy(s->window, s->window + s->w_size, s->strstart);
-                if (s->matches < 2)
+                s->strstart -= s->w_اندازه;
+                zmemcpy(s->کړکۍ, s->کړکۍ + s->w_اندازه, s->strstart);
+                إذا (s->matches < 2)
                     s->matches++;   /* add a pending slide_hash() */
-                if (s->insert > s->strstart)
-                    s->insert = s->strstart;
+                إذا (s->ورننباسه > s->strstart)
+                    s->ورننباسه = s->strstart;
             }
-            zmemcpy(s->window + s->strstart, s->strm->next_in - used, used);
-            s->strstart += used;
-            s->insert += MIN(used, s->w_size - s->insert);
+            zmemcpy(s->کړکۍ + s->strstart, s->strm->بل_دننه - کارول_شوی, کارول_شوی);
+            s->strstart += کارول_شوی;
+            s->ورننباسه += MIN(کارول_شوی, s->w_اندازه - s->ورننباسه);
         }
-        s->block_start = s->strstart;
+        s->بلاک_پیل = s->strstart;
     }
-    if (s->high_water < s->strstart)
-        s->high_water = s->strstart;
+    إذا (s->لوړ_water < s->strstart)
+        s->لوړ_water = s->strstart;
 
     /* If the last block was written to next_out, then done. */
-    if (last) {
-        s->bi_used = 8;
-        return finish_done;
+    إذا (وروستی) {
+        s->bi_کارول_شوی = 8;
+        أرجع پای_بشپړ;
     }
 
     /* If flushing and all input has been consumed, then done. */
-    if (flush != Z_NO_FLUSH && flush != Z_FINISH &&
-        s->strm->avail_in == 0 && (long)s->strstart == s->block_start)
-        return block_done;
+    إذا (flush != Z_NO_FLUSH && flush != Z_پای &&
+        s->strm->avail_دننه == 0 && (اوږد)s->strstart == s->بلاک_پیل)
+        أرجع بلاک_بشپړ;
 
     /* Fill the window with any remaining input. */
-    have = (unsigned)(s->window_size - s->strstart);
-    if (s->strm->avail_in > have && s->block_start >= (long)s->w_size) {
+    have = (بینښه)(s->کړکۍ_اندازه - s->strstart);
+    إذا (s->strm->avail_دننه > have && s->بلاک_پیل >= (اوږد)s->w_اندازه) {
         /* Slide the window down. */
-        s->block_start -= s->w_size;
-        s->strstart -= s->w_size;
-        zmemcpy(s->window, s->window + s->w_size, s->strstart);
-        if (s->matches < 2)
+        s->بلاک_پیل -= s->w_اندازه;
+        s->strstart -= s->w_اندازه;
+        zmemcpy(s->کړکۍ, s->کړکۍ + s->w_اندازه, s->strstart);
+        إذا (s->matches < 2)
             s->matches++;           /* add a pending slide_hash() */
-        have += s->w_size;          /* more space now */
-        if (s->insert > s->strstart)
-            s->insert = s->strstart;
+        have += s->w_اندازه;          /* more space now */
+        إذا (s->ورننباسه > s->strstart)
+            s->ورننباسه = s->strstart;
     }
-    if (have > s->strm->avail_in)
-        have = s->strm->avail_in;
-    if (have) {
-        read_buf(s->strm, s->window + s->strstart, have);
+    إذا (have > s->strm->avail_دننه)
+        have = s->strm->avail_دننه;
+    إذا (have) {
+        read_buf(s->strm, s->کړکۍ + s->strstart, have);
         s->strstart += have;
-        s->insert += MIN(have, s->w_size - s->insert);
+        s->ورننباسه += MIN(have, s->w_اندازه - s->ورننباسه);
     }
-    if (s->high_water < s->strstart)
-        s->high_water = s->strstart;
+    إذا (s->لوړ_water < s->strstart)
+        s->لوړ_water = s->strstart;
 
     /* There was not enough avail_out to write a complete worthy or flushed
      * stored block to next_out. Write a stored block to pending instead, if we
      * have enough input for a worthy block, or if flushing and there is enough
      * room for the remaining input as a stored block in the pending buffer.
      */
-    have = ((unsigned)s->bi_valid + 42) >> 3;   /* bytes in header */
+    have = ((بینښه)s->bi_valid + 42) >> 3;   /* bytes in header */
         /* maximum stored block length that will fit in pending: */
-    have = (unsigned)MIN(s->pending_buf_size - have, MAX_STORED);
-    min_block = MIN(have, s->w_size);
-    left = (unsigned)(s->strstart - s->block_start);
-    if (left >= min_block ||
-        ((left || flush == Z_FINISH) && flush != Z_NO_FLUSH &&
-         s->strm->avail_in == 0 && left <= have)) {
-        len = MIN(left, have);
-        last = flush == Z_FINISH && s->strm->avail_in == 0 &&
-               len == left ? 1 : 0;
-        _tr_stored_block(s, (charf *)s->window + s->block_start, len, last);
-        s->block_start += len;
+    have = (بینښه)MIN(s->pending_buf_اندازه - have, MAX_STORED);
+    min_بلاک = MIN(have, s->w_اندازه);
+    کیڼ = (بینښه)(s->strstart - s->بلاک_پیل);
+    إذا (کیڼ >= min_بلاک ||
+        ((کیڼ || flush == Z_پای) && flush != Z_NO_FLUSH &&
+         s->strm->avail_دننه == 0 && کیڼ <= have)) {
+        len = MIN(کیڼ, have);
+        وروستی = flush == Z_پای && s->strm->avail_دننه == 0 &&
+               len == کیڼ ? 1 : 0;
+        tr_stored_بلاک(s, (charf *)s->کړکۍ + s->بلاک_پیل, len, وروستی);
+        s->بلاک_پیل += len;
         flush_pending(s->strm);
     }
 
     /* We've done all we can with the available input and output. */
-    if (last)
-        s->bi_used = 8;
-    return last ? finish_started : need_more;
+    إذا (وروستی)
+        s->bi_کارول_شوی = 8;
+    أرجع وروستی ? پای_started : need_نور;
 }
 
 /* ===========================================================================
@@ -1855,332 +1855,332 @@ local block_state deflate_stored(deflate_state *s, int flush) {
  * new strings in the dictionary only for unmatched strings or for short
  * matches. It is used only for the fast compression options.
  */
-local block_state deflate_fast(deflate_state *s, int flush) {
-    IPos hash_head;       /* head of the hash chain */
-    int bflush;           /* set if current block must be flushed */
+local بلاک_state deflate_fast(deflate_state *s, صحيح flush) {
+    IPos hash_سر;       /* head of the hash chain */
+    صحيح bflush;           /* set if current block must be flushed */
 
-    for (;;) {
+    لكل (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the next match, plus MIN_MATCH bytes to insert the
          * string following the next match.
          */
-        if (s->lookahead < MIN_LOOKAHEAD) {
-            fill_window(s);
-            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
-                return need_more;
+        إذا (s->lookahead < MIN_LOOKAHEAD) {
+            fill_کړکۍ(s);
+            إذا (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                أرجع need_نور;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            إذا (s->lookahead == 0) اكسر; /* flush the current block */
         }
 
         /* Insert the string window[strstart .. strstart + 2] in the
          * dictionary, and set hash_head to the head of the hash chain:
          */
-        hash_head = NIL;
-        if (s->lookahead >= MIN_MATCH) {
-            INSERT_STRING(s, s->strstart, hash_head);
+        hash_سر = NIL;
+        إذا (s->lookahead >= MIN_سمون) {
+            ورننباسه_STRING(s, s->strstart, hash_سر);
         }
 
         /* Find the longest match, discarding those <= prev_length.
          * At this point we have always match_length < MIN_MATCH
          */
-        if (hash_head != NIL && s->strstart - hash_head <= MAX_DIST(s)) {
+        إذا (hash_سر != NIL && s->strstart - hash_سر <= MAX_DIST(s)) {
             /* To simplify the code, we prevent matches with the string
              * of window index 0 (in particular we have to avoid a match
              * of the string with itself at the start of the input file).
              */
-            s->match_length = longest_match (s, hash_head);
+            s->سمون_اوږدتیا = longest_سمون (s, hash_سر);
             /* longest_match() sets match_start */
         }
-        if (s->match_length >= MIN_MATCH) {
-            check_match(s, s->strstart, s->match_start, (int)s->match_length);
+        إذا (s->سمون_اوږدتیا >= MIN_سمون) {
+            check_سمون(s, s->strstart, s->سمون_پیل, (صحيح)s->سمون_اوږدتیا);
 
-            _tr_tally_dist(s, s->strstart - s->match_start,
-                           s->match_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, s->strstart - s->سمون_پیل,
+                           s->سمون_اوږدتیا - MIN_سمون, bflush);
 
-            s->lookahead -= s->match_length;
+            s->lookahead -= s->سمون_اوږدتیا;
 
             /* Insert new strings in the hash table only if the match length
              * is not too large. This saves time but degrades compression.
              */
-#ifndef FASTEST
-            if (s->match_length <= s->max_insert_length &&
-                s->lookahead >= MIN_MATCH) {
-                s->match_length--; /* string at strstart already in table */
-                do {
+#که_نه_تعریف_شوی FASTEST
+            إذا (s->سمون_اوږدتیا <= s->max_ورننباسه_اوږدتیا &&
+                s->lookahead >= MIN_سمون) {
+                s->سمون_اوږدتیا--; /* string at strstart already in table */
+                افعل {
                     s->strstart++;
-                    INSERT_STRING(s, s->strstart, hash_head);
+                    ورننباسه_STRING(s, s->strstart, hash_سر);
                     /* strstart never exceeds WSIZE-MAX_MATCH, so there are
                      * always MIN_MATCH bytes ahead.
                      */
-                } while (--s->match_length != 0);
+                } طالما (--s->سمون_اوږدتیا != 0);
                 s->strstart++;
-            } else
-#endif
+            } وإلا
+#د_که_پای
             {
-                s->strstart += s->match_length;
-                s->match_length = 0;
-                s->ins_h = s->window[s->strstart];
-                UPDATE_HASH(s, s->ins_h, s->window[s->strstart + 1]);
-#if MIN_MATCH != 3
-                Call UPDATE_HASH() MIN_MATCH-3 more times
-#endif
+                s->strstart += s->سمون_اوږدتیا;
+                s->سمون_اوږدتیا = 0;
+                s->ins_h = s->کړکۍ[s->strstart];
+                UPDATE_HASH(s, s->ins_h, s->کړکۍ[s->strstart + 1]);
+#إذا MIN_سمون != 3
+                Call UPDATE_HASH() MIN_سمون-3 نور times
+#د_که_پای
                 /* If lookahead < MIN_MATCH, ins_h is garbage, but it does not
                  * matter since it will be recomputed at next deflate call.
                  */
             }
-        } else {
+        } وإلا {
             /* No match, output a literal byte */
-            Tracevv((stderr,"%c", s->window[s->strstart]));
-            _tr_tally_lit(s, s->window[s->strstart], bflush);
+            Tracevv((stderr,"%c", s->کړکۍ[s->strstart]));
+            _tr_tally_lit(s, s->کړکۍ[s->strstart], bflush);
             s->lookahead--;
             s->strstart++;
         }
-        if (bflush) FLUSH_BLOCK(s, 0);
+        إذا (bflush) FLUSH_بلاک(s, 0);
     }
-    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->ورننباسه = s->strstart < MIN_سمون-1 ? s->strstart : MIN_سمون-1;
+    إذا (flush == Z_پای) {
+        FLUSH_بلاک(s, 1);
+        أرجع پای_بشپړ;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    إذا (s->sym_بل)
+        FLUSH_بلاک(s, 0);
+    أرجع بلاک_بشپړ;
 }
 
-#ifndef FASTEST
+#که_نه_تعریف_شوی FASTEST
 /* ===========================================================================
  * Same as above, but achieves better compression. We use a lazy
  * evaluation for matches: a match is finally adopted only if there is
  * no better match at the next window position.
  */
-local block_state deflate_slow(deflate_state *s, int flush) {
-    IPos hash_head;          /* head of hash chain */
-    int bflush;              /* set if current block must be flushed */
+local بلاک_state deflate_slow(deflate_state *s, صحيح flush) {
+    IPos hash_سر;          /* head of hash chain */
+    صحيح bflush;              /* set if current block must be flushed */
 
     /* Process the input block. */
-    for (;;) {
+    لكل (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the next match, plus MIN_MATCH bytes to insert the
          * string following the next match.
          */
-        if (s->lookahead < MIN_LOOKAHEAD) {
-            fill_window(s);
-            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
-                return need_more;
+        إذا (s->lookahead < MIN_LOOKAHEAD) {
+            fill_کړکۍ(s);
+            إذا (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                أرجع need_نور;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            إذا (s->lookahead == 0) اكسر; /* flush the current block */
         }
 
         /* Insert the string window[strstart .. strstart + 2] in the
          * dictionary, and set hash_head to the head of the hash chain:
          */
-        hash_head = NIL;
-        if (s->lookahead >= MIN_MATCH) {
-            INSERT_STRING(s, s->strstart, hash_head);
+        hash_سر = NIL;
+        إذا (s->lookahead >= MIN_سمون) {
+            ورننباسه_STRING(s, s->strstart, hash_سر);
         }
 
         /* Find the longest match, discarding those <= prev_length.
          */
-        s->prev_length = s->match_length, s->prev_match = s->match_start;
-        s->match_length = MIN_MATCH-1;
+        s->prev_اوږدتیا = s->سمون_اوږدتیا, s->prev_سمون = s->سمون_پیل;
+        s->سمون_اوږدتیا = MIN_سمون-1;
 
-        if (hash_head != NIL && s->prev_length < s->max_lazy_match &&
-            s->strstart - hash_head <= MAX_DIST(s)) {
+        إذا (hash_سر != NIL && s->prev_اوږدتیا < s->max_lazy_سمون &&
+            s->strstart - hash_سر <= MAX_DIST(s)) {
             /* To simplify the code, we prevent matches with the string
              * of window index 0 (in particular we have to avoid a match
              * of the string with itself at the start of the input file).
              */
-            s->match_length = longest_match (s, hash_head);
+            s->سمون_اوږدتیا = longest_سمون (s, hash_سر);
             /* longest_match() sets match_start */
 
-            if (s->match_length <= 5 && (s->strategy == Z_FILTERED
-#if TOO_FAR <= 32767
-                || (s->match_length == MIN_MATCH &&
-                    s->strstart - s->match_start > TOO_FAR)
-#endif
+            إذا (s->سمون_اوږدتیا <= 5 && (s->strategy == Z_FILTERED
+#إذا TOO_FAR <= 32767
+                || (s->سمون_اوږدتیا == MIN_سمون &&
+                    s->strstart - s->سمون_پیل > TOO_FAR)
+#د_که_پای
                 )) {
 
                 /* If prev_match is also MIN_MATCH, match_start is garbage
                  * but we will ignore the current match anyway.
                  */
-                s->match_length = MIN_MATCH-1;
+                s->سمون_اوږدتیا = MIN_سمون-1;
             }
         }
         /* If there was a match at the previous step and the current
          * match is not better, output the previous match:
          */
-        if (s->prev_length >= MIN_MATCH && s->match_length <= s->prev_length) {
-            uInt max_insert = s->strstart + s->lookahead - MIN_MATCH;
+        إذا (s->prev_اوږدتیا >= MIN_سمون && s->سمون_اوږدتیا <= s->prev_اوږدتیا) {
+            uInt max_ورننباسه = s->strstart + s->lookahead - MIN_سمون;
             /* Do not insert strings in hash table beyond this. */
 
-            check_match(s, s->strstart - 1, s->prev_match, (int)s->prev_length);
+            check_سمون(s, s->strstart - 1, s->prev_سمون, (صحيح)s->prev_اوږدتیا);
 
-            _tr_tally_dist(s, s->strstart - 1 - s->prev_match,
-                           s->prev_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, s->strstart - 1 - s->prev_سمون,
+                           s->prev_اوږدتیا - MIN_سمون, bflush);
 
             /* Insert in hash table all strings up to the end of the match.
              * strstart - 1 and strstart are already inserted. If there is not
              * enough lookahead, the last two strings are not inserted in
              * the hash table.
              */
-            s->lookahead -= s->prev_length - 1;
-            s->prev_length -= 2;
-            do {
-                if (++s->strstart <= max_insert) {
-                    INSERT_STRING(s, s->strstart, hash_head);
+            s->lookahead -= s->prev_اوږدتیا - 1;
+            s->prev_اوږدتیا -= 2;
+            افعل {
+                إذا (++s->strstart <= max_ورننباسه) {
+                    ورننباسه_STRING(s, s->strstart, hash_سر);
                 }
-            } while (--s->prev_length != 0);
-            s->match_available = 0;
-            s->match_length = MIN_MATCH-1;
+            } طالما (--s->prev_اوږدتیا != 0);
+            s->سمون_شته = 0;
+            s->سمون_اوږدتیا = MIN_سمون-1;
             s->strstart++;
 
-            if (bflush) FLUSH_BLOCK(s, 0);
+            إذا (bflush) FLUSH_بلاک(s, 0);
 
-        } else if (s->match_available) {
+        } وإلا إذا (s->سمون_شته) {
             /* If there was no match at the previous position, output a
              * single literal. If there was a match but the current match
              * is longer, truncate the previous match to a single literal.
              */
-            Tracevv((stderr,"%c", s->window[s->strstart - 1]));
-            _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
-            if (bflush) {
-                FLUSH_BLOCK_ONLY(s, 0);
+            Tracevv((stderr,"%c", s->کړکۍ[s->strstart - 1]));
+            _tr_tally_lit(s, s->کړکۍ[s->strstart - 1], bflush);
+            إذا (bflush) {
+                FLUSH_بلاک_ONLY(s, 0);
             }
             s->strstart++;
             s->lookahead--;
-            if (s->strm->avail_out == 0) return need_more;
-        } else {
+            إذا (s->strm->avail_بهر == 0) أرجع need_نور;
+        } وإلا {
             /* There is no previous match to compare with, wait for
              * the next step to decide.
              */
-            s->match_available = 1;
+            s->سمون_شته = 1;
             s->strstart++;
             s->lookahead--;
         }
     }
     Assert (flush != Z_NO_FLUSH, "no flush?");
-    if (s->match_available) {
-        Tracevv((stderr,"%c", s->window[s->strstart - 1]));
-        _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
-        s->match_available = 0;
+    إذا (s->سمون_شته) {
+        Tracevv((stderr,"%c", s->کړکۍ[s->strstart - 1]));
+        _tr_tally_lit(s, s->کړکۍ[s->strstart - 1], bflush);
+        s->سمون_شته = 0;
     }
-    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->ورننباسه = s->strstart < MIN_سمون-1 ? s->strstart : MIN_سمون-1;
+    إذا (flush == Z_پای) {
+        FLUSH_بلاک(s, 1);
+        أرجع پای_بشپړ;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    إذا (s->sym_بل)
+        FLUSH_بلاک(s, 0);
+    أرجع بلاک_بشپړ;
 }
-#endif /* FASTEST */
+#د_که_پای /* FASTEST */
 
 /* ===========================================================================
  * For Z_RLE, simply look for runs of bytes, generate matches only of distance
  * one.  Do not maintain a hash table.  (It will be regenerated if this run of
  * deflate switches away from Z_RLE.)
  */
-local block_state deflate_rle(deflate_state *s, int flush) {
-    int bflush;             /* set if current block must be flushed */
+local بلاک_state deflate_rle(deflate_state *s, صحيح flush) {
+    صحيح bflush;             /* set if current block must be flushed */
     uInt prev;              /* byte at distance one to match */
-    Bytef *scan, *strend;   /* scan goes up to strend for length of run */
+    Bytef *لټون, *strend;   /* scan goes up to strend for length of run */
 
-    for (;;) {
+    لكل (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the longest run, plus one for the unrolled loop.
          */
-        if (s->lookahead <= MAX_MATCH) {
-            fill_window(s);
-            if (s->lookahead <= MAX_MATCH && flush == Z_NO_FLUSH) {
-                return need_more;
+        إذا (s->lookahead <= MAX_سمون) {
+            fill_کړکۍ(s);
+            إذا (s->lookahead <= MAX_سمون && flush == Z_NO_FLUSH) {
+                أرجع need_نور;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            إذا (s->lookahead == 0) اكسر; /* flush the current block */
         }
 
         /* See how many times the previous byte repeats */
-        s->match_length = 0;
-        if (s->lookahead >= MIN_MATCH && s->strstart > 0) {
-            scan = s->window + s->strstart - 1;
-            prev = *scan;
-            if (prev == *++scan && prev == *++scan && prev == *++scan) {
-                strend = s->window + s->strstart + MAX_MATCH;
-                do {
-                } while (prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         scan < strend);
-                s->match_length = MAX_MATCH - (uInt)(strend - scan);
-                if (s->match_length > s->lookahead)
-                    s->match_length = s->lookahead;
+        s->سمون_اوږدتیا = 0;
+        إذا (s->lookahead >= MIN_سمون && s->strstart > 0) {
+            لټون = s->کړکۍ + s->strstart - 1;
+            prev = *لټون;
+            إذا (prev == *++لټون && prev == *++لټون && prev == *++لټون) {
+                strend = s->کړکۍ + s->strstart + MAX_سمون;
+                افعل {
+                } طالما (prev == *++لټون && prev == *++لټون &&
+                         prev == *++لټون && prev == *++لټون &&
+                         prev == *++لټون && prev == *++لټون &&
+                         prev == *++لټون && prev == *++لټون &&
+                         لټون < strend);
+                s->سمون_اوږدتیا = MAX_سمون - (uInt)(strend - لټون);
+                إذا (s->سمون_اوږدتیا > s->lookahead)
+                    s->سمون_اوږدتیا = s->lookahead;
             }
-            Assert(scan <= s->window + (uInt)(s->window_size - 1),
+            Assert(لټون <= s->کړکۍ + (uInt)(s->کړکۍ_اندازه - 1),
                    "wild scan");
         }
 
         /* Emit match if have run of MIN_MATCH or longer, else emit literal */
-        if (s->match_length >= MIN_MATCH) {
-            check_match(s, s->strstart, s->strstart - 1, (int)s->match_length);
+        إذا (s->سمون_اوږدتیا >= MIN_سمون) {
+            check_سمون(s, s->strstart, s->strstart - 1, (صحيح)s->سمون_اوږدتیا);
 
-            _tr_tally_dist(s, 1, s->match_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, 1, s->سمون_اوږدتیا - MIN_سمون, bflush);
 
-            s->lookahead -= s->match_length;
-            s->strstart += s->match_length;
-            s->match_length = 0;
-        } else {
+            s->lookahead -= s->سمون_اوږدتیا;
+            s->strstart += s->سمون_اوږدتیا;
+            s->سمون_اوږدتیا = 0;
+        } وإلا {
             /* No match, output a literal byte */
-            Tracevv((stderr,"%c", s->window[s->strstart]));
-            _tr_tally_lit(s, s->window[s->strstart], bflush);
+            Tracevv((stderr,"%c", s->کړکۍ[s->strstart]));
+            _tr_tally_lit(s, s->کړکۍ[s->strstart], bflush);
             s->lookahead--;
             s->strstart++;
         }
-        if (bflush) FLUSH_BLOCK(s, 0);
+        إذا (bflush) FLUSH_بلاک(s, 0);
     }
-    s->insert = 0;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->ورننباسه = 0;
+    إذا (flush == Z_پای) {
+        FLUSH_بلاک(s, 1);
+        أرجع پای_بشپړ;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    إذا (s->sym_بل)
+        FLUSH_بلاک(s, 0);
+    أرجع بلاک_بشپړ;
 }
 
 /* ===========================================================================
  * For Z_HUFFMAN_ONLY, do not look for matches.  Do not maintain a hash table.
  * (It will be regenerated if this run of deflate switches away from Huffman.)
  */
-local block_state deflate_huff(deflate_state *s, int flush) {
-    int bflush;             /* set if current block must be flushed */
+local بلاک_state deflate_huff(deflate_state *s, صحيح flush) {
+    صحيح bflush;             /* set if current block must be flushed */
 
-    for (;;) {
+    لكل (;;) {
         /* Make sure that we have a literal to write. */
-        if (s->lookahead == 0) {
-            fill_window(s);
-            if (s->lookahead == 0) {
-                if (flush == Z_NO_FLUSH)
-                    return need_more;
-                break;      /* flush the current block */
+        إذا (s->lookahead == 0) {
+            fill_کړکۍ(s);
+            إذا (s->lookahead == 0) {
+                إذا (flush == Z_NO_FLUSH)
+                    أرجع need_نور;
+                اكسر;      /* flush the current block */
             }
         }
 
         /* Output a literal byte */
-        s->match_length = 0;
-        Tracevv((stderr,"%c", s->window[s->strstart]));
-        _tr_tally_lit(s, s->window[s->strstart], bflush);
+        s->سمون_اوږدتیا = 0;
+        Tracevv((stderr,"%c", s->کړکۍ[s->strstart]));
+        _tr_tally_lit(s, s->کړکۍ[s->strstart], bflush);
         s->lookahead--;
         s->strstart++;
-        if (bflush) FLUSH_BLOCK(s, 0);
+        إذا (bflush) FLUSH_بلاک(s, 0);
     }
-    s->insert = 0;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->ورننباسه = 0;
+    إذا (flush == Z_پای) {
+        FLUSH_بلاک(s, 1);
+        أرجع پای_بشپړ;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    إذا (s->sym_بل)
+        FLUSH_بلاک(s, 0);
+    أرجع بلاک_بشپړ;
 }

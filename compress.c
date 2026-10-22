@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#define ZLIB_INTERNAL
-#include "zlib.h"
+#تعریف_کړه ZLIB_دننی
+#ضمن "zlib.h"
 
 /* ===========================================================================
      Compresses the source buffer into the destination buffer. The level
@@ -21,79 +21,79 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                        z_size_t sourceLen, int level) {
-    z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t left;
+صحيح ZEXPORT compress2_z(Bytef *dest, z_اندازه_t *destLen, ثابت Bytef *سرچینه,
+                        z_اندازه_t سرچینه_Len, صحيح level) {
+    z_بهیر بهیر;
+    صحيح err;
+    ثابت uInt max = (uInt)-1;
+    z_اندازه_t کیڼ;
 
-    if ((sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    إذا ((سرچینه_Len > 0 && سرچینه == عدم) ||
+        destLen == عدم || (*destLen > 0 && dest == عدم))
+        أرجع Z_بهیر_ERROR;
 
-    left = *destLen;
+    کیڼ = *destLen;
     *destLen = 0;
 
-    stream.zalloc = (alloc_func)0;
-    stream.zfree = (free_func)0;
-    stream.opaque = (voidpf)0;
+    بهیر.zalloc = (alloc_func)0;
+    بهیر.zfree = (free_func)0;
+    بهیر.opaque = (voidpf)0;
 
-    err = deflateInit(&stream, level);
-    if (err != Z_OK) return err;
+    err = deflateInit(&بهیر, level);
+    إذا (err != Z_OK) أرجع err;
 
-    stream.next_out = dest;
-    stream.avail_out = 0;
-    stream.next_in = (z_const Bytef *)source;
-    stream.avail_in = 0;
+    بهیر.بل_بهر = dest;
+    بهیر.avail_بهر = 0;
+    بهیر.بل_دننه = (z_const Bytef *)سرچینه;
+    بهیر.avail_دننه = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    افعل {
+        إذا (بهیر.avail_بهر == 0) {
+            بهیر.avail_بهر = کیڼ > (z_اندازه_t)max ? max : (uInt)کیڼ;
+            کیڼ -= بهیر.avail_بهر;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = sourceLen > (z_size_t)max ? max :
-                                                          (uInt)sourceLen;
-            sourceLen -= stream.avail_in;
+        إذا (بهیر.avail_دننه == 0) {
+            بهیر.avail_دننه = سرچینه_Len > (z_اندازه_t)max ? max :
+                                                          (uInt)سرچینه_Len;
+            سرچینه_Len -= بهیر.avail_دننه;
         }
-        err = deflate(&stream, sourceLen ? Z_NO_FLUSH : Z_FINISH);
-    } while (err == Z_OK);
+        err = deflate(&بهیر, سرچینه_Len ? Z_NO_FLUSH : Z_پای);
+    } طالما (err == Z_OK);
 
-    *destLen = (z_size_t)(stream.next_out - dest);
-    deflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK : err;
+    *destLen = (z_اندازه_t)(بهیر.بل_بهر - dest);
+    deflate_پای_ټکی(&بهیر);
+    أرجع err == Z_بهیر_پای_ټکی ? Z_OK : err;
 }
-int ZEXPORT compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen, int level) {
-    int ret;
-    z_size_t got = *destLen;
-    ret = compress2_z(dest, &got, source, sourceLen, level);
+صحيح ZEXPORT compress2(Bytef *dest, uLongf *destLen, ثابت Bytef *سرچینه,
+                      uLong سرچینه_Len, صحيح level) {
+    صحيح ret;
+    z_اندازه_t got = *destLen;
+    ret = compress2_z(dest, &got, سرچینه, سرچینه_Len, level);
     *destLen = (uLong)got;
-    return ret;
+    أرجع ret;
 }
 /* ===========================================================================
  */
-int ZEXPORT compress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                       z_size_t sourceLen) {
-    return compress2_z(dest, destLen, source, sourceLen,
+صحيح ZEXPORT compress_z(Bytef *dest, z_اندازه_t *destLen, ثابت Bytef *سرچینه,
+                       z_اندازه_t سرچینه_Len) {
+    أرجع compress2_z(dest, destLen, سرچینه, سرچینه_Len,
                        Z_DEFAULT_COMPRESSION);
 }
-int ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen) {
-    return compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
+صحيح ZEXPORT compress(Bytef *dest, uLongf *destLen, ثابت Bytef *سرچینه,
+                     uLong سرچینه_Len) {
+    أرجع compress2(dest, destLen, سرچینه, سرچینه_Len, Z_DEFAULT_COMPRESSION);
 }
 
 /* ===========================================================================
      If the default memLevel or windowBits for deflateInit() is changed, then
    this function needs to be updated.
  */
-z_size_t ZEXPORT compressBound_z(z_size_t sourceLen) {
-    z_size_t bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
-                     (sourceLen >> 25) + 13;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+z_اندازه_t ZEXPORT compressBound_z(z_اندازه_t سرچینه_Len) {
+    z_اندازه_t bound = سرچینه_Len + (سرچینه_Len >> 12) + (سرچینه_Len >> 14) +
+                     (سرچینه_Len >> 25) + 13;
+    أرجع bound < سرچینه_Len ? (z_اندازه_t)-1 : bound;
 }
-uLong ZEXPORT compressBound(uLong sourceLen) {
-    z_size_t bound = compressBound_z(sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+uLong ZEXPORT compressBound(uLong سرچینه_Len) {
+    z_اندازه_t bound = compressBound_z(سرچینه_Len);
+    أرجع (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }
