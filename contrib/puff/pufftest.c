@@ -15,7 +15,7 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#ប្រសិនបើ defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
@@ -23,11 +23,11 @@
 #include <stdlib.h>
 #include "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#ប្រសិនបើ defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#បើមិនដូច្នេះ
 #  define SET_BINARY_MODE(file)
 #endif
 
@@ -39,19 +39,19 @@
    to keep reallocations less than ~33% over the actual data. */
 local size_t bythirds(size_t size)
 {
-    int n;
+    ចំនួនគត់ n;
     size_t m;
 
     m = size;
-    for (n = 0; m; n++)
+    សម្រាប់ (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    ប្រសិនបើ (n < 3)
+        ត្រឡប់ size + 1;
     n -= 3;
     m = size >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    ត្រឡប់ m > size ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,7 +60,7 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local void *load(const var_na *name, size_t *len)
 {
     size_t size;
     void *buf, *swap;
@@ -68,93 +68,93 @@ local void *load(const char *name, size_t *len)
 
     *len = 0;
     buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
+    ប្រសិនបើ (buf == NULL)
+        ត្រឡប់ NULL;
     in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
+    ប្រសិនបើ (in != NULL) {
+        សម្រាប់ (;;) {
+            *len += fread((var_na *)buf + *len, 1, size - *len, in);
+            ប្រសិនបើ (*len < size) bha_nga;
             size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
+            ប្រសិនបើ (size == *len || (swap = realloc(buf, size)) == NULL) {
                 free(buf);
                 buf = NULL;
-                break;
+                bha_nga;
             }
             buf = swap;
         }
         fclose(in);
     }
-    return buf;
+    ត្រឡប់ buf;
 }
 
-int main(int argc, char **argv)
+ចំនួនគត់ main(ចំនួនគត់ argc, var_na **argv)
 {
-    int ret, put = 0, fail = 0;
+    ចំនួនគត់ ret, put = 0, fail = 0;
     unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
+    var_na *arg, *name = NULL;
+    unsigned var_na *source = NULL, *dest;
     size_t len = 0;
     unsigned long sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    ខណៈពេល (arg = *++argv, --argc)
+        ប្រសិនបើ (arg[0] == '-') {
+            ប្រសិនបើ (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            បើមិនដូច្នេះ ប្រសិនបើ (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
+            បើមិនដូច្នេះ ប្រសិនបើ (arg[1] >= '0' && arg[1] <= '9')
                 skip = (unsigned)atoi(arg + 1);
-            else {
+            បើមិនដូច្នេះ {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                ត្រឡប់ 3;
             }
         }
-        else if (name != NULL) {
+        បើមិនដូច្នេះ ប្រសិនបើ (name != NULL) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            ត្រឡប់ 3;
         }
-        else
+        បើមិនដូច្នេះ
             name = arg;
     source = load(name, &len);
-    if (source == NULL) {
+    ប្រសិនបើ (source == NULL) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        ត្រឡប់ 4;
     }
-    if (len == 0) {
+    ប្រសិនបើ (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
                 name == NULL ? "<stdin>" : name);
         free(source);
-        return 3;
+        ត្រឡប់ 3;
     }
-    if (skip >= len) {
+    ប្រសិនបើ (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
         free(source);
-        return 3;
+        ត្រឡប់ 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
     sourcelen = (unsigned long)len;
     ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    ប្រសិនបើ (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    បើមិនដូច្នេះ {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        ប្រសិនបើ (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    ប្រសិនបើ (put && ret == 0) {
+        ប្រសិនបើ (fail)
             destlen >>= 1;
         dest = malloc(destlen);
-        if (dest == NULL) {
+        ប្រសិនបើ (dest == NULL) {
             fprintf(stderr, "memory allocation failure\n");
             free(source);
-            return 4;
+            ត្រឡប់ 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
         SET_BINARY_MODE(stdout);
@@ -164,5 +164,5 @@ int main(int argc, char **argv)
 
     /* clean up */
     free(source);
-    return ret;
+    ត្រឡប់ ret;
 }

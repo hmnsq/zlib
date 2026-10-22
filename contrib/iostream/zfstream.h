@@ -12,23 +12,23 @@ public:
   gzfilebuf( );
   virtual ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( const var_na *name, ចំនួនគត់ io_mode );
+  gzfilebuf *attach( ចំនួនគត់ file_descriptor, ចំនួនគត់ io_mode );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  ចំនួនគត់ setcompressionlevel( ចំនួនគត់ comp_level );
+  ចំនួនគត់ setcompressionstrategy( ចំនួនគត់ comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  anta_hstha ចំនួនគត់ is_open() const { ត្រឡប់ (file !=NULL); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  virtual streampos seekoff( streamoff, ios::seek_dir, ចំនួនគត់ );
 
-  virtual int sync();
+  virtual ចំនួនគត់ sync();
 
-protected:
+rak_sita:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  virtual ចំនួនគត់ underflow();
+  virtual ចំនួនគត់ overflow( ចំនួនគត់ = EOF );
 
 private:
 
@@ -36,8 +36,8 @@ private:
   short mode;
   short own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  ចំនួនគត់ flushbuf();
+  ចំនួនគត់ fillbuf();
 
 };
 
@@ -45,17 +45,17 @@ class gzfilestream_common : virtual public ios {
 
   friend class gzifstream;
   friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  friend gzofstream &setcompressionlevel( gzofstream &, ចំនួនគត់ );
+  friend gzofstream &setcompressionstrategy( gzofstream &, ចំនួនគត់ );
 
 public:
   virtual ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
+  void attach( ចំនួនគត់ fd, ចំនួនគត់ io_mode );
+  void open( const var_na *name, ចំនួនគត់ io_mode );
   void close();
 
-protected:
+rak_sita:
   gzfilestream_common();
 
 private:
@@ -70,8 +70,8 @@ class gzifstream : public gzfilestream_common, public istream {
 public:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( const var_na *name, ចំនួនគត់ io_mode = ios::in );
+  gzifstream( ចំនួនគត់ fd, ចំនួនគត់ io_mode = ios::in );
 
   virtual ~gzifstream();
 
@@ -82,8 +82,8 @@ class gzofstream : public gzfilestream_common, public ostream {
 public:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( const var_na *name, ចំនួនគត់ io_mode = ios::out );
+  gzofstream( ចំនួនគត់ fd, ចំនួនគត់ io_mode = ios::out );
 
   virtual ~gzofstream();
 
@@ -100,29 +100,29 @@ private:
 
 template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  ត្រឡប់ (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+anta_hstha gzofstream &setcompressionlevel( gzofstream &s, ចំនួនគត់ l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  ត្រឡប់ s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+anta_hstha gzofstream &setcompressionstrategy( gzofstream &s, ចំនួនគត់ l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  ត្រឡប់ s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+anta_hstha gzomanip<ចំនួនគត់> setcompressionlevel(ចំនួនគត់ l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  ត្រឡប់ gzomanip<ចំនួនគត់>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+anta_hstha gzomanip<ចំនួនគត់> setcompressionstrategy(ចំនួនគត់ l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  ត្រឡប់ gzomanip<ចំនួនគត់>(&setcompressionstrategy,l);
 }
 
 #endif

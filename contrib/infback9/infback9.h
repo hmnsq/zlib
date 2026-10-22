@@ -20,17 +20,17 @@
 extern "C" {
 #endif
 
-ZEXTERN int ZEXPORT inflateBack9(z_stream FAR *strm,
+ZEXTERN ចំនួនគត់ ZEXPORT inflateBack9(z_stream FAR *strm,
                                  in_func in, void FAR *in_desc,
                                  out_func out, void FAR *out_desc);
-ZEXTERN int ZEXPORT inflateBack9End(z_stream FAR *strm);
-ZEXTERN int ZEXPORT inflateBack9Init_(z_stream FAR *strm,
-                                      unsigned char FAR *window,
-                                      const char *version,
-                                      int stream_size);
+ZEXTERN ចំនួនគត់ ZEXPORT inflateBack9End(z_stream FAR *strm);
+ZEXTERN ចំនួនគត់ ZEXPORT inflateBack9Init_(z_stream FAR *strm,
+                                      unsigned var_na FAR *window,
+                                      const var_na *version,
+                                      ចំនួនគត់ stream_size);
 #define inflateBack9Init(strm, window) \
         inflateBack9Init_((strm), (window), \
-        ZLIB_VERSION, sizeof(z_stream))
+        ZLIB_VERSION, parimaa_na(z_stream))
 
 #ifdef __cplusplus
 }
