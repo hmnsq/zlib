@@ -1,26 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <windows.h>
 
-#include "zlib.h"
+#अन्तर्भाव "zlib.h"
 
 
-void MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
+शून्य MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
 {
-    R->HighPart = A.HighPart - B.HighPart;
-    if (A.LowPart >= B.LowPart)
-        R->LowPart = A.LowPart - B.LowPart;
-    else
+    R->उच्चः_Part = A.उच्चः_Part - B.उच्चः_Part;
+    सचे (A.नीचः_Part >= B.नीचः_Part)
+        R->नीचः_Part = A.नीचः_Part - B.नीचः_Part;
+    अञ्ञथा
     {
-        R->LowPart = A.LowPart - B.LowPart;
-        R->HighPart --;
+        R->नीचः_Part = A.नीचः_Part - B.नीचः_Part;
+        R->उच्चः_Part --;
     }
 }
 
 #ifdef _M_X64
 // see https://learn.microsoft.com/en-us/cpp/intrinsics/rdtsc?view=msvc-170 for __rdtsc
-unsigned __int64 __rdtsc(void);
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+unsigned __int64 __rdtsc(शून्य);
+शून्य Begin_गणनम्_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
  //   printf("rdtsc = %I64x\n",__rdtsc());
    pbeginTime64->QuadPart=__rdtsc();
@@ -32,11 +32,11 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
     unsigned _int64 res=__rdtsc()-((unsigned _int64)(beginTime64.QuadPart));
     LIres.QuadPart=res;
    // printf("rdtsc = %I64x\n",__rdtsc());
-    return LIres;
+    पटिनिवत्त LIres;
 }
-#else
+#अञ्ञथा
 #ifdef _M_IX86
-void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
+शून्य myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
     DWORD dwEdx,dwEax;
     _asm
@@ -45,11 +45,11 @@ void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
         mov dwEax,eax
         mov dwEdx,edx
     }
-    pbeginTime64->LowPart=dwEax;
-    pbeginTime64->HighPart=dwEdx;
+    pbeginTime64->नीचः_Part=dwEax;
+    pbeginTime64->उच्चः_Part=dwEdx;
 }
 
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+शून्य Begin_गणनम्_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
     myGetRDTSC32(pbeginTime64);
 }
@@ -59,16 +59,16 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
     LARGE_INTEGER LIres,endTime64;
     myGetRDTSC32(&endTime64);
 
-    LIres.LowPart=LIres.HighPart=0;
+    LIres.नीचः_Part=LIres.उच्चः_Part=0;
     MyDoMinus64(&LIres,endTime64,beginTime64);
-    return LIres;
+    पटिनिवत्त LIres;
 }
-#else
-void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
+#अञ्ञथा
+शून्य myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
 }
 
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+शून्य Begin_गणनम्_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
 }
 
@@ -76,17 +76,17 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
 {
     LARGE_INTEGER lr;
     lr.QuadPart=0;
-    return lr;
+    पटिनिवत्त lr;
 }
 #endif
 #endif
 
-void BeginCountPerfCounter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
+शून्य Begin_गणनम्_Perf_Counter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
 {
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
+    सचे ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
     {
-        pbeginTime64->LowPart = GetTickCount();
-        pbeginTime64->HighPart = 0;
+        pbeginTime64->नीचः_Part = Get_Tick_गणनम्();
+        pbeginTime64->उच्चः_Part = 0;
     }
 }
 
@@ -96,9 +96,9 @@ DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPe
     DWORDLONG ticksShifted,tickSecShifted;
     DWORD dwLog=16+0;
     DWORD dwRet;
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
-        dwRet = (GetTickCount() - beginTime64.LowPart)*1;
-    else
+    सचे ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
+        dwRet = (Get_Tick_गणनम्() - beginTime64.नीचः_Part)*1;
+    अञ्ञथा
     {
         MyDoMinus64(&ticks,endTime64,beginTime64);
         QueryPerformanceFrequency(&ticksPerSecond);
@@ -113,95 +113,95 @@ DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPe
         dwRet = (DWORD)((((DWORD)ticksShifted)*1000)/(DWORD)(tickSecShifted));
         dwRet *=1;
     }
-    return dwRet;
+    पटिनिवत्त dwRet;
 }
 
-int ReadFileMemory(const char* filename,long* plFileSize,unsigned char** pFilePtr)
+पूर्णाङ्क ReadFileMemory(ध्रुव वर्ण* filename,long* plFileSize,unsigned वर्ण** pFilePtr)
 {
     FILE* stream;
-    unsigned char* ptr;
-    int retVal=1;
+    unsigned वर्ण* ptr;
+    पूर्णाङ्क retVal=1;
     stream=fopen(filename, "rb");
-    if (stream==NULL)
-        return 0;
+    सचे (stream==रिक्त)
+        पटिनिवत्त 0;
 
     fseek(stream,0,SEEK_END);
 
     *plFileSize=ftell(stream);
     fseek(stream,0,SEEK_SET);
     ptr=malloc((*plFileSize)+1);
-    if (ptr==NULL)
+    सचे (ptr==रिक्त)
         retVal=0;
-    else
+    अञ्ञथा
     {
-        if (fread(ptr, 1, *plFileSize,stream) != (*plFileSize))
+        सचे (fread(ptr, 1, *plFileSize,stream) != (*plFileSize))
             retVal=0;
     }
     fclose(stream);
     *pFilePtr=ptr;
-    return retVal;
+    पटिनिवत्त retVal;
 }
 
-int main(int argc, char *argv[])
+पूर्णाङ्क main(पूर्णाङ्क argc, वर्ण *argv[])
 {
-    int BlockSizeCompress=0x8000;
-    int BlockSizeUncompress=0x8000;
-    int cprLevel=Z_DEFAULT_COMPRESSION ;
+    पूर्णाङ्क BlockSizeCompress=0x8000;
+    पूर्णाङ्क BlockSizeUncompress=0x8000;
+    पूर्णाङ्क cprLevel=Z_DEFAULT_COMPRESSION ;
     long lFileSize;
-    unsigned char* FilePtr;
+    unsigned वर्ण* FilePtr;
     long lBufferSizeCpr;
     long lBufferSizeUncpr;
     long lCompressedSize=0;
-    unsigned char* CprPtr;
-    unsigned char* UncprPtr;
+    unsigned वर्ण* CprPtr;
+    unsigned वर्ण* UncprPtr;
     long lSizeCpr,lSizeUncpr;
     DWORD dwGetTick,dwMsecQP;
     LARGE_INTEGER li_qp,li_rdtsc,dwResRdtsc;
 
-    if (argc<=1)
+    सचे (argc<=1)
     {
         printf("run TestZlib <File> [BlockSizeCompress] [BlockSizeUncompress] [compres. level]\n");
-        return 0;
+        पटिनिवत्त 0;
     }
 
-    if (ReadFileMemory(argv[1],&lFileSize,&FilePtr)==0)
+    सचे (ReadFileMemory(argv[1],&lFileSize,&FilePtr)==0)
     {
         printf("error reading %s\n",argv[1]);
-        return 1;
+        पटिनिवत्त 1;
     }
-    else printf("file %s read, %ld bytes\n",argv[1],lFileSize);
+    अञ्ञथा printf("file %s read, %ld bytes\n",argv[1],lFileSize);
 
-    if (argc>=3)
+    सचे (argc>=3)
         BlockSizeCompress=atol(argv[2]);
 
-    if (argc>=4)
+    सचे (argc>=4)
         BlockSizeUncompress=atol(argv[3]);
 
-    if (argc>=5)
-        cprLevel=(int)atol(argv[4]);
+    सचे (argc>=5)
+        cprLevel=(पूर्णाङ्क)atol(argv[4]);
 
     lBufferSizeCpr = lFileSize + (lFileSize/0x10) + 0x200;
     lBufferSizeUncpr = lBufferSizeCpr;
 
-    CprPtr=(unsigned char*)malloc(lBufferSizeCpr + BlockSizeCompress);
+    CprPtr=(unsigned वर्ण*)malloc(lBufferSizeCpr + BlockSizeCompress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_गणनम्_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_गणनम्();
+    Begin_गणनम्_Rdtsc(&li_rdtsc);
     {
         z_stream zcpr;
-        int ret=Z_OK;
+        पूर्णाङ्क ret=Z_OK;
         long lOrigToDo = lFileSize;
         long lOrigDone = 0;
-        int step=0;
-        memset(&zcpr,0,sizeof(z_stream));
+        पूर्णाङ्क step=0;
+        memset(&zcpr,0,परिमाण(z_stream));
         deflateInit(&zcpr,cprLevel);
 
         zcpr.next_in = FilePtr;
         zcpr.next_out = CprPtr;
 
 
-        do
+        करोहि
         {
             long all_read_before = zcpr.total_in;
             zcpr.avail_in = min(lOrigToDo,BlockSizeCompress);
@@ -210,39 +210,39 @@ int main(int argc, char *argv[])
             lOrigDone += (zcpr.total_in-all_read_before);
             lOrigToDo -= (zcpr.total_in-all_read_before);
             step++;
-        } while (ret==Z_OK);
+        } याव (ret==Z_OK);
 
         lSizeCpr=zcpr.total_out;
         deflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        dwGetTick=Get_Tick_गणनम्()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
         printf("total compress size = %u, in %u step\n",lSizeCpr,step);
-        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(double)1000.);
-        printf("defcpr time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(double)1000.);
+        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(द्विगुण)1000.);
+        printf("defcpr time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(द्विगुण)1000.);
         printf("defcpr result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    CprPtr=(unsigned char*)realloc(CprPtr,lSizeCpr);
-    UncprPtr=(unsigned char*)malloc(lBufferSizeUncpr + BlockSizeUncompress);
+    CprPtr=(unsigned वर्ण*)realloc(CprPtr,lSizeCpr);
+    UncprPtr=(unsigned वर्ण*)malloc(lBufferSizeUncpr + BlockSizeUncompress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_गणनम्_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_गणनम्();
+    Begin_गणनम्_Rdtsc(&li_rdtsc);
     {
         z_stream zcpr;
-        int ret=Z_OK;
+        पूर्णाङ्क ret=Z_OK;
         long lOrigToDo = lSizeCpr;
         long lOrigDone = 0;
-        int step=0;
-        memset(&zcpr,0,sizeof(z_stream));
+        पूर्णाङ्क step=0;
+        memset(&zcpr,0,परिमाण(z_stream));
         inflateInit(&zcpr);
 
         zcpr.next_in = CprPtr;
         zcpr.next_out = UncprPtr;
 
 
-        do
+        करोहि
         {
             long all_read_before = zcpr.total_in;
             zcpr.avail_in = min(lOrigToDo,BlockSizeUncompress);
@@ -251,25 +251,25 @@ int main(int argc, char *argv[])
             lOrigDone += (zcpr.total_in-all_read_before);
             lOrigToDo -= (zcpr.total_in-all_read_before);
             step++;
-        } while (ret==Z_OK);
+        } याव (ret==Z_OK);
 
         lSizeUncpr=zcpr.total_out;
         inflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        dwGetTick=Get_Tick_गणनम्()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
         printf("total uncompress size = %u, in %u step\n",lSizeUncpr,step);
-        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(double)1000.);
-        printf("uncpr  time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(double)1000.);
+        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(द्विगुण)1000.);
+        printf("uncpr  time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(द्विगुण)1000.);
         printf("uncpr  result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    if (lSizeUncpr==lFileSize)
+    सचे (lSizeUncpr==lFileSize)
     {
-        if (memcmp(FilePtr,UncprPtr,lFileSize)==0)
+        सचे (memcmp(FilePtr,UncprPtr,lFileSize)==0)
             printf("compare ok\n");
 
     }
 
-    return 0;
+    पटिनिवत्त 0;
 }
