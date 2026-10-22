@@ -45,16 +45,16 @@ public:
    *  it can default and setcompression(level) then becomes like the old
    *  setcompressionlevel(level).
   */
-  int
-  setcompression(int comp_level,
-                 int comp_strategy = Z_DEFAULT_STRATEGY);
+  ကိန်းပြည့်
+  setcompression(ကိန်းပြည့် comp_level,
+                 ကိန်းပြည့် comp_strategy = Z_DEFAULT_STRATEGY);
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() const { return (file != NULL); }
+  is_open() const { ပြန်ပေး (file != NULL); }
 
   /**
    *  @brief  Open gzipped file.
@@ -63,7 +63,7 @@ public:
    *  @return  @c this on success, NULL on failure.
   */
   gzfilebuf*
-  open(const char* name,
+  open(const var_na* name,
        std::ios_base::openmode mode);
 
   /**
@@ -73,7 +73,7 @@ public:
    *  @return  @c this on success, NULL on failure.
   */
   gzfilebuf*
-  attach(int fd,
+  attach(ကိန်းပြည့် fd,
          std::ios_base::openmode mode);
 
   /**
@@ -83,14 +83,14 @@ public:
   gzfilebuf*
   close();
 
-protected:
+rak_sita:
   /**
    *  @brief  Convert ios open mode int to mode string used by zlib.
    *  @return  True if valid mode flag combination.
   */
   bool
   open_mode(std::ios_base::openmode mode,
-            char* c_mode) const;
+            var_na* c_mode) const;
 
   /**
    *  @brief  Number of characters available in stream buffer.
@@ -142,7 +142,7 @@ protected:
    *
    *  This calls underflow(EOF) to do the job.
   */
-  virtual int
+  virtual ကိန်းပြည့်
   sync();
 
 //
@@ -243,7 +243,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::in).
   */
   explicit
-  gzifstream(const char* name,
+  gzifstream(const var_na* name,
              std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -252,7 +252,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::in).
   */
   explicit
-  gzifstream(int fd,
+  gzifstream(ကိန်းပြည့် fd,
              std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -260,14 +260,14 @@ public:
   */
   gzfilebuf*
   rdbuf() const
-  { return const_cast<gzfilebuf*>(&sb); }
+  { ပြန်ပေး const_cast<gzfilebuf*>(&sb); }
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() { return sb.is_open(); }
+  is_open() { ပြန်ပေး sb.is_open(); }
 
   /**
    *  @brief  Open gzipped file.
@@ -282,7 +282,7 @@ public:
    *  convenience.
   */
   void
-  open(const char* name,
+  open(const var_na* name,
        std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -294,7 +294,7 @@ public:
    *  in state fail().
   */
   void
-  attach(int fd,
+  attach(ကိန်းပြည့် fd,
          std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -332,7 +332,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::out).
   */
   explicit
-  gzofstream(const char* name,
+  gzofstream(const var_na* name,
              std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -341,7 +341,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::out).
   */
   explicit
-  gzofstream(int fd,
+  gzofstream(ကိန်းပြည့် fd,
              std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -349,14 +349,14 @@ public:
   */
   gzfilebuf*
   rdbuf() const
-  { return const_cast<gzfilebuf*>(&sb); }
+  { ပြန်ပေး const_cast<gzfilebuf*>(&sb); }
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() { return sb.is_open(); }
+  is_open() { ပြန်ပေး sb.is_open(); }
 
   /**
    *  @brief  Open gzipped file.
@@ -371,7 +371,7 @@ public:
    *  convenience.
   */
   void
-  open(const char* name,
+  open(const var_na* name,
        std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -383,7 +383,7 @@ public:
    *  in state fail().
   */
   void
-  attach(int fd,
+  attach(ကိန်းပြည့် fd,
          std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -436,16 +436,16 @@ template<typename T1, typename T2>
 /*****************************************************************************/
 
 // Manipulator function thunks through to stream buffer
-inline gzofstream&
-setcompression(gzofstream &gzs, int l, int s = Z_DEFAULT_STRATEGY)
+anta_hstha gzofstream&
+setcompression(gzofstream &gzs, ကိန်းပြည့် l, ကိန်းပြည့် s = Z_DEFAULT_STRATEGY)
 {
   (gzs.rdbuf())->setcompression(l, s);
-  return gzs;
+  ပြန်ပေး gzs;
 }
 
 // Manipulator constructor stores arguments
 template<typename T1, typename T2>
-  inline
+  anta_hstha
   gzomanip2<T1,T2>::gzomanip2(gzofstream &(*f)(gzofstream &, T1, T2),
                               T1 v1,
                               T2 v2)
@@ -454,13 +454,13 @@ template<typename T1, typename T2>
 
 // Inserter applies underlying manipulator function to stream
 template<typename T1, typename T2>
-  inline gzofstream&
+  anta_hstha gzofstream&
   operator<<(gzofstream& s, const gzomanip2<T1,T2>& m)
-  { return (*m.func)(s, m.val1, m.val2); }
+  { ပြန်ပေး (*m.func)(s, m.val1, m.val2); }
 
 // Insert this onto stream to simplify setting of compression level
-inline gzomanip2<int,int>
-setcompression(int l, int s = Z_DEFAULT_STRATEGY)
-{ return gzomanip2<int,int>(&setcompression, l, s); }
+anta_hstha gzomanip2<ကိန်းပြည့်,ကိန်းပြည့်>
+setcompression(ကိန်းပြည့် l, ကိန်းပြည့် s = Z_DEFAULT_STRATEGY)
+{ ပြန်ပေး gzomanip2<ကိန်းပြည့်,ကိန်းပြည့်>(&setcompression, l, s); }
 
 #endif // ZFSTREAM_H

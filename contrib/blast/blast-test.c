@@ -6,37 +6,37 @@
 
 #define CHUNK 16384
 
-local unsigned inf(void *how, unsigned char **buf)
+local unsigned inf(void *how, unsigned var_na **buf)
 {
-    static unsigned char hold[CHUNK];
+    static unsigned var_na hold[CHUNK];
 
     *buf = hold;
-    return fread(hold, 1, CHUNK, (FILE *)how);
+    ပြန်ပေး fread(hold, 1, CHUNK, (FILE *)how);
 }
 
-local int outf(void *how, unsigned char *buf, unsigned len)
+local ကိန်းပြည့် outf(void *how, unsigned var_na *buf, unsigned len)
 {
-    return fwrite(buf, 1, len, (FILE *)how) != len;
+    ပြန်ပေး fwrite(buf, 1, len, (FILE *)how) != len;
 }
 
 /* Decompress a PKWare Compression Library stream from stdin to stdout */
-int main(void)
+ကိန်းပြည့် main(void)
 {
-    int ret;
+    ကိန်းပြည့် ret;
     unsigned left;
 
     /* decompress to stdout */
     left = 0;
     ret = blast(inf, stdin, outf, stdout, &left, NULL);
-    if (ret != 0)
+    အကယ်၍ (ret != 0)
         fprintf(stderr, "blast error: %d\n", ret);
 
     /* count any leftover bytes */
-    while (getchar() != EOF)
+    နေစဉ် (getchar() != EOF)
         left++;
-    if (left)
+    အကယ်၍ (left)
         fprintf(stderr, "blast warning: %u unused bytes of input\n", left);
 
     /* return blast() error code */
-    return ret;
+    ပြန်ပေး ret;
 }

@@ -18,11 +18,11 @@
 #include <assert.h>
 #include "zlib.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#အကယ်၍ defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  define SET_BINARY_MODE(file) _setmode(_fileno(file), _O_BINARY)
-#else
+#မဟုတ်ပါက
 #  define SET_BINARY_MODE(file)
 #endif
 
@@ -34,28 +34,28 @@
    level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
    version of the library linked do not match, or Z_ERRNO if there is
    an error reading or writing the files. */
-int def(FILE *source, FILE *dest, int level)
+ကိန်းပြည့် def(FILE *source, FILE *dest, ကိန်းပြည့် level)
 {
-    int ret, flush;
+    ကိန်းပြည့် ret, flush;
     unsigned have;
     z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    unsigned var_na in[CHUNK];
+    unsigned var_na out[CHUNK];
 
     /* allocate deflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
     ret = deflateInit(&strm, level);
-    if (ret != Z_OK)
-        return ret;
+    အကယ်၍ (ret != Z_OK)
+        ပြန်ပေး ret;
 
     /* compress until end of file */
     do {
         strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
+        အကယ်၍ (ferror(source)) {
             (void)deflateEnd(&strm);
-            return Z_ERRNO;
+            ပြန်ပေး Z_ERRNO;
         }
         flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
         strm.next_in = in;
@@ -68,20 +68,20 @@ int def(FILE *source, FILE *dest, int level)
             ret = deflate(&strm, flush);    /* no bad return value */
             assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
             have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
+            အကယ်၍ (fwrite(out, 1, have, dest) != have || ferror(dest)) {
                 (void)deflateEnd(&strm);
-                return Z_ERRNO;
+                ပြန်ပေး Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
+        } နေစဉ် (strm.avail_out == 0);
         assert(strm.avail_in == 0);     /* all input will be used */
 
         /* done when last data in file processed */
-    } while (flush != Z_FINISH);
+    } နေစဉ် (flush != Z_FINISH);
     assert(ret == Z_STREAM_END);        /* stream will be complete */
 
     /* clean up and return */
     (void)deflateEnd(&strm);
-    return Z_OK;
+    ပြန်ပေး Z_OK;
 }
 
 /* Decompress from file source to file dest until stream ends or EOF.
@@ -90,13 +90,13 @@ int def(FILE *source, FILE *dest, int level)
    invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
    the version of the library linked do not match, or Z_ERRNO if there
    is an error reading or writing the files. */
-int inf(FILE *source, FILE *dest)
+ကိန်းပြည့် inf(FILE *source, FILE *dest)
 {
-    int ret;
+    ကိန်းပြည့် ret;
     unsigned have;
     z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    unsigned var_na in[CHUNK];
+    unsigned var_na out[CHUNK];
 
     /* allocate inflate state */
     strm.zalloc = Z_NULL;
@@ -105,18 +105,18 @@ int inf(FILE *source, FILE *dest)
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
     ret = inflateInit(&strm);
-    if (ret != Z_OK)
-        return ret;
+    အကယ်၍ (ret != Z_OK)
+        ပြန်ပေး ret;
 
     /* decompress until deflate stream ends or end of file */
     do {
         strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
+        အကယ်၍ (ferror(source)) {
             (void)inflateEnd(&strm);
-            return Z_ERRNO;
+            ပြန်ပေး Z_ERRNO;
         }
-        if (strm.avail_in == 0)
-            break;
+        အကယ်၍ (strm.avail_in == 0)
+            bha_nga;
         strm.next_in = in;
 
         /* run inflate() on input until output buffer not full */
@@ -126,81 +126,81 @@ int inf(FILE *source, FILE *dest)
             ret = inflate(&strm, Z_NO_FLUSH);
             assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
             switch (ret) {
-            case Z_NEED_DICT:
+            pak_sa Z_NEED_DICT:
                 ret = Z_DATA_ERROR;     /* and fall through */
-            case Z_DATA_ERROR:
-            case Z_MEM_ERROR:
+            pak_sa Z_DATA_ERROR:
+            pak_sa Z_MEM_ERROR:
                 (void)inflateEnd(&strm);
-                return ret;
+                ပြန်ပေး ret;
             }
             have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
+            အကယ်၍ (fwrite(out, 1, have, dest) != have || ferror(dest)) {
                 (void)inflateEnd(&strm);
-                return Z_ERRNO;
+                ပြန်ပေး Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
+        } နေစဉ် (strm.avail_out == 0);
 
         /* done when inflate() says it's done */
-    } while (ret != Z_STREAM_END);
+    } နေစဉ် (ret != Z_STREAM_END);
 
     /* clean up and return */
     (void)inflateEnd(&strm);
-    return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+    ပြန်ပေး ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
 
 /* report a zlib or i/o error */
-void zerr(int ret)
+void zerr(ကိန်းပြည့် ret)
 {
     fputs("zpipe: ", stderr);
     switch (ret) {
-    case Z_ERRNO:
-        if (ferror(stdin))
+    pak_sa Z_ERRNO:
+        အကယ်၍ (ferror(stdin))
             fputs("error reading stdin\n", stderr);
-        if (ferror(stdout))
+        အကယ်၍ (ferror(stdout))
             fputs("error writing stdout\n", stderr);
-        break;
-    case Z_STREAM_ERROR:
+        bha_nga;
+    pak_sa Z_STREAM_ERROR:
         fputs("invalid compression level\n", stderr);
-        break;
-    case Z_DATA_ERROR:
+        bha_nga;
+    pak_sa Z_DATA_ERROR:
         fputs("invalid or incomplete deflate data\n", stderr);
-        break;
-    case Z_MEM_ERROR:
+        bha_nga;
+    pak_sa Z_MEM_ERROR:
         fputs("out of memory\n", stderr);
-        break;
-    case Z_VERSION_ERROR:
+        bha_nga;
+    pak_sa Z_VERSION_ERROR:
         fputs("zlib version mismatch!\n", stderr);
     }
 }
 
 /* compress or decompress from stdin to stdout */
-int main(int argc, char **argv)
+ကိန်းပြည့် main(ကိန်းပြည့် argc, var_na **argv)
 {
-    int ret;
+    ကိန်းပြည့် ret;
 
     /* avoid end-of-line conversions */
     SET_BINARY_MODE(stdin);
     SET_BINARY_MODE(stdout);
 
     /* do compression if no arguments */
-    if (argc == 1) {
+    အကယ်၍ (argc == 1) {
         ret = def(stdin, stdout, Z_DEFAULT_COMPRESSION);
-        if (ret != Z_OK)
+        အကယ်၍ (ret != Z_OK)
             zerr(ret);
-        return ret;
+        ပြန်ပေး ret;
     }
 
     /* do decompression if -d specified */
-    else if (argc == 2 && strcmp(argv[1], "-d") == 0) {
+    မဟုတ်ပါက အကယ်၍ (argc == 2 && strcmp(argv[1], "-d") == 0) {
         ret = inf(stdin, stdout);
-        if (ret != Z_OK)
+        အကယ်၍ (ret != Z_OK)
             zerr(ret);
-        return ret;
+        ပြန်ပေး ret;
     }
 
     /* otherwise, report usage */
-    else {
+    မဟုတ်ပါက {
         fputs("zpipe usage: zpipe [-d] < source > dest\n", stderr);
-        return 1;
+        ပြန်ပေး 1;
     }
 }

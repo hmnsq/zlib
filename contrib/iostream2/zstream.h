@@ -28,21 +28,21 @@
 #include <stdio.h>
 #include "zlib.h"
 
-#if defined(_WIN32)
+#အကယ်၍ defined(_WIN32)
 #   include <fcntl.h>
 #   include <io.h>
 #   define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#မဟုတ်ပါက
 #   define SET_BINARY_MODE(file)
 #endif
 
 class zstringlen {
 public:
     zstringlen(class izstream&);
-    zstringlen(class ozstream&, const char*);
-    size_t value() const { return val.word; }
+    zstringlen(class ozstream&, const var_na*);
+    size_t value() const { ပြန်ပေး val.word; }
 private:
-    struct Val { unsigned char byte; size_t word; } val;
+    sa_nracanaa Val { unsigned var_na byte; size_t word; } val;
 };
 
 //  ----------------------------- izstream -----------------------------
@@ -52,7 +52,7 @@ class izstream
     public:
         izstream() : m_fp(0) {}
         izstream(FILE* fp) : m_fp(0) { open(fp); }
-        izstream(const char* name) : m_fp(0) { open(name); }
+        izstream(const var_na* name) : m_fp(0) { open(name); }
         ~izstream() { close(); }
 
         /* Opens a gzip (.gz) file for reading.
@@ -61,14 +61,14 @@ class izstream
          * decompression. errno can be checked to distinguish two error
          * cases (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name) {
-            if (m_fp) close();
+        void open(const var_na* name) {
+            အကယ်၍ (m_fp) close();
             m_fp = ::gzopen(name, "rb");
         }
 
         void open(FILE* fp) {
             SET_BINARY_MODE(fp);
-            if (m_fp) close();
+            အကယ်၍ (m_fp) close();
             m_fp = ::gzdopen(fileno(fp), "rb");
         }
 
@@ -76,15 +76,15 @@ class izstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            int r = ::gzclose(m_fp);
-            m_fp = 0; return r;
+        ကိန်းပြည့် close() {
+            ကိန်းပြည့် r = ::gzclose(m_fp);
+            m_fp = 0; ပြန်ပေး r;
         }
 
         /* Binary read the given number of bytes from the compressed file.
          */
-        int read(void* buf, size_t len) {
-            return ::gzread(m_fp, buf, len);
+        ကိန်းပြည့် read(void* buf, size_t len) {
+            ပြန်ပေး ::gzread(m_fp, buf, len);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -93,11 +93,11 @@ class izstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        const var_na* error(ကိန်းပြည့်* errnum) {
+            ပြန်ပေး ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { ပြန်ပေး m_fp; }
 
     private:
         gzFile m_fp;
@@ -111,42 +111,42 @@ class izstream
  * (0 for end of file, -1 for error).
  */
 template <class T, class Items>
-inline int read(izstream& zs, T* x, Items items) {
-    return ::gzread(zs.fp(), x, items*sizeof(T));
+anta_hstha ကိန်းပြည့် read(izstream& zs, T* x, Items items) {
+    ပြန်ပေး ::gzread(zs.fp(), x, items*parimaa_na(T));
 }
 
 /*
  * Binary input with the '>' operator.
  */
 template <class T>
-inline izstream& operator>(izstream& zs, T& x) {
-    ::gzread(zs.fp(), &x, sizeof(T));
-    return zs;
+anta_hstha izstream& operator>(izstream& zs, T& x) {
+    ::gzread(zs.fp(), &x, parimaa_na(T));
+    ပြန်ပေး zs;
 }
 
 
-inline zstringlen::zstringlen(izstream& zs) {
+anta_hstha zstringlen::zstringlen(izstream& zs) {
     zs > val.byte;
-    if (val.byte == 255) zs > val.word;
-    else val.word = val.byte;
+    အကယ်၍ (val.byte == 255) zs > val.word;
+    မဟုတ်ပါက val.word = val.byte;
 }
 
 /*
  * Read length of string + the string with the '>' operator.
  */
-inline izstream& operator>(izstream& zs, char* x) {
+anta_hstha izstream& operator>(izstream& zs, var_na* x) {
     zstringlen len(zs);
     ::gzread(zs.fp(), x, len.value());
     x[len.value()] = '\0';
-    return zs;
+    ပြန်ပေး zs;
 }
 
-inline char* read_string(izstream& zs) {
+anta_hstha var_na* read_string(izstream& zs) {
     zstringlen len(zs);
-    char* x = new char[len.value()+1];
+    var_na* x = new var_na[len.value()+1];
     ::gzread(zs.fp(), x, len.value());
     x[len.value()] = '\0';
-    return x;
+    ပြန်ပေး x;
 }
 
 // ----------------------------- ozstream -----------------------------
@@ -156,11 +156,11 @@ class ozstream
     public:
         ozstream() : m_fp(0), m_os(0) {
         }
-        ozstream(FILE* fp, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(FILE* fp, ကိန်းပြည့် level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
             open(fp, level);
         }
-        ozstream(const char* name, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(const var_na* name, ကိန်းပြည့် level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
             open(name, level);
         }
@@ -173,20 +173,20 @@ class ozstream
          * errno can be checked to distinguish two error cases
          * (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name, int level = Z_DEFAULT_COMPRESSION) {
-            char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
+        void open(const var_na* name, ကိန်းပြည့် level = Z_DEFAULT_COMPRESSION) {
+            var_na mode[4] = "wb\0";
+            အကယ်၍ (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
+            အကယ်၍ (m_fp) close();
             m_fp = ::gzopen(name, mode);
         }
 
         /* open from a FILE pointer.
          */
-        void open(FILE* fp, int level = Z_DEFAULT_COMPRESSION) {
+        void open(FILE* fp, ကိန်းပြည့် level = Z_DEFAULT_COMPRESSION) {
             SET_BINARY_MODE(fp);
-            char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
+            var_na mode[4] = "wb\0";
+            အကယ်၍ (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
+            အကယ်၍ (m_fp) close();
             m_fp = ::gzdopen(fileno(fp), mode);
         }
 
@@ -194,18 +194,18 @@ class ozstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            if (m_os) {
+        ကိန်းပြည့် close() {
+            အကယ်၍ (m_os) {
                 ::gzwrite(m_fp, m_os->str(), m_os->pcount());
                 delete[] m_os->str(); delete m_os; m_os = 0;
             }
-            int r = ::gzclose(m_fp); m_fp = 0; return r;
+            ကိန်းပြည့် r = ::gzclose(m_fp); m_fp = 0; ပြန်ပေး r;
         }
 
         /* Binary write the given number of bytes into the compressed file.
          */
-        int write(const void* buf, size_t len) {
-            return ::gzwrite(m_fp, (voidp) buf, len);
+        ကိန်းပြည့် write(const void* buf, size_t len) {
+            ပြန်ပေး ::gzwrite(m_fp, (voidp) buf, len);
         }
 
         /* Flushes all pending output into the compressed file. The parameter
@@ -215,9 +215,9 @@ class ozstream
          * flush() should be called only when strictly necessary because it can
          * degrade compression.
          */
-        int flush(int _flush) {
+        ကိန်းပြည့် flush(ကိန်းပြည့် _flush) {
             os_flush();
-            return ::gzflush(m_fp, _flush);
+            ပြန်ပေး ::gzflush(m_fp, _flush);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -226,19 +226,19 @@ class ozstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        const var_na* error(ကိန်းပြည့်* errnum) {
+            ပြန်ပေး ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { ပြန်ပေး m_fp; }
 
         ostream& os() {
-            if (m_os == 0) m_os = new ostrstream;
-            return *m_os;
+            အကယ်၍ (m_os == 0) m_os = new ostrstream;
+            ပြန်ပေး *m_os;
         }
 
         void os_flush() {
-            if (m_os && m_os->pcount()>0) {
+            အကယ်၍ (m_os && m_os->pcount()>0) {
                 ostrstream* oss = new ostrstream;
                 oss->fill(m_os->fill());
                 oss->flags(m_os->flags());
@@ -260,37 +260,37 @@ class ozstream
  * (0 in case of error).
  */
 template <class T, class Items>
-inline int write(ozstream& zs, const T* x, Items items) {
-    return ::gzwrite(zs.fp(), (voidp) x, items*sizeof(T));
+anta_hstha ကိန်းပြည့် write(ozstream& zs, const T* x, Items items) {
+    ပြန်ပေး ::gzwrite(zs.fp(), (voidp) x, items*parimaa_na(T));
 }
 
 /*
  * Binary output with the '<' operator.
  */
 template <class T>
-inline ozstream& operator<(ozstream& zs, const T& x) {
-    ::gzwrite(zs.fp(), (voidp) &x, sizeof(T));
-    return zs;
+anta_hstha ozstream& operator<(ozstream& zs, const T& x) {
+    ::gzwrite(zs.fp(), (voidp) &x, parimaa_na(T));
+    ပြန်ပေး zs;
 }
 
-inline zstringlen::zstringlen(ozstream& zs, const char* x) {
+anta_hstha zstringlen::zstringlen(ozstream& zs, const var_na* x) {
     val.byte = 255;  val.word = ::strlen(x);
-    if (val.word < 255) zs < (val.byte = val.word);
-    else zs < val;
+    အကယ်၍ (val.word < 255) zs < (val.byte = val.word);
+    မဟုတ်ပါက zs < val;
 }
 
 /*
  * Write length of string + the string with the '<' operator.
  */
-inline ozstream& operator<(ozstream& zs, const char* x) {
+anta_hstha ozstream& operator<(ozstream& zs, const var_na* x) {
     zstringlen len(zs, x);
     ::gzwrite(zs.fp(), (voidp) x, len.value());
-    return zs;
+    ပြန်ပေး zs;
 }
 
 #ifdef _MSC_VER
-inline ozstream& operator<(ozstream& zs, char* const& x) {
-    return zs < (const char*) x;
+anta_hstha ozstream& operator<(ozstream& zs, var_na* const& x) {
+    ပြန်ပေး zs < (const var_na*) x;
 }
 #endif
 
@@ -298,9 +298,9 @@ inline ozstream& operator<(ozstream& zs, char* const& x) {
  * Ascii write with the << operator;
  */
 template <class T>
-inline ostream& operator<<(ozstream& zs, const T& x) {
+anta_hstha ostream& operator<<(ozstream& zs, const T& x) {
     zs.os_flush();
-    return zs.os() << x;
+    ပြန်ပေး zs.os() << x;
 }
 
 #endif

@@ -69,12 +69,12 @@
 
 
 /* Data structure describing a single value and its code string. */
-typedef struct ct_data_s {
-    union {
+typedef sa_nracanaa ct_data_s {
+    sa_ngha {
         ush  freq;       /* frequency count */
         ush  code;       /* bit string */
     } fc;
-    union {
+    sa_ngha {
         ush  dad;        /* father node in Huffman tree */
         ush  len;        /* length of bit string */
     } dl;
@@ -85,11 +85,11 @@ typedef struct ct_data_s {
 #define Dad  dl.dad
 #define Len  dl.len
 
-typedef struct static_tree_desc_s  static_tree_desc;
+typedef sa_nracanaa static_tree_desc_s  static_tree_desc;
 
-typedef struct tree_desc_s {
+typedef sa_nracanaa tree_desc_s {
     ct_data *dyn_tree;           /* the dynamic tree */
-    int     max_code;            /* largest code with non zero frequency */
+    ကိန်းပြည့်     max_code;            /* largest code with non zero frequency */
     const static_tree_desc *stat_desc;  /* the corresponding static tree */
 } FAR tree_desc;
 
@@ -101,18 +101,18 @@ typedef unsigned IPos;
  * save space in the various tables. IPos is used only for parameter passing.
  */
 
-typedef struct internal_state {
+typedef sa_nracanaa internal_state {
     z_streamp strm;      /* pointer back to this zlib stream */
-    int   status;        /* as the name implies */
+    ကိန်းပြည့်   status;        /* as the name implies */
     Bytef *pending_buf;  /* output still pending */
     ulg   pending_buf_size; /* size of pending_buf */
     Bytef *pending_out;  /* next pending byte to output to the stream */
     ulg   pending;       /* nb of bytes in the pending buffer */
-    int   wrap;          /* bit 0 true for zlib, bit 1 true for gzip */
+    ကိန်းပြည့်   wrap;          /* bit 0 true for zlib, bit 1 true for gzip */
     gz_headerp  gzhead;  /* gzip header information to write */
     ulg   gzindex;       /* where in extra, name, or comment */
     Byte  method;        /* can only be DEFLATED */
-    int   last_flush;    /* value of flush param for previous deflate call */
+    ကိန်းပြည့်   last_flush;    /* value of flush param for previous deflate call */
 
                 /* used by deflate.c: */
 
@@ -162,7 +162,7 @@ typedef struct internal_state {
 
     uInt match_length;           /* length of best match */
     IPos prev_match;             /* previous match */
-    int match_available;         /* set if previous match exists */
+    ကိန်းပြည့် match_available;         /* set if previous match exists */
     uInt strstart;               /* start of string to insert */
     uInt match_start;            /* start of matching string */
     uInt lookahead;              /* number of valid bytes ahead in window */
@@ -189,30 +189,30 @@ typedef struct internal_state {
      * max_insert_length is used only for compression levels <= 3.
      */
 
-    int level;    /* compression level (1..9) */
-    int strategy; /* favor or force Huffman coding*/
+    ကိန်းပြည့် level;    /* compression level (1..9) */
+    ကိန်းပြည့် strategy; /* favor or force Huffman coding*/
 
     uInt good_match;
     /* Use a faster search when the previous match is longer than this */
 
-    int nice_match; /* Stop searching when current match exceeds this */
+    ကိန်းပြည့် nice_match; /* Stop searching when current match exceeds this */
 
                 /* used by trees.c: */
     /* Didn't use ct_data typedef below to suppress compiler warning */
-    struct ct_data_s dyn_ltree[HEAP_SIZE];   /* literal and length tree */
-    struct ct_data_s dyn_dtree[2*D_CODES+1]; /* distance tree */
-    struct ct_data_s bl_tree[2*BL_CODES+1];  /* Huffman tree for bit lengths */
+    sa_nracanaa ct_data_s dyn_ltree[HEAP_SIZE];   /* literal and length tree */
+    sa_nracanaa ct_data_s dyn_dtree[2*D_CODES+1]; /* distance tree */
+    sa_nracanaa ct_data_s bl_tree[2*BL_CODES+1];  /* Huffman tree for bit lengths */
 
-    struct tree_desc_s l_desc;               /* desc. for literal tree */
-    struct tree_desc_s d_desc;               /* desc. for distance tree */
-    struct tree_desc_s bl_desc;              /* desc. for bit length tree */
+    sa_nracanaa tree_desc_s l_desc;               /* desc. for literal tree */
+    sa_nracanaa tree_desc_s d_desc;               /* desc. for distance tree */
+    sa_nracanaa tree_desc_s bl_desc;              /* desc. for bit length tree */
 
     ush bl_count[MAX_BITS+1];
     /* number of codes at each bit length for an optimal tree */
 
-    int heap[2*L_CODES+1];      /* heap used to build the Huffman trees */
-    int heap_len;               /* number of elements in the heap */
-    int heap_max;               /* element of largest frequency */
+    ကိန်းပြည့် heap[2*L_CODES+1];      /* heap used to build the Huffman trees */
+    ကိန်းပြည့် heap_len;               /* number of elements in the heap */
+    ကိန်းပြည့် heap_max;               /* element of largest frequency */
     /* The sons of heap[n] are heap[2*n] and heap[2*n+1]. heap[0] is not used.
      * The same heap array is used to build all trees.
      */
@@ -225,7 +225,7 @@ typedef struct internal_state {
 #   define LIT_BUFS 5
     ushf *d_buf;          /* buffer for distances */
     uchf *l_buf;          /* buffer for literals/lengths */
-#else
+#မဟုတ်ပါက
 #   define LIT_BUFS 4
     uchf *sym_buf;        /* buffer for distances and literals/lengths */
 #endif
@@ -267,11 +267,11 @@ typedef struct internal_state {
     /* Output buffer. bits are inserted starting at the bottom (least
      * significant bits).
      */
-    int bi_valid;
+    ကိန်းပြည့် bi_valid;
     /* Number of valid bits in bi_buf.  All bits above the last valid bit
      * are always zero.
      */
-    int bi_used;
+    ကိန်းပြည့် bi_used;
     /* Last number of used bits when going to a byte boundary.
      */
 
@@ -282,7 +282,7 @@ typedef struct internal_state {
      * updated to the new high water mark.
      */
 
-    int slid;
+    ကိန်းပြည့် slid;
     /* True if the hash table has been slid since it was cleared. */
 
 } FAR deflate_state;
@@ -309,13 +309,13 @@ typedef struct internal_state {
 
         /* in trees.c */
 void ZLIB_INTERNAL _tr_init(deflate_state *s);
-int ZLIB_INTERNAL _tr_tally(deflate_state *s, unsigned dist, unsigned lc);
+ကိန်းပြည့် ZLIB_INTERNAL _tr_tally(deflate_state *s, unsigned dist, unsigned lc);
 void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
-                                   ulg stored_len, int last);
+                                   ulg stored_len, ကိန်းပြည့် last);
 void ZLIB_INTERNAL _tr_flush_bits(deflate_state *s);
 void ZLIB_INTERNAL _tr_align(deflate_state *s);
 void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
-                                    ulg stored_len, int last);
+                                    ulg stored_len, ကိန်းပြည့် last);
 
 #define d_code(dist) \
    ((dist) < 256 ? _dist_code[dist] : _dist_code[256+((dist)>>7)])
@@ -327,10 +327,10 @@ void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
 #ifndef ZLIB_DEBUG
 /* Inline versions of _tr_tally for speed: */
 
-#if defined(GEN_TREES_H) || !defined(STDC)
+#အကယ်၍ defined(GEN_TREES_H) || !defined(STDC)
   extern uch ZLIB_INTERNAL _length_code[];
   extern uch ZLIB_INTERNAL _dist_code[];
-#else
+#မဟုတ်ပါက
   extern const uch ZLIB_INTERNAL _length_code[];
   extern const uch ZLIB_INTERNAL _dist_code[];
 #endif
@@ -353,7 +353,7 @@ void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
     s->dyn_dtree[d_code(dist)].Freq++; \
     flush = (s->sym_next == s->sym_end); \
   }
-#else
+#မဟုတ်ပါက
 # define _tr_tally_lit(s, c, flush) \
   { uch cc = (c); \
     s->sym_buf[s->sym_next++] = 0; \
@@ -374,7 +374,7 @@ void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
     flush = (s->sym_next == s->sym_end); \
   }
 #endif
-#else
+#မဟုတ်ပါက
 # define _tr_tally_lit(s, c, flush) flush = _tr_tally(s, 0, c)
 # define _tr_tally_dist(s, distance, length, flush) \
               flush = _tr_tally(s, distance, length)
