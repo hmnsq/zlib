@@ -7,51 +7,51 @@
 
 #ifndef INTS_H
 #define INTS_H
-#include <limits.h>
-#if defined(UCHAR_MAX) && UCHAR_MAX == 0xff
-    typedef signed char i8_t;
-    typedef unsigned char ui8_t;
-#else
+#অন্তর্ভাব <limits.h>
+#যদি defined(UCHAR_MAX) && UCHAR_MAX == 0xff
+    প্রকারলেখ signed অক্ষর i8_t;
+    প্রকারলেখ unsigned অক্ষর ui8_t;
+#অন্যথা
 #   error "no 8-bit integer"
 #endif
-#if defined(USHRT_MAX) && USHRT_MAX == 0xffff
-    typedef short i16_t;
-    typedef unsigned short ui16_t;
-#elif defined(UINT_MAX) && UINT_MAX == 0xffff
-    typedef int i16_t;
-    typedef unsigned ui16_t;
-#else
+#যদি defined(USHRT_MAX) && USHRT_MAX == 0xffff
+    প্রকারলেখ short i16_t;
+    প্রকারলেখ unsigned short ui16_t;
+#নতুবা_যদি defined(UINT_MAX) && UINT_MAX == 0xffff
+    প্রকারলেখ পূর্ণসংখ্যা i16_t;
+    প্রকারলেখ unsigned ui16_t;
+#অন্যথা
 #   error "no 16-bit integer"
 #endif
-#if defined(UINT_MAX) && UINT_MAX == 0xffffffff
-    typedef int i32_t;
-    typedef unsigned ui32_t;
+#যদি defined(UINT_MAX) && UINT_MAX == 0xffffffff
+    প্রকারলেখ পূর্ণসংখ্যা i32_t;
+    প্রকারলেখ unsigned ui32_t;
 #   define PI32 "d"
 #   define PUI32 "u"
-#elif defined(ULONG_MAX) && ULONG_MAX == 0xffffffff
-    typedef long i32_t;
-    typedef unsigned long ui32_t;
+#নতুবা_যদি defined(ULONG_MAX) && ULONG_MAX == 0xffffffff
+    প্রকারলেখ long i32_t;
+    প্রকারলেখ unsigned long ui32_t;
 #   define PI32 "ld"
 #   define PUI32 "lu"
-#else
+#অন্যথা
 #   error "no 32-bit integer"
 #endif
-#if defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
-    typedef long i64_t;
-    typedef unsigned long ui64_t;
+#যদি defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
+    প্রকারলেখ long i64_t;
+    প্রকারলেখ unsigned long ui64_t;
 #   define PI64 "ld"
 #   define PUI64 "lu"
-#elif defined(ULLONG_MAX) && ULLONG_MAX == 0xffffffffffffffff
-    typedef long long i64_t;
-    typedef unsigned long long ui64_t;
+#নতুবা_যদি defined(ULLONG_MAX) && ULLONG_MAX == 0xffffffffffffffff
+    প্রকারলেখ long long i64_t;
+    প্রকারলেখ unsigned long long ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#elif defined(ULONG_LONG_MAX) && ULONG_LONG_MAX == 0xffffffffffffffff
-    typedef long long i64_t;
-    typedef unsigned long long ui64_t;
+#নতুবা_যদি defined(ULONG_LONG_MAX) && ULONG_LONG_MAX == 0xffffffffffffffff
+    প্রকারলেখ long long i64_t;
+    প্রকারলেখ unsigned long long ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#else
+#অন্যথা
 #   error "no 64-bit integer"
 #endif
 #endif

@@ -2,127 +2,127 @@
 #ifndef zfstream_h
 #define zfstream_h
 
-#include <fstream.h>
-#include "zlib.h"
+#অন্তর্ভাব <fstream.h>
+#অন্তর্ভাব "zlib.h"
 
-class gzfilebuf : public streambuf {
+class gzfilebuf : সর্বজনীন streambuf {
 
-public:
+সর্বজনীন:
 
   gzfilebuf( );
-  virtual ~gzfilebuf();
+  আভাসী ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা io_mode );
+  gzfilebuf *attach( পূর্ণসংখ্যা file_descriptor, পূর্ণসংখ্যা io_mode );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  পূর্ণসংখ্যা setcompressionlevel( পূর্ণসংখ্যা comp_level );
+  পূর্ণসংখ্যা setcompressionstrategy( পূর্ণসংখ্যা comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  অন্তঃরেখ পূর্ণসংখ্যা is_open() ধ্রুবক { ফেরত (file !=ফাঁকা); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  আভাসী streampos seekoff( streamoff, ios::seek_dir, পূর্ণসংখ্যা );
 
-  virtual int sync();
+  আভাসী পূর্ণসংখ্যা sync();
 
-protected:
+সুরক্ষিত:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  আভাসী পূর্ণসংখ্যা underflow();
+  আভাসী পূর্ণসংখ্যা overflow( পূর্ণসংখ্যা = EOF );
 
-private:
+ব্যক্তিগত:
 
   gzFile file;
   short mode;
   short own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  পূর্ণসংখ্যা flushbuf();
+  পূর্ণসংখ্যা fillbuf();
 
 };
 
-class gzfilestream_common : virtual public ios {
+class gzfilestream_common : আভাসী সর্বজনীন ios {
 
   friend class gzifstream;
   friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  friend gzofstream &setcompressionlevel( gzofstream &, পূর্ণসংখ্যা );
+  friend gzofstream &setcompressionstrategy( gzofstream &, পূর্ণসংখ্যা );
 
-public:
-  virtual ~gzfilestream_common();
+সর্বজনীন:
+  আভাসী ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
-  void close();
+  শূন্য attach( পূর্ণসংখ্যা fd, পূর্ণসংখ্যা io_mode );
+  শূন্য open( ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা io_mode );
+  শূন্য close();
 
-protected:
+সুরক্ষিত:
   gzfilestream_common();
 
-private:
+ব্যক্তিগত:
   gzfilebuf *rdbuf();
 
-  gzfilebuf buffer;
+  gzfilebuf বাফার;
 
 };
 
-class gzifstream : public gzfilestream_common, public istream {
+class gzifstream : সর্বজনীন gzfilestream_common, সর্বজনীন istream {
 
-public:
+সর্বজনীন:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা io_mode = ios::in );
+  gzifstream( পূর্ণসংখ্যা fd, পূর্ণসংখ্যা io_mode = ios::in );
 
-  virtual ~gzifstream();
+  আভাসী ~gzifstream();
 
 };
 
-class gzofstream : public gzfilestream_common, public ostream {
+class gzofstream : সর্বজনীন gzfilestream_common, সর্বজনীন ostream {
 
-public:
+সর্বজনীন:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা io_mode = ios::out );
+  gzofstream( পূর্ণসংখ্যা fd, পূর্ণসংখ্যা io_mode = ios::out );
 
-  virtual ~gzofstream();
+  আভাসী ~gzofstream();
 
 };
 
 template<class T> class gzomanip {
-  friend gzofstream &operator<<(gzofstream &, const gzomanip<T> &);
-public:
+  friend gzofstream &operator<<(gzofstream &, ধ্রুবক gzomanip<T> &);
+সর্বজনীন:
   gzomanip(gzofstream &(*f)(gzofstream &, T), T v) : func(f), val(v) { }
-private:
+ব্যক্তিগত:
   gzofstream &(*func)(gzofstream &, T);
   T val;
 };
 
-template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
+template<class T> gzofstream &operator<<(gzofstream &s, ধ্রুবক gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  ফেরত (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+অন্তঃরেখ gzofstream &setcompressionlevel( gzofstream &s, পূর্ণসংখ্যা l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  ফেরত s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+অন্তঃরেখ gzofstream &setcompressionstrategy( gzofstream &s, পূর্ণসংখ্যা l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  ফেরত s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+অন্তঃরেখ gzomanip<পূর্ণসংখ্যা> setcompressionlevel(পূর্ণসংখ্যা l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  ফেরত gzomanip<পূর্ণসংখ্যা>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+অন্তঃরেখ gzomanip<পূর্ণসংখ্যা> setcompressionstrategy(পূর্ণসংখ্যা l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  ফেরত gzomanip<পূর্ণসংখ্যা>(&setcompressionstrategy,l);
 }
 
 #endif

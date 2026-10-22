@@ -6,7 +6,7 @@
 /* @(#) $Id$ */
 
 #define ZLIB_INTERNAL
-#include "zlib.h"
+#অন্তর্ভাব "zlib.h"
 
 /* ===========================================================================
      Decompresses the source buffer into the destination buffer.  *sourceLen is
@@ -26,76 +26,76 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                          z_size_t *sourceLen) {
+পূর্ণসংখ্যা ZEXPORT uncompress2_z(Bytef *dest, z_আকার_t *destLen, ধ্রুবক Bytef *source,
+                          z_আকার_t *sourceLen) {
     z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t len, left;
+    পূর্ণসংখ্যা err;
+    ধ্রুবক uInt max = (uInt)-1;
+    z_আকার_t len, বাম;
 
-    if (sourceLen == NULL || (*sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    যদি (sourceLen == ফাঁকা || (*sourceLen > 0 && source == ফাঁকা) ||
+        destLen == ফাঁকা || (*destLen > 0 && dest == ফাঁকা))
+        ফেরত Z_STREAM_ERROR;
 
     len = *sourceLen;
-    left = *destLen;
-    if (left == 0 && dest == Z_NULL)
+    বাম = *destLen;
+    যদি (বাম == 0 && dest == Z_NULL)
         dest = (Bytef *)&stream.reserved;       /* next_out cannot be NULL */
 
-    stream.next_in = (z_const Bytef *)source;
+    stream.পরবর্তী_in = (z_const Bytef *)source;
     stream.avail_in = 0;
     stream.zalloc = (alloc_func)0;
     stream.zfree = (free_func)0;
     stream.opaque = (voidpf)0;
 
     err = inflateInit(&stream);
-    if (err != Z_OK) return err;
+    যদি (err != Z_OK) ফেরত err;
 
-    stream.next_out = dest;
+    stream.পরবর্তী_out = dest;
     stream.avail_out = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    করো {
+        যদি (stream.avail_out == 0) {
+            stream.avail_out = বাম > (z_আকার_t)max ? max : (uInt)বাম;
+            বাম -= stream.avail_out;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = len > (z_size_t)max ? max : (uInt)len;
+        যদি (stream.avail_in == 0) {
+            stream.avail_in = len > (z_আকার_t)max ? max : (uInt)len;
             len -= stream.avail_in;
         }
         err = inflate(&stream, Z_NO_FLUSH);
-    } while (err == Z_OK);
+    } যখন (err == Z_OK);
 
     /* Set len and left to the unused input data and unused output space. Set
        *sourceLen to the amount of input consumed. Set *destLen to the amount
        of data produced. */
     len += stream.avail_in;
-    left += stream.avail_out;
+    বাম += stream.avail_out;
     *sourceLen -= len;
-    *destLen -= left;
+    *destLen -= বাম;
 
     inflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK :
-           err == Z_NEED_DICT ? Z_DATA_ERROR  :
-           err == Z_BUF_ERROR && len == 0 ? Z_DATA_ERROR :
+    ফেরত err == Z_STREAM_END ? Z_OK :
+           err == Z_NEED_DICT ? Z_তথ্য_ERROR  :
+           err == Z_BUF_ERROR && len == 0 ? Z_তথ্য_ERROR :
            err;
 }
-int ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
+পূর্ণসংখ্যা ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, ধ্রুবক Bytef *source,
                         uLong *sourceLen) {
-    int ret;
-    z_size_t got = *destLen, used = *sourceLen;
+    পূর্ণসংখ্যা ret;
+    z_আকার_t got = *destLen, used = *sourceLen;
     ret = uncompress2_z(dest, &got, source, &used);
     *sourceLen = (uLong)used;
     *destLen = (uLong)got;
-    return ret;
+    ফেরত ret;
 }
-int ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                         z_size_t sourceLen) {
-    z_size_t used = sourceLen;
-    return uncompress2_z(dest, destLen, source, &used);
+পূর্ণসংখ্যা ZEXPORT uncompress_z(Bytef *dest, z_আকার_t *destLen, ধ্রুবক Bytef *source,
+                         z_আকার_t sourceLen) {
+    z_আকার_t used = sourceLen;
+    ফেরত uncompress2_z(dest, destLen, source, &used);
 }
-int ZEXPORT uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
+পূর্ণসংখ্যা ZEXPORT uncompress(Bytef *dest, uLongf *destLen, ধ্রুবক Bytef *source,
                        uLong sourceLen) {
     uLong used = sourceLen;
-    return uncompress2(dest, destLen, source, &used);
+    ফেরত uncompress2(dest, destLen, source, &used);
 }

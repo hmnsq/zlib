@@ -1,253 +1,253 @@
 
-#include "zfstream.h"
+#অন্তর্ভাব "zfstream.h"
 
 gzfilebuf::gzfilebuf() :
-  file(NULL),
+  file(ফাঁকা),
   mode(0),
   own_file_descriptor(0)
 { }
 
 gzfilebuf::~gzfilebuf() {
 
-  sync();
-  if ( own_file_descriptor )
+  সমলয়();
+  যদি ( own_file_descriptor )
     close();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::open( ধ্রুবক অক্ষর *name,
+                            পূর্ণসংখ্যা io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  যদি ( is_open() )
+    ফেরত ফাঁকা;
 
-  char char_mode[10];
-  char *p = char_mode;
+  অক্ষর char_mode[10];
+  অক্ষর *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  যদি ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } অন্যথা যদি ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } অন্যথা {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  যদি ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  যদি ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  যদি ( (file = gzopen(name, char_mode)) == ফাঁকা )
+    ফেরত ফাঁকা;
 
   own_file_descriptor = 1;
 
-  return this;
+  ফেরত এই;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( পূর্ণসংখ্যা file_descriptor,
+                              পূর্ণসংখ্যা io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  যদি ( is_open() )
+    ফেরত ফাঁকা;
 
-  char char_mode[10];
-  char *p = char_mode;
+  অক্ষর char_mode[10];
+  অক্ষর *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  যদি ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } অন্যথা যদি ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } অন্যথা {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  যদি ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  যদি ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  যদি ( (file = gzdopen(file_descriptor, char_mode)) == ফাঁকা )
+    ফেরত ফাঁকা;
 
   own_file_descriptor = 0;
 
-  return this;
+  ফেরত এই;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  যদি ( is_open() ) {
 
-    sync();
+    সমলয়();
     gzclose( file );
-    file = NULL;
+    file = ফাঁকা;
 
   }
 
-  return this;
+  ফেরত এই;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+পূর্ণসংখ্যা gzfilebuf::setcompressionlevel( পূর্ণসংখ্যা comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  ফেরত gzsetparams(file, comp_level, -2);
 
 }
 
+পূর্ণসংখ্যা gzfilebuf::setcompressionstrategy( পূর্ণসংখ্যা comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  ফেরত gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, পূর্ণসংখ্যা which ) {
+
+  ফেরত streampos(EOF);
+
+}
+
+পূর্ণসংখ্যা gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  যদি ( !is_open() || !(mode & ios::in) )
+    ফেরত EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  যদি ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    যদি ( (allocate()) == EOF )
+      ফেরত EOF;
     setp(0,0);
 
-  } else {
+  } অন্যথা {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    যদি ( in_avail() )
+      ফেরত (unsigned অক্ষর) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    যদি ( out_waiting() ) {
+      যদি ( flushbuf() == EOF )
+        ফেরত EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  পূর্ণসংখ্যা ফলাফল = fillbuf();
+  যদি ( ফলাফল == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    ফেরত EOF;
   }
 
-  return (unsigned char) *gptr();
+  ফেরত (unsigned অক্ষর) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+পূর্ণসংখ্যা gzfilebuf::overflow( পূর্ণসংখ্যা c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  যদি ( !is_open() || !(mode & ios::out) )
+    ফেরত EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  যদি ( !base() ) {
+    যদি ( allocate() == EOF )
+      ফেরত EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } অন্যথা {
+    যদি (in_avail()) {
+        ফেরত EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    যদি (out_waiting()) {
+      যদি (flushbuf() == EOF)
+        ফেরত EOF;
     }
   }
 
-  int bl = blen();
+  পূর্ণসংখ্যা bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  যদি ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  ফেরত 0;
 
 }
 
-int gzfilebuf::sync() {
+পূর্ণসংখ্যা gzfilebuf::সমলয়() {
 
-  if ( !is_open() )
-    return EOF;
+  যদি ( !is_open() )
+    ফেরত EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  যদি ( out_waiting() )
+    ফেরত flushbuf();
 
-  return 0;
+  ফেরত 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+পূর্ণসংখ্যা gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  পূর্ণসংখ্যা n;
+  অক্ষর *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  যদি ( gzwrite( file, q, n) < n )
+    ফেরত EOF;
 
   setp(0,0);
 
-  return 0;
+  ফেরত 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+পূর্ণসংখ্যা gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  পূর্ণসংখ্যা required;
+  অক্ষর *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  পূর্ণসংখ্যা t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  যদি ( t <= 0) ফেরত EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  ফেরত t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+শূন্য gzfilestream_common::attach( পূর্ণসংখ্যা fd, পূর্ণসংখ্যা io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  যদি ( !বাফার.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  অন্যথা
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+শূন্য gzfilestream_common::open( ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  যদি ( !বাফার.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  অন্যথা
     clear();
 
 }
 
-void gzfilestream_common::close() {
+শূন্য gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  যদি ( !বাফার.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  ফেরত &বাফার;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( পূর্ণসংখ্যা fd, পূর্ণসংখ্যা io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( ধ্রুবক অক্ষর *name, পূর্ণসংখ্যা io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( পূর্ণসংখ্যা fd, পূর্ণসংখ্যা io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );

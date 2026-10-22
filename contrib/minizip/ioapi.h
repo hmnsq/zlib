@@ -21,7 +21,7 @@
 #ifndef ZLIBIOAPI64_H
 #define ZLIBIOAPI64_H
 
-#if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__)) && (!(defined(__ANDROID_API__) || __ANDROID_API__ >= 24))
+#যদি (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__)) && (!(defined(__ANDROID_API__) || __ANDROID_API__ >= 24))
 
   /* Linux needs this to support file operation on files larger then 4+GB */
   /* But might need better if/def to select just the platforms that needs them.*/
@@ -41,26 +41,26 @@
 
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "zlib.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব "zlib.h"
 
-#if defined(USE_FILE32API)
+#যদি defined(USE_FILE32API)
 #define fopen64 fopen
 #define ftello64 ftell
 #define fseeko64 fseek
-#else
-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
+#অন্যথা
+#যদি defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
 #define fopen64 fopen
 #define ftello64 ftello
 #define fseeko64 fseeko
 #endif
 #ifdef _MSC_VER
  #define fopen64 fopen
- #if (_MSC_VER >= 1400) && (!(defined(NO_MSCVER_FILE64_FUNC)))
+ #যদি (_MSC_VER >= 1400) && (!(defined(NO_MSCVER_FILE64_FUNC)))
   #define ftello64 _ftelli64
   #define fseeko64 _fseeki64
- #else // old MSC
+ #অন্যথা // old MSC
   #define ftello64 ftell
   #define fseeko64 fseek
  #endif
@@ -68,11 +68,11 @@
 #endif
 
 #ifdef HAVE_MINIZIP64_CONF_H
-#include "mz64conf.h"
+#অন্তর্ভাব "mz64conf.h"
 #endif
 
-#include "ints.h"
-typedef ui64_t ZPOS64_T;
+#অন্তর্ভাব "ints.h"
+প্রকারলেখ ui64_t ZPOS64_T;
 
 /* Maximum unsigned 32-bit value used as placeholder for zip64 */
 #ifndef MAXU32
@@ -80,7 +80,7 @@ typedef ui64_t ZPOS64_T;
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+বাহ্যিক "C" {
 #endif
 
 
@@ -97,9 +97,9 @@ extern "C" {
 
 
 #ifndef ZCALLBACK
- #if (defined(WIN32) || defined(_WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
+ #যদি (defined(WIN32) || defined(_WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
    #define ZCALLBACK CALLBACK
- #else
+ #অন্যথা
    #define ZCALLBACK
  #endif
 #endif
@@ -107,18 +107,18 @@ extern "C" {
 
 
 
-typedef voidpf   (ZCALLBACK *open_file_func)      (voidpf opaque, const char* filename, int mode);
-typedef uLong    (ZCALLBACK *read_file_func)      (voidpf opaque, voidpf stream, void* buf, uLong size);
-typedef uLong    (ZCALLBACK *write_file_func)     (voidpf opaque, voidpf stream, const void* buf, uLong size);
-typedef int      (ZCALLBACK *close_file_func)     (voidpf opaque, voidpf stream);
-typedef int      (ZCALLBACK *testerror_file_func) (voidpf opaque, voidpf stream);
+প্রকারলেখ voidpf   (ZCALLBACK *open_file_func)      (voidpf opaque, ধ্রুবক অক্ষর* filename, পূর্ণসংখ্যা mode);
+প্রকারলেখ uLong    (ZCALLBACK *read_file_func)      (voidpf opaque, voidpf stream, শূন্য* buf, uLong আকার_2);
+প্রকারলেখ uLong    (ZCALLBACK *write_file_func)     (voidpf opaque, voidpf stream, ধ্রুবক শূন্য* buf, uLong আকার_2);
+প্রকারলেখ পূর্ণসংখ্যা      (ZCALLBACK *close_file_func)     (voidpf opaque, voidpf stream);
+প্রকারলেখ পূর্ণসংখ্যা      (ZCALLBACK *testerror_file_func) (voidpf opaque, voidpf stream);
 
-typedef long     (ZCALLBACK *tell_file_func)      (voidpf opaque, voidpf stream);
-typedef long     (ZCALLBACK *seek_file_func)      (voidpf opaque, voidpf stream, uLong offset, int origin);
+প্রকারলেখ long     (ZCALLBACK *tell_file_func)      (voidpf opaque, voidpf stream);
+প্রকারলেখ long     (ZCALLBACK *seek_file_func)      (voidpf opaque, voidpf stream, uLong offset, পূর্ণসংখ্যা origin);
 
 
 /* here is the "old" 32 bits structure */
-typedef struct zlib_filefunc_def_s
+প্রকারলেখ কাঠামো zlib_filefunc_def_s
 {
     open_file_func      zopen_file;
     read_file_func      zread_file;
@@ -130,11 +130,11 @@ typedef struct zlib_filefunc_def_s
     voidpf              opaque;
 } zlib_filefunc_def;
 
-typedef ZPOS64_T (ZCALLBACK *tell64_file_func)    (voidpf opaque, voidpf stream);
-typedef long     (ZCALLBACK *seek64_file_func)    (voidpf opaque, voidpf stream, ZPOS64_T offset, int origin);
-typedef voidpf   (ZCALLBACK *open64_file_func)    (voidpf opaque, const void* filename, int mode);
+প্রকারলেখ ZPOS64_T (ZCALLBACK *tell64_file_func)    (voidpf opaque, voidpf stream);
+প্রকারলেখ long     (ZCALLBACK *seek64_file_func)    (voidpf opaque, voidpf stream, ZPOS64_T offset, পূর্ণসংখ্যা origin);
+প্রকারলেখ voidpf   (ZCALLBACK *open64_file_func)    (voidpf opaque, ধ্রুবক শূন্য* filename, পূর্ণসংখ্যা mode);
 
-typedef struct zlib_filefunc64_def_s
+প্রকারলেখ কাঠামো zlib_filefunc64_def_s
 {
     open64_file_func    zopen64_file;
     read_file_func      zread_file;
@@ -146,11 +146,11 @@ typedef struct zlib_filefunc64_def_s
     voidpf              opaque;
 } zlib_filefunc64_def;
 
-void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def);
-void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def);
+শূন্য fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def);
+শূন্য fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def);
 
 /* now internal definition, only for zip.c and unzip.h */
-typedef struct zlib_filefunc64_32_def_s
+প্রকারলেখ কাঠামো zlib_filefunc64_32_def_s
 {
     zlib_filefunc64_def zfile_func64;
     open_file_func      zopen32_file;
@@ -159,18 +159,18 @@ typedef struct zlib_filefunc64_32_def_s
 } zlib_filefunc64_32_def;
 
 
-#define ZREAD64(filefunc,filestream,buf,size)     ((*((filefunc).zfile_func64.zread_file))   ((filefunc).zfile_func64.opaque,filestream,buf,size))
-#define ZWRITE64(filefunc,filestream,buf,size)    ((*((filefunc).zfile_func64.zwrite_file))  ((filefunc).zfile_func64.opaque,filestream,buf,size))
+#define ZREAD64(filefunc,filestream,buf,আকার_2)     ((*((filefunc).zfile_func64.zread_file))   ((filefunc).zfile_func64.opaque,filestream,buf,আকার_2))
+#define ZWRITE64(filefunc,filestream,buf,আকার_2)    ((*((filefunc).zfile_func64.zwrite_file))  ((filefunc).zfile_func64.opaque,filestream,buf,আকার_2))
 /*#define ZTELL64(filefunc,filestream)            ((*((filefunc).ztell64_file)) ((filefunc).opaque,filestream)) */
 /*#define ZSEEK64(filefunc,filestream,pos,mode)   ((*((filefunc).zseek64_file)) ((filefunc).opaque,filestream,pos,mode)) */
 #define ZCLOSE64(filefunc,filestream)             ((*((filefunc).zfile_func64.zclose_file))  ((filefunc).zfile_func64.opaque,filestream))
 #define ZERROR64(filefunc,filestream)             ((*((filefunc).zfile_func64.zerror_file))  ((filefunc).zfile_func64.opaque,filestream))
 
-voidpf call_zopen64(const zlib_filefunc64_32_def* pfilefunc,const void*filename,int mode);
-long call_zseek64(const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, int origin);
-ZPOS64_T call_ztell64(const zlib_filefunc64_32_def* pfilefunc,voidpf filestream);
+voidpf call_zopen64(ধ্রুবক zlib_filefunc64_32_def* pfilefunc,ধ্রুবক শূন্য*filename,পূর্ণসংখ্যা mode);
+long call_zseek64(ধ্রুবক zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, পূর্ণসংখ্যা origin);
+ZPOS64_T call_ztell64(ধ্রুবক zlib_filefunc64_32_def* pfilefunc,voidpf filestream);
 
-void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32,const zlib_filefunc_def* p_filefunc32);
+শূন্য fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32,ধ্রুবক zlib_filefunc_def* p_filefunc32);
 
 #define ZOPEN64(filefunc,filename,mode)         (call_zopen64((&(filefunc)),(filename),(mode)))
 #define ZTELL64(filefunc,filestream)            (call_ztell64((&(filefunc)),(filestream)))

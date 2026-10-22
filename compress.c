@@ -6,7 +6,7 @@
 /* @(#) $Id$ */
 
 #define ZLIB_INTERNAL
-#include "zlib.h"
+#অন্তর্ভাব "zlib.h"
 
 /* ===========================================================================
      Compresses the source buffer into the destination buffer. The level
@@ -21,18 +21,18 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                        z_size_t sourceLen, int level) {
+পূর্ণসংখ্যা ZEXPORT compress2_z(Bytef *dest, z_আকার_t *destLen, ধ্রুবক Bytef *source,
+                        z_আকার_t sourceLen, পূর্ণসংখ্যা level) {
     z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t left;
+    পূর্ণসংখ্যা err;
+    ধ্রুবক uInt max = (uInt)-1;
+    z_আকার_t বাম;
 
-    if ((sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    যদি ((sourceLen > 0 && source == ফাঁকা) ||
+        destLen == ফাঁকা || (*destLen > 0 && dest == ফাঁকা))
+        ফেরত Z_STREAM_ERROR;
 
-    left = *destLen;
+    বাম = *destLen;
     *destLen = 0;
 
     stream.zalloc = (alloc_func)0;
@@ -40,60 +40,60 @@ int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
     stream.opaque = (voidpf)0;
 
     err = deflateInit(&stream, level);
-    if (err != Z_OK) return err;
+    যদি (err != Z_OK) ফেরত err;
 
-    stream.next_out = dest;
+    stream.পরবর্তী_out = dest;
     stream.avail_out = 0;
-    stream.next_in = (z_const Bytef *)source;
+    stream.পরবর্তী_in = (z_const Bytef *)source;
     stream.avail_in = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    করো {
+        যদি (stream.avail_out == 0) {
+            stream.avail_out = বাম > (z_আকার_t)max ? max : (uInt)বাম;
+            বাম -= stream.avail_out;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = sourceLen > (z_size_t)max ? max :
+        যদি (stream.avail_in == 0) {
+            stream.avail_in = sourceLen > (z_আকার_t)max ? max :
                                                           (uInt)sourceLen;
             sourceLen -= stream.avail_in;
         }
         err = deflate(&stream, sourceLen ? Z_NO_FLUSH : Z_FINISH);
-    } while (err == Z_OK);
+    } যখন (err == Z_OK);
 
-    *destLen = (z_size_t)(stream.next_out - dest);
+    *destLen = (z_আকার_t)(stream.পরবর্তী_out - dest);
     deflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK : err;
+    ফেরত err == Z_STREAM_END ? Z_OK : err;
 }
-int ZEXPORT compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen, int level) {
-    int ret;
-    z_size_t got = *destLen;
+পূর্ণসংখ্যা ZEXPORT compress2(Bytef *dest, uLongf *destLen, ধ্রুবক Bytef *source,
+                      uLong sourceLen, পূর্ণসংখ্যা level) {
+    পূর্ণসংখ্যা ret;
+    z_আকার_t got = *destLen;
     ret = compress2_z(dest, &got, source, sourceLen, level);
     *destLen = (uLong)got;
-    return ret;
+    ফেরত ret;
 }
 /* ===========================================================================
  */
-int ZEXPORT compress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                       z_size_t sourceLen) {
-    return compress2_z(dest, destLen, source, sourceLen,
+পূর্ণসংখ্যা ZEXPORT compress_z(Bytef *dest, z_আকার_t *destLen, ধ্রুবক Bytef *source,
+                       z_আকার_t sourceLen) {
+    ফেরত compress2_z(dest, destLen, source, sourceLen,
                        Z_DEFAULT_COMPRESSION);
 }
-int ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
+পূর্ণসংখ্যা ZEXPORT compress(Bytef *dest, uLongf *destLen, ধ্রুবক Bytef *source,
                      uLong sourceLen) {
-    return compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
+    ফেরত compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
 }
 
 /* ===========================================================================
      If the default memLevel or windowBits for deflateInit() is changed, then
    this function needs to be updated.
  */
-z_size_t ZEXPORT compressBound_z(z_size_t sourceLen) {
-    z_size_t bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
+z_আকার_t ZEXPORT compressBound_z(z_আকার_t sourceLen) {
+    z_আকার_t bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
                      (sourceLen >> 25) + 13;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+    ফেরত bound < sourceLen ? (z_আকার_t)-1 : bound;
 }
 uLong ZEXPORT compressBound(uLong sourceLen) {
-    z_size_t bound = compressBound_z(sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+    z_আকার_t bound = compressBound_z(sourceLen);
+    ফেরত (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }
