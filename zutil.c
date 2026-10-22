@@ -25,32 +25,32 @@ z_const char * const z_errmsg[10] = {
 
 
 const char * ZEXPORT zlibVersion(void) {
-    return ZLIB_VERSION;
+    върни ZLIB_VERSION;
 }
 
 uLong ZEXPORT zlibCompileFlags(void) {
     uLong flags;
 
     flags = 0;
-    switch ((int)(sizeof(uInt))) {
+    switch ((цяло)(sizeof(uInt))) {
     case 2:     break;
     case 4:     flags += 1;     break;
     case 8:     flags += 2;     break;
     default:    flags += 3;
     }
-    switch ((int)(sizeof(uLong))) {
+    switch ((цяло)(sizeof(uLong))) {
     case 2:     break;
     case 4:     flags += 1 << 2;        break;
     case 8:     flags += 2 << 2;        break;
     default:    flags += 3 << 2;
     }
-    switch ((int)(sizeof(voidpf))) {
+    switch ((цяло)(sizeof(voidpf))) {
     case 2:     break;
     case 4:     flags += 1 << 4;        break;
     case 8:     flags += 2 << 4;        break;
     default:    flags += 3 << 4;
     }
-    switch ((int)(sizeof(z_off_t))) {
+    switch ((цяло)(sizeof(z_off_t))) {
     case 2:     break;
     case 4:     flags += 1 << 6;        break;
     case 8:     flags += 2 << 6;        break;
@@ -85,39 +85,39 @@ uLong ZEXPORT zlibCompileFlags(void) {
 #ifdef FASTEST
     flags += 1L << 21;
 #endif
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+#ако defined(STDC) || defined(Z_HAVE_STDARG_H)
 #   ifdef NO_vsnprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       иначе
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_vsprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   иначе
 #       ifdef HAS_vsnprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
-#else
+#иначе
     flags += 1L << 24;
 #   ifdef NO_snprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       иначе
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_sprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   иначе
 #       ifdef HAS_snprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
 #endif
-    return flags;
+    върни flags;
 }
 
 #ifdef ZLIB_DEBUG
@@ -125,7 +125,7 @@ uLong ZEXPORT zlibCompileFlags(void) {
 #  ifndef verbose
 #    define verbose 0
 #  endif
-int ZLIB_INTERNAL z_verbose = verbose;
+цяло ZLIB_INTERNAL z_verbose = verbose;
 
 void ZLIB_INTERNAL z_error(char *m) {
     fprintf(stderr, "%s\n", m);
@@ -136,16 +136,16 @@ void ZLIB_INTERNAL z_error(char *m) {
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(int err) {
-    return ERR_MSG(err);
+const char * ZEXPORT zError(цяло err) {
+    върни ERR_MSG(err);
 }
 
-#if defined(_WIN32_WCE) && _WIN32_WCE < 0x800
+#ако defined(_WIN32_WCE) && _WIN32_WCE < 0x800
     /* The older Microsoft C Run-Time Library for Windows CE doesn't have
      * errno.  We define it as a global variable to simplify porting.
      * Its value is always 0 and should not be used.
      */
-    int errno = 0;
+    цяло errno = 0;
 #endif
 
 #ifndef HAVE_MEMCPY
@@ -153,25 +153,25 @@ const char * ZEXPORT zError(int err) {
 void ZLIB_INTERNAL zmemcpy(void FAR *dst, const void FAR *src, z_size_t n) {
     uchf *p = dst;
     const uchf *q = src;
-    while (n) {
+    докато (n) {
         *p++ = *q++;
         n--;
     }
 }
 
-int ZLIB_INTERNAL zmemcmp(const void FAR *s1, const void FAR *s2, z_size_t n) {
+цяло ZLIB_INTERNAL zmemcmp(const void FAR *s1, const void FAR *s2, z_size_t n) {
     const uchf *p = s1, *q = s2;
-    while (n) {
-        if (*p++ != *q++)
-            return (int)p[-1] - (int)q[-1];
+    докато (n) {
+        ако (*p++ != *q++)
+            върни (цяло)p[-1] - (цяло)q[-1];
         n--;
     }
-    return 0;
+    върни 0;
 }
 
 void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
     uchf *p = b;
-    while (len) {
+    докато (len) {
         *p++ = 0;
         len--;
     }
@@ -197,7 +197,7 @@ void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
 #define MAX_PTR 10
 /* 10*64K = 640K */
 
-local int next_ptr = 0;
+local цяло next_ptr = 0;
 
 typedef struct ptr_table_s {
     voidpf org_ptr;
@@ -221,41 +221,41 @@ voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
     /* If we allocate less than 65520 bytes, we assume that farmalloc
      * will return a usable pointer which doesn't have to be normalized.
      */
-    if (bsize < 65520L) {
+    ако (bsize < 65520L) {
         buf = farmalloc(bsize);
-        if (*(ush*)&buf != 0) return buf;
-    } else {
+        ако (*(ush*)&buf != 0) върни buf;
+    } иначе {
         buf = farmalloc(bsize + 16L);
     }
-    if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
+    ако (buf == NULL || next_ptr >= MAX_PTR) върни NULL;
     table[next_ptr].org_ptr = buf;
 
     /* Normalize the pointer to seg:0 */
     *((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
     *(ush*)&buf = 0;
     table[next_ptr++].new_ptr = buf;
-    return buf;
+    върни buf;
 }
 
 void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    int n;
+    цяло n;
 
     (void)opaque;
 
-    if (*(ush*)&ptr != 0) { /* object < 64K */
+    ако (*(ush*)&ptr != 0) { /* object < 64K */
         farfree(ptr);
-        return;
+        върни;
     }
     /* Find the original pointer */
-    for (n = 0; n < next_ptr; n++) {
-        if (ptr != table[n].new_ptr) continue;
+    за (n = 0; n < next_ptr; n++) {
+        ако (ptr != table[n].new_ptr) continue;
 
         farfree(table[n].org_ptr);
-        while (++n < next_ptr) {
+        докато (++n < next_ptr) {
             table[n-1] = table[n];
         }
         next_ptr--;
-        return;
+        върни;
     }
     Assert(0, "zcfree: ptr not found");
 }
@@ -268,14 +268,14 @@ void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
 
 #  define MY_ZCALLOC
 
-#if (!defined(_MSC_VER) || (_MSC_VER <= 600))
+#ако (!defined(_MSC_VER) || (_MSC_VER <= 600))
 #  define _halloc  halloc
 #  define _hfree   hfree
 #endif
 
 voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, uInt items, uInt size) {
     (void)opaque;
-    return _halloc((long)items, size);
+    върни _halloc((long)items, size);
 }
 
 void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
@@ -298,7 +298,7 @@ extern void free(voidpf ptr);
 
 voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
     (void)opaque;
-    return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
+    върни sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
                               (voidpf)calloc(items, size);
 }
 

@@ -64,7 +64,7 @@ struct mem_zone {
     struct mem_item *first;     /* pointer to first item in list, or NULL */
     size_t total, highwater;    /* total allocations, and largest total */
     size_t limit;               /* memory allocation limit, or 0 if no limit */
-    int notlifo, rogue;         /* counts of non-LIFO frees and rogue frees */
+    цяло notlifo, rogue;         /* counts of non-LIFO frees and rogue frees */
 };
 
 /* memory allocation routine to pass to zlib */
@@ -76,21 +76,21 @@ local void *mem_alloc(void *mem, unsigned count, unsigned size)
     size_t len = count * (size_t)size;
 
     /* induced allocation failure */
-    if (zone == NULL || (zone->limit && zone->total + len > zone->limit))
-        return NULL;
+    ако (zone == NULL || (zone->limit && zone->total + len > zone->limit))
+        върни NULL;
 
     /* perform allocation using the standard library, fill memory with a
        non-zero value to make sure that the code isn't depending on zeros */
     ptr = malloc(len);
-    if (ptr == NULL)
-        return NULL;
+    ако (ptr == NULL)
+        върни NULL;
     memset(ptr, 0xa5, len);
 
     /* create a new item for the list */
     item = malloc(sizeof(struct mem_item));
-    if (item == NULL) {
+    ако (item == NULL) {
         free(ptr);
-        return NULL;
+        върни NULL;
     }
     item->ptr = ptr;
     item->size = len;
@@ -101,11 +101,11 @@ local void *mem_alloc(void *mem, unsigned count, unsigned size)
 
     /* update the statistics */
     zone->total += item->size;
-    if (zone->total > zone->highwater)
+    ако (zone->total > zone->highwater)
         zone->highwater = zone->total;
 
     /* return the allocated memory */
-    return ptr;
+    върни ptr;
 }
 
 /* memory free routine to pass to zlib */
@@ -115,23 +115,23 @@ local void mem_free(void *mem, void *ptr)
     struct mem_zone *zone = mem;
 
     /* if no zone, just do a free */
-    if (zone == NULL) {
+    ако (zone == NULL) {
         free(ptr);
-        return;
+        върни;
     }
 
     /* point next to the item that matches ptr, or NULL if not found -- remove
        the item from the linked list if found */
     next = zone->first;
-    if (next) {
-        if (next->ptr == ptr)
+    ако (next) {
+        ако (next->ptr == ptr)
             zone->first = next->next;   /* first one is it, remove from list */
-        else {
+        иначе {
             do {                        /* search the linked list */
                 item = next;
                 next = item->next;
-            } while (next != NULL && next->ptr != ptr);
-            if (next) {                 /* if found, remove from linked list */
+            } докато (next != NULL && next->ptr != ptr);
+            ако (next) {                 /* if found, remove from linked list */
                 item->next = next->next;
                 zone->notlifo++;        /* not a LIFO free */
             }
@@ -140,13 +140,13 @@ local void mem_free(void *mem, void *ptr)
     }
 
     /* if found, update the statistics and free the item */
-    if (next) {
+    ако (next) {
         zone->total -= next->size;
         free(next);
     }
 
     /* if not found, update the rogue count */
-    else
+    иначе
         zone->rogue++;
 
     /* in any case, do the requested free with the standard library function */
@@ -199,7 +199,7 @@ local void mem_high(z_stream *strm, char *prefix)
 /* release the memory allocation zone -- if there are any surprises, notify */
 local void mem_done(z_stream *strm, char *prefix)
 {
-    int count = 0;
+    цяло count = 0;
     struct mem_item *item, *next;
     struct mem_zone *zone = strm->opaque;
 
@@ -208,7 +208,7 @@ local void mem_done(z_stream *strm, char *prefix)
 
     /* free leftover allocations and item structures, if any */
     item = zone->first;
-    while (item != NULL) {
+    докато (item != NULL) {
         free(item->ptr);
         next = item->next;
         free(item);
@@ -217,12 +217,12 @@ local void mem_done(z_stream *strm, char *prefix)
     }
 
     /* issue alerts about anything unexpected */
-    if (count || zone->total)
+    ако (count || zone->total)
         fprintf(stderr, "** %s: %zu bytes in %d blocks not freed\n",
                 prefix, zone->total, count);
-    if (zone->notlifo)
+    ако (zone->notlifo)
         fprintf(stderr, "** %s: %d frees not LIFO\n", prefix, zone->notlifo);
-    if (zone->rogue)
+    ако (zone->rogue)
         fprintf(stderr, "** %s: %d frees not recognized\n",
                 prefix, zone->rogue);
 
@@ -248,28 +248,28 @@ local unsigned char *h2b(const char *hex, unsigned *len)
     unsigned next, val;
 
     in = malloc((strlen(hex) + 1) >> 1);
-    if (in == NULL)
-        return NULL;
+    ако (in == NULL)
+        върни NULL;
     next = 0;
     val = 1;
     do {
-        if (*hex >= '0' && *hex <= '9')
+        ако (*hex >= '0' && *hex <= '9')
             val = (val << 4) + *hex - '0';
-        else if (*hex >= 'A' && *hex <= 'F')
+        иначе ако (*hex >= 'A' && *hex <= 'F')
             val = (val << 4) + *hex - 'A' + 10;
-        else if (*hex >= 'a' && *hex <= 'f')
+        иначе ако (*hex >= 'a' && *hex <= 'f')
             val = (val << 4) + *hex - 'a' + 10;
-        else if (val != 1 && val < 32)  /* one digit followed by delimiter */
+        иначе ако (val != 1 && val < 32)  /* one digit followed by delimiter */
             val += 240;                 /* make it look like two digits */
-        if (val > 255) {                /* have two digits */
+        ако (val > 255) {                /* have two digits */
             in[next++] = val & 0xff;    /* save the decoded byte */
             val = 1;                    /* start over */
         }
-    } while (*hex++);       /* go through the loop with the terminating null */
-    if (len != NULL)
+    } докато (*hex++);       /* go through the loop with the terminating null */
+    ако (len != NULL)
         *len = next;
     re = realloc(in, next);
-    return re == NULL ? in : re;
+    върни re == NULL ? in : re;
 }
 
 /* generic inflate() run, where hex is the hexadecimal input data, what is the
@@ -281,10 +281,10 @@ local unsigned char *h2b(const char *hex, unsigned *len)
    header information is collected with inflateGetHeader().  If a zlib stream
    is looking for a dictionary, then an empty dictionary is provided.
    inflate() is run until all of the input data is consumed. */
-local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
-               int err)
+local void inf(char *hex, char *what, unsigned step, цяло win, unsigned len,
+               цяло err)
 {
-    int ret;
+    цяло ret;
     unsigned have;
     unsigned char *in, *out;
     z_stream strm, copy;
@@ -294,12 +294,12 @@ local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
     ret = inflateInit2(&strm, win);
-    if (ret != Z_OK) {
+    ако (ret != Z_OK) {
         mem_done(&strm, what);
-        return;
+        върни;
     }
     out = malloc(len);                          assert(out != NULL);
-    if (win == 47) {
+    ако (win == 47) {
         head.extra = out;
         head.extra_max = len;
         head.name = out;
@@ -309,7 +309,7 @@ local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
         ret = inflateGetHeader(&strm, &head);   assert(ret == Z_OK);
     }
     in = h2b(hex, &have);                       assert(in != NULL);
-    if (step == 0 || step > have)
+    ако (step == 0 || step > have)
         step = have;
     strm.avail_in = step;
     have -= step;
@@ -318,9 +318,9 @@ local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
         strm.avail_out = len;
         strm.next_out = out;
         ret = inflate(&strm, Z_NO_FLUSH);       assert(err == 9 || ret == err);
-        if (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_NEED_DICT)
+        ако (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_NEED_DICT)
             break;
-        if (ret == Z_NEED_DICT) {
+        ако (ret == Z_NEED_DICT) {
             ret = inflateSetDictionary(&strm, in, 1);
                                                 assert(ret == Z_DATA_ERROR);
             mem_limit(&strm, 1);
@@ -338,7 +338,7 @@ local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
         have += strm.avail_in;
         strm.avail_in = step > have ? have : step;
         have -= strm.avail_in;
-    } while (strm.avail_in);
+    } докато (strm.avail_in);
     free(in);
     free(out);
     ret = inflateReset2(&strm, -8);             assert(ret == Z_OK);
@@ -349,7 +349,7 @@ local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
 /* cover all of the lines in inflate.c up to inflate() */
 local void cover_support(void)
 {
-    int ret;
+    цяло ret;
     z_stream strm;
 
     mem_setup(&strm);
@@ -373,7 +373,7 @@ local void cover_support(void)
     mem_setup(&strm);
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
-    ret = inflateInit_(&strm, "!", (int)sizeof(z_stream));
+    ret = inflateInit_(&strm, "!", (цяло)sizeof(z_stream));
                                                 assert(ret == Z_VERSION_ERROR);
     mem_done(&strm, "wrong version");
 
@@ -387,7 +387,7 @@ local void cover_support(void)
 /* cover all inflate() header and trailer cases and code after inflate() */
 local void cover_wrap(void)
 {
-    int ret;
+    цяло ret;
     z_stream strm, copy;
     unsigned char dict[257];
 
@@ -446,31 +446,31 @@ local void cover_wrap(void)
 /* input and output functions for inflateBack() */
 local unsigned pull(void *desc, unsigned char z_const **buf)
 {
-    static unsigned int next = 0;
+    static unsigned цяло next = 0;
     static unsigned char dat[] = {0x63, 0, 2, 0};
     struct inflate_state *state;
 
-    if (desc == Z_NULL) {
+    ако (desc == Z_NULL) {
         next = 0;
-        return 0;   /* no input (already provided at next_in) */
+        върни 0;   /* no input (already provided at next_in) */
     }
     state = (void *)((z_stream *)desc)->state;
-    if (state != Z_NULL)
+    ако (state != Z_NULL)
         state->mode = SYNC;     /* force an otherwise impossible situation */
-    return next < sizeof(dat) ? (*buf = dat + next++, 1) : 0;
+    върни next < sizeof(dat) ? (*buf = dat + next++, 1) : 0;
 }
 
-local int push(void *desc, unsigned char *buf, unsigned len)
+local цяло push(void *desc, unsigned char *buf, unsigned len)
 {
     (void)buf;
     (void)len;
-    return desc != Z_NULL;      /* force error if desc not null */
+    върни desc != Z_NULL;      /* force error if desc not null */
 }
 
 /* cover inflateBack() up to common deflate data cases and after those */
 local void cover_back(void)
 {
-    int ret;
+    цяло ret;
     z_stream strm;
     unsigned char win[32768];
 
@@ -505,9 +505,9 @@ local void cover_back(void)
 }
 
 /* do a raw inflate of data in hexadecimal with both inflate and inflateBack */
-local int try(char *hex, char *id, int err)
+local цяло try(char *hex, char *id, цяло err)
 {
-    int ret;
+    цяло ret;
     unsigned len, size;
     unsigned char *in, *out, *win;
     char *prefix;
@@ -541,10 +541,10 @@ local int try(char *hex, char *id, int err)
         strm.next_out = out;
         ret = inflate(&strm, Z_TREES);
         assert(ret != Z_STREAM_ERROR && ret != Z_MEM_ERROR);
-        if (ret == Z_DATA_ERROR || ret == Z_NEED_DICT)
+        ако (ret == Z_DATA_ERROR || ret == Z_NEED_DICT)
             break;
-    } while (strm.avail_in || strm.avail_out == 0);
-    if (err) {
+    } докато (strm.avail_in || strm.avail_out == 0);
+    ако (err) {
         assert(ret == Z_DATA_ERROR);
         assert(strcmp(id, strm.msg) == 0);
     }
@@ -552,7 +552,7 @@ local int try(char *hex, char *id, int err)
     mem_done(&strm, prefix);
 
     /* then with inflateBack */
-    if (err >= 0) {
+    ако (err >= 0) {
         strcpy(prefix, id);
         strcat(prefix, "-back");
         mem_setup(&strm);
@@ -562,7 +562,7 @@ local int try(char *hex, char *id, int err)
         strm.next_in = in;
         ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
         assert(ret != Z_STREAM_ERROR);
-        if (err) {
+        ако (err) {
             assert(ret == Z_DATA_ERROR);
             assert(strcmp(id, strm.msg) == 0);
         }
@@ -575,7 +575,7 @@ local int try(char *hex, char *id, int err)
     free(win);
     free(out);
     free(in);
-    return ret;
+    върни ret;
 }
 
 /* cover deflate data cases in both inflate() and inflateBack() */
@@ -617,14 +617,14 @@ local void cover_inflate(void)
 /* cover remaining lines in inftrees.c */
 local void cover_trees(void)
 {
-    int ret;
+    цяло ret;
     unsigned bits;
     unsigned short lens[16], work[16];
     code *next, table[ENOUGH_DISTS];
 
     /* we need to call inflate_table() directly in order to manifest not-
        enough errors, since zlib insures that enough is always enough */
-    for (bits = 0; bits < 15; bits++)
+    за (bits = 0; bits < 15; bits++)
         lens[bits] = (unsigned short)(bits + 1);
     lens[15] = 15;
     next = table;
@@ -659,7 +659,7 @@ local void cover_fast(void)
         Z_STREAM_END);
 }
 
-int main(void)
+цяло main(void)
 {
     fprintf(stderr, "%s\n", zlibVersion());
     cover_support();
@@ -668,5 +668,5 @@ int main(void)
     cover_inflate();
     cover_trees();
     cover_fast();
-    return 0;
+    върни 0;
 }

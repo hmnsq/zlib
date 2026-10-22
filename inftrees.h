@@ -49,7 +49,7 @@ typedef struct {
 #ifndef PKZIP_BUG_WORKAROUND
 #  define ENOUGH_LENS 852
 #  define ENOUGH_DISTS 592
-#else
+#иначе
 /* That workaround permits 288 literal/length codes and 32 distance codes. */
 #  define ENOUGH_LENS 854
 #  define ENOUGH_DISTS 594
@@ -63,7 +63,7 @@ typedef enum {
     DISTS
 } codetype;
 
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
+цяло ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
                                 unsigned codes, code FAR * FAR *table,
                                 unsigned FAR *bits, unsigned short FAR *work);
 struct inflate_state;

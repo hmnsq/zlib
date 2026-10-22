@@ -8,9 +8,9 @@
 void MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
 {
     R->HighPart = A.HighPart - B.HighPart;
-    if (A.LowPart >= B.LowPart)
+    ако (A.LowPart >= B.LowPart)
         R->LowPart = A.LowPart - B.LowPart;
-    else
+    иначе
     {
         R->LowPart = A.LowPart - B.LowPart;
         R->HighPart --;
@@ -32,9 +32,9 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
     unsigned _int64 res=__rdtsc()-((unsigned _int64)(beginTime64.QuadPart));
     LIres.QuadPart=res;
    // printf("rdtsc = %I64x\n",__rdtsc());
-    return LIres;
+    върни LIres;
 }
-#else
+#иначе
 #ifdef _M_IX86
 void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
@@ -61,9 +61,9 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
 
     LIres.LowPart=LIres.HighPart=0;
     MyDoMinus64(&LIres,endTime64,beginTime64);
-    return LIres;
+    върни LIres;
 }
-#else
+#иначе
 void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
 }
@@ -76,14 +76,14 @@ LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
 {
     LARGE_INTEGER lr;
     lr.QuadPart=0;
-    return lr;
+    върни lr;
 }
 #endif
 #endif
 
 void BeginCountPerfCounter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
 {
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
+    ако ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
     {
         pbeginTime64->LowPart = GetTickCount();
         pbeginTime64->HighPart = 0;
@@ -96,9 +96,9 @@ DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPe
     DWORDLONG ticksShifted,tickSecShifted;
     DWORD dwLog=16+0;
     DWORD dwRet;
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
+    ако ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
         dwRet = (GetTickCount() - beginTime64.LowPart)*1;
-    else
+    иначе
     {
         MyDoMinus64(&ticks,endTime64,beginTime64);
         QueryPerformanceFrequency(&ticksPerSecond);
@@ -113,40 +113,40 @@ DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPe
         dwRet = (DWORD)((((DWORD)ticksShifted)*1000)/(DWORD)(tickSecShifted));
         dwRet *=1;
     }
-    return dwRet;
+    върни dwRet;
 }
 
-int ReadFileMemory(const char* filename,long* plFileSize,unsigned char** pFilePtr)
+цяло ReadFileMemory(const char* filename,long* plFileSize,unsigned char** pFilePtr)
 {
     FILE* stream;
     unsigned char* ptr;
-    int retVal=1;
+    цяло retVal=1;
     stream=fopen(filename, "rb");
-    if (stream==NULL)
-        return 0;
+    ако (stream==NULL)
+        върни 0;
 
     fseek(stream,0,SEEK_END);
 
     *plFileSize=ftell(stream);
     fseek(stream,0,SEEK_SET);
     ptr=malloc((*plFileSize)+1);
-    if (ptr==NULL)
+    ако (ptr==NULL)
         retVal=0;
-    else
+    иначе
     {
-        if (fread(ptr, 1, *plFileSize,stream) != (*plFileSize))
+        ако (fread(ptr, 1, *plFileSize,stream) != (*plFileSize))
             retVal=0;
     }
     fclose(stream);
     *pFilePtr=ptr;
-    return retVal;
+    върни retVal;
 }
 
-int main(int argc, char *argv[])
+цяло main(цяло argc, char *argv[])
 {
-    int BlockSizeCompress=0x8000;
-    int BlockSizeUncompress=0x8000;
-    int cprLevel=Z_DEFAULT_COMPRESSION ;
+    цяло BlockSizeCompress=0x8000;
+    цяло BlockSizeUncompress=0x8000;
+    цяло cprLevel=Z_DEFAULT_COMPRESSION ;
     long lFileSize;
     unsigned char* FilePtr;
     long lBufferSizeCpr;
@@ -158,27 +158,27 @@ int main(int argc, char *argv[])
     DWORD dwGetTick,dwMsecQP;
     LARGE_INTEGER li_qp,li_rdtsc,dwResRdtsc;
 
-    if (argc<=1)
+    ако (argc<=1)
     {
         printf("run TestZlib <File> [BlockSizeCompress] [BlockSizeUncompress] [compres. level]\n");
-        return 0;
+        върни 0;
     }
 
-    if (ReadFileMemory(argv[1],&lFileSize,&FilePtr)==0)
+    ако (ReadFileMemory(argv[1],&lFileSize,&FilePtr)==0)
     {
         printf("error reading %s\n",argv[1]);
-        return 1;
+        върни 1;
     }
-    else printf("file %s read, %ld bytes\n",argv[1],lFileSize);
+    иначе printf("file %s read, %ld bytes\n",argv[1],lFileSize);
 
-    if (argc>=3)
+    ако (argc>=3)
         BlockSizeCompress=atol(argv[2]);
 
-    if (argc>=4)
+    ако (argc>=4)
         BlockSizeUncompress=atol(argv[3]);
 
-    if (argc>=5)
-        cprLevel=(int)atol(argv[4]);
+    ако (argc>=5)
+        cprLevel=(цяло)atol(argv[4]);
 
     lBufferSizeCpr = lFileSize + (lFileSize/0x10) + 0x200;
     lBufferSizeUncpr = lBufferSizeCpr;
@@ -190,10 +190,10 @@ int main(int argc, char *argv[])
     BeginCountRdtsc(&li_rdtsc);
     {
         z_stream zcpr;
-        int ret=Z_OK;
+        цяло ret=Z_OK;
         long lOrigToDo = lFileSize;
         long lOrigDone = 0;
-        int step=0;
+        цяло step=0;
         memset(&zcpr,0,sizeof(z_stream));
         deflateInit(&zcpr,cprLevel);
 
@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
             lOrigDone += (zcpr.total_in-all_read_before);
             lOrigToDo -= (zcpr.total_in-all_read_before);
             step++;
-        } while (ret==Z_OK);
+        } докато (ret==Z_OK);
 
         lSizeCpr=zcpr.total_out;
         deflateEnd(&zcpr);
@@ -231,10 +231,10 @@ int main(int argc, char *argv[])
     BeginCountRdtsc(&li_rdtsc);
     {
         z_stream zcpr;
-        int ret=Z_OK;
+        цяло ret=Z_OK;
         long lOrigToDo = lSizeCpr;
         long lOrigDone = 0;
-        int step=0;
+        цяло step=0;
         memset(&zcpr,0,sizeof(z_stream));
         inflateInit(&zcpr);
 
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
             lOrigDone += (zcpr.total_in-all_read_before);
             lOrigToDo -= (zcpr.total_in-all_read_before);
             step++;
-        } while (ret==Z_OK);
+        } докато (ret==Z_OK);
 
         lSizeUncpr=zcpr.total_out;
         inflateEnd(&zcpr);
@@ -264,12 +264,12 @@ int main(int argc, char *argv[])
         printf("uncpr  result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    if (lSizeUncpr==lFileSize)
+    ако (lSizeUncpr==lFileSize)
     {
-        if (memcmp(FilePtr,UncprPtr,lFileSize)==0)
+        ако (memcmp(FilePtr,UncprPtr,lFileSize)==0)
             printf("compare ok\n");
 
     }
 
-    return 0;
+    върни 0;
 }
