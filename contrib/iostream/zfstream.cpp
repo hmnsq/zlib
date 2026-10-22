@@ -10,98 +10,98 @@ gzfilebuf::gzfilebuf() :
 gzfilebuf::~gzfilebuf() {
 
   sync();
-  if ( own_file_descriptor )
+  nếu ( own_file_descriptor )
     close();
 
 }
 
 gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+                            số_nguyên io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  nếu ( is_open() )
+    trả_về NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  nếu ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } không_thì nếu ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } không_thì {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  nếu ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  nếu ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  nếu ( (file = gzopen(name, char_mode)) == NULL )
+    trả_về NULL;
 
   own_file_descriptor = 1;
 
-  return this;
+  trả_về this;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( số_nguyên file_descriptor,
+                              số_nguyên io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  nếu ( is_open() )
+    trả_về NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  nếu ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } không_thì nếu ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } không_thì {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  nếu ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  nếu ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  nếu ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
+    trả_về NULL;
 
   own_file_descriptor = 0;
 
-  return this;
+  trả_về this;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  nếu ( is_open() ) {
 
     sync();
     gzclose( file );
@@ -109,145 +109,145 @@ gzfilebuf *gzfilebuf::close() {
 
   }
 
-  return this;
+  trả_về this;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+số_nguyên gzfilebuf::setcompressionlevel( số_nguyên comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  trả_về gzsetparams(file, comp_level, -2);
 
 }
 
+số_nguyên gzfilebuf::setcompressionstrategy( số_nguyên comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  trả_về gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, số_nguyên which ) {
+
+  trả_về streampos(EOF);
+
+}
+
+số_nguyên gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  nếu ( !is_open() || !(mode & ios::in) )
+    trả_về EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  nếu ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    nếu ( (allocate()) == EOF )
+      trả_về EOF;
     setp(0,0);
 
-  } else {
+  } không_thì {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    nếu ( in_avail() )
+      trả_về (unsigned char) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    nếu ( out_waiting() ) {
+      nếu ( flushbuf() == EOF )
+        trả_về EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  số_nguyên result = fillbuf();
+  nếu ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    trả_về EOF;
   }
 
-  return (unsigned char) *gptr();
+  trả_về (unsigned char) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+số_nguyên gzfilebuf::overflow( số_nguyên c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  nếu ( !is_open() || !(mode & ios::out) )
+    trả_về EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  nếu ( !base() ) {
+    nếu ( allocate() == EOF )
+      trả_về EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } không_thì {
+    nếu (in_avail()) {
+        trả_về EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    nếu (out_waiting()) {
+      nếu (flushbuf() == EOF)
+        trả_về EOF;
     }
   }
 
-  int bl = blen();
+  số_nguyên bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  nếu ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  trả_về 0;
 
 }
 
-int gzfilebuf::sync() {
+số_nguyên gzfilebuf::sync() {
 
-  if ( !is_open() )
-    return EOF;
+  nếu ( !is_open() )
+    trả_về EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  nếu ( out_waiting() )
+    trả_về flushbuf();
 
-  return 0;
+  trả_về 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+số_nguyên gzfilebuf::flushbuf() {
 
-  int n;
+  số_nguyên n;
   char *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  nếu ( gzwrite( file, q, n) < n )
+    trả_về EOF;
 
   setp(0,0);
 
-  return 0;
+  trả_về 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+số_nguyên gzfilebuf::fillbuf() {
 
-  int required;
+  số_nguyên required;
   char *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  số_nguyên t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  nếu ( t <= 0) trả_về EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  trả_về t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+void gzfilestream_common::attach( số_nguyên fd, số_nguyên io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  nếu ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  không_thì
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+void gzfilestream_common::open( const char *name, số_nguyên io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  nếu ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  không_thì
     clear();
 
 }
 
 void gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  nếu ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  trả_về &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( const char *name, số_nguyên io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( số_nguyên fd, số_nguyên io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( const char *name, số_nguyên io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( số_nguyên fd, số_nguyên io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );

@@ -43,8 +43,8 @@ struct state {
     void *inhow;                /* opaque information passed to infun() */
     unsigned char *in;          /* next input location */
     unsigned left;              /* available input at in */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    số_nguyên bitbuf;                 /* bit buffer */
+    số_nguyên bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
@@ -53,7 +53,7 @@ struct state {
     blast_out outfun;           /* output function provided by user */
     void *outhow;               /* opaque information passed to outfun() */
     unsigned next;              /* index of next write location in out[] */
-    int first;                  /* true to check distances (for first 4K) */
+    số_nguyên first;                  /* true to check distances (for first 4K) */
     unsigned char out[MAXWIN];  /* output buffer and sliding window */
 };
 
@@ -68,18 +68,18 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local số_nguyên bits(struct state *s, số_nguyên need)
 {
-    int val;            /* bit accumulator */
+    số_nguyên val;            /* bit accumulator */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->left == 0) {
+    trong_khi (s->bitcnt < need) {
+        nếu (s->left == 0) {
             s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+            nếu (s->left == 0) longjmp(s->env, 1);       /* out of input */
         }
-        val |= (int)(*(s->in)++) << s->bitcnt;          /* load eight bits */
+        val |= (số_nguyên)(*(s->in)++) << s->bitcnt;          /* load eight bits */
         s->left--;
         s->bitcnt += 8;
     }
@@ -89,7 +89,7 @@ local int bits(struct state *s, int need)
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return val & ((1 << need) - 1);
+    trả_về val & ((1 << need) - 1);
 }
 
 /*
@@ -125,15 +125,15 @@ struct huffman {
  *   this ordering, the bits pulled during decoding are inverted to apply the
  *   more "natural" ordering starting with all zeros and incrementing.
  */
-local int decode(struct state *s, struct huffman *h)
+local số_nguyên decode(struct state *s, struct huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    số_nguyên len;            /* current number of bits in code */
+    số_nguyên code;           /* len bits being decoded */
+    số_nguyên first;          /* first code of length len */
+    số_nguyên count;          /* number of codes of length len */
+    số_nguyên index;          /* index of first code of length len in symbol table */
+    số_nguyên bitbuf;         /* bits from stream */
+    số_nguyên left;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
@@ -141,15 +141,15 @@ local int decode(struct state *s, struct huffman *h)
     code = first = index = 0;
     len = 1;
     next = h->count + 1;
-    while (1) {
-        while (left--) {
+    trong_khi (1) {
+        trong_khi (left--) {
             code |= (bitbuf & 1) ^ 1;   /* invert code */
             bitbuf >>= 1;
             count = *next++;
-            if (code < first + count) { /* if length len, return symbol */
+            nếu (code < first + count) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                trả_về h->symbol[index + (code - first)];
             }
             index += count;             /* else update for next length */
             first += count;
@@ -158,16 +158,16 @@ local int decode(struct state *s, struct huffman *h)
             len++;
         }
         left = (MAXBITS+1) - len;
-        if (left == 0) break;
-        if (s->left == 0) {
+        nếu (left == 0) break;
+        nếu (s->left == 0) {
             s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+            nếu (s->left == 0) longjmp(s->env, 1);       /* out of input */
         }
         bitbuf = *(s->in)++;
         s->left--;
-        if (left > 8) left = 8;
+        nếu (left > 8) left = 8;
     }
-    return -9;                          /* ran out of codes */
+    trả_về -9;                          /* ran out of codes */
 }
 
 /*
@@ -187,11 +187,11 @@ local int decode(struct state *s, struct huffman *h)
  * it is possible for decode() using that table to return an error for received
  * codes past the end of the incomplete lengths.
  */
-local int construct(struct huffman *h, const unsigned char *rep, int n)
+local số_nguyên construct(struct huffman *h, const unsigned char *rep, số_nguyên n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    số_nguyên symbol;         /* current symbol when stepping through length[] */
+    số_nguyên len;            /* current length when stepping through h->count[] */
+    số_nguyên left;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
     short length[256];  /* code lengths */
 
@@ -203,41 +203,41 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
         len &= 15;
         do {
             length[symbol++] = len;
-        } while (--left);
-    } while (--n);
+        } trong_khi (--left);
+    } trong_khi (--n);
     n = symbol;
 
     /* count number of codes of each length */
-    for (len = 0; len <= MAXBITS; len++)
+    cho (len = 0; len <= MAXBITS; len++)
         h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
+    cho (symbol = 0; symbol < n; symbol++)
         (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    nếu (h->count[0] == n)               /* no codes! */
+        trả_về 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;                           /* one possible code of zero length */
-    for (len = 1; len <= MAXBITS; len++) {
+    cho (len = 1; len <= MAXBITS; len++) {
         left <<= 1;                     /* one more bit, double codes left */
         left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0) return left;      /* over-subscribed--return negative */
+        nếu (left < 0) trả_về left;      /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
+    cho (len = 1; len < MAXBITS; len++)
         offs[len + 1] = offs[len] + h->count[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
+    cho (symbol = 0; symbol < n; symbol++)
+        nếu (length[symbol] != 0)
             h->symbol[offs[length[symbol]]++] = symbol;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    trả_về left;
 }
 
 /*
@@ -278,16 +278,16 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
  *   ignoring whether the length is greater than the distance or not implements
  *   this correctly.
  */
-local int decomp(struct state *s)
+local số_nguyên decomp(struct state *s)
 {
-    int lit;            /* true if literals are coded */
-    int dict;           /* log2(dictionary size) - 6 */
-    int symbol;         /* decoded symbol, extra bits for distance */
-    int len;            /* length for copy */
+    số_nguyên lit;            /* true if literals are coded */
+    số_nguyên dict;           /* log2(dictionary size) - 6 */
+    số_nguyên symbol;         /* decoded symbol, extra bits for distance */
+    số_nguyên len;            /* length for copy */
     unsigned dist;      /* distance for copy */
-    int copy;           /* copy counter */
+    số_nguyên copy;           /* copy counter */
     unsigned char *from, *to;   /* copy pointers */
-    static int virgin = 1;                              /* build tables once */
+    static số_nguyên virgin = 1;                              /* build tables once */
     static short litcnt[MAXBITS+1], litsym[256];        /* litcode memory */
     static short lencnt[MAXBITS+1], lensym[16];         /* lencode memory */
     static short distcnt[MAXBITS+1], distsym[64];       /* distcode memory */
@@ -312,7 +312,7 @@ local int decomp(struct state *s)
         0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     /* set up decoding tables (once--might not be thread-safe) */
-    if (virgin) {
+    nếu (virgin) {
         construct(&litcode, litlen, sizeof(litlen));
         construct(&lencode, lenlen, sizeof(lenlen));
         construct(&distcode, distlen, sizeof(distlen));
@@ -321,78 +321,78 @@ local int decomp(struct state *s)
 
     /* read header */
     lit = bits(s, 8);
-    if (lit > 1) return -1;
+    nếu (lit > 1) trả_về -1;
     dict = bits(s, 8);
-    if (dict < 4 || dict > 6) return -2;
+    nếu (dict < 4 || dict > 6) trả_về -2;
 
     /* decode literals and length/distance pairs */
     do {
-        if (bits(s, 1)) {
+        nếu (bits(s, 1)) {
             /* get length */
             symbol = decode(s, &lencode);
             len = base[symbol] + bits(s, extra[symbol]);
-            if (len == 519) break;              /* end code */
+            nếu (len == 519) break;              /* end code */
 
             /* get distance */
             symbol = len == 2 ? 2 : dict;
             dist = decode(s, &distcode) << symbol;
             dist += bits(s, symbol);
             dist++;
-            if (s->first && dist > s->next)
-                return -3;              /* distance too far back */
+            nếu (s->first && dist > s->next)
+                trả_về -3;              /* distance too far back */
 
             /* copy length bytes from distance bytes back */
             do {
                 to = s->out + s->next;
                 from = to - dist;
                 copy = MAXWIN;
-                if (s->next < dist) {
+                nếu (s->next < dist) {
                     from += copy;
                     copy = dist;
                 }
                 copy -= s->next;
-                if (copy > len) copy = len;
+                nếu (copy > len) copy = len;
                 len -= copy;
                 s->next += copy;
                 do {
                     *to++ = *from++;
-                } while (--copy);
-                if (s->next == MAXWIN) {
-                    if (s->outfun(s->outhow, s->out, s->next)) return 1;
+                } trong_khi (--copy);
+                nếu (s->next == MAXWIN) {
+                    nếu (s->outfun(s->outhow, s->out, s->next)) trả_về 1;
                     s->next = 0;
                     s->first = 0;
                 }
-            } while (len != 0);
+            } trong_khi (len != 0);
         }
-        else {
+        không_thì {
             /* get literal and write it */
             symbol = lit ? decode(s, &litcode) : bits(s, 8);
             s->out[s->next++] = symbol;
-            if (s->next == MAXWIN) {
-                if (s->outfun(s->outhow, s->out, s->next)) return 1;
+            nếu (s->next == MAXWIN) {
+                nếu (s->outfun(s->outhow, s->out, s->next)) trả_về 1;
                 s->next = 0;
                 s->first = 0;
             }
         }
-    } while (1);
-    return 0;
+    } trong_khi (1);
+    trả_về 0;
 }
 
 /* See comments in blast.h */
-int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
+số_nguyên blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
           unsigned *left, unsigned char **in)
 {
     struct state s;             /* input/output state */
-    int err;                    /* return value */
+    số_nguyên err;                    /* return value */
 
     /* initialize input state */
     s.infun = infun;
     s.inhow = inhow;
-    if (left != NULL && *left) {
+    nếu (left != NULL && *left) {
         s.left = *left;
         s.in = *in;
     }
-    else
+    không_thì
         s.left = 0;
     s.bitbuf = 0;
     s.bitcnt = 0;
@@ -404,19 +404,19 @@ int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
     s.first = 1;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
+    nếu (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
         err = 2;                        /*  then skip decomp(), return error */
-    else
+    không_thì
         err = decomp(&s);               /* decompress */
 
     /* return unused input */
-    if (left != NULL)
+    nếu (left != NULL)
         *left = s.left;
-    if (in != NULL)
+    nếu (in != NULL)
         *in = s.left ? s.in : NULL;
 
     /* write any leftover output and update the error code if needed */
-    if (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
+    nếu (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
         err = 1;
-    return err;
+    trả_về err;
 }

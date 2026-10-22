@@ -85,27 +85,27 @@
 #include "inflate.h"
 #include "inffast.h"
 
-local int inflateStateCheck(z_streamp strm) {
+local số_nguyên inflateStateCheck(z_streamp strm) {
     struct inflate_state FAR *state;
-    if (strm == Z_NULL ||
+    nếu (strm == Z_NULL ||
         strm->zalloc == (alloc_func)0 || strm->zfree == (free_func)0)
-        return 1;
+        trả_về 1;
     state = (struct inflate_state FAR *)strm->state;
-    if (state == Z_NULL || state->strm != strm ||
+    nếu (state == Z_NULL || state->strm != strm ||
         state->mode < HEAD || state->mode > SYNC)
-        return 1;
-    return 0;
+        trả_về 1;
+    trả_về 0;
 }
 
-int ZEXPORT inflateResetKeep(z_streamp strm) {
+số_nguyên ZEXPORT inflateResetKeep(z_streamp strm) {
     struct inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
     strm->total_in = strm->total_out = state->total = 0;
     strm->msg = Z_NULL;
     strm->data_type = 0;
-    if (state->wrap)        /* to support ill-conceived Java test suite */
+    nếu (state->wrap)        /* to support ill-conceived Java test suite */
         strm->adler = state->wrap & 1;
     state->mode = HEAD;
     state->last = 0;
@@ -119,47 +119,47 @@ int ZEXPORT inflateResetKeep(z_streamp strm) {
     state->sane = 1;
     state->back = -1;
     Tracev((stderr, "inflate: reset\n"));
-    return Z_OK;
+    trả_về Z_OK;
 }
 
-int ZEXPORT inflateReset(z_streamp strm) {
+số_nguyên ZEXPORT inflateReset(z_streamp strm) {
     struct inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
     state->wsize = 0;
     state->whave = 0;
     state->wnext = 0;
-    return inflateResetKeep(strm);
+    trả_về inflateResetKeep(strm);
 }
 
-int ZEXPORT inflateReset2(z_streamp strm, int windowBits) {
-    int wrap;
+số_nguyên ZEXPORT inflateReset2(z_streamp strm, số_nguyên windowBits) {
+    số_nguyên wrap;
     struct inflate_state FAR *state;
 
     /* get the state */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
 
     /* extract wrap request from windowBits parameter */
-    if (windowBits < 0) {
-        if (windowBits < -15)
-            return Z_STREAM_ERROR;
+    nếu (windowBits < 0) {
+        nếu (windowBits < -15)
+            trả_về Z_STREAM_ERROR;
         wrap = 0;
         windowBits = -windowBits;
     }
-    else {
+    không_thì {
         wrap = (windowBits >> 4) + 5;
 #ifdef GUNZIP
-        if (windowBits < 48)
+        nếu (windowBits < 48)
             windowBits &= 15;
 #endif
     }
 
     /* set number of window bits, free window if different */
-    if (windowBits && (windowBits < 8 || windowBits > 15))
-        return Z_STREAM_ERROR;
-    if (state->window != Z_NULL && state->wbits != (unsigned)windowBits) {
+    nếu (windowBits && (windowBits < 8 || windowBits > 15))
+        trả_về Z_STREAM_ERROR;
+    nếu (state->window != Z_NULL && state->wbits != (unsigned)windowBits) {
         ZFREE(strm, state->window);
         state->window = Z_NULL;
     }
@@ -167,36 +167,36 @@ int ZEXPORT inflateReset2(z_streamp strm, int windowBits) {
     /* update state and reset the rest of it */
     state->wrap = wrap;
     state->wbits = (unsigned)windowBits;
-    return inflateReset(strm);
+    trả_về inflateReset(strm);
 }
 
-int ZEXPORT inflateInit2_(z_streamp strm, int windowBits,
-                          const char *version, int stream_size) {
-    int ret;
+số_nguyên ZEXPORT inflateInit2_(z_streamp strm, số_nguyên windowBits,
+                          const char *version, số_nguyên stream_size) {
+    số_nguyên ret;
     struct inflate_state FAR *state;
 
-    if (version == Z_NULL || version[0] != ZLIB_VERSION[0] ||
-        stream_size != (int)(sizeof(z_stream)))
-        return Z_VERSION_ERROR;
-    if (strm == Z_NULL) return Z_STREAM_ERROR;
+    nếu (version == Z_NULL || version[0] != ZLIB_VERSION[0] ||
+        stream_size != (số_nguyên)(sizeof(z_stream)))
+        trả_về Z_VERSION_ERROR;
+    nếu (strm == Z_NULL) trả_về Z_STREAM_ERROR;
     strm->msg = Z_NULL;                 /* in case we return an error */
-    if (strm->zalloc == (alloc_func)0) {
+    nếu (strm->zalloc == (alloc_func)0) {
 #ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+        trả_về Z_STREAM_ERROR;
+#không_thì
         strm->zalloc = zcalloc;
         strm->opaque = (voidpf)0;
 #endif
     }
-    if (strm->zfree == (free_func)0)
+    nếu (strm->zfree == (free_func)0)
 #ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+        trả_về Z_STREAM_ERROR;
+#không_thì
         strm->zfree = zcfree;
 #endif
     state = (struct inflate_state FAR *)
             ZALLOC(strm, 1, sizeof(struct inflate_state));
-    if (state == Z_NULL) return Z_MEM_ERROR;
+    nếu (state == Z_NULL) trả_về Z_MEM_ERROR;
     zmemzero(state, sizeof(struct inflate_state));
     Tracev((stderr, "inflate: allocated\n"));
     strm->state = (struct internal_state FAR *)state;
@@ -204,35 +204,35 @@ int ZEXPORT inflateInit2_(z_streamp strm, int windowBits,
     state->window = Z_NULL;
     state->mode = HEAD;     /* to pass state test in inflateReset2() */
     ret = inflateReset2(strm, windowBits);
-    if (ret != Z_OK) {
+    nếu (ret != Z_OK) {
         ZFREE(strm, state);
         strm->state = Z_NULL;
     }
-    return ret;
+    trả_về ret;
 }
 
-int ZEXPORT inflateInit_(z_streamp strm, const char *version,
-                         int stream_size) {
-    return inflateInit2_(strm, DEF_WBITS, version, stream_size);
+số_nguyên ZEXPORT inflateInit_(z_streamp strm, const char *version,
+                         số_nguyên stream_size) {
+    trả_về inflateInit2_(strm, DEF_WBITS, version, stream_size);
 }
 
-int ZEXPORT inflatePrime(z_streamp strm, int bits, int value) {
+số_nguyên ZEXPORT inflatePrime(z_streamp strm, số_nguyên bits, số_nguyên value) {
     struct inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
-    if (bits == 0)
-        return Z_OK;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
+    nếu (bits == 0)
+        trả_về Z_OK;
     state = (struct inflate_state FAR *)strm->state;
-    if (bits < 0) {
+    nếu (bits < 0) {
         state->hold = 0;
         state->bits = 0;
-        return Z_OK;
+        trả_về Z_OK;
     }
-    if (bits > 16 || state->bits + (uInt)bits > 32) return Z_STREAM_ERROR;
+    nếu (bits > 16 || state->bits + (uInt)bits > 32) trả_về Z_STREAM_ERROR;
     value &= (1L << bits) - 1;
     state->hold += (unsigned long)value << state->bits;
     state->bits += (uInt)bits;
-    return Z_OK;
+    trả_về Z_OK;
 }
 
 /*
@@ -249,50 +249,50 @@ int ZEXPORT inflatePrime(z_streamp strm, int bits, int value) {
    output will fall in the output data, making match copies simpler and faster.
    The advantage may be dependent on the size of the processor's data caches.
  */
-local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
+local số_nguyên updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
     struct inflate_state FAR *state;
     unsigned dist;
 
     state = (struct inflate_state FAR *)strm->state;
 
     /* if it hasn't been done already, allocate space for the window */
-    if (state->window == Z_NULL) {
+    nếu (state->window == Z_NULL) {
         state->window = (unsigned char FAR *)
                         ZALLOC(strm, 1U << state->wbits,
                                sizeof(unsigned char));
-        if (state->window == Z_NULL) return 1;
+        nếu (state->window == Z_NULL) trả_về 1;
     }
 
     /* if window not in use yet, initialize */
-    if (state->wsize == 0) {
+    nếu (state->wsize == 0) {
         state->wsize = 1U << state->wbits;
         state->wnext = 0;
         state->whave = 0;
     }
 
     /* copy state->wsize or less output bytes into the circular window */
-    if (copy >= state->wsize) {
+    nếu (copy >= state->wsize) {
         zmemcpy(state->window, end - state->wsize, state->wsize);
         state->wnext = 0;
         state->whave = state->wsize;
     }
-    else {
+    không_thì {
         dist = state->wsize - state->wnext;
-        if (dist > copy) dist = copy;
+        nếu (dist > copy) dist = copy;
         zmemcpy(state->window + state->wnext, end - copy, dist);
         copy -= dist;
-        if (copy) {
+        nếu (copy) {
             zmemcpy(state->window, end - copy, copy);
             state->wnext = copy;
             state->whave = state->wsize;
         }
-        else {
+        không_thì {
             state->wnext += dist;
-            if (state->wnext == state->wsize) state->wnext = 0;
-            if (state->whave < state->wsize) state->whave += dist;
+            nếu (state->wnext == state->wsize) state->wnext = 0;
+            nếu (state->whave < state->wsize) state->whave += dist;
         }
     }
-    return 0;
+    trả_về 0;
 }
 
 /* Macros for inflate(): */
@@ -301,7 +301,7 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
 #ifdef GUNZIP
 #  define UPDATE_CHECK(check, buf, len) \
     (state->flags ? crc32(check, buf, len) : adler32(check, buf, len))
-#else
+#không_thì
 #  define UPDATE_CHECK(check, buf, len) adler32(check, buf, len)
 #endif
 
@@ -312,7 +312,7 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
         hbuf[0] = (unsigned char)(word); \
         hbuf[1] = (unsigned char)((word) >> 8); \
         check = crc32(check, hbuf, 2); \
-    } while (0)
+    } trong_khi (0)
 
 #  define CRC4(check, word) \
     do { \
@@ -321,7 +321,7 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
         hbuf[2] = (unsigned char)((word) >> 16); \
         hbuf[3] = (unsigned char)((word) >> 24); \
         check = crc32(check, hbuf, 4); \
-    } while (0)
+    } trong_khi (0)
 #endif
 
 /* Load registers with state in inflate() for speed */
@@ -333,7 +333,7 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
         have = strm->avail_in; \
         hold = state->hold; \
         bits = state->bits; \
-    } while (0)
+    } trong_khi (0)
 
 /* Restore state from registers in inflate() */
 #define RESTORE() \
@@ -344,32 +344,32 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
         strm->avail_in = have; \
         state->hold = hold; \
         state->bits = bits; \
-    } while (0)
+    } trong_khi (0)
 
 /* Clear the input bit accumulator */
 #define INITBITS() \
     do { \
         hold = 0; \
         bits = 0; \
-    } while (0)
+    } trong_khi (0)
 
 /* Get a byte of input into the bit accumulator, or return from inflate()
    if there is no input available. */
 #define PULLBYTE() \
     do { \
-        if (have == 0) goto inf_leave; \
+        nếu (have == 0) goto inf_leave; \
         have--; \
         hold += (unsigned long)(*next++) << bits; \
         bits += 8; \
-    } while (0)
+    } trong_khi (0)
 
 /* Assure that there are at least n bits in the bit accumulator.  If there is
    not enough available input to do that, then return from inflate(). */
 #define NEEDBITS(n) \
     do { \
-        while (bits < (unsigned)(n)) \
+        trong_khi (bits < (unsigned)(n)) \
             PULLBYTE(); \
-    } while (0)
+    } trong_khi (0)
 
 /* Return the low n bits of the bit accumulator (n < 16) */
 #define BITS(n) \
@@ -380,14 +380,14 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
     do { \
         hold >>= (n); \
         bits -= (unsigned)(n); \
-    } while (0)
+    } trong_khi (0)
 
 /* Remove zero to seven bits as needed to go to a byte boundary */
 #define BYTEBITS() \
     do { \
         hold >>= bits & 7; \
         bits -= bits & 7; \
-    } while (0)
+    } trong_khi (0)
 
 /*
    inflate() uses a state machine to process as much input data and generate as
@@ -471,7 +471,7 @@ local int updatewindow(z_streamp strm, const Bytef *end, unsigned copy) {
    will return Z_BUF_ERROR if it has not reached the end of the stream.
  */
 
-int ZEXPORT inflate(z_streamp strm, int flush) {
+số_nguyên ZEXPORT inflate(z_streamp strm, số_nguyên flush) {
     struct inflate_state FAR *state;
     z_const unsigned char FAR *next;    /* next input */
     unsigned char FAR *put;     /* next output */
@@ -484,34 +484,34 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
     code here;                  /* current decoding table entry */
     code last;                  /* parent table entry */
     unsigned len;               /* length to copy for repeats, bits to drop */
-    int ret;                    /* return code */
+    số_nguyên ret;                    /* return code */
 #ifdef GUNZIP
     unsigned char hbuf[4];      /* buffer for gzip header crc calculation */
 #endif
     static const unsigned short order[19] = /* permutation of code lengths */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
-    if (inflateStateCheck(strm) || strm->next_out == Z_NULL ||
+    nếu (inflateStateCheck(strm) || strm->next_out == Z_NULL ||
         (strm->next_in == Z_NULL && strm->avail_in != 0))
-        return Z_STREAM_ERROR;
+        trả_về Z_STREAM_ERROR;
 
     state = (struct inflate_state FAR *)strm->state;
-    if (state->mode == TYPE) state->mode = TYPEDO;      /* skip check */
+    nếu (state->mode == TYPE) state->mode = TYPEDO;      /* skip check */
     LOAD();
     in = have;
     out = left;
     ret = Z_OK;
-    for (;;)
+    cho (;;)
         switch (state->mode) {
         case HEAD:
-            if (state->wrap == 0) {
+            nếu (state->wrap == 0) {
                 state->mode = TYPEDO;
                 break;
             }
             NEEDBITS(16);
 #ifdef GUNZIP
-            if ((state->wrap & 2) && hold == 0x8b1f) {  /* gzip header */
-                if (state->wbits == 0)
+            nếu ((state->wrap & 2) && hold == 0x8b1f) {  /* gzip header */
+                nếu (state->wbits == 0)
                     state->wbits = 15;
                 state->check = crc32(0L, Z_NULL, 0);
                 CRC2(state->check, hold);
@@ -519,27 +519,27 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                 state->mode = FLAGS;
                 break;
             }
-            if (state->head != Z_NULL)
+            nếu (state->head != Z_NULL)
                 state->head->done = -1;
-            if (!(state->wrap & 1) ||   /* check if zlib header allowed */
-#else
-            if (
+            nếu (!(state->wrap & 1) ||   /* check if zlib header allowed */
+#không_thì
+            nếu (
 #endif
                 ((BITS(8) << 8) + (hold >> 8)) % 31) {
                 strm->msg = (z_const char *)"incorrect header check";
                 state->mode = BAD;
                 break;
             }
-            if (BITS(4) != Z_DEFLATED) {
+            nếu (BITS(4) != Z_DEFLATED) {
                 strm->msg = (z_const char *)"unknown compression method";
                 state->mode = BAD;
                 break;
             }
             DROPBITS(4);
             len = BITS(4) + 8;
-            if (state->wbits == 0)
+            nếu (state->wbits == 0)
                 state->wbits = len;
-            if (len > 15 || len > state->wbits) {
+            nếu (len > 15 || len > state->wbits) {
                 strm->msg = (z_const char *)"invalid window size";
                 state->mode = BAD;
                 break;
@@ -554,64 +554,64 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
 #ifdef GUNZIP
         case FLAGS:
             NEEDBITS(16);
-            state->flags = (int)(hold);
-            if ((state->flags & 0xff) != Z_DEFLATED) {
+            state->flags = (số_nguyên)(hold);
+            nếu ((state->flags & 0xff) != Z_DEFLATED) {
                 strm->msg = (z_const char *)"unknown compression method";
                 state->mode = BAD;
                 break;
             }
-            if (state->flags & 0xe000) {
+            nếu (state->flags & 0xe000) {
                 strm->msg = (z_const char *)"unknown header flags set";
                 state->mode = BAD;
                 break;
             }
-            if (state->head != Z_NULL)
-                state->head->text = (int)((hold >> 8) & 1);
-            if ((state->flags & 0x0200) && (state->wrap & 4))
+            nếu (state->head != Z_NULL)
+                state->head->text = (số_nguyên)((hold >> 8) & 1);
+            nếu ((state->flags & 0x0200) && (state->wrap & 4))
                 CRC2(state->check, hold);
             INITBITS();
             state->mode = TIME;
                 /* fallthrough */
         case TIME:
             NEEDBITS(32);
-            if (state->head != Z_NULL)
+            nếu (state->head != Z_NULL)
                 state->head->time = hold;
-            if ((state->flags & 0x0200) && (state->wrap & 4))
+            nếu ((state->flags & 0x0200) && (state->wrap & 4))
                 CRC4(state->check, hold);
             INITBITS();
             state->mode = OS;
                 /* fallthrough */
         case OS:
             NEEDBITS(16);
-            if (state->head != Z_NULL) {
-                state->head->xflags = (int)(hold & 0xff);
-                state->head->os = (int)(hold >> 8);
+            nếu (state->head != Z_NULL) {
+                state->head->xflags = (số_nguyên)(hold & 0xff);
+                state->head->os = (số_nguyên)(hold >> 8);
             }
-            if ((state->flags & 0x0200) && (state->wrap & 4))
+            nếu ((state->flags & 0x0200) && (state->wrap & 4))
                 CRC2(state->check, hold);
             INITBITS();
             state->mode = EXLEN;
                 /* fallthrough */
         case EXLEN:
-            if (state->flags & 0x0400) {
+            nếu (state->flags & 0x0400) {
                 NEEDBITS(16);
                 state->length = (unsigned)(hold);
-                if (state->head != Z_NULL)
+                nếu (state->head != Z_NULL)
                     state->head->extra_len = (unsigned)hold;
-                if ((state->flags & 0x0200) && (state->wrap & 4))
+                nếu ((state->flags & 0x0200) && (state->wrap & 4))
                     CRC2(state->check, hold);
                 INITBITS();
             }
-            else if (state->head != Z_NULL)
+            không_thì nếu (state->head != Z_NULL)
                 state->head->extra = Z_NULL;
             state->mode = EXTRA;
                 /* fallthrough */
         case EXTRA:
-            if (state->flags & 0x0400) {
+            nếu (state->flags & 0x0400) {
                 copy = state->length;
-                if (copy > have) copy = have;
-                if (copy) {
-                    if (state->head != Z_NULL &&
+                nếu (copy > have) copy = have;
+                nếu (copy) {
+                    nếu (state->head != Z_NULL &&
                         state->head->extra != Z_NULL &&
                         (len = state->head->extra_len - state->length) <
                             state->head->extra_max) {
@@ -619,72 +619,72 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                                 len + copy > state->head->extra_max ?
                                 state->head->extra_max - len : copy);
                     }
-                    if ((state->flags & 0x0200) && (state->wrap & 4))
+                    nếu ((state->flags & 0x0200) && (state->wrap & 4))
                         state->check = crc32(state->check, next, copy);
                     have -= copy;
                     next += copy;
                     state->length -= copy;
                 }
-                if (state->length) goto inf_leave;
+                nếu (state->length) goto inf_leave;
             }
             state->length = 0;
             state->mode = NAME;
                 /* fallthrough */
         case NAME:
-            if (state->flags & 0x0800) {
-                if (have == 0) goto inf_leave;
+            nếu (state->flags & 0x0800) {
+                nếu (have == 0) goto inf_leave;
                 copy = 0;
                 do {
                     len = (unsigned)(next[copy++]);
-                    if (state->head != Z_NULL &&
+                    nếu (state->head != Z_NULL &&
                             state->head->name != Z_NULL &&
                             state->length < state->head->name_max)
                         state->head->name[state->length++] = (Bytef)len;
-                } while (len && copy < have);
-                if ((state->flags & 0x0200) && (state->wrap & 4))
+                } trong_khi (len && copy < have);
+                nếu ((state->flags & 0x0200) && (state->wrap & 4))
                     state->check = crc32(state->check, next, copy);
                 have -= copy;
                 next += copy;
-                if (len) goto inf_leave;
+                nếu (len) goto inf_leave;
             }
-            else if (state->head != Z_NULL)
+            không_thì nếu (state->head != Z_NULL)
                 state->head->name = Z_NULL;
             state->length = 0;
             state->mode = COMMENT;
                 /* fallthrough */
         case COMMENT:
-            if (state->flags & 0x1000) {
-                if (have == 0) goto inf_leave;
+            nếu (state->flags & 0x1000) {
+                nếu (have == 0) goto inf_leave;
                 copy = 0;
                 do {
                     len = (unsigned)(next[copy++]);
-                    if (state->head != Z_NULL &&
+                    nếu (state->head != Z_NULL &&
                             state->head->comment != Z_NULL &&
                             state->length < state->head->comm_max)
                         state->head->comment[state->length++] = (Bytef)len;
-                } while (len && copy < have);
-                if ((state->flags & 0x0200) && (state->wrap & 4))
+                } trong_khi (len && copy < have);
+                nếu ((state->flags & 0x0200) && (state->wrap & 4))
                     state->check = crc32(state->check, next, copy);
                 have -= copy;
                 next += copy;
-                if (len) goto inf_leave;
+                nếu (len) goto inf_leave;
             }
-            else if (state->head != Z_NULL)
+            không_thì nếu (state->head != Z_NULL)
                 state->head->comment = Z_NULL;
             state->mode = HCRC;
                 /* fallthrough */
         case HCRC:
-            if (state->flags & 0x0200) {
+            nếu (state->flags & 0x0200) {
                 NEEDBITS(16);
-                if ((state->wrap & 4) && hold != (state->check & 0xffff)) {
+                nếu ((state->wrap & 4) && hold != (state->check & 0xffff)) {
                     strm->msg = (z_const char *)"header crc mismatch";
                     state->mode = BAD;
                     break;
                 }
                 INITBITS();
             }
-            if (state->head != Z_NULL) {
-                state->head->hcrc = (int)((state->flags >> 9) & 1);
+            nếu (state->head != Z_NULL) {
+                state->head->hcrc = (số_nguyên)((state->flags >> 9) & 1);
                 state->head->done = 1;
             }
             strm->adler = state->check = crc32(0L, Z_NULL, 0);
@@ -698,18 +698,18 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = DICT;
                 /* fallthrough */
         case DICT:
-            if (state->havedict == 0) {
+            nếu (state->havedict == 0) {
                 RESTORE();
-                return Z_NEED_DICT;
+                trả_về Z_NEED_DICT;
             }
             strm->adler = state->check = adler32(0L, Z_NULL, 0);
             state->mode = TYPE;
                 /* fallthrough */
         case TYPE:
-            if (flush == Z_BLOCK || flush == Z_TREES) goto inf_leave;
+            nếu (flush == Z_BLOCK || flush == Z_TREES) goto inf_leave;
                 /* fallthrough */
         case TYPEDO:
-            if (state->last) {
+            nếu (state->last) {
                 BYTEBITS();
                 state->mode = CHECK;
                 break;
@@ -728,7 +728,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                 Tracev((stderr, "inflate:     fixed codes block%s\n",
                         state->last ? " (last)" : ""));
                 state->mode = LEN_;             /* decode codes */
-                if (flush == Z_TREES) {
+                nếu (flush == Z_TREES) {
                     DROPBITS(2);
                     goto inf_leave;
                 }
@@ -747,7 +747,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
         case STORED:
             BYTEBITS();                         /* go to byte boundary */
             NEEDBITS(32);
-            if ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
+            nếu ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
                 strm->msg = (z_const char *)"invalid stored block lengths";
                 state->mode = BAD;
                 break;
@@ -757,17 +757,17 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                     state->length));
             INITBITS();
             state->mode = COPY_;
-            if (flush == Z_TREES) goto inf_leave;
+            nếu (flush == Z_TREES) goto inf_leave;
                 /* fallthrough */
         case COPY_:
             state->mode = COPY;
                 /* fallthrough */
         case COPY:
             copy = state->length;
-            if (copy) {
-                if (copy > have) copy = have;
-                if (copy > left) copy = left;
-                if (copy == 0) goto inf_leave;
+            nếu (copy) {
+                nếu (copy > have) copy = have;
+                nếu (copy > left) copy = left;
+                nếu (copy == 0) goto inf_leave;
                 zmemcpy(put, next, copy);
                 have -= copy;
                 next += copy;
@@ -788,7 +788,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->ncode = BITS(4) + 4;
             DROPBITS(4);
 #ifndef PKZIP_BUG_WORKAROUND
-            if (state->nlen > 286 || state->ndist > 30) {
+            nếu (state->nlen > 286 || state->ndist > 30) {
                 strm->msg = (z_const char *)
                     "too many length or distance symbols";
                 state->mode = BAD;
@@ -800,19 +800,19 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = LENLENS;
                 /* fallthrough */
         case LENLENS:
-            while (state->have < state->ncode) {
+            trong_khi (state->have < state->ncode) {
                 NEEDBITS(3);
                 state->lens[order[state->have++]] = (unsigned short)BITS(3);
                 DROPBITS(3);
             }
-            while (state->have < 19)
+            trong_khi (state->have < 19)
                 state->lens[order[state->have++]] = 0;
             state->next = state->codes;
             state->lencode = state->distcode = (const code FAR *)(state->next);
             state->lenbits = 7;
             ret = inflate_table(CODES, state->lens, 19, &(state->next),
                                 &(state->lenbits), state->work);
-            if (ret) {
+            nếu (ret) {
                 strm->msg = (z_const char *)"invalid code lengths set";
                 state->mode = BAD;
                 break;
@@ -822,21 +822,21 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = CODELENS;
                 /* fallthrough */
         case CODELENS:
-            while (state->have < state->nlen + state->ndist) {
-                for (;;) {
+            trong_khi (state->have < state->nlen + state->ndist) {
+                cho (;;) {
                     here = state->lencode[BITS(state->lenbits)];
-                    if ((unsigned)(here.bits) <= bits) break;
+                    nếu ((unsigned)(here.bits) <= bits) break;
                     PULLBYTE();
                 }
-                if (here.val < 16) {
+                nếu (here.val < 16) {
                     DROPBITS(here.bits);
                     state->lens[state->have++] = here.val;
                 }
-                else {
-                    if (here.val == 16) {
+                không_thì {
+                    nếu (here.val == 16) {
                         NEEDBITS(here.bits + 2);
                         DROPBITS(here.bits);
-                        if (state->have == 0) {
+                        nếu (state->have == 0) {
                             strm->msg = (z_const char *)
                                 "invalid bit length repeat";
                             state->mode = BAD;
@@ -846,36 +846,36 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
                         copy = 3 + BITS(2);
                         DROPBITS(2);
                     }
-                    else if (here.val == 17) {
+                    không_thì nếu (here.val == 17) {
                         NEEDBITS(here.bits + 3);
                         DROPBITS(here.bits);
                         len = 0;
                         copy = 3 + BITS(3);
                         DROPBITS(3);
                     }
-                    else {
+                    không_thì {
                         NEEDBITS(here.bits + 7);
                         DROPBITS(here.bits);
                         len = 0;
                         copy = 11 + BITS(7);
                         DROPBITS(7);
                     }
-                    if (state->have + copy > state->nlen + state->ndist) {
+                    nếu (state->have + copy > state->nlen + state->ndist) {
                         strm->msg = (z_const char *)
                             "invalid bit length repeat";
                         state->mode = BAD;
                         break;
                     }
-                    while (copy--)
+                    trong_khi (copy--)
                         state->lens[state->have++] = (unsigned short)len;
                 }
             }
 
             /* handle error breaks in while */
-            if (state->mode == BAD) break;
+            nếu (state->mode == BAD) break;
 
             /* check for end-of-block code (better have one) */
-            if (state->lens[256] == 0) {
+            nếu (state->lens[256] == 0) {
                 strm->msg = (z_const char *)
                     "invalid code -- missing end-of-block";
                 state->mode = BAD;
@@ -890,7 +890,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->lenbits = 9;
             ret = inflate_table(LENS, state->lens, state->nlen, &(state->next),
                                 &(state->lenbits), state->work);
-            if (ret) {
+            nếu (ret) {
                 strm->msg = (z_const char *)"invalid literal/lengths set";
                 state->mode = BAD;
                 break;
@@ -899,39 +899,39 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->distbits = 6;
             ret = inflate_table(DISTS, state->lens + state->nlen, state->ndist,
                             &(state->next), &(state->distbits), state->work);
-            if (ret) {
+            nếu (ret) {
                 strm->msg = (z_const char *)"invalid distances set";
                 state->mode = BAD;
                 break;
             }
             Tracev((stderr, "inflate:       codes ok\n"));
             state->mode = LEN_;
-            if (flush == Z_TREES) goto inf_leave;
+            nếu (flush == Z_TREES) goto inf_leave;
                 /* fallthrough */
         case LEN_:
             state->mode = LEN;
                 /* fallthrough */
         case LEN:
-            if (have >= 6 && left >= 258) {
+            nếu (have >= 6 && left >= 258) {
                 RESTORE();
                 inflate_fast(strm, out);
                 LOAD();
-                if (state->mode == TYPE)
+                nếu (state->mode == TYPE)
                     state->back = -1;
                 break;
             }
             state->back = 0;
-            for (;;) {
+            cho (;;) {
                 here = state->lencode[BITS(state->lenbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+                nếu ((unsigned)(here.bits) <= bits) break;
                 PULLBYTE();
             }
-            if (here.op && (here.op & 0xf0) == 0) {
+            nếu (here.op && (here.op & 0xf0) == 0) {
                 last = here;
-                for (;;) {
+                cho (;;) {
                     here = state->lencode[last.val +
                             (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+                    nếu ((unsigned)(last.bits + here.bits) <= bits) break;
                     PULLBYTE();
                 }
                 DROPBITS(last.bits);
@@ -940,20 +940,20 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             DROPBITS(here.bits);
             state->back += here.bits;
             state->length = (unsigned)here.val;
-            if ((int)(here.op) == 0) {
+            nếu ((số_nguyên)(here.op) == 0) {
                 Tracevv((stderr, here.val >= 0x20 && here.val < 0x7f ?
                         "inflate:         literal '%c'\n" :
                         "inflate:         literal 0x%02x\n", here.val));
                 state->mode = LIT;
                 break;
             }
-            if (here.op & 32) {
+            nếu (here.op & 32) {
                 Tracevv((stderr, "inflate:         end of block\n"));
                 state->back = -1;
                 state->mode = TYPE;
                 break;
             }
-            if (here.op & 64) {
+            nếu (here.op & 64) {
                 strm->msg = (z_const char *)"invalid literal/length code";
                 state->mode = BAD;
                 break;
@@ -962,7 +962,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = LENEXT;
                 /* fallthrough */
         case LENEXT:
-            if (state->extra) {
+            nếu (state->extra) {
                 NEEDBITS(state->extra);
                 state->length += BITS(state->extra);
                 DROPBITS(state->extra);
@@ -973,17 +973,17 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = DIST;
                 /* fallthrough */
         case DIST:
-            for (;;) {
+            cho (;;) {
                 here = state->distcode[BITS(state->distbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+                nếu ((unsigned)(here.bits) <= bits) break;
                 PULLBYTE();
             }
-            if ((here.op & 0xf0) == 0) {
+            nếu ((here.op & 0xf0) == 0) {
                 last = here;
-                for (;;) {
+                cho (;;) {
                     here = state->distcode[last.val +
                             (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+                    nếu ((unsigned)(last.bits + here.bits) <= bits) break;
                     PULLBYTE();
                 }
                 DROPBITS(last.bits);
@@ -991,7 +991,7 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             }
             DROPBITS(here.bits);
             state->back += here.bits;
-            if (here.op & 64) {
+            nếu (here.op & 64) {
                 strm->msg = (z_const char *)"invalid distance code";
                 state->mode = BAD;
                 break;
@@ -1001,14 +1001,14 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = DISTEXT;
                 /* fallthrough */
         case DISTEXT:
-            if (state->extra) {
+            nếu (state->extra) {
                 NEEDBITS(state->extra);
                 state->offset += BITS(state->extra);
                 DROPBITS(state->extra);
                 state->back += state->extra;
             }
 #ifdef INFLATE_STRICT
-            if (state->offset > state->dmax) {
+            nếu (state->offset > state->dmax) {
                 strm->msg = (z_const char *)"invalid distance too far back";
                 state->mode = BAD;
                 break;
@@ -1018,12 +1018,12 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = MATCH;
                 /* fallthrough */
         case MATCH:
-            if (left == 0) goto inf_leave;
+            nếu (left == 0) goto inf_leave;
             copy = out - left;
-            if (state->offset > copy) {         /* copy from window */
+            nếu (state->offset > copy) {         /* copy from window */
                 copy = state->offset - copy;
-                if (copy > state->whave) {
-                    if (state->sane) {
+                nếu (copy > state->whave) {
+                    nếu (state->sane) {
                         strm->msg = (z_const char *)
                             "invalid distance too far back";
                         state->mode = BAD;
@@ -1032,54 +1032,54 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
 #ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
                     Trace((stderr, "inflate.c too far\n"));
                     copy -= state->whave;
-                    if (copy > state->length) copy = state->length;
-                    if (copy > left) copy = left;
+                    nếu (copy > state->length) copy = state->length;
+                    nếu (copy > left) copy = left;
                     left -= copy;
                     state->length -= copy;
                     do {
                         *put++ = 0;
-                    } while (--copy);
-                    if (state->length == 0) state->mode = LEN;
+                    } trong_khi (--copy);
+                    nếu (state->length == 0) state->mode = LEN;
                     break;
 #endif
                 }
-                if (copy > state->wnext) {
+                nếu (copy > state->wnext) {
                     copy -= state->wnext;
                     from = state->window + (state->wsize - copy);
                 }
-                else
+                không_thì
                     from = state->window + (state->wnext - copy);
-                if (copy > state->length) copy = state->length;
+                nếu (copy > state->length) copy = state->length;
             }
-            else {                              /* copy from output */
+            không_thì {                              /* copy from output */
                 from = put - state->offset;
                 copy = state->length;
             }
-            if (copy > left) copy = left;
+            nếu (copy > left) copy = left;
             left -= copy;
             state->length -= copy;
             do {
                 *put++ = *from++;
-            } while (--copy);
-            if (state->length == 0) state->mode = LEN;
+            } trong_khi (--copy);
+            nếu (state->length == 0) state->mode = LEN;
             break;
         case LIT:
-            if (left == 0) goto inf_leave;
+            nếu (left == 0) goto inf_leave;
             *put++ = (unsigned char)(state->length);
             left--;
             state->mode = LEN;
             break;
         case CHECK:
-            if (state->wrap) {
+            nếu (state->wrap) {
                 NEEDBITS(32);
                 out -= left;
                 strm->total_out += out;
                 state->total += out;
-                if ((state->wrap & 4) && out)
+                nếu ((state->wrap & 4) && out)
                     strm->adler = state->check =
                         UPDATE_CHECK(state->check, put - out, out);
                 out = left;
-                if ((state->wrap & 4) && (
+                nếu ((state->wrap & 4) && (
 #ifdef GUNZIP
                      state->flags ? hold :
 #endif
@@ -1095,9 +1095,9 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             state->mode = LENGTH;
                 /* fallthrough */
         case LENGTH:
-            if (state->wrap && state->flags) {
+            nếu (state->wrap && state->flags) {
                 NEEDBITS(32);
-                if ((state->wrap & 4) && hold != (state->total & 0xffffffff)) {
+                nếu ((state->wrap & 4) && hold != (state->total & 0xffffffff)) {
                     strm->msg = (z_const char *)"incorrect length check";
                     state->mode = BAD;
                     break;
@@ -1115,11 +1115,11 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
             ret = Z_DATA_ERROR;
             goto inf_leave;
         case MEM:
-            return Z_MEM_ERROR;
+            trả_về Z_MEM_ERROR;
         case SYNC:
                 /* fallthrough */
         default:
-            return Z_STREAM_ERROR;
+            trả_về Z_STREAM_ERROR;
         }
 
     /*
@@ -1130,104 +1130,104 @@ int ZEXPORT inflate(z_streamp strm, int flush) {
      */
   inf_leave:
     RESTORE();
-    if (state->wsize || (out != strm->avail_out && state->mode < BAD &&
+    nếu (state->wsize || (out != strm->avail_out && state->mode < BAD &&
             (state->mode < CHECK || flush != Z_FINISH)))
-        if (updatewindow(strm, strm->next_out, out - strm->avail_out)) {
+        nếu (updatewindow(strm, strm->next_out, out - strm->avail_out)) {
             state->mode = MEM;
-            return Z_MEM_ERROR;
+            trả_về Z_MEM_ERROR;
         }
     in -= strm->avail_in;
     out -= strm->avail_out;
     strm->total_in += in;
     strm->total_out += out;
     state->total += out;
-    if ((state->wrap & 4) && out)
+    nếu ((state->wrap & 4) && out)
         strm->adler = state->check =
             UPDATE_CHECK(state->check, strm->next_out - out, out);
-    strm->data_type = (int)state->bits + (state->last ? 64 : 0) +
+    strm->data_type = (số_nguyên)state->bits + (state->last ? 64 : 0) +
                       (state->mode == TYPE ? 128 : 0) +
                       (state->mode == LEN_ || state->mode == COPY_ ? 256 : 0);
-    if (((in == 0 && out == 0) || flush == Z_FINISH) && ret == Z_OK)
+    nếu (((in == 0 && out == 0) || flush == Z_FINISH) && ret == Z_OK)
         ret = Z_BUF_ERROR;
-    return ret;
+    trả_về ret;
 }
 
-int ZEXPORT inflateEnd(z_streamp strm) {
+số_nguyên ZEXPORT inflateEnd(z_streamp strm) {
     struct inflate_state FAR *state;
-    if (inflateStateCheck(strm))
-        return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm))
+        trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
-    if (state->window != Z_NULL) ZFREE(strm, state->window);
+    nếu (state->window != Z_NULL) ZFREE(strm, state->window);
     ZFREE(strm, strm->state);
     strm->state = Z_NULL;
     Tracev((stderr, "inflate: end\n"));
-    return Z_OK;
+    trả_về Z_OK;
 }
 
-int ZEXPORT inflateGetDictionary(z_streamp strm, Bytef *dictionary,
+số_nguyên ZEXPORT inflateGetDictionary(z_streamp strm, Bytef *dictionary,
                                  uInt *dictLength) {
     struct inflate_state FAR *state;
 
     /* check state */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
 
     /* copy dictionary */
-    if (state->whave && dictionary != Z_NULL) {
+    nếu (state->whave && dictionary != Z_NULL) {
         zmemcpy(dictionary, state->window + state->wnext,
                 state->whave - state->wnext);
         zmemcpy(dictionary + state->whave - state->wnext,
                 state->window, state->wnext);
     }
-    if (dictLength != Z_NULL)
+    nếu (dictLength != Z_NULL)
         *dictLength = state->whave;
-    return Z_OK;
+    trả_về Z_OK;
 }
 
-int ZEXPORT inflateSetDictionary(z_streamp strm, const Bytef *dictionary,
+số_nguyên ZEXPORT inflateSetDictionary(z_streamp strm, const Bytef *dictionary,
                                  uInt dictLength) {
     struct inflate_state FAR *state;
     unsigned long dictid;
-    int ret;
+    số_nguyên ret;
 
     /* check state */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
-    if (state->wrap != 0 && state->mode != DICT)
-        return Z_STREAM_ERROR;
+    nếu (state->wrap != 0 && state->mode != DICT)
+        trả_về Z_STREAM_ERROR;
 
     /* check for correct dictionary identifier */
-    if (state->mode == DICT) {
+    nếu (state->mode == DICT) {
         dictid = adler32(0L, Z_NULL, 0);
         dictid = adler32(dictid, dictionary, dictLength);
-        if (dictid != state->check)
-            return Z_DATA_ERROR;
+        nếu (dictid != state->check)
+            trả_về Z_DATA_ERROR;
     }
 
     /* copy dictionary to window using updatewindow(), which will amend the
        existing dictionary if appropriate */
     ret = updatewindow(strm, dictionary + dictLength, dictLength);
-    if (ret) {
+    nếu (ret) {
         state->mode = MEM;
-        return Z_MEM_ERROR;
+        trả_về Z_MEM_ERROR;
     }
     state->havedict = 1;
     Tracev((stderr, "inflate:   dictionary set\n"));
-    return Z_OK;
+    trả_về Z_OK;
 }
 
-int ZEXPORT inflateGetHeader(z_streamp strm, gz_headerp head) {
+số_nguyên ZEXPORT inflateGetHeader(z_streamp strm, gz_headerp head) {
     struct inflate_state FAR *state;
 
     /* check state */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
-    if ((state->wrap & 2) == 0) return Z_STREAM_ERROR;
+    nếu ((state->wrap & 2) == 0) trả_về Z_STREAM_ERROR;
 
     /* save header structure */
     state->head = head;
     head->done = 0;
-    return Z_OK;
+    trả_về Z_OK;
 }
 
 /*
@@ -1248,38 +1248,38 @@ local unsigned syncsearch(unsigned FAR *have, const unsigned char FAR *buf,
 
     got = *have;
     next = 0;
-    while (next < len && got < 4) {
-        if ((int)(buf[next]) == (got < 2 ? 0 : 0xff))
+    trong_khi (next < len && got < 4) {
+        nếu ((số_nguyên)(buf[next]) == (got < 2 ? 0 : 0xff))
             got++;
-        else if (buf[next])
+        không_thì nếu (buf[next])
             got = 0;
-        else
+        không_thì
             got = 4 - got;
         next++;
     }
     *have = got;
-    return next;
+    trả_về next;
 }
 
-int ZEXPORT inflateSync(z_streamp strm) {
+số_nguyên ZEXPORT inflateSync(z_streamp strm) {
     unsigned len;               /* number of bytes to look at or looked at */
-    int flags;                  /* temporary to save header status */
+    số_nguyên flags;                  /* temporary to save header status */
     unsigned long in, out;      /* temporary to save total_in and total_out */
     unsigned char buf[4];       /* to restore bit buffer to byte string */
     struct inflate_state FAR *state;
 
     /* check parameters */
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
-    if (strm->avail_in == 0 && state->bits < 8) return Z_BUF_ERROR;
+    nếu (strm->avail_in == 0 && state->bits < 8) trả_về Z_BUF_ERROR;
 
     /* if first time, start search in bit buffer */
-    if (state->mode != SYNC) {
+    nếu (state->mode != SYNC) {
         state->mode = SYNC;
         state->hold >>= state->bits & 7;
         state->bits -= state->bits & 7;
         len = 0;
-        while (state->bits >= 8) {
+        trong_khi (state->bits >= 8) {
             buf[len++] = (unsigned char)(state->hold);
             state->hold >>= 8;
             state->bits -= 8;
@@ -1295,10 +1295,10 @@ int ZEXPORT inflateSync(z_streamp strm) {
     strm->total_in += len;
 
     /* return no joy or set up to restart inflate() on a new block */
-    if (state->have != 4) return Z_DATA_ERROR;
-    if (state->flags == -1)
+    nếu (state->have != 4) trả_về Z_DATA_ERROR;
+    nếu (state->flags == -1)
         state->wrap = 0;    /* if no header yet, treat as raw */
-    else
+    không_thì
         state->wrap &= ~4;  /* no point in computing a check value now */
     flags = state->flags;
     in = strm->total_in;  out = strm->total_out;
@@ -1306,7 +1306,7 @@ int ZEXPORT inflateSync(z_streamp strm) {
     strm->total_in = in;  strm->total_out = out;
     state->flags = flags;
     state->mode = TYPE;
-    return Z_OK;
+    trả_về Z_OK;
 }
 
 /*
@@ -1317,36 +1317,36 @@ int ZEXPORT inflateSync(z_streamp strm) {
    block. When decompressing, PPP checks that at the end of input packet,
    inflate is waiting for these length bytes.
  */
-int ZEXPORT inflateSyncPoint(z_streamp strm) {
+số_nguyên ZEXPORT inflateSyncPoint(z_streamp strm) {
     struct inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
-    return state->mode == STORED && state->bits == 0;
+    trả_về state->mode == STORED && state->bits == 0;
 }
 
-int ZEXPORT inflateCopy(z_streamp dest, z_streamp source) {
+số_nguyên ZEXPORT inflateCopy(z_streamp dest, z_streamp source) {
     struct inflate_state FAR *state;
     struct inflate_state FAR *copy;
     unsigned char FAR *window;
 
     /* check input */
-    if (inflateStateCheck(source) || dest == Z_NULL)
-        return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(source) || dest == Z_NULL)
+        trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)source->state;
 
     /* allocate space */
     copy = (struct inflate_state FAR *)
            ZALLOC(source, 1, sizeof(struct inflate_state));
-    if (copy == Z_NULL) return Z_MEM_ERROR;
+    nếu (copy == Z_NULL) trả_về Z_MEM_ERROR;
     zmemzero(copy, sizeof(struct inflate_state));
     window = Z_NULL;
-    if (state->window != Z_NULL) {
+    nếu (state->window != Z_NULL) {
         window = (unsigned char FAR *)
                  ZALLOC(source, 1U << state->wbits, sizeof(unsigned char));
-        if (window == Z_NULL) {
+        nếu (window == Z_NULL) {
             ZFREE(source, copy);
-            return Z_MEM_ERROR;
+            trả_về Z_MEM_ERROR;
         }
     }
 
@@ -1354,60 +1354,60 @@ int ZEXPORT inflateCopy(z_streamp dest, z_streamp source) {
     zmemcpy(dest, source, sizeof(z_stream));
     zmemcpy(copy, state, sizeof(struct inflate_state));
     copy->strm = dest;
-    if (state->lencode >= state->codes &&
+    nếu (state->lencode >= state->codes &&
         state->lencode <= state->codes + ENOUGH - 1) {
         copy->lencode = copy->codes + (state->lencode - state->codes);
         copy->distcode = copy->codes + (state->distcode - state->codes);
     }
     copy->next = copy->codes + (state->next - state->codes);
-    if (window != Z_NULL)
+    nếu (window != Z_NULL)
         zmemcpy(window, state->window, state->whave);
     copy->window = window;
     dest->state = (struct internal_state FAR *)copy;
-    return Z_OK;
+    trả_về Z_OK;
 }
 
-int ZEXPORT inflateUndermine(z_streamp strm, int subvert) {
+số_nguyên ZEXPORT inflateUndermine(z_streamp strm, số_nguyên subvert) {
     struct inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
 #ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
     state->sane = !subvert;
-    return Z_OK;
-#else
+    trả_về Z_OK;
+#không_thì
     (void)subvert;
     state->sane = 1;
-    return Z_DATA_ERROR;
+    trả_về Z_DATA_ERROR;
 #endif
 }
 
-int ZEXPORT inflateValidate(z_streamp strm, int check) {
+số_nguyên ZEXPORT inflateValidate(z_streamp strm, số_nguyên check) {
     struct inflate_state FAR *state;
 
-    if (inflateStateCheck(strm)) return Z_STREAM_ERROR;
+    nếu (inflateStateCheck(strm)) trả_về Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
-    if (check && state->wrap)
+    nếu (check && state->wrap)
         state->wrap |= 4;
-    else
+    không_thì
         state->wrap &= ~4;
-    return Z_OK;
+    trả_về Z_OK;
 }
 
 long ZEXPORT inflateMark(z_streamp strm) {
     struct inflate_state FAR *state;
 
-    if (inflateStateCheck(strm))
-        return -(1L << 16);
+    nếu (inflateStateCheck(strm))
+        trả_về -(1L << 16);
     state = (struct inflate_state FAR *)strm->state;
-    return (long)(((unsigned long)((long)state->back)) << 16) +
+    trả_về (long)(((unsigned long)((long)state->back)) << 16) +
         (state->mode == COPY ? state->length :
             (state->mode == MATCH ? state->was - state->length : 0));
 }
 
 unsigned long ZEXPORT inflateCodesUsed(z_streamp strm) {
     struct inflate_state FAR *state;
-    if (inflateStateCheck(strm)) return (unsigned long)-1;
+    nếu (inflateStateCheck(strm)) trả_về (unsigned long)-1;
     state = (struct inflate_state FAR *)strm->state;
-    return (unsigned long)(state->next - state->codes);
+    trả_về (unsigned long)(state->next - state->codes);
 }

@@ -29,7 +29,7 @@ const char inflate9_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
+số_nguyên inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
                    code FAR * FAR *table, unsigned FAR *bits,
                    unsigned short FAR *work) {
     unsigned len;               /* a code's length in bits */
@@ -38,7 +38,7 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     unsigned root;              /* number of index bits for root table */
     unsigned curr;              /* number of index bits for current table */
     unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
+    số_nguyên left;                   /* number of prefix codes available */
     unsigned used;              /* code entries in table used */
     unsigned huff;              /* Huffman code */
     unsigned incr;              /* for incrementing code, index */
@@ -49,7 +49,7 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     code FAR *next;             /* next available space in table */
     const unsigned short FAR *base;     /* base value table to use */
     const unsigned short FAR *extra;    /* extra bits table to use */
-    int end;                    /* use base and extra for symbol > end */
+    số_nguyên end;                    /* use base and extra for symbol > end */
     unsigned short count[MAXBITS+1];    /* number of codes of each length */
     unsigned short offs[MAXBITS+1];     /* offsets in table for each length */
     static const unsigned short lbase[31] = { /* Length codes 257..285 base */
@@ -101,39 +101,39 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
      */
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    for (len = 0; len <= MAXBITS; len++)
+    cho (len = 0; len <= MAXBITS; len++)
         count[len] = 0;
-    for (sym = 0; sym < codes; sym++)
+    cho (sym = 0; sym < codes; sym++)
         count[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
     root = *bits;
-    for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) return -1;            /* no codes! */
-    for (min = 1; min <= MAXBITS; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+    cho (max = MAXBITS; max >= 1; max--)
+        nếu (count[max] != 0) break;
+    nếu (root > max) root = max;
+    nếu (max == 0) trả_về -1;            /* no codes! */
+    cho (min = 1; min <= MAXBITS; min++)
+        nếu (count[min] != 0) break;
+    nếu (root < min) root = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;
-    for (len = 1; len <= MAXBITS; len++) {
+    cho (len = 1; len <= MAXBITS; len++) {
         left <<= 1;
         left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+        nếu (left < 0) trả_về -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    nếu (left > 0 && (type == CODES || max != 1))
+        trả_về -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
+    cho (len = 1; len < MAXBITS; len++)
         offs[len + 1] = offs[len] + count[len];
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+    cho (sym = 0; sym < codes; sym++)
+        nếu (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -197,23 +197,23 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used >= ENOUGH_LENS) ||
+    nếu ((type == LENS && used >= ENOUGH_LENS) ||
         (type == DISTS && used >= ENOUGH_DISTS))
-        return 1;
+        trả_về 1;
 
     /* process all codes and make table entries */
-    for (;;) {
+    cho (;;) {
         /* create table entry */
         this.bits = (unsigned char)(len - drop);
-        if ((int)(work[sym]) < end) {
+        nếu ((số_nguyên)(work[sym]) < end) {
             this.op = (unsigned char)0;
             this.val = work[sym];
         }
-        else if ((int)(work[sym]) > end) {
+        không_thì nếu ((số_nguyên)(work[sym]) > end) {
             this.op = (unsigned char)(extra[work[sym]]);
             this.val = base[work[sym]];
         }
-        else {
+        không_thì {
             this.op = (unsigned char)(32 + 64);         /* end of block */
             this.val = 0;
         }
@@ -224,30 +224,30 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
         do {
             fill -= incr;
             next[(huff >> drop) + fill] = this;
-        } while (fill != 0);
+        } trong_khi (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        trong_khi (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        nếu (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        không_thì
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        nếu (--(count[len]) == 0) {
+            nếu (len == max) break;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        nếu (len > root && (huff & mask) != low) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
+            nếu (drop == 0)
                 drop = root;
 
             /* increment past last table */
@@ -255,19 +255,19 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
+            left = (số_nguyên)(1 << curr);
+            trong_khi (curr + drop < max) {
                 left -= count[curr + drop];
-                if (left <= 0) break;
+                nếu (left <= 0) break;
                 curr++;
                 left <<= 1;
             }
 
             /* check for enough space */
             used += 1U << curr;
-            if ((type == LENS && used >= ENOUGH_LENS) ||
+            nếu ((type == LENS && used >= ENOUGH_LENS) ||
                 (type == DISTS && used >= ENOUGH_DISTS))
-                return 1;
+                trả_về 1;
 
             /* point entry in root table to sub-table */
             low = huff & mask;
@@ -287,9 +287,9 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     this.op = (unsigned char)64;                /* invalid code marker */
     this.bits = (unsigned char)(len - drop);
     this.val = (unsigned short)0;
-    while (huff != 0) {
+    trong_khi (huff != 0) {
         /* when done with sub-table, drop back to root table */
-        if (drop != 0 && (huff & mask) != low) {
+        nếu (drop != 0 && (huff & mask) != low) {
             drop = 0;
             len = root;
             next = *table;
@@ -302,18 +302,18 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        trong_khi (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        nếu (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        không_thì
             huff = 0;
     }
 
     /* set return parameters */
     *table += used;
     *bits = root;
-    return 0;
+    trả_về 0;
 }
