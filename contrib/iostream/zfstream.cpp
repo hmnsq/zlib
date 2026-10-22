@@ -10,98 +10,98 @@ gzfilebuf::gzfilebuf() :
 gzfilebuf::~gzfilebuf() {
 
   sync();
-  if ( own_file_descriptor )
+  만약 ( own_file_descriptor )
     close();
 
 }
 
 gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+                            정수 io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  만약 ( is_open() )
+    반환 NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  만약 ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } 아니면 만약 ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } 아니면 {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  만약 ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  만약 ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  만약 ( (file = gzopen(name, char_mode)) == NULL )
+    반환 NULL;
 
   own_file_descriptor = 1;
 
-  return this;
+  반환 this;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( 정수 file_descriptor,
+                              정수 io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  만약 ( is_open() )
+    반환 NULL;
 
   char char_mode[10];
   char *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  만약 ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } 아니면 만약 ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } 아니면 {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  만약 ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  만약 ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  만약 ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
+    반환 NULL;
 
   own_file_descriptor = 0;
 
-  return this;
+  반환 this;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  만약 ( is_open() ) {
 
     sync();
     gzclose( file );
@@ -109,145 +109,145 @@ gzfilebuf *gzfilebuf::close() {
 
   }
 
-  return this;
+  반환 this;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+정수 gzfilebuf::setcompressionlevel( 정수 comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  반환 gzsetparams(file, comp_level, -2);
 
 }
 
+정수 gzfilebuf::setcompressionstrategy( 정수 comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  반환 gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, 정수 which ) {
+
+  반환 streampos(EOF);
+
+}
+
+정수 gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  만약 ( !is_open() || !(mode & ios::in) )
+    반환 EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  만약 ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    만약 ( (allocate()) == EOF )
+      반환 EOF;
     setp(0,0);
 
-  } else {
+  } 아니면 {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    만약 ( in_avail() )
+      반환 (unsigned char) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    만약 ( out_waiting() ) {
+      만약 ( flushbuf() == EOF )
+        반환 EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  정수 result = fillbuf();
+  만약 ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    반환 EOF;
   }
 
-  return (unsigned char) *gptr();
+  반환 (unsigned char) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+정수 gzfilebuf::overflow( 정수 c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  만약 ( !is_open() || !(mode & ios::out) )
+    반환 EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  만약 ( !base() ) {
+    만약 ( allocate() == EOF )
+      반환 EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } 아니면 {
+    만약 (in_avail()) {
+        반환 EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    만약 (out_waiting()) {
+      만약 (flushbuf() == EOF)
+        반환 EOF;
     }
   }
 
-  int bl = blen();
+  정수 bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  만약 ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  반환 0;
 
 }
 
-int gzfilebuf::sync() {
+정수 gzfilebuf::sync() {
 
-  if ( !is_open() )
-    return EOF;
+  만약 ( !is_open() )
+    반환 EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  만약 ( out_waiting() )
+    반환 flushbuf();
 
-  return 0;
+  반환 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+정수 gzfilebuf::flushbuf() {
 
-  int n;
+  정수 n;
   char *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  만약 ( gzwrite( file, q, n) < n )
+    반환 EOF;
 
   setp(0,0);
 
-  return 0;
+  반환 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+정수 gzfilebuf::fillbuf() {
 
-  int required;
+  정수 required;
   char *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  정수 t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  만약 ( t <= 0) 반환 EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  반환 t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+void gzfilestream_common::attach( 정수 fd, 정수 io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  만약 ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  아니면
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+void gzfilestream_common::open( const char *name, 정수 io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  만약 ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  아니면
     clear();
 
 }
 
 void gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  만약 ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  반환 &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( const char *name, 정수 io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( 정수 fd, 정수 io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( const char *name, 정수 io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( 정수 fd, 정수 io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );

@@ -99,12 +99,12 @@ static void set_uniq(set_rand_t *gen, const void *ptr) {
 /* Return 32 random bits, advancing the state *gen. */
 static ui32_t set_rand(set_rand_t *gen) {
     ui32_t mix;
-    int rot;
+    정수 rot;
     ui64_t state = gen->state;
     gen->state = state * 6364136223846793005ULL + gen->inc;
     mix = (ui32_t)(((state >> 18) ^ state) >> 27);
     rot = state >> 59;
-    return (mix >> rot) | (mix << ((-rot) & 31));
+    반환 (mix >> rot) | (mix << ((-rot) & 31));
 }
 /* End of PCG32 code. */
 
@@ -140,7 +140,7 @@ typedef struct set_s {
    used by the application. e.g. if allocation tracking is desired. */
 #ifdef SET_TRACK
 /* Track the number of allocations and the total backing memory size. */
-#  if defined(_WIN32)
+#  만약 defined(_WIN32)
 #    include <malloc.h>
 #    define SET_ALLOC_SIZE(ptr) _msize(ptr)
 #  elif defined(__MACH__)
@@ -155,33 +155,33 @@ typedef struct set_s {
 #  elif defined(__NetBSD__)
 #    include <jemalloc/jemalloc.h>
 #    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
-#  else     /* e.g. OpenBSD */
+#  아니면     /* e.g. OpenBSD */
 #    define SET_ALLOC_SIZE(ptr) 0
 #  endif
 /* With tracking. */
 static void *set_alloc(set_t *set, void *ptr, size_t size) {
     size_t had = ptr == NULL ? 0 : SET_ALLOC_SIZE(ptr);
     void *mem = realloc(ptr, size);
-    if (mem == NULL)
+    만약 (mem == NULL)
         longjmp(set->env, ENOMEM);
     set->allocs += ptr == NULL;
     set->memory += SET_ALLOC_SIZE(mem) - had;
-    return mem;
+    반환 mem;
 }
 static void set_free(set_t *set, void *ptr) {
-    if (ptr != NULL) {
+    만약 (ptr != NULL) {
         set->allocs--;
         set->memory -= SET_ALLOC_SIZE(ptr);
         free(ptr);
     }
 }
-#else
+#아니면
 /* Without tracking. */
 static void *set_alloc(set_t *set, void *ptr, size_t size) {
     void *mem = realloc(ptr, size);
-    if (mem == NULL)
+    만약 (mem == NULL)
         longjmp(set->env, ENOMEM);
-    return mem;
+    반환 mem;
 }
 static void set_free(set_t *set, void *ptr) {
     (void)set;
@@ -193,18 +193,18 @@ static void set_free(set_t *set, void *ptr) {
    want links. If fill is true, assure that the first want links are filled in,
    setting them to set->head if not previously filled in. Otherwise it is
    assumed that the first want links are about to be filled in. */
-static void set_grow(set_t *set, set_node_t *node, int want, int fill) {
-    int i;
-    if (node->size < want) {
-        int more = node->size ? node->size : 1;
-        while (more < want)
+static void set_grow(set_t *set, set_node_t *node, 정수 want, 정수 fill) {
+    정수 i;
+    만약 (node->size < want) {
+        정수 more = node->size ? node->size : 1;
+        동안 (more < want)
             more <<= 1;
         node->right = set_alloc(set, node->right,
                                 (size_t)more * sizeof(set_node_t *));
         node->size = (i16_t)more;
     }
-    if (fill)
-        for (i = node->fill; i < want; i++)
+    만약 (fill)
+        위해 (i = node->fill; i < want; i++)
             node->right[i] = set->head;
     node->fill = (i16_t)want;
 }
@@ -215,13 +215,13 @@ static set_node_t *set_node(set_t *set) {
     node->size = 0;
     node->fill = 0;
     node->right = NULL;
-    return node;
+    반환 node;
 }
 
 /* --private-- Free the list linked from head, along with the keys. */
 static void set_sweep(set_t *set) {
     set_node_t *step = set->head->right[0];
-    while (step != set->head) {
+    동안 (step != set->head) {
         set_node_t *next = step->right[0];      /* save link to next node */
         set_drop(set, step->key);
         set_free(set, step->right);
@@ -253,13 +253,13 @@ SKIPSET_EXPORT void set_start(set_t *set) {
 
 /* Return true if *set appears to be in a usable state. If *set has been zeroed
    out, then set_ok(set) will be false and set_end(set) will be safe. */
-SKIPSET_EXPORT int set_ok(set_t *set) {
-    return set->head != NULL &&
+SKIPSET_EXPORT 정수 set_ok(set_t *set) {
+    반환 set->head != NULL &&
            set->head->right != NULL &&
            *(unsigned char *)&set->head->key == 137;
 }
 
-#if 0       /* not used in minizip */
+#만약 0       /* not used in minizip */
 /* Empty the set. This frees the memory used for the previous set contents.
    After set_clear(), *set is ready for use, as if after a set_start(). */
 SKIPSET_EXPORT void set_clear(set_t *set) {
@@ -282,22 +282,22 @@ SKIPSET_EXPORT void set_clear(set_t *set) {
    harm. This can be done at any time after a set_start(), or after a longjmp()
    on any allocation failure, including during a set_start(). */
 SKIPSET_EXPORT void set_end(set_t *set) {
-    if (set->head != NULL) {
+    만약 (set->head != NULL) {
         /* Empty the set and free the head node. */
-        if (set->head->right != NULL) {
+        만약 (set->head->right != NULL) {
             set_sweep(set);
             set_free(set, set->head->right);
         }
         set_free(set, set->head);
         set->head = NULL;
     }
-    if (set->path != NULL) {
+    만약 (set->path != NULL) {
         /* Free the path work area. */
         set_free(set, set->path->right);
         set_free(set, set->path);
         set->path = NULL;
     }
-    if (set->node != NULL) {
+    만약 (set->node != NULL) {
         /* Free the node that was under construction when longjmp() hit. */
         set_drop(set, set->node->key);
         set_free(set, set->node->right);
@@ -308,9 +308,9 @@ SKIPSET_EXPORT void set_end(set_t *set) {
 
 /* Look for key. Return 1 if found or 0 if not. This also puts the path to get
    there in set->path, for use by set_insert(). */
-SKIPSET_EXPORT int set_found(set_t *set, set_key_t key) {
+SKIPSET_EXPORT 정수 set_found(set_t *set, set_key_t key) {
     set_node_t *head, *here;
-    int i;
+    정수 i;
     assert(set_ok(set) && "improper use");
 
     /* Start at depth. Work down and right as determined by key comparisons. */
@@ -319,43 +319,43 @@ SKIPSET_EXPORT int set_found(set_t *set, set_key_t key) {
     i = set->depth;
     set_grow(set, set->path, i + 1, 0);
     do {
-        while (here->right[i] != head &&
+        동안 (here->right[i] != head &&
                set_cmp(here->right[i]->key, key) < 0)
             here = here->right[i];
         set->path->right[i] = here;
-    } while (i--);
+    } 동안 (i--);
 
     /* See if the key matches. */
     here = here->right[0];
-    return here != head && set_cmp(here->key, key) == 0;
+    반환 here != head && set_cmp(here->key, key) == 0;
 }
 
 /* Insert the key key. Return 0 on success, or 1 if it's already in the set. */
-SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
-    int level = 0;
-    int bit;
-    int i;
+SKIPSET_EXPORT 정수 set_insert(set_t *set, set_key_t key) {
+    정수 level = 0;
+    정수 bit;
+    정수 i;
     assert(set_ok(set) && "improper use");
 
-    if (set_found(set, key))
+    만약 (set_found(set, key))
         /* That key is already in the set. */
-        return 1;
+        반환 1;
 
     /* Randomly generate a new level-- level 0 with probability 1/2, 1 with
        probability 1/4, 2 with probability 1/8, etc. */
-    for (;;) {
-        if (set->ran == 1)
+    위해 (;;) {
+        만약 (set->ran == 1)
             /* Ran out. Get another 32 random bits. */
             set->ran = set_rand(&set->gen) | (1ULL << 32);
         bit = set->ran & 1;
         set->ran >>= 1;
-        if (bit)
+        만약 (bit)
             break;
         assert(level < 32767 &&
                "Overhead, without any fuss, the stars were going out.");
         level++;
     }
-    if (level > set->depth) {
+    만약 (level > set->depth) {
         /* The maximum depth is now deeper. Update the structures. */
         set_grow(set, set->path, level + 1, 1);
         set_grow(set, set->head, level + 1, 1);
@@ -367,15 +367,15 @@ SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
     set->node = set_node(set);
     set->node->key = key;
     set_grow(set, set->node, level + 1, 0);
-    for (i = 0; i <= level; i++) {
+    위해 (i = 0; i <= level; i++) {
         set->node->right[i] = set->path->right[i]->right[i];
         set->path->right[i]->right[i] = set->node;
     }
     set->node = NULL;
-    return 0;
+    반환 0;
 }
 
-#else
+#아니면
 #error ** another skiplist set already created here
 /* Would need to implement a prefix in order to support multiple sets. */
 #endif

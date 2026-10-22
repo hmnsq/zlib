@@ -10,7 +10,7 @@
 
 #ifdef ASMINF
 #  pragma message("Assembler code may have bugs -- use at your own risk")
-#else
+#아니면
 
 /*
    Decode literal, length, and distance codes and write out the resulting
@@ -98,7 +98,7 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
     /* decode literals and length/distances until end-of-block or not enough
        input data or output space */
     do {
-        if (bits < 15) {
+        만약 (bits < 15) {
             hold += (unsigned long)(*in++) << bits;
             bits += 8;
             hold += (unsigned long)(*in++) << bits;
@@ -110,17 +110,17 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
         hold >>= op;
         bits -= op;
         op = (unsigned)(here->op);
-        if (op == 0) {                          /* literal */
+        만약 (op == 0) {                          /* literal */
             Tracevv((stderr, here->val >= 0x20 && here->val < 0x7f ?
                     "inflate:         literal '%c'\n" :
                     "inflate:         literal 0x%02x\n", here->val));
             *out++ = (unsigned char)(here->val);
         }
-        else if (op & 16) {                     /* length base */
+        아니면 만약 (op & 16) {                     /* length base */
             len = (unsigned)(here->val);
             op &= 15;                           /* number of extra bits */
-            if (op) {
-                if (bits < op) {
+            만약 (op) {
+                만약 (bits < op) {
                     hold += (unsigned long)(*in++) << bits;
                     bits += 8;
                 }
@@ -129,7 +129,7 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
                 bits -= op;
             }
             Tracevv((stderr, "inflate:         length %u\n", len));
-            if (bits < 15) {
+            만약 (bits < 15) {
                 hold += (unsigned long)(*in++) << bits;
                 bits += 8;
                 hold += (unsigned long)(*in++) << bits;
@@ -141,20 +141,20 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
             hold >>= op;
             bits -= op;
             op = (unsigned)(here->op);
-            if (op & 16) {                      /* distance base */
+            만약 (op & 16) {                      /* distance base */
                 dist = (unsigned)(here->val);
                 op &= 15;                       /* number of extra bits */
-                if (bits < op) {
+                만약 (bits < op) {
                     hold += (unsigned long)(*in++) << bits;
                     bits += 8;
-                    if (bits < op) {
+                    만약 (bits < op) {
                         hold += (unsigned long)(*in++) << bits;
                         bits += 8;
                     }
                 }
                 dist += (unsigned)hold & ((1U << op) - 1);
 #ifdef INFLATE_STRICT
-                if (dist > dmax) {
+                만약 (dist > dmax) {
                     strm->msg = (z_const char *)
                         "invalid distance too far back";
                     state->mode = BAD;
@@ -165,127 +165,127 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
                 bits -= op;
                 Tracevv((stderr, "inflate:         distance %u\n", dist));
                 op = (unsigned)(out - beg);     /* max distance in output */
-                if (dist > op) {                /* see if copy from window */
+                만약 (dist > op) {                /* see if copy from window */
                     op = dist - op;             /* distance back in window */
-                    if (op > whave) {
-                        if (state->sane) {
+                    만약 (op > whave) {
+                        만약 (state->sane) {
                             strm->msg = (z_const char *)
                                 "invalid distance too far back";
                             state->mode = BAD;
                             break;
                         }
 #ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-                        if (len <= op - whave) {
+                        만약 (len <= op - whave) {
                             do {
                                 *out++ = 0;
-                            } while (--len);
+                            } 동안 (--len);
                             continue;
                         }
                         len -= op - whave;
                         do {
                             *out++ = 0;
-                        } while (--op > whave);
-                        if (op == 0) {
+                        } 동안 (--op > whave);
+                        만약 (op == 0) {
                             from = out - dist;
                             do {
                                 *out++ = *from++;
-                            } while (--len);
+                            } 동안 (--len);
                             continue;
                         }
 #endif
                     }
                     from = window;
-                    if (wnext == 0) {           /* very common case */
+                    만약 (wnext == 0) {           /* very common case */
                         from += wsize - op;
-                        if (op < len) {         /* some from window */
+                        만약 (op < len) {         /* some from window */
                             len -= op;
                             do {
                                 *out++ = *from++;
-                            } while (--op);
+                            } 동안 (--op);
                             from = out - dist;  /* rest from output */
                         }
                     }
-                    else if (wnext < op) {      /* wrap around window */
+                    아니면 만약 (wnext < op) {      /* wrap around window */
                         from += wsize + wnext - op;
                         op -= wnext;
-                        if (op < len) {         /* some from end of window */
+                        만약 (op < len) {         /* some from end of window */
                             len -= op;
                             do {
                                 *out++ = *from++;
-                            } while (--op);
+                            } 동안 (--op);
                             from = window;
-                            if (wnext < len) {  /* some from start of window */
+                            만약 (wnext < len) {  /* some from start of window */
                                 op = wnext;
                                 len -= op;
                                 do {
                                     *out++ = *from++;
-                                } while (--op);
+                                } 동안 (--op);
                                 from = out - dist;      /* rest from output */
                             }
                         }
                     }
-                    else {                      /* contiguous in window */
+                    아니면 {                      /* contiguous in window */
                         from += wnext - op;
-                        if (op < len) {         /* some from window */
+                        만약 (op < len) {         /* some from window */
                             len -= op;
                             do {
                                 *out++ = *from++;
-                            } while (--op);
+                            } 동안 (--op);
                             from = out - dist;  /* rest from output */
                         }
                     }
-                    while (len > 2) {
+                    동안 (len > 2) {
                         *out++ = *from++;
                         *out++ = *from++;
                         *out++ = *from++;
                         len -= 3;
                     }
-                    if (len) {
+                    만약 (len) {
                         *out++ = *from++;
-                        if (len > 1)
+                        만약 (len > 1)
                             *out++ = *from++;
                     }
                 }
-                else {
+                아니면 {
                     from = out - dist;          /* copy direct from output */
                     do {                        /* minimum length is three */
                         *out++ = *from++;
                         *out++ = *from++;
                         *out++ = *from++;
                         len -= 3;
-                    } while (len > 2);
-                    if (len) {
+                    } 동안 (len > 2);
+                    만약 (len) {
                         *out++ = *from++;
-                        if (len > 1)
+                        만약 (len > 1)
                             *out++ = *from++;
                     }
                 }
             }
-            else if ((op & 64) == 0) {          /* 2nd level distance code */
+            아니면 만약 ((op & 64) == 0) {          /* 2nd level distance code */
                 here = dcode + here->val + (hold & ((1U << op) - 1));
                 goto dodist;
             }
-            else {
+            아니면 {
                 strm->msg = (z_const char *)"invalid distance code";
                 state->mode = BAD;
                 break;
             }
         }
-        else if ((op & 64) == 0) {              /* 2nd level length code */
+        아니면 만약 ((op & 64) == 0) {              /* 2nd level length code */
             here = lcode + here->val + (hold & ((1U << op) - 1));
             goto dolen;
         }
-        else if (op & 32) {                     /* end-of-block */
+        아니면 만약 (op & 32) {                     /* end-of-block */
             Tracevv((stderr, "inflate:         end of block\n"));
             state->mode = TYPE;
             break;
         }
-        else {
+        아니면 {
             strm->msg = (z_const char *)"invalid literal/length code";
             state->mode = BAD;
             break;
         }
-    } while (in < last && out < end);
+    } 동안 (in < last && out < end);
 
     /* return unused bytes (on entry, bits < 8, so in won't go too far back) */
     len = bits >> 3;
@@ -301,7 +301,7 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
                                  257 + (end - out) : 257 - (out - end));
     state->hold = hold;
     state->bits = bits;
-    return;
+    반환;
 }
 
 /*

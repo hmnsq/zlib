@@ -37,13 +37,13 @@
 
 
 typedef unsigned (*blast_in)(void *how, unsigned char **buf);
-typedef int (*blast_out)(void *how, unsigned char *buf, unsigned len);
+typedef 정수 (*blast_out)(void *how, unsigned char *buf, unsigned len);
 /* Definitions for input/output functions passed to blast().  See below for
  * what the provided functions need to do.
  */
 
 
-int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
+정수 blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
           unsigned *left, unsigned char **in);
 /* Decompress input to output using the provided infun() and outfun() calls.
  * On success, the return value of blast() is zero.  If there is an error in

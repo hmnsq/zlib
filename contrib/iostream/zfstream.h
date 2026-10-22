@@ -12,23 +12,23 @@ public:
   gzfilebuf( );
   virtual ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( const char *name, 정수 io_mode );
+  gzfilebuf *attach( 정수 file_descriptor, 정수 io_mode );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  정수 setcompressionlevel( 정수 comp_level );
+  정수 setcompressionstrategy( 정수 comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  inline 정수 is_open() const { 반환 (file !=NULL); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  virtual streampos seekoff( streamoff, ios::seek_dir, 정수 );
 
-  virtual int sync();
+  virtual 정수 sync();
 
 protected:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  virtual 정수 underflow();
+  virtual 정수 overflow( 정수 = EOF );
 
 private:
 
@@ -36,8 +36,8 @@ private:
   short mode;
   short own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  정수 flushbuf();
+  정수 fillbuf();
 
 };
 
@@ -45,14 +45,14 @@ class gzfilestream_common : virtual public ios {
 
   friend class gzifstream;
   friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  friend gzofstream &setcompressionlevel( gzofstream &, 정수 );
+  friend gzofstream &setcompressionstrategy( gzofstream &, 정수 );
 
 public:
   virtual ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
+  void attach( 정수 fd, 정수 io_mode );
+  void open( const char *name, 정수 io_mode );
   void close();
 
 protected:
@@ -70,8 +70,8 @@ class gzifstream : public gzfilestream_common, public istream {
 public:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( const char *name, 정수 io_mode = ios::in );
+  gzifstream( 정수 fd, 정수 io_mode = ios::in );
 
   virtual ~gzifstream();
 
@@ -82,8 +82,8 @@ class gzofstream : public gzfilestream_common, public ostream {
 public:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( const char *name, 정수 io_mode = ios::out );
+  gzofstream( 정수 fd, 정수 io_mode = ios::out );
 
   virtual ~gzofstream();
 
@@ -100,29 +100,29 @@ private:
 
 template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  반환 (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+inline gzofstream &setcompressionlevel( gzofstream &s, 정수 l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  반환 s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+inline gzofstream &setcompressionstrategy( gzofstream &s, 정수 l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  반환 s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+inline gzomanip<정수> setcompressionlevel(정수 l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  반환 gzomanip<정수>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+inline gzomanip<정수> setcompressionstrategy(정수 l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  반환 gzomanip<정수>(&setcompressionstrategy,l);
 }
 
 #endif

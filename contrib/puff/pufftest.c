@@ -15,7 +15,7 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#만약 defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
@@ -23,11 +23,11 @@
 #include <stdlib.h>
 #include "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#만약 defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#아니면
 #  define SET_BINARY_MODE(file)
 #endif
 
@@ -39,19 +39,19 @@
    to keep reallocations less than ~33% over the actual data. */
 local size_t bythirds(size_t size)
 {
-    int n;
+    정수 n;
     size_t m;
 
     m = size;
-    for (n = 0; m; n++)
+    위해 (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    만약 (n < 3)
+        반환 size + 1;
     n -= 3;
     m = size >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    반환 m > size ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -68,15 +68,15 @@ local void *load(const char *name, size_t *len)
 
     *len = 0;
     buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
+    만약 (buf == NULL)
+        반환 NULL;
     in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
+    만약 (in != NULL) {
+        위해 (;;) {
             *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
+            만약 (*len < size) break;
             size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
+            만약 (size == *len || (swap = realloc(buf, size)) == NULL) {
                 free(buf);
                 buf = NULL;
                 break;
@@ -85,12 +85,12 @@ local void *load(const char *name, size_t *len)
         }
         fclose(in);
     }
-    return buf;
+    반환 buf;
 }
 
-int main(int argc, char **argv)
+정수 main(정수 argc, char **argv)
 {
-    int ret, put = 0, fail = 0;
+    정수 ret, put = 0, fail = 0;
     unsigned skip = 0;
     char *arg, *name = NULL;
     unsigned char *source = NULL, *dest;
@@ -98,63 +98,63 @@ int main(int argc, char **argv)
     unsigned long sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    동안 (arg = *++argv, --argc)
+        만약 (arg[0] == '-') {
+            만약 (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            아니면 만약 (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
+            아니면 만약 (arg[1] >= '0' && arg[1] <= '9')
                 skip = (unsigned)atoi(arg + 1);
-            else {
+            아니면 {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                반환 3;
             }
         }
-        else if (name != NULL) {
+        아니면 만약 (name != NULL) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            반환 3;
         }
-        else
+        아니면
             name = arg;
     source = load(name, &len);
-    if (source == NULL) {
+    만약 (source == NULL) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        반환 4;
     }
-    if (len == 0) {
+    만약 (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
                 name == NULL ? "<stdin>" : name);
         free(source);
-        return 3;
+        반환 3;
     }
-    if (skip >= len) {
+    만약 (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
         free(source);
-        return 3;
+        반환 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
     sourcelen = (unsigned long)len;
     ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    만약 (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    아니면 {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        만약 (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    만약 (put && ret == 0) {
+        만약 (fail)
             destlen >>= 1;
         dest = malloc(destlen);
-        if (dest == NULL) {
+        만약 (dest == NULL) {
             fprintf(stderr, "memory allocation failure\n");
             free(source);
-            return 4;
+            반환 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
         SET_BINARY_MODE(stdout);
@@ -164,5 +164,5 @@ int main(int argc, char **argv)
 
     /* clean up */
     free(source);
-    return ret;
+    반환 ret;
 }

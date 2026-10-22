@@ -43,8 +43,8 @@ struct state {
     void *inhow;                /* opaque information passed to infun() */
     unsigned char *in;          /* next input location */
     unsigned left;              /* available input at in */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    정수 bitbuf;                 /* bit buffer */
+    정수 bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
@@ -53,7 +53,7 @@ struct state {
     blast_out outfun;           /* output function provided by user */
     void *outhow;               /* opaque information passed to outfun() */
     unsigned next;              /* index of next write location in out[] */
-    int first;                  /* true to check distances (for first 4K) */
+    정수 first;                  /* true to check distances (for first 4K) */
     unsigned char out[MAXWIN];  /* output buffer and sliding window */
 };
 
@@ -68,18 +68,18 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local 정수 bits(struct state *s, 정수 need)
 {
-    int val;            /* bit accumulator */
+    정수 val;            /* bit accumulator */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->left == 0) {
+    동안 (s->bitcnt < need) {
+        만약 (s->left == 0) {
             s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+            만약 (s->left == 0) longjmp(s->env, 1);       /* out of input */
         }
-        val |= (int)(*(s->in)++) << s->bitcnt;          /* load eight bits */
+        val |= (정수)(*(s->in)++) << s->bitcnt;          /* load eight bits */
         s->left--;
         s->bitcnt += 8;
     }
@@ -89,7 +89,7 @@ local int bits(struct state *s, int need)
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return val & ((1 << need) - 1);
+    반환 val & ((1 << need) - 1);
 }
 
 /*
@@ -125,15 +125,15 @@ struct huffman {
  *   this ordering, the bits pulled during decoding are inverted to apply the
  *   more "natural" ordering starting with all zeros and incrementing.
  */
-local int decode(struct state *s, struct huffman *h)
+local 정수 decode(struct state *s, struct huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    정수 len;            /* current number of bits in code */
+    정수 code;           /* len bits being decoded */
+    정수 first;          /* first code of length len */
+    정수 count;          /* number of codes of length len */
+    정수 index;          /* index of first code of length len in symbol table */
+    정수 bitbuf;         /* bits from stream */
+    정수 left;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
@@ -141,15 +141,15 @@ local int decode(struct state *s, struct huffman *h)
     code = first = index = 0;
     len = 1;
     next = h->count + 1;
-    while (1) {
-        while (left--) {
+    동안 (1) {
+        동안 (left--) {
             code |= (bitbuf & 1) ^ 1;   /* invert code */
             bitbuf >>= 1;
             count = *next++;
-            if (code < first + count) { /* if length len, return symbol */
+            만약 (code < first + count) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                반환 h->symbol[index + (code - first)];
             }
             index += count;             /* else update for next length */
             first += count;
@@ -158,16 +158,16 @@ local int decode(struct state *s, struct huffman *h)
             len++;
         }
         left = (MAXBITS+1) - len;
-        if (left == 0) break;
-        if (s->left == 0) {
+        만약 (left == 0) break;
+        만약 (s->left == 0) {
             s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+            만약 (s->left == 0) longjmp(s->env, 1);       /* out of input */
         }
         bitbuf = *(s->in)++;
         s->left--;
-        if (left > 8) left = 8;
+        만약 (left > 8) left = 8;
     }
-    return -9;                          /* ran out of codes */
+    반환 -9;                          /* ran out of codes */
 }
 
 /*
@@ -187,11 +187,11 @@ local int decode(struct state *s, struct huffman *h)
  * it is possible for decode() using that table to return an error for received
  * codes past the end of the incomplete lengths.
  */
-local int construct(struct huffman *h, const unsigned char *rep, int n)
+local 정수 construct(struct huffman *h, const unsigned char *rep, 정수 n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    정수 symbol;         /* current symbol when stepping through length[] */
+    정수 len;            /* current length when stepping through h->count[] */
+    정수 left;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
     short length[256];  /* code lengths */
 
@@ -203,41 +203,41 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
         len &= 15;
         do {
             length[symbol++] = len;
-        } while (--left);
-    } while (--n);
+        } 동안 (--left);
+    } 동안 (--n);
     n = symbol;
 
     /* count number of codes of each length */
-    for (len = 0; len <= MAXBITS; len++)
+    위해 (len = 0; len <= MAXBITS; len++)
         h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
+    위해 (symbol = 0; symbol < n; symbol++)
         (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    만약 (h->count[0] == n)               /* no codes! */
+        반환 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;                           /* one possible code of zero length */
-    for (len = 1; len <= MAXBITS; len++) {
+    위해 (len = 1; len <= MAXBITS; len++) {
         left <<= 1;                     /* one more bit, double codes left */
         left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0) return left;      /* over-subscribed--return negative */
+        만약 (left < 0) 반환 left;      /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
+    위해 (len = 1; len < MAXBITS; len++)
         offs[len + 1] = offs[len] + h->count[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
+    위해 (symbol = 0; symbol < n; symbol++)
+        만약 (length[symbol] != 0)
             h->symbol[offs[length[symbol]]++] = symbol;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    반환 left;
 }
 
 /*
@@ -278,16 +278,16 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
  *   ignoring whether the length is greater than the distance or not implements
  *   this correctly.
  */
-local int decomp(struct state *s)
+local 정수 decomp(struct state *s)
 {
-    int lit;            /* true if literals are coded */
-    int dict;           /* log2(dictionary size) - 6 */
-    int symbol;         /* decoded symbol, extra bits for distance */
-    int len;            /* length for copy */
+    정수 lit;            /* true if literals are coded */
+    정수 dict;           /* log2(dictionary size) - 6 */
+    정수 symbol;         /* decoded symbol, extra bits for distance */
+    정수 len;            /* length for copy */
     unsigned dist;      /* distance for copy */
-    int copy;           /* copy counter */
+    정수 copy;           /* copy counter */
     unsigned char *from, *to;   /* copy pointers */
-    static int virgin = 1;                              /* build tables once */
+    static 정수 virgin = 1;                              /* build tables once */
     static short litcnt[MAXBITS+1], litsym[256];        /* litcode memory */
     static short lencnt[MAXBITS+1], lensym[16];         /* lencode memory */
     static short distcnt[MAXBITS+1], distsym[64];       /* distcode memory */
@@ -312,7 +312,7 @@ local int decomp(struct state *s)
         0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     /* set up decoding tables (once--might not be thread-safe) */
-    if (virgin) {
+    만약 (virgin) {
         construct(&litcode, litlen, sizeof(litlen));
         construct(&lencode, lenlen, sizeof(lenlen));
         construct(&distcode, distlen, sizeof(distlen));
@@ -321,78 +321,78 @@ local int decomp(struct state *s)
 
     /* read header */
     lit = bits(s, 8);
-    if (lit > 1) return -1;
+    만약 (lit > 1) 반환 -1;
     dict = bits(s, 8);
-    if (dict < 4 || dict > 6) return -2;
+    만약 (dict < 4 || dict > 6) 반환 -2;
 
     /* decode literals and length/distance pairs */
     do {
-        if (bits(s, 1)) {
+        만약 (bits(s, 1)) {
             /* get length */
             symbol = decode(s, &lencode);
             len = base[symbol] + bits(s, extra[symbol]);
-            if (len == 519) break;              /* end code */
+            만약 (len == 519) break;              /* end code */
 
             /* get distance */
             symbol = len == 2 ? 2 : dict;
             dist = decode(s, &distcode) << symbol;
             dist += bits(s, symbol);
             dist++;
-            if (s->first && dist > s->next)
-                return -3;              /* distance too far back */
+            만약 (s->first && dist > s->next)
+                반환 -3;              /* distance too far back */
 
             /* copy length bytes from distance bytes back */
             do {
                 to = s->out + s->next;
                 from = to - dist;
                 copy = MAXWIN;
-                if (s->next < dist) {
+                만약 (s->next < dist) {
                     from += copy;
                     copy = dist;
                 }
                 copy -= s->next;
-                if (copy > len) copy = len;
+                만약 (copy > len) copy = len;
                 len -= copy;
                 s->next += copy;
                 do {
                     *to++ = *from++;
-                } while (--copy);
-                if (s->next == MAXWIN) {
-                    if (s->outfun(s->outhow, s->out, s->next)) return 1;
+                } 동안 (--copy);
+                만약 (s->next == MAXWIN) {
+                    만약 (s->outfun(s->outhow, s->out, s->next)) 반환 1;
                     s->next = 0;
                     s->first = 0;
                 }
-            } while (len != 0);
+            } 동안 (len != 0);
         }
-        else {
+        아니면 {
             /* get literal and write it */
             symbol = lit ? decode(s, &litcode) : bits(s, 8);
             s->out[s->next++] = symbol;
-            if (s->next == MAXWIN) {
-                if (s->outfun(s->outhow, s->out, s->next)) return 1;
+            만약 (s->next == MAXWIN) {
+                만약 (s->outfun(s->outhow, s->out, s->next)) 반환 1;
                 s->next = 0;
                 s->first = 0;
             }
         }
-    } while (1);
-    return 0;
+    } 동안 (1);
+    반환 0;
 }
 
 /* See comments in blast.h */
-int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
+정수 blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
           unsigned *left, unsigned char **in)
 {
     struct state s;             /* input/output state */
-    int err;                    /* return value */
+    정수 err;                    /* return value */
 
     /* initialize input state */
     s.infun = infun;
     s.inhow = inhow;
-    if (left != NULL && *left) {
+    만약 (left != NULL && *left) {
         s.left = *left;
         s.in = *in;
     }
-    else
+    아니면
         s.left = 0;
     s.bitbuf = 0;
     s.bitcnt = 0;
@@ -404,19 +404,19 @@ int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
     s.first = 1;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
+    만약 (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
         err = 2;                        /*  then skip decomp(), return error */
-    else
+    아니면
         err = decomp(&s);               /* decompress */
 
     /* return unused input */
-    if (left != NULL)
+    만약 (left != NULL)
         *left = s.left;
-    if (in != NULL)
+    만약 (in != NULL)
         *in = s.left ? s.in : NULL;
 
     /* write any leftover output and update the error code if needed */
-    if (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
+    만약 (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
         err = 1;
-    return err;
+    반환 err;
 }

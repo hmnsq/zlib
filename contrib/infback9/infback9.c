@@ -16,28 +16,28 @@
 
    window is a user-supplied window and output buffer that is 64K bytes.
  */
-int ZEXPORT inflateBack9Init_(z_stream FAR *strm, unsigned char FAR *window,
-                              const char *version, int stream_size) {
+정수 ZEXPORT inflateBack9Init_(z_stream FAR *strm, unsigned char FAR *window,
+                              const char *version, 정수 stream_size) {
     struct inflate_state FAR *state;
 
-    if (version == Z_NULL || version[0] != ZLIB_VERSION[0] ||
-        stream_size != (int)(sizeof(z_stream)))
-        return Z_VERSION_ERROR;
-    if (strm == Z_NULL || window == Z_NULL)
-        return Z_STREAM_ERROR;
+    만약 (version == Z_NULL || version[0] != ZLIB_VERSION[0] ||
+        stream_size != (정수)(sizeof(z_stream)))
+        반환 Z_VERSION_ERROR;
+    만약 (strm == Z_NULL || window == Z_NULL)
+        반환 Z_STREAM_ERROR;
     strm->msg = Z_NULL;                 /* in case we return an error */
-    if (strm->zalloc == (alloc_func)0) {
+    만약 (strm->zalloc == (alloc_func)0) {
         strm->zalloc = zcalloc;
         strm->opaque = (voidpf)0;
     }
-    if (strm->zfree == (free_func)0) strm->zfree = zcfree;
+    만약 (strm->zfree == (free_func)0) strm->zfree = zcfree;
     state = (struct inflate_state FAR *)ZALLOC(strm, 1,
                                                sizeof(struct inflate_state));
-    if (state == Z_NULL) return Z_MEM_ERROR;
+    만약 (state == Z_NULL) 반환 Z_MEM_ERROR;
     Tracev((stderr, "inflate: allocated\n"));
     strm->state = (voidpf)state;
     state->window = window;
-    return Z_OK;
+    반환 Z_OK;
 }
 
 /*
@@ -55,10 +55,10 @@ void makefixed9(void) {
 
     /* literal/length table */
     sym = 0;
-    while (sym < 144) state.lens[sym++] = 8;
-    while (sym < 256) state.lens[sym++] = 9;
-    while (sym < 280) state.lens[sym++] = 7;
-    while (sym < 288) state.lens[sym++] = 8;
+    동안 (sym < 144) state.lens[sym++] = 8;
+    동안 (sym < 256) state.lens[sym++] = 9;
+    동안 (sym < 280) state.lens[sym++] = 7;
+    동안 (sym < 288) state.lens[sym++] = 8;
     next = fixed;
     lenfix = next;
     bits = 9;
@@ -66,7 +66,7 @@ void makefixed9(void) {
 
     /* distance table */
     sym = 0;
-    while (sym < 32) state.lens[sym++] = 5;
+    동안 (sym < 32) state.lens[sym++] = 5;
     distfix = next;
     bits = 5;
     inflate_table9(DISTS, state.lens, 32, &(next), &(bits), state.work);
@@ -84,22 +84,22 @@ void makefixed9(void) {
     size = 1U << 9;
     printf("    static const code lenfix[%u] = {", size);
     low = 0;
-    for (;;) {
-        if ((low % 6) == 0) printf("\n        ");
+    위해 (;;) {
+        만약 ((low % 6) == 0) printf("\n        ");
         printf("{%u,%u,%d}", lenfix[low].op, lenfix[low].bits,
                lenfix[low].val);
-        if (++low == size) break;
+        만약 (++low == size) break;
         putchar(',');
     }
     puts("\n    };");
     size = 1U << 5;
     printf("\n    static const code distfix[%u] = {", size);
     low = 0;
-    for (;;) {
-        if ((low % 5) == 0) printf("\n        ");
+    위해 (;;) {
+        만약 ((low % 5) == 0) printf("\n        ");
         printf("{%u,%u,%d}", distfix[low].op, distfix[low].bits,
                distfix[low].val);
-        if (++low == size) break;
+        만약 (++low == size) break;
         putchar(',');
     }
     puts("\n    };");
@@ -113,21 +113,21 @@ void makefixed9(void) {
     do { \
         hold = 0; \
         bits = 0; \
-    } while (0)
+    } 동안 (0)
 
 /* Assure that some input is available.  If input is requested, but denied,
    then return a Z_BUF_ERROR from inflateBack(). */
 #define PULL() \
     do { \
-        if (have == 0) { \
+        만약 (have == 0) { \
             have = in(in_desc, &next); \
-            if (have == 0) { \
+            만약 (have == 0) { \
                 next = Z_NULL; \
                 ret = Z_BUF_ERROR; \
                 goto inf_leave; \
             } \
         } \
-    } while (0)
+    } 동안 (0)
 
 /* Get a byte of input into the bit accumulator, or return from inflateBack()
    with an error if there is no input available. */
@@ -137,16 +137,16 @@ void makefixed9(void) {
         have--; \
         hold += (unsigned long)(*next++) << bits; \
         bits += 8; \
-    } while (0)
+    } 동안 (0)
 
 /* Assure that there are at least n bits in the bit accumulator.  If there is
    not enough available input to do that, then return from inflateBack() with
    an error. */
 #define NEEDBITS(n) \
     do { \
-        while (bits < (unsigned)(n)) \
+        동안 (bits < (unsigned)(n)) \
             PULLBYTE(); \
-    } while (0)
+    } 동안 (0)
 
 /* Return the low n bits of the bit accumulator (n <= 16) */
 #define BITS(n) \
@@ -157,30 +157,30 @@ void makefixed9(void) {
     do { \
         hold >>= (n); \
         bits -= (unsigned)(n); \
-    } while (0)
+    } 동안 (0)
 
 /* Remove zero to seven bits as needed to go to a byte boundary */
 #define BYTEBITS() \
     do { \
         hold >>= bits & 7; \
         bits -= bits & 7; \
-    } while (0)
+    } 동안 (0)
 
 /* Assure that some output space is available, by writing out the window
    if it's full.  If the write fails, return from inflateBack() with a
    Z_BUF_ERROR. */
 #define ROOM() \
     do { \
-        if (left == 0) { \
+        만약 (left == 0) { \
             put = window; \
             left = WSIZE; \
             wrap = 1; \
-            if (out(out_desc, put, (unsigned)left)) { \
+            만약 (out(out_desc, put, (unsigned)left)) { \
                 ret = Z_BUF_ERROR; \
                 goto inf_leave; \
             } \
         } \
-    } while (0)
+    } 동안 (0)
 
 /*
    strm provides the memory allocation functions and window buffer on input,
@@ -209,7 +209,7 @@ void makefixed9(void) {
    inflateBack() can also return Z_STREAM_ERROR if the input parameters
    are not correct, i.e. strm is Z_NULL or the state was not initialized.
  */
-int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
+정수 ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
                          out_func out, void FAR *out_desc) {
     struct inflate_state FAR *state;
     z_const unsigned char FAR *next;    /* next input */
@@ -217,8 +217,8 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
     unsigned have;              /* available input */
     unsigned long left;         /* available output */
     inflate_mode mode;          /* current inflate mode */
-    int lastblock;              /* true if processing last block */
-    int wrap;                   /* true if the window has wrapped */
+    정수 lastblock;              /* true if processing last block */
+    정수 wrap;                   /* true if the window has wrapped */
     unsigned char FAR *window;  /* allocated sliding window, if needed */
     unsigned long hold;         /* bit buffer */
     unsigned bits;              /* bits in bit buffer */
@@ -234,14 +234,14 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
     code here;                  /* current decoding table entry */
     code last;                  /* parent table entry */
     unsigned len;               /* length to copy for repeats, bits to drop */
-    int ret;                    /* return code */
+    정수 ret;                    /* return code */
     static const unsigned short order[19] = /* permutation of code lengths */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 #include "inffix9.h"
 
     /* Check that the strm exists and that the state was initialized */
-    if (strm == Z_NULL || strm->state == Z_NULL)
-        return Z_STREAM_ERROR;
+    만약 (strm == Z_NULL || strm->state == Z_NULL)
+        반환 Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
 
     /* Reset the state */
@@ -260,11 +260,11 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
     distcode = Z_NULL;
 
     /* Inflate until end of block marked as last */
-    for (;;)
+    위해 (;;)
         switch (mode) {
         case TYPE:
             /* determine and dispatch block type */
-            if (lastblock) {
+            만약 (lastblock) {
                 BYTEBITS();
                 mode = DONE;
                 break;
@@ -303,7 +303,7 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             /* get and verify stored block length */
             BYTEBITS();                         /* go to byte boundary */
             NEEDBITS(32);
-            if ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
+            만약 ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
                 strm->msg = (z_const char *)"invalid stored block lengths";
                 mode = BAD;
                 break;
@@ -314,12 +314,12 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             INITBITS();
 
             /* copy stored block from input to output */
-            while (length != 0) {
+            동안 (length != 0) {
                 copy = length;
                 PULL();
                 ROOM();
-                if (copy > have) copy = have;
-                if (copy > left) copy = left;
+                만약 (copy > have) copy = have;
+                만약 (copy > left) copy = left;
                 zmemcpy(put, next, copy);
                 have -= copy;
                 next += copy;
@@ -340,7 +340,7 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             DROPBITS(5);
             state->ncode = BITS(4) + 4;
             DROPBITS(4);
-            if (state->nlen > 286) {
+            만약 (state->nlen > 286) {
                 strm->msg = (z_const char *)"too many length symbols";
                 mode = BAD;
                 break;
@@ -349,19 +349,19 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
 
             /* get code length code lengths (not a typo) */
             state->have = 0;
-            while (state->have < state->ncode) {
+            동안 (state->have < state->ncode) {
                 NEEDBITS(3);
                 state->lens[order[state->have++]] = (unsigned short)BITS(3);
                 DROPBITS(3);
             }
-            while (state->have < 19)
+            동안 (state->have < 19)
                 state->lens[order[state->have++]] = 0;
             state->next = state->codes;
             lencode = (code const FAR *)(state->next);
             lenbits = 7;
             ret = inflate_table9(CODES, state->lens, 19, &(state->next),
                                 &(lenbits), state->work);
-            if (ret) {
+            만약 (ret) {
                 strm->msg = (z_const char *)"invalid code lengths set";
                 mode = BAD;
                 break;
@@ -370,22 +370,22 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
 
             /* get length and distance code code lengths */
             state->have = 0;
-            while (state->have < state->nlen + state->ndist) {
-                for (;;) {
+            동안 (state->have < state->nlen + state->ndist) {
+                위해 (;;) {
                     here = lencode[BITS(lenbits)];
-                    if ((unsigned)(here.bits) <= bits) break;
+                    만약 ((unsigned)(here.bits) <= bits) break;
                     PULLBYTE();
                 }
-                if (here.val < 16) {
+                만약 (here.val < 16) {
                     NEEDBITS(here.bits);
                     DROPBITS(here.bits);
                     state->lens[state->have++] = here.val;
                 }
-                else {
-                    if (here.val == 16) {
+                아니면 {
+                    만약 (here.val == 16) {
                         NEEDBITS(here.bits + 2);
                         DROPBITS(here.bits);
-                        if (state->have == 0) {
+                        만약 (state->have == 0) {
                             strm->msg = (z_const char *)"invalid bit length repeat";
                             mode = BAD;
                             break;
@@ -394,35 +394,35 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
                         copy = 3 + BITS(2);
                         DROPBITS(2);
                     }
-                    else if (here.val == 17) {
+                    아니면 만약 (here.val == 17) {
                         NEEDBITS(here.bits + 3);
                         DROPBITS(here.bits);
                         len = 0;
                         copy = 3 + BITS(3);
                         DROPBITS(3);
                     }
-                    else {
+                    아니면 {
                         NEEDBITS(here.bits + 7);
                         DROPBITS(here.bits);
                         len = 0;
                         copy = 11 + BITS(7);
                         DROPBITS(7);
                     }
-                    if (state->have + copy > state->nlen + state->ndist) {
+                    만약 (state->have + copy > state->nlen + state->ndist) {
                         strm->msg = (z_const char *)"invalid bit length repeat";
                         mode = BAD;
                         break;
                     }
-                    while (copy--)
+                    동안 (copy--)
                         state->lens[state->have++] = (unsigned short)len;
                 }
             }
 
             /* handle error breaks in while */
-            if (mode == BAD) break;
+            만약 (mode == BAD) break;
 
             /* check for end-of-block code (better have one) */
-            if (state->lens[256] == 0) {
+            만약 (state->lens[256] == 0) {
                 strm->msg = (z_const char *)"invalid code -- missing end-of-block";
                 mode = BAD;
                 break;
@@ -436,7 +436,7 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             lenbits = 9;
             ret = inflate_table9(LENS, state->lens, state->nlen,
                             &(state->next), &(lenbits), state->work);
-            if (ret) {
+            만약 (ret) {
                 strm->msg = (z_const char *)"invalid literal/lengths set";
                 mode = BAD;
                 break;
@@ -446,7 +446,7 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             ret = inflate_table9(DISTS, state->lens + state->nlen,
                             state->ndist, &(state->next), &(distbits),
                             state->work);
-            if (ret) {
+            만약 (ret) {
                 strm->msg = (z_const char *)"invalid distances set";
                 mode = BAD;
                 break;
@@ -456,17 +456,17 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
 
         case LEN:
             /* get a literal, length, or end-of-block code */
-            for (;;) {
+            위해 (;;) {
                 here = lencode[BITS(lenbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+                만약 ((unsigned)(here.bits) <= bits) break;
                 PULLBYTE();
             }
-            if (here.op && (here.op & 0xf0) == 0) {
+            만약 (here.op && (here.op & 0xf0) == 0) {
                 last = here;
-                for (;;) {
+                위해 (;;) {
                     here = lencode[last.val +
                             (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+                    만약 ((unsigned)(last.bits + here.bits) <= bits) break;
                     PULLBYTE();
                 }
                 DROPBITS(last.bits);
@@ -475,7 +475,7 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             length = (unsigned)here.val;
 
             /* process literal */
-            if (here.op == 0) {
+            만약 (here.op == 0) {
                 Tracevv((stderr, here.val >= 0x20 && here.val < 0x7f ?
                         "inflate:         literal '%c'\n" :
                         "inflate:         literal 0x%02x\n", here.val));
@@ -487,14 +487,14 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             }
 
             /* process end of block */
-            if (here.op & 32) {
+            만약 (here.op & 32) {
                 Tracevv((stderr, "inflate:         end of block\n"));
                 mode = TYPE;
                 break;
             }
 
             /* invalid code */
-            if (here.op & 64) {
+            만약 (here.op & 64) {
                 strm->msg = (z_const char *)"invalid literal/length code";
                 mode = BAD;
                 break;
@@ -502,7 +502,7 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
 
             /* length code -- get extra bits, if any */
             extra = (unsigned)(here.op) & 31;
-            if (extra != 0) {
+            만약 (extra != 0) {
                 NEEDBITS(extra);
                 length += BITS(extra);
                 DROPBITS(extra);
@@ -510,23 +510,23 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             Tracevv((stderr, "inflate:         length %lu\n", length));
 
             /* get distance code */
-            for (;;) {
+            위해 (;;) {
                 here = distcode[BITS(distbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+                만약 ((unsigned)(here.bits) <= bits) break;
                 PULLBYTE();
             }
-            if ((here.op & 0xf0) == 0) {
+            만약 ((here.op & 0xf0) == 0) {
                 last = here;
-                for (;;) {
+                위해 (;;) {
                     here = distcode[last.val +
                             (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+                    만약 ((unsigned)(last.bits + here.bits) <= bits) break;
                     PULLBYTE();
                 }
                 DROPBITS(last.bits);
             }
             DROPBITS(here.bits);
-            if (here.op & 64) {
+            만약 (here.op & 64) {
                 strm->msg = (z_const char *)"invalid distance code";
                 mode = BAD;
                 break;
@@ -535,12 +535,12 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
 
             /* get distance extra bits, if any */
             extra = (unsigned)(here.op) & 15;
-            if (extra != 0) {
+            만약 (extra != 0) {
                 NEEDBITS(extra);
                 offset += BITS(extra);
                 DROPBITS(extra);
             }
-            if (offset > WSIZE - (wrap ? 0: left)) {
+            만약 (offset > WSIZE - (wrap ? 0: left)) {
                 strm->msg = (z_const char *)"invalid distance too far back";
                 mode = BAD;
                 break;
@@ -551,28 +551,28 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             do {
                 ROOM();
                 copy = WSIZE - offset;
-                if (copy < left) {
+                만약 (copy < left) {
                     from = put + copy;
                     copy = left - copy;
                 }
-                else {
+                아니면 {
                     from = put - offset;
                     copy = left;
                 }
-                if (copy > length) copy = length;
+                만약 (copy > length) copy = length;
                 length -= copy;
                 left -= copy;
                 do {
                     *put++ = *from++;
-                } while (--copy);
-            } while (length != 0);
+                } 동안 (--copy);
+            } 동안 (length != 0);
             break;
 
         case DONE:
             /* inflate stream terminated properly -- write leftover output */
             ret = Z_STREAM_END;
-            if (left < WSIZE) {
-                if (out(out_desc, window, (unsigned)(WSIZE - left)))
+            만약 (left < WSIZE) {
+                만약 (out(out_desc, window, (unsigned)(WSIZE - left)))
                     ret = Z_BUF_ERROR;
             }
             goto inf_leave;
@@ -590,14 +590,14 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
   inf_leave:
     strm->next_in = next;
     strm->avail_in = have;
-    return ret;
+    반환 ret;
 }
 
-int ZEXPORT inflateBack9End(z_stream FAR *strm) {
-    if (strm == Z_NULL || strm->state == Z_NULL || strm->zfree == (free_func)0)
-        return Z_STREAM_ERROR;
+정수 ZEXPORT inflateBack9End(z_stream FAR *strm) {
+    만약 (strm == Z_NULL || strm->state == Z_NULL || strm->zfree == (free_func)0)
+        반환 Z_STREAM_ERROR;
     ZFREE(strm, strm->state);
     strm->state = Z_NULL;
     Tracev((stderr, "inflate: end\n"));
-    return Z_OK;
+    반환 Z_OK;
 }

@@ -28,11 +28,11 @@
 #include <stdio.h>
 #include "zlib.h"
 
-#if defined(_WIN32)
+#만약 defined(_WIN32)
 #   include <fcntl.h>
 #   include <io.h>
 #   define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#아니면
 #   define SET_BINARY_MODE(file)
 #endif
 
@@ -40,7 +40,7 @@ class zstringlen {
 public:
     zstringlen(class izstream&);
     zstringlen(class ozstream&, const char*);
-    size_t value() const { return val.word; }
+    size_t value() const { 반환 val.word; }
 private:
     struct Val { unsigned char byte; size_t word; } val;
 };
@@ -62,13 +62,13 @@ class izstream
          * cases (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
         void open(const char* name) {
-            if (m_fp) close();
+            만약 (m_fp) close();
             m_fp = ::gzopen(name, "rb");
         }
 
         void open(FILE* fp) {
             SET_BINARY_MODE(fp);
-            if (m_fp) close();
+            만약 (m_fp) close();
             m_fp = ::gzdopen(fileno(fp), "rb");
         }
 
@@ -76,15 +76,15 @@ class izstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            int r = ::gzclose(m_fp);
-            m_fp = 0; return r;
+        정수 close() {
+            정수 r = ::gzclose(m_fp);
+            m_fp = 0; 반환 r;
         }
 
         /* Binary read the given number of bytes from the compressed file.
          */
-        int read(void* buf, size_t len) {
-            return ::gzread(m_fp, buf, len);
+        정수 read(void* buf, size_t len) {
+            반환 ::gzread(m_fp, buf, len);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -93,11 +93,11 @@ class izstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        const char* error(정수* errnum) {
+            반환 ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { 반환 m_fp; }
 
     private:
         gzFile m_fp;
@@ -111,8 +111,8 @@ class izstream
  * (0 for end of file, -1 for error).
  */
 template <class T, class Items>
-inline int read(izstream& zs, T* x, Items items) {
-    return ::gzread(zs.fp(), x, items*sizeof(T));
+inline 정수 read(izstream& zs, T* x, Items items) {
+    반환 ::gzread(zs.fp(), x, items*sizeof(T));
 }
 
 /*
@@ -121,14 +121,14 @@ inline int read(izstream& zs, T* x, Items items) {
 template <class T>
 inline izstream& operator>(izstream& zs, T& x) {
     ::gzread(zs.fp(), &x, sizeof(T));
-    return zs;
+    반환 zs;
 }
 
 
 inline zstringlen::zstringlen(izstream& zs) {
     zs > val.byte;
-    if (val.byte == 255) zs > val.word;
-    else val.word = val.byte;
+    만약 (val.byte == 255) zs > val.word;
+    아니면 val.word = val.byte;
 }
 
 /*
@@ -138,7 +138,7 @@ inline izstream& operator>(izstream& zs, char* x) {
     zstringlen len(zs);
     ::gzread(zs.fp(), x, len.value());
     x[len.value()] = '\0';
-    return zs;
+    반환 zs;
 }
 
 inline char* read_string(izstream& zs) {
@@ -146,7 +146,7 @@ inline char* read_string(izstream& zs) {
     char* x = new char[len.value()+1];
     ::gzread(zs.fp(), x, len.value());
     x[len.value()] = '\0';
-    return x;
+    반환 x;
 }
 
 // ----------------------------- ozstream -----------------------------
@@ -156,11 +156,11 @@ class ozstream
     public:
         ozstream() : m_fp(0), m_os(0) {
         }
-        ozstream(FILE* fp, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(FILE* fp, 정수 level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
             open(fp, level);
         }
-        ozstream(const char* name, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(const char* name, 정수 level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
             open(name, level);
         }
@@ -173,20 +173,20 @@ class ozstream
          * errno can be checked to distinguish two error cases
          * (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name, int level = Z_DEFAULT_COMPRESSION) {
+        void open(const char* name, 정수 level = Z_DEFAULT_COMPRESSION) {
             char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
+            만약 (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
+            만약 (m_fp) close();
             m_fp = ::gzopen(name, mode);
         }
 
         /* open from a FILE pointer.
          */
-        void open(FILE* fp, int level = Z_DEFAULT_COMPRESSION) {
+        void open(FILE* fp, 정수 level = Z_DEFAULT_COMPRESSION) {
             SET_BINARY_MODE(fp);
             char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
+            만약 (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
+            만약 (m_fp) close();
             m_fp = ::gzdopen(fileno(fp), mode);
         }
 
@@ -194,18 +194,18 @@ class ozstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            if (m_os) {
+        정수 close() {
+            만약 (m_os) {
                 ::gzwrite(m_fp, m_os->str(), m_os->pcount());
                 delete[] m_os->str(); delete m_os; m_os = 0;
             }
-            int r = ::gzclose(m_fp); m_fp = 0; return r;
+            정수 r = ::gzclose(m_fp); m_fp = 0; 반환 r;
         }
 
         /* Binary write the given number of bytes into the compressed file.
          */
-        int write(const void* buf, size_t len) {
-            return ::gzwrite(m_fp, (voidp) buf, len);
+        정수 write(const void* buf, size_t len) {
+            반환 ::gzwrite(m_fp, (voidp) buf, len);
         }
 
         /* Flushes all pending output into the compressed file. The parameter
@@ -215,9 +215,9 @@ class ozstream
          * flush() should be called only when strictly necessary because it can
          * degrade compression.
          */
-        int flush(int _flush) {
+        정수 flush(정수 _flush) {
             os_flush();
-            return ::gzflush(m_fp, _flush);
+            반환 ::gzflush(m_fp, _flush);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -226,19 +226,19 @@ class ozstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        const char* error(정수* errnum) {
+            반환 ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { 반환 m_fp; }
 
         ostream& os() {
-            if (m_os == 0) m_os = new ostrstream;
-            return *m_os;
+            만약 (m_os == 0) m_os = new ostrstream;
+            반환 *m_os;
         }
 
         void os_flush() {
-            if (m_os && m_os->pcount()>0) {
+            만약 (m_os && m_os->pcount()>0) {
                 ostrstream* oss = new ostrstream;
                 oss->fill(m_os->fill());
                 oss->flags(m_os->flags());
@@ -260,8 +260,8 @@ class ozstream
  * (0 in case of error).
  */
 template <class T, class Items>
-inline int write(ozstream& zs, const T* x, Items items) {
-    return ::gzwrite(zs.fp(), (voidp) x, items*sizeof(T));
+inline 정수 write(ozstream& zs, const T* x, Items items) {
+    반환 ::gzwrite(zs.fp(), (voidp) x, items*sizeof(T));
 }
 
 /*
@@ -270,13 +270,13 @@ inline int write(ozstream& zs, const T* x, Items items) {
 template <class T>
 inline ozstream& operator<(ozstream& zs, const T& x) {
     ::gzwrite(zs.fp(), (voidp) &x, sizeof(T));
-    return zs;
+    반환 zs;
 }
 
 inline zstringlen::zstringlen(ozstream& zs, const char* x) {
     val.byte = 255;  val.word = ::strlen(x);
-    if (val.word < 255) zs < (val.byte = val.word);
-    else zs < val;
+    만약 (val.word < 255) zs < (val.byte = val.word);
+    아니면 zs < val;
 }
 
 /*
@@ -285,12 +285,12 @@ inline zstringlen::zstringlen(ozstream& zs, const char* x) {
 inline ozstream& operator<(ozstream& zs, const char* x) {
     zstringlen len(zs, x);
     ::gzwrite(zs.fp(), (voidp) x, len.value());
-    return zs;
+    반환 zs;
 }
 
 #ifdef _MSC_VER
 inline ozstream& operator<(ozstream& zs, char* const& x) {
-    return zs < (const char*) x;
+    반환 zs < (const char*) x;
 }
 #endif
 
@@ -300,7 +300,7 @@ inline ozstream& operator<(ozstream& zs, char* const& x) {
 template <class T>
 inline ostream& operator<<(ozstream& zs, const T& x) {
     zs.os_flush();
-    return zs.os() << x;
+    반환 zs.os() << x;
 }
 
 #endif
