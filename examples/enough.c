@@ -205,14 +205,14 @@ local void string_printf(string_t *s, char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     size_t len = s->len;
-    int ret = vsnprintf(s->str + len, s->size - len, fmt, ap);
+    整数 ret = vsnprintf(s->str + len, s->size - len, fmt, ap);
     assert(ret >= 0 && "out of memory");
     s->len += ret;
-    if (s->size < s->len + 1) {
+    もし (s->size < s->len + 1) {
         do {
             s->size <<= 1;
             assert(s->size != 0 && "overflow");
-        } while (s->size < s->len + 1);
+        } ながら (s->size < s->len + 1);
         s->str = realloc(s->str, s->size);
         assert(s->str != NULL && "out of memory");
         vsnprintf(s->str + len, s->size - len, fmt, ap);
@@ -222,29 +222,29 @@ local void string_printf(string_t *s, char *fmt, ...) {
 
 // Globals to avoid propagating constants or constant pointers recursively.
 struct {
-    int max;            // maximum allowed bit length for the codes
-    int root;           // size of base code table in bits
-    int large;          // largest code table so far
+    整数 max;            // maximum allowed bit length for the codes
+    整数 root;           // size of base code table in bits
+    整数 large;          // largest code table so far
     size_t size;        // number of elements in num and done
     big_t tot;          // total number of codes with maximum tables size
     string_t out;       // display of subcodes for maximum tables size
-    int *code;          // number of symbols assigned to each bit length
+    整数 *code;          // number of symbols assigned to each bit length
     big_t *num;         // saved results array for code counting
     struct tab *done;   // states already evaluated array
 } g;
 
 // Index function for num[] and done[].
-local inline size_t map(int syms, int left, int len) {
-    return ((size_t)((syms - 1) >> 1) * ((syms - 2) >> 1) +
+local inline size_t map(整数 syms, 整数 left, 整数 len) {
+    戻る ((size_t)((syms - 1) >> 1) * ((syms - 2) >> 1) +
             (left >> 1) - 1) * (g.max - 1) +
            len - 1;
 }
 
 // Free allocated space in globals.
 local void cleanup(void) {
-    if (g.done != NULL) {
-        for (size_t n = 0; n < g.size; n++)
-            if (g.done[n].len)
+    もし (g.done != NULL) {
+        ために (size_t n = 0; n < g.size; n++)
+            もし (g.done[n].len)
                 free(g.done[n].vec);
         g.size = 0;
         free(g.done);   g.done = NULL;
@@ -258,10 +258,10 @@ local void cleanup(void) {
 // through max inclusive, coding syms symbols, with left bit patterns of length
 // len unused -- return -1 if there is an overflow in the counting. Keep a
 // record of previous results in num to prevent repeating the same calculation.
-local big_t count(int syms, int left, int len) {
+local big_t count(整数 syms, 整数 left, 整数 len) {
     // see if only one possible code
-    if (syms == left)
-        return 1;
+    もし (syms == left)
+        戻る 1;
 
     // note and verify the expected state
     assert(syms > left && left > 0 && len < g.max);
@@ -269,28 +269,28 @@ local big_t count(int syms, int left, int len) {
     // see if we've done this one already
     size_t index = map(syms, left, len);
     big_t got = g.num[index];
-    if (got)
-        return got;         // we have -- return the saved result
+    もし (got)
+        戻る got;         // we have -- return the saved result
 
     // we need to use at least this many bit patterns so that the code won't be
     // incomplete at the next length (more bit patterns than symbols)
-    int least = (left << 1) - syms;
-    if (least < 0)
+    整数 least = (left << 1) - syms;
+    もし (least < 0)
         least = 0;
 
     // we can use at most this many bit patterns, lest there not be enough
     // available for the remaining symbols at the maximum length (if there were
     // no limit to the code length, this would become: most = left - 1)
-    int most = (((code_t)left << (g.max - len)) - syms) /
+    整数 most = (((code_t)left << (g.max - len)) - syms) /
                (((code_t)1 << (g.max - len)) - 1);
 
     // count all possible codes from this juncture and add them up
     big_t sum = 0;
-    for (int use = least; use <= most; use++) {
+    ために (整数 use = least; use <= most; use++) {
         got = count(syms - use, (left - use) << 1, len + 1);
         sum += got;
-        if (got == (big_t)-1 || sum < got)      // overflow
-            return (big_t)-1;
+        もし (got == (big_t)-1 || sum < got)      // overflow
+            戻る (big_t)-1;
     }
 
     // verify that all recursive calls are productive
@@ -298,14 +298,14 @@ local big_t count(int syms, int left, int len) {
 
     // save the result and return it
     g.num[index] = sum;
-    return sum;
+    戻る sum;
 }
 
 // Return true if we've been here before, set to true if not. Set a bit in a
 // bit vector to indicate visiting this state. Each (syms,len,left) state has a
 // variable size bit vector indexed by (mem,rem). The bit vector is lengthened
 // as needed to allow setting the (mem,rem) bit.
-local int been_here(int syms, int left, int len, int mem, int rem) {
+local 整数 been_here(整数 syms, 整数 left, 整数 len, 整数 mem, 整数 rem) {
     // point to vector for (syms,left,len), bit in vector for (mem,rem)
     size_t index = map(syms, left, len);
     mem -= 1 << g.root;             // mem always includes the root table
@@ -313,32 +313,32 @@ local int been_here(int syms, int left, int len, int mem, int rem) {
     rem >>= 1;
     size_t offset = (mem >> 3) + rem;
     offset = ((offset * (offset + 1)) >> 1) + rem;
-    int bit = 1 << (mem & 7);
+    整数 bit = 1 << (mem & 7);
 
     // see if we've been here
     size_t length = g.done[index].len;
-    if (offset < length && (g.done[index].vec[offset] & bit) != 0)
-        return 1;       // done this!
+    もし (offset < length && (g.done[index].vec[offset] & bit) != 0)
+        戻る 1;       // done this!
 
     // we haven't been here before -- set the bit to show we have now
 
     // see if we need to lengthen the vector in order to set the bit
-    if (length <= offset) {
+    もし (length <= offset) {
         // if we have one already, enlarge it, zero out the appended space
         char *vector;
-        if (length) {
+        もし (length) {
             do {
                 length <<= 1;
-            } while (length <= offset);
+            } ながら (length <= offset);
             vector = realloc(g.done[index].vec, length);
             assert(vector != NULL && "out of memory");
             memset(vector + g.done[index].len, 0, length - g.done[index].len);
         }
 
         // otherwise we need to make a new vector and zero it out
-        else {
+        否则 {
             length = 16;
-            while (length <= offset)
+            ながら (length <= offset)
                 length <<= 1;
             vector = calloc(length, 1);
             assert(vector != NULL && "out of memory");
@@ -351,21 +351,21 @@ local int been_here(int syms, int left, int len, int mem, int rem) {
 
     // set the bit
     g.done[index].vec[offset] |= bit;
-    return 0;
+    戻る 0;
 }
 
 // Examine all possible codes from the given node (syms, len, left). Compute
 // the amount of memory required to build inflate's decoding tables, where the
 // number of code structures used so far is mem, and the number remaining in
 // the current sub-table is rem.
-local void examine(int syms, int left, int len, int mem, int rem) {
+local void examine(整数 syms, 整数 left, 整数 len, 整数 mem, 整数 rem) {
     // see if we have a complete code
-    if (syms == left) {
+    もし (syms == left) {
         // set the last code entry
         g.code[len] = left;
 
         // complete computation of memory used by this code
-        while (rem < left) {
+        ながら (rem < left) {
             left -= rem;
             rem = 1 << (len - g.root);
             mem += rem;
@@ -373,10 +373,10 @@ local void examine(int syms, int left, int len, int mem, int rem) {
         assert(rem == left);
 
         // if this is at the maximum, show the sub-code
-        if (mem >= g.large) {
+        もし (mem >= g.large) {
             // if this is a new maximum, update the maximum and clear out the
             // printed sub-codes from the previous maximum
-            if (mem > g.large) {
+            もし (mem > g.large) {
                 g.large = mem;
                 string_clear(&g.out);
             }
@@ -384,7 +384,7 @@ local void examine(int syms, int left, int len, int mem, int rem) {
             // compute the starting state for this sub-code
             syms = 0;
             left = 1 << g.max;
-            for (int bits = g.max; bits > g.root; bits--) {
+            ために (整数 bits = g.max; bits > g.root; bits--) {
                 syms += g.code[bits];
                 left -= g.code[bits];
                 assert((left & 1) == 0);
@@ -394,36 +394,36 @@ local void examine(int syms, int left, int len, int mem, int rem) {
             // print the starting state and the resulting sub-code to g.out
             string_printf(&g.out, "<%u, %u, %u>:",
                           syms, g.root + 1, ((1 << g.root) - left) << 1);
-            for (int bits = g.root + 1; bits <= g.max; bits++)
-                if (g.code[bits])
+            ために (整数 bits = g.root + 1; bits <= g.max; bits++)
+                もし (g.code[bits])
                     string_printf(&g.out, " %d[%d]", g.code[bits], bits);
             string_printf(&g.out, "\n");
         }
 
         // remove entries as we drop back down in the recursion
         g.code[len] = 0;
-        return;
+        戻る;
     }
 
     // prune the tree if we can
-    if (been_here(syms, left, len, mem, rem))
-        return;
+    もし (been_here(syms, left, len, mem, rem))
+        戻る;
 
     // we need to use at least this many bit patterns so that the code won't be
     // incomplete at the next length (more bit patterns than symbols)
-    int least = (left << 1) - syms;
-    if (least < 0)
+    整数 least = (left << 1) - syms;
+    もし (least < 0)
         least = 0;
 
     // we can use at most this many bit patterns, lest there not be enough
     // available for the remaining symbols at the maximum length (if there were
     // no limit to the code length, this would become: most = left - 1)
-    int most = (((code_t)left << (g.max - len)) - syms) /
+    整数 most = (((code_t)left << (g.max - len)) - syms) /
                (((code_t)1 << (g.max - len)) - 1);
 
     // occupy least table spaces, creating new sub-tables as needed
-    int use = least;
-    while (rem < use) {
+    整数 use = least;
+    ながら (rem < use) {
         use -= rem;
         rem = 1 << (len - g.root);
         mem += rem;
@@ -431,11 +431,11 @@ local void examine(int syms, int left, int len, int mem, int rem) {
     rem -= use;
 
     // examine codes from here, updating table space as we go
-    for (use = least; use <= most; use++) {
+    ために (use = least; use <= most; use++) {
         g.code[len] = use;
         examine(syms - use, (left - use) << 1, len + 1,
                 mem + (rem ? 1 << (len - g.root) : 0), rem << 1);
-        if (rem == 0) {
+        もし (rem == 0) {
             rem = 1 << (len - g.root);
             mem += rem;
         }
@@ -451,26 +451,26 @@ local void examine(int syms, int left, int len, int mem, int rem) {
 // calculate the amount of memory required by inflate to build the decoding
 // tables. Find the maximum amount of memory required and show the codes that
 // require that maximum.
-local void enough(int syms) {
+local void enough(整数 syms) {
     // clear code
-    for (int n = 0; n <= g.max; n++)
+    ために (整数 n = 0; n <= g.max; n++)
         g.code[n] = 0;
 
     // look at all (root + 1) bit and longer codes
     string_clear(&g.out);           // empty saved results
     g.large = 1 << g.root;          // base table
-    if (g.root < g.max)             // otherwise, there's only a base table
-        for (int n = 3; n <= syms; n++)
-            for (int left = 2; left < n; left += 2) {
+    もし (g.root < g.max)             // otherwise, there's only a base table
+        ために (整数 n = 3; n <= syms; n++)
+            ために (整数 left = 2; left < n; left += 2) {
                 // look at all reachable (root + 1) bit nodes, and the
                 // resulting codes (complete at root + 2 or more)
                 size_t index = map(n, left, g.root + 1);
-                if (g.root + 1 < g.max && g.num[index]) // reachable node
+                もし (g.root + 1 < g.max && g.num[index]) // reachable node
                     examine(n, left, g.root + 1, 1 << g.root, 0);
 
                 // also look at root bit codes with completions at root + 1
                 // bits (not saved in num, since complete), just in case
-                if (g.num[index - 1] && n <= left << 1)
+                もし (g.num[index - 1] && n <= left << 1)
                     examine((n - left) << 1, (n - left) << 1, g.root + 1,
                             1 << g.root, 0);
             }
@@ -495,7 +495,7 @@ local void enough(int syms) {
 //
 // For the deflate literal/length code, use "enough". For the deflate distance
 // code, use "enough 30 6".
-int main(int argc, char **argv) {
+整数 メインページ(整数 argc, char **argv) {
     // set up globals for cleanup()
     g.code = NULL;
     g.num = NULL;
@@ -503,56 +503,56 @@ int main(int argc, char **argv) {
     string_init(&g.out);
 
     // get arguments -- default to the deflate literal/length code
-    int syms = 286;
+    整数 syms = 286;
     g.root = 9;
     g.max = 15;
-    if (argc > 1) {
+    もし (argc > 1) {
         syms = atoi(argv[1]);
-        if (argc > 2) {
+        もし (argc > 2) {
             g.root = atoi(argv[2]);
-            if (argc > 3)
+            もし (argc > 3)
                 g.max = atoi(argv[3]);
         }
     }
-    if (argc > 4 || syms < 2 || g.root < 1 || g.max < 1) {
+    もし (argc > 4 || syms < 2 || g.root < 1 || g.max < 1) {
         fputs("invalid arguments, need: [sym >= 2 [root >= 1 [max >= 1]]]\n",
               stderr);
-        return 1;
+        戻る 1;
     }
 
     // if not restricting the code length, the longest is syms - 1
-    if (g.max > syms - 1)
+    もし (g.max > syms - 1)
         g.max = syms - 1;
 
     // determine the number of bits in a code_t
-    int bits = 0;
-    for (code_t word = 1; word; word <<= 1)
+    整数 bits = 0;
+    ために (code_t word = 1; word; word <<= 1)
         bits++;
 
     // make sure that the calculation of most will not overflow
-    if (g.max > bits || (code_t)(syms - 2) >= ((code_t)-1 >> (g.max - 1))) {
+    もし (g.max > bits || (code_t)(syms - 2) >= ((code_t)-1 >> (g.max - 1))) {
         fputs("abort: code length too long for internal types\n", stderr);
-        return 1;
+        戻る 1;
     }
 
     // reject impossible code requests
-    if ((code_t)(syms - 1) > ((code_t)1 << g.max) - 1) {
+    もし ((code_t)(syms - 1) > ((code_t)1 << g.max) - 1) {
         fprintf(stderr, "%d symbols cannot be coded in %d bits\n",
                 syms, g.max);
-        return 1;
+        戻る 1;
     }
 
     // allocate code vector
-    g.code = calloc(g.max + 1, sizeof(int));
+    g.code = calloc(g.max + 1, sizeof(整数));
     assert(g.code != NULL && "out of memory");
 
     // determine size of saved results array, checking for overflows,
     // allocate and clear the array (set all to zero with calloc())
-    if (syms == 2)              // iff max == 1
+    もし (syms == 2)              // iff max == 1
         g.num = NULL;           // won't be saving any results
-    else {
+    否则 {
         g.size = syms >> 1;
-        int n = (syms - 1) >> 1;
+        整数 n = (syms - 1) >> 1;
         assert(g.size <= (size_t)-1 / n && "overflow");
         g.size *= n;
         n = g.max - 1;
@@ -564,34 +564,34 @@ int main(int argc, char **argv) {
 
     // count possible codes for all numbers of symbols, add up counts
     big_t sum = 0;
-    for (int n = 2; n <= syms; n++) {
+    ために (整数 n = 2; n <= syms; n++) {
         big_t got = count(n, 2, 1);
         sum += got;
         assert(got != (big_t)-1 && sum >= got && "overflow");
     }
     printf("%"PRIbig" total codes for 2 to %d symbols", sum, syms);
-    if (g.max < syms - 1)
+    もし (g.max < syms - 1)
         printf(" (%d-bit length limit)\n", g.max);
-    else
+    否则
         puts(" (no length limit)");
 
     // allocate and clear done array for been_here()
-    if (syms == 2)
+    もし (syms == 2)
         g.done = NULL;
-    else {
+    否则 {
         g.done = calloc(g.size, sizeof(struct tab));
         assert(g.done != NULL && "out of memory");
     }
 
     // find and show maximum inflate table usage
-    if (g.root > g.max)             // reduce root to max length
+    もし (g.root > g.max)             // reduce root to max length
         g.root = g.max;
-    if ((code_t)syms < ((code_t)1 << (g.root + 1)))
+    もし ((code_t)syms < ((code_t)1 << (g.root + 1)))
         enough(syms);
-    else
+    否则
         fputs("cannot handle minimum code lengths > root", stderr);
 
     // done
     cleanup();
-    return 0;
+    戻る 0;
 }

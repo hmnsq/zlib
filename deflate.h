@@ -89,7 +89,7 @@ typedef struct static_tree_desc_s  static_tree_desc;
 
 typedef struct tree_desc_s {
     ct_data *dyn_tree;           /* the dynamic tree */
-    int     max_code;            /* largest code with non zero frequency */
+    整数     max_code;            /* largest code with non zero frequency */
     const static_tree_desc *stat_desc;  /* the corresponding static tree */
 } FAR tree_desc;
 
@@ -103,16 +103,16 @@ typedef unsigned IPos;
 
 typedef struct internal_state {
     z_streamp strm;      /* pointer back to this zlib stream */
-    int   status;        /* as the name implies */
+    整数   status;        /* as the name implies */
     Bytef *pending_buf;  /* output still pending */
     ulg   pending_buf_size; /* size of pending_buf */
     Bytef *pending_out;  /* next pending byte to output to the stream */
     ulg   pending;       /* nb of bytes in the pending buffer */
-    int   wrap;          /* bit 0 true for zlib, bit 1 true for gzip */
+    整数   wrap;          /* bit 0 true for zlib, bit 1 true for gzip */
     gz_headerp  gzhead;  /* gzip header information to write */
     ulg   gzindex;       /* where in extra, name, or comment */
     Byte  method;        /* can only be DEFLATED */
-    int   last_flush;    /* value of flush param for previous deflate call */
+    整数   last_flush;    /* value of flush param for previous deflate call */
 
                 /* used by deflate.c: */
 
@@ -162,7 +162,7 @@ typedef struct internal_state {
 
     uInt match_length;           /* length of best match */
     IPos prev_match;             /* previous match */
-    int match_available;         /* set if previous match exists */
+    整数 match_available;         /* set if previous match exists */
     uInt strstart;               /* start of string to insert */
     uInt match_start;            /* start of matching string */
     uInt lookahead;              /* number of valid bytes ahead in window */
@@ -189,13 +189,13 @@ typedef struct internal_state {
      * max_insert_length is used only for compression levels <= 3.
      */
 
-    int level;    /* compression level (1..9) */
-    int strategy; /* favor or force Huffman coding*/
+    整数 level;    /* compression level (1..9) */
+    整数 strategy; /* favor or force Huffman coding*/
 
     uInt good_match;
     /* Use a faster search when the previous match is longer than this */
 
-    int nice_match; /* Stop searching when current match exceeds this */
+    整数 nice_match; /* Stop searching when current match exceeds this */
 
                 /* used by trees.c: */
     /* Didn't use ct_data typedef below to suppress compiler warning */
@@ -210,9 +210,9 @@ typedef struct internal_state {
     ush bl_count[MAX_BITS+1];
     /* number of codes at each bit length for an optimal tree */
 
-    int heap[2*L_CODES+1];      /* heap used to build the Huffman trees */
-    int heap_len;               /* number of elements in the heap */
-    int heap_max;               /* element of largest frequency */
+    整数 heap[2*L_CODES+1];      /* heap used to build the Huffman trees */
+    整数 heap_len;               /* number of elements in the heap */
+    整数 heap_max;               /* element of largest frequency */
     /* The sons of heap[n] are heap[2*n] and heap[2*n+1]. heap[0] is not used.
      * The same heap array is used to build all trees.
      */
@@ -225,7 +225,7 @@ typedef struct internal_state {
 #   define LIT_BUFS 5
     ushf *d_buf;          /* buffer for distances */
     uchf *l_buf;          /* buffer for literals/lengths */
-#else
+#否则
 #   define LIT_BUFS 4
     uchf *sym_buf;        /* buffer for distances and literals/lengths */
 #endif
@@ -267,11 +267,11 @@ typedef struct internal_state {
     /* Output buffer. bits are inserted starting at the bottom (least
      * significant bits).
      */
-    int bi_valid;
+    整数 bi_valid;
     /* Number of valid bits in bi_buf.  All bits above the last valid bit
      * are always zero.
      */
-    int bi_used;
+    整数 bi_used;
     /* Last number of used bits when going to a byte boundary.
      */
 
@@ -282,7 +282,7 @@ typedef struct internal_state {
      * updated to the new high water mark.
      */
 
-    int slid;
+    整数 slid;
     /* True if the hash table has been slid since it was cleared. */
 
 } FAR deflate_state;
@@ -309,13 +309,13 @@ typedef struct internal_state {
 
         /* in trees.c */
 void ZLIB_INTERNAL _tr_init(deflate_state *s);
-int ZLIB_INTERNAL _tr_tally(deflate_state *s, unsigned dist, unsigned lc);
+整数 ZLIB_INTERNAL _tr_tally(deflate_state *s, unsigned dist, unsigned lc);
 void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
-                                   ulg stored_len, int last);
+                                   ulg stored_len, 整数 last);
 void ZLIB_INTERNAL _tr_flush_bits(deflate_state *s);
 void ZLIB_INTERNAL _tr_align(deflate_state *s);
 void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
-                                    ulg stored_len, int last);
+                                    ulg stored_len, 整数 last);
 
 #define d_code(dist) \
    ((dist) < 256 ? _dist_code[dist] : _dist_code[256+((dist)>>7)])
@@ -327,10 +327,10 @@ void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
 #ifndef ZLIB_DEBUG
 /* Inline versions of _tr_tally for speed: */
 
-#if defined(GEN_TREES_H) || !defined(STDC)
+#もし defined(GEN_TREES_H) || !defined(STDC)
   extern uch ZLIB_INTERNAL _length_code[];
   extern uch ZLIB_INTERNAL _dist_code[];
-#else
+#否则
   extern const uch ZLIB_INTERNAL _length_code[];
   extern const uch ZLIB_INTERNAL _dist_code[];
 #endif
@@ -353,7 +353,7 @@ void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
     s->dyn_dtree[d_code(dist)].Freq++; \
     flush = (s->sym_next == s->sym_end); \
   }
-#else
+#否则
 # define _tr_tally_lit(s, c, flush) \
   { uch cc = (c); \
     s->sym_buf[s->sym_next++] = 0; \
@@ -374,7 +374,7 @@ void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
     flush = (s->sym_next == s->sym_end); \
   }
 #endif
-#else
+#否则
 # define _tr_tally_lit(s, c, flush) flush = _tr_tally(s, 0, c)
 # define _tr_tally_dist(s, distance, length, flush) \
               flush = _tr_tally(s, distance, length)
