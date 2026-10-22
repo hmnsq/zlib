@@ -10,397 +10,397 @@
 
 */
 
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "zlib.h"
-#include "ioapi.h"
-#include "iowin32.h"
+#ಅನ್ತರ್ಭಾವ "zlib.h"
+#ಅನ್ತರ್ಭಾವ "ioapi.h"
+#ಅನ್ತರ್ಭಾವ "iowin32.h"
 
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE (0xFFFFFFFF)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ INVALID_HANDLE_ಮೌಲ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿಸು INVALID_HANDLE_ಮೌಲ್ಯ (0xFFFFFFFF)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef INVALID_SET_FILE_POINTER
-#define INVALID_SET_FILE_POINTER ((DWORD)-1)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ INVALID_ಗಣ_FILE_ಸೂಚಕ
+#ವ್ಯಾಖ್ಯಾನಿಸು INVALID_ಗಣ_FILE_ಸೂಚಕ ((DWORD)-1)
+#ಆದರೆ_ಅಂತ್ಯ
 
 
 /* see Include/shared/winapifamily.h in the Windows Kit */
-#if defined(WINAPI_FAMILY_PARTITION) && (!(defined(IOWIN32_USING_WINRT_API)))
+#ಆದರೆ defined(WINAPI_FAMILY_ವಿಭಜನೆ) && (!(defined(IOWIN32_USING_WINRT_API)))
 
-#if !defined(WINAPI_FAMILY_ONE_PARTITION)
-#define WINAPI_FAMILY_ONE_PARTITION(PartitionSet, Partition) ((WINAPI_FAMILY & PartitionSet) == Partition)
-#endif
+#ಆದರೆ !defined(WINAPI_FAMILY_ONE_ವಿಭಜನೆ)
+#ವ್ಯಾಖ್ಯಾನಿಸು WINAPI_FAMILY_ONE_ವಿಭಜನೆ(ವಿಭಜನೆ_ಗಣ, ವಿಭಜನೆ) ((WINAPI_FAMILY & ವಿಭಜನೆ_ಗಣ) == ವಿಭಜನೆ)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
-#define IOWIN32_USING_WINRT_API 1
-#endif
-#endif
+#ಆದರೆ WINAPI_FAMILY_ONE_ವಿಭಜನೆ(WINAPI_FAMILY, WINAPI_ವಿಭಜನೆ_APP)
+#ವ್ಯಾಖ್ಯಾನಿಸು IOWIN32_USING_WINRT_API 1
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-typedef struct
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ
 {
     HANDLE hf;
-    int error;
+    ಪೂರ್ಣಾಂಕ error;
 } WIN32FILE_IOWIN;
 
 
-static void win32_translate_open_mode(int mode,
+ಸ್ಥಿರ ಶೂನ್ಯ win32_translate_open_ಬಹುಲಕ(ಪೂರ್ಣಾಂಕ ಬಹುಲಕ,
                                       DWORD* lpdwDesiredAccess,
                                       DWORD* lpdwCreationDisposition,
-                                      DWORD* lpdwShareMode,
-                                      DWORD* lpdwFlagsAndAttributes) {
-    *lpdwDesiredAccess = *lpdwShareMode = *lpdwFlagsAndAttributes = *lpdwCreationDisposition = 0;
+                                      DWORD* lpdw_Share_ಬಹುಲಕ,
+                                      DWORD* lpdw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು) {
+    *lpdwDesiredAccess = *lpdw_Share_ಬಹುಲಕ = *lpdw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು = *lpdwCreationDisposition = 0;
 
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+    ಆದರೆ ((ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_READWRITEFILTER)==ZLIB_FILEFUNC_ಬಹುಲಕ_READ)
     {
         *lpdwDesiredAccess = GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
-        *lpdwShareMode = FILE_SHARE_READ;
+        *lpdw_Share_ಬಹುಲಕ = FILE_SHARE_READ;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_EXISTING)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_CREATE)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = CREATE_ALWAYS;
     }
 }
 
-static voidpf win32_build_iowin(HANDLE hFile) {
-    voidpf ret=NULL;
+ಸ್ಥಿರ voidpf win32_build_iowin(HANDLE hFile) {
+    voidpf ret=ಖಾಲಿ;
 
-    if ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE))
+    ಆದರೆ ((hFile != ಖಾಲಿ) && (hFile != INVALID_HANDLE_ಮೌಲ್ಯ))
     {
         WIN32FILE_IOWIN w32fiow;
         w32fiow.hf = hFile;
         w32fiow.error = 0;
-        ret = malloc(sizeof(WIN32FILE_IOWIN));
+        ret = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(WIN32FILE_IOWIN));
 
-        if (ret==NULL)
+        ಆದರೆ (ret==ಖಾಲಿ)
             CloseHandle(hFile);
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
             *((WIN32FILE_IOWIN*)ret) = w32fiow;
     }
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* filename, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ) {
+    (ಶೂನ್ಯ)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_ಬಹುಲಕ,dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು ;
+    HANDLE hFile = ಖಾಲಿ;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_ಬಹುಲಕ(ಬಹುಲಕ,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_ಬಹುಲಕ,&dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು);
 
-#ifdef IOWIN32_USING_WINRT_API
-#ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ IOWIN32_USING_WINRT_API
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ UNICODE
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dw_Share_ಬಹುಲಕ, dwCreationDisposition, ಖಾಲಿ);
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_ಗಮ್ಯ_Wide_Char(CP_ACP,0,(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_ಬಹುಲಕ, dwCreationDisposition, ಖಾಲಿ);
     }
-#endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
+        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dw_Share_ಬಹುಲಕ, ಖಾಲಿ, dwCreationDisposition, dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು, ಖಾಲಿ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-    return win32_build_iowin(hFile);
+    ಹಿಂತಿರುಗಿ win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* filename, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ) {
+    (ಶೂನ್ಯ)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_ಬಹುಲಕ,dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು ;
+    HANDLE hFile = ಖಾಲಿ;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_ಬಹುಲಕ(ಬಹುಲಕ,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_ಬಹುಲಕ,&dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು);
 
-#ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ IOWIN32_USING_WINRT_API
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_ಗಮ್ಯ_Wide_Char(CP_ACP,0,(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_ಬಹುಲಕ, dwCreationDisposition, ಖಾಲಿ);
     }
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
+        hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dw_Share_ಬಹುಲಕ, ಖಾಲಿ, dwCreationDisposition, dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು, ಖಾಲಿ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-    return win32_build_iowin(hFile);
+    ಹಿಂತಿರುಗಿ win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* filename, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ) {
+    (ಶೂನ್ಯ)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_ಬಹುಲಕ,dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು ;
+    HANDLE hFile = ಖಾಲಿ;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_ಬಹುಲಕ(ಬಹುಲಕ,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_ಬಹುಲಕ,&dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು);
 
-#ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition,NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ IOWIN32_USING_WINRT_API
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dw_Share_ಬಹುಲಕ, dwCreationDisposition,ಖಾಲಿ);
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
+        hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dw_Share_ಬಹುಲಕ, ಖಾಲಿ, dwCreationDisposition, dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು, ಖಾಲಿ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-    return win32_build_iowin(hFile);
+    ಹಿಂತಿರುಗಿ win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open_file_func(voidpf opaque, const char* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open_file_func(voidpf opaque, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ) {
+    (ಶೂನ್ಯ)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_ಬಹುಲಕ,dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು ;
+    HANDLE hFile = ಖಾಲಿ;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_ಬಹುಲಕ(ಬಹುಲಕ,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_ಬಹುಲಕ,&dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು);
 
-#ifdef IOWIN32_USING_WINRT_API
-#ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ IOWIN32_USING_WINRT_API
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ UNICODE
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dw_Share_ಬಹುಲಕ, dwCreationDisposition, ಖಾಲಿ);
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_ಗಮ್ಯ_Wide_Char(CP_ACP,0,(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_ಬಹುಲಕ, dwCreationDisposition, ಖಾಲಿ);
     }
-#endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (dwDesiredAccess != 0))
+        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dw_Share_ಬಹುಲಕ, ಖಾಲಿ, dwCreationDisposition, dw_Flags_And_ಗುಣಲಕ್ಷಣಗಳು, ಖಾಲಿ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-    return win32_build_iowin(hFile);
+    ಹಿಂತಿರುಗಿ win32_build_iowin(hFile);
 }
 
 
-uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf stream, void* buf,uLong size) {
-    (void)opaque;
+uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf ಹರಿವು, ಶೂನ್ಯ* buf,uLong ಗಾತ್ರ_2) {
+    (ಶೂನ್ಯ)opaque;
     uLong ret=0;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
+    HANDLE hFile = ಖಾಲಿ;
+    ಆದರೆ (ಹರಿವು!=ಖಾಲಿ)
+        hFile = ((WIN32FILE_IOWIN*)ಹರಿವು) -> hf;
 
-    if (hFile != NULL)
+    ಆದರೆ (hFile != ಖಾಲಿ)
     {
-        if (!ReadFile(hFile, buf, size, &ret, NULL))
+        ಆದರೆ (!ReadFile(hFile, buf, ಗಾತ್ರ_2, &ret, ಖಾಲಿ))
         {
-            DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            DWORD dwErr = Get_ಕೊನೆಯ_Error();
+            ಆದರೆ (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)ಹರಿವು) -> error=(ಪೂರ್ಣಾಂಕ)dwErr;
         }
     }
 
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
 
-uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf stream, const void* buf, uLong size) {
-    (void)opaque;
+uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf ಹರಿವು, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* buf, uLong ಗಾತ್ರ_2) {
+    (ಶೂನ್ಯ)opaque;
     uLong ret=0;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
+    HANDLE hFile = ಖಾಲಿ;
+    ಆದರೆ (ಹರಿವು!=ಖಾಲಿ)
+        hFile = ((WIN32FILE_IOWIN*)ಹರಿವು) -> hf;
 
-    if (hFile != NULL)
+    ಆದರೆ (hFile != ಖಾಲಿ)
     {
-        if (!WriteFile(hFile, buf, size, &ret, NULL))
+        ಆದರೆ (!WriteFile(hFile, buf, ಗಾತ್ರ_2, &ret, ಖಾಲಿ))
         {
-            DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            DWORD dwErr = Get_ಕೊನೆಯ_Error();
+            ಆದರೆ (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)ಹರಿವು) -> error=(ಪೂರ್ಣಾಂಕ)dwErr;
         }
     }
 
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-static BOOL MySetFilePointerEx(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dwMoveMethod) {
-#ifdef IOWIN32_USING_WINRT_API
-    return SetFilePointerEx(hFile, pos, newPos, dwMoveMethod);
-#else
-    LONG lHigh = pos.HighPart;
-    DWORD dwNewPos = SetFilePointer(hFile, pos.LowPart, &lHigh, dwMoveMethod);
+ಸ್ಥಿರ BOOL My_ಗಣ_File_ಸೂಚಕ_Ex(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dw_Move_ವಿಧಾನ) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ IOWIN32_USING_WINRT_API
+    ಹಿಂತಿರುಗಿ ಗಣ_File_ಸೂಚಕ_Ex(hFile, pos, newPos, dw_Move_ವಿಧಾನ);
+#ಇಲ್ಲದಿದ್ದರೆ
+    LONG l_ಮೇಲಿನ = pos.ಮೇಲಿನ_Part;
+    DWORD dwNewPos = ಗಣ_File_ಸೂಚಕ(hFile, pos.ಕೆಳಗಿನ_Part, &l_ಮೇಲಿನ, dw_Move_ವಿಧಾನ);
     BOOL fOk = TRUE;
-    if (dwNewPos == 0xFFFFFFFF)
-        if (GetLastError() != NO_ERROR)
+    ಆದರೆ (dwNewPos == 0xFFFFFFFF)
+        ಆದರೆ (Get_ಕೊನೆಯ_Error() != NO_ERROR)
             fOk = FALSE;
-    if ((newPos != NULL) && (fOk))
+    ಆದರೆ ((newPos != ಖಾಲಿ) && (fOk))
     {
-        newPos->LowPart = dwNewPos;
-        newPos->HighPart = lHigh;
+        newPos->ಕೆಳಗಿನ_Part = dwNewPos;
+        newPos->ಮೇಲಿನ_Part = l_ಮೇಲಿನ;
     }
-    return fOk;
-#endif
+    ಹಿಂತಿರುಗಿ fOk;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-long ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    long ret=-1;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    if (hFile != NULL)
+ದೀರ್ಘ ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf ಹರಿವು) {
+    (ಶೂನ್ಯ)opaque;
+    ದೀರ್ಘ ret=-1;
+    HANDLE hFile = ಖಾಲಿ;
+    ಆದರೆ (ಹರಿವು!=ಖಾಲಿ)
+        hFile = ((WIN32FILE_IOWIN*)ಹರಿವು) -> hf;
+    ಆದರೆ (hFile != ಖಾಲಿ)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        ಆದರೆ (!My_ಗಣ_File_ಸೂಚಕ_Ex(hFile, pos, &pos, FILE_CURRENT))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_ಕೊನೆಯ_Error();
+            ((WIN32FILE_IOWIN*)ಹರಿವು) -> error=(ಪೂರ್ಣಾಂಕ)dwErr;
             ret = -1;
         }
-        else
-            ret=(long)pos.LowPart;
+        ಇಲ್ಲದಿದ್ದರೆ
+            ret=(ದೀರ್ಘ)pos.ಕೆಳಗಿನ_Part;
     }
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-ZPOS64_T ZCALLBACK win32_tell64_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
+ZPOS64_T ZCALLBACK win32_tell64_file_func(voidpf opaque, voidpf ಹರಿವು) {
+    (ಶೂನ್ಯ)opaque;
     ZPOS64_T ret= (ZPOS64_T)-1;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream)->hf;
+    HANDLE hFile = ಖಾಲಿ;
+    ಆದರೆ (ಹರಿವು!=ಖಾಲಿ)
+        hFile = ((WIN32FILE_IOWIN*)ಹರಿವು)->hf;
 
-    if (hFile)
+    ಆದರೆ (hFile)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        ಆದರೆ (!My_ಗಣ_File_ಸೂಚಕ_Ex(hFile, pos, &pos, FILE_CURRENT))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_ಕೊನೆಯ_Error();
+            ((WIN32FILE_IOWIN*)ಹರಿವು) -> error=(ಪೂರ್ಣಾಂಕ)dwErr;
             ret = (ZPOS64_T)-1;
         }
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
             ret=pos.QuadPart;
     }
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
 
-long ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf stream, uLong offset, int origin) {
-    (void)opaque;
-    DWORD dwMoveMethod=0xFFFFFFFF;
-    HANDLE hFile = NULL;
+ದೀರ್ಘ ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf ಹರಿವು, uLong ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ origin) {
+    (ಶೂನ್ಯ)opaque;
+    DWORD dw_Move_ವಿಧಾನ=0xFFFFFFFF;
+    HANDLE hFile = ಖಾಲಿ;
 
-    long ret=-1;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    switch (origin)
+    ದೀರ್ಘ ret=-1;
+    ಆದರೆ (ಹರಿವು!=ಖಾಲಿ)
+        hFile = ((WIN32FILE_IOWIN*)ಹರಿವು) -> hf;
+    ಆಯ್ಕೆ (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
-        dwMoveMethod = FILE_CURRENT;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
-        dwMoveMethod = FILE_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
-        dwMoveMethod = FILE_BEGIN;
-        break;
-    default: return -1;
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_CUR :
+        dw_Move_ವಿಧಾನ = FILE_CURRENT;
+        ನಿಲ್ಲಿಸು;
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_ಕೊನೆ :
+        dw_Move_ವಿಧಾನ = FILE_ಕೊನೆ;
+        ನಿಲ್ಲಿಸು;
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_ಗಣ :
+        dw_Move_ವಿಧಾನ = FILE_BEGIN;
+        ನಿಲ್ಲಿಸು;
+    ಪೂರ್ವನಿಯೋಜಿತ: ಹಿಂತಿರುಗಿ -1;
     }
 
-    if (hFile != NULL)
+    ಆದರೆ (hFile != ಖಾಲಿ)
     {
         LARGE_INTEGER pos;
-        pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        pos.QuadPart = ಸ್ಥಾನಾಂತರ;
+        ಆದರೆ (!My_ಗಣ_File_ಸೂಚಕ_Ex(hFile, pos, ಖಾಲಿ, dw_Move_ವಿಧಾನ))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_ಕೊನೆಯ_Error();
+            ((WIN32FILE_IOWIN*)ಹರಿವು) -> error=(ಪೂರ್ಣಾಂಕ)dwErr;
             ret = -1;
         }
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
             ret=0;
     }
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-long ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, int origin) {
-    (void)opaque;
-    DWORD dwMoveMethod=0xFFFFFFFF;
-    HANDLE hFile = NULL;
-    long ret=-1;
+ದೀರ್ಘ ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf ಹರಿವು, ZPOS64_T ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ origin) {
+    (ಶೂನ್ಯ)opaque;
+    DWORD dw_Move_ವಿಧಾನ=0xFFFFFFFF;
+    HANDLE hFile = ಖಾಲಿ;
+    ದೀರ್ಘ ret=-1;
 
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream)->hf;
+    ಆದರೆ (ಹರಿವು!=ಖಾಲಿ)
+        hFile = ((WIN32FILE_IOWIN*)ಹರಿವು)->hf;
 
-    switch (origin)
+    ಆಯ್ಕೆ (origin)
     {
-        case ZLIB_FILEFUNC_SEEK_CUR :
-            dwMoveMethod = FILE_CURRENT;
-            break;
-        case ZLIB_FILEFUNC_SEEK_END :
-            dwMoveMethod = FILE_END;
-            break;
-        case ZLIB_FILEFUNC_SEEK_SET :
-            dwMoveMethod = FILE_BEGIN;
-            break;
-        default: return -1;
+        ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_CUR :
+            dw_Move_ವಿಧಾನ = FILE_CURRENT;
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_ಕೊನೆ :
+            dw_Move_ವಿಧಾನ = FILE_ಕೊನೆ;
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_ಗಣ :
+            dw_Move_ವಿಧಾನ = FILE_BEGIN;
+            ನಿಲ್ಲಿಸು;
+        ಪೂರ್ವನಿಯೋಜಿತ: ಹಿಂತಿರುಗಿ -1;
     }
 
-    if (hFile)
+    ಆದರೆ (hFile)
     {
         LARGE_INTEGER pos;
-        pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        pos.QuadPart = ಸ್ಥಾನಾಂತರ;
+        ಆದರೆ (!My_ಗಣ_File_ಸೂಚಕ_Ex(hFile, pos, ಖಾಲಿ, dw_Move_ವಿಧಾನ))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_ಕೊನೆಯ_Error();
+            ((WIN32FILE_IOWIN*)ಹರಿವು) -> error=(ಪೂರ್ಣಾಂಕ)dwErr;
             ret = -1;
         }
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
             ret=0;
     }
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-int ZCALLBACK win32_close_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    int ret=-1;
+ಪೂರ್ಣಾಂಕ ZCALLBACK win32_close_file_func(voidpf opaque, voidpf ಹರಿವು) {
+    (ಶೂನ್ಯ)opaque;
+    ಪೂರ್ಣಾಂಕ ret=-1;
 
-    if (stream!=NULL)
+    ಆದರೆ (ಹರಿವು!=ಖಾಲಿ)
     {
         HANDLE hFile;
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-        if (hFile != NULL)
+        hFile = ((WIN32FILE_IOWIN*)ಹರಿವು) -> hf;
+        ಆದರೆ (hFile != ಖಾಲಿ)
         {
             CloseHandle(hFile);
             ret=0;
         }
-        free(stream);
+        ಬಿಡುಗಡೆ(ಹರಿವು);
     }
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-int ZCALLBACK win32_error_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    int ret=-1;
-    if (stream!=NULL)
+ಪೂರ್ಣಾಂಕ ZCALLBACK win32_error_file_func(voidpf opaque, voidpf ಹರಿವು) {
+    (ಶೂನ್ಯ)opaque;
+    ಪೂರ್ಣಾಂಕ ret=-1;
+    ಆದರೆ (ಹರಿವು!=ಖಾಲಿ)
     {
-        ret = ((WIN32FILE_IOWIN*)stream) -> error;
+        ret = ((WIN32FILE_IOWIN*)ಹರಿವು) -> error;
     }
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
+ಶೂನ್ಯ fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen_file = win32_open_file_func;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -408,10 +408,10 @@ void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek_file = win32_seek_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ಖಾಲಿ;
 }
 
-void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
+ಶೂನ್ಯ fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_func;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -419,11 +419,11 @@ void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ಖಾಲಿ;
 }
 
 
-void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
+ಶೂನ್ಯ fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_funcA;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -431,11 +431,11 @@ void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ಖಾಲಿ;
 }
 
 
-void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
+ಶೂನ್ಯ fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_funcW;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -443,5 +443,5 @@ void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ಖಾಲಿ;
 }

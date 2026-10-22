@@ -1,9 +1,9 @@
-#ifndef CRC32_VX_HOOKS_H
-#define CRC32_VX_HOOKS_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_VX_HOOKS_H
+#ವ್ಯಾಖ್ಯಾನಿಸು ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_VX_HOOKS_H
 
 /**
  * CRC HOOKS
  */
-ZLIB_INTERNAL extern unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len);
+ZLIB_ಆಂತರಿಕ ಬಾಹ್ಯ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ (*ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_z_hook)(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *buf, z_ಗಾತ್ರ_t len);
 
-#endif /* CRC32_VX_HOOKS_H */
+#ಆದರೆ_ಅಂತ್ಯ /* CRC32_VX_HOOKS_H */

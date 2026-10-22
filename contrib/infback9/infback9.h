@@ -16,22 +16,22 @@
  * zlib.h must be included before this header file.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __cplusplus
+ಬಾಹ್ಯ "C" {
+#ಆದರೆ_ಅಂತ್ಯ
 
-ZEXTERN int ZEXPORT inflateBack9(z_stream FAR *strm,
-                                 in_func in, void FAR *in_desc,
-                                 out_func out, void FAR *out_desc);
-ZEXTERN int ZEXPORT inflateBack9End(z_stream FAR *strm);
-ZEXTERN int ZEXPORT inflateBack9Init_(z_stream FAR *strm,
-                                      unsigned char FAR *window,
-                                      const char *version,
-                                      int stream_size);
-#define inflateBack9Init(strm, window) \
-        inflateBack9Init_((strm), (window), \
-        ZLIB_VERSION, sizeof(z_stream))
+ZEXTERN ಪೂರ್ಣಾಂಕ ZEXPORT inflateBack9(z_ಹರಿವು FAR *strm,
+                                 ಒಳ_func ಒಳ, ಶೂನ್ಯ FAR *ಒಳ_desc,
+                                 ಹೊರಹೋಗು_func ಹೊರಹೋಗು, ಶೂನ್ಯ FAR *ಹೊರಹೋಗು_desc);
+ZEXTERN ಪೂರ್ಣಾಂಕ ZEXPORT inflate_Back9_ಕೊನೆ(z_ಹರಿವು FAR *strm);
+ZEXTERN ಪೂರ್ಣಾಂಕ ZEXPORT inflateBack9Init_(z_ಹರಿವು FAR *strm,
+                                      ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *ಕಿಟಕಿ,
+                                      ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಆವೃತ್ತಿ,
+                                      ಪೂರ್ಣಾಂಕ ಹರಿವು_ಗಾತ್ರ);
+#ವ್ಯಾಖ್ಯಾನಿಸು inflateBack9Init(strm, ಕಿಟಕಿ) \
+        inflateBack9Init_((strm), (ಕಿಟಕಿ), \
+        ZLIB_ಆವೃತ್ತಿ, ಗಾತ್ರ(z_ಹರಿವು))
 
-#ifdef __cplusplus
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __cplusplus
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

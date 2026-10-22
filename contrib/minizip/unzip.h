@@ -39,121 +39,121 @@
 
 */
 
-#ifndef _unz64_H
-#define _unz64_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _unz64_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _unz64_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __cplusplus
+ಬಾಹ್ಯ "C" {
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef _ZLIB_H
-#include "zlib.h"
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _ZLIB_H
+#ಅನ್ತರ್ಭಾವ "zlib.h"
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef  _ZLIBIOAPI_H
-#include "ioapi.h"
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ  _ZLIBIOAPI_H
+#ಅನ್ತರ್ಭಾವ "ioapi.h"
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef HAVE_BZIP2
-#include "bzlib.h"
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+#ಅನ್ತರ್ಭಾವ "bzlib.h"
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define Z_BZIP2ED 12
+#ವ್ಯಾಖ್ಯಾನಿಸು Z_BZIP2ED 12
 
-#if defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)
+#ಆದರೆ defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
-typedef struct TagunzFile__ { int unused; } unzFile__;
-typedef unzFile__ *unzFile;
-#else
-typedef voidp unzFile;
-#endif
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ TagunzFile__ { ಪೂರ್ಣಾಂಕ ಬಳಸದ; } unzFile__;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ unzFile__ *unzFile;
+#ಇಲ್ಲದಿದ್ದರೆ
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ voidp unzFile;
+#ಆದರೆ_ಅಂತ್ಯ
 
-extern const char unz_copyright[];
+ಬಾಹ್ಯ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ unz_copyright[];
 
 
-#define UNZ_OK                          (0)
-#define UNZ_END_OF_LIST_OF_FILE         (-100)
-#define UNZ_ERRNO                       (Z_ERRNO)
-#define UNZ_EOF                         (0)
-#define UNZ_PARAMERROR                  (-102)
-#define UNZ_BADZIPFILE                  (-103)
-#define UNZ_INTERNALERROR               (-104)
-#define UNZ_CRCERROR                    (-105)
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_OK                          (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_ಕೊನೆ_ದ_LIST_ದ_FILE         (-100)
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_ERRNO                       (Z_ERRNO)
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_EOF                         (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_PARAMERROR                  (-102)
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_BADZIPFILE                  (-103)
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_INTERNALERROR               (-104)
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_CRCERROR                    (-105)
 
 /* tm_unz contain date/time info */
-typedef struct tm_unz_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ tm_unz_s
 {
-    int tm_sec;             /* seconds after the minute - [0,59] */
-    int tm_min;             /* minutes after the hour - [0,59] */
-    int tm_hour;            /* hours since midnight - [0,23] */
-    int tm_mday;            /* day of the month - [1,31] */
-    int tm_mon;             /* months since January - [0,11] */
-    int tm_year;            /* years - [1980..2044] */
+    ಪೂರ್ಣಾಂಕ tm_sec;             /* seconds after the minute - [0,59] */
+    ಪೂರ್ಣಾಂಕ tm_min;             /* minutes after the hour - [0,59] */
+    ಪೂರ್ಣಾಂಕ tm_hour;            /* hours since midnight - [0,23] */
+    ಪೂರ್ಣಾಂಕ tm_mday;            /* day of the month - [1,31] */
+    ಪೂರ್ಣಾಂಕ tm_mon;             /* months since January - [0,11] */
+    ಪೂರ್ಣಾಂಕ tm_year;            /* years - [1980..2044] */
 } tm_unz;
 
 /* unz_global_info structure contain global data about the ZIPfile
    These data comes from the end of central dir */
-typedef struct unz_global_info64_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ unz_global_info64_s
 {
-    ZPOS64_T number_entry;         /* total number of entries in
+    ZPOS64_T ಸಂಖ್ಯೆ_ನಮೂದು;         /* total number of entries in
                                      the central dir on this disk */
-    uLong size_comment;         /* size of the global comment of the zipfile */
+    uLong ಗಾತ್ರ_comment;         /* size of the global comment of the zipfile */
 } unz_global_info64;
 
-typedef struct unz_global_info_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ unz_global_info_s
 {
-    uLong number_entry;         /* total number of entries in
+    uLong ಸಂಖ್ಯೆ_ನಮೂದು;         /* total number of entries in
                                      the central dir on this disk */
-    uLong size_comment;         /* size of the global comment of the zipfile */
+    uLong ಗಾತ್ರ_comment;         /* size of the global comment of the zipfile */
 } unz_global_info;
 
 /* unz_file_info contain information about a file in the zipfile */
-typedef struct unz_file_info64_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ unz_file_info64_s
 {
-    uLong version;              /* version made by                 2 bytes */
-    uLong version_needed;       /* version needed to extract       2 bytes */
+    uLong ಆವೃತ್ತಿ;              /* version made by                 2 bytes */
+    uLong ಆವೃತ್ತಿ_needed;       /* version needed to extract       2 bytes */
     uLong flag;                 /* general purpose bit flag        2 bytes */
-    uLong compression_method;   /* compression method              2 bytes */
+    uLong compression_ವಿಧಾನ;   /* compression method              2 bytes */
     uLong dosDate;              /* last mod file date in Dos fmt   4 bytes */
-    uLong crc;                  /* crc-32                          4 bytes */
-    ZPOS64_T compressed_size;   /* compressed size                 8 bytes */
-    ZPOS64_T uncompressed_size; /* uncompressed size               8 bytes */
-    uLong size_filename;        /* filename length                 2 bytes */
-    uLong size_file_extra;      /* extra field length              2 bytes */
-    uLong size_file_comment;    /* file comment length             2 bytes */
+    uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;                  /* crc-32                          4 bytes */
+    ZPOS64_T compressed_ಗಾತ್ರ;   /* compressed size                 8 bytes */
+    ZPOS64_T uncompressed_ಗಾತ್ರ; /* uncompressed size               8 bytes */
+    uLong ಗಾತ್ರ_filename;        /* filename length                 2 bytes */
+    uLong ಗಾತ್ರ_file_extra;      /* extra field length              2 bytes */
+    uLong ಗಾತ್ರ_file_comment;    /* file comment length             2 bytes */
 
-    uLong disk_num_start;       /* disk number start               2 bytes */
-    uLong internal_fa;          /* internal file attributes        2 bytes */
+    uLong disk_ಅಂಕೆ_ಆರಂಭ;       /* disk number start               2 bytes */
+    uLong ಆಂತರಿಕ_fa;          /* internal file attributes        2 bytes */
     uLong external_fa;          /* external file attributes        4 bytes */
 
     tm_unz tmu_date;
 } unz_file_info64;
 
-typedef struct unz_file_info_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ unz_file_info_s
 {
-    uLong version;              /* version made by                 2 bytes */
-    uLong version_needed;       /* version needed to extract       2 bytes */
+    uLong ಆವೃತ್ತಿ;              /* version made by                 2 bytes */
+    uLong ಆವೃತ್ತಿ_needed;       /* version needed to extract       2 bytes */
     uLong flag;                 /* general purpose bit flag        2 bytes */
-    uLong compression_method;   /* compression method              2 bytes */
+    uLong compression_ವಿಧಾನ;   /* compression method              2 bytes */
     uLong dosDate;              /* last mod file date in Dos fmt   4 bytes */
-    uLong crc;                  /* crc-32                          4 bytes */
-    uLong compressed_size;      /* compressed size                 4 bytes */
-    uLong uncompressed_size;    /* uncompressed size               4 bytes */
-    uLong size_filename;        /* filename length                 2 bytes */
-    uLong size_file_extra;      /* extra field length              2 bytes */
-    uLong size_file_comment;    /* file comment length             2 bytes */
+    uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;                  /* crc-32                          4 bytes */
+    uLong compressed_ಗಾತ್ರ;      /* compressed size                 4 bytes */
+    uLong uncompressed_ಗಾತ್ರ;    /* uncompressed size               4 bytes */
+    uLong ಗಾತ್ರ_filename;        /* filename length                 2 bytes */
+    uLong ಗಾತ್ರ_file_extra;      /* extra field length              2 bytes */
+    uLong ಗಾತ್ರ_file_comment;    /* file comment length             2 bytes */
 
-    uLong disk_num_start;       /* disk number start               2 bytes */
-    uLong internal_fa;          /* internal file attributes        2 bytes */
+    uLong disk_ಅಂಕೆ_ಆರಂಭ;       /* disk number start               2 bytes */
+    uLong ಆಂತರಿಕ_fa;          /* internal file attributes        2 bytes */
     uLong external_fa;          /* external file attributes        4 bytes */
 
     tm_unz tmu_date;
 } unz_file_info;
 
-extern int ZEXPORT unzStringFileNameCompare(const char* fileName1,
-                                            const char* fileName2,
-                                            int iCaseSensitivity);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzStringFileNameCompare(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* fileName1,
+                                            ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* fileName2,
+                                            ಪೂರ್ಣಾಂಕ i_Case_ಸಂವೇದನಾಶೀಲತೆ);
 /*
    Compare two filenames (fileName1,fileName2).
    If iCaseSensitivity = 1, comparison is case sensitive (like strcmp)
@@ -164,8 +164,8 @@ extern int ZEXPORT unzStringFileNameCompare(const char* fileName1,
 */
 
 
-extern unzFile ZEXPORT unzOpen(const char *path);
-extern unzFile ZEXPORT unzOpen64(const void *path);
+ಬಾಹ್ಯ unzFile ZEXPORT unzOpen(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ);
+ಬಾಹ್ಯ unzFile ZEXPORT unzOpen64(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮಾರ್ಗ);
 /*
   Open a Zip file. path contain the full pathname (by example,
      on a Windows XP computer "c:\\zlib\\zlib113.zip" or on an Unix computer
@@ -182,31 +182,31 @@ extern unzFile ZEXPORT unzOpen64(const void *path);
 */
 
 
-extern unzFile ZEXPORT unzOpen2(const char *path,
+ಬಾಹ್ಯ unzFile ZEXPORT unzOpen2(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ,
                                 zlib_filefunc_def* pzlib_filefunc_def);
 /*
    Open a Zip file, like unzOpen, but provide a set of file low level API
       for read/write the zip file (see ioapi.h)
 */
 
-extern unzFile ZEXPORT unzOpen2_64(const void *path,
+ಬಾಹ್ಯ unzFile ZEXPORT unzOpen2_64(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮಾರ್ಗ,
                                    zlib_filefunc64_def* pzlib_filefunc_def);
 /*
    Open a Zip file, like unz64Open, but provide a set of file low level API
       for read/write the zip file (see ioapi.h)
 */
 
-extern int ZEXPORT unzClose(unzFile file);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzClose(unzFile file);
 /*
   Close a ZipFile opened with unzOpen.
   If there is files inside the .Zip opened with unzOpenCurrentFile (see later),
     these files MUST be closed with unzCloseCurrentFile before call unzClose.
   return UNZ_OK if there is no problem. */
 
-extern int ZEXPORT unzGetGlobalInfo(unzFile file,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetGlobalInfo(unzFile file,
                                     unz_global_info *pglobal_info);
 
-extern int ZEXPORT unzGetGlobalInfo64(unzFile file,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetGlobalInfo64(unzFile file,
                                       unz_global_info64 *pglobal_info);
 /*
   Write info about the ZipFile in the *pglobal_info structure.
@@ -214,9 +214,9 @@ extern int ZEXPORT unzGetGlobalInfo64(unzFile file,
   return UNZ_OK if there is no problem. */
 
 
-extern int ZEXPORT unzGetGlobalComment(unzFile file,
-                                       char *szComment,
-                                       uLong uSizeBuf);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetGlobalComment(unzFile file,
+                                       ಅಕ್ಷರ *szComment,
+                                       uLong u_ಗಾತ್ರ_Buf);
 /*
   Get the global comment string of the ZipFile, in the szComment buffer.
   uSizeBuf is the size of the szComment buffer.
@@ -227,22 +227,22 @@ extern int ZEXPORT unzGetGlobalComment(unzFile file,
 /***************************************************************************/
 /* Unzip package allow you browse the directory of the zipfile */
 
-extern int ZEXPORT unzGoToFirstFile(unzFile file);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_Go_ಗಮ್ಯ_ಮೊದಲ_File(unzFile file);
 /*
   Set the current file of the zipfile to the first file.
   return UNZ_OK if there is no problem
 */
 
-extern int ZEXPORT unzGoToNextFile(unzFile file);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_Go_ಗಮ್ಯ_ಮುಂದಿನ_File(unzFile file);
 /*
   Set the current file of the zipfile to the next file.
   return UNZ_OK if there is no problem
   return UNZ_END_OF_LIST_OF_FILE if the actual file was the latest.
 */
 
-extern int ZEXPORT unzLocateFile(unzFile file,
-                                 const char *szFileName,
-                                 int iCaseSensitivity);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzLocateFile(unzFile file,
+                                 ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *szFileName,
+                                 ಪೂರ್ಣಾಂಕ i_Case_ಸಂವೇದನಾಶೀಲತೆ);
 /*
   Try locate the file szFileName in the zipfile.
   For the iCaseSensitivity signification, see unzStringFileNameCompare
@@ -256,53 +256,53 @@ extern int ZEXPORT unzLocateFile(unzFile file,
 /* ****************************************** */
 /* Ryan supplied functions */
 /* unz_file_info contain information about a file in the zipfile */
-typedef struct unz_file_pos_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ unz_file_pos_s
 {
-    uLong pos_in_zip_directory;   /* offset in zip file directory */
-    uLong num_of_file;            /* # of file */
+    uLong pos_ಒಳ_zip_directory;   /* offset in zip file directory */
+    uLong ಅಂಕೆ_ದ_file;            /* # of file */
 } unz_file_pos;
 
-extern int ZEXPORT unzGetFilePos(
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetFilePos(
     unzFile file,
     unz_file_pos* file_pos);
 
-extern int ZEXPORT unzGoToFilePos(
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_Go_ಗಮ್ಯ_File_Pos(
     unzFile file,
     unz_file_pos* file_pos);
 
-typedef struct unz64_file_pos_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ unz64_file_pos_s
 {
-    ZPOS64_T pos_in_zip_directory;   /* offset in zip file directory */
-    ZPOS64_T num_of_file;            /* # of file */
+    ZPOS64_T pos_ಒಳ_zip_directory;   /* offset in zip file directory */
+    ZPOS64_T ಅಂಕೆ_ದ_file;            /* # of file */
 } unz64_file_pos;
 
-extern int ZEXPORT unzGetFilePos64(
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetFilePos64(
     unzFile file,
     unz64_file_pos* file_pos);
 
-extern int ZEXPORT unzGoToFilePos64(
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_Go_ಗಮ್ಯ_File_Pos64(
     unzFile file,
-    const unz64_file_pos* file_pos);
+    ಸ್ಥಿರಾಂಕ unz64_file_pos* file_pos);
 
 /* ****************************************** */
 
-extern int ZEXPORT unzGetCurrentFileInfo64(unzFile file,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetCurrentFileInfo64(unzFile file,
                                            unz_file_info64 *pfile_info,
-                                           char *szFileName,
-                                           uLong fileNameBufferSize,
-                                           void *extraField,
-                                           uLong extraFieldBufferSize,
-                                           char *szComment,
-                                           uLong commentBufferSize);
+                                           ಅಕ್ಷರ *szFileName,
+                                           uLong file_Name_ಬಫರ್_ಗಾತ್ರ,
+                                           ಶೂನ್ಯ *extra_ಕ್ಷೇತ್ರ,
+                                           uLong extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ,
+                                           ಅಕ್ಷರ *szComment,
+                                           uLong comment_ಬಫರ್_ಗಾತ್ರ);
 
-extern int ZEXPORT unzGetCurrentFileInfo(unzFile file,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetCurrentFileInfo(unzFile file,
                                          unz_file_info *pfile_info,
-                                         char *szFileName,
-                                         uLong fileNameBufferSize,
-                                         void *extraField,
-                                         uLong extraFieldBufferSize,
-                                         char *szComment,
-                                         uLong commentBufferSize);
+                                         ಅಕ್ಷರ *szFileName,
+                                         uLong file_Name_ಬಫರ್_ಗಾತ್ರ,
+                                         ಶೂನ್ಯ *extra_ಕ್ಷೇತ್ರ,
+                                         uLong extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ,
+                                         ಅಕ್ಷರ *szComment,
+                                         uLong comment_ಬಫರ್_ಗಾತ್ರ);
 /*
   Get Info about the current file
   if pfile_info!=NULL, the *pfile_info structure will contain some info about
@@ -323,7 +323,7 @@ extern int ZEXPORT unzGetCurrentFileInfo(unzFile file,
 
 /** Addition for GDAL : START */
 
-extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file);
+ಬಾಹ್ಯ ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file);
 
 /** Addition for GDAL : END */
 
@@ -333,24 +333,24 @@ extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file);
    from it, and close it (you can close it before reading all the file)
    */
 
-extern int ZEXPORT unzOpenCurrentFile(unzFile file);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzOpenCurrentFile(unzFile file);
 /*
   Open for reading data the current file in the zipfile.
   If there is no error, the return value is UNZ_OK.
 */
 
-extern int ZEXPORT unzOpenCurrentFilePassword(unzFile file,
-                                              const char* password);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzOpenCurrentFilePassword(unzFile file,
+                                              ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* password);
 /*
   Open for reading data the current file in the zipfile.
   password is a crypting password
   If there is no error, the return value is UNZ_OK.
 */
 
-extern int ZEXPORT unzOpenCurrentFile2(unzFile file,
-                                       int* method,
-                                       int* level,
-                                       int raw);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzOpenCurrentFile2(unzFile file,
+                                       ಪೂರ್ಣಾಂಕ* ವಿಧಾನ_2,
+                                       ಪೂರ್ಣಾಂಕ* level,
+                                       ಪೂರ್ಣಾಂಕ raw);
 /*
   Same than unzOpenCurrentFile, but open for read raw the file (not uncompress)
     if raw==1
@@ -360,11 +360,11 @@ extern int ZEXPORT unzOpenCurrentFile2(unzFile file,
          but you CANNOT set method parameter as NULL
 */
 
-extern int ZEXPORT unzOpenCurrentFile3(unzFile file,
-                                       int* method,
-                                       int* level,
-                                       int raw,
-                                       const char* password);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzOpenCurrentFile3(unzFile file,
+                                       ಪೂರ್ಣಾಂಕ* ವಿಧಾನ_2,
+                                       ಪೂರ್ಣಾಂಕ* level,
+                                       ಪೂರ್ಣಾಂಕ raw,
+                                       ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* password);
 /*
   Same than unzOpenCurrentFile, but open for read raw the file (not uncompress)
     if raw==1
@@ -375,15 +375,15 @@ extern int ZEXPORT unzOpenCurrentFile3(unzFile file,
 */
 
 
-extern int ZEXPORT unzCloseCurrentFile(unzFile file);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzCloseCurrentFile(unzFile file);
 /*
   Close the file in zip opened with unzOpenCurrentFile
   Return UNZ_CRCERROR if all the file was read but the CRC is not good
 */
 
-extern int ZEXPORT unzReadCurrentFile(unzFile file,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzReadCurrentFile(unzFile file,
                                       voidp buf,
-                                      unsigned len);
+                                      ಚಿಹ್ನೆರಹಿತ len);
 /*
   Read bytes from the current file (opened by unzOpenCurrentFile)
   buf contain buffer where data must be copied
@@ -395,21 +395,21 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file,
     (UNZ_ERRNO for IO error, or zLib error for uncompress error)
 */
 
-extern z_off_t ZEXPORT unztell(unzFile file);
+ಬಾಹ್ಯ z_off_t ZEXPORT unztell(unzFile file);
 
-extern ZPOS64_T ZEXPORT unztell64(unzFile file);
+ಬಾಹ್ಯ ZPOS64_T ZEXPORT unztell64(unzFile file);
 /*
   Give the current position in uncompressed data
 */
 
-extern int ZEXPORT unzeof(unzFile file);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzeof(unzFile file);
 /*
   return 1 if the end of file was reached, 0 elsewhere
 */
 
-extern int ZEXPORT unzGetLocalExtrafield(unzFile file,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetLocalExtrafield(unzFile file,
                                          voidp buf,
-                                         unsigned len);
+                                         ಚಿಹ್ನೆರಹಿತ len);
 /*
   Read extra field from the current file (opened by unzOpenCurrentFile)
   This is the local-header version of the extra field (sometimes, there is
@@ -426,17 +426,17 @@ extern int ZEXPORT unzGetLocalExtrafield(unzFile file,
 /***************************************************************************/
 
 /* Get the current file offset */
-extern ZPOS64_T ZEXPORT unzGetOffset64 (unzFile file);
-extern uLong ZEXPORT unzGetOffset (unzFile file);
+ಬಾಹ್ಯ ZPOS64_T ZEXPORT unzGetOffset64 (unzFile file);
+ಬಾಹ್ಯ uLong ZEXPORT unz_Get_ಸ್ಥಾನಾಂತರ (unzFile file);
 
 /* Set the current file offset */
-extern int ZEXPORT unzSetOffset64 (unzFile file, ZPOS64_T pos);
-extern int ZEXPORT unzSetOffset (unzFile file, uLong pos);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_ಗಣ_Offset64 (unzFile file, ZPOS64_T pos);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_ಗಣ_ಸ್ಥಾನಾಂತರ (unzFile file, uLong pos);
 
 
 
-#ifdef __cplusplus
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ __cplusplus
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif /* _unz64_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _unz64_H */

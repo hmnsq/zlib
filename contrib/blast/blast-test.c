@@ -1,42 +1,42 @@
-#include "blast.h"              /* prototype for blast() */
+#ಅನ್ತರ್ಭಾವ "blast.h"              /* prototype for blast() */
 
 /* Example of how to use blast() */
-#include <stdio.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#define CHUNK 16384
+#ವ್ಯಾಖ್ಯಾನಿಸು CHUNK 16384
 
-local unsigned inf(void *how, unsigned char **buf)
+local ಚಿಹ್ನೆರಹಿತ inf(ಶೂನ್ಯ *how, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ **buf)
 {
-    static unsigned char hold[CHUNK];
+    ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ hold[CHUNK];
 
     *buf = hold;
-    return fread(hold, 1, CHUNK, (FILE *)how);
+    ಹಿಂತಿರುಗಿ fread(hold, 1, CHUNK, (FILE *)how);
 }
 
-local int outf(void *how, unsigned char *buf, unsigned len)
+local ಪೂರ್ಣಾಂಕ outf(ಶೂನ್ಯ *how, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *buf, ಚಿಹ್ನೆರಹಿತ len)
 {
-    return fwrite(buf, 1, len, (FILE *)how) != len;
+    ಹಿಂತಿರುಗಿ fwrite(buf, 1, len, (FILE *)how) != len;
 }
 
 /* Decompress a PKWare Compression Library stream from stdin to stdout */
-int main(void)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಶೂನ್ಯ)
 {
-    int ret;
-    unsigned left;
+    ಪೂರ್ಣಾಂಕ ret;
+    ಚಿಹ್ನೆರಹಿತ ಎಡ;
 
     /* decompress to stdout */
-    left = 0;
-    ret = blast(inf, stdin, outf, stdout, &left, NULL);
-    if (ret != 0)
+    ಎಡ = 0;
+    ret = blast(inf, stdin, outf, stdout, &ಎಡ, ಖಾಲಿ);
+    ಆದರೆ (ret != 0)
         fprintf(stderr, "blast error: %d\n", ret);
 
     /* count any leftover bytes */
-    while (getchar() != EOF)
-        left++;
-    if (left)
-        fprintf(stderr, "blast warning: %u unused bytes of input\n", left);
+    ಆಗ (getchar() != EOF)
+        ಎಡ++;
+    ಆದರೆ (ಎಡ)
+        fprintf(stderr, "blast warning: %u unused bytes of input\n", ಎಡ);
 
     /* return blast() error code */
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }

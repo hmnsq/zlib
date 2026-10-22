@@ -15,64 +15,64 @@
 
 /* @(#) $Id$ */
 
-#ifndef _POSIX_C_SOURCE
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _POSIX_C_SOURCE
 #  define _POSIX_C_SOURCE 200112L
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#ಆದರೆ defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
-#endif
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "zlib.h"
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ "zlib.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#ifdef STDC
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ STDC
 #  include <string.h>
 #  include <stdlib.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef USE_MMAP
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_MMAP
 #  include <sys/types.h>
 #  include <sys/mman.h>
 #  include <sys/stat.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#ಆದರೆ defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  ifdef UNDER_CE
 #    include <stdlib.h>
 #  endif
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define ಗಣ_ದ್ವಿಮಾನ_ಬಹುಲಕ(file) setmode(fileno(file), O_ದ್ವಿಮಾನ)
+#ಇಲ್ಲದಿದ್ದರೆ
+#  define ಗಣ_ದ್ವಿಮಾನ_ಬಹುಲಕ(file)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef VMS
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ VMS
 #  define unlink delete
 #  define GZ_SUFFIX "-gz"
-#endif
-#if defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define GZ_SUFFIX "/gz"
 #  ifndef __GNUC__
 #    define unlink remove
 #    define fileno(file) file->__file
 #  endif
-#endif
-#if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
 #  include <unix.h> /* for fileno */
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !defined(Z_HAVE_UNISTD_H) && !defined(_LARGEFILE64_SOURCE)
-#ifndef WIN32 /* unlink already in stdio.h for WIN32 */
-  extern int unlink(const char *);
-#endif
-#endif
+#ಆದರೆ !defined(Z_HAVE_UNISTD_H) && !defined(LARGEFILE64_ಮೂಲ)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ WIN32 /* unlink already in stdio.h for WIN32 */
+  ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ unlink(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(UNDER_CE)
+#ಆದರೆ defined(UNDER_CE)
 #  include <windows.h>
 #  define perror(s) pwinerror(s)
 
@@ -86,70 +86,70 @@
    The strwinerror function does not change the current setting
    of GetLastError.  */
 
-static char *strwinerror (error)
+ಸ್ಥಿರ ಅಕ್ಷರ *strwinerror (error)
      DWORD error;
 {
-    static char buf[1024];
+    ಸ್ಥಿರ ಅಕ್ಷರ buf[1024];
 
     wchar_t *msgbuf;
-    DWORD lasterr = GetLastError();
-    DWORD chars = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM
-        | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-        NULL,
+    DWORD lasterr = Get_ಕೊನೆಯ_Error();
+    DWORD chars = Format_ಸಂದೇಶ(FORMAT_ಸಂದೇಶ_FROM_SYSTEM
+        | FORMAT_ಸಂದೇಶ_ALLOCATE_ಬಫರ್,
+        ಖಾಲಿ,
         error,
         0, /* Default language */
         (LPVOID)&msgbuf,
         0,
-        NULL);
-    if (chars != 0) {
+        ಖಾಲಿ);
+    ಆದರೆ (chars != 0) {
         /* If there is an \r\n appended, zap it.  */
-        if (chars >= 2
+        ಆದರೆ (chars >= 2
             && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n') {
             chars -= 2;
             msgbuf[chars] = 0;
         }
 
-        if (chars > sizeof (buf) - 1) {
-            chars = sizeof (buf) - 1;
+        ಆದರೆ (chars > ಗಾತ್ರ (buf) - 1) {
+            chars = ಗಾತ್ರ (buf) - 1;
             msgbuf[chars] = 0;
         }
 
         wcstombs(buf, msgbuf, chars + 1);
         LocalFree(msgbuf);
     }
-    else {
+    ಇಲ್ಲದಿದ್ದರೆ {
         sprintf(buf, "unknown win32 error (%lu)", error);
     }
 
-    SetLastError(lasterr);
-    return buf;
+    ಗಣ_ಕೊನೆಯ_Error(lasterr);
+    ಹಿಂತಿರುಗಿ buf;
 }
 
-static void pwinerror (s)
-    const char *s;
+ಸ್ಥಿರ ಶೂನ್ಯ pwinerror (s)
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s;
 {
-    if (s && *s)
-        fprintf(stderr, "%s: %s\n", s, strwinerror(GetLastError ()));
-    else
-        fprintf(stderr, "%s\n", strwinerror(GetLastError ()));
+    ಆದರೆ (s && *s)
+        fprintf(stderr, "%s: %s\n", s, strwinerror(Get_ಕೊನೆಯ_Error ()));
+    ಇಲ್ಲದಿದ್ದರೆ
+        fprintf(stderr, "%s\n", strwinerror(Get_ಕೊನೆಯ_Error ()));
 }
 
-#endif /* UNDER_CE */
+#ಆದರೆ_ಅಂತ್ಯ /* UNDER_CE */
 
-#ifndef GZ_SUFFIX
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ GZ_SUFFIX
 #  define GZ_SUFFIX ".gz"
-#endif
-#define SUFFIX_LEN (sizeof(GZ_SUFFIX)-1)
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿಸು SUFFIX_LEN (ಗಾತ್ರ(GZ_SUFFIX)-1)
 
-#define BUFLEN      16384
-#define MAX_NAME_LEN 1024
+#ವ್ಯಾಖ್ಯಾನಿಸು BUFLEN      16384
+#ವ್ಯಾಖ್ಯಾನಿಸು MAX_NAME_LEN 1024
 
-#ifdef MAXSEG_64K
-#  define local static
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ MAXSEG_64K
+#  define local ಸ್ಥಿರ
    /* Needed for systems with limitation on stack size. */
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 #  define local
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* ===========================================================================
  * Safe string copy. Copy up to len bytes from src to dst, if src terminates
@@ -157,260 +157,260 @@ static void pwinerror (s)
  * a null in dst[len-1], cutting src short. Return a pointer to the terminating
  * null. If len is zero, nothing is written to *dst and NULL is returned.
  */
-static char *string_copy(char *dst, char const *src, z_size_t len) {
-    if (len == 0)
-        return NULL;
-    while (--len) {
+ಸ್ಥಿರ ಅಕ್ಷರ *string_copy(ಅಕ್ಷರ *dst, ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *src, z_ಗಾತ್ರ_t len) {
+    ಆದರೆ (len == 0)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+    ಆಗ (--len) {
         *dst = *src++;
-        if (*dst == 0)
-            return dst;
+        ಆದರೆ (*dst == 0)
+            ಹಿಂತಿರುಗಿ dst;
         dst++;
     }
     *dst = 0;
-    return dst;
+    ಹಿಂತಿರುಗಿ dst;
 }
 
-#ifdef Z_SOLO
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ Z_SOLO
 /* for Z_SOLO, create simplified gz* functions using deflate and inflate */
 
-#if defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
+#ಆದರೆ defined(Z_HAVE_UNISTD_H) || defined(Z_LARGE)
 #  include <unistd.h>       /* for unlink() */
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-static void *myalloc(void *q, unsigned n, unsigned m) {
-    (void)q;
-    return calloc(n, m);
+ಸ್ಥಿರ ಶೂನ್ಯ *myalloc(ಶೂನ್ಯ *q, ಚಿಹ್ನೆರಹಿತ n, ಚಿಹ್ನೆರಹಿತ m) {
+    (ಶೂನ್ಯ)q;
+    ಹಿಂತಿರುಗಿ ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(n, m);
 }
 
-static void myfree(void *q, void *p) {
-    (void)q;
-    free(p);
+ಸ್ಥಿರ ಶೂನ್ಯ myfree(ಶೂನ್ಯ *q, ಶೂನ್ಯ *p) {
+    (ಶೂನ್ಯ)q;
+    ಬಿಡುಗಡೆ(p);
 }
 
-typedef struct gzFile_s {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ gzFile_s {
     FILE *file;
-    int write;
-    int err;
-    char *msg;
-    z_stream strm;
+    ಪೂರ್ಣಾಂಕ ಲಿಖ;
+    ಪೂರ್ಣಾಂಕ err;
+    ಅಕ್ಷರ *ಸಂದೇಶ;
+    z_ಹರಿವು strm;
 } *gzFile;
 
-static gzFile gz_open(const char *path, int fd, const char *mode) {
+ಸ್ಥಿರ gzFile gz_open(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಪೂರ್ಣಾಂಕ fd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ) {
     gzFile gz;
-    int ret;
+    ಪೂರ್ಣಾಂಕ ret;
 
-    gz = malloc(sizeof(struct gzFile_s));
-    if (gz == NULL)
-        return NULL;
-    gz->write = strchr(mode, 'w') != NULL;
+    gz = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(ರಚನೆ gzFile_s));
+    ಆದರೆ (gz == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+    gz->ಲಿಖ = strchr(ಬಹುಲಕ, 'w') != ಖಾಲಿ;
     gz->strm.zalloc = myalloc;
     gz->strm.zfree = myfree;
     gz->strm.opaque = Z_NULL;
-    if (gz->write)
+    ಆದರೆ (gz->ಲಿಖ)
         ret = deflateInit2(&(gz->strm), -1, 8, 15 + 16, 8, 0);
-    else {
-        gz->strm.next_in = 0;
-        gz->strm.avail_in = Z_NULL;
+    ಇಲ್ಲದಿದ್ದರೆ {
+        gz->strm.ಮುಂದಿನ_ಒಳ = 0;
+        gz->strm.avail_ಒಳ = Z_NULL;
         ret = inflateInit2(&(gz->strm), 15 + 16);
     }
-    if (ret != Z_OK) {
-        free(gz);
-        return NULL;
+    ಆದರೆ (ret != Z_OK) {
+        ಬಿಡುಗಡೆ(gz);
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    gz->file = path == NULL ? fdopen(fd, gz->write ? "wb" : "rb") :
-                              fopen(path, gz->write ? "wb" : "rb");
-    if (gz->file == NULL) {
-        gz->write ? deflateEnd(&(gz->strm)) : inflateEnd(&(gz->strm));
-        free(gz);
-        return NULL;
+    gz->file = ಮಾರ್ಗ == ಖಾಲಿ ? fdopen(fd, gz->ಲಿಖ ? "wb" : "rb") :
+                              fopen(ಮಾರ್ಗ, gz->ಲಿಖ ? "wb" : "rb");
+    ಆದರೆ (gz->file == ಖಾಲಿ) {
+        gz->ಲಿಖ ? deflate_ಕೊನೆ(&(gz->strm)) : inflate_ಕೊನೆ(&(gz->strm));
+        ಬಿಡುಗಡೆ(gz);
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     gz->err = 0;
-    gz->msg = "";
-    return gz;
+    gz->ಸಂದೇಶ = "";
+    ಹಿಂತಿರುಗಿ gz;
 }
 
-static gzFile gzopen(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+ಸ್ಥಿರ gzFile gzopen(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ) {
+    ಹಿಂತಿರುಗಿ gz_open(ಮಾರ್ಗ, -1, ಬಹುಲಕ);
 }
 
-static gzFile gzdopen(int fd, const char *mode) {
-    return gz_open(NULL, fd, mode);
+ಸ್ಥಿರ gzFile gzdopen(ಪೂರ್ಣಾಂಕ fd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ) {
+    ಹಿಂತಿರುಗಿ gz_open(ಖಾಲಿ, fd, ಬಹುಲಕ);
 }
 
-static int gzwrite(gzFile gz, const void *buf, unsigned len) {
-    z_stream *strm;
-    unsigned char out[BUFLEN];
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ gzwrite(gzFile gz, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf, ಚಿಹ್ನೆರಹಿತ len) {
+    z_ಹರಿವು *strm;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಹೊರಹೋಗು[BUFLEN];
 
-    if (gz == NULL || !gz->write)
-        return 0;
+    ಆದರೆ (gz == ಖಾಲಿ || !gz->ಲಿಖ)
+        ಹಿಂತಿರುಗಿ 0;
     strm = &(gz->strm);
-    strm->next_in = (void *)buf;
-    strm->avail_in = len;
-    do {
-        strm->next_out = out;
-        strm->avail_out = BUFLEN;
-        (void)deflate(strm, Z_NO_FLUSH);
-        fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-    } while (strm->avail_out == 0);
-    return (int)len;
+    strm->ಮುಂದಿನ_ಒಳ = (ಶೂನ್ಯ *)buf;
+    strm->avail_ಒಳ = len;
+    ಮಾಡು {
+        strm->ಮುಂದಿನ_ಹೊರಹೋಗು = ಹೊರಹೋಗು;
+        strm->avail_ಹೊರಹೋಗು = BUFLEN;
+        (ಶೂನ್ಯ)deflate(strm, Z_NO_FLUSH);
+        fwrite(ಹೊರಹೋಗು, 1, BUFLEN - strm->avail_ಹೊರಹೋಗು, gz->file);
+    } ಆಗ (strm->avail_ಹೊರಹೋಗು == 0);
+    ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)len;
 }
 
-static int gzread(gzFile gz, void *buf, unsigned len) {
-    int ret;
-    unsigned got;
-    unsigned char in[1];
-    z_stream *strm;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ gzread(gzFile gz, ಶೂನ್ಯ *buf, ಚಿಹ್ನೆರಹಿತ len) {
+    ಪೂರ್ಣಾಂಕ ret;
+    ಚಿಹ್ನೆರಹಿತ got;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಒಳ[1];
+    z_ಹರಿವು *strm;
 
-    if (gz == NULL || gz->write)
-        return 0;
-    if (gz->err)
-        return 0;
+    ಆದರೆ (gz == ಖಾಲಿ || gz->ಲಿಖ)
+        ಹಿಂತಿರುಗಿ 0;
+    ಆದರೆ (gz->err)
+        ಹಿಂತಿರುಗಿ 0;
     strm = &(gz->strm);
-    strm->next_out = (void *)buf;
-    strm->avail_out = len;
-    do {
-        got = (unsigned)fread(in, 1, 1, gz->file);
-        if (got == 0)
-            break;
-        strm->next_in = in;
-        strm->avail_in = 1;
+    strm->ಮುಂದಿನ_ಹೊರಹೋಗು = (ಶೂನ್ಯ *)buf;
+    strm->avail_ಹೊರಹೋಗು = len;
+    ಮಾಡು {
+        got = (ಚಿಹ್ನೆರಹಿತ)fread(ಒಳ, 1, 1, gz->file);
+        ಆದರೆ (got == 0)
+            ನಿಲ್ಲಿಸು;
+        strm->ಮುಂದಿನ_ಒಳ = ಒಳ;
+        strm->avail_ಒಳ = 1;
         ret = inflate(strm, Z_NO_FLUSH);
-        if (ret == Z_DATA_ERROR) {
-            gz->err = Z_DATA_ERROR;
-            gz->msg = strm->msg;
-            return 0;
+        ಆದರೆ (ret == Z_ದತ್ತಾಂಶ_ERROR) {
+            gz->err = Z_ದತ್ತಾಂಶ_ERROR;
+            gz->ಸಂದೇಶ = strm->ಸಂದೇಶ;
+            ಹಿಂತಿರುಗಿ 0;
         }
-        if (ret == Z_STREAM_END)
+        ಆದರೆ (ret == Z_ಹರಿವು_ಕೊನೆ)
             inflateReset(strm);
-    } while (strm->avail_out);
-    return (int)(len - strm->avail_out);
+    } ಆಗ (strm->avail_ಹೊರಹೋಗು);
+    ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)(len - strm->avail_ಹೊರಹೋಗು);
 }
 
-static int gzclose(gzFile gz) {
-    z_stream *strm;
-    unsigned char out[BUFLEN];
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ gzclose(gzFile gz) {
+    z_ಹರಿವು *strm;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಹೊರಹೋಗು[BUFLEN];
 
-    if (gz == NULL)
-        return Z_STREAM_ERROR;
+    ಆದರೆ (gz == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ Z_ಹರಿವು_ERROR;
     strm = &(gz->strm);
-    if (gz->write) {
-        strm->next_in = Z_NULL;
-        strm->avail_in = 0;
-        do {
-            strm->next_out = out;
-            strm->avail_out = BUFLEN;
-            (void)deflate(strm, Z_FINISH);
-            fwrite(out, 1, BUFLEN - strm->avail_out, gz->file);
-        } while (strm->avail_out == 0);
-        deflateEnd(strm);
+    ಆದರೆ (gz->ಲಿಖ) {
+        strm->ಮುಂದಿನ_ಒಳ = Z_NULL;
+        strm->avail_ಒಳ = 0;
+        ಮಾಡು {
+            strm->ಮುಂದಿನ_ಹೊರಹೋಗು = ಹೊರಹೋಗು;
+            strm->avail_ಹೊರಹೋಗು = BUFLEN;
+            (ಶೂನ್ಯ)deflate(strm, Z_ಮುಕ್ತಾಯ);
+            fwrite(ಹೊರಹೋಗು, 1, BUFLEN - strm->avail_ಹೊರಹೋಗು, gz->file);
+        } ಆಗ (strm->avail_ಹೊರಹೋಗು == 0);
+        deflate_ಕೊನೆ(strm);
     }
-    else
-        inflateEnd(strm);
+    ಇಲ್ಲದಿದ್ದರೆ
+        inflate_ಕೊನೆ(strm);
     fclose(gz->file);
-    free(gz);
-    return Z_OK;
+    ಬಿಡುಗಡೆ(gz);
+    ಹಿಂತಿರುಗಿ Z_OK;
 }
 
-static const char *gzerror(gzFile gz, int *err) {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *gzerror(gzFile gz, ಪೂರ್ಣಾಂಕ *err) {
     *err = gz->err;
-    return gz->msg;
+    ಹಿಂತಿರುಗಿ gz->ಸಂದೇಶ;
 }
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-static char *prog;
+ಸ್ಥಿರ ಅಕ್ಷರ *prog;
 
 /* ===========================================================================
  * Display error message and exit
  */
-static void error(const char *msg) {
-    fprintf(stderr, "%s: %s\n", prog, msg);
-    exit(1);
+ಸ್ಥಿರ ಶೂನ್ಯ error(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಂದೇಶ) {
+    fprintf(stderr, "%s: %s\n", prog, ಸಂದೇಶ);
+    ನಿರ್ಗಮಿಸು(1);
 }
 
-#ifdef USE_MMAP /* MMAP version, Miguel Albrecht <malbrech@eso.org> */
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_MMAP /* MMAP version, Miguel Albrecht <malbrech@eso.org> */
 
 /* Try compressing the input file at once using mmap. Return Z_OK if
  * success, Z_ERRNO otherwise.
  */
-static int gz_compress_mmap(FILE *in, gzFile out) {
-    int len;
-    int err;
-    int ifd = fileno(in);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ gz_compress_mmap(FILE *ಒಳ, gzFile ಹೊರಹೋಗು) {
+    ಪೂರ್ಣಾಂಕ len;
+    ಪೂರ್ಣಾಂಕ err;
+    ಪೂರ್ಣಾಂಕ ifd = fileno(ಒಳ);
     caddr_t buf;    /* mmap'ed buffer for the entire input file */
     off_t buf_len;  /* length of the input file */
-    struct stat sb;
+    ರಚನೆ stat sb;
 
     /* Determine the size of the file, needed for mmap: */
-    if (fstat(ifd, &sb) < 0) return Z_ERRNO;
+    ಆದರೆ (fstat(ifd, &sb) < 0) ಹಿಂತಿರುಗಿ Z_ERRNO;
     buf_len = sb.st_size;
-    if (buf_len <= 0) return Z_ERRNO;
+    ಆದರೆ (buf_len <= 0) ಹಿಂತಿರುಗಿ Z_ERRNO;
 
     /* Now do the actual mmap: */
     buf = mmap((caddr_t) 0, buf_len, PROT_READ, MAP_SHARED, ifd, (off_t)0);
-    if (buf == (caddr_t)(-1)) return Z_ERRNO;
+    ಆದರೆ (buf == (caddr_t)(-1)) ಹಿಂತಿರುಗಿ Z_ERRNO;
 
     /* Compress the whole file at once: */
-    len = gzwrite(out, (char *)buf, (unsigned)buf_len);
+    len = gzwrite(ಹೊರಹೋಗು, (ಅಕ್ಷರ *)buf, (ಚಿಹ್ನೆರಹಿತ)buf_len);
 
-    if (len != (int)buf_len) error(gzerror(out, &err));
+    ಆದರೆ (len != (ಪೂರ್ಣಾಂಕ)buf_len) error(gzerror(ಹೊರಹೋಗು, &err));
 
     munmap(buf, buf_len);
-    fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
-    return Z_OK;
+    fclose(ಒಳ);
+    ಆದರೆ (gzclose(ಹೊರಹೋಗು) != Z_OK) error("failed gzclose");
+    ಹಿಂತಿರುಗಿ Z_OK;
 }
-#endif /* USE_MMAP */
+#ಆದರೆ_ಅಂತ್ಯ /* USE_MMAP */
 
 /* ===========================================================================
  * Compress input to output then close both files.
  */
 
-static void gz_compress(FILE *in, gzFile out) {
-    local char buf[BUFLEN];
-    int len;
-    int err;
+ಸ್ಥಿರ ಶೂನ್ಯ gz_compress(FILE *ಒಳ, gzFile ಹೊರಹೋಗು) {
+    local ಅಕ್ಷರ buf[BUFLEN];
+    ಪೂರ್ಣಾಂಕ len;
+    ಪೂರ್ಣಾಂಕ err;
 
-#ifdef USE_MMAP
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_MMAP
     /* Try first compressing with mmap. If mmap fails (minigzip used in a
      * pipe), use the normal fread loop.
      */
-    if (gz_compress_mmap(in, out) == Z_OK) return;
-#endif
-    for (;;) {
-        len = (int)fread(buf, 1, sizeof(buf), in);
-        if (ferror(in)) {
+    ಆದರೆ (gz_compress_mmap(ಒಳ, ಹೊರಹೋಗು) == Z_OK) ಹಿಂತಿರುಗಿ;
+#ಆದರೆ_ಅಂತ್ಯ
+    ಗಾಗಿ (;;) {
+        len = (ಪೂರ್ಣಾಂಕ)fread(buf, 1, ಗಾತ್ರ(buf), ಒಳ);
+        ಆದರೆ (ferror(ಒಳ)) {
             perror("fread");
-            exit(1);
+            ನಿರ್ಗಮಿಸು(1);
         }
-        if (len == 0) break;
+        ಆದರೆ (len == 0) ನಿಲ್ಲಿಸು;
 
-        if (gzwrite(out, buf, (unsigned)len) != len) error(gzerror(out, &err));
+        ಆದರೆ (gzwrite(ಹೊರಹೋಗು, buf, (ಚಿಹ್ನೆರಹಿತ)len) != len) error(gzerror(ಹೊರಹೋಗು, &err));
     }
-    fclose(in);
-    if (gzclose(out) != Z_OK) error("failed gzclose");
+    fclose(ಒಳ);
+    ಆದರೆ (gzclose(ಹೊರಹೋಗು) != Z_OK) error("failed gzclose");
 }
 
 /* ===========================================================================
  * Uncompress input to output then close both files.
  */
-static void gz_uncompress(gzFile in, FILE *out) {
-    local char buf[BUFLEN];
-    int len;
-    int err;
+ಸ್ಥಿರ ಶೂನ್ಯ gz_uncompress(gzFile ಒಳ, FILE *ಹೊರಹೋಗು) {
+    local ಅಕ್ಷರ buf[BUFLEN];
+    ಪೂರ್ಣಾಂಕ len;
+    ಪೂರ್ಣಾಂಕ err;
 
-    for (;;) {
-        len = gzread(in, buf, sizeof(buf));
-        if (len < 0) error (gzerror(in, &err));
-        if (len == 0) break;
+    ಗಾಗಿ (;;) {
+        len = gzread(ಒಳ, buf, ಗಾತ್ರ(buf));
+        ಆದರೆ (len < 0) error (gzerror(ಒಳ, &err));
+        ಆದರೆ (len == 0) ನಿಲ್ಲಿಸು;
 
-        if ((int)fwrite(buf, 1, (unsigned)len, out) != len) {
+        ಆದರೆ ((ಪೂರ್ಣಾಂಕ)fwrite(buf, 1, (ಚಿಹ್ನೆರಹಿತ)len, ಹೊರಹೋಗು) != len) {
             error("failed fwrite");
         }
     }
-    if (fclose(out)) error("failed fclose");
+    ಆದರೆ (fclose(ಹೊರಹೋಗು)) error("failed fclose");
 
-    if (gzclose(in) != Z_OK) error("failed gzclose");
+    ಆದರೆ (gzclose(ಒಳ) != Z_OK) error("failed gzclose");
 }
 
 
@@ -418,31 +418,31 @@ static void gz_uncompress(gzFile in, FILE *out) {
  * Compress the given file: create a corresponding .gz file and remove the
  * original.
  */
-static void file_compress(char *file, char *mode) {
-    local char outfile[MAX_NAME_LEN+1], *end;
-    FILE  *in;
-    gzFile out;
+ಸ್ಥಿರ ಶೂನ್ಯ file_compress(ಅಕ್ಷರ *file, ಅಕ್ಷರ *ಬಹುಲಕ) {
+    local ಅಕ್ಷರ outfile[MAX_NAME_LEN+1], *ಕೊನೆ;
+    FILE  *ಒಳ;
+    gzFile ಹೊರಹೋಗು;
 
-    if (strlen(file) + strlen(GZ_SUFFIX) >= sizeof(outfile)) {
+    ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(file) + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(GZ_SUFFIX) >= ಗಾತ್ರ(outfile)) {
         fprintf(stderr, "%s: filename too long\n", prog);
-        exit(1);
+        ನಿರ್ಗಮಿಸು(1);
     }
 
-    end = string_copy(outfile, file, sizeof(outfile));
-    string_copy(end, GZ_SUFFIX, sizeof(outfile) - (z_size_t)(end - outfile));
+    ಕೊನೆ = string_copy(outfile, file, ಗಾತ್ರ(outfile));
+    string_copy(ಕೊನೆ, GZ_SUFFIX, ಗಾತ್ರ(outfile) - (z_ಗಾತ್ರ_t)(ಕೊನೆ - outfile));
 
-    in = fopen(file, "rb");
-    if (in == NULL) {
+    ಒಳ = fopen(file, "rb");
+    ಆದರೆ (ಒಳ == ಖಾಲಿ) {
         perror(file);
-        exit(1);
+        ನಿರ್ಗಮಿಸು(1);
     }
-    out = gzopen(outfile, mode);
-    if (out == NULL) {
-        fclose(in);
+    ಹೊರಹೋಗು = gzopen(outfile, ಬಹುಲಕ);
+    ಆದರೆ (ಹೊರಹೋಗು == ಖಾಲಿ) {
+        fclose(ಒಳ);
         fprintf(stderr, "%s: can't gzopen %s\n", prog, outfile);
-        exit(1);
+        ನಿರ್ಗಮಿಸು(1);
     }
-    gz_compress(in, out);
+    gz_compress(ಒಳ, ಹೊರಹೋಗು);
 
     unlink(file);
 }
@@ -451,42 +451,42 @@ static void file_compress(char *file, char *mode) {
 /* ===========================================================================
  * Uncompress the given file and remove the original.
  */
-static void file_uncompress(char *file) {
-    local char buf[MAX_NAME_LEN+1];
-    char *infile, *outfile;
-    FILE  *out;
-    gzFile in;
-    z_size_t len = strlen(file);
+ಸ್ಥಿರ ಶೂನ್ಯ file_uncompress(ಅಕ್ಷರ *file) {
+    local ಅಕ್ಷರ buf[MAX_NAME_LEN+1];
+    ಅಕ್ಷರ *infile, *outfile;
+    FILE  *ಹೊರಹೋಗು;
+    gzFile ಒಳ;
+    z_ಗಾತ್ರ_t len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(file);
 
-    if (len + strlen(GZ_SUFFIX) >= sizeof(buf)) {
+    ಆದರೆ (len + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(GZ_SUFFIX) >= ಗಾತ್ರ(buf)) {
         fprintf(stderr, "%s: filename too long\n", prog);
-        exit(1);
+        ನಿರ್ಗಮಿಸು(1);
     }
 
-    string_copy(buf, file, sizeof(buf));
+    string_copy(buf, file, ಗಾತ್ರ(buf));
 
-    if (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
+    ಆದರೆ (len > SUFFIX_LEN && strcmp(file+len-SUFFIX_LEN, GZ_SUFFIX) == 0) {
         infile = file;
         outfile = buf;
         outfile[len-3] = '\0';
-    } else {
+    } ಇಲ್ಲದಿದ್ದರೆ {
         outfile = file;
         infile = buf;
-        string_copy(buf + len, GZ_SUFFIX, sizeof(buf) - len);
+        string_copy(buf + len, GZ_SUFFIX, ಗಾತ್ರ(buf) - len);
     }
-    in = gzopen(infile, "rb");
-    if (in == NULL) {
+    ಒಳ = gzopen(infile, "rb");
+    ಆದರೆ (ಒಳ == ಖಾಲಿ) {
         fprintf(stderr, "%s: can't gzopen %s\n", prog, infile);
-        exit(1);
+        ನಿರ್ಗಮಿಸು(1);
     }
-    out = fopen(outfile, "wb");
-    if (out == NULL) {
-        gzclose(in);
+    ಹೊರಹೋಗು = fopen(outfile, "wb");
+    ಆದರೆ (ಹೊರಹೋಗು == ಖಾಲಿ) {
+        gzclose(ಒಳ);
         perror(file);
-        exit(1);
+        ನಿರ್ಗಮಿಸು(1);
     }
 
-    gz_uncompress(in, out);
+    gz_uncompress(ಒಳ, ಹೊರಹೋಗು);
 
     unlink(infile);
 }
@@ -502,91 +502,91 @@ static void file_uncompress(char *file) {
  *   -1 to -9 : compression level
  */
 
-int main(int argc, char *argv[]) {
-    int copyout = 0;
-    int uncompr = 0;
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ *argv[]) {
+    ಪೂರ್ಣಾಂಕ copyout = 0;
+    ಪೂರ್ಣಾಂಕ uncompr = 0;
     gzFile file;
-    char *bname, outmode[5];
+    ಅಕ್ಷರ *bname, outmode[5];
 
-    string_copy(outmode, "wb6 ", sizeof(outmode));
+    string_copy(outmode, "wb6 ", ಗಾತ್ರ(outmode));
     prog = argv[0];
     bname = strrchr(argv[0], '/');
-    if (bname)
+    ಆದರೆ (bname)
       bname++;
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
       bname = argv[0];
     argc--, argv++;
 
-    if (!strcmp(bname, "gunzip"))
+    ಆದರೆ (!strcmp(bname, "gunzip"))
       uncompr = 1;
-    else if (!strcmp(bname, "zcat"))
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!strcmp(bname, "zcat"))
       copyout = uncompr = 1;
 
-    while (argc > 0) {
-      if (strcmp(*argv, "-c") == 0)
+    ಆಗ (argc > 0) {
+      ಆದರೆ (strcmp(*argv, "-c") == 0)
         copyout = 1;
-      else if (strcmp(*argv, "-d") == 0)
+      ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(*argv, "-d") == 0)
         uncompr = 1;
-      else if (strcmp(*argv, "-f") == 0)
+      ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(*argv, "-f") == 0)
         outmode[3] = 'f';
-      else if (strcmp(*argv, "-h") == 0)
+      ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(*argv, "-h") == 0)
         outmode[3] = 'h';
-      else if (strcmp(*argv, "-r") == 0)
+      ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(*argv, "-r") == 0)
         outmode[3] = 'R';
-      else if ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
+      ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((*argv)[0] == '-' && (*argv)[1] >= '1' && (*argv)[1] <= '9' &&
                (*argv)[2] == 0)
         outmode[2] = (*argv)[1];
-      else
-        break;
+      ಇಲ್ಲದಿದ್ದರೆ
+        ನಿಲ್ಲಿಸು;
       argc--, argv++;
     }
-    if (outmode[3] == ' ')
+    ಆದರೆ (outmode[3] == ' ')
         outmode[3] = 0;
-    if (argc == 0) {
-        SET_BINARY_MODE(stdin);
-        SET_BINARY_MODE(stdout);
-        if (uncompr) {
+    ಆದರೆ (argc == 0) {
+        ಗಣ_ದ್ವಿಮಾನ_ಬಹುಲಕ(stdin);
+        ಗಣ_ದ್ವಿಮಾನ_ಬಹುಲಕ(stdout);
+        ಆದರೆ (uncompr) {
             file = gzdopen(fileno(stdin), "rb");
-            if (file == NULL) error("can't gzdopen stdin");
+            ಆದರೆ (file == ಖಾಲಿ) error("can't gzdopen stdin");
             gz_uncompress(file, stdout);
-        } else {
+        } ಇಲ್ಲದಿದ್ದರೆ {
             file = gzdopen(fileno(stdout), outmode);
-            if (file == NULL) error("can't gzdopen stdout");
+            ಆದರೆ (file == ಖಾಲಿ) error("can't gzdopen stdout");
             gz_compress(stdin, file);
         }
-    } else {
-        if (copyout) {
-            SET_BINARY_MODE(stdout);
+    } ಇಲ್ಲದಿದ್ದರೆ {
+        ಆದರೆ (copyout) {
+            ಗಣ_ದ್ವಿಮಾನ_ಬಹುಲಕ(stdout);
         }
-        do {
-            if (uncompr) {
-                if (copyout) {
+        ಮಾಡು {
+            ಆದರೆ (uncompr) {
+                ಆದರೆ (copyout) {
                     file = gzopen(*argv, "rb");
-                    if (file == NULL)
+                    ಆದರೆ (file == ಖಾಲಿ)
                         fprintf(stderr, "%s: can't gzopen %s\n", prog, *argv);
-                    else
+                    ಇಲ್ಲದಿದ್ದರೆ
                         gz_uncompress(file, stdout);
-                } else {
+                } ಇಲ್ಲದಿದ್ದರೆ {
                     file_uncompress(*argv);
                 }
-            } else {
-                if (copyout) {
-                    FILE * in = fopen(*argv, "rb");
+            } ಇಲ್ಲದಿದ್ದರೆ {
+                ಆದರೆ (copyout) {
+                    FILE * ಒಳ = fopen(*argv, "rb");
 
-                    if (in == NULL) {
+                    ಆದರೆ (ಒಳ == ಖಾಲಿ) {
                         perror(*argv);
-                    } else {
+                    } ಇಲ್ಲದಿದ್ದರೆ {
                         file = gzdopen(fileno(stdout), outmode);
-                        if (file == NULL) error("can't gzdopen stdout");
+                        ಆದರೆ (file == ಖಾಲಿ) error("can't gzdopen stdout");
 
-                        gz_compress(in, file);
+                        gz_compress(ಒಳ, file);
                     }
 
-                } else {
+                } ಇಲ್ಲದಿದ್ದರೆ {
                     file_compress(*argv, outmode);
                 }
             }
-        } while (argv++, --argc);
+        } ಆಗ (argv++, --argc);
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }

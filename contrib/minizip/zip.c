@@ -21,49 +21,49 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#ifndef ZLIB_CONST
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ZLIB_CONST
 #  define ZLIB_CONST
-#endif
-#ifdef ZLIB_DLL
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ZLIB_DLL
 #  undef ZLIB_DLL
-#endif
-#include "zlib.h"
-#include "zip.h"
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "zlib.h"
+#ಅನ್ತರ್ಭಾವ "zip.h"
 
-#ifdef STDC
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ STDC
 #  include <stddef.h>
-#endif
-#ifdef NO_ERRNO_H
-    extern int errno;
-#else
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NO_ERRNO_H
+    ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ errno;
+#ಇಲ್ಲದಿದ್ದರೆ
 #   include <errno.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 
-#ifndef local
-#  define local static
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ local
+#  define local ಸ್ಥಿರ
+#ಆದರೆ_ಅಂತ್ಯ
 /* compile with -Dlocal if your debugger can't find static symbols */
 
-#ifndef VERSIONMADEBY
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ VERSIONMADEBY
 # define VERSIONMADEBY   (0x0) /* platform dependent */
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef Z_BUFSIZE
-#define Z_BUFSIZE (64*1024) /* (16384) */
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ Z_BUFSIZE
+#ವ್ಯಾಖ್ಯಾನಿಸು Z_BUFSIZE (64*1024) /* (16384) */
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef Z_MAXFILENAMEINZIP
-#define Z_MAXFILENAMEINZIP (256)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ Z_MAXFILENAMEINZIP
+#ವ್ಯಾಖ್ಯಾನಿಸು Z_MAXFILENAMEINZIP (256)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef ALLOC
-# define ALLOC(size) (malloc(size))
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ALLOC
+# define ALLOC(ಗಾತ್ರ_2) (ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2))
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
 #define SIZECENTRALDIRITEM (0x2e)
@@ -74,216 +74,216 @@
 
 
 /* NOT sure that this work on ALL platform */
-#define MAKEULONG64(a, b) ((ZPOS64_T)(((unsigned long)(a)) | ((ZPOS64_T)((unsigned long)(b))) << 32))
+#ವ್ಯಾಖ್ಯಾನಿಸು MAKEULONG64(a, b) ((ZPOS64_T)(((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(a)) | ((ZPOS64_T)((ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(b))) << 32))
 
-#ifndef SEEK_CUR
-#define SEEK_CUR    1
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SEEK_CUR
+#ವ್ಯಾಖ್ಯಾನಿಸು SEEK_CUR    1
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef SEEK_END
-#define SEEK_END    2
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SEEK_END
+#ವ್ಯಾಖ್ಯಾನಿಸು SEEK_END    2
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef SEEK_SET
-#define SEEK_SET    0
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SEEK_SET
+#ವ್ಯಾಖ್ಯಾನಿಸು SEEK_SET    0
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef DEF_MEM_LEVEL
-#if MAX_MEM_LEVEL >= 8
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ DEF_MEM_LEVEL
+#ಆದರೆ MAX_MEM_LEVEL >= 8
 #  define DEF_MEM_LEVEL 8
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 #  define DEF_MEM_LEVEL  MAX_MEM_LEVEL
-#endif
-#endif
-const char zip_copyright[] =" zip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ zip_copyright[] =" zip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
 
 
-#define SIZEDATA_INDATABLOCK (4096-(4*4))
+#ವ್ಯಾಖ್ಯಾನಿಸು SIZEDATA_INDATABLOCK (4096-(4*4))
 
-#define LOCALHEADERMAGIC    (0x04034b50)
-#define CENTRALHEADERMAGIC  (0x02014b50)
-#define ENDHEADERMAGIC      (0x06054b50)
-#define ZIP64ENDHEADERMAGIC      (0x6064b50)
-#define ZIP64ENDLOCHEADERMAGIC   (0x7064b50)
+#ವ್ಯಾಖ್ಯಾನಿಸು LOCALHEADERMAGIC    (0x04034b50)
+#ವ್ಯಾಖ್ಯಾನಿಸು CENTRALHEADERMAGIC  (0x02014b50)
+#ವ್ಯಾಖ್ಯಾನಿಸು ENDHEADERMAGIC      (0x06054b50)
+#ವ್ಯಾಖ್ಯಾನಿಸು ZIP64ENDHEADERMAGIC      (0x6064b50)
+#ವ್ಯಾಖ್ಯಾನಿಸು ZIP64ENDLOCHEADERMAGIC   (0x7064b50)
 
-#define FLAG_LOCALHEADER_OFFSET (0x06)
-#define CRC_LOCALHEADER_OFFSET  (0x0e)
+#ವ್ಯಾಖ್ಯಾನಿಸು FLAG_LOCALHEADER_ಸ್ಥಾನಾಂತರ (0x06)
+#ವ್ಯಾಖ್ಯಾನಿಸು ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_LOCALHEADER_ಸ್ಥಾನಾಂತರ  (0x0e)
 
-#define SIZECENTRALHEADER (0x2e) /* 46 */
+#ವ್ಯಾಖ್ಯಾನಿಸು SIZECENTRALHEADER (0x2e) /* 46 */
 
-typedef struct linkedlist_datablock_internal_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ linkedlist_datablock_ಆಂತರಿಕ_s
 {
-  struct linkedlist_datablock_internal_s* next_datablock;
-  uLong  avail_in_this_block;
-  uLong  filled_in_this_block;
-  uLong  unused; /* for future use and alignment */
-  unsigned char data[SIZEDATA_INDATABLOCK];
-} linkedlist_datablock_internal;
+  ರಚನೆ linkedlist_datablock_ಆಂತರಿಕ_s* ಮುಂದಿನ_datablock;
+  uLong  avail_ಒಳ_this_ಖಂಡ;
+  uLong  filled_ಒಳ_this_ಖಂಡ;
+  uLong  ಬಳಸದ; /* for future use and alignment */
+  ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ದತ್ತಾಂಶ[SIZEDATA_INDATABLOCK];
+} linkedlist_datablock_ಆಂತರಿಕ;
 
-typedef struct linkedlist_data_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ linkedlist_ದತ್ತಾಂಶ_s
 {
-    linkedlist_datablock_internal* first_block;
-    linkedlist_datablock_internal* last_block;
-} linkedlist_data;
+    linkedlist_datablock_ಆಂತರಿಕ* ಮೊದಲ_ಖಂಡ;
+    linkedlist_datablock_ಆಂತರಿಕ* ಕೊನೆಯ_ಖಂಡ;
+} linkedlist_ದತ್ತಾಂಶ;
 
 
 /* zipAlreadyThere() set functions for a set of zero-terminated strings, and
    a block_t type for reading the central directory datablocks. */
-#define SKIPSET_EXPORT static
-typedef char *set_key_t;
-#define set_cmp(a, b) strcmp(a, b)
-#define set_drop(s, k) set_free(s, k)
-#include "skipset.h"
-typedef struct {
-    unsigned char *next;        /* next byte in datablock data */
-    size_t left;                /* number of bytes left in data (at least) */
-    linkedlist_datablock_internal *node;    /* current datablock */
-} block_t;
+#ವ್ಯಾಖ್ಯಾನಿಸು SKIPSET_EXPORT ಸ್ಥಿರ
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಅಕ್ಷರ *ಗಣ_ಕೀಲಿ_t;
+#ವ್ಯಾಖ್ಯಾನಿಸು ಗಣ_cmp(a, b) strcmp(a, b)
+#ವ್ಯಾಖ್ಯಾನಿಸು ಗಣ_drop(s, k) ಗಣ_free(s, k)
+#ಅನ್ತರ್ಭಾವ "skipset.h"
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *ಮುಂದಿನ;        /* next byte in datablock data */
+    size_t ಎಡ;                /* number of bytes left in data (at least) */
+    linkedlist_datablock_ಆಂತರಿಕ *ಗಂಟು;    /* current datablock */
+} ಖಂಡ_t;
 
 
-typedef struct
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ
 {
-    z_stream stream;            /* zLib stream structure for inflate */
-#ifdef HAVE_BZIP2
-    bz_stream bstream;          /* bzLib stream structure for bziped */
-#endif
+    z_ಹರಿವು ಹರಿವು;            /* zLib stream structure for inflate */
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    bz_ಹರಿವು bstream;          /* bzLib stream structure for bziped */
+#ಆದರೆ_ಅಂತ್ಯ
 
-    int  stream_initialised;    /* 1 is stream is initialised */
-    uInt pos_in_buffered_data;  /* last written byte in buffered_data */
+    ಪೂರ್ಣಾಂಕ  ಹರಿವು_initialised;    /* 1 is stream is initialised */
+    uInt pos_ಒಳ_buffered_ದತ್ತಾಂಶ;  /* last written byte in buffered_data */
 
-    ZPOS64_T pos_local_header;     /* offset of the local header of the file
+    ZPOS64_T pos_local_ಶೀರ್ಷಿಕೆ;     /* offset of the local header of the file
                                      currently writing */
-    char* central_header;       /* central header data for the current file */
-    uLong size_centralExtra;
-    uLong size_centralheader;   /* size of the central header for cur file */
-    uLong size_centralExtraFree; /* Extra bytes allocated to the centralheader but that are not used */
+    ಅಕ್ಷರ* central_ಶೀರ್ಷಿಕೆ;       /* central header data for the current file */
+    uLong ಗಾತ್ರ_central_Extra;
+    uLong ಗಾತ್ರ_centralheader;   /* size of the central header for cur file */
+    uLong ಗಾತ್ರ_central_Extra_Free; /* Extra bytes allocated to the centralheader but that are not used */
     uLong flag;                 /* flag of the file currently writing */
 
-    int  method;                /* compression method of file currently wr.*/
-    int  raw;                   /* 1 for directly writing raw data */
-    Byte buffered_data[Z_BUFSIZE];/* buffer contain compressed data to be writ*/
+    ಪೂರ್ಣಾಂಕ  ವಿಧಾನ_2;                /* compression method of file currently wr.*/
+    ಪೂರ್ಣಾಂಕ  raw;                   /* 1 for directly writing raw data */
+    Byte buffered_ದತ್ತಾಂಶ[Z_BUFSIZE];/* buffer contain compressed data to be writ*/
     uLong dosDate;
-    uLong crc32;
-    int  encrypt;
-    int  zip64;               /* Add ZIP64 extended information in the extra field */
+    uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2;
+    ಪೂರ್ಣಾಂಕ  encrypt;
+    ಪೂರ್ಣಾಂಕ  zip64;               /* Add ZIP64 extended information in the extra field */
     ZPOS64_T pos_zip64extrainfo;
-    ZPOS64_T totalCompressedData;
-    ZPOS64_T totalUncompressedData;
-#ifndef NOCRYPT
-    unsigned long keys[3];     /* keys defining the pseudo-random sequence */
-    const z_crc_t* pcrc_32_tab;
-    unsigned crypt_header_size;
-#endif
+    ZPOS64_T ಒಟ್ಟು_Compressed_ದತ್ತಾಂಶ;
+    ZPOS64_T ಒಟ್ಟು_Uncompressed_ದತ್ತಾಂಶ;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NOCRYPT
+    ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಕೀಲಿಗಳು[3];     /* keys defining the pseudo-random sequence */
+    ಸ್ಥಿರಾಂಕ z_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_t* pcrc_32_tab;
+    ಚಿಹ್ನೆರಹಿತ crypt_ಶೀರ್ಷಿಕೆ_ಗಾತ್ರ;
+#ಆದರೆ_ಅಂತ್ಯ
 } curfile64_info;
 
-typedef struct
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ
 {
     zlib_filefunc64_32_def z_filefunc;
     voidpf filestream;        /* io structure of the zipfile */
-    linkedlist_data central_dir;/* datablock with central dir in construction*/
-    int  in_opened_file_inzip;  /* 1 if a file in the zip is currently writ.*/
+    linkedlist_ದತ್ತಾಂಶ central_dir;/* datablock with central dir in construction*/
+    ಪೂರ್ಣಾಂಕ  ಒಳ_opened_file_inzip;  /* 1 if a file in the zip is currently writ.*/
     curfile64_info ci;            /* info on the file currently writing */
 
     ZPOS64_T begin_pos;            /* position of the beginning of the zipfile */
-    ZPOS64_T add_position_when_writing_offset;
-    ZPOS64_T number_entry;
+    ZPOS64_T ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ;
+    ZPOS64_T ಸಂಖ್ಯೆ_ನಮೂದು;
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    char *globalcomment;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_ADDFILEINEXISTINGZIP
+    ಅಕ್ಷರ *globalcomment;
+#ಆದರೆ_ಅಂತ್ಯ
 
     /* Support for zipAlreadyThere(). */
-    set_t set;              /* set for detecting name collisions */
-    block_t block;          /* block for reading the central directory */
+    ಗಣ_t ಗಣ;              /* set for detecting name collisions */
+    ಖಂಡ_t ಖಂಡ;          /* block for reading the central directory */
 
-} zip64_internal;
+} zip64_ಆಂತರಿಕ;
 
 
-#ifndef NOCRYPT
-#define INCLUDECRYPTINGCODE_IFCRYPTALLOWED
-#include "crypt.h"
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NOCRYPT
+#ವ್ಯಾಖ್ಯಾನಿಸು INCLUDECRYPTINGCODE_IFCRYPTALLOWED
+#ಅನ್ತರ್ಭಾವ "crypt.h"
+#ಆದರೆ_ಅಂತ್ಯ
 
-local linkedlist_datablock_internal* allocate_new_datablock(void) {
-    linkedlist_datablock_internal* ldi;
-    ldi = (linkedlist_datablock_internal*)
-                 ALLOC(sizeof(linkedlist_datablock_internal));
-    if (ldi!=NULL)
+local linkedlist_datablock_ಆಂತರಿಕ* allocate_new_datablock(ಶೂನ್ಯ) {
+    linkedlist_datablock_ಆಂತರಿಕ* ldi;
+    ldi = (linkedlist_datablock_ಆಂತರಿಕ*)
+                 ALLOC(ಗಾತ್ರ(linkedlist_datablock_ಆಂತರಿಕ));
+    ಆದರೆ (ldi!=ಖಾಲಿ)
     {
-        ldi->next_datablock = NULL ;
-        ldi->filled_in_this_block = 0 ;
-        ldi->avail_in_this_block = SIZEDATA_INDATABLOCK ;
+        ldi->ಮುಂದಿನ_datablock = ಖಾಲಿ ;
+        ldi->filled_ಒಳ_this_ಖಂಡ = 0 ;
+        ldi->avail_ಒಳ_this_ಖಂಡ = SIZEDATA_INDATABLOCK ;
     }
-    return ldi;
+    ಹಿಂತಿರುಗಿ ldi;
 }
 
-local void free_datablock(linkedlist_datablock_internal* ldi) {
-    while (ldi!=NULL)
+local ಶೂನ್ಯ free_datablock(linkedlist_datablock_ಆಂತರಿಕ* ldi) {
+    ಆಗ (ldi!=ಖಾಲಿ)
     {
-        linkedlist_datablock_internal* ldinext = ldi->next_datablock;
-        free(ldi);
+        linkedlist_datablock_ಆಂತರಿಕ* ldinext = ldi->ಮುಂದಿನ_datablock;
+        ಬಿಡುಗಡೆ(ldi);
         ldi = ldinext;
     }
 }
 
-local void init_linkedlist(linkedlist_data* ll) {
-    ll->first_block = ll->last_block = NULL;
+local ಶೂನ್ಯ init_linkedlist(linkedlist_ದತ್ತಾಂಶ* ll) {
+    ll->ಮೊದಲ_ಖಂಡ = ll->ಕೊನೆಯ_ಖಂಡ = ಖಾಲಿ;
 }
 
-local void free_linkedlist(linkedlist_data* ll) {
-    free_datablock(ll->first_block);
-    ll->first_block = ll->last_block = NULL;
+local ಶೂನ್ಯ free_linkedlist(linkedlist_ದತ್ತಾಂಶ* ll) {
+    free_datablock(ll->ಮೊದಲ_ಖಂಡ);
+    ll->ಮೊದಲ_ಖಂಡ = ll->ಕೊನೆಯ_ಖಂಡ = ಖಾಲಿ;
 }
 
 
-local int add_data_in_datablock(linkedlist_data* ll, const void* buf, uLong len) {
-    linkedlist_datablock_internal* ldi;
-    const unsigned char* from_copy;
+local ಪೂರ್ಣಾಂಕ ಕೂಡಿಸು_ದತ್ತಾಂಶ_ಒಳ_datablock(linkedlist_ದತ್ತಾಂಶ* ll, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* buf, uLong len) {
+    linkedlist_datablock_ಆಂತರಿಕ* ldi;
+    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* from_copy;
 
-    if (ll==NULL)
-        return ZIP_INTERNALERROR;
+    ಆದರೆ (ll==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ZIP_INTERNALERROR;
 
-    if (ll->last_block == NULL)
+    ಆದರೆ (ll->ಕೊನೆಯ_ಖಂಡ == ಖಾಲಿ)
     {
-        ll->first_block = ll->last_block = allocate_new_datablock();
-        if (ll->first_block == NULL)
-            return ZIP_INTERNALERROR;
+        ll->ಮೊದಲ_ಖಂಡ = ll->ಕೊನೆಯ_ಖಂಡ = allocate_new_datablock();
+        ಆದರೆ (ll->ಮೊದಲ_ಖಂಡ == ಖಾಲಿ)
+            ಹಿಂತಿರುಗಿ ZIP_INTERNALERROR;
     }
 
-    ldi = ll->last_block;
-    from_copy = (const unsigned char*)buf;
+    ldi = ll->ಕೊನೆಯ_ಖಂಡ;
+    from_copy = (ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)buf;
 
-    while (len>0)
+    ಆಗ (len>0)
     {
         uInt copy_this;
         uInt i;
-        unsigned char* to_copy;
+        ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* ಗಮ್ಯ_copy;
 
-        if (ldi->avail_in_this_block==0)
+        ಆದರೆ (ldi->avail_ಒಳ_this_ಖಂಡ==0)
         {
-            ldi->next_datablock = allocate_new_datablock();
-            if (ldi->next_datablock == NULL)
-                return ZIP_INTERNALERROR;
-            ldi = ldi->next_datablock ;
-            ll->last_block = ldi;
+            ldi->ಮುಂದಿನ_datablock = allocate_new_datablock();
+            ಆದರೆ (ldi->ಮುಂದಿನ_datablock == ಖಾಲಿ)
+                ಹಿಂತಿರುಗಿ ZIP_INTERNALERROR;
+            ldi = ldi->ಮುಂದಿನ_datablock ;
+            ll->ಕೊನೆಯ_ಖಂಡ = ldi;
         }
 
-        if (ldi->avail_in_this_block < len)
-            copy_this = (uInt)ldi->avail_in_this_block;
-        else
+        ಆದರೆ (ldi->avail_ಒಳ_this_ಖಂಡ < len)
+            copy_this = (uInt)ldi->avail_ಒಳ_this_ಖಂಡ;
+        ಇಲ್ಲದಿದ್ದರೆ
             copy_this = (uInt)len;
 
-        to_copy = &(ldi->data[ldi->filled_in_this_block]);
+        ಗಮ್ಯ_copy = &(ldi->ದತ್ತಾಂಶ[ldi->filled_ಒಳ_this_ಖಂಡ]);
 
-        for (i=0;i<copy_this;i++)
-            *(to_copy+i)=*(from_copy+i);
+        ಗಾಗಿ (i=0;i<copy_this;i++)
+            *(ಗಮ್ಯ_copy+i)=*(from_copy+i);
 
-        ldi->filled_in_this_block += copy_this;
-        ldi->avail_in_this_block -= copy_this;
+        ldi->filled_ಒಳ_this_ಖಂಡ += copy_this;
+        ldi->avail_ಒಳ_this_ಖಂಡ -= copy_this;
         from_copy += copy_this ;
         len -= copy_this;
     }
-    return ZIP_OK;
+    ಹಿಂತಿರುಗಿ ZIP_OK;
 }
 
 /* zipAlreadyThere() operations. "set" in the zip internal structure keeps the
@@ -299,264 +299,264 @@ local int add_data_in_datablock(linkedlist_data* ll, const void* buf, uLong len)
 
    Initialize *block to the head of list. This should only be called once the
    list has at least some data in it, i.e. list->first_block is not NULL. */
-local void block_init(block_t *block, linkedlist_data *list) {
-    block->node = list->first_block;
-    block->next = block->node->data;
-    block->left = block->node->filled_in_this_block;
+local ಶೂನ್ಯ ಖಂಡ_init(ಖಂಡ_t *ಖಂಡ, linkedlist_ದತ್ತಾಂಶ *list) {
+    ಖಂಡ->ಗಂಟು = list->ಮೊದಲ_ಖಂಡ;
+    ಖಂಡ->ಮುಂದಿನ = ಖಂಡ->ಗಂಟು->ದತ್ತಾಂಶ;
+    ಖಂಡ->ಎಡ = ಖಂಡ->ಗಂಟು->filled_ಒಳ_this_ಖಂಡ;
 }
 
 /* Mark *block as bad, with all subsequent reads returning end, even if more
    data is added to the datablocks. This is invoked if the central directory is
    invalid, so there is no longer any point in attempting to interpret it. */
-local void block_stop(block_t *block) {
-    block->left = 0;
-    block->next = NULL;
+local ಶೂನ್ಯ ಖಂಡ_stop(ಖಂಡ_t *ಖಂಡ) {
+    ಖಂಡ->ಎಡ = 0;
+    ಖಂಡ->ಮುಂದಿನ = ಖಾಲಿ;
 }
 
 /* Return true if *block has reached the end of the data in the datablocks. */
-local int block_end(block_t *block) {
-    linkedlist_datablock_internal *node = block->node;
-    if (node == NULL)
+local ಪೂರ್ಣಾಂಕ ಖಂಡ_ಕೊನೆ(ಖಂಡ_t *ಖಂಡ) {
+    linkedlist_datablock_ಆಂತರಿಕ *ಗಂಟು = ಖಂಡ->ಗಂಟು;
+    ಆದರೆ (ಗಂಟು == ಖಾಲಿ)
         /* This block was previously terminated with extreme prejudice. */
-        return 1;
-    if (block->next < node->data + node->filled_in_this_block)
+        ಹಿಂತಿರುಗಿ 1;
+    ಆದರೆ (ಖಂಡ->ಮುಂದಿನ < ಗಂಟು->ದತ್ತಾಂಶ + ಗಂಟು->filled_ಒಳ_this_ಖಂಡ)
         /* There are more bytes to read in the current datablock. */
-        return 0;
-    while (node->next_datablock != NULL) {
-        if (node->filled_in_this_block != 0)
+        ಹಿಂತಿರುಗಿ 0;
+    ಆಗ (ಗಂಟು->ಮುಂದಿನ_datablock != ಖಾಲಿ) {
+        ಆದರೆ (ಗಂಟು->filled_ಒಳ_this_ಖಂಡ != 0)
             /* There are some bytes in a later datablock. */
-            return 0;
-        node = node->next_datablock;
+            ಹಿಂತಿರುಗಿ 0;
+        ಗಂಟು = ಗಂಟು->ಮುಂದಿನ_datablock;
     }
     /* Reached the end of the list of datablocks. There's nothing. */
-    return 1;
+    ಹಿಂತಿರುಗಿ 1;
 }
 
 /* Return one byte from *block, or -1 if the end is reached. */
-local int block_get(block_t *block) {
-    while (block->left == 0) {
-        if (block->node == NULL)
+local ಪೂರ್ಣಾಂಕ ಖಂಡ_get(ಖಂಡ_t *ಖಂಡ) {
+    ಆಗ (ಖಂಡ->ಎಡ == 0) {
+        ಆದರೆ (ಖಂಡ->ಗಂಟು == ಖಾಲಿ)
             /* We've been marked bad. Return end. */
-            return -1;
+            ಹಿಂತಿರುಗಿ -1;
         /* Update left in case more was filled in since we were last here. */
-        block->left = block->node->filled_in_this_block -
-                      (size_t)(block->next - block->node->data);
-        if (block->left != 0)
+        ಖಂಡ->ಎಡ = ಖಂಡ->ಗಂಟು->filled_ಒಳ_this_ಖಂಡ -
+                      (size_t)(ಖಂಡ->ಮುಂದಿನ - ಖಂಡ->ಗಂಟು->ದತ್ತಾಂಶ);
+        ಆದರೆ (ಖಂಡ->ಎಡ != 0)
             /* There was indeed more data appended in the current datablock. */
-            break;
-        if (block->node->next_datablock == NULL)
+            ನಿಲ್ಲಿಸು;
+        ಆದರೆ (ಖಂಡ->ಗಂಟು->ಮುಂದಿನ_datablock == ಖಾಲಿ)
             /* No more data here, and there is no next datablock. At the end. */
-            return -1;
+            ಹಿಂತಿರುಗಿ -1;
         /* Try the next datablock for more data. */
-        block->node = block->node->next_datablock;
-        block->next = block->node->data;
-        block->left = block->node->filled_in_this_block;
+        ಖಂಡ->ಗಂಟು = ಖಂಡ->ಗಂಟು->ಮುಂದಿನ_datablock;
+        ಖಂಡ->ಮುಂದಿನ = ಖಂಡ->ಗಂಟು->ದತ್ತಾಂಶ;
+        ಖಂಡ->ಎಡ = ಖಂಡ->ಗಂಟು->filled_ಒಳ_this_ಖಂಡ;
     }
     /* We have a byte to return. */
-    block->left--;
-    return *block->next++;
+    ಖಂಡ->ಎಡ--;
+    ಹಿಂತಿರುಗಿ *ಖಂಡ->ಮುಂದಿನ++;
 }
 
 /* Return a 16-bit unsigned little-endian value from block, or a negative value
    if the end is reached. */
-local long block_get2(block_t *block) {
-    int low = block_get(block);
-    int high = block_get(block);
-    return low < 0 || high < 0 ? -1 : low | ((long)high << 8);
+local ದೀರ್ಘ ಖಂಡ_get2(ಖಂಡ_t *ಖಂಡ) {
+    ಪೂರ್ಣಾಂಕ ಕೆಳಗಿನ = ಖಂಡ_get(ಖಂಡ);
+    ಪೂರ್ಣಾಂಕ ಮೇಲಿನ = ಖಂಡ_get(ಖಂಡ);
+    ಹಿಂತಿರುಗಿ ಕೆಳಗಿನ < 0 || ಮೇಲಿನ < 0 ? -1 : ಕೆಳಗಿನ | ((ದೀರ್ಘ)ಮೇಲಿನ << 8);
 }
 
 /* Read up to len bytes from block into buf. Return the number of bytes read. */
-local size_t block_read(block_t *block, unsigned char *buf, size_t len) {
+local size_t ಖಂಡ_read(ಖಂಡ_t *ಖಂಡ, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *buf, size_t len) {
     size_t need = len;
     size_t take;
-    while (need) {
-        if (block->left == 0) {
+    ಆಗ (need) {
+        ಆದರೆ (ಖಂಡ->ಎಡ == 0) {
             /* Get a byte to update and step through the linked list as needed. */
-            int got = block_get(block);
-            if (got == -1)
+            ಪೂರ್ಣಾಂಕ got = ಖಂಡ_get(ಖಂಡ);
+            ಆದರೆ (got == -1)
                 /* Reached the end. */
-                break;
-            *buf++ = (unsigned char)got;
+                ನಿಲ್ಲಿಸು;
+            *buf++ = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)got;
             need--;
-            continue;
+            ಮುಂದುವರಿ;
         }
-        take = need > block->left ? block->left : need;
-        memcpy(buf, block->next, take);
-        block->next += take;
-        block->left -= take;
+        take = need > ಖಂಡ->ಎಡ ? ಖಂಡ->ಎಡ : need;
+        ಸ್ಮರಣೆ_ನಕಲು(buf, ಖಂಡ->ಮುಂದಿನ, take);
+        ಖಂಡ->ಮುಂದಿನ += take;
+        ಖಂಡ->ಎಡ -= take;
         buf += take;
         need -= take;
     }
-    return len - need;      /* return the number of bytes copied */
+    ಹಿಂತಿರುಗಿ len - need;      /* return the number of bytes copied */
 }
 
 /* Skip n bytes in block. Return 0 on success or -1 if there are less than n
    bytes to the end. */
-local int block_skip(block_t *block, size_t n) {
-    while (n > block->left) {
-        n -= block->left;
-        block->next += block->left;
-        block->left = 0;
-        if (block_get(block) == -1)
-            return -1;
+local ಪೂರ್ಣಾಂಕ ಖಂಡ_skip(ಖಂಡ_t *ಖಂಡ, size_t n) {
+    ಆಗ (n > ಖಂಡ->ಎಡ) {
+        n -= ಖಂಡ->ಎಡ;
+        ಖಂಡ->ಮುಂದಿನ += ಖಂಡ->ಎಡ;
+        ಖಂಡ->ಎಡ = 0;
+        ಆದರೆ (ಖಂಡ_get(ಖಂಡ) == -1)
+            ಹಿಂತಿರುಗಿ -1;
         n--;
     }
-    block->next += n;
-    block->left -= n;
-    return 0;
+    ಖಂಡ->ಮುಂದಿನ += n;
+    ಖಂಡ->ಎಡ -= n;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
 /* Process the next central directory record at *block. Return the allocated,
    zero-terminated file name, or NULL for end of input or invalid data. If
    invalid, *block is marked bad. This uses *set for the allocation of memory. */
-local char *block_central_name(block_t *block, set_t *set) {
-    unsigned flen, xlen, clen;
-    char *name = NULL;
-    for (;;) {
-        if (block_end(block))
+local ಅಕ್ಷರ *ಖಂಡ_central_name(ಖಂಡ_t *ಖಂಡ, ಗಣ_t *ಗಣ) {
+    ಚಿಹ್ನೆರಹಿತ flen, xlen, clen;
+    ಅಕ್ಷರ *name = ಖಾಲಿ;
+    ಗಾಗಿ (;;) {
+        ಆದರೆ (ಖಂಡ_ಕೊನೆ(ಖಂಡ))
             /* At the end of the central directory (so far). */
-            return NULL;
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
         /* Check for a central directory record signature. */
-        if (block_get2(block) != (CENTRALHEADERMAGIC & 0xffff) ||
-            block_get2(block) != (CENTRALHEADERMAGIC >> 16))
+        ಆದರೆ (ಖಂಡ_get2(ಖಂಡ) != (CENTRALHEADERMAGIC & 0xffff) ||
+            ಖಂಡ_get2(ಖಂಡ) != (CENTRALHEADERMAGIC >> 16))
             /* Incorrect signature. */
-            break;
+            ನಿಲ್ಲಿಸು;
 
         /* Go through the remaining fixed-length portion of the record,
            extracting the lengths of the three variable-length fields. */
-        block_skip(block, 24);
-        flen = (unsigned)block_get2(block);    /* file name length */
-        xlen = (unsigned)block_get2(block);    /* extra length */
-        clen = (unsigned)block_get2(block);    /* comment length */
-        if (block_skip(block, 12) == -1)
+        ಖಂಡ_skip(ಖಂಡ, 24);
+        flen = (ಚಿಹ್ನೆರಹಿತ)ಖಂಡ_get2(ಖಂಡ);    /* file name length */
+        xlen = (ಚಿಹ್ನೆರಹಿತ)ಖಂಡ_get2(ಖಂಡ);    /* extra length */
+        clen = (ಚಿಹ್ನೆರಹಿತ)ಖಂಡ_get2(ಖಂಡ);    /* comment length */
+        ಆದರೆ (ಖಂಡ_skip(ಖಂಡ, 12) == -1)
             /* Premature end of the record. */
-            break;
+            ನಿಲ್ಲಿಸು;
 
         /* Extract the name and skip over the extra and comment fields. */
-        name = set_alloc(set, NULL, flen + 1);
-        if (block_read(block, (unsigned char *)name, flen) < flen ||
-            block_skip(block, xlen + clen) == -1)
+        name = ಗಣ_alloc(ಗಣ, ಖಾಲಿ, flen + 1);
+        ಆದರೆ (ಖಂಡ_read(ಖಂಡ, (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)name, flen) < flen ||
+            ಖಂಡ_skip(ಖಂಡ, xlen + clen) == -1)
             /* Premature end of the record. */
-            break;
+            ನಿಲ್ಲಿಸು;
 
         /* Check for embedded nuls in the name. */
-        if (memchr(name, 0, flen) != NULL) {
+        ಆದರೆ (memchr(name, 0, flen) != ಖಾಲಿ) {
             /* This name can never match the zero-terminated name provided to
                zipAlreadyThere(), so we discard it and go back to get another
                name. (Who the heck is putting nuls inside their zip file entry
                names anyway?) */
-            set_free(set, name);
-            continue;
+            ಗಣ_free(ಗಣ, name);
+            ಮುಂದುವರಿ;
         }
 
         /* All good. Return the zero-terminated file name. */
         name[flen] = 0;
-        return name;
+        ಹಿಂತಿರುಗಿ name;
     }
 
     /* Invalid signature or premature end of the central directory record.
        Abandon trying to process the central directory. */
-    set_free(set, name);
-    block_stop(block);
-    return NULL;
+    ಗಣ_free(ಗಣ, name);
+    ಖಂಡ_stop(ಖಂಡ);
+    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /* Return 0 if name is not in the central directory so far, 1 if it is, -1 if
    the central directory is invalid, -2 if out of memory, or ZIP_PARAMERROR if
    file is NULL. */
-extern int ZEXPORT zipAlreadyThere(zipFile file, char const *name) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zipAlreadyThere(zipFile file, ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *name) {
     size_t len;
-    char *copy;
-    int found;
-    zip64_internal *zip = file;
-    if (zip == NULL)
-        return ZIP_PARAMERROR;
-    if (zip->central_dir.first_block == NULL)
+    ಅಕ್ಷರ *copy;
+    ಪೂರ್ಣಾಂಕ ಸಿಕ್ಕಿತು;
+    zip64_ಆಂತರಿಕ *zip = file;
+    ಆದರೆ (zip == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
+    ಆದರೆ (zip->central_dir.ಮೊದಲ_ಖಂಡ == ಖಾಲಿ)
         /* No central directory yet, so no, name isn't there. */
-        return 0;
-    if (setjmp(zip->set.env)) {
+        ಹಿಂತಿರುಗಿ 0;
+    ಆದರೆ (setjmp(zip->ಗಣ.env)) {
         /* Memory allocation failure. */
-        set_end(&zip->set);
-        return -2;
+        ಗಣ_ಕೊನೆ(&zip->ಗಣ);
+        ಹಿಂತಿರುಗಿ -2;
     }
-    if (!set_ok(&zip->set)) {
+    ಆದರೆ (!ಗಣ_ok(&zip->ಗಣ)) {
         /* This is the first time here with some central directory content. We
            construct this set of names only on demand. Prepare set and block. */
-        set_start(&zip->set);
-        block_init(&zip->block, &zip->central_dir);
+        ಗಣ_ಆರಂಭ(&zip->ಗಣ);
+        ಖಂಡ_init(&zip->ಖಂಡ, &zip->central_dir);
     }
 
     /* Update the set of names from the current central directory contents.
        This reads any new central directory records since the last time we were
        here. */
-    for (;;) {
-        char *there = block_central_name(&zip->block, &zip->set);
-        if (there == NULL) {
-            if (zip->block.next == NULL)
+    ಗಾಗಿ (;;) {
+        ಅಕ್ಷರ *there = ಖಂಡ_central_name(&zip->ಖಂಡ, &zip->ಗಣ);
+        ಆದರೆ (there == ಖಾಲಿ) {
+            ಆದರೆ (zip->ಖಂಡ.ಮುಂದಿನ == ಖಾಲಿ)
                 /* The central directory is invalid. */
-                return -1;
-            break;
+                ಹಿಂತಿರುಗಿ -1;
+            ನಿಲ್ಲಿಸು;
         }
 
         /* Add there to the set. */
-        if (set_insert(&zip->set, there))
+        ಆದರೆ (ಗಣ_ಸೇರಿಸು(&zip->ಗಣ, there))
             /* There's already a duplicate in the central directory! We'll just
                let this be and carry on. */
-            set_free(&zip->set, there);
+            ಗಣ_free(&zip->ಗಣ, there);
     }
 
     /* Return true if name is in the central directory. */
-    len = strlen(name);
-    copy = set_alloc(&zip->set, NULL, len + 1);
-    memcpy(copy, name, len + 1);
-    found = set_found(&zip->set, copy);
-    set_free(&zip->set, copy);
-    return found;
+    len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name);
+    copy = ಗಣ_alloc(&zip->ಗಣ, ಖಾಲಿ, len + 1);
+    ಸ್ಮರಣೆ_ನಕಲು(copy, name, len + 1);
+    ಸಿಕ್ಕಿತು = ಗಣ_ಸಿಕ್ಕಿತು(&zip->ಗಣ, copy);
+    ಗಣ_free(&zip->ಗಣ, copy);
+    ಹಿಂತಿರುಗಿ ಸಿಕ್ಕಿತು;
 }
 
 
 /****************************************************************************/
 
-#ifndef NO_ADDFILEINEXISTINGZIP
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_ADDFILEINEXISTINGZIP
 /* ===========================================================================
    Inputs a long in LSB order to the given file
    nbByte == 1, 2 ,4 or 8 (byte, short or long, ZPOS64_T)
 */
 
-local int zip64local_putValue(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T x, int nbByte) {
-    unsigned char buf[8];
-    int n;
-    for (n = 0; n < nbByte; n++)
+local ಪೂರ್ಣಾಂಕ zip64local_put_ಮೌಲ್ಯ(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T x, ಪೂರ್ಣಾಂಕ nbByte) {
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ buf[8];
+    ಪೂರ್ಣಾಂಕ n;
+    ಗಾಗಿ (n = 0; n < nbByte; n++)
     {
-        buf[n] = (unsigned char)(x & 0xff);
+        buf[n] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(x & 0xff);
         x >>= 8;
     }
-    if (x != 0)
+    ಆದರೆ (x != 0)
       {     /* data overflow - hack for ZIP64 (X Roche) */
-      for (n = 0; n < nbByte; n++)
+      ಗಾಗಿ (n = 0; n < nbByte; n++)
         {
           buf[n] = 0xff;
         }
       }
 
-    if (ZWRITE64(*pzlib_filefunc_def,filestream,buf,(uLong)nbByte)!=(uLong)nbByte)
-        return ZIP_ERRNO;
-    else
-        return ZIP_OK;
+    ಆದರೆ (ZWRITE64(*pzlib_filefunc_def,filestream,buf,(uLong)nbByte)!=(uLong)nbByte)
+        ಹಿಂತಿರುಗಿ ZIP_ERRNO;
+    ಇಲ್ಲದಿದ್ದರೆ
+        ಹಿಂತಿರುಗಿ ZIP_OK;
 }
 
-local void zip64local_putValue_inmemory (void* dest, ZPOS64_T x, int nbByte) {
-    unsigned char* buf=(unsigned char*)dest;
-    int n;
-    for (n = 0; n < nbByte; n++) {
-        buf[n] = (unsigned char)(x & 0xff);
+local ಶೂನ್ಯ zip64local_put_ಮೌಲ್ಯ_inmemory (ಶೂನ್ಯ* dest, ZPOS64_T x, ಪೂರ್ಣಾಂಕ nbByte) {
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* buf=(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)dest;
+    ಪೂರ್ಣಾಂಕ n;
+    ಗಾಗಿ (n = 0; n < nbByte; n++) {
+        buf[n] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(x & 0xff);
         x >>= 8;
     }
 
-    if (x != 0)
+    ಆದರೆ (x != 0)
     {     /* data overflow - hack for ZIP64 */
-       for (n = 0; n < nbByte; n++)
+       ಗಾಗಿ (n = 0; n < nbByte; n++)
        {
           buf[n] = 0xff;
        }
@@ -566,13 +566,13 @@ local void zip64local_putValue_inmemory (void* dest, ZPOS64_T x, int nbByte) {
 /****************************************************************************/
 
 
-local uLong zip64local_TmzDateToDosDate(const tm_zip* ptm) {
+local uLong zip64local_Tmz_Date_ಗಮ್ಯ_Dos_Date(ಸ್ಥಿರಾಂಕ tm_zip* ptm) {
     uLong year = (uLong)ptm->tm_year;
-    if (year>=1980)
+    ಆದರೆ (year>=1980)
         year-=1980;
-    else if (year>=80)
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (year>=80)
         year-=80;
-    return
+    ಹಿಂತಿರುಗಿ
       (uLong) (((uLong)(ptm->tm_mday) + (32 * (uLong)(ptm->tm_mon+1)) + (512 * year)) << 16) |
         (((uLong)ptm->tm_sec/2) + (32 * (uLong)ptm->tm_min) + (2048 * (uLong)ptm->tm_hour));
 }
@@ -580,20 +580,20 @@ local uLong zip64local_TmzDateToDosDate(const tm_zip* ptm) {
 
 /****************************************************************************/
 
-local int zip64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, int* pi) {
-    unsigned char c;
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,&c,1);
-    if (err==1)
+local ಪೂರ್ಣಾಂಕ zip64local_getByte(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ಪೂರ್ಣಾಂಕ* pi) {
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ c;
+    ಪೂರ್ಣಾಂಕ err = (ಪೂರ್ಣಾಂಕ)ZREAD64(*pzlib_filefunc_def,filestream,&c,1);
+    ಆದರೆ (err==1)
     {
-        *pi = (int)c;
-        return ZIP_OK;
+        *pi = (ಪೂರ್ಣಾಂಕ)c;
+        ಹಿಂತಿರುಗಿ ZIP_OK;
     }
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return ZIP_ERRNO;
-        else
-            return ZIP_EOF;
+        ಆದರೆ (ZERROR64(*pzlib_filefunc_def,filestream))
+            ಹಿಂತಿರುಗಿ ZIP_ERRNO;
+        ಇಲ್ಲದಿದ್ದರೆ
+            ಹಿಂತಿರುಗಿ ZIP_EOF;
     }
 }
 
@@ -601,292 +601,292 @@ local int zip64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, v
 /* ===========================================================================
    Reads a long in LSB order from the given gz_stream. Sets
 */
-local int zip64local_getShort(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
+local ಪೂರ್ಣಾಂಕ zip64local_getShort(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
     uLong x ;
-    int i = 0;
-    int err;
+    ಪೂರ್ಣಾಂಕ i = 0;
+    ಪೂರ್ಣಾಂಕ err;
 
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x = (uLong)i;
 
-    if (err==ZIP_OK)
+    ಆದರೆ (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<8;
 
-    if (err==ZIP_OK)
+    ಆದರೆ (err==ZIP_OK)
         *pX = x;
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
         *pX = 0;
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-local int zip64local_getLong(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
+local ಪೂರ್ಣಾಂಕ zip64local_getLong(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
     uLong x ;
-    int i = 0;
-    int err;
+    ಪೂರ್ಣಾಂಕ i = 0;
+    ಪೂರ್ಣಾಂಕ err;
 
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x = (uLong)i;
 
-    if (err==ZIP_OK)
+    ಆದರೆ (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<8;
 
-    if (err==ZIP_OK)
+    ಆದರೆ (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<16;
 
-    if (err==ZIP_OK)
+    ಆದರೆ (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<24;
 
-    if (err==ZIP_OK)
+    ಆದರೆ (err==ZIP_OK)
         *pX = x;
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
         *pX = 0;
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
 
-local int zip64local_getLong64(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T *pX) {
+local ಪೂರ್ಣಾಂಕ zip64local_getLong64(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T *pX) {
   ZPOS64_T x;
-  int i = 0;
-  int err;
+  ಪೂರ್ಣಾಂಕ i = 0;
+  ಪೂರ್ಣಾಂಕ err;
 
   err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x = (ZPOS64_T)i;
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<8;
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<16;
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<24;
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<32;
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<40;
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<48;
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<56;
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
     *pX = x;
-  else
+  ಇಲ್ಲದಿದ್ದರೆ
     *pX = 0;
 
-  return err;
+  ಹಿಂತಿರುಗಿ err;
 }
 
-#ifndef BUFREADCOMMENT
-#define BUFREADCOMMENT (0x400)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ BUFREADCOMMENT
+#ವ್ಯಾಖ್ಯಾನಿಸು BUFREADCOMMENT (0x400)
+#ಆದರೆ_ಅಂತ್ಯ
 /*
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T zip64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-  unsigned char* buf;
-  ZPOS64_T uSizeFile;
-  ZPOS64_T uBackRead;
-  ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-  ZPOS64_T uPosFound=0;
+local ZPOS64_T zip64local_ಹುಡುಕು_Central_Dir(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+  ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* buf;
+  ZPOS64_T u_ಗಾತ್ರ_File;
+  ZPOS64_T u_ಹಿಂಭಾಗ_Read;
+  ZPOS64_T u_Max_ಹಿಂಭಾಗ=0xffff; /* maximum size of global comment */
+  ZPOS64_T u_Pos_ಸಿಕ್ಕಿತು=0;
 
-  if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-    return 0;
+  ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_ಕೊನೆ) != 0)
+    ಹಿಂತಿರುಗಿ 0;
 
 
-  uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+  u_ಗಾತ್ರ_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-  if (uMaxBack>uSizeFile)
-    uMaxBack = uSizeFile;
+  ಆದರೆ (u_Max_ಹಿಂಭಾಗ>u_ಗಾತ್ರ_File)
+    u_Max_ಹಿಂಭಾಗ = u_ಗಾತ್ರ_File;
 
-  buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-  if (buf==NULL)
-    return 0;
+  buf = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)ALLOC(BUFREADCOMMENT+4);
+  ಆದರೆ (buf==ಖಾಲಿ)
+    ಹಿಂತಿರುಗಿ 0;
 
-  uBackRead = 4;
-  while (uBackRead<uMaxBack)
+  u_ಹಿಂಭಾಗ_Read = 4;
+  ಆಗ (u_ಹಿಂಭಾಗ_Read<u_Max_ಹಿಂಭಾಗ)
   {
-    uLong uReadSize;
+    uLong u_Read_ಗಾತ್ರ;
     ZPOS64_T uReadPos ;
-    int i;
-    if (uBackRead+BUFREADCOMMENT>uMaxBack)
-      uBackRead = uMaxBack;
-    else
-      uBackRead+=BUFREADCOMMENT;
-    uReadPos = uSizeFile-uBackRead ;
+    ಪೂರ್ಣಾಂಕ i;
+    ಆದರೆ (u_ಹಿಂಭಾಗ_Read+BUFREADCOMMENT>u_Max_ಹಿಂಭಾಗ)
+      u_ಹಿಂಭಾಗ_Read = u_Max_ಹಿಂಭಾಗ;
+    ಇಲ್ಲದಿದ್ದರೆ
+      u_ಹಿಂಭಾಗ_Read+=BUFREADCOMMENT;
+    uReadPos = u_ಗಾತ್ರ_File-u_ಹಿಂಭಾಗ_Read ;
 
-    uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-      (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-      break;
+    u_Read_ಗಾತ್ರ = ((BUFREADCOMMENT+4) < (u_ಗಾತ್ರ_File-uReadPos)) ?
+      (BUFREADCOMMENT+4) : (uLong)(u_ಗಾತ್ರ_File-uReadPos);
+    ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+      ನಿಲ್ಲಿಸು;
 
-    if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-      break;
+    ಆದರೆ (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_ಗಾತ್ರ)!=u_Read_ಗಾತ್ರ)
+      ನಿಲ್ಲಿಸು;
 
-    for (i=(int)uReadSize-3; (i--)>0;)
-      if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+    ಗಾಗಿ (i=(ಪೂರ್ಣಾಂಕ)u_Read_ಗಾತ್ರ-3; (i--)>0;)
+      ಆದರೆ (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
         ((*(buf+i+2))==0x05) && ((*(buf+i+3))==0x06))
       {
-        uPosFound = uReadPos+(unsigned)i;
-        break;
+        u_Pos_ಸಿಕ್ಕಿತು = uReadPos+(ಚಿಹ್ನೆರಹಿತ)i;
+        ನಿಲ್ಲಿಸು;
       }
 
-    if (uPosFound!=0)
-      break;
+    ಆದರೆ (u_Pos_ಸಿಕ್ಕಿತು!=0)
+      ನಿಲ್ಲಿಸು;
   }
-  free(buf);
-  return uPosFound;
+  ಬಿಡುಗಡೆ(buf);
+  ಹಿಂತಿರುಗಿ u_Pos_ಸಿಕ್ಕಿತು;
 }
 
 /*
 Locate the End of Zip64 Central directory locator and from there find the CD of a zipfile (at the end, just before
 the global comment)
 */
-local ZPOS64_T zip64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-  unsigned char* buf;
-  ZPOS64_T uSizeFile;
-  ZPOS64_T uBackRead;
-  ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-  ZPOS64_T uPosFound=0;
+local ZPOS64_T zip64local_ಹುಡುಕು_Central_Dir64(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+  ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* buf;
+  ZPOS64_T u_ಗಾತ್ರ_File;
+  ZPOS64_T u_ಹಿಂಭಾಗ_Read;
+  ZPOS64_T u_Max_ಹಿಂಭಾಗ=0xffff; /* maximum size of global comment */
+  ZPOS64_T u_Pos_ಸಿಕ್ಕಿತು=0;
   uLong uL;
-  ZPOS64_T relativeOffset;
+  ZPOS64_T relative_ಸ್ಥಾನಾಂತರ;
 
-  if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-    return 0;
+  ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_ಕೊನೆ) != 0)
+    ಹಿಂತಿರುಗಿ 0;
 
-  uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+  u_ಗಾತ್ರ_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-  if (uMaxBack>uSizeFile)
-    uMaxBack = uSizeFile;
+  ಆದರೆ (u_Max_ಹಿಂಭಾಗ>u_ಗಾತ್ರ_File)
+    u_Max_ಹಿಂಭಾಗ = u_ಗಾತ್ರ_File;
 
-  buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-  if (buf==NULL)
-    return 0;
+  buf = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)ALLOC(BUFREADCOMMENT+4);
+  ಆದರೆ (buf==ಖಾಲಿ)
+    ಹಿಂತಿರುಗಿ 0;
 
-  uBackRead = 4;
-  while (uBackRead<uMaxBack)
+  u_ಹಿಂಭಾಗ_Read = 4;
+  ಆಗ (u_ಹಿಂಭಾಗ_Read<u_Max_ಹಿಂಭಾಗ)
   {
-    uLong uReadSize;
+    uLong u_Read_ಗಾತ್ರ;
     ZPOS64_T uReadPos;
-    int i;
-    if (uBackRead+BUFREADCOMMENT>uMaxBack)
-      uBackRead = uMaxBack;
-    else
-      uBackRead+=BUFREADCOMMENT;
-    uReadPos = uSizeFile-uBackRead ;
+    ಪೂರ್ಣಾಂಕ i;
+    ಆದರೆ (u_ಹಿಂಭಾಗ_Read+BUFREADCOMMENT>u_Max_ಹಿಂಭಾಗ)
+      u_ಹಿಂಭಾಗ_Read = u_Max_ಹಿಂಭಾಗ;
+    ಇಲ್ಲದಿದ್ದರೆ
+      u_ಹಿಂಭಾಗ_Read+=BUFREADCOMMENT;
+    uReadPos = u_ಗಾತ್ರ_File-u_ಹಿಂಭಾಗ_Read ;
 
-    uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-      (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-      break;
+    u_Read_ಗಾತ್ರ = ((BUFREADCOMMENT+4) < (u_ಗಾತ್ರ_File-uReadPos)) ?
+      (BUFREADCOMMENT+4) : (uLong)(u_ಗಾತ್ರ_File-uReadPos);
+    ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+      ನಿಲ್ಲಿಸು;
 
-    if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-      break;
+    ಆದರೆ (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_ಗಾತ್ರ)!=u_Read_ಗಾತ್ರ)
+      ನಿಲ್ಲಿಸು;
 
-    for (i=(int)uReadSize-3; (i--)>0;)
+    ಗಾಗಿ (i=(ಪೂರ್ಣಾಂಕ)u_Read_ಗಾತ್ರ-3; (i--)>0;)
     {
       /* Signature "0x07064b50" Zip64 end of central directory locator */
-      if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) && ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
+      ಆದರೆ (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) && ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
       {
-        uPosFound = uReadPos+(unsigned)i;
-        break;
+        u_Pos_ಸಿಕ್ಕಿತು = uReadPos+(ಚಿಹ್ನೆರಹಿತ)i;
+        ನಿಲ್ಲಿಸು;
       }
     }
 
-      if (uPosFound!=0)
-        break;
+      ಆದರೆ (u_Pos_ಸಿಕ್ಕಿತು!=0)
+        ನಿಲ್ಲಿಸು;
   }
 
-  free(buf);
-  if (uPosFound == 0)
-    return 0;
+  ಬಿಡುಗಡೆ(buf);
+  ಆದರೆ (u_Pos_ಸಿಕ್ಕಿತು == 0)
+    ಹಿಂತಿರುಗಿ 0;
 
   /* Zip64 end of central directory locator */
-  if (ZSEEK64(*pzlib_filefunc_def,filestream, uPosFound,ZLIB_FILEFUNC_SEEK_SET)!=0)
-    return 0;
+  ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream, u_Pos_ಸಿಕ್ಕಿತು,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+    ಹಿಂತಿರುಗಿ 0;
 
   /* the signature, already checked */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
+  ಆದರೆ (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    ಹಿಂತಿರುಗಿ 0;
 
   /* number of the disk with the start of the zip64 end of central directory */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
-  if (uL != 0)
-    return 0;
+  ಆದರೆ (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    ಹಿಂತಿರುಗಿ 0;
+  ಆದರೆ (uL != 0)
+    ಹಿಂತಿರುಗಿ 0;
 
   /* relative offset of the zip64 end of central directory record */
-  if (zip64local_getLong64(pzlib_filefunc_def,filestream,&relativeOffset)!=ZIP_OK)
-    return 0;
+  ಆದರೆ (zip64local_getLong64(pzlib_filefunc_def,filestream,&relative_ಸ್ಥಾನಾಂತರ)!=ZIP_OK)
+    ಹಿಂತಿರುಗಿ 0;
 
   /* total number of disks */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
-  if (uL != 1)
-    return 0;
+  ಆದರೆ (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    ಹಿಂತಿರುಗಿ 0;
+  ಆದರೆ (uL != 1)
+    ಹಿಂತಿರುಗಿ 0;
 
   /* Goto Zip64 end of central directory record */
-  if (ZSEEK64(*pzlib_filefunc_def,filestream, relativeOffset,ZLIB_FILEFUNC_SEEK_SET)!=0)
-    return 0;
+  ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream, relative_ಸ್ಥಾನಾಂತರ,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+    ಹಿಂತಿರುಗಿ 0;
 
   /* the signature */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
+  ಆದರೆ (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    ಹಿಂತಿರುಗಿ 0;
 
-  if (uL != 0x06064b50) /* signature of 'Zip64 end of central directory' */
-    return 0;
+  ಆದರೆ (uL != 0x06064b50) /* signature of 'Zip64 end of central directory' */
+    ಹಿಂತಿರುಗಿ 0;
 
-  return relativeOffset;
+  ಹಿಂತಿರುಗಿ relative_ಸ್ಥಾನಾಂತರ;
 }
 
-local int LoadCentralDirectoryRecord(zip64_internal* pziinit) {
-  int err=ZIP_OK;
+local ಪೂರ್ಣಾಂಕ ತುಂಬು_Central_Directory_ದಾಖಲೆ(zip64_ಆಂತರಿಕ* pziinit) {
+  ಪೂರ್ಣಾಂಕ err=ZIP_OK;
   ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
 
-  ZPOS64_T size_central_dir;     /* size of the central directory  */
-  ZPOS64_T offset_central_dir;   /* offset of start of central directory */
+  ZPOS64_T ಗಾತ್ರ_central_dir;     /* size of the central directory  */
+  ZPOS64_T ಸ್ಥಾನಾಂತರ_central_dir;   /* offset of start of central directory */
   ZPOS64_T central_pos;
   uLong uL;
 
-  uLong number_disk;          /* number of the current disk, used for
+  uLong ಸಂಖ್ಯೆ_disk;          /* number of the current disk, used for
                               spanning ZIP, unsupported, always 0*/
-  uLong number_disk_with_CD;  /* number of the disk with central dir, used
+  uLong ಸಂಖ್ಯೆ_disk_with_CD;  /* number of the disk with central dir, used
                               for spanning ZIP, unsupported, always 0*/
-  ZPOS64_T number_entry;
-  ZPOS64_T number_entry_CD;      /* total number of entries in
+  ZPOS64_T ಸಂಖ್ಯೆ_ನಮೂದು;
+  ZPOS64_T ಸಂಖ್ಯೆ_ನಮೂದು_CD;      /* total number of entries in
                                 the central dir
                                 (same than number_entry on nospan) */
-  uLong VersionMadeBy;
-  uLong VersionNeeded;
-  uLong size_comment;
+  uLong ಆವೃತ್ತಿ_Made_By;
+  uLong ಆವೃತ್ತಿ_Needed;
+  uLong ಗಾತ್ರ_comment;
 
-  int hasZIP64Record = 0;
+  ಪೂರ್ಣಾಂಕ has_ZIP64_ದಾಖಲೆ = 0;
 
   /* check first if we find a ZIP64 record */
-  central_pos = zip64local_SearchCentralDir64(&pziinit->z_filefunc,pziinit->filestream);
-  if(central_pos > 0)
+  central_pos = zip64local_ಹುಡುಕು_Central_Dir64(&pziinit->z_filefunc,pziinit->filestream);
+  ಆದರೆ(central_pos > 0)
   {
-    hasZIP64Record = 1;
+    has_ZIP64_ದಾಖಲೆ = 1;
   }
-  else if(central_pos == 0)
+  ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ(central_pos == 0)
   {
-    central_pos = zip64local_SearchCentralDir(&pziinit->z_filefunc,pziinit->filestream);
+    central_pos = zip64local_ಹುಡುಕು_Central_Dir(&pziinit->z_filefunc,pziinit->filestream);
   }
 
 /* disable to allow appending to empty ZIP archive
@@ -894,367 +894,367 @@ local int LoadCentralDirectoryRecord(zip64_internal* pziinit) {
             err=ZIP_ERRNO;
 */
 
-  if(hasZIP64Record)
+  ಆದರೆ(has_ZIP64_ದಾಖಲೆ)
   {
-    ZPOS64_T sizeEndOfCentralDirectory;
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos, ZLIB_FILEFUNC_SEEK_SET) != 0)
+    ZPOS64_T ಗಾತ್ರ_ಕೊನೆ_ದ_Central_Directory;
+    ಆದರೆ (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos, ZLIB_FILEFUNC_SEEK_ಗಣ) != 0)
       err=ZIP_ERRNO;
 
     /* the signature, already checked */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* size of zip64 end of central directory record */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &sizeEndOfCentralDirectory)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &ಗಾತ್ರ_ಕೊನೆ_ದ_Central_Directory)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* version made by */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &VersionMadeBy)!=ZIP_OK)
+    ಆದರೆ (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &ಆವೃತ್ತಿ_Made_By)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* version needed to extract */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &VersionNeeded)!=ZIP_OK)
+    ಆದರೆ (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &ಆವೃತ್ತಿ_Needed)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of this disk */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&number_disk)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&ಸಂಖ್ಯೆ_disk)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of the disk with the start of the central directory */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&number_disk_with_CD)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&ಸಂಖ್ಯೆ_disk_with_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central directory on this disk */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &number_entry)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &ಸಂಖ್ಯೆ_ನಮೂದು)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central directory */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&number_entry_CD)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&ಸಂಖ್ಯೆ_ನಮೂದು_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
-    if ((number_entry_CD!=number_entry) || (number_disk_with_CD!=0) || (number_disk!=0))
+    ಆದರೆ ((ಸಂಖ್ಯೆ_ನಮೂದು_CD!=ಸಂಖ್ಯೆ_ನಮೂದು) || (ಸಂಖ್ಯೆ_disk_with_CD!=0) || (ಸಂಖ್ಯೆ_disk!=0))
       err=ZIP_BADZIPFILE;
 
     /* size of the central directory */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&size_central_dir)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&ಗಾತ್ರ_central_dir)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* offset of start of central directory with respect to the
     starting disk number */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&offset_central_dir)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&ಸ್ಥಾನಾಂತರ_central_dir)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* TODO..
        read the comment from the standard central header. */
-    size_comment = 0;
+    ಗಾತ್ರ_comment = 0;
   }
-  else
+  ಇಲ್ಲದಿದ್ದರೆ
   {
     /* Read End of central Directory info */
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+    ಆದರೆ (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
       err=ZIP_ERRNO;
 
     /* the signature, already checked */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
+    ಆದರೆ (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of this disk */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&number_disk)!=ZIP_OK)
+    ಆದರೆ (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&ಸಂಖ್ಯೆ_disk)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of the disk with the start of the central directory */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&number_disk_with_CD)!=ZIP_OK)
+    ಆದರೆ (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&ಸಂಖ್ಯೆ_disk_with_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central dir on this disk */
-    number_entry = 0;
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    ಸಂಖ್ಯೆ_ನಮೂದು = 0;
+    ಆದರೆ (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      number_entry = uL;
+    ಇಲ್ಲದಿದ್ದರೆ
+      ಸಂಖ್ಯೆ_ನಮೂದು = uL;
 
     /* total number of entries in the central dir */
-    number_entry_CD = 0;
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    ಸಂಖ್ಯೆ_ನಮೂದು_CD = 0;
+    ಆದರೆ (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      number_entry_CD = uL;
+    ಇಲ್ಲದಿದ್ದರೆ
+      ಸಂಖ್ಯೆ_ನಮೂದು_CD = uL;
 
-    if ((number_entry_CD!=number_entry) || (number_disk_with_CD!=0) || (number_disk!=0))
+    ಆದರೆ ((ಸಂಖ್ಯೆ_ನಮೂದು_CD!=ಸಂಖ್ಯೆ_ನಮೂದು) || (ಸಂಖ್ಯೆ_disk_with_CD!=0) || (ಸಂಖ್ಯೆ_disk!=0))
       err=ZIP_BADZIPFILE;
 
     /* size of the central directory */
-    size_central_dir = 0;
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    ಗಾತ್ರ_central_dir = 0;
+    ಆದರೆ (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      size_central_dir = uL;
+    ಇಲ್ಲದಿದ್ದರೆ
+      ಗಾತ್ರ_central_dir = uL;
 
     /* offset of start of central directory with respect to the starting disk number */
-    offset_central_dir = 0;
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    ಸ್ಥಾನಾಂತರ_central_dir = 0;
+    ಆದರೆ (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      offset_central_dir = uL;
+    ಇಲ್ಲದಿದ್ದರೆ
+      ಸ್ಥಾನಾಂತರ_central_dir = uL;
 
 
     /* zipfile global comment length */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &size_comment)!=ZIP_OK)
+    ಆದರೆ (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &ಗಾತ್ರ_comment)!=ZIP_OK)
       err=ZIP_ERRNO;
   }
 
-  if ((central_pos<offset_central_dir+size_central_dir) &&
+  ಆದರೆ ((central_pos<ಸ್ಥಾನಾಂತರ_central_dir+ಗಾತ್ರ_central_dir) &&
     (err==ZIP_OK))
     err=ZIP_BADZIPFILE;
 
-  if (err!=ZIP_OK)
+  ಆದರೆ (err!=ZIP_OK)
   {
     ZCLOSE64(pziinit->z_filefunc, pziinit->filestream);
-    return ZIP_ERRNO;
+    ಹಿಂತಿರುಗಿ ZIP_ERRNO;
   }
 
-  if (size_comment>0)
+  ಆದರೆ (ಗಾತ್ರ_comment>0)
   {
-    pziinit->globalcomment = (char*)ALLOC(size_comment+1);
-    if (pziinit->globalcomment)
+    pziinit->globalcomment = (ಅಕ್ಷರ*)ALLOC(ಗಾತ್ರ_comment+1);
+    ಆದರೆ (pziinit->globalcomment)
     {
-      size_comment = ZREAD64(pziinit->z_filefunc, pziinit->filestream, pziinit->globalcomment,size_comment);
-      pziinit->globalcomment[size_comment]=0;
+      ಗಾತ್ರ_comment = ZREAD64(pziinit->z_filefunc, pziinit->filestream, pziinit->globalcomment,ಗಾತ್ರ_comment);
+      pziinit->globalcomment[ಗಾತ್ರ_comment]=0;
     }
   }
 
-  byte_before_the_zipfile = central_pos - (offset_central_dir+size_central_dir);
-  pziinit->add_position_when_writing_offset = byte_before_the_zipfile;
+  byte_before_the_zipfile = central_pos - (ಸ್ಥಾನಾಂತರ_central_dir+ಗಾತ್ರ_central_dir);
+  pziinit->ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ = byte_before_the_zipfile;
 
   {
-    ZPOS64_T size_central_dir_to_read = size_central_dir;
-    size_t buf_size = SIZEDATA_INDATABLOCK;
-    void* buf_read = (void*)ALLOC(buf_size);
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, offset_central_dir + byte_before_the_zipfile, ZLIB_FILEFUNC_SEEK_SET) != 0)
+    ZPOS64_T ಗಾತ್ರ_central_dir_ಗಮ್ಯ_read = ಗಾತ್ರ_central_dir;
+    size_t buf_ಗಾತ್ರ_2 = SIZEDATA_INDATABLOCK;
+    ಶೂನ್ಯ* buf_read = (ಶೂನ್ಯ*)ALLOC(buf_ಗಾತ್ರ_2);
+    ಆದರೆ (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, ಸ್ಥಾನಾಂತರ_central_dir + byte_before_the_zipfile, ZLIB_FILEFUNC_SEEK_ಗಣ) != 0)
       err=ZIP_ERRNO;
 
-    while ((size_central_dir_to_read>0) && (err==ZIP_OK))
+    ಆಗ ((ಗಾತ್ರ_central_dir_ಗಮ್ಯ_read>0) && (err==ZIP_OK))
     {
       ZPOS64_T read_this = SIZEDATA_INDATABLOCK;
-      if (read_this > size_central_dir_to_read)
-        read_this = size_central_dir_to_read;
+      ಆದರೆ (read_this > ಗಾತ್ರ_central_dir_ಗಮ್ಯ_read)
+        read_this = ಗಾತ್ರ_central_dir_ಗಮ್ಯ_read;
 
-      if (ZREAD64(pziinit->z_filefunc, pziinit->filestream,buf_read,(uLong)read_this) != read_this)
+      ಆದರೆ (ZREAD64(pziinit->z_filefunc, pziinit->filestream,buf_read,(uLong)read_this) != read_this)
         err=ZIP_ERRNO;
 
-      if (err==ZIP_OK)
-        err = add_data_in_datablock(&pziinit->central_dir,buf_read, (uLong)read_this);
+      ಆದರೆ (err==ZIP_OK)
+        err = ಕೂಡಿಸು_ದತ್ತಾಂಶ_ಒಳ_datablock(&pziinit->central_dir,buf_read, (uLong)read_this);
 
-      size_central_dir_to_read-=read_this;
+      ಗಾತ್ರ_central_dir_ಗಮ್ಯ_read-=read_this;
     }
-    free(buf_read);
+    ಬಿಡುಗಡೆ(buf_read);
   }
   pziinit->begin_pos = byte_before_the_zipfile;
-  pziinit->number_entry = number_entry_CD;
+  pziinit->ಸಂಖ್ಯೆ_ನಮೂದು = ಸಂಖ್ಯೆ_ನಮೂದು_CD;
 
-  if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, offset_central_dir+byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_SET) != 0)
+  ಆದರೆ (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, ಸ್ಥಾನಾಂತರ_central_dir+byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_ಗಣ) != 0)
     err=ZIP_ERRNO;
 
-  return err;
+  ಹಿಂತಿರುಗಿ err;
 }
 
 
-#endif /* !NO_ADDFILEINEXISTINGZIP*/
+#ಆದರೆ_ಅಂತ್ಯ /* !NO_ADDFILEINEXISTINGZIP*/
 
 
 /************************************************************/
-extern zipFile ZEXPORT zipOpen3(const void *pathname, int append, zipcharpc* globalcomment, zlib_filefunc64_32_def* pzlib_filefunc64_32_def) {
-    zip64_internal ziinit;
-    zip64_internal* zi;
-    int err=ZIP_OK;
+ಬಾಹ್ಯ zipFile ZEXPORT zipOpen3(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *pathname, ಪೂರ್ಣಾಂಕ append, zipcharpc* globalcomment, zlib_filefunc64_32_def* pzlib_filefunc64_32_def) {
+    zip64_ಆಂತರಿಕ ziinit;
+    zip64_ಆಂತರಿಕ* zi;
+    ಪೂರ್ಣಾಂಕ err=ZIP_OK;
 
-    ziinit.z_filefunc.zseek32_file = NULL;
-    ziinit.z_filefunc.ztell32_file = NULL;
-    if (pzlib_filefunc64_32_def==NULL)
+    ziinit.z_filefunc.zseek32_file = ಖಾಲಿ;
+    ziinit.z_filefunc.ztell32_file = ಖಾಲಿ;
+    ಆದರೆ (pzlib_filefunc64_32_def==ಖಾಲಿ)
         fill_fopen64_filefunc(&ziinit.z_filefunc.zfile_func64);
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
         ziinit.z_filefunc = *pzlib_filefunc64_32_def;
 
     ziinit.filestream = ZOPEN64(ziinit.z_filefunc,
                   pathname,
-                  (append == APPEND_STATUS_CREATE) ?
-                  (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_CREATE) :
-                    (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_EXISTING));
+                  (append == APPEND_ಸ್ಥಿತಿ_CREATE) ?
+                  (ZLIB_FILEFUNC_ಬಹುಲಕ_READ | ZLIB_FILEFUNC_ಬಹುಲಕ_WRITE | ZLIB_FILEFUNC_ಬಹುಲಕ_CREATE) :
+                    (ZLIB_FILEFUNC_ಬಹುಲಕ_READ | ZLIB_FILEFUNC_ಬಹುಲಕ_WRITE | ZLIB_FILEFUNC_ಬಹುಲಕ_EXISTING));
 
-    if (ziinit.filestream == NULL)
-        return NULL;
+    ಆದರೆ (ziinit.filestream == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-    if (append == APPEND_STATUS_CREATEAFTER)
+    ಆದರೆ (append == APPEND_ಸ್ಥಿತಿ_CREATEAFTER)
         ZSEEK64(ziinit.z_filefunc,ziinit.filestream,0,SEEK_END);
 
     ziinit.begin_pos = ZTELL64(ziinit.z_filefunc,ziinit.filestream);
-    ziinit.in_opened_file_inzip = 0;
-    ziinit.ci.stream_initialised = 0;
-    ziinit.number_entry = 0;
-    ziinit.add_position_when_writing_offset = 0;
+    ziinit.ಒಳ_opened_file_inzip = 0;
+    ziinit.ci.ಹರಿವು_initialised = 0;
+    ziinit.ಸಂಖ್ಯೆ_ನಮೂದು = 0;
+    ziinit.ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ = 0;
     init_linkedlist(&(ziinit.central_dir));
-    memset(&ziinit.set, 0, sizeof(set_t));  /* make sure set appears dormant */
+    memset(&ziinit.ಗಣ, 0, ಗಾತ್ರ(ಗಣ_t));  /* make sure set appears dormant */
 
 
 
-    zi = (zip64_internal*)ALLOC(sizeof(zip64_internal));
-    if (zi==NULL)
+    zi = (zip64_ಆಂತರಿಕ*)ALLOC(ಗಾತ್ರ(zip64_ಆಂತರಿಕ));
+    ಆದರೆ (zi==ಖಾಲಿ)
     {
         ZCLOSE64(ziinit.z_filefunc,ziinit.filestream);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     /* now we add file in a zipfile */
 #    ifndef NO_ADDFILEINEXISTINGZIP
-    ziinit.globalcomment = NULL;
-    if (append == APPEND_STATUS_ADDINZIP)
+    ziinit.globalcomment = ಖಾಲಿ;
+    ಆದರೆ (append == APPEND_ಸ್ಥಿತಿ_ADDINZIP)
     {
       /* Read and Cache Central Directory Records */
-      err = LoadCentralDirectoryRecord(&ziinit);
+      err = ತುಂಬು_Central_Directory_ದಾಖಲೆ(&ziinit);
     }
 
-    if (globalcomment)
+    ಆದರೆ (globalcomment)
     {
       *globalcomment = ziinit.globalcomment;
     }
 #    endif /* !NO_ADDFILEINEXISTINGZIP*/
 
-    if (err != ZIP_OK)
+    ಆದರೆ (err != ZIP_OK)
     {
 #    ifndef NO_ADDFILEINEXISTINGZIP
-        free(ziinit.globalcomment);
+        ಬಿಡುಗಡೆ(ziinit.globalcomment);
 #    endif /* !NO_ADDFILEINEXISTINGZIP*/
-        free(zi);
-        return NULL;
+        ಬಿಡುಗಡೆ(zi);
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
         *zi = ziinit;
-        return (zipFile)zi;
+        ಹಿಂತಿರುಗಿ (zipFile)zi;
     }
 }
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname, int append, zipcharpc* globalcomment, zlib_filefunc_def* pzlib_filefunc32_def) {
-    if (pzlib_filefunc32_def != NULL)
+ಬಾಹ್ಯ zipFile ZEXPORT zipOpen2(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pathname, ಪೂರ್ಣಾಂಕ append, zipcharpc* globalcomment, zlib_filefunc_def* pzlib_filefunc32_def) {
+    ಆದರೆ (pzlib_filefunc32_def != ಖಾಲಿ)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
-        return zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
+        ಹಿಂತಿರುಗಿ zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
     }
-    else
-        return zipOpen3(pathname, append, globalcomment, NULL);
+    ಇಲ್ಲದಿದ್ದರೆ
+        ಹಿಂತಿರುಗಿ zipOpen3(pathname, append, globalcomment, ಖಾಲಿ);
 }
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname, int append, zipcharpc* globalcomment, zlib_filefunc64_def* pzlib_filefunc_def) {
-    if (pzlib_filefunc_def != NULL)
+ಬಾಹ್ಯ zipFile ZEXPORT zipOpen2_64(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *pathname, ಪೂರ್ಣಾಂಕ append, zipcharpc* globalcomment, zlib_filefunc64_def* pzlib_filefunc_def) {
+    ಆದರೆ (pzlib_filefunc_def != ಖಾಲಿ)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
-        zlib_filefunc64_32_def_fill.zopen32_file = NULL;
-        zlib_filefunc64_32_def_fill.ztell32_file = NULL;
-        zlib_filefunc64_32_def_fill.zseek32_file = NULL;
-        return zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
+        zlib_filefunc64_32_def_fill.zopen32_file = ಖಾಲಿ;
+        zlib_filefunc64_32_def_fill.ztell32_file = ಖಾಲಿ;
+        zlib_filefunc64_32_def_fill.zseek32_file = ಖಾಲಿ;
+        ಹಿಂತಿರುಗಿ zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
     }
-    else
-        return zipOpen3(pathname, append, globalcomment, NULL);
+    ಇಲ್ಲದಿದ್ದರೆ
+        ಹಿಂತಿರುಗಿ zipOpen3(pathname, append, globalcomment, ಖಾಲಿ);
 }
 
 
 
-extern zipFile ZEXPORT zipOpen(const char* pathname, int append) {
-    return zipOpen3((const void*)pathname,append,NULL,NULL);
+ಬಾಹ್ಯ zipFile ZEXPORT zipOpen(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* pathname, ಪೂರ್ಣಾಂಕ append) {
+    ಹಿಂತಿರುಗಿ zipOpen3((ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ*)pathname,append,ಖಾಲಿ,ಖಾಲಿ);
 }
 
-extern zipFile ZEXPORT zipOpen64(const void* pathname, int append) {
-    return zipOpen3(pathname,append,NULL,NULL);
+ಬಾಹ್ಯ zipFile ZEXPORT zipOpen64(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* pathname, ಪೂರ್ಣಾಂಕ append) {
+    ಹಿಂತಿರುಗಿ zipOpen3(pathname,append,ಖಾಲಿ,ಖಾಲಿ);
 }
 
-local int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt size_extrafield_local, const void* extrafield_local) {
+local ಪೂರ್ಣಾಂಕ Write_Local_File_ಶೀರ್ಷಿಕೆ(zip64_ಆಂತರಿಕ* zi, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, uInt ಗಾತ್ರ_extrafield_local, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local) {
   /* write the local header */
-  int err;
-  uInt size_filename = (uInt)strlen(filename);
-  uInt size_extrafield = size_extrafield_local;
+  ಪೂರ್ಣಾಂಕ err;
+  uInt ಗಾತ್ರ_filename = (uInt)ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(filename);
+  uInt ಗಾತ್ರ_extrafield = ಗಾತ್ರ_extrafield_local;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)LOCALHEADERMAGIC, 4);
+  err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)LOCALHEADERMAGIC, 4);
 
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);/* version needed to extract */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)20,2);/* version needed to extract */
+    ಆದರೆ(zi->ci.zip64)
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)45,2);/* version needed to extract */
+    ಇಲ್ಲದಿದ್ದರೆ
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)20,2);/* version needed to extract */
   }
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.flag,2);
+  ಆದರೆ (err==ZIP_OK)
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.flag,2);
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.method,2);
+  ಆದರೆ (err==ZIP_OK)
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.ವಿಧಾನ_2,2);
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.dosDate,4);
+  ಆದರೆ (err==ZIP_OK)
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.dosDate,4);
 
   /* CRC / Compressed size / Uncompressed size will be filled in later and rewritten later */
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* crc 32, unknown */
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* crc 32, unknown */
+  ಆದರೆ (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* compressed size, unknown */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* compressed size, unknown */
+    ಆದರೆ(zi->ci.zip64)
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* compressed size, unknown */
+    ಇಲ್ಲದಿದ್ದರೆ
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* compressed size, unknown */
   }
-  if (err==ZIP_OK)
+  ಆದರೆ (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* uncompressed size, unknown */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* uncompressed size, unknown */
-  }
-
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_filename,2);
-
-  if(zi->ci.zip64)
-  {
-    size_extrafield += 20;
+    ಆದರೆ(zi->ci.zip64)
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* uncompressed size, unknown */
+    ಇಲ್ಲದಿದ್ದರೆ
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* uncompressed size, unknown */
   }
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_extrafield,2);
+  ಆದರೆ (err==ZIP_OK)
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)ಗಾತ್ರ_filename,2);
 
-  if ((err==ZIP_OK) && (size_filename > 0))
+  ಆದರೆ(zi->ci.zip64)
   {
-    if (ZWRITE64(zi->z_filefunc,zi->filestream,filename,size_filename)!=size_filename)
+    ಗಾತ್ರ_extrafield += 20;
+  }
+
+  ಆದರೆ (err==ZIP_OK)
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)ಗಾತ್ರ_extrafield,2);
+
+  ಆದರೆ ((err==ZIP_OK) && (ಗಾತ್ರ_filename > 0))
+  {
+    ಆದರೆ (ZWRITE64(zi->z_filefunc,zi->filestream,filename,ಗಾತ್ರ_filename)!=ಗಾತ್ರ_filename)
       err = ZIP_ERRNO;
   }
 
-  if ((err==ZIP_OK) && (size_extrafield_local > 0))
+  ಆದರೆ ((err==ZIP_OK) && (ಗಾತ್ರ_extrafield_local > 0))
   {
-    if (ZWRITE64(zi->z_filefunc, zi->filestream, extrafield_local, size_extrafield_local) != size_extrafield_local)
+    ಆದರೆ (ZWRITE64(zi->z_filefunc, zi->filestream, extrafield_local, ಗಾತ್ರ_extrafield_local) != ಗಾತ್ರ_extrafield_local)
       err = ZIP_ERRNO;
   }
 
 
-  if ((err==ZIP_OK) && (zi->ci.zip64))
+  ಆದರೆ ((err==ZIP_OK) && (zi->ci.zip64))
   {
       /* write the Zip64 extended info */
-      short HeaderID = 1;
-      short DataSize = 16;
-      ZPOS64_T CompressedSize = 0;
-      ZPOS64_T UncompressedSize = 0;
+      ಗಿಡ್ಡ ಶೀರ್ಷಿಕೆ_ID = 1;
+      ಗಿಡ್ಡ ದತ್ತಾಂಶ_ಗಾತ್ರ_2 = 16;
+      ZPOS64_T Compressed_ಗಾತ್ರ = 0;
+      ZPOS64_T Uncompressed_ಗಾತ್ರ = 0;
 
       /* Remember position of Zip64 extended info for the local file header. (needed when we update size after done with file) */
       zi->ci.pos_zip64extrainfo = ZTELL64(zi->z_filefunc,zi->filestream);
 
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)HeaderID,2);
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)DataSize,2);
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc, zi->filestream, (ZPOS64_T)ಶೀರ್ಷಿಕೆ_ID,2);
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc, zi->filestream, (ZPOS64_T)ದತ್ತಾಂಶ_ಗಾತ್ರ_2,2);
 
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)UncompressedSize,8);
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)CompressedSize,8);
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc, zi->filestream, (ZPOS64_T)Uncompressed_ಗಾತ್ರ,8);
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc, zi->filestream, (ZPOS64_T)Compressed_ಗಾತ್ರ,8);
   }
 
-  return err;
+  ಹಿಂತಿರುಗಿ err;
 }
 
 /* Return the length of the UTF-8 code at str[0..len-1] in [1..4], or negative
@@ -1262,8 +1262,8 @@ local int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt s
    of bytes examined in order to determine it was bad. Or if minus the return
    code is one less than len, then at least one more byte than provided would
    be needed to complete the code. */
-local int utf8len(unsigned char const *str, size_t len) {
-    return
+local ಪೂರ್ಣಾಂಕ utf8len(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *str, size_t len) {
+    ಹಿಂತಿರುಗಿ
         len == 0 ? -1 :                         /* empty input */
         str[0] < 0x80 ? 1 :                     /* good one-byte */
         str[0] < 0xc0 ? -1 :                    /* bad first byte */
@@ -1283,18 +1283,18 @@ local int utf8len(unsigned char const *str, size_t len) {
 /* Return true if str[0..len-1] is valid UTF-8 *and* it contains at least one
    code of two or more bytes. This is used to determine whether or not to set
    bit 11 in the zip header flags. */
-local int isutf8(char const *str, size_t len) {
-    int utf8 = 0;
-    while (len) {
-        int code = utf8len((unsigned char const *)str, len);
-        if (code < 0)
-            return 0;
-        if (code > 1)
+local ಪೂರ್ಣಾಂಕ isutf8(ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *str, size_t len) {
+    ಪೂರ್ಣಾಂಕ utf8 = 0;
+    ಆಗ (len) {
+        ಪೂರ್ಣಾಂಕ ಸಂಕೇತ_2 = utf8len((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *)str, len);
+        ಆದರೆ (ಸಂಕೇತ_2 < 0)
+            ಹಿಂತಿರುಗಿ 0;
+        ಆದರೆ (ಸಂಕೇತ_2 > 1)
             utf8 = 1;
-        str += code;
-        len -= (unsigned)code;
+        str += ಸಂಕೇತ_2;
+        len -= (ಚಿಹ್ನೆರಹಿತ)ಸಂಕೇತ_2;
     }
-    return utf8;
+    ಹಿಂತಿರುಗಿ utf8;
 }
 
 /*
@@ -1305,948 +1305,948 @@ local int isutf8(char const *str, size_t len) {
  It is not done here because then we need to realloc a new buffer since parameters are 'const' and I want to minimize
  unnecessary allocations.
  */
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                           const void* extrafield_local, uInt size_extrafield_local,
-                                           const void* extrafield_global, uInt size_extrafield_global,
-                                           const char* comment, int method, int level, int raw,
-                                           int windowBits,int memLevel, int strategy,
-                                           const char* password, uLong crcForCrypting,
-                                           uLong versionMadeBy, uLong flagBase, int zip64) {
-    zip64_internal* zi;
-    uInt size_filename;
-    uInt size_comment;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Open_New_File_ಒಳ_Zip4_64(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಸ್ಥಿರಾಂಕ zip_fileinfo* zipfi,
+                                           ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local, uInt ಗಾತ್ರ_extrafield_local,
+                                           ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_global, uInt ಗಾತ್ರ_extrafield_global,
+                                           ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* comment, ಪೂರ್ಣಾಂಕ ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ level, ಪೂರ್ಣಾಂಕ raw,
+                                           ಪೂರ್ಣಾಂಕ ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು,ಪೂರ್ಣಾಂಕ memLevel, ಪೂರ್ಣಾಂಕ strategy,
+                                           ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* password, uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting,
+                                           uLong ಆವೃತ್ತಿ_Made_By_2, uLong flag_ತಳ, ಪೂರ್ಣಾಂಕ zip64) {
+    zip64_ಆಂತರಿಕ* zi;
+    uInt ಗಾತ್ರ_filename;
+    uInt ಗಾತ್ರ_comment;
     uInt i;
-    int err = ZIP_OK;
+    ಪೂರ್ಣಾಂಕ err = ZIP_OK;
 
 #    ifdef NOCRYPT
-    if (password != NULL)
-        return ZIP_PARAMERROR;
+    ಆದರೆ (password != ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
 #    endif
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
 
-#ifdef HAVE_BZIP2
-    if ((method!=0) && (method!=Z_DEFLATED) && (method!=Z_BZIP2ED))
-      return ZIP_PARAMERROR;
-#else
-    if ((method!=0) && (method!=Z_DEFLATED))
-      return ZIP_PARAMERROR;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    ಆದರೆ ((ವಿಧಾನ_2!=0) && (ವಿಧಾನ_2!=Z_DEFLATED) && (ವಿಧಾನ_2!=Z_BZIP2ED))
+      ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ ((ವಿಧಾನ_2!=0) && (ವಿಧಾನ_2!=Z_DEFLATED))
+      ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
+#ಆದರೆ_ಅಂತ್ಯ
 
     /* The filename and comment length must fit in 16 bits. */
-    if ((filename!=NULL) && (strlen(filename)>0xffff))
-        return ZIP_PARAMERROR;
-    if ((comment!=NULL) && (strlen(comment)>0xffff))
-        return ZIP_PARAMERROR;
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(filename)>0xffff))
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
+    ಆದರೆ ((comment!=ಖಾಲಿ) && (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(comment)>0xffff))
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
     /* The extra field length must fit in 16 bits. If the member also requires
        a Zip64 extra block, that will also need to fit within that 16-bit
        length, but that will be checked for later. */
-    if ((size_extrafield_local>0xffff) || (size_extrafield_global>0xffff))
-        return ZIP_PARAMERROR;
+    ಆದರೆ ((ಗಾತ್ರ_extrafield_local>0xffff) || (ಗಾತ್ರ_extrafield_global>0xffff))
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
 
-    zi = (zip64_internal*)file;
+    zi = (zip64_ಆಂತರಿಕ*)file;
 
-    if (zi->in_opened_file_inzip == 1)
+    ಆದರೆ (zi->ಒಳ_opened_file_inzip == 1)
     {
-        err = zipCloseFileInZip (file);
-        if (err != ZIP_OK)
-            return err;
+        err = zip_Close_File_ಒಳ_Zip (file);
+        ಆದರೆ (err != ZIP_OK)
+            ಹಿಂತಿರುಗಿ err;
     }
 
-    if (filename==NULL)
+    ಆದರೆ (filename==ಖಾಲಿ)
         filename="-";
 
-    if (comment==NULL)
-        size_comment = 0;
-    else
-        size_comment = (uInt)strlen(comment);
+    ಆದರೆ (comment==ಖಾಲಿ)
+        ಗಾತ್ರ_comment = 0;
+    ಇಲ್ಲದಿದ್ದರೆ
+        ಗಾತ್ರ_comment = (uInt)ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(comment);
 
-    size_filename = (uInt)strlen(filename);
+    ಗಾತ್ರ_filename = (uInt)ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(filename);
 
-    if (zipfi == NULL)
+    ಆದರೆ (zipfi == ಖಾಲಿ)
         zi->ci.dosDate = 0;
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
-        if (zipfi->dosDate != 0)
+        ಆದರೆ (zipfi->dosDate != 0)
             zi->ci.dosDate = zipfi->dosDate;
-        else
-          zi->ci.dosDate = zip64local_TmzDateToDosDate(&zipfi->tmz_date);
+        ಇಲ್ಲದಿದ್ದರೆ
+          zi->ci.dosDate = zip64local_Tmz_Date_ಗಮ್ಯ_Dos_Date(&zipfi->tmz_date);
     }
 
-    zi->ci.flag = flagBase;
-    if ((level==8) || (level==9))
+    zi->ci.flag = flag_ತಳ;
+    ಆದರೆ ((level==8) || (level==9))
       zi->ci.flag |= 2;
-    if (level==2)
+    ಆದರೆ (level==2)
       zi->ci.flag |= 4;
-    if (level==1)
+    ಆದರೆ (level==1)
       zi->ci.flag |= 6;
-    if (password != NULL)
+    ಆದರೆ (password != ಖಾಲಿ)
       zi->ci.flag |= 1;
-    if (isutf8(filename, size_filename) &&
-        (size_comment == 0 || isutf8(comment, size_comment)))
+    ಆದರೆ (isutf8(filename, ಗಾತ್ರ_filename) &&
+        (ಗಾತ್ರ_comment == 0 || isutf8(comment, ಗಾತ್ರ_comment)))
       zi->ci.flag |= (1 << 11);
 
-    zi->ci.crc32 = 0;
-    zi->ci.method = method;
+    zi->ci.ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2 = 0;
+    zi->ci.ವಿಧಾನ_2 = ವಿಧಾನ_2;
     zi->ci.encrypt = 0;
-    zi->ci.stream_initialised = 0;
-    zi->ci.pos_in_buffered_data = 0;
+    zi->ci.ಹರಿವು_initialised = 0;
+    zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ = 0;
     zi->ci.raw = raw;
-    zi->ci.pos_local_header = ZTELL64(zi->z_filefunc,zi->filestream);
+    zi->ci.pos_local_ಶೀರ್ಷಿಕೆ = ZTELL64(zi->z_filefunc,zi->filestream);
 
-    zi->ci.size_centralheader = SIZECENTRALHEADER + size_filename + size_extrafield_global + size_comment;
-    zi->ci.size_centralExtraFree = 32; /* Extra space we have reserved in case we need to add ZIP64 extra info data */
+    zi->ci.ಗಾತ್ರ_centralheader = SIZECENTRALHEADER + ಗಾತ್ರ_filename + ಗಾತ್ರ_extrafield_global + ಗಾತ್ರ_comment;
+    zi->ci.ಗಾತ್ರ_central_Extra_Free = 32; /* Extra space we have reserved in case we need to add ZIP64 extra info data */
 
-    zi->ci.central_header = (char*)ALLOC((uInt)zi->ci.size_centralheader + zi->ci.size_centralExtraFree);
+    zi->ci.central_ಶೀರ್ಷಿಕೆ = (ಅಕ್ಷರ*)ALLOC((uInt)zi->ci.ಗಾತ್ರ_centralheader + zi->ci.ಗಾತ್ರ_central_Extra_Free);
 
-    zi->ci.size_centralExtra = size_extrafield_global;
-    zip64local_putValue_inmemory(zi->ci.central_header,(uLong)CENTRALHEADERMAGIC,4);
+    zi->ci.ಗಾತ್ರ_central_Extra = ಗಾತ್ರ_extrafield_global;
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ,(uLong)CENTRALHEADERMAGIC,4);
     /* version info */
-    zip64local_putValue_inmemory(zi->ci.central_header+4,(uLong)versionMadeBy,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+6,(uLong)20,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+8,(uLong)zi->ci.flag,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+10,(uLong)zi->ci.method,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+12,(uLong)zi->ci.dosDate,4);
-    zip64local_putValue_inmemory(zi->ci.central_header+16,(uLong)0,4); /*crc*/
-    zip64local_putValue_inmemory(zi->ci.central_header+20,(uLong)0,4); /*compr size*/
-    zip64local_putValue_inmemory(zi->ci.central_header+24,(uLong)0,4); /*uncompr size*/
-    zip64local_putValue_inmemory(zi->ci.central_header+28,(uLong)size_filename,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+30,(uLong)size_extrafield_global,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+32,(uLong)size_comment,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+34,(uLong)0,2); /*disk nm start*/
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+4,(uLong)ಆವೃತ್ತಿ_Made_By_2,2);
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+6,(uLong)20,2);
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+8,(uLong)zi->ci.flag,2);
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+10,(uLong)zi->ci.ವಿಧಾನ_2,2);
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+12,(uLong)zi->ci.dosDate,4);
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+16,(uLong)0,4); /*crc*/
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+20,(uLong)0,4); /*compr size*/
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+24,(uLong)0,4); /*uncompr size*/
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+28,(uLong)ಗಾತ್ರ_filename,2);
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+30,(uLong)ಗಾತ್ರ_extrafield_global,2);
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+32,(uLong)ಗಾತ್ರ_comment,2);
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+34,(uLong)0,2); /*disk nm start*/
 
-    if (zipfi==NULL)
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)0,2);
-    else
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)zipfi->internal_fa,2);
+    ಆದರೆ (zipfi==ಖಾಲಿ)
+        zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+36,(uLong)0,2);
+    ಇಲ್ಲದಿದ್ದರೆ
+        zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+36,(uLong)zipfi->ಆಂತರಿಕ_fa,2);
 
-    if (zipfi==NULL)
-        zip64local_putValue_inmemory(zi->ci.central_header+38,(uLong)0,4);
-    else
-        zip64local_putValue_inmemory(zi->ci.central_header+38,(uLong)zipfi->external_fa,4);
+    ಆದರೆ (zipfi==ಖಾಲಿ)
+        zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+38,(uLong)0,4);
+    ಇಲ್ಲದಿದ್ದರೆ
+        zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+38,(uLong)zipfi->external_fa,4);
 
-    if(zi->ci.pos_local_header >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+42,(uLong)0xffffffff,4);
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+42,(uLong)zi->ci.pos_local_header - zi->add_position_when_writing_offset,4);
+    ಆದರೆ(zi->ci.pos_local_ಶೀರ್ಷಿಕೆ >= 0xffffffff)
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+42,(uLong)0xffffffff,4);
+    ಇಲ್ಲದಿದ್ದರೆ
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+42,(uLong)zi->ci.pos_local_ಶೀರ್ಷಿಕೆ - zi->ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ,4);
 
-    for (i=0;i<size_filename;i++)
-        *(zi->ci.central_header+SIZECENTRALHEADER+i) = *(filename+i);
+    ಗಾಗಿ (i=0;i<ಗಾತ್ರ_filename;i++)
+        *(zi->ci.central_ಶೀರ್ಷಿಕೆ+SIZECENTRALHEADER+i) = *(filename+i);
 
-    for (i=0;i<size_extrafield_global;i++)
-        *(zi->ci.central_header+SIZECENTRALHEADER+size_filename+i) =
-              *(((const char*)extrafield_global)+i);
+    ಗಾಗಿ (i=0;i<ಗಾತ್ರ_extrafield_global;i++)
+        *(zi->ci.central_ಶೀರ್ಷಿಕೆ+SIZECENTRALHEADER+ಗಾತ್ರ_filename+i) =
+              *(((ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*)extrafield_global)+i);
 
-    for (i=0;i<size_comment;i++)
-        *(zi->ci.central_header+SIZECENTRALHEADER+size_filename+
-              size_extrafield_global+i) = *(comment+i);
-    if (zi->ci.central_header == NULL)
-        return ZIP_INTERNALERROR;
+    ಗಾಗಿ (i=0;i<ಗಾತ್ರ_comment;i++)
+        *(zi->ci.central_ಶೀರ್ಷಿಕೆ+SIZECENTRALHEADER+ಗಾತ್ರ_filename+
+              ಗಾತ್ರ_extrafield_global+i) = *(comment+i);
+    ಆದರೆ (zi->ci.central_ಶೀರ್ಷಿಕೆ == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ZIP_INTERNALERROR;
 
     zi->ci.zip64 = zip64;
-    zi->ci.totalCompressedData = 0;
-    zi->ci.totalUncompressedData = 0;
+    zi->ci.ಒಟ್ಟು_Compressed_ದತ್ತಾಂಶ = 0;
+    zi->ci.ಒಟ್ಟು_Uncompressed_ದತ್ತಾಂಶ = 0;
     zi->ci.pos_zip64extrainfo = 0;
 
-    err = Write_LocalFileHeader(zi, filename, size_extrafield_local, extrafield_local);
+    err = Write_Local_File_ಶೀರ್ಷಿಕೆ(zi, filename, ಗಾತ್ರ_extrafield_local, extrafield_local);
 
-#ifdef HAVE_BZIP2
-    zi->ci.bstream.avail_in = (uInt)0;
-    zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-    zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
-    zi->ci.bstream.total_in_hi32 = 0;
-    zi->ci.bstream.total_in_lo32 = 0;
-    zi->ci.bstream.total_out_hi32 = 0;
-    zi->ci.bstream.total_out_lo32 = 0;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    zi->ci.bstream.avail_ಒಳ = (uInt)0;
+    zi->ci.bstream.avail_ಹೊರಹೋಗು = (uInt)Z_BUFSIZE;
+    zi->ci.bstream.ಮುಂದಿನ_ಹೊರಹೋಗು = (ಅಕ್ಷರ*)zi->ci.buffered_ದತ್ತಾಂಶ;
+    zi->ci.bstream.ಒಟ್ಟು_ಒಳ_hi32 = 0;
+    zi->ci.bstream.ಒಟ್ಟು_ಒಳ_lo32 = 0;
+    zi->ci.bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_hi32 = 0;
+    zi->ci.bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32 = 0;
+#ಆದರೆ_ಅಂತ್ಯ
 
-    zi->ci.stream.avail_in = (uInt)0;
-    zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-    zi->ci.stream.next_out = zi->ci.buffered_data;
-    zi->ci.stream.total_in = 0;
-    zi->ci.stream.total_out = 0;
-    zi->ci.stream.data_type = Z_BINARY;
+    zi->ci.ಹರಿವು.avail_ಒಳ = (uInt)0;
+    zi->ci.ಹರಿವು.avail_ಹೊರಹೋಗು = (uInt)Z_BUFSIZE;
+    zi->ci.ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು = zi->ci.buffered_ದತ್ತಾಂಶ;
+    zi->ci.ಹರಿವು.ಒಟ್ಟು_ಒಳ = 0;
+    zi->ci.ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು = 0;
+    zi->ci.ಹರಿವು.ದತ್ತಾಂಶ_type = Z_ದ್ವಿಮಾನ;
 
-#ifdef HAVE_BZIP2
-    if ((err==ZIP_OK) && (zi->ci.method == Z_DEFLATED || zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
-#else
-    if ((err==ZIP_OK) && (zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    ಆದರೆ ((err==ZIP_OK) && (zi->ci.ವಿಧಾನ_2 == Z_DEFLATED || zi->ci.ವಿಧಾನ_2 == Z_BZIP2ED) && (!zi->ci.raw))
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ ((err==ZIP_OK) && (zi->ci.ವಿಧಾನ_2 == Z_DEFLATED) && (!zi->ci.raw))
+#ಆದರೆ_ಅಂತ್ಯ
     {
-        if(zi->ci.method == Z_DEFLATED)
+        ಆದರೆ(zi->ci.ವಿಧಾನ_2 == Z_DEFLATED)
         {
-          zi->ci.stream.zalloc = (alloc_func)0;
-          zi->ci.stream.zfree = (free_func)0;
-          zi->ci.stream.opaque = (voidpf)0;
+          zi->ci.ಹರಿವು.zalloc = (alloc_func)0;
+          zi->ci.ಹರಿವು.zfree = (free_func)0;
+          zi->ci.ಹರಿವು.opaque = (voidpf)0;
 
-          if (windowBits>0)
-              windowBits = -windowBits;
+          ಆದರೆ (ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು>0)
+              ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು = -ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು;
 
-          err = deflateInit2(&zi->ci.stream, level, Z_DEFLATED, windowBits, memLevel, strategy);
+          err = deflateInit2(&zi->ci.ಹರಿವು, level, Z_DEFLATED, ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು, memLevel, strategy);
 
-          if (err==Z_OK)
-              zi->ci.stream_initialised = Z_DEFLATED;
+          ಆದರೆ (err==Z_OK)
+              zi->ci.ಹರಿವು_initialised = Z_DEFLATED;
         }
-        else if(zi->ci.method == Z_BZIP2ED)
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ(zi->ci.ವಿಧಾನ_2 == Z_BZIP2ED)
         {
-#ifdef HAVE_BZIP2
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
             /* Init BZip stuff here */
           zi->ci.bstream.bzalloc = 0;
           zi->ci.bstream.bzfree = 0;
           zi->ci.bstream.opaque = (voidpf)0;
 
           err = BZ2_bzCompressInit(&zi->ci.bstream, level, 0,35);
-          if(err == BZ_OK)
-            zi->ci.stream_initialised = Z_BZIP2ED;
-#endif
+          ಆದರೆ(err == BZ_OK)
+            zi->ci.ಹರಿವು_initialised = Z_BZIP2ED;
+#ಆದರೆ_ಅಂತ್ಯ
         }
 
     }
 
 #    ifndef NOCRYPT
-    zi->ci.crypt_header_size = 0;
-    if ((err==Z_OK) && (password != NULL))
+    zi->ci.crypt_ಶೀರ್ಷಿಕೆ_ಗಾತ್ರ = 0;
+    ಆದರೆ ((err==Z_OK) && (password != ಖಾಲಿ))
     {
-        unsigned char bufHead[RAND_HEAD_LEN];
-        unsigned int sizeHead;
+        ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ buf_ತಲೆ[RAND_ತಲೆ_LEN];
+        ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_ತಲೆ;
         zi->ci.encrypt = 1;
-        zi->ci.pcrc_32_tab = get_crc_table();
+        zi->ci.pcrc_32_tab = get_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_ಕೋಷ್ಟಕ();
         /*init_keys(password,zi->ci.keys,zi->ci.pcrc_32_tab);*/
 
-        sizeHead=crypthead(password,bufHead,RAND_HEAD_LEN,zi->ci.keys,zi->ci.pcrc_32_tab,crcForCrypting);
-        zi->ci.crypt_header_size = sizeHead;
+        ಗಾತ್ರ_ತಲೆ=crypthead(password,buf_ತಲೆ,RAND_ತಲೆ_LEN,zi->ci.ಕೀಲಿಗಳು,zi->ci.pcrc_32_tab,ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting);
+        zi->ci.crypt_ಶೀರ್ಷಿಕೆ_ಗಾತ್ರ = ಗಾತ್ರ_ತಲೆ;
 
-        if (ZWRITE64(zi->z_filefunc,zi->filestream,bufHead,sizeHead) != sizeHead)
+        ಆದರೆ (ZWRITE64(zi->z_filefunc,zi->filestream,buf_ತಲೆ,ಗಾತ್ರ_ತಲೆ) != ಗಾತ್ರ_ತಲೆ)
                 err = ZIP_ERRNO;
     }
 #    endif
 
-    if (err==Z_OK)
-        zi->in_opened_file_inzip = 1;
-    return err;
+    ಆದರೆ (err==Z_OK)
+        zi->ಒಳ_opened_file_inzip = 1;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw,
-                                        int windowBits,int memLevel, int strategy,
-                                        const char* password, uLong crcForCrypting,
-                                        uLong versionMadeBy, uLong flagBase) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
-                                   windowBits, memLevel, strategy,
-                                   password, crcForCrypting, versionMadeBy, flagBase, 0);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Open_New_File_ಒಳ_Zip4(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಸ್ಥಿರಾಂಕ zip_fileinfo* zipfi,
+                                        ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local, uInt ಗಾತ್ರ_extrafield_local,
+                                        ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_global, uInt ಗಾತ್ರ_extrafield_global,
+                                        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* comment, ಪೂರ್ಣಾಂಕ ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ level, ಪೂರ್ಣಾಂಕ raw,
+                                        ಪೂರ್ಣಾಂಕ ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು,ಪೂರ್ಣಾಂಕ memLevel, ಪೂರ್ಣಾಂಕ strategy,
+                                        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* password, uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting,
+                                        uLong ಆವೃತ್ತಿ_Made_By_2, uLong flag_ತಳ) {
+    ಹಿಂತಿರುಗಿ zip_Open_New_File_ಒಳ_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, ಗಾತ್ರ_extrafield_local,
+                                   extrafield_global, ಗಾತ್ರ_extrafield_global,
+                                   comment, ವಿಧಾನ_2, level, raw,
+                                   ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು, memLevel, strategy,
+                                   password, ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting, ಆವೃತ್ತಿ_Made_By_2, flag_ತಳ, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw,
-                                        int windowBits,int memLevel, int strategy,
-                                        const char* password, uLong crcForCrypting) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
-                                   windowBits, memLevel, strategy,
-                                   password, crcForCrypting, VERSIONMADEBY, 0, 0);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Open_New_File_ಒಳ_Zip3(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಸ್ಥಿರಾಂಕ zip_fileinfo* zipfi,
+                                        ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local, uInt ಗಾತ್ರ_extrafield_local,
+                                        ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_global, uInt ಗಾತ್ರ_extrafield_global,
+                                        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* comment, ಪೂರ್ಣಾಂಕ ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ level, ಪೂರ್ಣಾಂಕ raw,
+                                        ಪೂರ್ಣಾಂಕ ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು,ಪೂರ್ಣಾಂಕ memLevel, ಪೂರ್ಣಾಂಕ strategy,
+                                        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* password, uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting) {
+    ಹಿಂತಿರುಗಿ zip_Open_New_File_ಒಳ_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, ಗಾತ್ರ_extrafield_local,
+                                   extrafield_global, ಗಾತ್ರ_extrafield_global,
+                                   comment, ವಿಧಾನ_2, level, raw,
+                                   ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು, memLevel, strategy,
+                                   password, ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting, VERSIONMADEBY, 0, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                         const void* extrafield_local, uInt size_extrafield_local,
-                                         const void* extrafield_global, uInt size_extrafield_global,
-                                         const char* comment, int method, int level, int raw,
-                                         int windowBits,int memLevel, int strategy,
-                                         const char* password, uLong crcForCrypting, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
-                                   windowBits, memLevel, strategy,
-                                   password, crcForCrypting, VERSIONMADEBY, 0, zip64);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Open_New_File_ಒಳ_Zip3_64(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಸ್ಥಿರಾಂಕ zip_fileinfo* zipfi,
+                                         ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local, uInt ಗಾತ್ರ_extrafield_local,
+                                         ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_global, uInt ಗಾತ್ರ_extrafield_global,
+                                         ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* comment, ಪೂರ್ಣಾಂಕ ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ level, ಪೂರ್ಣಾಂಕ raw,
+                                         ಪೂರ್ಣಾಂಕ ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು,ಪೂರ್ಣಾಂಕ memLevel, ಪೂರ್ಣಾಂಕ strategy,
+                                         ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* password, uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting, ಪೂರ್ಣಾಂಕ zip64) {
+    ಹಿಂತಿರುಗಿ zip_Open_New_File_ಒಳ_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, ಗಾತ್ರ_extrafield_local,
+                                   extrafield_global, ಗಾತ್ರ_extrafield_global,
+                                   comment, ವಿಧಾನ_2, level, raw,
+                                   ಕಿಟಕಿ_ಬಿಟ್ಟುಗಳು, memLevel, strategy,
+                                   password, ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Open_New_File_ಒಳ_Zip2(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಸ್ಥಿರಾಂಕ zip_fileinfo* zipfi,
+                                        ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local, uInt ಗಾತ್ರ_extrafield_local,
+                                        ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_global, uInt ಗಾತ್ರ_extrafield_global,
+                                        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* comment, ಪೂರ್ಣಾಂಕ ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ level, ಪೂರ್ಣಾಂಕ raw) {
+    ಹಿಂತಿರುಗಿ zip_Open_New_File_ಒಳ_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, ಗಾತ್ರ_extrafield_local,
+                                   extrafield_global, ಗಾತ್ರ_extrafield_global,
+                                   comment, ವಿಧಾನ_2, level, raw,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, 0);
+                                   ಖಾಲಿ, 0, VERSIONMADEBY, 0, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                           const void* extrafield_local, uInt size_extrafield_local,
-                                           const void* extrafield_global, uInt size_extrafield_global,
-                                           const char* comment, int method, int level, int raw, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Open_New_File_ಒಳ_Zip2_64(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಸ್ಥಿರಾಂಕ zip_fileinfo* zipfi,
+                                           ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local, uInt ಗಾತ್ರ_extrafield_local,
+                                           ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_global, uInt ಗಾತ್ರ_extrafield_global,
+                                           ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* comment, ಪೂರ್ಣಾಂಕ ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ level, ಪೂರ್ಣಾಂಕ raw, ಪೂರ್ಣಾಂಕ zip64) {
+    ಹಿಂತಿರುಗಿ zip_Open_New_File_ಒಳ_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, ಗಾತ್ರ_extrafield_local,
+                                   extrafield_global, ಗಾತ್ರ_extrafield_global,
+                                   comment, ವಿಧಾನ_2, level, raw,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, zip64);
+                                   ಖಾಲಿ, 0, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                         const void* extrafield_local, uInt size_extrafield_local,
-                                         const void*extrafield_global, uInt size_extrafield_global,
-                                         const char* comment, int method, int level, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, 0,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Open_New_File_ಒಳ_Zip64(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಸ್ಥಿರಾಂಕ zip_fileinfo* zipfi,
+                                         ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local, uInt ಗಾತ್ರ_extrafield_local,
+                                         ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ*extrafield_global, uInt ಗಾತ್ರ_extrafield_global,
+                                         ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* comment, ಪೂರ್ಣಾಂಕ ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ level, ಪೂರ್ಣಾಂಕ zip64) {
+    ಹಿಂತಿರುಗಿ zip_Open_New_File_ಒಳ_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, ಗಾತ್ರ_extrafield_local,
+                                   extrafield_global, ಗಾತ್ರ_extrafield_global,
+                                   comment, ವಿಧಾನ_2, level, 0,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, zip64);
+                                   ಖಾಲಿ, 0, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                       const void* extrafield_local, uInt size_extrafield_local,
-                                       const void*extrafield_global, uInt size_extrafield_global,
-                                       const char* comment, int method, int level) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, 0,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Open_New_File_ಒಳ_Zip(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಸ್ಥಿರಾಂಕ zip_fileinfo* zipfi,
+                                       ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* extrafield_local, uInt ಗಾತ್ರ_extrafield_local,
+                                       ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ*extrafield_global, uInt ಗಾತ್ರ_extrafield_global,
+                                       ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* comment, ಪೂರ್ಣಾಂಕ ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ level) {
+    ಹಿಂತಿರುಗಿ zip_Open_New_File_ಒಳ_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, ಗಾತ್ರ_extrafield_local,
+                                   extrafield_global, ಗಾತ್ರ_extrafield_global,
+                                   comment, ವಿಧಾನ_2, level, 0,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, 0);
+                                   ಖಾಲಿ, 0, VERSIONMADEBY, 0, 0);
 }
 
-local int zip64FlushWriteBuffer(zip64_internal* zi) {
-    int err=ZIP_OK;
+local ಪೂರ್ಣಾಂಕ zip64_Flush_Write_ಬಫರ್(zip64_ಆಂತರಿಕ* zi) {
+    ಪೂರ್ಣಾಂಕ err=ZIP_OK;
 
-    if (zi->ci.encrypt != 0)
+    ಆದರೆ (zi->ci.encrypt != 0)
     {
-#ifndef NOCRYPT
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NOCRYPT
         uInt i;
-        int t;
-        for (i=0;i<zi->ci.pos_in_buffered_data;i++)
-            zi->ci.buffered_data[i] = zencode(zi->ci.keys, zi->ci.pcrc_32_tab, zi->ci.buffered_data[i],t);
-#endif
+        ಪೂರ್ಣಾಂಕ t;
+        ಗಾಗಿ (i=0;i<zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ;i++)
+            zi->ci.buffered_ದತ್ತಾಂಶ[i] = zencode(zi->ci.ಕೀಲಿಗಳು, zi->ci.pcrc_32_tab, zi->ci.buffered_ದತ್ತಾಂಶ[i],t);
+#ಆದರೆ_ಅಂತ್ಯ
     }
 
-    if (ZWRITE64(zi->z_filefunc,zi->filestream,zi->ci.buffered_data,zi->ci.pos_in_buffered_data) != zi->ci.pos_in_buffered_data)
+    ಆದರೆ (ZWRITE64(zi->z_filefunc,zi->filestream,zi->ci.buffered_ದತ್ತಾಂಶ,zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ) != zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ)
       err = ZIP_ERRNO;
 
-    zi->ci.totalCompressedData += zi->ci.pos_in_buffered_data;
+    zi->ci.ಒಟ್ಟು_Compressed_ದತ್ತಾಂಶ += zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ;
 
-#ifdef HAVE_BZIP2
-    if(zi->ci.method == Z_BZIP2ED)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    ಆದರೆ(zi->ci.ವಿಧಾನ_2 == Z_BZIP2ED)
     {
-      zi->ci.totalUncompressedData += zi->ci.bstream.total_in_lo32;
-      zi->ci.bstream.total_in_lo32 = 0;
-      zi->ci.bstream.total_in_hi32 = 0;
+      zi->ci.ಒಟ್ಟು_Uncompressed_ದತ್ತಾಂಶ += zi->ci.bstream.ಒಟ್ಟು_ಒಳ_lo32;
+      zi->ci.bstream.ಒಟ್ಟು_ಒಳ_lo32 = 0;
+      zi->ci.bstream.ಒಟ್ಟು_ಒಳ_hi32 = 0;
     }
-    else
-#endif
+    ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
     {
-      zi->ci.totalUncompressedData += zi->ci.stream.total_in;
-      zi->ci.stream.total_in = 0;
+      zi->ci.ಒಟ್ಟು_Uncompressed_ದತ್ತಾಂಶ += zi->ci.ಹರಿವು.ಒಟ್ಟು_ಒಳ;
+      zi->ci.ಹರಿವು.ಒಟ್ಟು_ಒಳ = 0;
     }
 
 
-    zi->ci.pos_in_buffered_data = 0;
+    zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ = 0;
 
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file, const void* buf, unsigned int len) {
-    zip64_internal* zi;
-    int err=ZIP_OK;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Write_ಒಳ_File_ಒಳ_Zip(zipFile file, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* buf, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ len) {
+    zip64_ಆಂತರಿಕ* zi;
+    ಪೂರ್ಣಾಂಕ err=ZIP_OK;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
-    zi = (zip64_internal*)file;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
+    zi = (zip64_ಆಂತರಿಕ*)file;
 
-    if (zi->in_opened_file_inzip == 0)
-        return ZIP_PARAMERROR;
+    ಆದರೆ (zi->ಒಳ_opened_file_inzip == 0)
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
 
-    zi->ci.crc32 = crc32(zi->ci.crc32,buf,(uInt)len);
+    zi->ci.ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2 = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2(zi->ci.ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2,buf,(uInt)len);
 
-#ifdef HAVE_BZIP2
-    if(zi->ci.method == Z_BZIP2ED && (!zi->ci.raw))
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    ಆದರೆ(zi->ci.ವಿಧಾನ_2 == Z_BZIP2ED && (!zi->ci.raw))
     {
-      zi->ci.bstream.next_in = (void*)buf;
-      zi->ci.bstream.avail_in = len;
-      err = BZ_RUN_OK;
+      zi->ci.bstream.ಮುಂದಿನ_ಒಳ = (ಶೂನ್ಯ*)buf;
+      zi->ci.bstream.avail_ಒಳ = len;
+      err = BZ_ಸತತ_OK;
 
-      while ((err==BZ_RUN_OK) && (zi->ci.bstream.avail_in>0))
+      ಆಗ ((err==BZ_ಸತತ_OK) && (zi->ci.bstream.avail_ಒಳ>0))
       {
-        if (zi->ci.bstream.avail_out == 0)
+        ಆದರೆ (zi->ci.bstream.avail_ಹೊರಹೋಗು == 0)
         {
-          if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+          ಆದರೆ (zip64_Flush_Write_ಬಫರ್(zi) == ZIP_ERRNO)
             err = ZIP_ERRNO;
-          zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-          zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
+          zi->ci.bstream.avail_ಹೊರಹೋಗು = (uInt)Z_BUFSIZE;
+          zi->ci.bstream.ಮುಂದಿನ_ಹೊರಹೋಗು = (ಅಕ್ಷರ*)zi->ci.buffered_ದತ್ತಾಂಶ;
         }
 
 
-        if(err != BZ_RUN_OK)
-          break;
+        ಆದರೆ(err != BZ_ಸತತ_OK)
+          ನಿಲ್ಲಿಸು;
 
-        if ((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+        ಆದರೆ ((zi->ci.ವಿಧಾನ_2 == Z_BZIP2ED) && (!zi->ci.raw))
         {
-          uLong uTotalOutBefore_lo = zi->ci.bstream.total_out_lo32;
+          uLong u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before_lo = zi->ci.bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32;
 /*          uLong uTotalOutBefore_hi = zi->ci.bstream.total_out_hi32; */
-          err=BZ2_bzCompress(&zi->ci.bstream,  BZ_RUN);
+          err=BZ2_bzCompress(&zi->ci.bstream,  BZ_ಸತತ);
 
-          zi->ci.pos_in_buffered_data += (uInt)(zi->ci.bstream.total_out_lo32 - uTotalOutBefore_lo) ;
+          zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ += (uInt)(zi->ci.bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32 - u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before_lo) ;
         }
       }
 
-      if(err == BZ_RUN_OK)
+      ಆದರೆ(err == BZ_ಸತತ_OK)
         err = ZIP_OK;
     }
-    else
-#endif
+    ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
     {
-      zi->ci.stream.next_in = buf;
-      zi->ci.stream.avail_in = len;
+      zi->ci.ಹರಿವು.ಮುಂದಿನ_ಒಳ = buf;
+      zi->ci.ಹರಿವು.avail_ಒಳ = len;
 
-      while ((err==ZIP_OK) && (zi->ci.stream.avail_in>0))
+      ಆಗ ((err==ZIP_OK) && (zi->ci.ಹರಿವು.avail_ಒಳ>0))
       {
-          if (zi->ci.stream.avail_out == 0)
+          ಆದರೆ (zi->ci.ಹರಿವು.avail_ಹೊರಹೋಗು == 0)
           {
-              if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+              ಆದರೆ (zip64_Flush_Write_ಬಫರ್(zi) == ZIP_ERRNO)
                   err = ZIP_ERRNO;
-              zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-              zi->ci.stream.next_out = zi->ci.buffered_data;
+              zi->ci.ಹರಿವು.avail_ಹೊರಹೋಗು = (uInt)Z_BUFSIZE;
+              zi->ci.ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು = zi->ci.buffered_ದತ್ತಾಂಶ;
           }
 
 
-          if(err != ZIP_OK)
-              break;
+          ಆದರೆ(err != ZIP_OK)
+              ನಿಲ್ಲಿಸು;
 
-          if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+          ಆದರೆ ((zi->ci.ವಿಧಾನ_2 == Z_DEFLATED) && (!zi->ci.raw))
           {
-              uLong uTotalOutBefore = zi->ci.stream.total_out;
-              err=deflate(&zi->ci.stream,  Z_NO_FLUSH);
+              uLong u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before = zi->ci.ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು;
+              err=deflate(&zi->ci.ಹರಿವು,  Z_NO_FLUSH);
 
-              zi->ci.pos_in_buffered_data += (uInt)(zi->ci.stream.total_out - uTotalOutBefore) ;
+              zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ += (uInt)(zi->ci.ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು - u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before) ;
           }
-          else
+          ಇಲ್ಲದಿದ್ದರೆ
           {
               uInt copy_this,i;
-              if (zi->ci.stream.avail_in < zi->ci.stream.avail_out)
-                  copy_this = zi->ci.stream.avail_in;
-              else
-                  copy_this = zi->ci.stream.avail_out;
+              ಆದರೆ (zi->ci.ಹರಿವು.avail_ಒಳ < zi->ci.ಹರಿವು.avail_ಹೊರಹೋಗು)
+                  copy_this = zi->ci.ಹರಿವು.avail_ಒಳ;
+              ಇಲ್ಲದಿದ್ದರೆ
+                  copy_this = zi->ci.ಹರಿವು.avail_ಹೊರಹೋಗು;
 
-              for (i = 0; i < copy_this; i++)
-                  *(((char*)zi->ci.stream.next_out)+i) =
-                      *(((const char*)zi->ci.stream.next_in)+i);
+              ಗಾಗಿ (i = 0; i < copy_this; i++)
+                  *(((ಅಕ್ಷರ*)zi->ci.ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು)+i) =
+                      *(((ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*)zi->ci.ಹರಿವು.ಮುಂದಿನ_ಒಳ)+i);
               {
-                  zi->ci.stream.avail_in -= copy_this;
-                  zi->ci.stream.avail_out-= copy_this;
-                  zi->ci.stream.next_in+= copy_this;
-                  zi->ci.stream.next_out+= copy_this;
-                  zi->ci.stream.total_in+= copy_this;
-                  zi->ci.stream.total_out+= copy_this;
-                  zi->ci.pos_in_buffered_data += copy_this;
+                  zi->ci.ಹರಿವು.avail_ಒಳ -= copy_this;
+                  zi->ci.ಹರಿವು.avail_ಹೊರಹೋಗು-= copy_this;
+                  zi->ci.ಹರಿವು.ಮುಂದಿನ_ಒಳ+= copy_this;
+                  zi->ci.ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು+= copy_this;
+                  zi->ci.ಹರಿವು.ಒಟ್ಟು_ಒಳ+= copy_this;
+                  zi->ci.ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು+= copy_this;
+                  zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ += copy_this;
               }
           }
       }/* while(...) */
     }
 
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file, uLong uncompressed_size, uLong crc32) {
-    return zipCloseFileInZipRaw64 (file, uncompressed_size, crc32);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Close_File_ಒಳ_Zip_Raw(zipFile file, uLong uncompressed_ಗಾತ್ರ, uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2) {
+    ಹಿಂತಿರುಗಿ zip_Close_File_ಒಳ_Zip_Raw64 (file, uncompressed_ಗಾತ್ರ, ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2);
 }
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file, ZPOS64_T uncompressed_size, uLong crc32) {
-    zip64_internal* zi;
-    ZPOS64_T compressed_size;
-    uLong invalidValue = 0xffffffff;
-    unsigned datasize = 0;
-    int err=ZIP_OK;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Close_File_ಒಳ_Zip_Raw64(zipFile file, ZPOS64_T uncompressed_ಗಾತ್ರ, uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2) {
+    zip64_ಆಂತರಿಕ* zi;
+    ZPOS64_T compressed_ಗಾತ್ರ;
+    uLong invalid_ಮೌಲ್ಯ = 0xffffffff;
+    ಚಿಹ್ನೆರಹಿತ datasize = 0;
+    ಪೂರ್ಣಾಂಕ err=ZIP_OK;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
-    zi = (zip64_internal*)file;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
+    zi = (zip64_ಆಂತರಿಕ*)file;
 
-    if (zi->in_opened_file_inzip == 0)
-        return ZIP_PARAMERROR;
-    zi->ci.stream.avail_in = 0;
+    ಆದರೆ (zi->ಒಳ_opened_file_inzip == 0)
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
+    zi->ci.ಹರಿವು.avail_ಒಳ = 0;
 
-    if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+    ಆದರೆ ((zi->ci.ವಿಧಾನ_2 == Z_DEFLATED) && (!zi->ci.raw))
                 {
-                        while (err==ZIP_OK)
+                        ಆಗ (err==ZIP_OK)
                         {
-                                uLong uTotalOutBefore;
-                                if (zi->ci.stream.avail_out == 0)
+                                uLong u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before;
+                                ಆದರೆ (zi->ci.ಹರಿವು.avail_ಹೊರಹೋಗು == 0)
                                 {
-                                        if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+                                        ಆದರೆ (zip64_Flush_Write_ಬಫರ್(zi) == ZIP_ERRNO)
                                                 err = ZIP_ERRNO;
-                                        zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-                                        zi->ci.stream.next_out = zi->ci.buffered_data;
+                                        zi->ci.ಹರಿವು.avail_ಹೊರಹೋಗು = (uInt)Z_BUFSIZE;
+                                        zi->ci.ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು = zi->ci.buffered_ದತ್ತಾಂಶ;
                                 }
-                                uTotalOutBefore = zi->ci.stream.total_out;
-                                err=deflate(&zi->ci.stream,  Z_FINISH);
-                                zi->ci.pos_in_buffered_data += (uInt)(zi->ci.stream.total_out - uTotalOutBefore) ;
+                                u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before = zi->ci.ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು;
+                                err=deflate(&zi->ci.ಹರಿವು,  Z_ಮುಕ್ತಾಯ);
+                                zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ += (uInt)(zi->ci.ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು - u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before) ;
                         }
                 }
-    else if ((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((zi->ci.ವಿಧಾನ_2 == Z_BZIP2ED) && (!zi->ci.raw))
     {
-#ifdef HAVE_BZIP2
-      err = BZ_FINISH_OK;
-      while (err==BZ_FINISH_OK)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+      err = BZ_ಮುಕ್ತಾಯ_OK;
+      ಆಗ (err==BZ_ಮುಕ್ತಾಯ_OK)
       {
-        uLong uTotalOutBefore;
-        if (zi->ci.bstream.avail_out == 0)
+        uLong u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before;
+        ಆದರೆ (zi->ci.bstream.avail_ಹೊರಹೋಗು == 0)
         {
-          if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+          ಆದರೆ (zip64_Flush_Write_ಬಫರ್(zi) == ZIP_ERRNO)
             err = ZIP_ERRNO;
-          zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-          zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
+          zi->ci.bstream.avail_ಹೊರಹೋಗು = (uInt)Z_BUFSIZE;
+          zi->ci.bstream.ಮುಂದಿನ_ಹೊರಹೋಗು = (ಅಕ್ಷರ*)zi->ci.buffered_ದತ್ತಾಂಶ;
         }
-        uTotalOutBefore = zi->ci.bstream.total_out_lo32;
-        err=BZ2_bzCompress(&zi->ci.bstream,  BZ_FINISH);
-        if(err == BZ_STREAM_END)
-          err = Z_STREAM_END;
+        u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before = zi->ci.bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32;
+        err=BZ2_bzCompress(&zi->ci.bstream,  BZ_ಮುಕ್ತಾಯ);
+        ಆದರೆ(err == BZ_ಹರಿವು_ಕೊನೆ)
+          err = Z_ಹರಿವು_ಕೊನೆ;
 
-        zi->ci.pos_in_buffered_data += (uInt)(zi->ci.bstream.total_out_lo32 - uTotalOutBefore);
+        zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ += (uInt)(zi->ci.bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32 - u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before);
       }
 
-      if(err == BZ_FINISH_OK)
+      ಆದರೆ(err == BZ_ಮುಕ್ತಾಯ_OK)
         err = ZIP_OK;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
     }
 
-    if (err==Z_STREAM_END)
+    ಆದರೆ (err==Z_ಹರಿವು_ಕೊನೆ)
         err=ZIP_OK; /* this is normal */
 
-    if ((zi->ci.pos_in_buffered_data>0) && (err==ZIP_OK))
+    ಆದರೆ ((zi->ci.pos_ಒಳ_buffered_ದತ್ತಾಂಶ>0) && (err==ZIP_OK))
                 {
-        if (zip64FlushWriteBuffer(zi)==ZIP_ERRNO)
+        ಆದರೆ (zip64_Flush_Write_ಬಫರ್(zi)==ZIP_ERRNO)
             err = ZIP_ERRNO;
                 }
 
-    if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+    ಆದರೆ ((zi->ci.ವಿಧಾನ_2 == Z_DEFLATED) && (!zi->ci.raw))
     {
-        int tmp_err = deflateEnd(&zi->ci.stream);
-        if (err == ZIP_OK)
+        ಪೂರ್ಣಾಂಕ tmp_err = deflate_ಕೊನೆ(&zi->ci.ಹರಿವು);
+        ಆದರೆ (err == ZIP_OK)
             err = tmp_err;
-        zi->ci.stream_initialised = 0;
+        zi->ci.ಹರಿವು_initialised = 0;
     }
-#ifdef HAVE_BZIP2
-    else if((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ((zi->ci.ವಿಧಾನ_2 == Z_BZIP2ED) && (!zi->ci.raw))
     {
-      int tmperr = BZ2_bzCompressEnd(&zi->ci.bstream);
-                        if (err==ZIP_OK)
+      ಪೂರ್ಣಾಂಕ tmperr = BZ2_bz_Compress_ಕೊನೆ(&zi->ci.bstream);
+                        ಆದರೆ (err==ZIP_OK)
                                 err = tmperr;
-                        zi->ci.stream_initialised = 0;
+                        zi->ci.ಹರಿವು_initialised = 0;
     }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-    if (!zi->ci.raw)
+    ಆದರೆ (!zi->ci.raw)
     {
-        crc32 = (uLong)zi->ci.crc32;
-        uncompressed_size = zi->ci.totalUncompressedData;
+        ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2 = (uLong)zi->ci.ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2;
+        uncompressed_ಗಾತ್ರ = zi->ci.ಒಟ್ಟು_Uncompressed_ದತ್ತಾಂಶ;
     }
-    compressed_size = zi->ci.totalCompressedData;
+    compressed_ಗಾತ್ರ = zi->ci.ಒಟ್ಟು_Compressed_ದತ್ತಾಂಶ;
 
 #    ifndef NOCRYPT
-    compressed_size += zi->ci.crypt_header_size;
+    compressed_ಗಾತ್ರ += zi->ci.crypt_ಶೀರ್ಷಿಕೆ_ಗಾತ್ರ;
 #    endif
 
     /* update Current Item crc and sizes, */
-    if(compressed_size >= 0xffffffff || uncompressed_size >= 0xffffffff || zi->ci.pos_local_header >= 0xffffffff)
+    ಆದರೆ(compressed_ಗಾತ್ರ >= 0xffffffff || uncompressed_ಗಾತ್ರ >= 0xffffffff || zi->ci.pos_local_ಶೀರ್ಷಿಕೆ >= 0xffffffff)
     {
       /*version Made by*/
-      zip64local_putValue_inmemory(zi->ci.central_header+4,(uLong)45,2);
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+4,(uLong)45,2);
       /*version needed*/
-      zip64local_putValue_inmemory(zi->ci.central_header+6,(uLong)45,2);
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+6,(uLong)45,2);
 
     }
 
-    zip64local_putValue_inmemory(zi->ci.central_header+16,crc32,4); /*crc*/
+    zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+16,ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2,4); /*crc*/
 
 
-    if(compressed_size >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+20, invalidValue,4); /*compr size*/
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+20, compressed_size,4); /*compr size*/
+    ಆದರೆ(compressed_ಗಾತ್ರ >= 0xffffffff)
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+20, invalid_ಮೌಲ್ಯ,4); /*compr size*/
+    ಇಲ್ಲದಿದ್ದರೆ
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+20, compressed_ಗಾತ್ರ,4); /*compr size*/
 
     /* set internal file attributes field */
-    if (zi->ci.stream.data_type == Z_ASCII)
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)Z_ASCII,2);
+    ಆದರೆ (zi->ci.ಹರಿವು.ದತ್ತಾಂಶ_type == Z_ASCII)
+        zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+36,(uLong)Z_ASCII,2);
 
-    if(uncompressed_size >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+24, invalidValue,4); /*uncompr size*/
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+24, uncompressed_size,4); /*uncompr size*/
+    ಆದರೆ(uncompressed_ಗಾತ್ರ >= 0xffffffff)
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+24, invalid_ಮೌಲ್ಯ,4); /*uncompr size*/
+    ಇಲ್ಲದಿದ್ದರೆ
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+24, uncompressed_ಗಾತ್ರ,4); /*uncompr size*/
 
     /* Add ZIP64 extra info field for uncompressed size */
-    if(uncompressed_size >= 0xffffffff)
+    ಆದರೆ(uncompressed_ಗಾತ್ರ >= 0xffffffff)
       datasize += 8;
 
     /* Add ZIP64 extra info field for compressed size */
-    if(compressed_size >= 0xffffffff)
+    ಆದರೆ(compressed_ಗಾತ್ರ >= 0xffffffff)
       datasize += 8;
 
     /* Add ZIP64 extra info field for relative offset to local file header of current file */
-    if(zi->ci.pos_local_header >= 0xffffffff)
+    ಆದರೆ(zi->ci.pos_local_ಶೀರ್ಷಿಕೆ >= 0xffffffff)
       datasize += 8;
 
-    if(datasize > 0)
+    ಆದರೆ(datasize > 0)
     {
-      char* p = NULL;
+      ಅಕ್ಷರ* p = ಖಾಲಿ;
 
-      if((uLong)(datasize + 4) > zi->ci.size_centralExtraFree)
+      ಆದರೆ((uLong)(datasize + 4) > zi->ci.ಗಾತ್ರ_central_Extra_Free)
       {
         /* we cannot write more data to the buffer that we have room for. */
-        return ZIP_BADZIPFILE;
+        ಹಿಂತಿರುಗಿ ZIP_BADZIPFILE;
       }
 
-      p = zi->ci.central_header + zi->ci.size_centralheader;
+      p = zi->ci.central_ಶೀರ್ಷಿಕೆ + zi->ci.ಗಾತ್ರ_centralheader;
 
       /* Add Extra Information Header for 'ZIP64 information' */
-      zip64local_putValue_inmemory(p, 0x0001, 2); /* HeaderID */
+      zip64local_put_ಮೌಲ್ಯ_inmemory(p, 0x0001, 2); /* HeaderID */
       p += 2;
-      zip64local_putValue_inmemory(p, datasize, 2); /* DataSize */
+      zip64local_put_ಮೌಲ್ಯ_inmemory(p, datasize, 2); /* DataSize */
       p += 2;
 
-      if(uncompressed_size >= 0xffffffff)
+      ಆದರೆ(uncompressed_ಗಾತ್ರ >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, uncompressed_size, 8);
+        zip64local_put_ಮೌಲ್ಯ_inmemory(p, uncompressed_ಗಾತ್ರ, 8);
         p += 8;
       }
 
-      if(compressed_size >= 0xffffffff)
+      ಆದರೆ(compressed_ಗಾತ್ರ >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, compressed_size, 8);
+        zip64local_put_ಮೌಲ್ಯ_inmemory(p, compressed_ಗಾತ್ರ, 8);
         p += 8;
       }
 
-      if(zi->ci.pos_local_header >= 0xffffffff)
+      ಆದರೆ(zi->ci.pos_local_ಶೀರ್ಷಿಕೆ >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, zi->ci.pos_local_header, 8);
+        zip64local_put_ಮೌಲ್ಯ_inmemory(p, zi->ci.pos_local_ಶೀರ್ಷಿಕೆ, 8);
         p += 8;
       }
 
       /* Update how much extra free space we got in the memory buffer
          and increase the centralheader size so the new ZIP64 fields are included
          ( 4 below is the size of HeaderID and DataSize field ) */
-      zi->ci.size_centralExtraFree -= datasize + 4;
-      zi->ci.size_centralheader += datasize + 4;
+      zi->ci.ಗಾತ್ರ_central_Extra_Free -= datasize + 4;
+      zi->ci.ಗಾತ್ರ_centralheader += datasize + 4;
 
       /* Update the extra info size field */
-      zi->ci.size_centralExtra += datasize + 4;
-      zip64local_putValue_inmemory(zi->ci.central_header+30,(uLong)zi->ci.size_centralExtra,2);
+      zi->ci.ಗಾತ್ರ_central_Extra += datasize + 4;
+      zip64local_put_ಮೌಲ್ಯ_inmemory(zi->ci.central_ಶೀರ್ಷಿಕೆ+30,(uLong)zi->ci.ಗಾತ್ರ_central_Extra,2);
     }
 
-    if (err==ZIP_OK)
-        err = add_data_in_datablock(&zi->central_dir, zi->ci.central_header, (uLong)zi->ci.size_centralheader);
+    ಆದರೆ (err==ZIP_OK)
+        err = ಕೂಡಿಸು_ದತ್ತಾಂಶ_ಒಳ_datablock(&zi->central_dir, zi->ci.central_ಶೀರ್ಷಿಕೆ, (uLong)zi->ci.ಗಾತ್ರ_centralheader);
 
-    free(zi->ci.central_header);
+    ಬಿಡುಗಡೆ(zi->ci.central_ಶೀರ್ಷಿಕೆ);
 
-    if (err==ZIP_OK)
+    ಆದರೆ (err==ZIP_OK)
     {
         /* Update the LocalFileHeader with the new values. */
 
         ZPOS64_T cur_pos_inzip = ZTELL64(zi->z_filefunc,zi->filestream);
 
-        if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_local_header + 14,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        ಆದರೆ (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_local_ಶೀರ್ಷಿಕೆ + 14,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
             err = ZIP_ERRNO;
 
-        if (err==ZIP_OK)
-            err = zip64local_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
+        ಆದರೆ (err==ZIP_OK)
+            err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2,4); /* crc 32, unknown */
 
-        if(uncompressed_size >= 0xffffffff || compressed_size >= 0xffffffff )
+        ಆದರೆ(uncompressed_ಗಾತ್ರ >= 0xffffffff || compressed_ಗಾತ್ರ >= 0xffffffff )
         {
-          if(zi->ci.pos_zip64extrainfo > 0)
+          ಆದರೆ(zi->ci.pos_zip64extrainfo > 0)
           {
             /* Update the size in the ZIP64 extended field. */
-            if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_zip64extrainfo + 4,ZLIB_FILEFUNC_SEEK_SET)!=0)
+            ಆದರೆ (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_zip64extrainfo + 4,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
               err = ZIP_ERRNO;
 
-            if (err==ZIP_OK) /* compressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc, zi->filestream, uncompressed_size, 8);
+            ಆದರೆ (err==ZIP_OK) /* compressed size, unknown */
+              err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc, zi->filestream, uncompressed_ಗಾತ್ರ, 8);
 
-            if (err==ZIP_OK) /* uncompressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc, zi->filestream, compressed_size, 8);
+            ಆದರೆ (err==ZIP_OK) /* uncompressed size, unknown */
+              err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc, zi->filestream, compressed_ಗಾತ್ರ, 8);
           }
-          else
+          ಇಲ್ಲದಿದ್ದರೆ
               err = ZIP_BADZIPFILE; /* Caller passed zip64 = 0, so no room for zip64 info -> fatal */
         }
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
         {
-          if (err==ZIP_OK) /* compressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
+          ಆದರೆ (err==ZIP_OK) /* compressed size, unknown */
+              err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,compressed_ಗಾತ್ರ,4);
 
-          if (err==ZIP_OK) /* uncompressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+          ಆದರೆ (err==ZIP_OK) /* uncompressed size, unknown */
+              err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,uncompressed_ಗಾತ್ರ,4);
         }
 
-        if (ZSEEK64(zi->z_filefunc,zi->filestream, cur_pos_inzip,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        ಆದರೆ (ZSEEK64(zi->z_filefunc,zi->filestream, cur_pos_inzip,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
             err = ZIP_ERRNO;
     }
 
-    zi->number_entry ++;
-    zi->in_opened_file_inzip = 0;
+    zi->ಸಂಖ್ಯೆ_ನಮೂದು ++;
+    zi->ಒಳ_opened_file_inzip = 0;
 
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file) {
-    return zipCloseFileInZipRaw (file,0,0);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Close_File_ಒಳ_Zip(zipFile file) {
+    ಹಿಂತಿರುಗಿ zip_Close_File_ಒಳ_Zip_Raw (file,0,0);
 }
 
-local int Write_Zip64EndOfCentralDirectoryLocator(zip64_internal* zi, ZPOS64_T zip64eocd_pos_inzip) {
-  int err = ZIP_OK;
-  ZPOS64_T pos = zip64eocd_pos_inzip - zi->add_position_when_writing_offset;
+local ಪೂರ್ಣಾಂಕ Write_Zip64_ಕೊನೆ_ದ_Central_Directory_Locator(zip64_ಆಂತರಿಕ* zi, ZPOS64_T zip64eocd_pos_inzip) {
+  ಪೂರ್ಣಾಂಕ err = ZIP_OK;
+  ZPOS64_T pos = zip64eocd_pos_inzip - zi->ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDLOCHEADERMAGIC,4);
+  err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDLOCHEADERMAGIC,4);
 
   /*num disks*/
-    if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+    ಆದರೆ (err==ZIP_OK) /* number of the disk with the start of the central directory */
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
   /*relative offset*/
-    if (err==ZIP_OK) /* Relative offset to the Zip64EndOfCentralDirectory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, pos,8);
+    ಆದರೆ (err==ZIP_OK) /* Relative offset to the Zip64EndOfCentralDirectory */
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream, pos,8);
 
   /*total disks*/ /* Do not support spawning of disk so always say 1 here*/
-    if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)1,4);
+    ಆದರೆ (err==ZIP_OK) /* number of the disk with the start of the central directory */
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)1,4);
 
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-local int Write_Zip64EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centraldir, ZPOS64_T centraldir_pos_inzip) {
-  int err = ZIP_OK;
+local ಪೂರ್ಣಾಂಕ Write_Zip64_ಕೊನೆ_ದ_Central_Directory_ದಾಖಲೆ(zip64_ಆಂತರಿಕ* zi, uLong ಗಾತ್ರ_centraldir, ZPOS64_T centraldir_pos_inzip) {
+  ಪೂರ್ಣಾಂಕ err = ZIP_OK;
 
-  uLong Zip64DataSize = 44;
+  uLong Zip64_ದತ್ತಾಂಶ_ಗಾತ್ರ = 44;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDHEADERMAGIC,4);
+  err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDHEADERMAGIC,4);
 
-  if (err==ZIP_OK) /* size of this 'zip64 end of central directory' */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(ZPOS64_T)Zip64DataSize,8); /* why ZPOS64_T of this ? */
+  ಆದರೆ (err==ZIP_OK) /* size of this 'zip64 end of central directory' */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(ZPOS64_T)Zip64_ದತ್ತಾಂಶ_ಗಾತ್ರ,8); /* why ZPOS64_T of this ? */
 
-  if (err==ZIP_OK) /* version made by */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);
+  ಆದರೆ (err==ZIP_OK) /* version made by */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)45,2);
 
-  if (err==ZIP_OK) /* version needed */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);
+  ಆದರೆ (err==ZIP_OK) /* version needed */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)45,2);
 
-  if (err==ZIP_OK) /* number of this disk */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+  ಆದರೆ (err==ZIP_OK) /* number of this disk */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
-  if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+  ಆದರೆ (err==ZIP_OK) /* number of the disk with the start of the central directory */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir on this disk */
-    err = zip64local_putValue(&zi->z_filefunc, zi->filestream, zi->number_entry, 8);
+  ಆದರೆ (err==ZIP_OK) /* total number of entries in the central dir on this disk */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc, zi->filestream, zi->ಸಂಖ್ಯೆ_ನಮೂದು, 8);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir */
-    err = zip64local_putValue(&zi->z_filefunc, zi->filestream, zi->number_entry, 8);
+  ಆದರೆ (err==ZIP_OK) /* total number of entries in the central dir */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc, zi->filestream, zi->ಸಂಖ್ಯೆ_ನಮೂದು, 8);
 
-  if (err==ZIP_OK) /* size of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(ZPOS64_T)size_centraldir,8);
+  ಆದರೆ (err==ZIP_OK) /* size of the central directory */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(ZPOS64_T)ಗಾತ್ರ_centraldir,8);
 
-  if (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
+  ಆದರೆ (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
   {
-    ZPOS64_T pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (ZPOS64_T)pos,8);
+    ZPOS64_T pos = centraldir_pos_inzip - zi->ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ;
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream, (ZPOS64_T)pos,8);
   }
-  return err;
+  ಹಿಂತಿರುಗಿ err;
 }
 
-local int Write_EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centraldir, ZPOS64_T centraldir_pos_inzip) {
-  int err = ZIP_OK;
+local ಪೂರ್ಣಾಂಕ Write_ಕೊನೆ_ದ_Central_Directory_ದಾಖಲೆ(zip64_ಆಂತರಿಕ* zi, uLong ಗಾತ್ರ_centraldir, ZPOS64_T centraldir_pos_inzip) {
+  ಪೂರ್ಣಾಂಕ err = ZIP_OK;
 
   /*signature*/
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ENDHEADERMAGIC,4);
+  err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)ENDHEADERMAGIC,4);
 
-  if (err==ZIP_OK) /* number of this disk */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,2);
+  ಆದರೆ (err==ZIP_OK) /* number of this disk */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0,2);
 
-  if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,2);
+  ಆದರೆ (err==ZIP_OK) /* number of the disk with the start of the central directory */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0,2);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir on this disk */
+  ಆದರೆ (err==ZIP_OK) /* total number of entries in the central dir on this disk */
   {
     {
-      if(zi->number_entry >= 0xFFFF)
-        err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
-      else
-        err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->number_entry,2);
+      ಆದರೆ(zi->ಸಂಖ್ಯೆ_ನಮೂದು >= 0xFFFF)
+        err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
+      ಇಲ್ಲದಿದ್ದರೆ
+        err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)zi->ಸಂಖ್ಯೆ_ನಮೂದು,2);
     }
   }
 
-  if (err==ZIP_OK) /* total number of entries in the central dir */
+  ಆದರೆ (err==ZIP_OK) /* total number of entries in the central dir */
   {
-    if(zi->number_entry >= 0xFFFF)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->number_entry,2);
+    ಆದರೆ(zi->ಸಂಖ್ಯೆ_ನಮೂದು >= 0xFFFF)
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
+    ಇಲ್ಲದಿದ್ದರೆ
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)zi->ಸಂಖ್ಯೆ_ನಮೂದು,2);
   }
 
-  if (err==ZIP_OK) /* size of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_centraldir,4);
+  ಆದರೆ (err==ZIP_OK) /* size of the central directory */
+    err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)ಗಾತ್ರ_centraldir,4);
 
-  if (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
+  ಆದರೆ (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
   {
-    ZPOS64_T pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    if(pos >= 0xffffffff)
+    ZPOS64_T pos = centraldir_pos_inzip - zi->ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ;
+    ಆದರೆ(pos >= 0xffffffff)
     {
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (uLong)0xffffffff,4);
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream, (uLong)0xffffffff,4);
     }
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (uLong)(centraldir_pos_inzip - zi->add_position_when_writing_offset),4);
+    ಇಲ್ಲದಿದ್ದರೆ
+      err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream, (uLong)(centraldir_pos_inzip - zi->ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ),4);
   }
 
-   return err;
+   ಹಿಂತಿರುಗಿ err;
 }
 
-local int Write_GlobalComment(zip64_internal* zi, const char* global_comment) {
-  int err = ZIP_OK;
-  uInt size_global_comment = 0;
+local ಪೂರ್ಣಾಂಕ Write_GlobalComment(zip64_ಆಂತರಿಕ* zi, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* global_comment) {
+  ಪೂರ್ಣಾಂಕ err = ZIP_OK;
+  uInt ಗಾತ್ರ_global_comment = 0;
 
-  if(global_comment != NULL)
-    size_global_comment = (uInt)strlen(global_comment);
+  ಆದರೆ(global_comment != ಖಾಲಿ)
+    ಗಾತ್ರ_global_comment = (uInt)ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(global_comment);
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_global_comment,2);
+  err = zip64local_put_ಮೌಲ್ಯ(&zi->z_filefunc,zi->filestream,(uLong)ಗಾತ್ರ_global_comment,2);
 
-  if (err == ZIP_OK && size_global_comment > 0)
+  ಆದರೆ (err == ZIP_OK && ಗಾತ್ರ_global_comment > 0)
   {
-    if (ZWRITE64(zi->z_filefunc,zi->filestream, global_comment, size_global_comment) != size_global_comment)
+    ಆದರೆ (ZWRITE64(zi->z_filefunc,zi->filestream, global_comment, ಗಾತ್ರ_global_comment) != ಗಾತ್ರ_global_comment)
       err = ZIP_ERRNO;
   }
-  return err;
+  ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT zipClose(zipFile file, const char* global_comment) {
-    zip64_internal* zi;
-    int err = 0;
-    uLong size_centraldir = 0;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zipClose(zipFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* global_comment) {
+    zip64_ಆಂತರಿಕ* zi;
+    ಪೂರ್ಣಾಂಕ err = 0;
+    uLong ಗಾತ್ರ_centraldir = 0;
     ZPOS64_T centraldir_pos_inzip;
     ZPOS64_T pos;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
 
-    zi = (zip64_internal*)file;
+    zi = (zip64_ಆಂತರಿಕ*)file;
 
-    if (zi->in_opened_file_inzip == 1)
+    ಆದರೆ (zi->ಒಳ_opened_file_inzip == 1)
     {
-        err = zipCloseFileInZip (file);
+        err = zip_Close_File_ಒಳ_Zip (file);
     }
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    if (global_comment==NULL)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_ADDFILEINEXISTINGZIP
+    ಆದರೆ (global_comment==ಖಾಲಿ)
         global_comment = zi->globalcomment;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
     centraldir_pos_inzip = ZTELL64(zi->z_filefunc,zi->filestream);
 
-    if (err==ZIP_OK)
+    ಆದರೆ (err==ZIP_OK)
     {
-        linkedlist_datablock_internal* ldi = zi->central_dir.first_block;
-        while (ldi!=NULL)
+        linkedlist_datablock_ಆಂತರಿಕ* ldi = zi->central_dir.ಮೊದಲ_ಖಂಡ;
+        ಆಗ (ldi!=ಖಾಲಿ)
         {
-            if ((err==ZIP_OK) && (ldi->filled_in_this_block>0))
+            ಆದರೆ ((err==ZIP_OK) && (ldi->filled_ಒಳ_this_ಖಂಡ>0))
             {
-                if (ZWRITE64(zi->z_filefunc,zi->filestream, ldi->data, ldi->filled_in_this_block) != ldi->filled_in_this_block)
+                ಆದರೆ (ZWRITE64(zi->z_filefunc,zi->filestream, ldi->ದತ್ತಾಂಶ, ldi->filled_ಒಳ_this_ಖಂಡ) != ldi->filled_ಒಳ_this_ಖಂಡ)
                     err = ZIP_ERRNO;
             }
 
-            size_centraldir += ldi->filled_in_this_block;
-            ldi = ldi->next_datablock;
+            ಗಾತ್ರ_centraldir += ldi->filled_ಒಳ_this_ಖಂಡ;
+            ldi = ldi->ಮುಂದಿನ_datablock;
         }
     }
     free_linkedlist(&(zi->central_dir));
 
-    set_end(&zi->set);          /* set was zeroed, so this is safe */
+    ಗಣ_ಕೊನೆ(&zi->ಗಣ);          /* set was zeroed, so this is safe */
 
-    pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    if(pos >= 0xffffffff || zi->number_entry >= 0xFFFF)
+    pos = centraldir_pos_inzip - zi->ಕೂಡಿಸು_position_when_writing_ಸ್ಥಾನಾಂತರ;
+    ಆದರೆ(pos >= 0xffffffff || zi->ಸಂಖ್ಯೆ_ನಮೂದು >= 0xFFFF)
     {
       ZPOS64_T Zip64EOCDpos = ZTELL64(zi->z_filefunc,zi->filestream);
-      Write_Zip64EndOfCentralDirectoryRecord(zi, size_centraldir, centraldir_pos_inzip);
+      Write_Zip64_ಕೊನೆ_ದ_Central_Directory_ದಾಖಲೆ(zi, ಗಾತ್ರ_centraldir, centraldir_pos_inzip);
 
-      Write_Zip64EndOfCentralDirectoryLocator(zi, Zip64EOCDpos);
+      Write_Zip64_ಕೊನೆ_ದ_Central_Directory_Locator(zi, Zip64EOCDpos);
     }
 
-    if (err==ZIP_OK)
-      err = Write_EndOfCentralDirectoryRecord(zi, size_centraldir, centraldir_pos_inzip);
+    ಆದರೆ (err==ZIP_OK)
+      err = Write_ಕೊನೆ_ದ_Central_Directory_ದಾಖಲೆ(zi, ಗಾತ್ರ_centraldir, centraldir_pos_inzip);
 
-    if(err == ZIP_OK)
+    ಆದರೆ(err == ZIP_OK)
       err = Write_GlobalComment(zi, global_comment);
 
-    if (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
-        if (err == ZIP_OK)
+    ಆದರೆ (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
+        ಆದರೆ (err == ZIP_OK)
             err = ZIP_ERRNO;
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    free(zi->globalcomment);
-#endif
-    free(zi);
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_ADDFILEINEXISTINGZIP
+    ಬಿಡುಗಡೆ(zi->globalcomment);
+#ಆದರೆ_ಅಂತ್ಯ
+    ಬಿಡುಗಡೆ(zi);
 
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader) {
-  char* p = pData;
-  int size = 0;
-  char* pNewHeader;
-  char* pTmp;
-  short header;
-  short dataSize;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT zip_Remove_Extra_Info_ಖಂಡ(ಅಕ್ಷರ* p_ದತ್ತಾಂಶ, ಪೂರ್ಣಾಂಕ* ದತ್ತಾಂಶ_Len, ಗಿಡ್ಡ s_ಶೀರ್ಷಿಕೆ) {
+  ಅಕ್ಷರ* p = p_ದತ್ತಾಂಶ;
+  ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2 = 0;
+  ಅಕ್ಷರ* p_New_ಶೀರ್ಷಿಕೆ;
+  ಅಕ್ಷರ* pTmp;
+  ಗಿಡ್ಡ ಶೀರ್ಷಿಕೆ;
+  ಗಿಡ್ಡ ದತ್ತಾಂಶ_ಗಾತ್ರ;
 
-  int retVal = ZIP_OK;
+  ಪೂರ್ಣಾಂಕ retVal = ZIP_OK;
 
-  if(pData == NULL || dataLen == NULL || *dataLen < 4)
-    return ZIP_PARAMERROR;
+  ಆದರೆ(p_ದತ್ತಾಂಶ == ಖಾಲಿ || ದತ್ತಾಂಶ_Len == ಖಾಲಿ || *ದತ್ತಾಂಶ_Len < 4)
+    ಹಿಂತಿರುಗಿ ZIP_PARAMERROR;
 
-  pNewHeader = (char*)ALLOC((unsigned)*dataLen);
-  pTmp = pNewHeader;
+  p_New_ಶೀರ್ಷಿಕೆ = (ಅಕ್ಷರ*)ALLOC((ಚಿಹ್ನೆರಹಿತ)*ದತ್ತಾಂಶ_Len);
+  pTmp = p_New_ಶೀರ್ಷಿಕೆ;
 
-  while(p < (pData + *dataLen))
+  ಆಗ(p < (p_ದತ್ತಾಂಶ + *ದತ್ತಾಂಶ_Len))
   {
-    header = *(short*)p;
-    dataSize = *(((short*)p)+1);
+    ಶೀರ್ಷಿಕೆ = *(ಗಿಡ್ಡ*)p;
+    ದತ್ತಾಂಶ_ಗಾತ್ರ = *(((ಗಿಡ್ಡ*)p)+1);
 
-    if( header == sHeader ) /* Header found. */
+    ಆದರೆ( ಶೀರ್ಷಿಕೆ == s_ಶೀರ್ಷಿಕೆ ) /* Header found. */
     {
-      p += dataSize + 4; /* skip it. do not copy to temp buffer */
+      p += ದತ್ತಾಂಶ_ಗಾತ್ರ + 4; /* skip it. do not copy to temp buffer */
     }
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
       /* Extra Info block should not be removed, So copy it to the temp buffer. */
-      memcpy(pTmp, p, dataSize + 4);
-      p += dataSize + 4;
-      size += dataSize + 4;
+      ಸ್ಮರಣೆ_ನಕಲು(pTmp, p, ದತ್ತಾಂಶ_ಗಾತ್ರ + 4);
+      p += ದತ್ತಾಂಶ_ಗಾತ್ರ + 4;
+      ಗಾತ್ರ_2 += ದತ್ತಾಂಶ_ಗಾತ್ರ + 4;
     }
 
   }
 
-  if(size < *dataLen)
+  ಆದರೆ(ಗಾತ್ರ_2 < *ದತ್ತಾಂಶ_Len)
   {
     /* clean old extra info block. */
-    memset(pData,0, *dataLen);
+    memset(p_ದತ್ತಾಂಶ,0, *ದತ್ತಾಂಶ_Len);
 
     /* copy the new extra info block over the old */
-    if(size > 0)
-      memcpy(pData, pNewHeader, size);
+    ಆದರೆ(ಗಾತ್ರ_2 > 0)
+      ಸ್ಮರಣೆ_ನಕಲು(p_ದತ್ತಾಂಶ, p_New_ಶೀರ್ಷಿಕೆ, ಗಾತ್ರ_2);
 
     /* set the new extra info size */
-    *dataLen = size;
+    *ದತ್ತಾಂಶ_Len = ಗಾತ್ರ_2;
 
     retVal = ZIP_OK;
   }
-  else
+  ಇಲ್ಲದಿದ್ದರೆ
     retVal = ZIP_ERRNO;
 
-  free(pNewHeader);
+  ಬಿಡುಗಡೆ(p_New_ಶೀರ್ಷಿಕೆ);
 
-  return retVal;
+  ಹಿಂತಿರುಗಿ retVal;
 }

@@ -3,26 +3,26 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#ifdef MAKEFIXED
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ MAKEFIXED
 #  ifndef BUILDFIXED
 #    define BUILDFIXED
 #  endif
-#endif
-#ifdef BUILDFIXED
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BUILDFIXED
 #  define Z_ONCE
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "zutil.h"
-#include "inftrees.h"
-#include "inflate.h"
+#ಅನ್ತರ್ಭಾವ "zutil.h"
+#ಅನ್ತರ್ಭಾವ "inftrees.h"
+#ಅನ್ತರ್ಭಾವ "inflate.h"
 
-#ifndef NULL
-#  define NULL 0
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ಖಾಲಿ
+#  define ಖಾಲಿ 0
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define MAXBITS 15
+#ವ್ಯಾಖ್ಯಾನಿಸು MAXBITS 15
 
-const char inflate_copyright[] =
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ inflate_copyright[] =
    " inflate 1.3.2.1 Copyright 1995-2026 Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -43,40 +43,40 @@ const char inflate_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
-                                unsigned codes, code FAR * FAR *table,
-                                unsigned FAR *bits, unsigned short FAR *work) {
-    unsigned len;               /* a code's length in bits */
-    unsigned sym;               /* index of code symbols */
-    unsigned min, max;          /* minimum and maximum code lengths */
-    unsigned root;              /* number of index bits for root table */
-    unsigned curr;              /* number of index bits for current table */
-    unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
-    unsigned used;              /* code entries in table used */
-    unsigned huff;              /* Huffman code */
-    unsigned incr;              /* for incrementing code, index */
-    unsigned fill;              /* index for replicating entries */
-    unsigned low;               /* low bits for current root entry */
-    unsigned mask;              /* mask for low root bits */
-    code here;                  /* table entry for duplication */
-    code FAR *next;             /* next available space in table */
-    const unsigned short FAR *base = NULL;  /* base value table to use */
-    const unsigned short FAR *extra = NULL; /* extra bits table to use */
-    unsigned match = 0;         /* use base and extra for symbol >= match */
-    unsigned short count[MAXBITS+1];    /* number of codes of each length */
-    unsigned short offs[MAXBITS+1];     /* offsets in table for each length */
-    static const unsigned short lbase[31] = { /* Length codes 257..285 base */
+ಪೂರ್ಣಾಂಕ ZLIB_ಆಂತರಿಕ inflate_ಕೋಷ್ಟಕ(codetype type, ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ FAR *lens,
+                                ಚಿಹ್ನೆರಹಿತ codes, ಸಂಕೇತ_2 FAR * FAR *ಕೋಷ್ಟಕ_2,
+                                ಚಿಹ್ನೆರಹಿತ FAR *ಬಿಟ್ಟುಗಳು, ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ FAR *work) {
+    ಚಿಹ್ನೆರಹಿತ len;               /* a code's length in bits */
+    ಚಿಹ್ನೆರಹಿತ sym;               /* index of code symbols */
+    ಚಿಹ್ನೆರಹಿತ min, max;          /* minimum and maximum code lengths */
+    ಚಿಹ್ನೆರಹಿತ ಬೇರು;              /* number of index bits for root table */
+    ಚಿಹ್ನೆರಹಿತ curr;              /* number of index bits for current table */
+    ಚಿಹ್ನೆರಹಿತ drop;              /* code bits to drop for sub-table */
+    ಪೂರ್ಣಾಂಕ ಎಡ;                   /* number of prefix codes available */
+    ಚಿಹ್ನೆರಹಿತ ಬಳಸಿದ;              /* code entries in table used */
+    ಚಿಹ್ನೆರಹಿತ huff;              /* Huffman code */
+    ಚಿಹ್ನೆರಹಿತ incr;              /* for incrementing code, index */
+    ಚಿಹ್ನೆರಹಿತ fill;              /* index for replicating entries */
+    ಚಿಹ್ನೆರಹಿತ ಕೆಳಗಿನ;               /* low bits for current root entry */
+    ಚಿಹ್ನೆರಹಿತ ಮುಖವಾಡ;              /* mask for low root bits */
+    ಸಂಕೇತ_2 ಇಲ್ಲಿ;                  /* table entry for duplication */
+    ಸಂಕೇತ_2 FAR *ಮುಂದಿನ;             /* next available space in table */
+    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ FAR *ತಳ_2 = ಖಾಲಿ;  /* base value table to use */
+    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ FAR *extra = ಖಾಲಿ; /* extra bits table to use */
+    ಚಿಹ್ನೆರಹಿತ ಹೊಂದಿಕೆ = 0;         /* use base and extra for symbol >= match */
+    ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ ಎಣಿಕೆ_2[MAXBITS+1];    /* number of codes of each length */
+    ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ offs[MAXBITS+1];     /* offsets in table for each length */
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ lbase[31] = { /* Length codes 257..285 base */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
         35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0};
-    static const unsigned short lext[31] = { /* Length codes 257..285 extra */
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ lext[31] = { /* Length codes 257..285 extra */
         16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18,
         19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 68, 193};
-    static const unsigned short dbase[32] = { /* Distance codes 0..29 base */
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ dbase[32] = { /* Distance codes 0..29 base */
         1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
         257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
         8193, 12289, 16385, 24577, 0, 0};
-    static const unsigned short dext[32] = { /* Distance codes 0..29 extra */
+    ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ dext[32] = { /* Distance codes 0..29 extra */
         16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22,
         23, 23, 24, 24, 25, 25, 26, 26, 27, 27,
         28, 28, 29, 29, 64, 64};
@@ -113,47 +113,47 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
      */
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    for (len = 0; len <= MAXBITS; len++)
-        count[len] = 0;
-    for (sym = 0; sym < codes; sym++)
-        count[lens[sym]]++;
+    ಗಾಗಿ (len = 0; len <= MAXBITS; len++)
+        ಎಣಿಕೆ_2[len] = 0;
+    ಗಾಗಿ (sym = 0; sym < codes; sym++)
+        ಎಣಿಕೆ_2[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
-    root = *bits;
-    for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) {                     /* no symbols to code at all */
-        here.op = (unsigned char)64;    /* invalid code marker */
-        here.bits = (unsigned char)1;
-        here.val = (unsigned short)0;
-        *(*table)++ = here;             /* make a table to force an error */
-        *(*table)++ = here;
-        *bits = 1;
-        return 0;     /* no symbols, but wait for decoding to report error */
+    ಬೇರು = *ಬಿಟ್ಟುಗಳು;
+    ಗಾಗಿ (max = MAXBITS; max >= 1; max--)
+        ಆದರೆ (ಎಣಿಕೆ_2[max] != 0) ನಿಲ್ಲಿಸು;
+    ಆದರೆ (ಬೇರು > max) ಬೇರು = max;
+    ಆದರೆ (max == 0) {                     /* no symbols to code at all */
+        ಇಲ್ಲಿ.op = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)64;    /* invalid code marker */
+        ಇಲ್ಲಿ.ಬಿಟ್ಟುಗಳು = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)1;
+        ಇಲ್ಲಿ.val = (ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ)0;
+        *(*ಕೋಷ್ಟಕ_2)++ = ಇಲ್ಲಿ;             /* make a table to force an error */
+        *(*ಕೋಷ್ಟಕ_2)++ = ಇಲ್ಲಿ;
+        *ಬಿಟ್ಟುಗಳು = 1;
+        ಹಿಂತಿರುಗಿ 0;     /* no symbols, but wait for decoding to report error */
     }
-    for (min = 1; min < max; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+    ಗಾಗಿ (min = 1; min < max; min++)
+        ಆದರೆ (ಎಣಿಕೆ_2[min] != 0) ನಿಲ್ಲಿಸು;
+    ಆದರೆ (ಬೇರು < min) ಬೇರು = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;
-        left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+    ಎಡ = 1;
+    ಗಾಗಿ (len = 1; len <= MAXBITS; len++) {
+        ಎಡ <<= 1;
+        ಎಡ -= ಎಣಿಕೆ_2[len];
+        ಆದರೆ (ಎಡ < 0) ಹಿಂತಿರುಗಿ -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    ಆದರೆ (ಎಡ > 0 && (type == CODES || max != 1))
+        ಹಿಂತಿರುಗಿ -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + count[len];
+    ಗಾಗಿ (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + ಎಣಿಕೆ_2[len];
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+    ಗಾಗಿ (sym = 0; sym < codes; sym++)
+        ಆದರೆ (lens[sym] != 0) work[offs[lens[sym]]++] = (ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -187,17 +187,17 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
      */
 
     /* set up for code type */
-    switch (type) {
-    case CODES:
-        match = 20;
-        break;
-    case LENS:
-        base = lbase;
+    ಆಯ್ಕೆ (type) {
+    ಸ್ಥಿತಿ CODES:
+        ಹೊಂದಿಕೆ = 20;
+        ನಿಲ್ಲಿಸು;
+    ಸ್ಥಿತಿ LENS:
+        ತಳ_2 = lbase;
         extra = lext;
-        match = 257;
-        break;
-    case DISTS:
-        base = dbase;
+        ಹೊಂದಿಕೆ = 257;
+        ನಿಲ್ಲಿಸು;
+    ಸ್ಥಿತಿ DISTS:
+        ತಳ_2 = dbase;
         extra = dext;
     }
 
@@ -205,112 +205,112 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
     huff = 0;                   /* starting code */
     sym = 0;                    /* starting code symbol */
     len = min;                  /* starting code length */
-    next = *table;              /* current table to fill in */
-    curr = root;                /* current table index bits */
+    ಮುಂದಿನ = *ಕೋಷ್ಟಕ_2;              /* current table to fill in */
+    curr = ಬೇರು;                /* current table index bits */
     drop = 0;                   /* current bits to drop from code for index */
-    low = (unsigned)(-1);       /* trigger new sub-table when len > root */
-    used = 1U << root;          /* use root table entries */
-    mask = used - 1;            /* mask for comparing low */
+    ಕೆಳಗಿನ = (ಚಿಹ್ನೆರಹಿತ)(-1);       /* trigger new sub-table when len > root */
+    ಬಳಸಿದ = 1U << ಬೇರು;          /* use root table entries */
+    ಮುಖವಾಡ = ಬಳಸಿದ - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used > ENOUGH_LENS) ||
-        (type == DISTS && used > ENOUGH_DISTS))
-        return 1;
+    ಆದರೆ ((type == LENS && ಬಳಸಿದ > ENOUGH_LENS) ||
+        (type == DISTS && ಬಳಸಿದ > ENOUGH_DISTS))
+        ಹಿಂತಿರುಗಿ 1;
 
     /* process all codes and make table entries */
-    for (;;) {
+    ಗಾಗಿ (;;) {
         /* create table entry */
-        here.bits = (unsigned char)(len - drop);
-        if (work[sym] + 1U < match) {
-            here.op = (unsigned char)0;
-            here.val = work[sym];
+        ಇಲ್ಲಿ.ಬಿಟ್ಟುಗಳು = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(len - drop);
+        ಆದರೆ (work[sym] + 1U < ಹೊಂದಿಕೆ) {
+            ಇಲ್ಲಿ.op = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)0;
+            ಇಲ್ಲಿ.val = work[sym];
         }
-        else if (work[sym] >= match) {
-            here.op = (unsigned char)(extra[work[sym] - match]);
-            here.val = base[work[sym] - match];
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (work[sym] >= ಹೊಂದಿಕೆ) {
+            ಇಲ್ಲಿ.op = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(extra[work[sym] - ಹೊಂದಿಕೆ]);
+            ಇಲ್ಲಿ.val = ತಳ_2[work[sym] - ಹೊಂದಿಕೆ];
         }
-        else {
-            here.op = (unsigned char)(32 + 64);         /* end of block */
-            here.val = 0;
+        ಇಲ್ಲದಿದ್ದರೆ {
+            ಇಲ್ಲಿ.op = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(32 + 64);         /* end of block */
+            ಇಲ್ಲಿ.val = 0;
         }
 
         /* replicate for those indices with low len bits equal to huff */
         incr = 1U << (len - drop);
         fill = 1U << curr;
         min = fill;                 /* save offset to next table */
-        do {
+        ಮಾಡು {
             fill -= incr;
-            next[(huff >> drop) + fill] = here;
-        } while (fill != 0);
+            ಮುಂದಿನ[(huff >> drop) + fill] = ಇಲ್ಲಿ;
+        } ಆಗ (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        ಆಗ (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        ಆದರೆ (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        ಆದರೆ (--(ಎಣಿಕೆ_2[len]) == 0) {
+            ಆದರೆ (len == max) ನಿಲ್ಲಿಸು;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        ಆದರೆ (len > ಬೇರು && (huff & ಮುಖವಾಡ) != ಕೆಳಗಿನ) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
-                drop = root;
+            ಆದರೆ (drop == 0)
+                drop = ಬೇರು;
 
             /* increment past last table */
-            next += min;            /* here min is 1 << curr */
+            ಮುಂದಿನ += min;            /* here min is 1 << curr */
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
-                left -= count[curr + drop];
-                if (left <= 0) break;
+            ಎಡ = (ಪೂರ್ಣಾಂಕ)(1 << curr);
+            ಆಗ (curr + drop < max) {
+                ಎಡ -= ಎಣಿಕೆ_2[curr + drop];
+                ಆದರೆ (ಎಡ <= 0) ನಿಲ್ಲಿಸು;
                 curr++;
-                left <<= 1;
+                ಎಡ <<= 1;
             }
 
             /* check for enough space */
-            used += 1U << curr;
-            if ((type == LENS && used > ENOUGH_LENS) ||
-                (type == DISTS && used > ENOUGH_DISTS))
-                return 1;
+            ಬಳಸಿದ += 1U << curr;
+            ಆದರೆ ((type == LENS && ಬಳಸಿದ > ENOUGH_LENS) ||
+                (type == DISTS && ಬಳಸಿದ > ENOUGH_DISTS))
+                ಹಿಂತಿರುಗಿ 1;
 
             /* point entry in root table to sub-table */
-            low = huff & mask;
-            (*table)[low].op = (unsigned char)curr;
-            (*table)[low].bits = (unsigned char)root;
-            (*table)[low].val = (unsigned short)(next - *table);
+            ಕೆಳಗಿನ = huff & ಮುಖವಾಡ;
+            (*ಕೋಷ್ಟಕ_2)[ಕೆಳಗಿನ].op = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)curr;
+            (*ಕೋಷ್ಟಕ_2)[ಕೆಳಗಿನ].ಬಿಟ್ಟುಗಳು = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)ಬೇರು;
+            (*ಕೋಷ್ಟಕ_2)[ಕೆಳಗಿನ].val = (ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ)(ಮುಂದಿನ - *ಕೋಷ್ಟಕ_2);
         }
     }
 
     /* fill in remaining table entry if code is incomplete (guaranteed to have
        at most one remaining entry, since if the code is incomplete, the
        maximum code length that was allowed to get this far is one bit) */
-    if (huff != 0) {
-        here.op = (unsigned char)64;            /* invalid code marker */
-        here.bits = (unsigned char)(len - drop);
-        here.val = (unsigned short)0;
-        next[huff] = here;
+    ಆದರೆ (huff != 0) {
+        ಇಲ್ಲಿ.op = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)64;            /* invalid code marker */
+        ಇಲ್ಲಿ.ಬಿಟ್ಟುಗಳು = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(len - drop);
+        ಇಲ್ಲಿ.val = (ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ)0;
+        ಮುಂದಿನ[huff] = ಇಲ್ಲಿ;
     }
 
     /* set return parameters */
-    *table += used;
-    *bits = root;
-    return 0;
+    *ಕೋಷ್ಟಕ_2 += ಬಳಸಿದ;
+    *ಬಿಟ್ಟುಗಳು = ಬೇರು;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-#ifdef BUILDFIXED
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BUILDFIXED
 /*
   If this is compiled with BUILDFIXED defined, and if inflate will be used in
   multiple threads, and if atomics are not available, then inflate() must be
@@ -318,38 +318,38 @@ int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
   return before any other threads are allowed to call inflate.
  */
 
-static code *lenfix, *distfix;
-static code fixed[544];
+ಸ್ಥಿರ ಸಂಕೇತ_2 *lenfix, *distfix;
+ಸ್ಥಿರ ಸಂಕೇತ_2 fixed[544];
 
 /* State for z_once(). */
 local z_once_t built = Z_ONCE_INIT;
 
-local void buildtables(void) {
-    unsigned sym, bits;
-    static code *next;
-    unsigned short lens[288], work[288];
+local ಶೂನ್ಯ buildtables(ಶೂನ್ಯ) {
+    ಚಿಹ್ನೆರಹಿತ sym, ಬಿಟ್ಟುಗಳು;
+    ಸ್ಥಿರ ಸಂಕೇತ_2 *ಮುಂದಿನ;
+    ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ lens[288], work[288];
 
     /* literal/length table */
     sym = 0;
-    while (sym < 144) lens[sym++] = 8;
-    while (sym < 256) lens[sym++] = 9;
-    while (sym < 280) lens[sym++] = 7;
-    while (sym < 288) lens[sym++] = 8;
-    next = fixed;
-    lenfix = next;
-    bits = 9;
-    inflate_table(LENS, lens, 288, &(next), &(bits), work);
+    ಆಗ (sym < 144) lens[sym++] = 8;
+    ಆಗ (sym < 256) lens[sym++] = 9;
+    ಆಗ (sym < 280) lens[sym++] = 7;
+    ಆಗ (sym < 288) lens[sym++] = 8;
+    ಮುಂದಿನ = fixed;
+    lenfix = ಮುಂದಿನ;
+    ಬಿಟ್ಟುಗಳು = 9;
+    inflate_ಕೋಷ್ಟಕ(LENS, lens, 288, &(ಮುಂದಿನ), &(ಬಿಟ್ಟುಗಳು), work);
 
     /* distance table */
     sym = 0;
-    while (sym < 32) lens[sym++] = 5;
-    distfix = next;
-    bits = 5;
-    inflate_table(DISTS, lens, 32, &(next), &(bits), work);
+    ಆಗ (sym < 32) lens[sym++] = 5;
+    distfix = ಮುಂದಿನ;
+    ಬಿಟ್ಟುಗಳು = 5;
+    inflate_ಕೋಷ್ಟಕ(DISTS, lens, 32, &(ಮುಂದಿನ), &(ಬಿಟ್ಟುಗಳು), work);
 }
-#else /* !BUILDFIXED */
+#ಇಲ್ಲದಿದ್ದರೆ /* !BUILDFIXED */
 #  include "inffixed.h"
-#endif /* BUILDFIXED */
+#ಆದರೆ_ಅಂತ್ಯ /* BUILDFIXED */
 
 /*
    Return state with length and distance decoding tables and index sizes set to
@@ -361,18 +361,18 @@ local void buildtables(void) {
    used for threaded applications if atomics are not available, as it will
    not be thread-safe.
  */
-void inflate_fixed(struct inflate_state FAR *state) {
-#ifdef BUILDFIXED
+ಶೂನ್ಯ inflate_fixed(ರಚನೆ inflate_state FAR *state) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BUILDFIXED
     z_once(&built, buildtables);
-#endif /* BUILDFIXED */
+#ಆದರೆ_ಅಂತ್ಯ /* BUILDFIXED */
     state->lencode = lenfix;
     state->lenbits = 9;
     state->distcode = distfix;
     state->distbits = 5;
 }
 
-#ifdef MAKEFIXED
-#include <stdio.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ MAKEFIXED
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
 /*
    Write out the inffixed.h that will be #include'd above.  Defining MAKEFIXED
@@ -383,9 +383,9 @@ void inflate_fixed(struct inflate_state FAR *state) {
        cc -DMAKEFIXED -o fix inftrees.c zutil.c
        ./fix > inffixed.h
  */
-int main(void) {
-    unsigned low, size;
-    struct inflate_state state;
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಶೂನ್ಯ) {
+    ಚಿಹ್ನೆರಹಿತ ಕೆಳಗಿನ, ಗಾತ್ರ_2;
+    ರಚನೆ inflate_state state;
 
     inflate_fixed(&state);
     puts("/* inffixed.h -- table for decoding fixed codes");
@@ -397,28 +397,28 @@ int main(void) {
     puts("   subject to change. Applications should only use zlib.h.");
     puts(" */");
     puts("");
-    size = 1U << 9;
-    printf("static const code lenfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 7) == 0) printf("\n    ");
-        printf("{%u,%u,%d}", (low & 127) == 99 ? 64 : state.lencode[low].op,
-               state.lencode[low].bits, state.lencode[low].val);
-        if (++low == size) break;
-        putchar(',');
+    ಗಾತ್ರ_2 = 1U << 9;
+    ಬರೆ("static const code lenfix[%u] = {", ಗಾತ್ರ_2);
+    ಕೆಳಗಿನ = 0;
+    ಗಾಗಿ (;;) {
+        ಆದರೆ ((ಕೆಳಗಿನ % 7) == 0) ಬರೆ("\n    ");
+        ಬರೆ("{%u,%u,%d}", (ಕೆಳಗಿನ & 127) == 99 ? 64 : state.lencode[ಕೆಳಗಿನ].op,
+               state.lencode[ಕೆಳಗಿನ].ಬಿಟ್ಟುಗಳು, state.lencode[ಕೆಳಗಿನ].val);
+        ಆದರೆ (++ಕೆಳಗಿನ == ಗಾತ್ರ_2) ನಿಲ್ಲಿಸು;
+        ಅಕ್ಷರ_ಬರೆ(',');
     }
     puts("\n};");
-    size = 1U << 5;
-    printf("\nstatic const code distfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 6) == 0) printf("\n    ");
-        printf("{%u,%u,%d}", state.distcode[low].op, state.distcode[low].bits,
-               state.distcode[low].val);
-        if (++low == size) break;
-        putchar(',');
+    ಗಾತ್ರ_2 = 1U << 5;
+    ಬರೆ("\nstatic const code distfix[%u] = {", ಗಾತ್ರ_2);
+    ಕೆಳಗಿನ = 0;
+    ಗಾಗಿ (;;) {
+        ಆದರೆ ((ಕೆಳಗಿನ % 6) == 0) ಬರೆ("\n    ");
+        ಬರೆ("{%u,%u,%d}", state.distcode[ಕೆಳಗಿನ].op, state.distcode[ಕೆಳಗಿನ].ಬಿಟ್ಟುಗಳು,
+               state.distcode[ಕೆಳಗಿನ].val);
+        ಆದರೆ (++ಕೆಳಗಿನ == ಗಾತ್ರ_2) ನಿಲ್ಲಿಸು;
+        ಅಕ್ಷರ_ಬರೆ(',');
     }
     puts("\n};");
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
-#endif /* MAKEFIXED */
+#ಆದರೆ_ಅಂತ್ಯ /* MAKEFIXED */

@@ -3,19 +3,19 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "gzguts.h"
+#ಅನ್ತರ್ಭಾವ "gzguts.h"
 
-#if defined(__DJGPP__)
+#ಆದರೆ defined(__DJGPP__)
 #  define LSEEK llseek
-#elif defined(_WIN32) && !defined(__BORLANDC__) && !defined(UNDER_CE)
+#ಅಥವಾಆದರೆ defined(_WIN32) && !defined(__BORLANDC__) && !defined(UNDER_CE)
 #  define LSEEK _lseeki64
-#elif defined(_LARGEFILE64_SOURCE) && _LFS64_LARGEFILE-0
+#ಅಥವಾಆದರೆ defined(LARGEFILE64_ಮೂಲ) && _LFS64_LARGEFILE-0
 #  define LSEEK lseek64
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 #  define LSEEK lseek
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined UNDER_CE
+#ಆದರೆ defined UNDER_CE
 
 /* Map the Windows error number in ERROR to a locale-dependent error message
    string and return a pointer to it.  Typically, the values for ERROR come
@@ -26,419 +26,419 @@
 
    The gz_strwinerror function does not change the current setting of
    GetLastError. */
-char ZLIB_INTERNAL *gz_strwinerror(DWORD error) {
-    static char buf[1024];
+ಅಕ್ಷರ ZLIB_ಆಂತರಿಕ *gz_strwinerror(DWORD error) {
+    ಸ್ಥಿರ ಅಕ್ಷರ buf[1024];
 
     wchar_t *msgbuf;
-    DWORD lasterr = GetLastError();
-    DWORD chars = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM
-        | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-        NULL,
+    DWORD lasterr = Get_ಕೊನೆಯ_Error();
+    DWORD chars = Format_ಸಂದೇಶ(FORMAT_ಸಂದೇಶ_FROM_SYSTEM
+        | FORMAT_ಸಂದೇಶ_ALLOCATE_ಬಫರ್,
+        ಖಾಲಿ,
         error,
         0, /* Default language */
         (LPVOID)&msgbuf,
         0,
-        NULL);
-    if (chars != 0) {
+        ಖಾಲಿ);
+    ಆದರೆ (chars != 0) {
         /* If there is an \r\n appended, zap it.  */
-        if (chars >= 2
+        ಆದರೆ (chars >= 2
             && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n') {
             chars -= 2;
             msgbuf[chars] = 0;
         }
 
-        if (chars > sizeof (buf) - 1) {
-            chars = sizeof (buf) - 1;
+        ಆದರೆ (chars > ಗಾತ್ರ (buf) - 1) {
+            chars = ಗಾತ್ರ (buf) - 1;
             msgbuf[chars] = 0;
         }
 
         wcstombs(buf, msgbuf, chars + 1);       /* assumes buf is big enough */
         LocalFree(msgbuf);
     }
-    else {
+    ಇಲ್ಲದಿದ್ದರೆ {
         sprintf(buf, "unknown win32 error (%ld)", error);
     }
 
-    SetLastError(lasterr);
-    return buf;
+    ಗಣ_ಕೊನೆಯ_Error(lasterr);
+    ಹಿಂತಿರುಗಿ buf;
 }
 
-#endif /* UNDER_CE */
+#ಆದರೆ_ಅಂತ್ಯ /* UNDER_CE */
 
 /* Reset gzip file state */
-local void gz_reset(gz_statep state) {
+local ಶೂನ್ಯ gz_reset(gz_statep state) {
     state->x.have = 0;              /* no output data available */
     state->past = 0;                /* have not read past end yet */
-    if (state->mode == GZ_READ) {   /* for reading ... */
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_READ) {   /* for reading ... */
         state->eof = 0;             /* not at end of file */
         state->how = LOOK;          /* look for gzip header */
         state->junk = -1;           /* mark first member */
     }
-    else                            /* for writing ... */
+    ಇಲ್ಲದಿದ್ದರೆ                            /* for writing ... */
         state->reset = 0;           /* no deflateReset pending */
     state->again = 0;               /* no stalled i/o yet */
     state->skip = 0;                /* no seek request pending */
-    gz_error(state, Z_OK, NULL);    /* clear error */
+    gz_error(state, Z_OK, ಖಾಲಿ);    /* clear error */
     state->x.pos = 0;               /* no uncompressed data yet */
-    state->strm.avail_in = 0;       /* no input data yet */
+    state->strm.avail_ಒಳ = 0;       /* no input data yet */
 }
 
 /* Open a gzip file either by name or file descriptor. */
-local gzFile gz_open(const void *path, int fd, const char *mode) {
+local gzFile gz_open(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮಾರ್ಗ, ಪೂರ್ಣಾಂಕ fd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ) {
     gz_statep state;
-    z_size_t len;
-    int oflag = 0;
-#ifdef O_EXCL
-    int exclusive = 0;
-#endif
+    z_ಗಾತ್ರ_t len;
+    ಪೂರ್ಣಾಂಕ oflag = 0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_EXCL
+    ಪೂರ್ಣಾಂಕ exclusive = 0;
+#ಆದರೆ_ಅಂತ್ಯ
 
     /* check input */
-    if (path == NULL || mode == NULL)
-        return NULL;
+    ಆದರೆ (ಮಾರ್ಗ == ಖಾಲಿ || ಬಹುಲಕ == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
     /* allocate gzFile structure to return */
-    state = (gz_statep)malloc(sizeof(gz_state));
-    if (state == NULL)
-        return NULL;
-    state->size = 0;            /* no buffers allocated yet */
+    state = (gz_statep)ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(gz_state));
+    ಆದರೆ (state == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+    state->ಗಾತ್ರ_2 = 0;            /* no buffers allocated yet */
     state->want = GZBUFSIZE;    /* requested buffer size */
     state->err = Z_OK;          /* no error yet */
-    state->msg = NULL;          /* no error message yet */
+    state->ಸಂದೇಶ = ಖಾಲಿ;          /* no error message yet */
 
     /* interpret mode */
-    state->mode = GZ_NONE;
+    state->ಬಹುಲಕ = GZ_NONE;
     state->level = Z_DEFAULT_COMPRESSION;
     state->strategy = Z_DEFAULT_STRATEGY;
-    state->direct = 0;
-    while (*mode) {
-        if (*mode >= '0' && *mode <= '9')
-            state->level = *mode - '0';
-        else
-            switch (*mode) {
-            case 'r':
-                state->mode = GZ_READ;
-                break;
-#ifndef NO_GZCOMPRESS
-            case 'w':
-                state->mode = GZ_WRITE;
-                break;
-            case 'a':
-                state->mode = GZ_APPEND;
-                break;
-#endif
-            case '+':       /* can't read and write at the same time */
-                free(state);
-                return NULL;
-            case 'b':       /* ignore -- will request binary anyway */
-                break;
-#ifdef O_CLOEXEC
-            case 'e':
+    state->ನೇರ = 0;
+    ಆಗ (*ಬಹುಲಕ) {
+        ಆದರೆ (*ಬಹುಲಕ >= '0' && *ಬಹುಲಕ <= '9')
+            state->level = *ಬಹುಲಕ - '0';
+        ಇಲ್ಲದಿದ್ದರೆ
+            ಆಯ್ಕೆ (*ಬಹುಲಕ) {
+            ಸ್ಥಿತಿ 'r':
+                state->ಬಹುಲಕ = GZ_READ;
+                ನಿಲ್ಲಿಸು;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_GZCOMPRESS
+            ಸ್ಥಿತಿ 'w':
+                state->ಬಹುಲಕ = GZ_WRITE;
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ 'a':
+                state->ಬಹುಲಕ = GZ_APPEND;
+                ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
+            ಸ್ಥಿತಿ '+':       /* can't read and write at the same time */
+                ಬಿಡುಗಡೆ(state);
+                ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+            ಸ್ಥಿತಿ 'b':       /* ignore -- will request binary anyway */
+                ನಿಲ್ಲಿಸು;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_CLOEXEC
+            ಸ್ಥಿತಿ 'e':
                 oflag |= O_CLOEXEC;
-                break;
-#endif
-#ifdef O_EXCL
-            case 'x':
+                ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_EXCL
+            ಸ್ಥಿತಿ 'x':
                 exclusive = 1;
-                break;
-#endif
-            case 'f':
+                ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
+            ಸ್ಥಿತಿ 'f':
                 state->strategy = Z_FILTERED;
-                break;
-            case 'h':
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ 'h':
                 state->strategy = Z_HUFFMAN_ONLY;
-                break;
-            case 'R':
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ 'R':
                 state->strategy = Z_RLE;
-                break;
-            case 'F':
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ 'F':
                 state->strategy = Z_FIXED;
-                break;
-            case 'G':
-                state->direct = -1;
-                break;
-#ifdef O_NONBLOCK
-            case 'N':
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ 'G':
+                state->ನೇರ = -1;
+                ನಿಲ್ಲಿಸು;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_NONBLOCK
+            ಸ್ಥಿತಿ 'N':
                 oflag |= O_NONBLOCK;
-                break;
-#endif
-            case 'T':
-                state->direct = 1;
-                break;
-            default:        /* could consider as an error, but just ignore */
+                ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
+            ಸ್ಥಿತಿ 'T':
+                state->ನೇರ = 1;
+                ನಿಲ್ಲಿಸು;
+            ಪೂರ್ವನಿಯೋಜಿತ:        /* could consider as an error, but just ignore */
                 ;
             }
-        mode++;
+        ಬಹುಲಕ++;
     }
 
     /* must provide an "r", "w", or "a" */
-    if (state->mode == GZ_NONE) {
-        free(state);
-        return NULL;
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_NONE) {
+        ಬಿಡುಗಡೆ(state);
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     /* direct is 0, 1 if "T", or -1 if "G" (last "G" or "T" wins) */
-    if (state->mode == GZ_READ) {
-        if (state->direct == 1) {
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_READ) {
+        ಆದರೆ (state->ನೇರ == 1) {
             /* can't force a transparent read */
-            free(state);
-            return NULL;
+            ಬಿಡುಗಡೆ(state);
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
-        if (state->direct == 0)
+        ಆದರೆ (state->ನೇರ == 0)
             /* default when reading is auto-detect of gzip vs. transparent --
                start with a transparent assumption in case of an empty file */
-            state->direct = 1;
+            state->ನೇರ = 1;
     }
-    else if (state->direct == -1) {
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (state->ನೇರ == -1) {
         /* "G" has no meaning when writing -- disallow it */
-        free(state);
-        return NULL;
+        ಬಿಡುಗಡೆ(state);
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     /* if reading, direct == 1 for auto-detect, -1 for gzip only; if writing or
        appending, direct == 0 for gzip, 1 for transparent (copy in to out) */
 
     /* save the path name for error messages */
-#ifdef WIDECHAR
-    if (fd == -2)
-        len = wcstombs(NULL, path, 0);
-    else
-#endif
-        len = strlen((const char *)path);
-    state->path = (char *)malloc(len + 1);
-    if (state->path == NULL) {
-        free(state);
-        return NULL;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WIDECHAR
+    ಆದರೆ (fd == -2)
+        len = wcstombs(ಖಾಲಿ, ಮಾರ್ಗ, 0);
+    ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
+        len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ((ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *)ಮಾರ್ಗ);
+    state->ಮಾರ್ಗ = (ಅಕ್ಷರ *)ಸ್ಮರಣೆ_ಕೊಡು(len + 1);
+    ಆದರೆ (state->ಮಾರ್ಗ == ಖಾಲಿ) {
+        ಬಿಡುಗಡೆ(state);
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-#ifdef WIDECHAR
-    if (fd == -2) {
-        if (len)
-            wcstombs(state->path, path, len + 1);
-        else
-            *(state->path) = 0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WIDECHAR
+    ಆದರೆ (fd == -2) {
+        ಆದರೆ (len)
+            wcstombs(state->ಮಾರ್ಗ, ಮಾರ್ಗ, len + 1);
+        ಇಲ್ಲದಿದ್ದರೆ
+            *(state->ಮಾರ್ಗ) = 0;
     }
-    else
-#endif
+    ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
     {
-#if !defined(NO_snprintf) && !defined(NO_vsnprintf)
-        (void)snprintf(state->path, len + 1, "%s", (const char *)path);
-#else
-        strcpy(state->path, path);
-#endif
+#ಆದರೆ !defined(NO_snprintf) && !defined(NO_vsnprintf)
+        (ಶೂನ್ಯ)snprintf(state->ಮಾರ್ಗ, len + 1, "%s", (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *)ಮಾರ್ಗ);
+#ಇಲ್ಲದಿದ್ದರೆ
+        strcpy(state->ಮಾರ್ಗ, ಮಾರ್ಗ);
+#ಆದರೆ_ಅಂತ್ಯ
     }
 
     /* compute the flags for open() */
     oflag |=
-#ifdef O_LARGEFILE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_LARGEFILE
         O_LARGEFILE |
-#endif
-#ifdef O_BINARY
-        O_BINARY |
-#endif
-        (state->mode == GZ_READ ?
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_ದ್ವಿಮಾನ
+        O_ದ್ವಿಮಾನ |
+#ಆದರೆ_ಅಂತ್ಯ
+        (state->ಬಹುಲಕ == GZ_READ ?
          O_RDONLY :
          (O_WRONLY | O_CREAT |
-#ifdef O_EXCL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_EXCL
           (exclusive ? O_EXCL : 0) |
-#endif
-          (state->mode == GZ_WRITE ?
+#ಆದರೆ_ಅಂತ್ಯ
+          (state->ಬಹುಲಕ == GZ_WRITE ?
            O_TRUNC :
            O_APPEND)));
 
     /* open the file with the appropriate flags (or just use fd) */
-    if (fd == -1)
-        state->fd = open((const char *)path, oflag, 0666);
-#ifdef WIDECHAR
-    else if (fd == -2)
-        state->fd = _wopen(path, oflag, _S_IREAD | _S_IWRITE);
-#endif
-    else {
-#ifdef O_NONBLOCK
-        if (oflag & O_NONBLOCK)
+    ಆದರೆ (fd == -1)
+        state->fd = open((ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *)ಮಾರ್ಗ, oflag, 0666);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WIDECHAR
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (fd == -2)
+        state->fd = _wopen(ಮಾರ್ಗ, oflag, _S_IREAD | _S_IWRITE);
+#ಆದರೆ_ಅಂತ್ಯ
+    ಇಲ್ಲದಿದ್ದರೆ {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_NONBLOCK
+        ಆದರೆ (oflag & O_NONBLOCK)
             fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
-#endif
-#ifdef O_CLOEXEC
-        if (oflag & O_CLOEXEC)
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ O_CLOEXEC
+        ಆದರೆ (oflag & O_CLOEXEC)
             fcntl(fd, F_SETFD, fcntl(fd, F_GETFD) | O_CLOEXEC);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
         state->fd = fd;
     }
-    if (state->fd == -1) {
-        free(state->path);
-        free(state);
-        return NULL;
+    ಆದರೆ (state->fd == -1) {
+        ಬಿಡುಗಡೆ(state->ಮಾರ್ಗ);
+        ಬಿಡುಗಡೆ(state);
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (state->mode == GZ_APPEND) {
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_APPEND) {
         LSEEK(state->fd, 0, SEEK_END);  /* so gzoffset() is correct */
-        state->mode = GZ_WRITE;         /* simplify later checks */
+        state->ಬಹುಲಕ = GZ_WRITE;         /* simplify later checks */
     }
 
     /* save the current position for rewinding (only if reading) */
-    if (state->mode == GZ_READ) {
-        state->start = LSEEK(state->fd, 0, SEEK_CUR);
-        if (state->start == -1) state->start = 0;
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_READ) {
+        state->ಆರಂಭ = LSEEK(state->fd, 0, SEEK_CUR);
+        ಆದರೆ (state->ಆರಂಭ == -1) state->ಆರಂಭ = 0;
     }
 
     /* initialize stream */
     gz_reset(state);
 
     /* return stream */
-    return (gzFile)state;
+    ಹಿಂತಿರುಗಿ (gzFile)state;
 }
 
 /* -- see zlib.h -- */
-gzFile ZEXPORT gzopen(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+gzFile ZEXPORT gzopen(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ) {
+    ಹಿಂತಿರುಗಿ gz_open(ಮಾರ್ಗ, -1, ಬಹುಲಕ);
 }
 
 /* -- see zlib.h -- */
-gzFile ZEXPORT gzopen64(const char *path, const char *mode) {
-    return gz_open(path, -1, mode);
+gzFile ZEXPORT gzopen64(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ) {
+    ಹಿಂತಿರುಗಿ gz_open(ಮಾರ್ಗ, -1, ಬಹುಲಕ);
 }
 
 /* -- see zlib.h -- */
-gzFile ZEXPORT gzdopen(int fd, const char *mode) {
-    char *path;         /* identifier for error messages */
+gzFile ZEXPORT gzdopen(ಪೂರ್ಣಾಂಕ fd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ) {
+    ಅಕ್ಷರ *ಮಾರ್ಗ;         /* identifier for error messages */
     gzFile gz;
 
-    if (fd == -1 || (path = (char *)malloc(7 + 3 * sizeof(int))) == NULL)
-        return NULL;
-#if !defined(NO_snprintf) && !defined(NO_vsnprintf)
-    (void)snprintf(path, 7 + 3 * sizeof(int), "<fd:%d>", fd);
-#else
-    sprintf(path, "<fd:%d>", fd);   /* for debugging */
-#endif
-    gz = gz_open(path, fd, mode);
-    free(path);
-    return gz;
+    ಆದರೆ (fd == -1 || (ಮಾರ್ಗ = (ಅಕ್ಷರ *)ಸ್ಮರಣೆ_ಕೊಡು(7 + 3 * ಗಾತ್ರ(ಪೂರ್ಣಾಂಕ))) == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+#ಆದರೆ !defined(NO_snprintf) && !defined(NO_vsnprintf)
+    (ಶೂನ್ಯ)snprintf(ಮಾರ್ಗ, 7 + 3 * ಗಾತ್ರ(ಪೂರ್ಣಾಂಕ), "<fd:%d>", fd);
+#ಇಲ್ಲದಿದ್ದರೆ
+    sprintf(ಮಾರ್ಗ, "<fd:%d>", fd);   /* for debugging */
+#ಆದರೆ_ಅಂತ್ಯ
+    gz = gz_open(ಮಾರ್ಗ, fd, ಬಹುಲಕ);
+    ಬಿಡುಗಡೆ(ಮಾರ್ಗ);
+    ಹಿಂತಿರುಗಿ gz;
 }
 
 /* -- see zlib.h -- */
-#ifdef WIDECHAR
-gzFile ZEXPORT gzopen_w(const wchar_t *path, const char *mode) {
-    return gz_open(path, -2, mode);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WIDECHAR
+gzFile ZEXPORT gzopen_w(ಸ್ಥಿರಾಂಕ wchar_t *ಮಾರ್ಗ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ) {
+    ಹಿಂತಿರುಗಿ gz_open(ಮಾರ್ಗ, -2, ಬಹುಲಕ);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* -- see zlib.h -- */
-int ZEXPORT gzbuffer(gzFile file, unsigned size) {
+ಪೂರ್ಣಾಂಕ ZEXPORT gzbuffer(gzFile file, ಚಿಹ್ನೆರಹಿತ ಗಾತ್ರ_2) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return -1;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return -1;
+    ಆದರೆ (state->ಬಹುಲಕ != GZ_READ && state->ಬಹುಲಕ != GZ_WRITE)
+        ಹಿಂತಿರುಗಿ -1;
 
     /* make sure we haven't already allocated memory */
-    if (state->size != 0)
-        return -1;
+    ಆದರೆ (state->ಗಾತ್ರ_2 != 0)
+        ಹಿಂತಿರುಗಿ -1;
 
     /* check and set requested size */
-    if ((size << 1) < size)
-        return -1;              /* need to be able to double it */
-    if (size < 8)
-        size = 8;               /* needed to behave well with flushing */
-    state->want = size;
-    return 0;
+    ಆದರೆ ((ಗಾತ್ರ_2 << 1) < ಗಾತ್ರ_2)
+        ಹಿಂತಿರುಗಿ -1;              /* need to be able to double it */
+    ಆದರೆ (ಗಾತ್ರ_2 < 8)
+        ಗಾತ್ರ_2 = 8;               /* needed to behave well with flushing */
+    state->want = ಗಾತ್ರ_2;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzrewind(gzFile file) {
+ಪೂರ್ಣಾಂಕ ZEXPORT gzrewind(gzFile file) {
     gz_statep state;
 
     /* get internal structure */
-    if (file == NULL)
-        return -1;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ -1;
     state = (gz_statep)file;
 
     /* check that we're reading and that there's no error */
-    if (state->mode != GZ_READ ||
+    ಆದರೆ (state->ಬಹುಲಕ != GZ_READ ||
             (state->err != Z_OK && state->err != Z_BUF_ERROR))
-        return -1;
+        ಹಿಂತಿರುಗಿ -1;
 
     /* back up and start over */
-    if (LSEEK(state->fd, state->start, SEEK_SET) == -1)
-        return -1;
+    ಆದರೆ (LSEEK(state->fd, state->ಆರಂಭ, SEEK_SET) == -1)
+        ಹಿಂತಿರುಗಿ -1;
     gz_reset(state);
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
 /* -- see zlib.h -- */
-z_off64_t ZEXPORT gzseek64(gzFile file, z_off64_t offset, int whence) {
-    unsigned n;
+z_off64_t ZEXPORT gzseek64(gzFile file, z_off64_t ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ whence) {
+    ಚಿಹ್ನೆರಹಿತ n;
     z_off64_t ret, pos;
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return -1;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return -1;
+    ಆದರೆ (state->ಬಹುಲಕ != GZ_READ && state->ಬಹುಲಕ != GZ_WRITE)
+        ಹಿಂತಿರುಗಿ -1;
 
     /* check that there's no error */
-    if (state->err != Z_OK && state->err != Z_BUF_ERROR)
-        return -1;
+    ಆದರೆ (state->err != Z_OK && state->err != Z_BUF_ERROR)
+        ಹಿಂತಿರುಗಿ -1;
 
     /* can only seek from start or relative to current position */
-    if (whence != SEEK_SET && whence != SEEK_CUR)
-        return -1;
+    ಆದರೆ (whence != SEEK_SET && whence != SEEK_CUR)
+        ಹಿಂತಿರುಗಿ -1;
 
     /* compute the absolute position */
     pos = whence == SEEK_SET ? 0 :
           state->x.pos + (state->past ? 0 : state->skip);
-    if (offset > GZ_OFF_MAX - pos)
-        return -1;                          /* would overflow z_off64_t */
-    if (offset < -pos)
-        return -1;                          /* before start of file */
-    pos += offset;
+    ಆದರೆ (ಸ್ಥಾನಾಂತರ > GZ_OFF_MAX - pos)
+        ಹಿಂತಿರುಗಿ -1;                          /* would overflow z_off64_t */
+    ಆದರೆ (ಸ್ಥಾನಾಂತರ < -pos)
+        ಹಿಂತಿರುಗಿ -1;                          /* before start of file */
+    pos += ಸ್ಥಾನಾಂತರ;
 
     /* if within raw area while reading, just go there */
-    if (state->mode == GZ_READ && state->how == COPY) {
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_READ && state->how == COPY) {
         ret = LSEEK(state->fd, pos - state->x.pos - (z_off64_t)state->x.have,
                     SEEK_CUR);
-        if (ret == -1)
-            return -1;
+        ಆದರೆ (ret == -1)
+            ಹಿಂತಿರುಗಿ -1;
         state->x.have = 0;
         state->eof = 0;
         state->past = 0;
         state->skip = 0;
-        gz_error(state, Z_OK, NULL);
-        state->strm.avail_in = 0;
+        gz_error(state, Z_OK, ಖಾಲಿ);
+        state->strm.avail_ಒಳ = 0;
         state->x.pos = pos;
-        return pos;
+        ಹಿಂತಿರುಗಿ pos;
     }
 
     /* rewind if needed for back seek when reading */
-    if (pos < state->x.pos) {
-        if (state->mode != GZ_READ)         /* writing -- can't go backwards */
-            return -1;
-        if (gzrewind(file) == -1)           /* rewind, then skip to pos */
-            return -1;
+    ಆದರೆ (pos < state->x.pos) {
+        ಆದರೆ (state->ಬಹುಲಕ != GZ_READ)         /* writing -- can't go backwards */
+            ಹಿಂತಿರುಗಿ -1;
+        ಆದರೆ (gzrewind(file) == -1)           /* rewind, then skip to pos */
+            ಹಿಂತಿರುಗಿ -1;
     }
-    offset = pos - state->x.pos;
+    ಸ್ಥಾನಾಂತರ = pos - state->x.pos;
 
     /* if reading, skip what's in output buffer (one less gzgetc() check) */
-    if (state->mode == GZ_READ) {
-        n = GT_OFF(state->x.have) || (z_off64_t)state->x.have > offset ?
-            (unsigned)offset : state->x.have;
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_READ) {
+        n = GT_OFF(state->x.have) || (z_off64_t)state->x.have > ಸ್ಥಾನಾಂತರ ?
+            (ಚಿಹ್ನೆರಹಿತ)ಸ್ಥಾನಾಂತರ : state->x.have;
         state->x.have -= n;
-        state->x.next += n;
+        state->x.ಮುಂದಿನ += n;
         state->x.pos += n;
-        offset -= n;
+        ಸ್ಥಾನಾಂತರ -= n;
     }
 
     /* request skip (if not zero) */
-    state->skip = offset;
-    return pos;
+    state->skip = ಸ್ಥಾನಾಂತರ;
+    ಹಿಂತಿರುಗಿ pos;
 }
 
 /* -- see zlib.h -- */
-z_off_t ZEXPORT gzseek(gzFile file, z_off_t offset, int whence) {
+z_off_t ZEXPORT gzseek(gzFile file, z_off_t ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ whence) {
     z_off64_t ret;
 
-    ret = gzseek64(file, (z_off64_t)offset, whence);
-    return ret == (z_off_t)ret ? (z_off_t)ret : -1;
+    ret = gzseek64(file, (z_off64_t)ಸ್ಥಾನಾಂತರ, whence);
+    ಹಿಂತಿರುಗಿ ret == (z_off_t)ret ? (z_off_t)ret : -1;
 }
 
 /* -- see zlib.h -- */
@@ -446,14 +446,14 @@ z_off64_t ZEXPORT gztell64(gzFile file) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return -1;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return -1;
+    ಆದರೆ (state->ಬಹುಲಕ != GZ_READ && state->ಬಹುಲಕ != GZ_WRITE)
+        ಹಿಂತಿರುಗಿ -1;
 
     /* return position */
-    return state->x.pos + (state->past ? 0 : state->skip);
+    ಹಿಂತಿರುಗಿ state->x.pos + (state->past ? 0 : state->skip);
 }
 
 /* -- see zlib.h -- */
@@ -461,28 +461,28 @@ z_off_t ZEXPORT gztell(gzFile file) {
     z_off64_t ret;
 
     ret = gztell64(file);
-    return ret == (z_off_t)ret ? (z_off_t)ret : -1;
+    ಹಿಂತಿರುಗಿ ret == (z_off_t)ret ? (z_off_t)ret : -1;
 }
 
 /* -- see zlib.h -- */
 z_off64_t ZEXPORT gzoffset64(gzFile file) {
-    z_off64_t offset;
+    z_off64_t ಸ್ಥಾನಾಂತರ;
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return -1;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ -1;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return -1;
+    ಆದರೆ (state->ಬಹುಲಕ != GZ_READ && state->ಬಹುಲಕ != GZ_WRITE)
+        ಹಿಂತಿರುಗಿ -1;
 
     /* compute and return effective offset in file */
-    offset = LSEEK(state->fd, 0, SEEK_CUR);
-    if (offset == -1)
-        return -1;
-    if (state->mode == GZ_READ)             /* reading */
-        offset -= state->strm.avail_in;     /* don't count buffered input */
-    return offset;
+    ಸ್ಥಾನಾಂತರ = LSEEK(state->fd, 0, SEEK_CUR);
+    ಆದರೆ (ಸ್ಥಾನಾಂತರ == -1)
+        ಹಿಂತಿರುಗಿ -1;
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_READ)             /* reading */
+        ಸ್ಥಾನಾಂತರ -= state->strm.avail_ಒಳ;     /* don't count buffered input */
+    ಹಿಂತಿರುಗಿ ಸ್ಥಾನಾಂತರ;
 }
 
 /* -- see zlib.h -- */
@@ -490,59 +490,59 @@ z_off_t ZEXPORT gzoffset(gzFile file) {
     z_off64_t ret;
 
     ret = gzoffset64(file);
-    return ret == (z_off_t)ret ? (z_off_t)ret : -1;
+    ಹಿಂತಿರುಗಿ ret == (z_off_t)ret ? (z_off_t)ret : -1;
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzeof(gzFile file) {
+ಪೂರ್ಣಾಂಕ ZEXPORT gzeof(gzFile file) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return 0;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ 0;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return 0;
+    ಆದರೆ (state->ಬಹುಲಕ != GZ_READ && state->ಬಹುಲಕ != GZ_WRITE)
+        ಹಿಂತಿರುಗಿ 0;
 
     /* return end-of-file state */
-    return state->mode == GZ_READ ? state->past : 0;
+    ಹಿಂತಿರುಗಿ state->ಬಹುಲಕ == GZ_READ ? state->past : 0;
 }
 
 /* -- see zlib.h -- */
-const char * ZEXPORT gzerror(gzFile file, int *errnum) {
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ * ZEXPORT gzerror(gzFile file, ಪೂರ್ಣಾಂಕ *errnum) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return NULL;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return NULL;
+    ಆದರೆ (state->ಬಹುಲಕ != GZ_READ && state->ಬಹುಲಕ != GZ_WRITE)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
     /* return error information */
-    if (errnum != NULL)
+    ಆದರೆ (errnum != ಖಾಲಿ)
         *errnum = state->err;
-    return state->err == Z_MEM_ERROR ? "out of memory" :
-                                       (state->msg == NULL ? "" : state->msg);
+    ಹಿಂತಿರುಗಿ state->err == Z_MEM_ERROR ? "out of memory" :
+                                       (state->ಸಂದೇಶ == ಖಾಲಿ ? "" : state->ಸಂದೇಶ);
 }
 
 /* -- see zlib.h -- */
-void ZEXPORT gzclearerr(gzFile file) {
+ಶೂನ್ಯ ZEXPORT gzclearerr(gzFile file) {
     gz_statep state;
 
     /* get internal structure and check integrity */
-    if (file == NULL)
-        return;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ;
     state = (gz_statep)file;
-    if (state->mode != GZ_READ && state->mode != GZ_WRITE)
-        return;
+    ಆದರೆ (state->ಬಹುಲಕ != GZ_READ && state->ಬಹುಲಕ != GZ_WRITE)
+        ಹಿಂತಿರುಗಿ;
 
     /* clear error and end-of-file */
-    if (state->mode == GZ_READ) {
+    ಆದರೆ (state->ಬಹುಲಕ == GZ_READ) {
         state->eof = 0;
         state->past = 0;
     }
-    gz_error(state, Z_OK, NULL);
+    gz_error(state, Z_OK, ಖಾಲಿ);
 }
 
 /* Create an error message in allocated memory and set state->err and
@@ -551,58 +551,58 @@ void ZEXPORT gzclearerr(gzFile file) {
    memory).  Simply save the error message as a static string.  If there is an
    allocation failure constructing the error message, then convert the error to
    out of memory. */
-void ZLIB_INTERNAL gz_error(gz_statep state, int err, const char *msg) {
+ಶೂನ್ಯ ZLIB_ಆಂತರಿಕ gz_error(gz_statep state, ಪೂರ್ಣಾಂಕ err, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಂದೇಶ) {
     /* free previously allocated message and clear */
-    if (state->msg != NULL) {
-        if (state->err != Z_MEM_ERROR)
-            free(state->msg);
-        state->msg = NULL;
+    ಆದರೆ (state->ಸಂದೇಶ != ಖಾಲಿ) {
+        ಆದರೆ (state->err != Z_MEM_ERROR)
+            ಬಿಡುಗಡೆ(state->ಸಂದೇಶ);
+        state->ಸಂದೇಶ = ಖಾಲಿ;
     }
 
     /* if fatal, set state->x.have to 0 so that the gzgetc() macro fails */
-    if (err != Z_OK && err != Z_BUF_ERROR && !state->again)
+    ಆದರೆ (err != Z_OK && err != Z_BUF_ERROR && !state->again)
         state->x.have = 0;
 
     /* set error code, and if no message, then done */
     state->err = err;
-    if (msg == NULL)
-        return;
+    ಆದರೆ (ಸಂದೇಶ == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ;
 
     /* for an out of memory error, return literal string when requested */
-    if (err == Z_MEM_ERROR)
-        return;
+    ಆದರೆ (err == Z_MEM_ERROR)
+        ಹಿಂತಿರುಗಿ;
 
     /* construct error message with path */
-    if ((state->msg = (char *)malloc(strlen(state->path) + strlen(msg) + 3)) ==
-            NULL) {
+    ಆದರೆ ((state->ಸಂದೇಶ = (ಅಕ್ಷರ *)ಸ್ಮರಣೆ_ಕೊಡು(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(state->ಮಾರ್ಗ) + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಸಂದೇಶ) + 3)) ==
+            ಖಾಲಿ) {
         state->err = Z_MEM_ERROR;
-        return;
+        ಹಿಂತಿರುಗಿ;
     }
-#if !defined(NO_snprintf) && !defined(NO_vsnprintf)
-    (void)snprintf(state->msg, strlen(state->path) + strlen(msg) + 3,
-                   "%s%s%s", state->path, ": ", msg);
-#else
-    strcpy(state->msg, state->path);
-    strcat(state->msg, ": ");
-    strcat(state->msg, msg);
-#endif
+#ಆದರೆ !defined(NO_snprintf) && !defined(NO_vsnprintf)
+    (ಶೂನ್ಯ)snprintf(state->ಸಂದೇಶ, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(state->ಮಾರ್ಗ) + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಸಂದೇಶ) + 3,
+                   "%s%s%s", state->ಮಾರ್ಗ, ": ", ಸಂದೇಶ);
+#ಇಲ್ಲದಿದ್ದರೆ
+    strcpy(state->ಸಂದೇಶ, state->ಮಾರ್ಗ);
+    strcat(state->ಸಂದೇಶ, ": ");
+    strcat(state->ಸಂದೇಶ, ಸಂದೇಶ);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
 /* portably return maximum value for an int (when limits.h presumed not
    available) -- we need to do this to cover cases where 2's complement not
    used, since C standard permits 1's complement and sign-bit representations,
    otherwise we could just use ((unsigned)-1) >> 1 */
-unsigned ZLIB_INTERNAL gz_intmax(void) {
-#ifdef INT_MAX
-    return INT_MAX;
-#else
-    unsigned p = 1, q;
+ಚಿಹ್ನೆರಹಿತ ZLIB_ಆಂತರಿಕ gz_intmax(ಶೂನ್ಯ) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ
+    ಹಿಂತಿರುಗಿ ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಚಿಹ್ನೆರಹಿತ p = 1, q;
 
-    do {
+    ಮಾಡು {
         q = p;
         p <<= 1;
         p++;
-    } while (p > q);
-    return q >> 1;
-#endif
+    } ಆಗ (p > q);
+    ಹಿಂತಿರುಗಿ q >> 1;
+#ಆದರೆ_ಅಂತ್ಯ
 }

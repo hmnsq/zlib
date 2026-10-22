@@ -15,43 +15,43 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#ಆದರೆ defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "puff.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#ಆದರೆ defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define ಗಣ_ದ್ವಿಮಾನ_ಬಹುಲಕ(file) setmode(fileno(file), O_ದ್ವಿಮಾನ)
+#ಇಲ್ಲದಿದ್ದರೆ
+#  define ಗಣ_ದ್ವಿಮಾನ_ಬಹುಲಕ(file)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define local static
+#ವ್ಯಾಖ್ಯಾನಿಸು local ಸ್ಥಿರ
 
 /* Return size times approximately the cube root of 2, keeping the result as 1,
    3, or 5 times a power of 2 -- the result is always > size, until the result
    is the maximum value of an unsigned long, where it remains.  This is useful
    to keep reallocations less than ~33% over the actual data. */
-local size_t bythirds(size_t size)
+local size_t bythirds(size_t ಗಾತ್ರ_2)
 {
-    int n;
+    ಪೂರ್ಣಾಂಕ n;
     size_t m;
 
-    m = size;
-    for (n = 0; m; n++)
+    m = ಗಾತ್ರ_2;
+    ಗಾಗಿ (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    ಆದರೆ (n < 3)
+        ಹಿಂತಿರುಗಿ ಗಾತ್ರ_2 + 1;
     n -= 3;
-    m = size >> n;
+    m = ಗಾತ್ರ_2 >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    ಹಿಂತಿರುಗಿ m > ಗಾತ್ರ_2 ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,109 +60,109 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local ಶೂನ್ಯ *ತುಂಬು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, size_t *len)
 {
-    size_t size;
-    void *buf, *swap;
-    FILE *in;
+    size_t ಗಾತ್ರ_2;
+    ಶೂನ್ಯ *buf, *ಅದಲುಬದಲು;
+    FILE *ಒಳ;
 
     *len = 0;
-    buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
-    in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
-            size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
-                free(buf);
-                buf = NULL;
-                break;
+    buf = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2 = 4096);
+    ಆದರೆ (buf == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+    ಒಳ = name == ಖಾಲಿ ? stdin : fopen(name, "rb");
+    ಆದರೆ (ಒಳ != ಖಾಲಿ) {
+        ಗಾಗಿ (;;) {
+            *len += fread((ಅಕ್ಷರ *)buf + *len, 1, ಗಾತ್ರ_2 - *len, ಒಳ);
+            ಆದರೆ (*len < ಗಾತ್ರ_2) ನಿಲ್ಲಿಸು;
+            ಗಾತ್ರ_2 = bythirds(ಗಾತ್ರ_2);
+            ಆದರೆ (ಗಾತ್ರ_2 == *len || (ಅದಲುಬದಲು = realloc(buf, ಗಾತ್ರ_2)) == ಖಾಲಿ) {
+                ಬಿಡುಗಡೆ(buf);
+                buf = ಖಾಲಿ;
+                ನಿಲ್ಲಿಸು;
             }
-            buf = swap;
+            buf = ಅದಲುಬದಲು;
         }
-        fclose(in);
+        fclose(ಒಳ);
     }
-    return buf;
+    ಹಿಂತಿರುಗಿ buf;
 }
 
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-    int ret, put = 0, fail = 0;
-    unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
+    ಪೂರ್ಣಾಂಕ ret, put = 0, fail = 0;
+    ಚಿಹ್ನೆರಹಿತ skip = 0;
+    ಅಕ್ಷರ *arg, *name = ಖಾಲಿ;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *ಮೂಲ = ಖಾಲಿ, *dest;
     size_t len = 0;
-    unsigned long sourcelen, destlen;
+    ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    ಆಗ (arg = *++argv, --argc)
+        ಆದರೆ (arg[0] == '-') {
+            ಆದರೆ (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
-                skip = (unsigned)atoi(arg + 1);
-            else {
+            ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (arg[1] >= '0' && arg[1] <= '9')
+                skip = (ಚಿಹ್ನೆರಹಿತ)atoi(arg + 1);
+            ಇಲ್ಲದಿದ್ದರೆ {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                ಹಿಂತಿರುಗಿ 3;
             }
         }
-        else if (name != NULL) {
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (name != ಖಾಲಿ) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            ಹಿಂತಿರುಗಿ 3;
         }
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
             name = arg;
-    source = load(name, &len);
-    if (source == NULL) {
+    ಮೂಲ = ತುಂಬು(name, &len);
+    ಆದರೆ (ಮೂಲ == ಖಾಲಿ) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        ಹಿಂತಿರುಗಿ 4;
     }
-    if (len == 0) {
+    ಆದರೆ (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
-                name == NULL ? "<stdin>" : name);
-        free(source);
-        return 3;
+                name == ಖಾಲಿ ? "<stdin>" : name);
+        ಬಿಡುಗಡೆ(ಮೂಲ);
+        ಹಿಂತಿರುಗಿ 3;
     }
-    if (skip >= len) {
+    ಆದರೆ (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
-        free(source);
-        return 3;
+        ಬಿಡುಗಡೆ(ಮೂಲ);
+        ಹಿಂತಿರುಗಿ 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
-    sourcelen = (unsigned long)len;
-    ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    sourcelen = (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)len;
+    ret = puff(NIL, &destlen, ಮೂಲ + skip, &sourcelen);
+    ಆದರೆ (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    ಇಲ್ಲದಿದ್ದರೆ {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        ಆದರೆ (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    ಆದರೆ (put && ret == 0) {
+        ಆದರೆ (fail)
             destlen >>= 1;
-        dest = malloc(destlen);
-        if (dest == NULL) {
+        dest = ಸ್ಮರಣೆ_ಕೊಡು(destlen);
+        ಆದರೆ (dest == ಖಾಲಿ) {
             fprintf(stderr, "memory allocation failure\n");
-            free(source);
-            return 4;
+            ಬಿಡುಗಡೆ(ಮೂಲ);
+            ಹಿಂತಿರುಗಿ 4;
         }
-        puff(dest, &destlen, source + skip, &sourcelen);
-        SET_BINARY_MODE(stdout);
+        puff(dest, &destlen, ಮೂಲ + skip, &sourcelen);
+        ಗಣ_ದ್ವಿಮಾನ_ಬಹುಲಕ(stdout);
         fwrite(dest, 1, destlen, stdout);
-        free(dest);
+        ಬಿಡುಗಡೆ(dest);
     }
 
     /* clean up */
-    free(source);
-    return ret;
+    ಬಿಡುಗಡೆ(ಮೂಲ);
+    ಹಿಂತಿರುಗಿ ret;
 }

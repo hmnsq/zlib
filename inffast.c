@@ -3,14 +3,14 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "zutil.h"
-#include "inftrees.h"
-#include "inflate.h"
-#include "inffast.h"
+#ಅನ್ತರ್ಭಾವ "zutil.h"
+#ಅನ್ತರ್ಭಾವ "inftrees.h"
+#ಅನ್ತರ್ಭಾವ "inflate.h"
+#ಅನ್ತರ್ಭಾವ "inffast.h"
 
-#ifdef ASMINF
-#  pragma message("Assembler code may have bugs -- use at your own risk")
-#else
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ASMINF
+#  pragma ಸಂದೇಶ_2("Assembler code may have bugs -- use at your own risk")
+#ಇಲ್ಲದಿದ್ದರೆ
 
 /*
    Decode literal, length, and distance codes and write out the resulting
@@ -47,49 +47,49 @@
       requires strm->avail_out >= 258 for each loop to avoid checking for
       output space.
  */
-void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
-    struct inflate_state FAR *state;
-    z_const unsigned char FAR *in;      /* local strm->next_in */
-    z_const unsigned char FAR *last;    /* have enough input while in < last */
-    unsigned char FAR *out;     /* local strm->next_out */
-    unsigned char FAR *beg;     /* inflate()'s initial strm->next_out */
-    unsigned char FAR *end;     /* while out < end, enough space available */
-#ifdef INFLATE_STRICT
-    unsigned dmax;              /* maximum distance from zlib header */
-#endif
-    unsigned wsize;             /* window size or zero if not using window */
-    unsigned whave;             /* valid bytes in the window */
-    unsigned wnext;             /* window write index */
-    unsigned char FAR *window;  /* allocated sliding window, if wsize != 0 */
-    unsigned long hold;         /* local strm->hold */
-    unsigned bits;              /* local strm->bits */
-    code const FAR *lcode;      /* local strm->lencode */
-    code const FAR *dcode;      /* local strm->distcode */
-    unsigned lmask;             /* mask for first level of length codes */
-    unsigned dmask;             /* mask for first level of distance codes */
-    code const *here;           /* retrieved table entry */
-    unsigned op;                /* code bits, operation, extra bits, or */
+ಶೂನ್ಯ ZLIB_ಆಂತರಿಕ inflate_fast(z_streamp strm, ಚಿಹ್ನೆರಹಿತ ಆರಂಭ) {
+    ರಚನೆ inflate_state FAR *state;
+    z_const ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *ಒಳ;      /* local strm->next_in */
+    z_const ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *ಕೊನೆಯ;    /* have enough input while in < last */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *ಹೊರಹೋಗು;     /* local strm->next_out */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *beg;     /* inflate()'s initial strm->next_out */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *ಕೊನೆ;     /* while out < end, enough space available */
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ INFLATE_STRICT
+    ಚಿಹ್ನೆರಹಿತ dmax;              /* maximum distance from zlib header */
+#ಆದರೆ_ಅಂತ್ಯ
+    ಚಿಹ್ನೆರಹಿತ wsize;             /* window size or zero if not using window */
+    ಚಿಹ್ನೆರಹಿತ whave;             /* valid bytes in the window */
+    ಚಿಹ್ನೆರಹಿತ wnext;             /* window write index */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *ಕಿಟಕಿ;  /* allocated sliding window, if wsize != 0 */
+    ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ hold;         /* local strm->hold */
+    ಚಿಹ್ನೆರಹಿತ ಬಿಟ್ಟುಗಳು;              /* local strm->bits */
+    ಸಂಕೇತ_2 ಸ್ಥಿರಾಂಕ FAR *lcode;      /* local strm->lencode */
+    ಸಂಕೇತ_2 ಸ್ಥಿರಾಂಕ FAR *dcode;      /* local strm->distcode */
+    ಚಿಹ್ನೆರಹಿತ lmask;             /* mask for first level of length codes */
+    ಚಿಹ್ನೆರಹಿತ dmask;             /* mask for first level of distance codes */
+    ಸಂಕೇತ_2 ಸ್ಥಿರಾಂಕ *ಇಲ್ಲಿ;           /* retrieved table entry */
+    ಚಿಹ್ನೆರಹಿತ op;                /* code bits, operation, extra bits, or */
                                 /*  window position, window bytes to copy */
-    unsigned len;               /* match length, unused bytes */
-    unsigned dist;              /* match distance */
-    unsigned char FAR *from;    /* where to copy match from */
+    ಚಿಹ್ನೆರಹಿತ len;               /* match length, unused bytes */
+    ಚಿಹ್ನೆರಹಿತ dist;              /* match distance */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ FAR *from;    /* where to copy match from */
 
     /* copy state to local variables */
-    state = (struct inflate_state FAR *)strm->state;
-    in = strm->next_in;
-    last = in + (strm->avail_in - 5);
-    out = strm->next_out;
-    beg = out - (start - strm->avail_out);
-    end = out + (strm->avail_out - 257);
-#ifdef INFLATE_STRICT
+    state = (ರಚನೆ inflate_state FAR *)strm->state;
+    ಒಳ = strm->ಮುಂದಿನ_ಒಳ;
+    ಕೊನೆಯ = ಒಳ + (strm->avail_ಒಳ - 5);
+    ಹೊರಹೋಗು = strm->ಮುಂದಿನ_ಹೊರಹೋಗು;
+    beg = ಹೊರಹೋಗು - (ಆರಂಭ - strm->avail_ಹೊರಹೋಗು);
+    ಕೊನೆ = ಹೊರಹೋಗು + (strm->avail_ಹೊರಹೋಗು - 257);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ INFLATE_STRICT
     dmax = state->dmax;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
     wsize = state->wsize;
     whave = state->whave;
     wnext = state->wnext;
-    window = state->window;
+    ಕಿಟಕಿ = state->ಕಿಟಕಿ;
     hold = state->hold;
-    bits = state->bits;
+    ಬಿಟ್ಟುಗಳು = state->ಬಿಟ್ಟುಗಳು;
     lcode = state->lencode;
     dcode = state->distcode;
     lmask = (1U << state->lenbits) - 1;
@@ -97,211 +97,211 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
 
     /* decode literals and length/distances until end-of-block or not enough
        input data or output space */
-    do {
-        if (bits < 15) {
-            hold += (unsigned long)(*in++) << bits;
-            bits += 8;
-            hold += (unsigned long)(*in++) << bits;
-            bits += 8;
+    ಮಾಡು {
+        ಆದರೆ (ಬಿಟ್ಟುಗಳು < 15) {
+            hold += (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(*ಒಳ++) << ಬಿಟ್ಟುಗಳು;
+            ಬಿಟ್ಟುಗಳು += 8;
+            hold += (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(*ಒಳ++) << ಬಿಟ್ಟುಗಳು;
+            ಬಿಟ್ಟುಗಳು += 8;
         }
-        here = lcode + (hold & lmask);
+        ಇಲ್ಲಿ = lcode + (hold & lmask);
       dolen:
-        op = (unsigned)(here->bits);
+        op = (ಚಿಹ್ನೆರಹಿತ)(ಇಲ್ಲಿ->ಬಿಟ್ಟುಗಳು);
         hold >>= op;
-        bits -= op;
-        op = (unsigned)(here->op);
-        if (op == 0) {                          /* literal */
-            Tracevv((stderr, here->val >= 0x20 && here->val < 0x7f ?
+        ಬಿಟ್ಟುಗಳು -= op;
+        op = (ಚಿಹ್ನೆರಹಿತ)(ಇಲ್ಲಿ->op);
+        ಆದರೆ (op == 0) {                          /* literal */
+            Tracevv((stderr, ಇಲ್ಲಿ->val >= 0x20 && ಇಲ್ಲಿ->val < 0x7f ?
                     "inflate:         literal '%c'\n" :
-                    "inflate:         literal 0x%02x\n", here->val));
-            *out++ = (unsigned char)(here->val);
+                    "inflate:         literal 0x%02x\n", ಇಲ್ಲಿ->val));
+            *ಹೊರಹೋಗು++ = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(ಇಲ್ಲಿ->val);
         }
-        else if (op & 16) {                     /* length base */
-            len = (unsigned)(here->val);
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (op & 16) {                     /* length base */
+            len = (ಚಿಹ್ನೆರಹಿತ)(ಇಲ್ಲಿ->val);
             op &= 15;                           /* number of extra bits */
-            if (op) {
-                if (bits < op) {
-                    hold += (unsigned long)(*in++) << bits;
-                    bits += 8;
+            ಆದರೆ (op) {
+                ಆದರೆ (ಬಿಟ್ಟುಗಳು < op) {
+                    hold += (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(*ಒಳ++) << ಬಿಟ್ಟುಗಳು;
+                    ಬಿಟ್ಟುಗಳು += 8;
                 }
-                len += (unsigned)hold & ((1U << op) - 1);
+                len += (ಚಿಹ್ನೆರಹಿತ)hold & ((1U << op) - 1);
                 hold >>= op;
-                bits -= op;
+                ಬಿಟ್ಟುಗಳು -= op;
             }
             Tracevv((stderr, "inflate:         length %u\n", len));
-            if (bits < 15) {
-                hold += (unsigned long)(*in++) << bits;
-                bits += 8;
-                hold += (unsigned long)(*in++) << bits;
-                bits += 8;
+            ಆದರೆ (ಬಿಟ್ಟುಗಳು < 15) {
+                hold += (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(*ಒಳ++) << ಬಿಟ್ಟುಗಳು;
+                ಬಿಟ್ಟುಗಳು += 8;
+                hold += (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(*ಒಳ++) << ಬಿಟ್ಟುಗಳು;
+                ಬಿಟ್ಟುಗಳು += 8;
             }
-            here = dcode + (hold & dmask);
+            ಇಲ್ಲಿ = dcode + (hold & dmask);
           dodist:
-            op = (unsigned)(here->bits);
+            op = (ಚಿಹ್ನೆರಹಿತ)(ಇಲ್ಲಿ->ಬಿಟ್ಟುಗಳು);
             hold >>= op;
-            bits -= op;
-            op = (unsigned)(here->op);
-            if (op & 16) {                      /* distance base */
-                dist = (unsigned)(here->val);
+            ಬಿಟ್ಟುಗಳು -= op;
+            op = (ಚಿಹ್ನೆರಹಿತ)(ಇಲ್ಲಿ->op);
+            ಆದರೆ (op & 16) {                      /* distance base */
+                dist = (ಚಿಹ್ನೆರಹಿತ)(ಇಲ್ಲಿ->val);
                 op &= 15;                       /* number of extra bits */
-                if (bits < op) {
-                    hold += (unsigned long)(*in++) << bits;
-                    bits += 8;
-                    if (bits < op) {
-                        hold += (unsigned long)(*in++) << bits;
-                        bits += 8;
+                ಆದರೆ (ಬಿಟ್ಟುಗಳು < op) {
+                    hold += (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(*ಒಳ++) << ಬಿಟ್ಟುಗಳು;
+                    ಬಿಟ್ಟುಗಳು += 8;
+                    ಆದರೆ (ಬಿಟ್ಟುಗಳು < op) {
+                        hold += (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(*ಒಳ++) << ಬಿಟ್ಟುಗಳು;
+                        ಬಿಟ್ಟುಗಳು += 8;
                     }
                 }
-                dist += (unsigned)hold & ((1U << op) - 1);
-#ifdef INFLATE_STRICT
-                if (dist > dmax) {
-                    strm->msg = (z_const char *)
+                dist += (ಚಿಹ್ನೆರಹಿತ)hold & ((1U << op) - 1);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ INFLATE_STRICT
+                ಆದರೆ (dist > dmax) {
+                    strm->ಸಂದೇಶ = (z_const ಅಕ್ಷರ *)
                         "invalid distance too far back";
-                    state->mode = BAD;
-                    break;
+                    state->ಬಹುಲಕ = BAD;
+                    ನಿಲ್ಲಿಸು;
                 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
                 hold >>= op;
-                bits -= op;
+                ಬಿಟ್ಟುಗಳು -= op;
                 Tracevv((stderr, "inflate:         distance %u\n", dist));
-                op = (unsigned)(out - beg);     /* max distance in output */
-                if (dist > op) {                /* see if copy from window */
+                op = (ಚಿಹ್ನೆರಹಿತ)(ಹೊರಹೋಗು - beg);     /* max distance in output */
+                ಆದರೆ (dist > op) {                /* see if copy from window */
                     op = dist - op;             /* distance back in window */
-                    if (op > whave) {
-                        if (state->sane) {
-                            strm->msg = (z_const char *)
+                    ಆದರೆ (op > whave) {
+                        ಆದರೆ (state->sane) {
+                            strm->ಸಂದೇಶ = (z_const ಅಕ್ಷರ *)
                                 "invalid distance too far back";
-                            state->mode = BAD;
-                            break;
+                            state->ಬಹುಲಕ = BAD;
+                            ನಿಲ್ಲಿಸು;
                         }
-#ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-                        if (len <= op - whave) {
-                            do {
-                                *out++ = 0;
-                            } while (--len);
-                            continue;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ INFLATE_ALLOW_INVALID_ದೂರ_TOOFAR_ARRR
+                        ಆದರೆ (len <= op - whave) {
+                            ಮಾಡು {
+                                *ಹೊರಹೋಗು++ = 0;
+                            } ಆಗ (--len);
+                            ಮುಂದುವರಿ;
                         }
                         len -= op - whave;
-                        do {
-                            *out++ = 0;
-                        } while (--op > whave);
-                        if (op == 0) {
-                            from = out - dist;
-                            do {
-                                *out++ = *from++;
-                            } while (--len);
-                            continue;
+                        ಮಾಡು {
+                            *ಹೊರಹೋಗು++ = 0;
+                        } ಆಗ (--op > whave);
+                        ಆದರೆ (op == 0) {
+                            from = ಹೊರಹೋಗು - dist;
+                            ಮಾಡು {
+                                *ಹೊರಹೋಗು++ = *from++;
+                            } ಆಗ (--len);
+                            ಮುಂದುವರಿ;
                         }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
                     }
-                    from = window;
-                    if (wnext == 0) {           /* very common case */
+                    from = ಕಿಟಕಿ;
+                    ಆದರೆ (wnext == 0) {           /* very common case */
                         from += wsize - op;
-                        if (op < len) {         /* some from window */
+                        ಆದರೆ (op < len) {         /* some from window */
                             len -= op;
-                            do {
-                                *out++ = *from++;
-                            } while (--op);
-                            from = out - dist;  /* rest from output */
+                            ಮಾಡು {
+                                *ಹೊರಹೋಗು++ = *from++;
+                            } ಆಗ (--op);
+                            from = ಹೊರಹೋಗು - dist;  /* rest from output */
                         }
                     }
-                    else if (wnext < op) {      /* wrap around window */
+                    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (wnext < op) {      /* wrap around window */
                         from += wsize + wnext - op;
                         op -= wnext;
-                        if (op < len) {         /* some from end of window */
+                        ಆದರೆ (op < len) {         /* some from end of window */
                             len -= op;
-                            do {
-                                *out++ = *from++;
-                            } while (--op);
-                            from = window;
-                            if (wnext < len) {  /* some from start of window */
+                            ಮಾಡು {
+                                *ಹೊರಹೋಗು++ = *from++;
+                            } ಆಗ (--op);
+                            from = ಕಿಟಕಿ;
+                            ಆದರೆ (wnext < len) {  /* some from start of window */
                                 op = wnext;
                                 len -= op;
-                                do {
-                                    *out++ = *from++;
-                                } while (--op);
-                                from = out - dist;      /* rest from output */
+                                ಮಾಡು {
+                                    *ಹೊರಹೋಗು++ = *from++;
+                                } ಆಗ (--op);
+                                from = ಹೊರಹೋಗು - dist;      /* rest from output */
                             }
                         }
                     }
-                    else {                      /* contiguous in window */
+                    ಇಲ್ಲದಿದ್ದರೆ {                      /* contiguous in window */
                         from += wnext - op;
-                        if (op < len) {         /* some from window */
+                        ಆದರೆ (op < len) {         /* some from window */
                             len -= op;
-                            do {
-                                *out++ = *from++;
-                            } while (--op);
-                            from = out - dist;  /* rest from output */
+                            ಮಾಡು {
+                                *ಹೊರಹೋಗು++ = *from++;
+                            } ಆಗ (--op);
+                            from = ಹೊರಹೋಗು - dist;  /* rest from output */
                         }
                     }
-                    while (len > 2) {
-                        *out++ = *from++;
-                        *out++ = *from++;
-                        *out++ = *from++;
+                    ಆಗ (len > 2) {
+                        *ಹೊರಹೋಗು++ = *from++;
+                        *ಹೊರಹೋಗು++ = *from++;
+                        *ಹೊರಹೋಗು++ = *from++;
                         len -= 3;
                     }
-                    if (len) {
-                        *out++ = *from++;
-                        if (len > 1)
-                            *out++ = *from++;
+                    ಆದರೆ (len) {
+                        *ಹೊರಹೋಗು++ = *from++;
+                        ಆದರೆ (len > 1)
+                            *ಹೊರಹೋಗು++ = *from++;
                     }
                 }
-                else {
-                    from = out - dist;          /* copy direct from output */
-                    do {                        /* minimum length is three */
-                        *out++ = *from++;
-                        *out++ = *from++;
-                        *out++ = *from++;
+                ಇಲ್ಲದಿದ್ದರೆ {
+                    from = ಹೊರಹೋಗು - dist;          /* copy direct from output */
+                    ಮಾಡು {                        /* minimum length is three */
+                        *ಹೊರಹೋಗು++ = *from++;
+                        *ಹೊರಹೋಗು++ = *from++;
+                        *ಹೊರಹೋಗು++ = *from++;
                         len -= 3;
-                    } while (len > 2);
-                    if (len) {
-                        *out++ = *from++;
-                        if (len > 1)
-                            *out++ = *from++;
+                    } ಆಗ (len > 2);
+                    ಆದರೆ (len) {
+                        *ಹೊರಹೋಗು++ = *from++;
+                        ಆದರೆ (len > 1)
+                            *ಹೊರಹೋಗು++ = *from++;
                     }
                 }
             }
-            else if ((op & 64) == 0) {          /* 2nd level distance code */
-                here = dcode + here->val + (hold & ((1U << op) - 1));
-                goto dodist;
+            ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((op & 64) == 0) {          /* 2nd level distance code */
+                ಇಲ್ಲಿ = dcode + ಇಲ್ಲಿ->val + (hold & ((1U << op) - 1));
+                ಹೋಗು dodist;
             }
-            else {
-                strm->msg = (z_const char *)"invalid distance code";
-                state->mode = BAD;
-                break;
+            ಇಲ್ಲದಿದ್ದರೆ {
+                strm->ಸಂದೇಶ = (z_const ಅಕ್ಷರ *)"invalid distance code";
+                state->ಬಹುಲಕ = BAD;
+                ನಿಲ್ಲಿಸು;
             }
         }
-        else if ((op & 64) == 0) {              /* 2nd level length code */
-            here = lcode + here->val + (hold & ((1U << op) - 1));
-            goto dolen;
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((op & 64) == 0) {              /* 2nd level length code */
+            ಇಲ್ಲಿ = lcode + ಇಲ್ಲಿ->val + (hold & ((1U << op) - 1));
+            ಹೋಗು dolen;
         }
-        else if (op & 32) {                     /* end-of-block */
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (op & 32) {                     /* end-of-block */
             Tracevv((stderr, "inflate:         end of block\n"));
-            state->mode = TYPE;
-            break;
+            state->ಬಹುಲಕ = TYPE;
+            ನಿಲ್ಲಿಸು;
         }
-        else {
-            strm->msg = (z_const char *)"invalid literal/length code";
-            state->mode = BAD;
-            break;
+        ಇಲ್ಲದಿದ್ದರೆ {
+            strm->ಸಂದೇಶ = (z_const ಅಕ್ಷರ *)"invalid literal/length code";
+            state->ಬಹುಲಕ = BAD;
+            ನಿಲ್ಲಿಸು;
         }
-    } while (in < last && out < end);
+    } ಆಗ (ಒಳ < ಕೊನೆಯ && ಹೊರಹೋಗು < ಕೊನೆ);
 
     /* return unused bytes (on entry, bits < 8, so in won't go too far back) */
-    len = bits >> 3;
-    in -= len;
-    bits -= len << 3;
-    hold &= (1U << bits) - 1;
+    len = ಬಿಟ್ಟುಗಳು >> 3;
+    ಒಳ -= len;
+    ಬಿಟ್ಟುಗಳು -= len << 3;
+    hold &= (1U << ಬಿಟ್ಟುಗಳು) - 1;
 
     /* update state and return */
-    strm->next_in = in;
-    strm->next_out = out;
-    strm->avail_in = (unsigned)(in < last ? 5 + (last - in) : 5 - (in - last));
-    strm->avail_out = (unsigned)(out < end ?
-                                 257 + (end - out) : 257 - (out - end));
+    strm->ಮುಂದಿನ_ಒಳ = ಒಳ;
+    strm->ಮುಂದಿನ_ಹೊರಹೋಗು = ಹೊರಹೋಗು;
+    strm->avail_ಒಳ = (ಚಿಹ್ನೆರಹಿತ)(ಒಳ < ಕೊನೆಯ ? 5 + (ಕೊನೆಯ - ಒಳ) : 5 - (ಒಳ - ಕೊನೆಯ));
+    strm->avail_ಹೊರಹೋಗು = (ಚಿಹ್ನೆರಹಿತ)(ಹೊರಹೋಗು < ಕೊನೆ ?
+                                 257 + (ಕೊನೆ - ಹೊರಹೋಗು) : 257 - (ಹೊರಹೋಗು - ಕೊನೆ));
     state->hold = hold;
-    state->bits = bits;
-    return;
+    state->ಬಿಟ್ಟುಗಳು = ಬಿಟ್ಟುಗಳು;
+    ಹಿಂತಿರುಗಿ;
 }
 
 /*
@@ -318,4 +318,4 @@ void ZLIB_INTERNAL inflate_fast(z_streamp strm, unsigned start) {
    - Moving len -= 3 statement into middle of loop
  */
 
-#endif /* !ASMINF */
+#ಆದರೆ_ಅಂತ್ಯ /* !ASMINF */

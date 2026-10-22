@@ -5,53 +5,53 @@
  * There exist compilers with limits.h, but not stdint.h or inttypes.h.
  */
 
-#ifndef INTS_H
-#define INTS_H
-#include <limits.h>
-#if defined(UCHAR_MAX) && UCHAR_MAX == 0xff
-    typedef signed char i8_t;
-    typedef unsigned char ui8_t;
-#else
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ INTS_H
+#ವ್ಯಾಖ್ಯಾನಿಸು INTS_H
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಆದರೆ defined(UCHAR_MAX) && UCHAR_MAX == 0xff
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆಯುಳ್ಳ ಅಕ್ಷರ i8_t;
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ui8_t;
+#ಇಲ್ಲದಿದ್ದರೆ
 #   error "no 8-bit integer"
-#endif
-#if defined(USHRT_MAX) && USHRT_MAX == 0xffff
-    typedef short i16_t;
-    typedef unsigned short ui16_t;
-#elif defined(UINT_MAX) && UINT_MAX == 0xffff
-    typedef int i16_t;
-    typedef unsigned ui16_t;
-#else
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(USHRT_MAX) && USHRT_MAX == 0xffff
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಗಿಡ್ಡ i16_t;
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ ui16_t;
+#ಅಥವಾಆದರೆ defined(UINT_MAX) && UINT_MAX == 0xffff
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಪೂರ್ಣಾಂಕ i16_t;
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ui16_t;
+#ಇಲ್ಲದಿದ್ದರೆ
 #   error "no 16-bit integer"
-#endif
-#if defined(UINT_MAX) && UINT_MAX == 0xffffffff
-    typedef int i32_t;
-    typedef unsigned ui32_t;
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(UINT_MAX) && UINT_MAX == 0xffffffff
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಪೂರ್ಣಾಂಕ i32_t;
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ui32_t;
 #   define PI32 "d"
 #   define PUI32 "u"
-#elif defined(ULONG_MAX) && ULONG_MAX == 0xffffffff
-    typedef long i32_t;
-    typedef unsigned long ui32_t;
+#ಅಥವಾಆದರೆ defined(ULONG_MAX) && ULONG_MAX == 0xffffffff
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ದೀರ್ಘ i32_t;
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ui32_t;
 #   define PI32 "ld"
 #   define PUI32 "lu"
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 #   error "no 32-bit integer"
-#endif
-#if defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
-    typedef long i64_t;
-    typedef unsigned long ui64_t;
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ದೀರ್ಘ i64_t;
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ui64_t;
 #   define PI64 "ld"
 #   define PUI64 "lu"
-#elif defined(ULLONG_MAX) && ULLONG_MAX == 0xffffffffffffffff
-    typedef long long i64_t;
-    typedef unsigned long long ui64_t;
+#ಅಥವಾಆದರೆ defined(ULLONG_MAX) && ULLONG_MAX == 0xffffffffffffffff
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ದೀರ್ಘ ದೀರ್ಘ i64_t;
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#elif defined(ULONG_LONG_MAX) && ULONG_LONG_MAX == 0xffffffffffffffff
-    typedef long long i64_t;
-    typedef unsigned long long ui64_t;
+#ಅಥವಾಆದರೆ defined(ULONG_LONG_MAX) && ULONG_LONG_MAX == 0xffffffffffffffff
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ದೀರ್ಘ ದೀರ್ಘ i64_t;
+    ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 #   error "no 64-bit integer"
-#endif
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ

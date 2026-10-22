@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#define ZLIB_INTERNAL
-#include "zlib.h"
+#ವ್ಯಾಖ್ಯಾನಿಸು ZLIB_ಆಂತರಿಕ
+#ಅನ್ತರ್ಭಾವ "zlib.h"
 
 /* ===========================================================================
      Compresses the source buffer into the destination buffer. The level
@@ -21,79 +21,79 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                        z_size_t sourceLen, int level) {
-    z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t left;
+ಪೂರ್ಣಾಂಕ ZEXPORT compress2_z(Bytef *dest, z_ಗಾತ್ರ_t *destLen, ಸ್ಥಿರಾಂಕ Bytef *ಮೂಲ,
+                        z_ಗಾತ್ರ_t ಮೂಲ_Len, ಪೂರ್ಣಾಂಕ level) {
+    z_ಹರಿವು ಹರಿವು;
+    ಪೂರ್ಣಾಂಕ err;
+    ಸ್ಥಿರಾಂಕ uInt max = (uInt)-1;
+    z_ಗಾತ್ರ_t ಎಡ;
 
-    if ((sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    ಆದರೆ ((ಮೂಲ_Len > 0 && ಮೂಲ == ಖಾಲಿ) ||
+        destLen == ಖಾಲಿ || (*destLen > 0 && dest == ಖಾಲಿ))
+        ಹಿಂತಿರುಗಿ Z_ಹರಿವು_ERROR;
 
-    left = *destLen;
+    ಎಡ = *destLen;
     *destLen = 0;
 
-    stream.zalloc = (alloc_func)0;
-    stream.zfree = (free_func)0;
-    stream.opaque = (voidpf)0;
+    ಹರಿವು.zalloc = (alloc_func)0;
+    ಹರಿವು.zfree = (free_func)0;
+    ಹರಿವು.opaque = (voidpf)0;
 
-    err = deflateInit(&stream, level);
-    if (err != Z_OK) return err;
+    err = deflateInit(&ಹರಿವು, level);
+    ಆದರೆ (err != Z_OK) ಹಿಂತಿರುಗಿ err;
 
-    stream.next_out = dest;
-    stream.avail_out = 0;
-    stream.next_in = (z_const Bytef *)source;
-    stream.avail_in = 0;
+    ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು = dest;
+    ಹರಿವು.avail_ಹೊರಹೋಗು = 0;
+    ಹರಿವು.ಮುಂದಿನ_ಒಳ = (z_const Bytef *)ಮೂಲ;
+    ಹರಿವು.avail_ಒಳ = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    ಮಾಡು {
+        ಆದರೆ (ಹರಿವು.avail_ಹೊರಹೋಗು == 0) {
+            ಹರಿವು.avail_ಹೊರಹೋಗು = ಎಡ > (z_ಗಾತ್ರ_t)max ? max : (uInt)ಎಡ;
+            ಎಡ -= ಹರಿವು.avail_ಹೊರಹೋಗು;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = sourceLen > (z_size_t)max ? max :
-                                                          (uInt)sourceLen;
-            sourceLen -= stream.avail_in;
+        ಆದರೆ (ಹರಿವು.avail_ಒಳ == 0) {
+            ಹರಿವು.avail_ಒಳ = ಮೂಲ_Len > (z_ಗಾತ್ರ_t)max ? max :
+                                                          (uInt)ಮೂಲ_Len;
+            ಮೂಲ_Len -= ಹರಿವು.avail_ಒಳ;
         }
-        err = deflate(&stream, sourceLen ? Z_NO_FLUSH : Z_FINISH);
-    } while (err == Z_OK);
+        err = deflate(&ಹರಿವು, ಮೂಲ_Len ? Z_NO_FLUSH : Z_ಮುಕ್ತಾಯ);
+    } ಆಗ (err == Z_OK);
 
-    *destLen = (z_size_t)(stream.next_out - dest);
-    deflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK : err;
+    *destLen = (z_ಗಾತ್ರ_t)(ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು - dest);
+    deflate_ಕೊನೆ(&ಹರಿವು);
+    ಹಿಂತಿರುಗಿ err == Z_ಹರಿವು_ಕೊನೆ ? Z_OK : err;
 }
-int ZEXPORT compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen, int level) {
-    int ret;
-    z_size_t got = *destLen;
-    ret = compress2_z(dest, &got, source, sourceLen, level);
+ಪೂರ್ಣಾಂಕ ZEXPORT compress2(Bytef *dest, uLongf *destLen, ಸ್ಥಿರಾಂಕ Bytef *ಮೂಲ,
+                      uLong ಮೂಲ_Len, ಪೂರ್ಣಾಂಕ level) {
+    ಪೂರ್ಣಾಂಕ ret;
+    z_ಗಾತ್ರ_t got = *destLen;
+    ret = compress2_z(dest, &got, ಮೂಲ, ಮೂಲ_Len, level);
     *destLen = (uLong)got;
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 /* ===========================================================================
  */
-int ZEXPORT compress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                       z_size_t sourceLen) {
-    return compress2_z(dest, destLen, source, sourceLen,
+ಪೂರ್ಣಾಂಕ ZEXPORT compress_z(Bytef *dest, z_ಗಾತ್ರ_t *destLen, ಸ್ಥಿರಾಂಕ Bytef *ಮೂಲ,
+                       z_ಗಾತ್ರ_t ಮೂಲ_Len) {
+    ಹಿಂತಿರುಗಿ compress2_z(dest, destLen, ಮೂಲ, ಮೂಲ_Len,
                        Z_DEFAULT_COMPRESSION);
 }
-int ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen) {
-    return compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
+ಪೂರ್ಣಾಂಕ ZEXPORT compress(Bytef *dest, uLongf *destLen, ಸ್ಥಿರಾಂಕ Bytef *ಮೂಲ,
+                     uLong ಮೂಲ_Len) {
+    ಹಿಂತಿರುಗಿ compress2(dest, destLen, ಮೂಲ, ಮೂಲ_Len, Z_DEFAULT_COMPRESSION);
 }
 
 /* ===========================================================================
      If the default memLevel or windowBits for deflateInit() is changed, then
    this function needs to be updated.
  */
-z_size_t ZEXPORT compressBound_z(z_size_t sourceLen) {
-    z_size_t bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
-                     (sourceLen >> 25) + 13;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+z_ಗಾತ್ರ_t ZEXPORT compressBound_z(z_ಗಾತ್ರ_t ಮೂಲ_Len) {
+    z_ಗಾತ್ರ_t bound = ಮೂಲ_Len + (ಮೂಲ_Len >> 12) + (ಮೂಲ_Len >> 14) +
+                     (ಮೂಲ_Len >> 25) + 13;
+    ಹಿಂತಿರುಗಿ bound < ಮೂಲ_Len ? (z_ಗಾತ್ರ_t)-1 : bound;
 }
-uLong ZEXPORT compressBound(uLong sourceLen) {
-    z_size_t bound = compressBound_z(sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+uLong ZEXPORT compressBound(uLong ಮೂಲ_Len) {
+    z_ಗಾತ್ರ_t bound = compressBound_z(ಮೂಲ_Len);
+    ಹಿಂತಿರುಗಿ (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }

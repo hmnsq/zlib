@@ -24,33 +24,33 @@
    Encryption is not supported.
 */
 
-#define CRC32(c, b) ((*(pcrc_32_tab+(((int)(c) ^ (b)) & 0xff))) ^ ((c) >> 8))
+#ವ್ಯಾಖ್ಯಾನಿಸು ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32(c, b) ((*(pcrc_32_tab+(((ಪೂರ್ಣಾಂಕ)(c) ^ (b)) & 0xff))) ^ ((c) >> 8))
 
 /***********************************************************************
  * Return the next byte in the pseudo-random sequence
  */
-static int decrypt_byte(unsigned long* pkeys, const z_crc_t* pcrc_32_tab) {
-    unsigned temp;  /* POTENTIAL BUG:  temp*(temp^1) may overflow in an
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ decrypt_byte(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ* pkeys, ಸ್ಥಿರಾಂಕ z_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_t* pcrc_32_tab) {
+    ಚಿಹ್ನೆರಹಿತ ತಾತ್ಕಾಲಿಕ;  /* POTENTIAL BUG:  temp*(temp^1) may overflow in an
                      * unpredictable manner on 16-bit systems; not a problem
                      * with any known compiler so far, though */
 
-    (void)pcrc_32_tab;
-    temp = ((unsigned)(*(pkeys+2)) & 0xffff) | 2;
-    return (int)(((temp * (temp ^ 1)) >> 8) & 0xff);
+    (ಶೂನ್ಯ)pcrc_32_tab;
+    ತಾತ್ಕಾಲಿಕ = ((ಚಿಹ್ನೆರಹಿತ)(*(pkeys+2)) & 0xffff) | 2;
+    ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)(((ತಾತ್ಕಾಲಿಕ * (ತಾತ್ಕಾಲಿಕ ^ 1)) >> 8) & 0xff);
 }
 
 /***********************************************************************
  * Update the encryption keys with the next byte of plain text
  */
-static int update_keys(unsigned long* pkeys, const z_crc_t* pcrc_32_tab, int c) {
-    (*(pkeys+0)) = CRC32((*(pkeys+0)), c);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ update_ಕೀಲಿಗಳು(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ* pkeys, ಸ್ಥಿರಾಂಕ z_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_t* pcrc_32_tab, ಪೂರ್ಣಾಂಕ c) {
+    (*(pkeys+0)) = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32((*(pkeys+0)), c);
     (*(pkeys+1)) += (*(pkeys+0)) & 0xff;
     (*(pkeys+1)) = (*(pkeys+1)) * 134775813L + 1;
     {
-      int keyshift = (int)((*(pkeys+1)) >> 24);
-      (*(pkeys+2)) = CRC32((*(pkeys+2)), keyshift);
+      ಪೂರ್ಣಾಂಕ keyshift = (ಪೂರ್ಣಾಂಕ)((*(pkeys+1)) >> 24);
+      (*(pkeys+2)) = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32((*(pkeys+2)), keyshift);
     }
-    return c;
+    ಹಿಂತಿರುಗಿ c;
 }
 
 
@@ -58,68 +58,68 @@ static int update_keys(unsigned long* pkeys, const z_crc_t* pcrc_32_tab, int c) 
  * Initialize the encryption keys and the random header according to
  * the given password.
  */
-static void init_keys(const char* passwd, unsigned long* pkeys, const z_crc_t* pcrc_32_tab) {
+ಸ್ಥಿರ ಶೂನ್ಯ init_ಕೀಲಿಗಳು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* passwd, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ* pkeys, ಸ್ಥಿರಾಂಕ z_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_t* pcrc_32_tab) {
     *(pkeys+0) = 305419896L;
     *(pkeys+1) = 591751049L;
     *(pkeys+2) = 878082192L;
-    while (*passwd != '\0') {
-        update_keys(pkeys,pcrc_32_tab,(int)*passwd);
+    ಆಗ (*passwd != '\0') {
+        update_ಕೀಲಿಗಳು(pkeys,pcrc_32_tab,(ಪೂರ್ಣಾಂಕ)*passwd);
         passwd++;
     }
 }
 
-#define zdecode(pkeys,pcrc_32_tab,c) \
-    (update_keys(pkeys,pcrc_32_tab,c ^= decrypt_byte(pkeys,pcrc_32_tab)))
+#ವ್ಯಾಖ್ಯಾನಿಸು zdecode(pkeys,pcrc_32_tab,c) \
+    (update_ಕೀಲಿಗಳು(pkeys,pcrc_32_tab,c ^= decrypt_byte(pkeys,pcrc_32_tab)))
 
-#define zencode(pkeys,pcrc_32_tab,c,t) \
-    (t=decrypt_byte(pkeys,pcrc_32_tab), update_keys(pkeys,pcrc_32_tab,c), (Byte)t^(c))
+#ವ್ಯಾಖ್ಯಾನಿಸು zencode(pkeys,pcrc_32_tab,c,t) \
+    (t=decrypt_byte(pkeys,pcrc_32_tab), update_ಕೀಲಿಗಳು(pkeys,pcrc_32_tab,c), (Byte)t^(c))
 
-#ifdef INCLUDECRYPTINGCODE_IFCRYPTALLOWED
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ INCLUDECRYPTINGCODE_IFCRYPTALLOWED
 
-#define RAND_HEAD_LEN  12
+#ವ್ಯಾಖ್ಯಾನಿಸು RAND_ತಲೆ_LEN  12
    /* "last resort" source for second part of crypt seed pattern */
 #  ifndef ZCR_SEED2
 #    define ZCR_SEED2 3141592654UL      /* use PI as default pattern */
 #  endif
 
-static unsigned crypthead(const char* passwd,       /* password string */
-                          unsigned char* buf,       /* where to write header */
-                          int bufSize,
-                          unsigned long* pkeys,
-                          const z_crc_t* pcrc_32_tab,
-                          unsigned long crcForCrypting) {
-    unsigned n;                  /* index in random header */
-    int t;                       /* temporary */
-    int c;                       /* random byte */
-    unsigned char header[RAND_HEAD_LEN-2]; /* random header */
-    static unsigned calls = 0;   /* ensure different random header each time */
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ crypthead(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* passwd,       /* password string */
+                          ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* buf,       /* where to write header */
+                          ಪೂರ್ಣಾಂಕ buf_ಗಾತ್ರ,
+                          ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ* pkeys,
+                          ಸ್ಥಿರಾಂಕ z_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_t* pcrc_32_tab,
+                          ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting) {
+    ಚಿಹ್ನೆರಹಿತ n;                  /* index in random header */
+    ಪೂರ್ಣಾಂಕ t;                       /* temporary */
+    ಪೂರ್ಣಾಂಕ c;                       /* random byte */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಶೀರ್ಷಿಕೆ[RAND_ತಲೆ_LEN-2]; /* random header */
+    ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ calls = 0;   /* ensure different random header each time */
 
-    if (bufSize<RAND_HEAD_LEN)
-      return 0;
+    ಆದರೆ (buf_ಗಾತ್ರ<RAND_ತಲೆ_LEN)
+      ಹಿಂತಿರುಗಿ 0;
 
     /* First generate RAND_HEAD_LEN-2 random bytes. We encrypt the
      * output of rand() to get less predictability, since rand() is
      * often poorly implemented.
      */
-    if (++calls == 1)
+    ಆದರೆ (++calls == 1)
     {
-        srand((unsigned)time(NULL) ^ ZCR_SEED2);
+        srand((ಚಿಹ್ನೆರಹಿತ)time(ಖಾಲಿ) ^ ZCR_SEED2);
     }
-    init_keys(passwd, pkeys, pcrc_32_tab);
-    for (n = 0; n < RAND_HEAD_LEN-2; n++)
+    init_ಕೀಲಿಗಳು(passwd, pkeys, pcrc_32_tab);
+    ಗಾಗಿ (n = 0; n < RAND_ತಲೆ_LEN-2; n++)
     {
         c = (rand() >> 7) & 0xff;
-        header[n] = (unsigned char)zencode(pkeys, pcrc_32_tab, c, t);
+        ಶೀರ್ಷಿಕೆ[n] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)zencode(pkeys, pcrc_32_tab, c, t);
     }
     /* Encrypt random header (last two bytes is high word of crc) */
-    init_keys(passwd, pkeys, pcrc_32_tab);
-    for (n = 0; n < RAND_HEAD_LEN-2; n++)
+    init_ಕೀಲಿಗಳು(passwd, pkeys, pcrc_32_tab);
+    ಗಾಗಿ (n = 0; n < RAND_ತಲೆ_LEN-2; n++)
     {
-        buf[n] = (unsigned char)zencode(pkeys, pcrc_32_tab, header[n], t);
+        buf[n] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)zencode(pkeys, pcrc_32_tab, ಶೀರ್ಷಿಕೆ[n], t);
     }
-    buf[n++] = (unsigned char)zencode(pkeys, pcrc_32_tab, (int)(crcForCrypting >> 16) & 0xff, t);
-    buf[n++] = (unsigned char)zencode(pkeys, pcrc_32_tab, (int)(crcForCrypting >> 24) & 0xff, t);
-    return n;
+    buf[n++] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)zencode(pkeys, pcrc_32_tab, (ಪೂರ್ಣಾಂಕ)(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting >> 16) & 0xff, t);
+    buf[n++] = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)zencode(pkeys, pcrc_32_tab, (ಪೂರ್ಣಾಂಕ)(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_For_Crypting >> 24) & 0xff, t);
+    ಹಿಂತಿರುಗಿ n;
 }
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

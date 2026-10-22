@@ -51,183 +51,183 @@
    to complete in all cases.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include "zlib.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ "zlib.h"
 
-#define local static
+#ವ್ಯಾಖ್ಯಾನಿಸು local ಸ್ಥಿರ
 
 /* print nastygram and leave */
-local void quit(char *why)
+local ಶೂನ್ಯ quit(ಅಕ್ಷರ *why)
 {
     fprintf(stderr, "fitblk abort: %s\n", why);
-    exit(1);
+    ನಿರ್ಗಮಿಸು(1);
 }
 
-#define RAWLEN 4096    /* intermediate uncompressed buffer size */
+#ವ್ಯಾಖ್ಯಾನಿಸು RAWLEN 4096    /* intermediate uncompressed buffer size */
 
 /* compress from file to def until provided buffer is full or end of
    input reached; return last deflate() return value, or Z_ERRNO if
    there was read error on the file */
-local int partcompress(FILE *in, z_streamp def)
+local ಪೂರ್ಣಾಂಕ partcompress(FILE *ಒಳ, z_streamp def)
 {
-    int ret, flush;
-    unsigned char raw[RAWLEN];
+    ಪೂರ್ಣಾಂಕ ret, flush;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ raw[RAWLEN];
 
     flush = Z_NO_FLUSH;
-    do {
-        def->avail_in = fread(raw, 1, RAWLEN, in);
-        if (ferror(in))
-            return Z_ERRNO;
-        def->next_in = raw;
-        if (feof(in))
-            flush = Z_FINISH;
+    ಮಾಡು {
+        def->avail_ಒಳ = fread(raw, 1, RAWLEN, ಒಳ);
+        ಆದರೆ (ferror(ಒಳ))
+            ಹಿಂತಿರುಗಿ Z_ERRNO;
+        def->ಮುಂದಿನ_ಒಳ = raw;
+        ಆದರೆ (feof(ಒಳ))
+            flush = Z_ಮುಕ್ತಾಯ;
         ret = deflate(def, flush);
-        assert(ret != Z_STREAM_ERROR);
-    } while (def->avail_out != 0 && flush == Z_NO_FLUSH);
-    return ret;
+        ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR);
+    } ಆಗ (def->avail_ಹೊರಹೋಗು != 0 && flush == Z_NO_FLUSH);
+    ಹಿಂತಿರುಗಿ ret;
 }
 
 /* recompress from inf's input to def's output; the input for inf and
    the output for def are set in those structures before calling;
    return last deflate() return value, or Z_MEM_ERROR if inflate()
    was not able to allocate enough memory when it needed to */
-local int recompress(z_streamp inf, z_streamp def)
+local ಪೂರ್ಣಾಂಕ recompress(z_streamp inf, z_streamp def)
 {
-    int ret, flush;
-    unsigned char raw[RAWLEN];
+    ಪೂರ್ಣಾಂಕ ret, flush;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ raw[RAWLEN];
 
     flush = Z_NO_FLUSH;
-    do {
+    ಮಾಡು {
         /* decompress */
-        inf->avail_out = RAWLEN;
-        inf->next_out = raw;
+        inf->avail_ಹೊರಹೋಗು = RAWLEN;
+        inf->ಮುಂದಿನ_ಹೊರಹೋಗು = raw;
         ret = inflate(inf, Z_NO_FLUSH);
-        assert(ret != Z_STREAM_ERROR && ret != Z_DATA_ERROR &&
+        ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR && ret != Z_ದತ್ತಾಂಶ_ERROR &&
                ret != Z_NEED_DICT);
-        if (ret == Z_MEM_ERROR)
-            return ret;
+        ಆದರೆ (ret == Z_MEM_ERROR)
+            ಹಿಂತಿರುಗಿ ret;
 
         /* compress what was decompressed until done or no room */
-        def->avail_in = RAWLEN - inf->avail_out;
-        def->next_in = raw;
-        if (inf->avail_out != 0)
-            flush = Z_FINISH;
+        def->avail_ಒಳ = RAWLEN - inf->avail_ಹೊರಹೋಗು;
+        def->ಮುಂದಿನ_ಒಳ = raw;
+        ಆದರೆ (inf->avail_ಹೊರಹೋಗು != 0)
+            flush = Z_ಮುಕ್ತಾಯ;
         ret = deflate(def, flush);
-        assert(ret != Z_STREAM_ERROR);
-    } while (ret != Z_STREAM_END && def->avail_out != 0);
-    return ret;
+        ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR);
+    } ಆಗ (ret != Z_ಹರಿವು_ಕೊನೆ && def->avail_ಹೊರಹೋಗು != 0);
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-#define EXCESS 256      /* empirically determined stream overage */
-#define MARGIN 8        /* amount to back off for completion */
+#ವ್ಯಾಖ್ಯಾನಿಸು EXCESS 256      /* empirically determined stream overage */
+#ವ್ಯಾಖ್ಯಾನಿಸು MARGIN 8        /* amount to back off for completion */
 
 /* compress from stdin to fixed-size block on stdout */
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-    int ret;                /* return code */
-    unsigned size;          /* requested fixed output block size */
-    unsigned have;          /* bytes written by deflate() call */
-    unsigned char *blk;     /* intermediate and final stream */
-    unsigned char *tmp;     /* close to desired size stream */
-    z_stream def, inf;      /* zlib deflate and inflate states */
+    ಪೂರ್ಣಾಂಕ ret;                /* return code */
+    ಚಿಹ್ನೆರಹಿತ ಗಾತ್ರ_2;          /* requested fixed output block size */
+    ಚಿಹ್ನೆರಹಿತ have;          /* bytes written by deflate() call */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *blk;     /* intermediate and final stream */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *tmp;     /* close to desired size stream */
+    z_ಹರಿವು def, inf;      /* zlib deflate and inflate states */
 
     /* get requested output size */
-    if (argc != 2)
+    ಆದರೆ (argc != 2)
         quit("need one argument: size of output block");
     ret = strtol(argv[1], argv + 1, 10);
-    if (argv[1][0] != 0)
+    ಆದರೆ (argv[1][0] != 0)
         quit("argument must be a number");
-    if (ret < 8)            /* 8 is minimum zlib stream size */
+    ಆದರೆ (ret < 8)            /* 8 is minimum zlib stream size */
         quit("need positive size of 8 or greater");
-    size = (unsigned)ret;
+    ಗಾತ್ರ_2 = (ಚಿಹ್ನೆರಹಿತ)ret;
 
     /* allocate memory for buffers and compression engine */
-    blk = malloc(size + EXCESS);
+    blk = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2 + EXCESS);
     def.zalloc = Z_NULL;
     def.zfree = Z_NULL;
     def.opaque = Z_NULL;
     ret = deflateInit(&def, Z_DEFAULT_COMPRESSION);
-    if (ret != Z_OK || blk == NULL)
+    ಆದರೆ (ret != Z_OK || blk == ಖಾಲಿ)
         quit("out of memory");
 
     /* compress from stdin until output full, or no more input */
-    def.avail_out = size + EXCESS;
-    def.next_out = blk;
+    def.avail_ಹೊರಹೋಗು = ಗಾತ್ರ_2 + EXCESS;
+    def.ಮುಂದಿನ_ಹೊರಹೋಗು = blk;
     ret = partcompress(stdin, &def);
-    if (ret == Z_ERRNO)
+    ಆದರೆ (ret == Z_ERRNO)
         quit("error reading input");
 
     /* if it all fit, then size was undersubscribed -- done! */
-    if (ret == Z_STREAM_END && def.avail_out >= EXCESS) {
+    ಆದರೆ (ret == Z_ಹರಿವು_ಕೊನೆ && def.avail_ಹೊರಹೋಗು >= EXCESS) {
         /* write block to stdout */
-        have = size + EXCESS - def.avail_out;
-        if (fwrite(blk, 1, have, stdout) != have || ferror(stdout))
+        have = ಗಾತ್ರ_2 + EXCESS - def.avail_ಹೊರಹೋಗು;
+        ಆದರೆ (fwrite(blk, 1, have, stdout) != have || ferror(stdout))
             quit("error writing output");
 
         /* clean up and print results to stderr */
-        ret = deflateEnd(&def);
-        assert(ret != Z_STREAM_ERROR);
-        free(blk);
+        ret = deflate_ಕೊನೆ(&def);
+        ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR);
+        ಬಿಡುಗಡೆ(blk);
         fprintf(stderr,
                 "%u bytes unused out of %u requested (all input)\n",
-                size - have, size);
-        return 0;
+                ಗಾತ್ರ_2 - have, ಗಾತ್ರ_2);
+        ಹಿಂತಿರುಗಿ 0;
     }
 
     /* it didn't all fit -- set up for recompression */
     inf.zalloc = Z_NULL;
     inf.zfree = Z_NULL;
     inf.opaque = Z_NULL;
-    inf.avail_in = 0;
-    inf.next_in = Z_NULL;
+    inf.avail_ಒಳ = 0;
+    inf.ಮುಂದಿನ_ಒಳ = Z_NULL;
     ret = inflateInit(&inf);
-    tmp = malloc(size + EXCESS);
-    if (ret != Z_OK || tmp == NULL)
+    tmp = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2 + EXCESS);
+    ಆದರೆ (ret != Z_OK || tmp == ಖಾಲಿ)
         quit("out of memory");
     ret = deflateReset(&def);
-    assert(ret != Z_STREAM_ERROR);
+    ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR);
 
     /* do first recompression close to the right amount */
-    inf.avail_in = size + EXCESS;
-    inf.next_in = blk;
-    def.avail_out = size + EXCESS;
-    def.next_out = tmp;
+    inf.avail_ಒಳ = ಗಾತ್ರ_2 + EXCESS;
+    inf.ಮುಂದಿನ_ಒಳ = blk;
+    def.avail_ಹೊರಹೋಗು = ಗಾತ್ರ_2 + EXCESS;
+    def.ಮುಂದಿನ_ಹೊರಹೋಗು = tmp;
     ret = recompress(&inf, &def);
-    if (ret == Z_MEM_ERROR)
+    ಆದರೆ (ret == Z_MEM_ERROR)
         quit("out of memory");
 
     /* set up for next recompression */
     ret = inflateReset(&inf);
-    assert(ret != Z_STREAM_ERROR);
+    ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR);
     ret = deflateReset(&def);
-    assert(ret != Z_STREAM_ERROR);
+    ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR);
 
     /* do second and final recompression (third compression) */
-    inf.avail_in = size - MARGIN;   /* assure stream will complete */
-    inf.next_in = tmp;
-    def.avail_out = size;
-    def.next_out = blk;
+    inf.avail_ಒಳ = ಗಾತ್ರ_2 - MARGIN;   /* assure stream will complete */
+    inf.ಮುಂದಿನ_ಒಳ = tmp;
+    def.avail_ಹೊರಹೋಗು = ಗಾತ್ರ_2;
+    def.ಮುಂದಿನ_ಹೊರಹೋಗು = blk;
     ret = recompress(&inf, &def);
-    if (ret == Z_MEM_ERROR)
+    ಆದರೆ (ret == Z_MEM_ERROR)
         quit("out of memory");
-    assert(ret == Z_STREAM_END);    /* otherwise MARGIN too small */
+    ಪ್ರತಿಜ್ಞಾ(ret == Z_ಹರಿವು_ಕೊನೆ);    /* otherwise MARGIN too small */
 
     /* done -- write block to stdout */
-    have = size - def.avail_out;
-    if (fwrite(blk, 1, have, stdout) != have || ferror(stdout))
+    have = ಗಾತ್ರ_2 - def.avail_ಹೊರಹೋಗು;
+    ಆದರೆ (fwrite(blk, 1, have, stdout) != have || ferror(stdout))
         quit("error writing output");
 
     /* clean up and print results to stderr */
-    free(tmp);
-    ret = inflateEnd(&inf);
-    assert(ret != Z_STREAM_ERROR);
-    ret = deflateEnd(&def);
-    assert(ret != Z_STREAM_ERROR);
-    free(blk);
+    ಬಿಡುಗಡೆ(tmp);
+    ret = inflate_ಕೊನೆ(&inf);
+    ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR);
+    ret = deflate_ಕೊನೆ(&def);
+    ಪ್ರತಿಜ್ಞಾ(ret != Z_ಹರಿವು_ERROR);
+    ಬಿಡುಗಡೆ(blk);
     fprintf(stderr,
             "%u bytes unused out of %u requested (%lu input)\n",
-            size - have, size, def.total_in);
-    return 0;
+            ಗಾತ್ರ_2 - have, ಗಾತ್ರ_2, def.ಒಟ್ಟು_ಒಳ);
+    ಹಿಂತಿರುಗಿ 0;
 }

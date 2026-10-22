@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#define ZLIB_INTERNAL
-#include "zlib.h"
+#ವ್ಯಾಖ್ಯಾನಿಸು ZLIB_ಆಂತರಿಕ
+#ಅನ್ತರ್ಭಾವ "zlib.h"
 
 /* ===========================================================================
      Decompresses the source buffer into the destination buffer.  *sourceLen is
@@ -26,76 +26,76 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                          z_size_t *sourceLen) {
-    z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t len, left;
+ಪೂರ್ಣಾಂಕ ZEXPORT uncompress2_z(Bytef *dest, z_ಗಾತ್ರ_t *destLen, ಸ್ಥಿರಾಂಕ Bytef *ಮೂಲ,
+                          z_ಗಾತ್ರ_t *ಮೂಲ_Len) {
+    z_ಹರಿವು ಹರಿವು;
+    ಪೂರ್ಣಾಂಕ err;
+    ಸ್ಥಿರಾಂಕ uInt max = (uInt)-1;
+    z_ಗಾತ್ರ_t len, ಎಡ;
 
-    if (sourceLen == NULL || (*sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    ಆದರೆ (ಮೂಲ_Len == ಖಾಲಿ || (*ಮೂಲ_Len > 0 && ಮೂಲ == ಖಾಲಿ) ||
+        destLen == ಖಾಲಿ || (*destLen > 0 && dest == ಖಾಲಿ))
+        ಹಿಂತಿರುಗಿ Z_ಹರಿವು_ERROR;
 
-    len = *sourceLen;
-    left = *destLen;
-    if (left == 0 && dest == Z_NULL)
-        dest = (Bytef *)&stream.reserved;       /* next_out cannot be NULL */
+    len = *ಮೂಲ_Len;
+    ಎಡ = *destLen;
+    ಆದರೆ (ಎಡ == 0 && dest == Z_NULL)
+        dest = (Bytef *)&ಹರಿವು.reserved;       /* next_out cannot be NULL */
 
-    stream.next_in = (z_const Bytef *)source;
-    stream.avail_in = 0;
-    stream.zalloc = (alloc_func)0;
-    stream.zfree = (free_func)0;
-    stream.opaque = (voidpf)0;
+    ಹರಿವು.ಮುಂದಿನ_ಒಳ = (z_const Bytef *)ಮೂಲ;
+    ಹರಿವು.avail_ಒಳ = 0;
+    ಹರಿವು.zalloc = (alloc_func)0;
+    ಹರಿವು.zfree = (free_func)0;
+    ಹರಿವು.opaque = (voidpf)0;
 
-    err = inflateInit(&stream);
-    if (err != Z_OK) return err;
+    err = inflateInit(&ಹರಿವು);
+    ಆದರೆ (err != Z_OK) ಹಿಂತಿರುಗಿ err;
 
-    stream.next_out = dest;
-    stream.avail_out = 0;
+    ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು = dest;
+    ಹರಿವು.avail_ಹೊರಹೋಗು = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    ಮಾಡು {
+        ಆದರೆ (ಹರಿವು.avail_ಹೊರಹೋಗು == 0) {
+            ಹರಿವು.avail_ಹೊರಹೋಗು = ಎಡ > (z_ಗಾತ್ರ_t)max ? max : (uInt)ಎಡ;
+            ಎಡ -= ಹರಿವು.avail_ಹೊರಹೋಗು;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = len > (z_size_t)max ? max : (uInt)len;
-            len -= stream.avail_in;
+        ಆದರೆ (ಹರಿವು.avail_ಒಳ == 0) {
+            ಹರಿವು.avail_ಒಳ = len > (z_ಗಾತ್ರ_t)max ? max : (uInt)len;
+            len -= ಹರಿವು.avail_ಒಳ;
         }
-        err = inflate(&stream, Z_NO_FLUSH);
-    } while (err == Z_OK);
+        err = inflate(&ಹರಿವು, Z_NO_FLUSH);
+    } ಆಗ (err == Z_OK);
 
     /* Set len and left to the unused input data and unused output space. Set
        *sourceLen to the amount of input consumed. Set *destLen to the amount
        of data produced. */
-    len += stream.avail_in;
-    left += stream.avail_out;
-    *sourceLen -= len;
-    *destLen -= left;
+    len += ಹರಿವು.avail_ಒಳ;
+    ಎಡ += ಹರಿವು.avail_ಹೊರಹೋಗು;
+    *ಮೂಲ_Len -= len;
+    *destLen -= ಎಡ;
 
-    inflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK :
-           err == Z_NEED_DICT ? Z_DATA_ERROR  :
-           err == Z_BUF_ERROR && len == 0 ? Z_DATA_ERROR :
+    inflate_ಕೊನೆ(&ಹರಿವು);
+    ಹಿಂತಿರುಗಿ err == Z_ಹರಿವು_ಕೊನೆ ? Z_OK :
+           err == Z_NEED_DICT ? Z_ದತ್ತಾಂಶ_ERROR  :
+           err == Z_BUF_ERROR && len == 0 ? Z_ದತ್ತಾಂಶ_ERROR :
            err;
 }
-int ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                        uLong *sourceLen) {
-    int ret;
-    z_size_t got = *destLen, used = *sourceLen;
-    ret = uncompress2_z(dest, &got, source, &used);
-    *sourceLen = (uLong)used;
+ಪೂರ್ಣಾಂಕ ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, ಸ್ಥಿರಾಂಕ Bytef *ಮೂಲ,
+                        uLong *ಮೂಲ_Len) {
+    ಪೂರ್ಣಾಂಕ ret;
+    z_ಗಾತ್ರ_t got = *destLen, ಬಳಸಿದ = *ಮೂಲ_Len;
+    ret = uncompress2_z(dest, &got, ಮೂಲ, &ಬಳಸಿದ);
+    *ಮೂಲ_Len = (uLong)ಬಳಸಿದ;
     *destLen = (uLong)got;
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
-int ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                         z_size_t sourceLen) {
-    z_size_t used = sourceLen;
-    return uncompress2_z(dest, destLen, source, &used);
+ಪೂರ್ಣಾಂಕ ZEXPORT uncompress_z(Bytef *dest, z_ಗಾತ್ರ_t *destLen, ಸ್ಥಿರಾಂಕ Bytef *ಮೂಲ,
+                         z_ಗಾತ್ರ_t ಮೂಲ_Len) {
+    z_ಗಾತ್ರ_t ಬಳಸಿದ = ಮೂಲ_Len;
+    ಹಿಂತಿರುಗಿ uncompress2_z(dest, destLen, ಮೂಲ, &ಬಳಸಿದ);
 }
-int ZEXPORT uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                       uLong sourceLen) {
-    uLong used = sourceLen;
-    return uncompress2(dest, destLen, source, &used);
+ಪೂರ್ಣಾಂಕ ZEXPORT uncompress(Bytef *dest, uLongf *destLen, ಸ್ಥಿರಾಂಕ Bytef *ಮೂಲ,
+                       uLong ಮೂಲ_Len) {
+    uLong ಬಳಸಿದ = ಮೂಲ_Len;
+    ಹಿಂತಿರುಗಿ uncompress2(dest, destLen, ಮೂಲ, &ಬಳಸಿದ);
 }

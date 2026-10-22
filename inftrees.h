@@ -21,11 +21,11 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
-    unsigned short val;         /* offset in table or code value */
-} code;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ op;           /* operation, extra bits, table bits */
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಬಿಟ್ಟುಗಳು;         /* bits in this part of the code */
+    ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ val;         /* offset in table or code value */
+} ಸಂಕೇತ_2;
 
 /* op values as set by inflate_table():
     00000000 - literal
@@ -46,25 +46,25 @@ typedef struct {
    inflate_table() calls in inflate.c and infback.c.  If the root table size is
    changed, then these maximum sizes would be need to be recalculated and
    updated. */
-#ifndef PKZIP_BUG_WORKAROUND
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ PKZIP_BUG_WORKAROUND
 #  define ENOUGH_LENS 852
 #  define ENOUGH_DISTS 592
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 /* That workaround permits 288 literal/length codes and 32 distance codes. */
 #  define ENOUGH_LENS 854
 #  define ENOUGH_DISTS 594
-#endif
-#define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿಸು ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table() */
-typedef enum {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಎಣಿಕೆ {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
-                                unsigned codes, code FAR * FAR *table,
-                                unsigned FAR *bits, unsigned short FAR *work);
-struct inflate_state;
-void ZLIB_INTERNAL inflate_fixed(struct inflate_state FAR *state);
+ಪೂರ್ಣಾಂಕ ZLIB_ಆಂತರಿಕ inflate_ಕೋಷ್ಟಕ(codetype type, ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ FAR *lens,
+                                ಚಿಹ್ನೆರಹಿತ codes, ಸಂಕೇತ_2 FAR * FAR *ಕೋಷ್ಟಕ_2,
+                                ಚಿಹ್ನೆರಹಿತ FAR *ಬಿಟ್ಟುಗಳು, ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ FAR *work);
+ರಚನೆ inflate_state;
+ಶೂನ್ಯ ZLIB_ಆಂತರಿಕ inflate_fixed(ರಚನೆ inflate_state FAR *state);

@@ -10,66 +10,66 @@
 
 */
 
-#if defined(_WIN32) && (!(defined(_CRT_SECURE_NO_WARNINGS)))
-        #define _CRT_SECURE_NO_WARNINGS
-#endif
+#ಆದರೆ defined(_WIN32) && (!(defined(_CRT_SECURE_NO_WARNINGS)))
+        #ವ್ಯಾಖ್ಯಾನಿಸು _CRT_SECURE_NO_WARNINGS
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(__APPLE__) || defined(IOAPI_NO_64) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64) || (defined(__ANDROID_API__) && __ANDROID_API__ < 24)
+#ಆದರೆ defined(__APPLE__) || defined(IOAPI_NO_64) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64) || (defined(__ANDROID_API__) && __ANDROID_API__ < 24)
 /* In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions */
-#define FOPEN_FUNC(filename, mode) fopen(filename, mode)
-#define FTELLO_FUNC(stream) ftello(stream)
-#define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
-#else
-#define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
-#define FTELLO_FUNC(stream) ftello64(stream)
-#define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿಸು FOPEN_FUNC(filename, ಬಹುಲಕ) fopen(filename, ಬಹುಲಕ)
+#ವ್ಯಾಖ್ಯಾನಿಸು FTELLO_FUNC(ಹರಿವು) ftello(ಹರಿವು)
+#ವ್ಯಾಖ್ಯಾನಿಸು FSEEKO_FUNC(ಹರಿವು, ಸ್ಥಾನಾಂತರ, origin) fseeko(ಹರಿವು, ಸ್ಥಾನಾಂತರ, origin)
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು FOPEN_FUNC(filename, ಬಹುಲಕ) fopen64(filename, ಬಹುಲಕ)
+#ವ್ಯಾಖ್ಯಾನಿಸು FTELLO_FUNC(ಹರಿವು) ftello64(ಹರಿವು)
+#ವ್ಯಾಖ್ಯಾನಿಸು FSEEKO_FUNC(ಹರಿವು, ಸ್ಥಾನಾಂತರ, origin) fseeko64(ಹರಿವು, ಸ್ಥಾನಾಂತರ, origin)
+#ಆದರೆ_ಅಂತ್ಯ
 
 
-#include "ioapi.h"
+#ಅನ್ತರ್ಭಾವ "ioapi.h"
 
-voidpf call_zopen64 (const zlib_filefunc64_32_def* pfilefunc, const void*filename, int mode) {
-    if (pfilefunc->zfile_func64.zopen64_file != NULL)
-        return (*(pfilefunc->zfile_func64.zopen64_file)) (pfilefunc->zfile_func64.opaque,filename,mode);
-    else
+voidpf call_zopen64 (ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pfilefunc, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ*filename, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ) {
+    ಆದರೆ (pfilefunc->zfile_func64.zopen64_file != ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ (*(pfilefunc->zfile_func64.zopen64_file)) (pfilefunc->zfile_func64.opaque,filename,ಬಹುಲಕ);
+    ಇಲ್ಲದಿದ್ದರೆ
     {
-        return (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque,(const char*)filename,mode);
+        ಹಿಂತಿರುಗಿ (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque,(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*)filename,ಬಹುಲಕ);
     }
 }
 
-long call_zseek64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, int origin) {
-    if (pfilefunc->zfile_func64.zseek64_file != NULL)
-        return (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,offset,origin);
-    else
+ದೀರ್ಘ call_zseek64 (ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ origin) {
+    ಆದರೆ (pfilefunc->zfile_func64.zseek64_file != ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,ಸ್ಥಾನಾಂತರ,origin);
+    ಇಲ್ಲದಿದ್ದರೆ
     {
-        uLong offsetTruncated = (uLong)offset;
-        if (offsetTruncated != offset)
-            return -1;
-        else
-            return (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,filestream,offsetTruncated,origin);
+        uLong ಸ್ಥಾನಾಂತರ_Truncated = (uLong)ಸ್ಥಾನಾಂತರ;
+        ಆದರೆ (ಸ್ಥಾನಾಂತರ_Truncated != ಸ್ಥಾನಾಂತರ)
+            ಹಿಂತಿರುಗಿ -1;
+        ಇಲ್ಲದಿದ್ದರೆ
+            ಹಿಂತಿರುಗಿ (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,filestream,ಸ್ಥಾನಾಂತರ_Truncated,origin);
     }
 }
 
-ZPOS64_T call_ztell64 (const zlib_filefunc64_32_def* pfilefunc, voidpf filestream) {
-    if (pfilefunc->zfile_func64.zseek64_file != NULL)
-        return (*(pfilefunc->zfile_func64.ztell64_file)) (pfilefunc->zfile_func64.opaque,filestream);
-    else
+ZPOS64_T call_ztell64 (ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pfilefunc, voidpf filestream) {
+    ಆದರೆ (pfilefunc->zfile_func64.zseek64_file != ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ (*(pfilefunc->zfile_func64.ztell64_file)) (pfilefunc->zfile_func64.opaque,filestream);
+    ಇಲ್ಲದಿದ್ದರೆ
     {
         uLong tell_uLong = (uLong)(*(pfilefunc->ztell32_file))(pfilefunc->zfile_func64.opaque,filestream);
-        if ((tell_uLong) == MAXU32)
-            return (ZPOS64_T)-1;
-        else
-            return tell_uLong;
+        ಆದರೆ ((tell_uLong) == MAXU32)
+            ಹಿಂತಿರುಗಿ (ZPOS64_T)-1;
+        ಇಲ್ಲದಿದ್ದರೆ
+            ಹಿಂತಿರುಗಿ tell_uLong;
     }
 }
 
-void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32, const zlib_filefunc_def* p_filefunc32) {
-    p_filefunc64_32->zfile_func64.zopen64_file = NULL;
+ಶೂನ್ಯ fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32, ಸ್ಥಿರಾಂಕ zlib_filefunc_def* p_filefunc32) {
+    p_filefunc64_32->zfile_func64.zopen64_file = ಖಾಲಿ;
     p_filefunc64_32->zopen32_file = p_filefunc32->zopen_file;
     p_filefunc64_32->zfile_func64.zread_file = p_filefunc32->zread_file;
     p_filefunc64_32->zfile_func64.zwrite_file = p_filefunc32->zwrite_file;
-    p_filefunc64_32->zfile_func64.ztell64_file = NULL;
-    p_filefunc64_32->zfile_func64.zseek64_file = NULL;
+    p_filefunc64_32->zfile_func64.ztell64_file = ಖಾಲಿ;
+    p_filefunc64_32->zfile_func64.zseek64_file = ಖಾಲಿ;
     p_filefunc64_32->zfile_func64.zclose_file = p_filefunc32->zclose_file;
     p_filefunc64_32->zfile_func64.zerror_file = p_filefunc32->zerror_file;
     p_filefunc64_32->zfile_func64.opaque = p_filefunc32->opaque;
@@ -79,136 +79,136 @@ void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filef
 
 
 
-static voidpf ZCALLBACK fopen_file_func(voidpf opaque, const char* filename, int mode) {
-    FILE* file = NULL;
-    const char* mode_fopen = NULL;
-    (void)opaque;
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
-        mode_fopen = "rb";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
-        mode_fopen = "r+b";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_CREATE)
-        mode_fopen = "wb";
+ಸ್ಥಿರ voidpf ZCALLBACK fopen_file_func(voidpf opaque, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ) {
+    FILE* file = ಖಾಲಿ;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* ಬಹುಲಕ_fopen = ಖಾಲಿ;
+    (ಶೂನ್ಯ)opaque;
+    ಆದರೆ ((ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_READWRITEFILTER)==ZLIB_FILEFUNC_ಬಹುಲಕ_READ)
+        ಬಹುಲಕ_fopen = "rb";
+    ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ (ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_EXISTING)
+        ಬಹುಲಕ_fopen = "r+b";
+    ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ (ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_CREATE)
+        ಬಹುಲಕ_fopen = "wb";
 
-    if ((filename!=NULL) && (mode_fopen != NULL))
-        file = fopen(filename, mode_fopen);
-    return file;
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (ಬಹುಲಕ_fopen != ಖಾಲಿ))
+        file = fopen(filename, ಬಹುಲಕ_fopen);
+    ಹಿಂತಿರುಗಿ file;
 }
 
-static voidpf ZCALLBACK fopen64_file_func(voidpf opaque, const void* filename, int mode) {
-    FILE* file = NULL;
-    const char* mode_fopen = NULL;
-    (void)opaque;
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
-        mode_fopen = "rb";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
-        mode_fopen = "r+b";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_CREATE)
-        mode_fopen = "wb";
+ಸ್ಥಿರ voidpf ZCALLBACK fopen64_file_func(voidpf opaque, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* filename, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ) {
+    FILE* file = ಖಾಲಿ;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* ಬಹುಲಕ_fopen = ಖಾಲಿ;
+    (ಶೂನ್ಯ)opaque;
+    ಆದರೆ ((ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_READWRITEFILTER)==ZLIB_FILEFUNC_ಬಹುಲಕ_READ)
+        ಬಹುಲಕ_fopen = "rb";
+    ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ (ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_EXISTING)
+        ಬಹುಲಕ_fopen = "r+b";
+    ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ (ಬಹುಲಕ & ZLIB_FILEFUNC_ಬಹುಲಕ_CREATE)
+        ಬಹುಲಕ_fopen = "wb";
 
-    if ((filename!=NULL) && (mode_fopen != NULL))
-        file = FOPEN_FUNC((const char*)filename, mode_fopen);
-    return file;
+    ಆದರೆ ((filename!=ಖಾಲಿ) && (ಬಹುಲಕ_fopen != ಖಾಲಿ))
+        file = FOPEN_FUNC((ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*)filename, ಬಹುಲಕ_fopen);
+    ಹಿಂತಿರುಗಿ file;
 }
 
 
-static uLong ZCALLBACK fread_file_func(voidpf opaque, voidpf stream, void* buf, uLong size) {
+ಸ್ಥಿರ uLong ZCALLBACK fread_file_func(voidpf opaque, voidpf ಹರಿವು, ಶೂನ್ಯ* buf, uLong ಗಾತ್ರ_2) {
     uLong ret;
-    (void)opaque;
-    ret = (uLong)fread(buf, 1, (size_t)size, (FILE *)stream);
-    return ret;
+    (ಶೂನ್ಯ)opaque;
+    ret = (uLong)fread(buf, 1, (size_t)ಗಾತ್ರ_2, (FILE *)ಹರಿವು);
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-static uLong ZCALLBACK fwrite_file_func(voidpf opaque, voidpf stream, const void* buf, uLong size) {
+ಸ್ಥಿರ uLong ZCALLBACK fwrite_file_func(voidpf opaque, voidpf ಹರಿವು, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ* buf, uLong ಗಾತ್ರ_2) {
     uLong ret;
-    (void)opaque;
-    ret = (uLong)fwrite(buf, 1, (size_t)size, (FILE *)stream);
-    return ret;
+    (ಶೂನ್ಯ)opaque;
+    ret = (uLong)fwrite(buf, 1, (size_t)ಗಾತ್ರ_2, (FILE *)ಹರಿವು);
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-static long ZCALLBACK ftell_file_func(voidpf opaque, voidpf stream) {
-    long ret;
-    (void)opaque;
-    ret = ftell((FILE *)stream);
-    return ret;
+ಸ್ಥಿರ ದೀರ್ಘ ZCALLBACK ftell_file_func(voidpf opaque, voidpf ಹರಿವು) {
+    ದೀರ್ಘ ret;
+    (ಶೂನ್ಯ)opaque;
+    ret = ftell((FILE *)ಹರಿವು);
+    ಹಿಂತಿರುಗಿ ret;
 }
 
 
-static ZPOS64_T ZCALLBACK ftell64_file_func(voidpf opaque, voidpf stream) {
+ಸ್ಥಿರ ZPOS64_T ZCALLBACK ftell64_file_func(voidpf opaque, voidpf ಹರಿವು) {
     ZPOS64_T ret;
-    (void)opaque;
-    ret = (ZPOS64_T)FTELLO_FUNC((FILE *)stream);
-    return ret;
+    (ಶೂನ್ಯ)opaque;
+    ret = (ZPOS64_T)FTELLO_FUNC((FILE *)ಹರಿವು);
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-static long ZCALLBACK fseek_file_func(voidpf opaque, voidpf stream, uLong offset, int origin) {
-    int fseek_origin=0;
-    long ret;
-    (void)opaque;
-    switch (origin)
+ಸ್ಥಿರ ದೀರ್ಘ ZCALLBACK fseek_file_func(voidpf opaque, voidpf ಹರಿವು, uLong ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ origin) {
+    ಪೂರ್ಣಾಂಕ fseek_origin=0;
+    ದೀರ್ಘ ret;
+    (ಶೂನ್ಯ)opaque;
+    ಆಯ್ಕೆ (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_CUR :
         fseek_origin = SEEK_CUR;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
+        ನಿಲ್ಲಿಸು;
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_ಕೊನೆ :
         fseek_origin = SEEK_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
+        ನಿಲ್ಲಿಸು;
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_ಗಣ :
         fseek_origin = SEEK_SET;
-        break;
-    default: return -1;
+        ನಿಲ್ಲಿಸು;
+    ಪೂರ್ವನಿಯೋಜಿತ: ಹಿಂತಿರುಗಿ -1;
     }
     ret = 0;
-    if (fseek((FILE *)stream, (long)offset, fseek_origin) != 0)
+    ಆದರೆ (fseek((FILE *)ಹರಿವು, (ದೀರ್ಘ)ಸ್ಥಾನಾಂತರ, fseek_origin) != 0)
         ret = -1;
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-static long ZCALLBACK fseek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, int origin) {
-    int fseek_origin=0;
-    long ret;
-    (void)opaque;
-    switch (origin)
+ಸ್ಥಿರ ದೀರ್ಘ ZCALLBACK fseek64_file_func(voidpf opaque, voidpf ಹರಿವು, ZPOS64_T ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ origin) {
+    ಪೂರ್ಣಾಂಕ fseek_origin=0;
+    ದೀರ್ಘ ret;
+    (ಶೂನ್ಯ)opaque;
+    ಆಯ್ಕೆ (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_CUR :
         fseek_origin = SEEK_CUR;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
+        ನಿಲ್ಲಿಸು;
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_ಕೊನೆ :
         fseek_origin = SEEK_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
+        ನಿಲ್ಲಿಸು;
+    ಸ್ಥಿತಿ ZLIB_FILEFUNC_SEEK_ಗಣ :
         fseek_origin = SEEK_SET;
-        break;
-    default: return -1;
+        ನಿಲ್ಲಿಸು;
+    ಪೂರ್ವನಿಯೋಜಿತ: ಹಿಂತಿರುಗಿ -1;
     }
     ret = 0;
 
-    if(FSEEKO_FUNC((FILE *)stream, (z_off64_t)offset, fseek_origin) != 0)
+    ಆದರೆ(FSEEKO_FUNC((FILE *)ಹರಿವು, (z_off64_t)ಸ್ಥಾನಾಂತರ, fseek_origin) != 0)
                         ret = -1;
 
-    return ret;
+    ಹಿಂತಿರುಗಿ ret;
 }
 
 
-static int ZCALLBACK fclose_file_func(voidpf opaque, voidpf stream) {
-    int ret;
-    (void)opaque;
-    ret = fclose((FILE *)stream);
-    return ret;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ZCALLBACK fclose_file_func(voidpf opaque, voidpf ಹರಿವು) {
+    ಪೂರ್ಣಾಂಕ ret;
+    (ಶೂನ್ಯ)opaque;
+    ret = fclose((FILE *)ಹರಿವು);
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-static int ZCALLBACK ferror_file_func(voidpf opaque, voidpf stream) {
-    int ret;
-    (void)opaque;
-    ret = ferror((FILE *)stream);
-    return ret;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ZCALLBACK ferror_file_func(voidpf opaque, voidpf ಹರಿವು) {
+    ಪೂರ್ಣಾಂಕ ret;
+    (ಶೂನ್ಯ)opaque;
+    ret = ferror((FILE *)ಹರಿವು);
+    ಹಿಂತಿರುಗಿ ret;
 }
 
-void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
+ಶೂನ್ಯ fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen_file = fopen_file_func;
     pzlib_filefunc_def->zread_file = fread_file_func;
     pzlib_filefunc_def->zwrite_file = fwrite_file_func;
@@ -216,10 +216,10 @@ void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek_file = fseek_file_func;
     pzlib_filefunc_def->zclose_file = fclose_file_func;
     pzlib_filefunc_def->zerror_file = ferror_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ಖಾಲಿ;
 }
 
-void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
+ಶೂನ್ಯ fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = fopen64_file_func;
     pzlib_filefunc_def->zread_file = fread_file_func;
     pzlib_filefunc_def->zwrite_file = fwrite_file_func;
@@ -227,5 +227,5 @@ void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = fseek64_file_func;
     pzlib_filefunc_def->zclose_file = fclose_file_func;
     pzlib_filefunc_def->zerror_file = ferror_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ಖಾಲಿ;
 }

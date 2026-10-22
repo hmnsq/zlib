@@ -63,231 +63,231 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#ifdef ZLIB_DLL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ZLIB_DLL
 #  undef ZLIB_DLL
-#endif
-#include "zlib.h"
-#include "unzip.h"
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "zlib.h"
+#ಅನ್ತರ್ಭಾವ "unzip.h"
 
-#ifdef STDC
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ STDC
 #  include <stddef.h>
-#endif
-#ifdef NO_ERRNO_H
-    extern int errno;
-#else
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NO_ERRNO_H
+    ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ errno;
+#ಇಲ್ಲದಿದ್ದರೆ
 #   include <errno.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 
-#ifndef local
-#  define local static
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ local
+#  define local ಸ್ಥಿರ
+#ಆದರೆ_ಅಂತ್ಯ
 /* compile with -Dlocal if your debugger can't find static symbols */
 
 
-#ifndef CASESENSITIVITYDEFAULT_NO
-#  if (!defined(__unix__) && !defined(__unix) || defined(__CYGWIN__))  && !defined(CASESENSITIVITYDEFAULT_YES)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ CASESENSITIVITYDEFAULT_NO
+#  ಆದರೆ (!defined(__unix__) && !defined(__unix) || defined(__CYGWIN__))  && !defined(CASESENSITIVITYDEFAULT_YES)
 #    define CASESENSITIVITYDEFAULT_NO
 #  endif
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 
-#ifndef UNZ_BUFSIZE
-#define UNZ_BUFSIZE (16384)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ UNZ_BUFSIZE
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_BUFSIZE (16384)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef UNZ_MAXFILENAMEINZIP
-#define UNZ_MAXFILENAMEINZIP (256)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ UNZ_MAXFILENAMEINZIP
+#ವ್ಯಾಖ್ಯಾನಿಸು UNZ_MAXFILENAMEINZIP (256)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef ALLOC
-# define ALLOC(size) (malloc(size))
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ALLOC
+# define ALLOC(ಗಾತ್ರ_2) (ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2))
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define SIZECENTRALDIRITEM (0x2e)
-#define SIZEZIPLOCALHEADER (0x1e)
+#ವ್ಯಾಖ್ಯಾನಿಸು SIZECENTRALDIRITEM (0x2e)
+#ವ್ಯಾಖ್ಯಾನಿಸು SIZEZIPLOCALHEADER (0x1e)
 
 
-const char unz_copyright[] =
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ unz_copyright[] =
    " unzip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
 
 /* unz_file_info64_internal contain internal info about a file in zipfile*/
-typedef struct unz_file_info64_internal_s
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ unz_file_info64_ಆಂತರಿಕ_s
 {
-    ZPOS64_T offset_curfile;/* relative offset of local header 8 bytes */
-} unz_file_info64_internal;
+    ZPOS64_T ಸ್ಥಾನಾಂತರ_curfile;/* relative offset of local header 8 bytes */
+} unz_file_info64_ಆಂತರಿಕ;
 
 
 /* file_in_zip_read_info_s contain internal information about a file in zipfile,
     when reading and decompress it */
-typedef struct
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ
 {
-    char  *read_buffer;         /* internal buffer for compressed data */
-    z_stream stream;            /* zLib stream structure for inflate */
+    ಅಕ್ಷರ  *read_ಬಫರ್;         /* internal buffer for compressed data */
+    z_ಹರಿವು ಹರಿವು;            /* zLib stream structure for inflate */
 
-#ifdef HAVE_BZIP2
-    bz_stream bstream;          /* bzLib stream structure for bziped */
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    bz_ಹರಿವು bstream;          /* bzLib stream structure for bziped */
+#ಆದರೆ_ಅಂತ್ಯ
 
-    ZPOS64_T pos_in_zipfile;       /* position in byte on the zipfile, for fseek*/
-    uLong stream_initialised;   /* flag set if stream structure is initialised*/
+    ZPOS64_T pos_ಒಳ_zipfile;       /* position in byte on the zipfile, for fseek*/
+    uLong ಹರಿವು_initialised;   /* flag set if stream structure is initialised*/
 
-    ZPOS64_T offset_local_extrafield;/* offset of the local extra field */
-    uInt  size_local_extrafield;/* size of the local extra field */
+    ZPOS64_T ಸ್ಥಾನಾಂತರ_local_extrafield;/* offset of the local extra field */
+    uInt  ಗಾತ್ರ_local_extrafield;/* size of the local extra field */
     ZPOS64_T pos_local_extrafield;   /* position in the local extra field in read*/
-    ZPOS64_T total_out_64;
+    ZPOS64_T ಒಟ್ಟು_ಹೊರಹೋಗು_64;
 
-    uLong crc32;                /* crc32 of all data uncompressed */
-    uLong crc32_wait;           /* crc32 we must obtain after decompress all */
+    uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2;                /* crc32 of all data uncompressed */
+    uLong ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_wait;           /* crc32 we must obtain after decompress all */
     ZPOS64_T rest_read_compressed; /* number of byte to be decompressed */
     ZPOS64_T rest_read_uncompressed;/*number of byte to be obtained after decomp*/
     zlib_filefunc64_32_def z_filefunc;
     voidpf filestream;        /* io structure of the zipfile */
-    uLong compression_method;   /* compression method (0==store) */
+    uLong compression_ವಿಧಾನ;   /* compression method (0==store) */
     ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
-    int   raw;
-} file_in_zip64_read_info_s;
+    ಪೂರ್ಣಾಂಕ   raw;
+} file_ಒಳ_zip64_read_info_s;
 
 
 /* unz64_s contain internal information about the zipfile
 */
-typedef struct
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ
 {
     zlib_filefunc64_32_def z_filefunc;
-    int is64bitOpenFunction;
+    ಪೂರ್ಣಾಂಕ is64bitOpenFunction;
     voidpf filestream;        /* io structure of the zipfile */
     unz_global_info64 gi;       /* public global information */
     ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
-    ZPOS64_T num_file;             /* number of the current file in the zipfile*/
-    ZPOS64_T pos_in_central_dir;   /* pos of the current file in the central dir*/
+    ZPOS64_T ಅಂಕೆ_file;             /* number of the current file in the zipfile*/
+    ZPOS64_T pos_ಒಳ_central_dir;   /* pos of the current file in the central dir*/
     ZPOS64_T current_file_ok;      /* flag about the usability of the current file*/
     ZPOS64_T central_pos;          /* position of the beginning of the central dir*/
 
-    ZPOS64_T size_central_dir;     /* size of the central directory  */
-    ZPOS64_T offset_central_dir;   /* offset of start of central directory with
+    ZPOS64_T ಗಾತ್ರ_central_dir;     /* size of the central directory  */
+    ZPOS64_T ಸ್ಥಾನಾಂತರ_central_dir;   /* offset of start of central directory with
                                    respect to the starting disk number */
 
     unz_file_info64 cur_file_info; /* public info about the current file in zip*/
-    unz_file_info64_internal cur_file_info_internal; /* private info about it*/
-    file_in_zip64_read_info_s* pfile_in_zip_read; /* structure about the current
+    unz_file_info64_ಆಂತರಿಕ cur_file_info_ಆಂತರಿಕ; /* private info about it*/
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read; /* structure about the current
                                         file if we are decompressing it */
-    int encrypted;
+    ಪೂರ್ಣಾಂಕ encrypted;
 
-    int isZip64;
+    ಪೂರ್ಣಾಂಕ isZip64;
 
 #    ifndef NOUNCRYPT
-    unsigned long keys[3];     /* keys defining the pseudo-random sequence */
-    const z_crc_t* pcrc_32_tab;
+    ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಕೀಲಿಗಳು[3];     /* keys defining the pseudo-random sequence */
+    ಸ್ಥಿರಾಂಕ z_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_t* pcrc_32_tab;
 #    endif
 } unz64_s;
 
 
-#ifndef NOUNCRYPT
-#include "crypt.h"
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NOUNCRYPT
+#ಅನ್ತರ್ಭಾವ "crypt.h"
+#ಆದರೆ_ಅಂತ್ಯ
 
 
 /* ===========================================================================
    Reads a long in LSB order from the given gz_stream. Sets
 */
 
-local int unz64local_getShort(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local ಪೂರ್ಣಾಂಕ unz64local_getShort(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def,
                               voidpf filestream,
                               uLong *pX) {
-    unsigned char c[2];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,2);
-    if (err==2)
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ c[2];
+    ಪೂರ್ಣಾಂಕ err = (ಪೂರ್ಣಾಂಕ)ZREAD64(*pzlib_filefunc_def,filestream,c,2);
+    ಆದರೆ (err==2)
     {
         *pX = c[0] | ((uLong)c[1] << 8);
-        return UNZ_OK;
+        ಹಿಂತಿರುಗಿ UNZ_OK;
     }
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        ಆದರೆ (ZERROR64(*pzlib_filefunc_def,filestream))
+            ಹಿಂತಿರುಗಿ UNZ_ERRNO;
+        ಇಲ್ಲದಿದ್ದರೆ
+            ಹಿಂತಿರುಗಿ UNZ_EOF;
     }
 }
 
-local int unz64local_getLong(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local ಪೂರ್ಣಾಂಕ unz64local_getLong(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def,
                              voidpf filestream,
                              uLong *pX) {
-    unsigned char c[4];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,4);
-    if (err==4)
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ c[4];
+    ಪೂರ್ಣಾಂಕ err = (ಪೂರ್ಣಾಂಕ)ZREAD64(*pzlib_filefunc_def,filestream,c,4);
+    ಆದರೆ (err==4)
     {
         *pX = c[0] | ((uLong)c[1] << 8) | ((uLong)c[2] << 16) | ((uLong)c[3] << 24);
-        return UNZ_OK;
+        ಹಿಂತಿರುಗಿ UNZ_OK;
     }
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        ಆದರೆ (ZERROR64(*pzlib_filefunc_def,filestream))
+            ಹಿಂತಿರುಗಿ UNZ_ERRNO;
+        ಇಲ್ಲದಿದ್ದರೆ
+            ಹಿಂತಿರುಗಿ UNZ_EOF;
     }
 }
 
 
-local int unz64local_getLong64(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local ಪೂರ್ಣಾಂಕ unz64local_getLong64(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def,
                                voidpf filestream,
                                ZPOS64_T *pX) {
-    unsigned char c[8];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,8);
-    if (err==8)
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ c[8];
+    ಪೂರ್ಣಾಂಕ err = (ಪೂರ್ಣಾಂಕ)ZREAD64(*pzlib_filefunc_def,filestream,c,8);
+    ಆದರೆ (err==8)
     {
         *pX = c[0] | ((ZPOS64_T)c[1] << 8) | ((ZPOS64_T)c[2] << 16) | ((ZPOS64_T)c[3] << 24)
             | ((ZPOS64_T)c[4] << 32) | ((ZPOS64_T)c[5] << 40) | ((ZPOS64_T)c[6] << 48) | ((ZPOS64_T)c[7] << 56);
-        return UNZ_OK;
+        ಹಿಂತಿರುಗಿ UNZ_OK;
     }
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        ಆದರೆ (ZERROR64(*pzlib_filefunc_def,filestream))
+            ಹಿಂತಿರುಗಿ UNZ_ERRNO;
+        ಇಲ್ಲದಿದ್ದರೆ
+            ಹಿಂತಿರುಗಿ UNZ_EOF;
     }
 }
 
 /* My own strcmpi / strcasecmp */
-local int strcmpcasenosensitive_internal(const char* fileName1, const char* fileName2) {
-    for (;;)
+local ಪೂರ್ಣಾಂಕ strcmpcasenosensitive_ಆಂತರಿಕ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* fileName1, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* fileName2) {
+    ಗಾಗಿ (;;)
     {
-        char c1=*(fileName1++);
-        char c2=*(fileName2++);
-        if ((c1>='a') && (c1<='z'))
+        ಅಕ್ಷರ c1=*(fileName1++);
+        ಅಕ್ಷರ c2=*(fileName2++);
+        ಆದರೆ ((c1>='a') && (c1<='z'))
             c1 -= 0x20;
-        if ((c2>='a') && (c2<='z'))
+        ಆದರೆ ((c2>='a') && (c2<='z'))
             c2 -= 0x20;
-        if (c1=='\0')
-            return ((c2=='\0') ? 0 : -1);
-        if (c2=='\0')
-            return 1;
-        if (c1<c2)
-            return -1;
-        if (c1>c2)
-            return 1;
+        ಆದರೆ (c1=='\0')
+            ಹಿಂತಿರುಗಿ ((c2=='\0') ? 0 : -1);
+        ಆದರೆ (c2=='\0')
+            ಹಿಂತಿರುಗಿ 1;
+        ಆದರೆ (c1<c2)
+            ಹಿಂತಿರುಗಿ -1;
+        ಆದರೆ (c1>c2)
+            ಹಿಂತಿರುಗಿ 1;
     }
 }
 
 
-#ifdef  CASESENSITIVITYDEFAULT_NO
-#define CASESENSITIVITYDEFAULTVALUE 2
-#else
-#define CASESENSITIVITYDEFAULTVALUE 1
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ  CASESENSITIVITYDEFAULT_NO
+#ವ್ಯಾಖ್ಯಾನಿಸು CASESENSITIVITYDEFAULTVALUE 2
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು CASESENSITIVITYDEFAULTVALUE 1
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef STRCMPCASENOSENTIVEFUNCTION
-#define STRCMPCASENOSENTIVEFUNCTION strcmpcasenosensitive_internal
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ STRCMPCASENOSENTIVEFUNCTION
+#ವ್ಯಾಖ್ಯಾನಿಸು STRCMPCASENOSENTIVEFUNCTION strcmpcasenosensitive_ಆಂತರಿಕ
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
    Compare two filenames (fileName1,fileName2).
@@ -298,83 +298,83 @@ local int strcmpcasenosensitive_internal(const char* fileName1, const char* file
         (like 1 on Unix, 2 on Windows)
 
 */
-extern int ZEXPORT unzStringFileNameCompare (const char*  fileName1,
-                                             const char*  fileName2,
-                                             int iCaseSensitivity) {
-    if (iCaseSensitivity==0)
-        iCaseSensitivity=CASESENSITIVITYDEFAULTVALUE;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzStringFileNameCompare (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*  fileName1,
+                                             ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*  fileName2,
+                                             ಪೂರ್ಣಾಂಕ i_Case_ಸಂವೇದನಾಶೀಲತೆ) {
+    ಆದರೆ (i_Case_ಸಂವೇದನಾಶೀಲತೆ==0)
+        i_Case_ಸಂವೇದನಾಶೀಲತೆ=CASESENSITIVITYDEFAULTVALUE;
 
-    if (iCaseSensitivity==1)
-        return strcmp(fileName1,fileName2);
+    ಆದರೆ (i_Case_ಸಂವೇದನಾಶೀಲತೆ==1)
+        ಹಿಂತಿರುಗಿ strcmp(fileName1,fileName2);
 
-    return STRCMPCASENOSENTIVEFUNCTION(fileName1,fileName2);
+    ಹಿಂತಿರುಗಿ STRCMPCASENOSENTIVEFUNCTION(fileName1,fileName2);
 }
 
-#ifndef BUFREADCOMMENT
-#define BUFREADCOMMENT (0x400)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ BUFREADCOMMENT
+#ವ್ಯಾಖ್ಯಾನಿಸು BUFREADCOMMENT (0x400)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef CENTRALDIRINVALID
-#define CENTRALDIRINVALID ((ZPOS64_T)(-1))
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ CENTRALDIRINVALID
+#ವ್ಯಾಖ್ಯಾನಿಸು CENTRALDIRINVALID ((ZPOS64_T)(-1))
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-    unsigned char* buf;
-    ZPOS64_T uSizeFile;
-    ZPOS64_T uBackRead;
-    ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-    ZPOS64_T uPosFound=CENTRALDIRINVALID;
+local ZPOS64_T unz64local_ಹುಡುಕು_Central_Dir(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* buf;
+    ZPOS64_T u_ಗಾತ್ರ_File;
+    ZPOS64_T u_ಹಿಂಭಾಗ_Read;
+    ZPOS64_T u_Max_ಹಿಂಭಾಗ=0xffff; /* maximum size of global comment */
+    ZPOS64_T u_Pos_ಸಿಕ್ಕಿತು=CENTRALDIRINVALID;
 
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_ಕೊನೆ) != 0)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
 
-    uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+    u_ಗಾತ್ರ_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-    if (uMaxBack>uSizeFile)
-        uMaxBack = uSizeFile;
+    ಆದರೆ (u_Max_ಹಿಂಭಾಗ>u_ಗಾತ್ರ_File)
+        u_Max_ಹಿಂಭಾಗ = u_ಗಾತ್ರ_File;
 
-    buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-    if (buf==NULL)
-        return CENTRALDIRINVALID;
+    buf = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)ALLOC(BUFREADCOMMENT+4);
+    ಆದರೆ (buf==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
-    uBackRead = 4;
-    while (uBackRead<uMaxBack)
+    u_ಹಿಂಭಾಗ_Read = 4;
+    ಆಗ (u_ಹಿಂಭಾಗ_Read<u_Max_ಹಿಂಭಾಗ)
     {
-        uLong uReadSize;
+        uLong u_Read_ಗಾತ್ರ;
         ZPOS64_T uReadPos ;
-        int i;
-        if (uBackRead+BUFREADCOMMENT>uMaxBack)
-            uBackRead = uMaxBack;
-        else
-            uBackRead+=BUFREADCOMMENT;
-        uReadPos = uSizeFile-uBackRead ;
+        ಪೂರ್ಣಾಂಕ i;
+        ಆದರೆ (u_ಹಿಂಭಾಗ_Read+BUFREADCOMMENT>u_Max_ಹಿಂಭಾಗ)
+            u_ಹಿಂಭಾಗ_Read = u_Max_ಹಿಂಭಾಗ;
+        ಇಲ್ಲದಿದ್ದರೆ
+            u_ಹಿಂಭಾಗ_Read+=BUFREADCOMMENT;
+        uReadPos = u_ಗಾತ್ರ_File-u_ಹಿಂಭಾಗ_Read ;
 
-        uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-                     (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-        if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-            break;
+        u_Read_ಗಾತ್ರ = ((BUFREADCOMMENT+4) < (u_ಗಾತ್ರ_File-uReadPos)) ?
+                     (BUFREADCOMMENT+4) : (uLong)(u_ಗಾತ್ರ_File-uReadPos);
+        ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+            ನಿಲ್ಲಿಸು;
 
-        if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-            break;
+        ಆದರೆ (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_ಗಾತ್ರ)!=u_Read_ಗಾತ್ರ)
+            ನಿಲ್ಲಿಸು;
 
-        for (i=(int)uReadSize-3; (i--)>0;)
-            if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+        ಗಾಗಿ (i=(ಪೂರ್ಣಾಂಕ)u_Read_ಗಾತ್ರ-3; (i--)>0;)
+            ಆದರೆ (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
                 ((*(buf+i+2))==0x05) && ((*(buf+i+3))==0x06))
             {
-                uPosFound = uReadPos+(unsigned)i;
-                break;
+                u_Pos_ಸಿಕ್ಕಿತು = uReadPos+(ಚಿಹ್ನೆರಹಿತ)i;
+                ನಿಲ್ಲಿಸು;
             }
 
-        if (uPosFound!=CENTRALDIRINVALID)
-            break;
+        ಆದರೆ (u_Pos_ಸಿಕ್ಕಿತು!=CENTRALDIRINVALID)
+            ನಿಲ್ಲಿಸು;
     }
-    free(buf);
-    return uPosFound;
+    ಬಿಡುಗಡೆ(buf);
+    ಹಿಂತಿರುಗಿ u_Pos_ಸಿಕ್ಕಿತು;
 }
 
 
@@ -382,100 +382,100 @@ local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_f
   Locate the Central directory 64 of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local ZPOS64_T unz64local_ಹುಡುಕು_Central_Dir64(ಸ್ಥಿರಾಂಕ zlib_filefunc64_32_def* pzlib_filefunc_def,
                                              voidpf filestream) {
-    unsigned char* buf;
-    ZPOS64_T uSizeFile;
-    ZPOS64_T uBackRead;
-    ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-    ZPOS64_T uPosFound=CENTRALDIRINVALID;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* buf;
+    ZPOS64_T u_ಗಾತ್ರ_File;
+    ZPOS64_T u_ಹಿಂಭಾಗ_Read;
+    ZPOS64_T u_Max_ಹಿಂಭಾಗ=0xffff; /* maximum size of global comment */
+    ZPOS64_T u_Pos_ಸಿಕ್ಕಿತು=CENTRALDIRINVALID;
     uLong uL;
-                ZPOS64_T relativeOffset;
+                ZPOS64_T relative_ಸ್ಥಾನಾಂತರ;
 
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_ಕೊನೆ) != 0)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
 
-    uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+    u_ಗಾತ್ರ_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-    if (uMaxBack>uSizeFile)
-        uMaxBack = uSizeFile;
+    ಆದರೆ (u_Max_ಹಿಂಭಾಗ>u_ಗಾತ್ರ_File)
+        u_Max_ಹಿಂಭಾಗ = u_ಗಾತ್ರ_File;
 
-    buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-    if (buf==NULL)
-        return CENTRALDIRINVALID;
+    buf = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)ALLOC(BUFREADCOMMENT+4);
+    ಆದರೆ (buf==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
-    uBackRead = 4;
-    while (uBackRead<uMaxBack)
+    u_ಹಿಂಭಾಗ_Read = 4;
+    ಆಗ (u_ಹಿಂಭಾಗ_Read<u_Max_ಹಿಂಭಾಗ)
     {
-        uLong uReadSize;
+        uLong u_Read_ಗಾತ್ರ;
         ZPOS64_T uReadPos;
-        int i;
-        if (uBackRead+BUFREADCOMMENT>uMaxBack)
-            uBackRead = uMaxBack;
-        else
-            uBackRead+=BUFREADCOMMENT;
-        uReadPos = uSizeFile-uBackRead ;
+        ಪೂರ್ಣಾಂಕ i;
+        ಆದರೆ (u_ಹಿಂಭಾಗ_Read+BUFREADCOMMENT>u_Max_ಹಿಂಭಾಗ)
+            u_ಹಿಂಭಾಗ_Read = u_Max_ಹಿಂಭಾಗ;
+        ಇಲ್ಲದಿದ್ದರೆ
+            u_ಹಿಂಭಾಗ_Read+=BUFREADCOMMENT;
+        uReadPos = u_ಗಾತ್ರ_File-u_ಹಿಂಭಾಗ_Read ;
 
-        uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-                     (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-        if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-            break;
+        u_Read_ಗಾತ್ರ = ((BUFREADCOMMENT+4) < (u_ಗಾತ್ರ_File-uReadPos)) ?
+                     (BUFREADCOMMENT+4) : (uLong)(u_ಗಾತ್ರ_File-uReadPos);
+        ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+            ನಿಲ್ಲಿಸು;
 
-        if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-            break;
+        ಆದರೆ (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_ಗಾತ್ರ)!=u_Read_ಗಾತ್ರ)
+            ನಿಲ್ಲಿಸು;
 
-        for (i=(int)uReadSize-3; (i--)>0;)
-            if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+        ಗಾಗಿ (i=(ಪೂರ್ಣಾಂಕ)u_Read_ಗಾತ್ರ-3; (i--)>0;)
+            ಆದರೆ (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
                 ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
             {
-                uPosFound = uReadPos+(unsigned)i;
-                break;
+                u_Pos_ಸಿಕ್ಕಿತು = uReadPos+(ಚಿಹ್ನೆರಹಿತ)i;
+                ನಿಲ್ಲಿಸು;
             }
 
-        if (uPosFound!=CENTRALDIRINVALID)
-            break;
+        ಆದರೆ (u_Pos_ಸಿಕ್ಕಿತು!=CENTRALDIRINVALID)
+            ನಿಲ್ಲಿಸು;
     }
-    free(buf);
-    if (uPosFound == CENTRALDIRINVALID)
-        return CENTRALDIRINVALID;
+    ಬಿಡುಗಡೆ(buf);
+    ಆದರೆ (u_Pos_ಸಿಕ್ಕಿತು == CENTRALDIRINVALID)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
     /* Zip64 end of central directory locator */
-    if (ZSEEK64(*pzlib_filefunc_def,filestream, uPosFound,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream, u_Pos_ಸಿಕ್ಕಿತು,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
     /* the signature, already checked */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
     /* number of the disk with the start of the zip64 end of central directory */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
-    if (uL != 0)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
+    ಆದರೆ (uL != 0)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
     /* relative offset of the zip64 end of central directory record */
-    if (unz64local_getLong64(pzlib_filefunc_def,filestream,&relativeOffset)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (unz64local_getLong64(pzlib_filefunc_def,filestream,&relative_ಸ್ಥಾನಾಂತರ)!=UNZ_OK)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
     /* total number of disks */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
-    if (uL != 1)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
+    ಆದರೆ (uL != 1)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
     /* Goto end of central directory record */
-    if (ZSEEK64(*pzlib_filefunc_def,filestream, relativeOffset,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (ZSEEK64(*pzlib_filefunc_def,filestream, relative_ಸ್ಥಾನಾಂತರ,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
      /* the signature */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
-    if (uL != 0x06064b50)
-        return CENTRALDIRINVALID;
+    ಆದರೆ (uL != 0x06064b50)
+        ಹಿಂತಿರುಗಿ CENTRALDIRINVALID;
 
-    return relativeOffset;
+    ಹಿಂತಿರುಗಿ relative_ಸ್ಥಾನಾಂತರ;
 }
 
 /*
@@ -487,219 +487,219 @@ local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
      Else, the return value is a unzFile Handle, usable with other function
        of this unzip package.
 */
-local unzFile unzOpenInternal(const void *path,
+local unzFile unz_Open_ಆಂತರಿಕ(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮಾರ್ಗ,
                               zlib_filefunc64_32_def* pzlib_filefunc64_32_def,
-                              int is64bitOpenFunction) {
+                              ಪೂರ್ಣಾಂಕ is64bitOpenFunction) {
     unz64_s us;
     unz64_s *s;
     ZPOS64_T central_pos;
     uLong   uL;
 
-    uLong number_disk;          /* number of the current disk, used for
+    uLong ಸಂಖ್ಯೆ_disk;          /* number of the current disk, used for
                                    spanning ZIP, unsupported, always 0*/
-    uLong number_disk_with_CD;  /* number the disk with central dir, used
+    uLong ಸಂಖ್ಯೆ_disk_with_CD;  /* number the disk with central dir, used
                                    for spanning ZIP, unsupported, always 0*/
-    ZPOS64_T number_entry_CD;      /* total number of entries in
+    ZPOS64_T ಸಂಖ್ಯೆ_ನಮೂದು_CD;      /* total number of entries in
                                    the central dir
                                    (same than number_entry on nospan) */
 
-    int err=UNZ_OK;
+    ಪೂರ್ಣಾಂಕ err=UNZ_OK;
 
-    if (unz_copyright[0]!=' ')
-        return NULL;
+    ಆದರೆ (unz_copyright[0]!=' ')
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-    us.z_filefunc.zseek32_file = NULL;
-    us.z_filefunc.ztell32_file = NULL;
-    if (pzlib_filefunc64_32_def==NULL)
+    us.z_filefunc.zseek32_file = ಖಾಲಿ;
+    us.z_filefunc.ztell32_file = ಖಾಲಿ;
+    ಆದರೆ (pzlib_filefunc64_32_def==ಖಾಲಿ)
         fill_fopen64_filefunc(&us.z_filefunc.zfile_func64);
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
         us.z_filefunc = *pzlib_filefunc64_32_def;
     us.is64bitOpenFunction = is64bitOpenFunction;
 
 
 
     us.filestream = ZOPEN64(us.z_filefunc,
-                                                 path,
-                                                 ZLIB_FILEFUNC_MODE_READ |
-                                                 ZLIB_FILEFUNC_MODE_EXISTING);
-    if (us.filestream==NULL)
-        return NULL;
+                                                 ಮಾರ್ಗ,
+                                                 ZLIB_FILEFUNC_ಬಹುಲಕ_READ |
+                                                 ZLIB_FILEFUNC_ಬಹುಲಕ_EXISTING);
+    ಆದರೆ (us.filestream==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-    central_pos = unz64local_SearchCentralDir64(&us.z_filefunc,us.filestream);
-    if (central_pos!=CENTRALDIRINVALID)
+    central_pos = unz64local_ಹುಡುಕು_Central_Dir64(&us.z_filefunc,us.filestream);
+    ಆದರೆ (central_pos!=CENTRALDIRINVALID)
     {
         uLong uS;
         ZPOS64_T uL64;
 
         us.isZip64 = 1;
 
-        if (ZSEEK64(us.z_filefunc, us.filestream,
-                                      central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        ಆದರೆ (ZSEEK64(us.z_filefunc, us.filestream,
+                                      central_pos,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
         err=UNZ_ERRNO;
 
         /* the signature, already checked */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* size of zip64 end of central directory record */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&uL64)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong64(&us.z_filefunc, us.filestream,&uL64)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* version made by */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
+        ಆದರೆ (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* version needed to extract */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
+        ಆದರೆ (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of this disk */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&number_disk)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong(&us.z_filefunc, us.filestream,&ಸಂಖ್ಯೆ_disk)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of the disk with the start of the central directory */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&number_disk_with_CD)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong(&us.z_filefunc, us.filestream,&ಸಂಖ್ಯೆ_disk_with_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central directory on this disk */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.gi.number_entry)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.gi.ಸಂಖ್ಯೆ_ನಮೂದು)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central directory */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&number_entry_CD)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong64(&us.z_filefunc, us.filestream,&ಸಂಖ್ಯೆ_ನಮೂದು_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
-        if ((number_entry_CD!=us.gi.number_entry) ||
-            (number_disk_with_CD!=0) ||
-            (number_disk!=0))
+        ಆದರೆ ((ಸಂಖ್ಯೆ_ನಮೂದು_CD!=us.gi.ಸಂಖ್ಯೆ_ನಮೂದು) ||
+            (ಸಂಖ್ಯೆ_disk_with_CD!=0) ||
+            (ಸಂಖ್ಯೆ_disk!=0))
             err=UNZ_BADZIPFILE;
 
         /* size of the central directory */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.size_central_dir)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.ಗಾತ್ರ_central_dir)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* offset of start of central directory with respect to the
           starting disk number */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.offset_central_dir)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.ಸ್ಥಾನಾಂತರ_central_dir)!=UNZ_OK)
             err=UNZ_ERRNO;
 
-        us.gi.size_comment = 0;
+        us.gi.ಗಾತ್ರ_comment = 0;
     }
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
-        central_pos = unz64local_SearchCentralDir(&us.z_filefunc,us.filestream);
-        if (central_pos==CENTRALDIRINVALID)
+        central_pos = unz64local_ಹುಡುಕು_Central_Dir(&us.z_filefunc,us.filestream);
+        ಆದರೆ (central_pos==CENTRALDIRINVALID)
             err=UNZ_ERRNO;
 
         us.isZip64 = 0;
 
-        if (ZSEEK64(us.z_filefunc, us.filestream,
-                                        central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        ಆದರೆ (ZSEEK64(us.z_filefunc, us.filestream,
+                                        central_pos,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
             err=UNZ_ERRNO;
 
         /* the signature, already checked */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of this disk */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&number_disk)!=UNZ_OK)
+        ಆದರೆ (unz64local_getShort(&us.z_filefunc, us.filestream,&ಸಂಖ್ಯೆ_disk)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of the disk with the start of the central directory */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&number_disk_with_CD)!=UNZ_OK)
+        ಆದರೆ (unz64local_getShort(&us.z_filefunc, us.filestream,&ಸಂಖ್ಯೆ_disk_with_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central dir on this disk */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ಆದರೆ (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.gi.number_entry = uL;
+        us.gi.ಸಂಖ್ಯೆ_ನಮೂದು = uL;
 
         /* total number of entries in the central dir */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ಆದರೆ (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        number_entry_CD = uL;
+        ಸಂಖ್ಯೆ_ನಮೂದು_CD = uL;
 
-        if ((number_entry_CD!=us.gi.number_entry) ||
-            (number_disk_with_CD!=0) ||
-            (number_disk!=0))
+        ಆದರೆ ((ಸಂಖ್ಯೆ_ನಮೂದು_CD!=us.gi.ಸಂಖ್ಯೆ_ನಮೂದು) ||
+            (ಸಂಖ್ಯೆ_disk_with_CD!=0) ||
+            (ಸಂಖ್ಯೆ_disk!=0))
             err=UNZ_BADZIPFILE;
 
         /* size of the central directory */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.size_central_dir = uL;
+        us.ಗಾತ್ರ_central_dir = uL;
 
         /* offset of start of central directory with respect to the
             starting disk number */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ಆದರೆ (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.offset_central_dir = uL;
+        us.ಸ್ಥಾನಾಂತರ_central_dir = uL;
 
         /* zipfile comment length */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&us.gi.size_comment)!=UNZ_OK)
+        ಆದರೆ (unz64local_getShort(&us.z_filefunc, us.filestream,&us.gi.ಗಾತ್ರ_comment)!=UNZ_OK)
             err=UNZ_ERRNO;
     }
 
-    if ((central_pos<us.offset_central_dir+us.size_central_dir) &&
+    ಆದರೆ ((central_pos<us.ಸ್ಥಾನಾಂತರ_central_dir+us.ಗಾತ್ರ_central_dir) &&
         (err==UNZ_OK))
         err=UNZ_BADZIPFILE;
 
-    if (err!=UNZ_OK)
+    ಆದರೆ (err!=UNZ_OK)
     {
         ZCLOSE64(us.z_filefunc, us.filestream);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     us.byte_before_the_zipfile = central_pos -
-                            (us.offset_central_dir+us.size_central_dir);
+                            (us.ಸ್ಥಾನಾಂತರ_central_dir+us.ಗಾತ್ರ_central_dir);
     us.central_pos = central_pos;
-    us.pfile_in_zip_read = NULL;
+    us.pfile_ಒಳ_zip_read = ಖಾಲಿ;
     us.encrypted = 0;
 
 
-    s=(unz64_s*)ALLOC(sizeof(unz64_s));
-    if( s != NULL)
+    s=(unz64_s*)ALLOC(ಗಾತ್ರ(unz64_s));
+    ಆದರೆ( s != ಖಾಲಿ)
     {
         *s=us;
-        unzGoToFirstFile((unzFile)s);
+        unz_Go_ಗಮ್ಯ_ಮೊದಲ_File((unzFile)s);
     }
-    return (unzFile)s;
+    ಹಿಂತಿರುಗಿ (unzFile)s;
 }
 
 
-extern unzFile ZEXPORT unzOpen2(const char *path,
+ಬಾಹ್ಯ unzFile ZEXPORT unzOpen2(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ,
                                 zlib_filefunc_def* pzlib_filefunc32_def) {
-    if (pzlib_filefunc32_def != NULL)
+    ಆದರೆ (pzlib_filefunc32_def != ಖಾಲಿ)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
-        return unzOpenInternal(path, &zlib_filefunc64_32_def_fill, 0);
+        ಹಿಂತಿರುಗಿ unz_Open_ಆಂತರಿಕ(ಮಾರ್ಗ, &zlib_filefunc64_32_def_fill, 0);
     }
-    else
-        return unzOpenInternal(path, NULL, 0);
+    ಇಲ್ಲದಿದ್ದರೆ
+        ಹಿಂತಿರುಗಿ unz_Open_ಆಂತರಿಕ(ಮಾರ್ಗ, ಖಾಲಿ, 0);
 }
 
-extern unzFile ZEXPORT unzOpen2_64(const void *path,
+ಬಾಹ್ಯ unzFile ZEXPORT unzOpen2_64(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮಾರ್ಗ,
                                    zlib_filefunc64_def* pzlib_filefunc_def) {
-    if (pzlib_filefunc_def != NULL)
+    ಆದರೆ (pzlib_filefunc_def != ಖಾಲಿ)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
-        zlib_filefunc64_32_def_fill.zopen32_file = NULL;
-        zlib_filefunc64_32_def_fill.ztell32_file = NULL;
-        zlib_filefunc64_32_def_fill.zseek32_file = NULL;
-        return unzOpenInternal(path, &zlib_filefunc64_32_def_fill, 1);
+        zlib_filefunc64_32_def_fill.zopen32_file = ಖಾಲಿ;
+        zlib_filefunc64_32_def_fill.ztell32_file = ಖಾಲಿ;
+        zlib_filefunc64_32_def_fill.zseek32_file = ಖಾಲಿ;
+        ಹಿಂತಿರುಗಿ unz_Open_ಆಂತರಿಕ(ಮಾರ್ಗ, &zlib_filefunc64_32_def_fill, 1);
     }
-    else
-        return unzOpenInternal(path, NULL, 1);
+    ಇಲ್ಲದಿದ್ದರೆ
+        ಹಿಂತಿರುಗಿ unz_Open_ಆಂತರಿಕ(ಮಾರ್ಗ, ಖಾಲಿ, 1);
 }
 
-extern unzFile ZEXPORT unzOpen(const char *path) {
-    return unzOpenInternal(path, NULL, 0);
+ಬಾಹ್ಯ unzFile ZEXPORT unzOpen(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ) {
+    ಹಿಂತಿರುಗಿ unz_Open_ಆಂತರಿಕ(ಮಾರ್ಗ, ಖಾಲಿ, 0);
 }
 
-extern unzFile ZEXPORT unzOpen64(const void *path) {
-    return unzOpenInternal(path, NULL, 1);
+ಬಾಹ್ಯ unzFile ZEXPORT unzOpen64(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಮಾರ್ಗ) {
+    ಹಿಂತಿರುಗಿ unz_Open_ಆಂತರಿಕ(ಮಾರ್ಗ, ಖಾಲಿ, 1);
 }
 
 /*
@@ -707,18 +707,18 @@ extern unzFile ZEXPORT unzOpen64(const void *path) {
   If there is files inside the .Zip opened with unzOpenCurrentFile (see later),
     these files MUST be closed with unzCloseCurrentFile before call unzClose.
   return UNZ_OK if there is no problem. */
-extern int ZEXPORT unzClose(unzFile file) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzClose(unzFile file) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    if (s->pfile_in_zip_read!=NULL)
+    ಆದರೆ (s->pfile_ಒಳ_zip_read!=ಖಾಲಿ)
         unzCloseCurrentFile(file);
 
     ZCLOSE64(s->z_filefunc, s->filestream);
-    free(s);
-    return UNZ_OK;
+    ಬಿಡುಗಡೆ(s);
+    ಹಿಂತಿರುಗಿ UNZ_OK;
 }
 
 
@@ -726,276 +726,276 @@ extern int ZEXPORT unzClose(unzFile file) {
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed
   return UNZ_OK if there is no problem. */
-extern int ZEXPORT unzGetGlobalInfo64(unzFile file, unz_global_info64* pglobal_info) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetGlobalInfo64(unzFile file, unz_global_info64* pglobal_info) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
     *pglobal_info=s->gi;
-    return UNZ_OK;
+    ಹಿಂತಿರುಗಿ UNZ_OK;
 }
 
-extern int ZEXPORT unzGetGlobalInfo(unzFile file, unz_global_info* pglobal_info32) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetGlobalInfo(unzFile file, unz_global_info* pglobal_info32) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
     /* to do : check if number_entry is not truncated */
-    pglobal_info32->number_entry = (uLong)s->gi.number_entry;
-    pglobal_info32->size_comment = s->gi.size_comment;
-    return UNZ_OK;
+    pglobal_info32->ಸಂಖ್ಯೆ_ನಮೂದು = (uLong)s->gi.ಸಂಖ್ಯೆ_ನಮೂದು;
+    pglobal_info32->ಗಾತ್ರ_comment = s->gi.ಗಾತ್ರ_comment;
+    ಹಿಂತಿರುಗಿ UNZ_OK;
 }
 /*
    Translate date/time from Dos format to tm_unz (readable more easily)
 */
-local void unz64local_DosDateToTmuDate(ZPOS64_T ulDosDate, tm_unz* ptm) {
+local ಶೂನ್ಯ unz64local_Dos_Date_ಗಮ್ಯ_Tmu_Date(ZPOS64_T ulDosDate, tm_unz* ptm) {
     ZPOS64_T uDate;
     uDate = (ZPOS64_T)(ulDosDate>>16);
-    ptm->tm_mday = (int)(uDate&0x1f) ;
-    ptm->tm_mon =  (int)((((uDate)&0x1E0)/0x20)-1) ;
-    ptm->tm_year = (int)(((uDate&0x0FE00)/0x0200)+1980) ;
+    ptm->tm_mday = (ಪೂರ್ಣಾಂಕ)(uDate&0x1f) ;
+    ptm->tm_mon =  (ಪೂರ್ಣಾಂಕ)((((uDate)&0x1E0)/0x20)-1) ;
+    ptm->tm_year = (ಪೂರ್ಣಾಂಕ)(((uDate&0x0FE00)/0x0200)+1980) ;
 
-    ptm->tm_hour = (int) ((ulDosDate &0xF800)/0x800);
-    ptm->tm_min =  (int) ((ulDosDate&0x7E0)/0x20) ;
-    ptm->tm_sec =  (int) (2*(ulDosDate&0x1f)) ;
+    ptm->tm_hour = (ಪೂರ್ಣಾಂಕ) ((ulDosDate &0xF800)/0x800);
+    ptm->tm_min =  (ಪೂರ್ಣಾಂಕ) ((ulDosDate&0x7E0)/0x20) ;
+    ptm->tm_sec =  (ಪೂರ್ಣಾಂಕ) (2*(ulDosDate&0x1f)) ;
 }
 
 /*
   Get Info about the current file in the zipfile, with internal only info
 */
-local int unz64local_GetCurrentFileInfoInternal(unzFile file,
+local ಪೂರ್ಣಾಂಕ unz64local_Get_Current_File_Info_ಆಂತರಿಕ(unzFile file,
                                                 unz_file_info64 *pfile_info,
-                                                unz_file_info64_internal
-                                                *pfile_info_internal,
-                                                char *szFileName,
-                                                uLong fileNameBufferSize,
-                                                void *extraField,
-                                                uLong extraFieldBufferSize,
-                                                char *szComment,
-                                                uLong commentBufferSize) {
+                                                unz_file_info64_ಆಂತರಿಕ
+                                                *pfile_info_ಆಂತರಿಕ,
+                                                ಅಕ್ಷರ *szFileName,
+                                                uLong file_Name_ಬಫರ್_ಗಾತ್ರ,
+                                                ಶೂನ್ಯ *extra_ಕ್ಷೇತ್ರ,
+                                                uLong extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ,
+                                                ಅಕ್ಷರ *szComment,
+                                                uLong comment_ಬಫರ್_ಗಾತ್ರ) {
     unz64_s* s;
     unz_file_info64 file_info;
-    unz_file_info64_internal file_info_internal;
-    int err=UNZ_OK;
+    unz_file_info64_ಆಂತರಿಕ file_info_ಆಂತರಿಕ;
+    ಪೂರ್ಣಾಂಕ err=UNZ_OK;
     uLong uMagic;
-    long lSeek=0;
+    ದೀರ್ಘ lSeek=0;
     uLong uL;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (ZSEEK64(s->z_filefunc, s->filestream,
-              s->pos_in_central_dir+s->byte_before_the_zipfile,
-              ZLIB_FILEFUNC_SEEK_SET)!=0)
+    ಆದರೆ (ZSEEK64(s->z_filefunc, s->filestream,
+              s->pos_ಒಳ_central_dir+s->byte_before_the_zipfile,
+              ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
         err=UNZ_ERRNO;
 
 
     /* we check the magic */
-    if (err==UNZ_OK)
+    ಆದರೆ (err==UNZ_OK)
     {
-        if (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
+        ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
             err=UNZ_ERRNO;
-        else if (uMagic!=0x02014b50)
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (uMagic!=0x02014b50)
             err=UNZ_BADZIPFILE;
     }
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.version) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.ಆವೃತ್ತಿ) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.version_needed) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.ಆವೃತ್ತಿ_needed) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.flag) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.flag) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.compression_method) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.compression_ವಿಧಾನ) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.dosDate) != UNZ_OK)
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.dosDate) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    unz64local_DosDateToTmuDate(file_info.dosDate,&file_info.tmu_date);
+    unz64local_Dos_Date_ಗಮ್ಯ_Tmu_Date(file_info.dosDate,&file_info.tmu_date);
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.crc) != UNZ_OK)
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info.compressed_size = uL;
+    file_info.compressed_ಗಾತ್ರ = uL;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info.uncompressed_size = uL;
+    file_info.uncompressed_ಗಾತ್ರ = uL;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_filename) != UNZ_OK)
-        err=UNZ_ERRNO;
-
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_file_extra) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.ಗಾತ್ರ_filename) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_file_comment) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.ಗಾತ್ರ_file_extra) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.disk_num_start) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.ಗಾತ್ರ_file_comment) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.internal_fa) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.disk_ಅಂಕೆ_ಆರಂಭ) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.external_fa) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.ಆಂತರಿಕ_fa) != UNZ_OK)
+        err=UNZ_ERRNO;
+
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.external_fa) != UNZ_OK)
         err=UNZ_ERRNO;
 
                 /* relative offset of local header */
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info_internal.offset_curfile = uL;
+    file_info_ಆಂತರಿಕ.ಸ್ಥಾನಾಂತರ_curfile = uL;
 
-    lSeek+=file_info.size_filename;
-    if ((err==UNZ_OK) && (szFileName!=NULL))
+    lSeek+=file_info.ಗಾತ್ರ_filename;
+    ಆದರೆ ((err==UNZ_OK) && (szFileName!=ಖಾಲಿ))
     {
-        uLong uSizeRead ;
-        if (file_info.size_filename<fileNameBufferSize)
+        uLong u_ಗಾತ್ರ_Read ;
+        ಆದರೆ (file_info.ಗಾತ್ರ_filename<file_Name_ಬಫರ್_ಗಾತ್ರ)
         {
-            *(szFileName+file_info.size_filename)='\0';
-            uSizeRead = file_info.size_filename;
+            *(szFileName+file_info.ಗಾತ್ರ_filename)='\0';
+            u_ಗಾತ್ರ_Read = file_info.ಗಾತ್ರ_filename;
         }
-        else
-            uSizeRead = fileNameBufferSize;
+        ಇಲ್ಲದಿದ್ದರೆ
+            u_ಗಾತ್ರ_Read = file_Name_ಬಫರ್_ಗಾತ್ರ;
 
-        if ((file_info.size_filename>0) && (fileNameBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,szFileName,uSizeRead)!=uSizeRead)
+        ಆದರೆ ((file_info.ಗಾತ್ರ_filename>0) && (file_Name_ಬಫರ್_ಗಾತ್ರ>0))
+            ಆದರೆ (ZREAD64(s->z_filefunc, s->filestream,szFileName,u_ಗಾತ್ರ_Read)!=u_ಗಾತ್ರ_Read)
                 err=UNZ_ERRNO;
-        lSeek -= uSizeRead;
+        lSeek -= u_ಗಾತ್ರ_Read;
     }
 
     /* Read extrafield */
-    if ((err==UNZ_OK) && (extraField!=NULL))
+    ಆದರೆ ((err==UNZ_OK) && (extra_ಕ್ಷೇತ್ರ!=ಖಾಲಿ))
     {
-        ZPOS64_T uSizeRead ;
-        if (file_info.size_file_extra<extraFieldBufferSize)
-            uSizeRead = file_info.size_file_extra;
-        else
-            uSizeRead = extraFieldBufferSize;
+        ZPOS64_T u_ಗಾತ್ರ_Read ;
+        ಆದರೆ (file_info.ಗಾತ್ರ_file_extra<extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ)
+            u_ಗಾತ್ರ_Read = file_info.ಗಾತ್ರ_file_extra;
+        ಇಲ್ಲದಿದ್ದರೆ
+            u_ಗಾತ್ರ_Read = extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ;
 
-        if (lSeek!=0)
+        ಆದರೆ (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            ಆದರೆ (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            ಇಲ್ಲದಿದ್ದರೆ
                 err=UNZ_ERRNO;
         }
 
-        if ((file_info.size_file_extra>0) && (extraFieldBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,extraField,(uLong)uSizeRead)!=uSizeRead)
+        ಆದರೆ ((file_info.ಗಾತ್ರ_file_extra>0) && (extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ>0))
+            ಆದರೆ (ZREAD64(s->z_filefunc, s->filestream,extra_ಕ್ಷೇತ್ರ,(uLong)u_ಗಾತ್ರ_Read)!=u_ಗಾತ್ರ_Read)
                 err=UNZ_ERRNO;
 
-        lSeek += file_info.size_file_extra - (uLong)uSizeRead;
+        lSeek += file_info.ಗಾತ್ರ_file_extra - (uLong)u_ಗಾತ್ರ_Read;
     }
-    else
-        lSeek += file_info.size_file_extra;
+    ಇಲ್ಲದಿದ್ದರೆ
+        lSeek += file_info.ಗಾತ್ರ_file_extra;
 
 
-    if ((err==UNZ_OK) && (file_info.size_file_extra != 0))
+    ಆದರೆ ((err==UNZ_OK) && (file_info.ಗಾತ್ರ_file_extra != 0))
     {
                                 uLong acc = 0;
 
         /* since lSeek now points to after the extra field we need to move back */
-        lSeek -= file_info.size_file_extra;
+        lSeek -= file_info.ಗಾತ್ರ_file_extra;
 
-        if (lSeek!=0)
+        ಆದರೆ (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            ಆದರೆ (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            ಇಲ್ಲದಿದ್ದರೆ
                 err=UNZ_ERRNO;
         }
 
-        while(acc < file_info.size_file_extra)
+        ಆಗ(acc < file_info.ಗಾತ್ರ_file_extra)
         {
-            uLong headerId;
-                                                uLong dataSize;
+            uLong ಶೀರ್ಷಿಕೆ_Id;
+                                                uLong ದತ್ತಾಂಶ_ಗಾತ್ರ;
 
-            if (unz64local_getShort(&s->z_filefunc, s->filestream,&headerId) != UNZ_OK)
+            ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&ಶೀರ್ಷಿಕೆ_Id) != UNZ_OK)
                 err=UNZ_ERRNO;
 
-            if (unz64local_getShort(&s->z_filefunc, s->filestream,&dataSize) != UNZ_OK)
+            ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&ದತ್ತಾಂಶ_ಗಾತ್ರ) != UNZ_OK)
                 err=UNZ_ERRNO;
 
             /* ZIP64 extra fields */
-            if (headerId == 0x0001)
+            ಆದರೆ (ಶೀರ್ಷಿಕೆ_Id == 0x0001)
             {
-                if(file_info.uncompressed_size == MAXU32)
+                ಆದರೆ(file_info.uncompressed_ಗಾತ್ರ == MAXU32)
                 {
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.uncompressed_size) != UNZ_OK)
+                    ಆದರೆ (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.uncompressed_ಗಾತ್ರ) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info.compressed_size == MAXU32)
+                ಆದರೆ(file_info.compressed_ಗಾತ್ರ == MAXU32)
                 {
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.compressed_size) != UNZ_OK)
+                    ಆದರೆ (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.compressed_ಗಾತ್ರ) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info_internal.offset_curfile == MAXU32)
+                ಆದರೆ(file_info_ಆಂತರಿಕ.ಸ್ಥಾನಾಂತರ_curfile == MAXU32)
                 {
                     /* Relative Header offset */
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info_internal.offset_curfile) != UNZ_OK)
+                    ಆದರೆ (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info_ಆಂತರಿಕ.ಸ್ಥಾನಾಂತರ_curfile) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info.disk_num_start == 0xffff)
+                ಆದರೆ(file_info.disk_ಅಂಕೆ_ಆರಂಭ == 0xffff)
                 {
                     /* Disk Start Number */
-                    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.disk_num_start) != UNZ_OK)
+                    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.disk_ಅಂಕೆ_ಆರಂಭ) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
             }
-            else
+            ಇಲ್ಲದಿದ್ದರೆ
             {
-                if (ZSEEK64(s->z_filefunc, s->filestream,dataSize,ZLIB_FILEFUNC_SEEK_CUR)!=0)
+                ಆದರೆ (ZSEEK64(s->z_filefunc, s->filestream,ದತ್ತಾಂಶ_ಗಾತ್ರ,ZLIB_FILEFUNC_SEEK_CUR)!=0)
                     err=UNZ_ERRNO;
             }
 
-            acc += 2 + 2 + dataSize;
+            acc += 2 + 2 + ದತ್ತಾಂಶ_ಗಾತ್ರ;
         }
     }
 
-    if ((err==UNZ_OK) && (szComment!=NULL))
+    ಆದರೆ ((err==UNZ_OK) && (szComment!=ಖಾಲಿ))
     {
-        uLong uSizeRead ;
-        if (file_info.size_file_comment<commentBufferSize)
+        uLong u_ಗಾತ್ರ_Read ;
+        ಆದರೆ (file_info.ಗಾತ್ರ_file_comment<comment_ಬಫರ್_ಗಾತ್ರ)
         {
-            *(szComment+file_info.size_file_comment)='\0';
-            uSizeRead = file_info.size_file_comment;
+            *(szComment+file_info.ಗಾತ್ರ_file_comment)='\0';
+            u_ಗಾತ್ರ_Read = file_info.ಗಾತ್ರ_file_comment;
         }
-        else
-            uSizeRead = commentBufferSize;
+        ಇಲ್ಲದಿದ್ದರೆ
+            u_ಗಾತ್ರ_Read = comment_ಬಫರ್_ಗಾತ್ರ;
 
-        if (lSeek!=0)
+        ಆದರೆ (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            ಆದರೆ (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            ಇಲ್ಲದಿದ್ದರೆ
                 err=UNZ_ERRNO;
         }
 
-        if ((file_info.size_file_comment>0) && (commentBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,szComment,uSizeRead)!=uSizeRead)
+        ಆದರೆ ((file_info.ಗಾತ್ರ_file_comment>0) && (comment_ಬಫರ್_ಗಾತ್ರ>0))
+            ಆದರೆ (ZREAD64(s->z_filefunc, s->filestream,szComment,u_ಗಾತ್ರ_Read)!=u_ಗಾತ್ರ_Read)
                 err=UNZ_ERRNO;
-        lSeek+=file_info.size_file_comment - uSizeRead;
+        lSeek+=file_info.ಗಾತ್ರ_file_comment - u_ಗಾತ್ರ_Read;
     }
-    else
-        lSeek+=file_info.size_file_comment;
+    ಇಲ್ಲದಿದ್ದರೆ
+        lSeek+=file_info.ಗಾತ್ರ_file_comment;
 
 
-    if ((err==UNZ_OK) && (pfile_info!=NULL))
+    ಆದರೆ ((err==UNZ_OK) && (pfile_info!=ಖಾಲಿ))
         *pfile_info=file_info;
 
-    if ((err==UNZ_OK) && (pfile_info_internal!=NULL))
-        *pfile_info_internal=file_info_internal;
+    ಆದರೆ ((err==UNZ_OK) && (pfile_info_ಆಂತರಿಕ!=ಖಾಲಿ))
+        *pfile_info_ಆಂತರಿಕ=file_info_ಆಂತರಿಕ;
 
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
 
@@ -1005,71 +1005,71 @@ local int unz64local_GetCurrentFileInfoInternal(unzFile file,
   No preparation of the structure is needed
   return UNZ_OK if there is no problem.
 */
-extern int ZEXPORT unzGetCurrentFileInfo64(unzFile file,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetCurrentFileInfo64(unzFile file,
                                            unz_file_info64 * pfile_info,
-                                           char * szFileName, uLong fileNameBufferSize,
-                                           void *extraField, uLong extraFieldBufferSize,
-                                           char* szComment,  uLong commentBufferSize) {
-    return unz64local_GetCurrentFileInfoInternal(file,pfile_info,NULL,
-                                                 szFileName,fileNameBufferSize,
-                                                 extraField,extraFieldBufferSize,
-                                                 szComment,commentBufferSize);
+                                           ಅಕ್ಷರ * szFileName, uLong file_Name_ಬಫರ್_ಗಾತ್ರ,
+                                           ಶೂನ್ಯ *extra_ಕ್ಷೇತ್ರ, uLong extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ,
+                                           ಅಕ್ಷರ* szComment,  uLong comment_ಬಫರ್_ಗಾತ್ರ) {
+    ಹಿಂತಿರುಗಿ unz64local_Get_Current_File_Info_ಆಂತರಿಕ(file,pfile_info,ಖಾಲಿ,
+                                                 szFileName,file_Name_ಬಫರ್_ಗಾತ್ರ,
+                                                 extra_ಕ್ಷೇತ್ರ,extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ,
+                                                 szComment,comment_ಬಫರ್_ಗಾತ್ರ);
 }
 
-extern int ZEXPORT unzGetCurrentFileInfo(unzFile file,
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetCurrentFileInfo(unzFile file,
                                          unz_file_info * pfile_info,
-                                         char * szFileName, uLong fileNameBufferSize,
-                                         void *extraField, uLong extraFieldBufferSize,
-                                         char* szComment,  uLong commentBufferSize) {
-    int err;
+                                         ಅಕ್ಷರ * szFileName, uLong file_Name_ಬಫರ್_ಗಾತ್ರ,
+                                         ಶೂನ್ಯ *extra_ಕ್ಷೇತ್ರ, uLong extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ,
+                                         ಅಕ್ಷರ* szComment,  uLong comment_ಬಫರ್_ಗಾತ್ರ) {
+    ಪೂರ್ಣಾಂಕ err;
     unz_file_info64 file_info64;
-    err = unz64local_GetCurrentFileInfoInternal(file,&file_info64,NULL,
-                                                szFileName,fileNameBufferSize,
-                                                extraField,extraFieldBufferSize,
-                                                szComment,commentBufferSize);
-    if ((err==UNZ_OK) && (pfile_info != NULL))
+    err = unz64local_Get_Current_File_Info_ಆಂತರಿಕ(file,&file_info64,ಖಾಲಿ,
+                                                szFileName,file_Name_ಬಫರ್_ಗಾತ್ರ,
+                                                extra_ಕ್ಷೇತ್ರ,extra_ಕ್ಷೇತ್ರ_ಬಫರ್_ಗಾತ್ರ,
+                                                szComment,comment_ಬಫರ್_ಗಾತ್ರ);
+    ಆದರೆ ((err==UNZ_OK) && (pfile_info != ಖಾಲಿ))
     {
-        pfile_info->version = file_info64.version;
-        pfile_info->version_needed = file_info64.version_needed;
+        pfile_info->ಆವೃತ್ತಿ = file_info64.ಆವೃತ್ತಿ;
+        pfile_info->ಆವೃತ್ತಿ_needed = file_info64.ಆವೃತ್ತಿ_needed;
         pfile_info->flag = file_info64.flag;
-        pfile_info->compression_method = file_info64.compression_method;
+        pfile_info->compression_ವಿಧಾನ = file_info64.compression_ವಿಧಾನ;
         pfile_info->dosDate = file_info64.dosDate;
-        pfile_info->crc = file_info64.crc;
+        pfile_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = file_info64.ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
 
-        pfile_info->size_filename = file_info64.size_filename;
-        pfile_info->size_file_extra = file_info64.size_file_extra;
-        pfile_info->size_file_comment = file_info64.size_file_comment;
+        pfile_info->ಗಾತ್ರ_filename = file_info64.ಗಾತ್ರ_filename;
+        pfile_info->ಗಾತ್ರ_file_extra = file_info64.ಗಾತ್ರ_file_extra;
+        pfile_info->ಗಾತ್ರ_file_comment = file_info64.ಗಾತ್ರ_file_comment;
 
-        pfile_info->disk_num_start = file_info64.disk_num_start;
-        pfile_info->internal_fa = file_info64.internal_fa;
+        pfile_info->disk_ಅಂಕೆ_ಆರಂಭ = file_info64.disk_ಅಂಕೆ_ಆರಂಭ;
+        pfile_info->ಆಂತರಿಕ_fa = file_info64.ಆಂತರಿಕ_fa;
         pfile_info->external_fa = file_info64.external_fa;
 
         pfile_info->tmu_date = file_info64.tmu_date;
 
 
-        pfile_info->compressed_size = (uLong)file_info64.compressed_size;
-        pfile_info->uncompressed_size = (uLong)file_info64.uncompressed_size;
+        pfile_info->compressed_ಗಾತ್ರ = (uLong)file_info64.compressed_ಗಾತ್ರ;
+        pfile_info->uncompressed_ಗಾತ್ರ = (uLong)file_info64.uncompressed_ಗಾತ್ರ;
 
     }
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 /*
   Set the current file of the zipfile to the first file.
   return UNZ_OK if there is no problem
 */
-extern int ZEXPORT unzGoToFirstFile(unzFile file) {
-    int err=UNZ_OK;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_Go_ಗಮ್ಯ_ಮೊದಲ_File(unzFile file) {
+    ಪೂರ್ಣಾಂಕ err=UNZ_OK;
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    s->pos_in_central_dir=s->offset_central_dir;
-    s->num_file=0;
-    err=unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                             &s->cur_file_info_internal,
-                                             NULL,0,NULL,0,NULL,0);
+    s->pos_ಒಳ_central_dir=s->ಸ್ಥಾನಾಂತರ_central_dir;
+    s->ಅಂಕೆ_file=0;
+    err=unz64local_Get_Current_File_Info_ಆಂತರಿಕ(file,&s->cur_file_info,
+                                             &s->cur_file_info_ಆಂತರಿಕ,
+                                             ಖಾಲಿ,0,ಖಾಲಿ,0,ಖಾಲಿ,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
 /*
@@ -1077,27 +1077,27 @@ extern int ZEXPORT unzGoToFirstFile(unzFile file) {
   return UNZ_OK if there is no problem
   return UNZ_END_OF_LIST_OF_FILE if the actual file was the latest.
 */
-extern int ZEXPORT unzGoToNextFile(unzFile file) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_Go_ಗಮ್ಯ_ಮುಂದಿನ_File(unzFile file) {
     unz64_s* s;
-    int err;
+    ಪೂರ್ಣಾಂಕ err;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
-    if (s->gi.number_entry != 0xffff)    /* 2^16 files overflow hack */
-      if (s->num_file+1==s->gi.number_entry)
-        return UNZ_END_OF_LIST_OF_FILE;
+    ಆದರೆ (!s->current_file_ok)
+        ಹಿಂತಿರುಗಿ UNZ_ಕೊನೆ_ದ_LIST_ದ_FILE;
+    ಆದರೆ (s->gi.ಸಂಖ್ಯೆ_ನಮೂದು != 0xffff)    /* 2^16 files overflow hack */
+      ಆದರೆ (s->ಅಂಕೆ_file+1==s->gi.ಸಂಖ್ಯೆ_ನಮೂದು)
+        ಹಿಂತಿರುಗಿ UNZ_ಕೊನೆ_ದ_LIST_ದ_FILE;
 
-    s->pos_in_central_dir += SIZECENTRALDIRITEM + s->cur_file_info.size_filename +
-            s->cur_file_info.size_file_extra + s->cur_file_info.size_file_comment ;
-    s->num_file++;
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                               &s->cur_file_info_internal,
-                                               NULL,0,NULL,0,NULL,0);
+    s->pos_ಒಳ_central_dir += SIZECENTRALDIRITEM + s->cur_file_info.ಗಾತ್ರ_filename +
+            s->cur_file_info.ಗಾತ್ರ_file_extra + s->cur_file_info.ಗಾತ್ರ_file_comment ;
+    s->ಅಂಕೆ_file++;
+    err = unz64local_Get_Current_File_Info_ಆಂತರಿಕ(file,&s->cur_file_info,
+                                               &s->cur_file_info_ಆಂತರಿಕ,
+                                               ಖಾಲಿ,0,ಖಾಲಿ,0,ಖಾಲಿ,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
 
@@ -1109,60 +1109,60 @@ extern int ZEXPORT unzGoToNextFile(unzFile file) {
   UNZ_OK if the file is found. It becomes the current file.
   UNZ_END_OF_LIST_OF_FILE if the file is not found
 */
-extern int ZEXPORT unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzLocateFile(unzFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *szFileName, ಪೂರ್ಣಾಂಕ i_Case_ಸಂವೇದನಾಶೀಲತೆ) {
     unz64_s* s;
-    int err;
+    ಪೂರ್ಣಾಂಕ err;
 
     /* We remember the 'current' position in the file so that we can jump
      * back there if we fail.
      */
     unz_file_info64 cur_file_infoSaved;
-    unz_file_info64_internal cur_file_info_internalSaved;
-    ZPOS64_T num_fileSaved;
-    ZPOS64_T pos_in_central_dirSaved;
+    unz_file_info64_ಆಂತರಿಕ cur_file_info_ಆಂತರಿಕ_Saved;
+    ZPOS64_T ಅಂಕೆ_file_Saved;
+    ZPOS64_T pos_ಒಳ_central_dir_Saved;
 
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
-    if (strlen(szFileName)>=UNZ_MAXFILENAMEINZIP)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(szFileName)>=UNZ_MAXFILENAMEINZIP)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
+    ಆದರೆ (!s->current_file_ok)
+        ಹಿಂತಿರುಗಿ UNZ_ಕೊನೆ_ದ_LIST_ದ_FILE;
 
     /* Save the current state */
-    num_fileSaved = s->num_file;
-    pos_in_central_dirSaved = s->pos_in_central_dir;
+    ಅಂಕೆ_file_Saved = s->ಅಂಕೆ_file;
+    pos_ಒಳ_central_dir_Saved = s->pos_ಒಳ_central_dir;
     cur_file_infoSaved = s->cur_file_info;
-    cur_file_info_internalSaved = s->cur_file_info_internal;
+    cur_file_info_ಆಂತರಿಕ_Saved = s->cur_file_info_ಆಂತರಿಕ;
 
-    err = unzGoToFirstFile(file);
+    err = unz_Go_ಗಮ್ಯ_ಮೊದಲ_File(file);
 
-    while (err == UNZ_OK)
+    ಆಗ (err == UNZ_OK)
     {
-        char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
-        err = unzGetCurrentFileInfo64(file,NULL,
-                                    szCurrentFileName,sizeof(szCurrentFileName)-1,
-                                    NULL,0,NULL,0);
-        if (err == UNZ_OK)
+        ಅಕ್ಷರ szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
+        err = unzGetCurrentFileInfo64(file,ಖಾಲಿ,
+                                    szCurrentFileName,ಗಾತ್ರ(szCurrentFileName)-1,
+                                    ಖಾಲಿ,0,ಖಾಲಿ,0);
+        ಆದರೆ (err == UNZ_OK)
         {
-            if (unzStringFileNameCompare(szCurrentFileName,
-                                            szFileName,iCaseSensitivity)==0)
-                return UNZ_OK;
-            err = unzGoToNextFile(file);
+            ಆದರೆ (unzStringFileNameCompare(szCurrentFileName,
+                                            szFileName,i_Case_ಸಂವೇದನಾಶೀಲತೆ)==0)
+                ಹಿಂತಿರುಗಿ UNZ_OK;
+            err = unz_Go_ಗಮ್ಯ_ಮುಂದಿನ_File(file);
         }
     }
 
     /* We failed, so restore the state of the 'current file' to where we
      * were.
      */
-    s->num_file = num_fileSaved ;
-    s->pos_in_central_dir = pos_in_central_dirSaved ;
+    s->ಅಂಕೆ_file = ಅಂಕೆ_file_Saved ;
+    s->pos_ಒಳ_central_dir = pos_ಒಳ_central_dir_Saved ;
     s->cur_file_info = cur_file_infoSaved;
-    s->cur_file_info_internal = cur_file_info_internalSaved;
-    return err;
+    s->cur_file_info_ಆಂತರಿಕ = cur_file_info_ಆಂತರಿಕ_Saved;
+    ಹಿಂತಿರುಗಿ err;
 }
 
 
@@ -1183,61 +1183,61 @@ typedef struct unz_file_pos_s
 } unz_file_pos;
 */
 
-extern int ZEXPORT unzGetFilePos64(unzFile file, unz64_file_pos* file_pos) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetFilePos64(unzFile file, unz64_file_pos* file_pos) {
     unz64_s* s;
 
-    if (file==NULL || file_pos==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ || file_pos==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
+    ಆದರೆ (!s->current_file_ok)
+        ಹಿಂತಿರುಗಿ UNZ_ಕೊನೆ_ದ_LIST_ದ_FILE;
 
-    file_pos->pos_in_zip_directory  = s->pos_in_central_dir;
-    file_pos->num_of_file           = s->num_file;
+    file_pos->pos_ಒಳ_zip_directory  = s->pos_ಒಳ_central_dir;
+    file_pos->ಅಂಕೆ_ದ_file           = s->ಅಂಕೆ_file;
 
-    return UNZ_OK;
+    ಹಿಂತಿರುಗಿ UNZ_OK;
 }
 
-extern int ZEXPORT unzGetFilePos(unzFile file, unz_file_pos* file_pos) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetFilePos(unzFile file, unz_file_pos* file_pos) {
     unz64_file_pos file_pos64;
-    int err = unzGetFilePos64(file,&file_pos64);
-    if (err==UNZ_OK)
+    ಪೂರ್ಣಾಂಕ err = unzGetFilePos64(file,&file_pos64);
+    ಆದರೆ (err==UNZ_OK)
     {
-        file_pos->pos_in_zip_directory = (uLong)file_pos64.pos_in_zip_directory;
-        file_pos->num_of_file = (uLong)file_pos64.num_of_file;
+        file_pos->pos_ಒಳ_zip_directory = (uLong)file_pos64.pos_ಒಳ_zip_directory;
+        file_pos->ಅಂಕೆ_ದ_file = (uLong)file_pos64.ಅಂಕೆ_ದ_file;
     }
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT unzGoToFilePos64(unzFile file, const unz64_file_pos* file_pos) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_Go_ಗಮ್ಯ_File_Pos64(unzFile file, ಸ್ಥಿರಾಂಕ unz64_file_pos* file_pos) {
     unz64_s* s;
-    int err;
+    ಪೂರ್ಣಾಂಕ err;
 
-    if (file==NULL || file_pos==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ || file_pos==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
     /* jump to the right spot */
-    s->pos_in_central_dir = file_pos->pos_in_zip_directory;
-    s->num_file           = file_pos->num_of_file;
+    s->pos_ಒಳ_central_dir = file_pos->pos_ಒಳ_zip_directory;
+    s->ಅಂಕೆ_file           = file_pos->ಅಂಕೆ_ದ_file;
 
     /* set the current file */
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                               &s->cur_file_info_internal,
-                                               NULL,0,NULL,0,NULL,0);
+    err = unz64local_Get_Current_File_Info_ಆಂತರಿಕ(file,&s->cur_file_info,
+                                               &s->cur_file_info_ಆಂತರಿಕ,
+                                               ಖಾಲಿ,0,ಖಾಲಿ,0,ಖಾಲಿ,0);
     /* return results */
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT unzGoToFilePos(unzFile file, unz_file_pos* file_pos) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_Go_ಗಮ್ಯ_File_Pos(unzFile file, unz_file_pos* file_pos) {
     unz64_file_pos file_pos64;
-    if (file_pos == NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file_pos == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
-    file_pos64.pos_in_zip_directory = file_pos->pos_in_zip_directory;
-    file_pos64.num_of_file = file_pos->num_of_file;
-    return unzGoToFilePos64(file,&file_pos64);
+    file_pos64.pos_ಒಳ_zip_directory = file_pos->pos_ಒಳ_zip_directory;
+    file_pos64.ಅಂಕೆ_ದ_file = file_pos->ಅಂಕೆ_ದ_file;
+    ಹಿಂತಿರುಗಿ unz_Go_ಗಮ್ಯ_File_Pos64(file,&file_pos64);
 }
 
 /*
@@ -1251,212 +1251,212 @@ extern int ZEXPORT unzGoToFilePos(unzFile file, unz_file_pos* file_pos) {
   store in *piSizeVar the size of extra info in local header
         (filename and size of extra field data)
 */
-local int unz64local_CheckCurrentFileCoherencyHeader(unz64_s* s, uInt* piSizeVar,
+local ಪೂರ್ಣಾಂಕ unz64local_Check_Current_File_Coherency_ಶೀರ್ಷಿಕೆ(unz64_s* s, uInt* pi_ಗಾತ್ರ_Var,
                                                      ZPOS64_T * poffset_local_extrafield,
                                                      uInt  * psize_local_extrafield) {
-    uLong uMagic,uData,uFlags;
-    uLong size_filename;
-    uLong size_extra_field;
-    int err=UNZ_OK;
+    uLong uMagic,u_ದತ್ತಾಂಶ,uFlags;
+    uLong ಗಾತ್ರ_filename;
+    uLong ಗಾತ್ರ_extra_ಕ್ಷೇತ್ರ;
+    ಪೂರ್ಣಾಂಕ err=UNZ_OK;
 
-    *piSizeVar = 0;
+    *pi_ಗಾತ್ರ_Var = 0;
     *poffset_local_extrafield = 0;
     *psize_local_extrafield = 0;
 
-    if (ZSEEK64(s->z_filefunc, s->filestream,s->cur_file_info_internal.offset_curfile +
-                                s->byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    ಆದರೆ (ZSEEK64(s->z_filefunc, s->filestream,s->cur_file_info_ಆಂತರಿಕ.ಸ್ಥಾನಾಂತರ_curfile +
+                                s->byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+        ಹಿಂತಿರುಗಿ UNZ_ERRNO;
 
 
-    if (err==UNZ_OK)
+    ಆದರೆ (err==UNZ_OK)
     {
-        if (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
+        ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
             err=UNZ_ERRNO;
-        else if (uMagic!=0x04034b50)
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (uMagic!=0x04034b50)
             err=UNZ_BADZIPFILE;
     }
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uData) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&u_ದತ್ತಾಂಶ) != UNZ_OK)
         err=UNZ_ERRNO;
 /*
     else if ((err==UNZ_OK) && (uData!=s->cur_file_info.wVersion))
         err=UNZ_BADZIPFILE;
 */
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uFlags) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&uFlags) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uData) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&u_ದತ್ತಾಂಶ) != UNZ_OK)
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (uData!=s->cur_file_info.compression_method))
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((err==UNZ_OK) && (u_ದತ್ತಾಂಶ!=s->cur_file_info.compression_ವಿಧಾನ))
         err=UNZ_BADZIPFILE;
 
-    if ((err==UNZ_OK) && (s->cur_file_info.compression_method!=0) &&
+    ಆದರೆ ((err==UNZ_OK) && (s->cur_file_info.compression_ವಿಧಾನ!=0) &&
 /* #ifdef HAVE_BZIP2 */
-                         (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
+                         (s->cur_file_info.compression_ವಿಧಾನ!=Z_BZIP2ED) &&
 /* #endif */
-                         (s->cur_file_info.compression_method!=Z_DEFLATED))
+                         (s->cur_file_info.compression_ವಿಧಾನ!=Z_DEFLATED))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* date/time */
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&u_ದತ್ತಾಂಶ) != UNZ_OK) /* date/time */
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* crc */
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&u_ದತ್ತಾಂಶ) != UNZ_OK) /*ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ*/
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (uData!=s->cur_file_info.crc) && ((uFlags & 8)==0))
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((err==UNZ_OK) && (u_ದತ್ತಾಂಶ!=s->cur_file_info.ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* size compr */
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&u_ದತ್ತಾಂಶ) != UNZ_OK) /* size compr */
         err=UNZ_ERRNO;
-    else if (uData != 0xFFFFFFFF && (err==UNZ_OK) && (uData!=s->cur_file_info.compressed_size) && ((uFlags & 8)==0))
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (u_ದತ್ತಾಂಶ != 0xFFFFFFFF && (err==UNZ_OK) && (u_ದತ್ತಾಂಶ!=s->cur_file_info.compressed_ಗಾತ್ರ) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* size uncompr */
+    ಆದರೆ (unz64local_getLong(&s->z_filefunc, s->filestream,&u_ದತ್ತಾಂಶ) != UNZ_OK) /* size uncompr */
         err=UNZ_ERRNO;
-    else if (uData != 0xFFFFFFFF && (err==UNZ_OK) && (uData!=s->cur_file_info.uncompressed_size) && ((uFlags & 8)==0))
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (u_ದತ್ತಾಂಶ != 0xFFFFFFFF && (err==UNZ_OK) && (u_ದತ್ತಾಂಶ!=s->cur_file_info.uncompressed_ಗಾತ್ರ) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&size_filename) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&ಗಾತ್ರ_filename) != UNZ_OK)
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (size_filename!=s->cur_file_info.size_filename))
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((err==UNZ_OK) && (ಗಾತ್ರ_filename!=s->cur_file_info.ಗಾತ್ರ_filename))
         err=UNZ_BADZIPFILE;
 
-    *piSizeVar += (uInt)size_filename;
+    *pi_ಗಾತ್ರ_Var += (uInt)ಗಾತ್ರ_filename;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&size_extra_field) != UNZ_OK)
+    ಆದರೆ (unz64local_getShort(&s->z_filefunc, s->filestream,&ಗಾತ್ರ_extra_ಕ್ಷೇತ್ರ) != UNZ_OK)
         err=UNZ_ERRNO;
-    *poffset_local_extrafield= s->cur_file_info_internal.offset_curfile +
-                                    SIZEZIPLOCALHEADER + size_filename;
-    *psize_local_extrafield = (uInt)size_extra_field;
+    *poffset_local_extrafield= s->cur_file_info_ಆಂತರಿಕ.ಸ್ಥಾನಾಂತರ_curfile +
+                                    SIZEZIPLOCALHEADER + ಗಾತ್ರ_filename;
+    *psize_local_extrafield = (uInt)ಗಾತ್ರ_extra_ಕ್ಷೇತ್ರ;
 
-    *piSizeVar += (uInt)size_extra_field;
+    *pi_ಗಾತ್ರ_Var += (uInt)ಗಾತ್ರ_extra_ಕ್ಷೇತ್ರ;
 
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
 /*
   Open for reading data the current file in the zipfile.
   If there is no error and the file is opened, the return value is UNZ_OK.
 */
-extern int ZEXPORT unzOpenCurrentFile3(unzFile file, int* method,
-                                       int* level, int raw, const char* password) {
-    int err=UNZ_OK;
-    uInt iSizeVar;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzOpenCurrentFile3(unzFile file, ಪೂರ್ಣಾಂಕ* ವಿಧಾನ_2,
+                                       ಪೂರ್ಣಾಂಕ* level, ಪೂರ್ಣಾಂಕ raw, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* password) {
+    ಪೂರ್ಣಾಂಕ err=UNZ_OK;
+    uInt i_ಗಾತ್ರ_Var;
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    ZPOS64_T offset_local_extrafield;  /* offset of the local extra field */
-    uInt  size_local_extrafield;    /* size of the local extra field */
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read_info;
+    ZPOS64_T ಸ್ಥಾನಾಂತರ_local_extrafield;  /* offset of the local extra field */
+    uInt  ಗಾತ್ರ_local_extrafield;    /* size of the local extra field */
 #    ifndef NOUNCRYPT
-    char source[12];
-#    else
-    if (password != NULL)
-        return UNZ_PARAMERROR;
+    ಅಕ್ಷರ ಮೂಲ[12];
+#    ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ (password != ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 #    endif
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (!s->current_file_ok)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
-    if (s->pfile_in_zip_read != NULL)
+    ಆದರೆ (s->pfile_ಒಳ_zip_read != ಖಾಲಿ)
         unzCloseCurrentFile(file);
 
-    if (unz64local_CheckCurrentFileCoherencyHeader(s,&iSizeVar, &offset_local_extrafield,&size_local_extrafield)!=UNZ_OK)
-        return UNZ_BADZIPFILE;
+    ಆದರೆ (unz64local_Check_Current_File_Coherency_ಶೀರ್ಷಿಕೆ(s,&i_ಗಾತ್ರ_Var, &ಸ್ಥಾನಾಂತರ_local_extrafield,&ಗಾತ್ರ_local_extrafield)!=UNZ_OK)
+        ಹಿಂತಿರುಗಿ UNZ_BADZIPFILE;
 
-    pfile_in_zip_read_info = (file_in_zip64_read_info_s*)ALLOC(sizeof(file_in_zip64_read_info_s));
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_INTERNALERROR;
+    pfile_ಒಳ_zip_read_info = (file_ಒಳ_zip64_read_info_s*)ALLOC(ಗಾತ್ರ(file_ಒಳ_zip64_read_info_s));
+    ಆದರೆ (pfile_ಒಳ_zip_read_info==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_INTERNALERROR;
 
-    pfile_in_zip_read_info->read_buffer=(char*)ALLOC(UNZ_BUFSIZE);
-    pfile_in_zip_read_info->offset_local_extrafield = offset_local_extrafield;
-    pfile_in_zip_read_info->size_local_extrafield = size_local_extrafield;
-    pfile_in_zip_read_info->pos_local_extrafield=0;
-    pfile_in_zip_read_info->raw=raw;
+    pfile_ಒಳ_zip_read_info->read_ಬಫರ್=(ಅಕ್ಷರ*)ALLOC(UNZ_BUFSIZE);
+    pfile_ಒಳ_zip_read_info->ಸ್ಥಾನಾಂತರ_local_extrafield = ಸ್ಥಾನಾಂತರ_local_extrafield;
+    pfile_ಒಳ_zip_read_info->ಗಾತ್ರ_local_extrafield = ಗಾತ್ರ_local_extrafield;
+    pfile_ಒಳ_zip_read_info->pos_local_extrafield=0;
+    pfile_ಒಳ_zip_read_info->raw=raw;
 
-    if (pfile_in_zip_read_info->read_buffer==NULL)
+    ಆದರೆ (pfile_ಒಳ_zip_read_info->read_ಬಫರ್==ಖಾಲಿ)
     {
-        free(pfile_in_zip_read_info);
-        return UNZ_INTERNALERROR;
+        ಬಿಡುಗಡೆ(pfile_ಒಳ_zip_read_info);
+        ಹಿಂತಿರುಗಿ UNZ_INTERNALERROR;
     }
 
-    pfile_in_zip_read_info->stream_initialised=0;
+    pfile_ಒಳ_zip_read_info->ಹರಿವು_initialised=0;
 
-    if (method!=NULL)
-        *method = (int)s->cur_file_info.compression_method;
+    ಆದರೆ (ವಿಧಾನ_2!=ಖಾಲಿ)
+        *ವಿಧಾನ_2 = (ಪೂರ್ಣಾಂಕ)s->cur_file_info.compression_ವಿಧಾನ;
 
-    if (level!=NULL)
+    ಆದರೆ (level!=ಖಾಲಿ)
     {
         *level = 6;
-        switch (s->cur_file_info.flag & 0x06)
+        ಆಯ್ಕೆ (s->cur_file_info.flag & 0x06)
         {
-          case 6 : *level = 1; break;
-          case 4 : *level = 2; break;
-          case 2 : *level = 9; break;
+          ಸ್ಥಿತಿ 6 : *level = 1; ನಿಲ್ಲಿಸು;
+          ಸ್ಥಿತಿ 4 : *level = 2; ನಿಲ್ಲಿಸು;
+          ಸ್ಥಿತಿ 2 : *level = 9; ನಿಲ್ಲಿಸು;
         }
     }
 
-    if ((s->cur_file_info.compression_method!=0) &&
+    ಆದರೆ ((s->cur_file_info.compression_ವಿಧಾನ!=0) &&
 /* #ifdef HAVE_BZIP2 */
-        (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
+        (s->cur_file_info.compression_ವಿಧಾನ!=Z_BZIP2ED) &&
 /* #endif */
-        (s->cur_file_info.compression_method!=Z_DEFLATED))
+        (s->cur_file_info.compression_ವಿಧಾನ!=Z_DEFLATED))
 
         err=UNZ_BADZIPFILE;
 
-    pfile_in_zip_read_info->crc32_wait=s->cur_file_info.crc;
-    pfile_in_zip_read_info->crc32=0;
-    pfile_in_zip_read_info->total_out_64=0;
-    pfile_in_zip_read_info->compression_method = s->cur_file_info.compression_method;
-    pfile_in_zip_read_info->filestream=s->filestream;
-    pfile_in_zip_read_info->z_filefunc=s->z_filefunc;
-    pfile_in_zip_read_info->byte_before_the_zipfile=s->byte_before_the_zipfile;
+    pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_wait=s->cur_file_info.ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
+    pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2=0;
+    pfile_ಒಳ_zip_read_info->ಒಟ್ಟು_ಹೊರಹೋಗು_64=0;
+    pfile_ಒಳ_zip_read_info->compression_ವಿಧಾನ = s->cur_file_info.compression_ವಿಧಾನ;
+    pfile_ಒಳ_zip_read_info->filestream=s->filestream;
+    pfile_ಒಳ_zip_read_info->z_filefunc=s->z_filefunc;
+    pfile_ಒಳ_zip_read_info->byte_before_the_zipfile=s->byte_before_the_zipfile;
 
-    pfile_in_zip_read_info->stream.total_out = 0;
+    pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು = 0;
 
-    if ((s->cur_file_info.compression_method==Z_BZIP2ED) && (!raw))
+    ಆದರೆ ((s->cur_file_info.compression_ವಿಧಾನ==Z_BZIP2ED) && (!raw))
     {
-#ifdef HAVE_BZIP2
-      pfile_in_zip_read_info->bstream.bzalloc = (void *(*) (void *, int, int))0;
-      pfile_in_zip_read_info->bstream.bzfree = (free_func)0;
-      pfile_in_zip_read_info->bstream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->bstream.state = (voidpf)0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+      pfile_ಒಳ_zip_read_info->bstream.bzalloc = (ಶೂನ್ಯ *(*) (ಶೂನ್ಯ *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ))0;
+      pfile_ಒಳ_zip_read_info->bstream.bzfree = (free_func)0;
+      pfile_ಒಳ_zip_read_info->bstream.opaque = (voidpf)0;
+      pfile_ಒಳ_zip_read_info->bstream.state = (voidpf)0;
 
-      pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
-      pfile_in_zip_read_info->stream.zfree = (free_func)0;
-      pfile_in_zip_read_info->stream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->stream.next_in = (voidpf)0;
-      pfile_in_zip_read_info->stream.avail_in = 0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.zalloc = (alloc_func)0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.zfree = (free_func)0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.opaque = (voidpf)0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಒಳ = (voidpf)0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ = 0;
 
-      err=BZ2_bzDecompressInit(&pfile_in_zip_read_info->bstream, 0, 0);
-      if (err == Z_OK)
-        pfile_in_zip_read_info->stream_initialised=Z_BZIP2ED;
-      else
+      err=BZ2_bzDecompressInit(&pfile_ಒಳ_zip_read_info->bstream, 0, 0);
+      ಆದರೆ (err == Z_OK)
+        pfile_ಒಳ_zip_read_info->ಹರಿವು_initialised=Z_BZIP2ED;
+      ಇಲ್ಲದಿದ್ದರೆ
       {
-        free(pfile_in_zip_read_info->read_buffer);
-        free(pfile_in_zip_read_info);
-        return err;
+        ಬಿಡುಗಡೆ(pfile_ಒಳ_zip_read_info->read_ಬಫರ್);
+        ಬಿಡುಗಡೆ(pfile_ಒಳ_zip_read_info);
+        ಹಿಂತಿರುಗಿ err;
       }
-#else
-      pfile_in_zip_read_info->raw=1;
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+      pfile_ಒಳ_zip_read_info->raw=1;
+#ಆದರೆ_ಅಂತ್ಯ
     }
-    else if ((s->cur_file_info.compression_method==Z_DEFLATED) && (!raw))
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((s->cur_file_info.compression_ವಿಧಾನ==Z_DEFLATED) && (!raw))
     {
-      pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
-      pfile_in_zip_read_info->stream.zfree = (free_func)0;
-      pfile_in_zip_read_info->stream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->stream.next_in = 0;
-      pfile_in_zip_read_info->stream.avail_in = 0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.zalloc = (alloc_func)0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.zfree = (free_func)0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.opaque = (voidpf)0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಒಳ = 0;
+      pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ = 0;
 
-      err=inflateInit2(&pfile_in_zip_read_info->stream, -MAX_WBITS);
-      if (err == Z_OK)
-        pfile_in_zip_read_info->stream_initialised=Z_DEFLATED;
-      else
+      err=inflateInit2(&pfile_ಒಳ_zip_read_info->ಹರಿವು, -MAX_WBITS);
+      ಆದರೆ (err == Z_OK)
+        pfile_ಒಳ_zip_read_info->ಹರಿವು_initialised=Z_DEFLATED;
+      ಇಲ್ಲದಿದ್ದರೆ
       {
-        free(pfile_in_zip_read_info->read_buffer);
-        free(pfile_in_zip_read_info);
-        return err;
+        ಬಿಡುಗಡೆ(pfile_ಒಳ_zip_read_info->read_ಬಫರ್);
+        ಬಿಡುಗಡೆ(pfile_ಒಳ_zip_read_info);
+        ಹಿಂತಿರುಗಿ err;
       }
         /* windowBits is passed < 0 to tell that there is no zlib header.
          * Note that in this case inflate *requires* an extra "dummy" byte
@@ -1466,72 +1466,72 @@ extern int ZEXPORT unzOpenCurrentFile3(unzFile file, int* method,
          * size of both compressed and uncompressed data
          */
     }
-    pfile_in_zip_read_info->rest_read_compressed =
-            s->cur_file_info.compressed_size ;
-    pfile_in_zip_read_info->rest_read_uncompressed =
-            s->cur_file_info.uncompressed_size ;
+    pfile_ಒಳ_zip_read_info->rest_read_compressed =
+            s->cur_file_info.compressed_ಗಾತ್ರ ;
+    pfile_ಒಳ_zip_read_info->rest_read_uncompressed =
+            s->cur_file_info.uncompressed_ಗಾತ್ರ ;
 
 
-    pfile_in_zip_read_info->pos_in_zipfile =
-            s->cur_file_info_internal.offset_curfile + SIZEZIPLOCALHEADER +
-              iSizeVar;
+    pfile_ಒಳ_zip_read_info->pos_ಒಳ_zipfile =
+            s->cur_file_info_ಆಂತರಿಕ.ಸ್ಥಾನಾಂತರ_curfile + SIZEZIPLOCALHEADER +
+              i_ಗಾತ್ರ_Var;
 
-    pfile_in_zip_read_info->stream.avail_in = (uInt)0;
+    pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ = (uInt)0;
 
-    s->pfile_in_zip_read = pfile_in_zip_read_info;
+    s->pfile_ಒಳ_zip_read = pfile_ಒಳ_zip_read_info;
                 s->encrypted = 0;
 
 #    ifndef NOUNCRYPT
-    if (password != NULL)
+    ಆದರೆ (password != ಖಾಲಿ)
     {
-        int i;
-        s->pcrc_32_tab = get_crc_table();
-        init_keys(password,s->keys,s->pcrc_32_tab);
-        if (ZSEEK64(s->z_filefunc, s->filestream,
-                  s->pfile_in_zip_read->pos_in_zipfile +
-                     s->pfile_in_zip_read->byte_before_the_zipfile,
+        ಪೂರ್ಣಾಂಕ i;
+        s->pcrc_32_tab = get_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_ಕೋಷ್ಟಕ();
+        init_ಕೀಲಿಗಳು(password,s->ಕೀಲಿಗಳು,s->pcrc_32_tab);
+        ಆದರೆ (ZSEEK64(s->z_filefunc, s->filestream,
+                  s->pfile_ಒಳ_zip_read->pos_ಒಳ_zipfile +
+                     s->pfile_ಒಳ_zip_read->byte_before_the_zipfile,
                   SEEK_SET)!=0)
-            return UNZ_INTERNALERROR;
-        if(ZREAD64(s->z_filefunc, s->filestream,source, 12)<12)
-            return UNZ_INTERNALERROR;
+            ಹಿಂತಿರುಗಿ UNZ_INTERNALERROR;
+        ಆದರೆ(ZREAD64(s->z_filefunc, s->filestream,ಮೂಲ, 12)<12)
+            ಹಿಂತಿರುಗಿ UNZ_INTERNALERROR;
 
-        for (i = 0; i<12; i++)
-            zdecode(s->keys,s->pcrc_32_tab,source[i]);
+        ಗಾಗಿ (i = 0; i<12; i++)
+            zdecode(s->ಕೀಲಿಗಳು,s->pcrc_32_tab,ಮೂಲ[i]);
 
-        s->pfile_in_zip_read->pos_in_zipfile+=12;
+        s->pfile_ಒಳ_zip_read->pos_ಒಳ_zipfile+=12;
         s->encrypted=1;
     }
 #    endif
 
 
-    return UNZ_OK;
+    ಹಿಂತಿರುಗಿ UNZ_OK;
 }
 
-extern int ZEXPORT unzOpenCurrentFile(unzFile file) {
-    return unzOpenCurrentFile3(file, NULL, NULL, 0, NULL);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzOpenCurrentFile(unzFile file) {
+    ಹಿಂತಿರುಗಿ unzOpenCurrentFile3(file, ಖಾಲಿ, ಖಾಲಿ, 0, ಖಾಲಿ);
 }
 
-extern int ZEXPORT unzOpenCurrentFilePassword(unzFile file, const char* password) {
-    return unzOpenCurrentFile3(file, NULL, NULL, 0, password);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzOpenCurrentFilePassword(unzFile file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* password) {
+    ಹಿಂತಿರುಗಿ unzOpenCurrentFile3(file, ಖಾಲಿ, ಖಾಲಿ, 0, password);
 }
 
-extern int ZEXPORT unzOpenCurrentFile2(unzFile file, int* method, int* level, int raw) {
-    return unzOpenCurrentFile3(file, method, level, raw, NULL);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzOpenCurrentFile2(unzFile file, ಪೂರ್ಣಾಂಕ* ವಿಧಾನ_2, ಪೂರ್ಣಾಂಕ* level, ಪೂರ್ಣಾಂಕ raw) {
+    ಹಿಂತಿರುಗಿ unzOpenCurrentFile3(file, ವಿಧಾನ_2, level, raw, ಖಾಲಿ);
 }
 
 /** Addition for GDAL : START */
 
-extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
+ಬಾಹ್ಯ ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read_info;
     s=(unz64_s*)file;
-    if (file==NULL)
-        return 0; /* UNZ_PARAMERROR; */
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
-    if (pfile_in_zip_read_info==NULL)
-        return 0; /* UNZ_PARAMERROR; */
-    return pfile_in_zip_read_info->pos_in_zipfile +
-                         pfile_in_zip_read_info->byte_before_the_zipfile;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ 0; /* UNZ_PARAMERROR; */
+    pfile_ಒಳ_zip_read_info=s->pfile_ಒಳ_zip_read;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ 0; /* UNZ_PARAMERROR; */
+    ಹಿಂತಿರುಗಿ pfile_ಒಳ_zip_read_info->pos_ಒಳ_zipfile +
+                         pfile_ಒಳ_zip_read_info->byte_before_the_zipfile;
 }
 
 /** Addition for GDAL : END */
@@ -1546,168 +1546,168 @@ extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
   return <0 with error code if there is an error
     (UNZ_ERRNO for IO error, or zLib error for uncompress error)
 */
-extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
-    int err=UNZ_OK;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, ಚಿಹ್ನೆರಹಿತ len) {
+    ಪೂರ್ಣಾಂಕ err=UNZ_OK;
     uInt iRead = 0;
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read_info;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_ಒಳ_zip_read_info=s->pfile_ಒಳ_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
 
-    if (pfile_in_zip_read_info->read_buffer == NULL)
-        return UNZ_END_OF_LIST_OF_FILE;
-    if (len==0)
-        return 0;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info->read_ಬಫರ್ == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_ಕೊನೆ_ದ_LIST_ದ_FILE;
+    ಆದರೆ (len==0)
+        ಹಿಂತಿರುಗಿ 0;
 
-    pfile_in_zip_read_info->stream.next_out = (Bytef*)buf;
+    pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು = (Bytef*)buf;
 
-    pfile_in_zip_read_info->stream.avail_out = (uInt)len;
+    pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು = (uInt)len;
 
-    if ((len>pfile_in_zip_read_info->rest_read_uncompressed) &&
-        (!(pfile_in_zip_read_info->raw)))
-        pfile_in_zip_read_info->stream.avail_out =
-            (uInt)pfile_in_zip_read_info->rest_read_uncompressed;
+    ಆದರೆ ((len>pfile_ಒಳ_zip_read_info->rest_read_uncompressed) &&
+        (!(pfile_ಒಳ_zip_read_info->raw)))
+        pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು =
+            (uInt)pfile_ಒಳ_zip_read_info->rest_read_uncompressed;
 
-    if ((len>pfile_in_zip_read_info->rest_read_compressed+
-           pfile_in_zip_read_info->stream.avail_in) &&
-         (pfile_in_zip_read_info->raw))
-        pfile_in_zip_read_info->stream.avail_out =
-            (uInt)pfile_in_zip_read_info->rest_read_compressed+
-            pfile_in_zip_read_info->stream.avail_in;
+    ಆದರೆ ((len>pfile_ಒಳ_zip_read_info->rest_read_compressed+
+           pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ) &&
+         (pfile_ಒಳ_zip_read_info->raw))
+        pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು =
+            (uInt)pfile_ಒಳ_zip_read_info->rest_read_compressed+
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ;
 
-    while (pfile_in_zip_read_info->stream.avail_out>0)
+    ಆಗ (pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು>0)
     {
-        if ((pfile_in_zip_read_info->stream.avail_in==0) &&
-            (pfile_in_zip_read_info->rest_read_compressed>0))
+        ಆದರೆ ((pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ==0) &&
+            (pfile_ಒಳ_zip_read_info->rest_read_compressed>0))
         {
             uInt uReadThis = UNZ_BUFSIZE;
-            if (pfile_in_zip_read_info->rest_read_compressed<uReadThis)
-                uReadThis = (uInt)pfile_in_zip_read_info->rest_read_compressed;
-            if (uReadThis == 0)
-                return UNZ_EOF;
-            if (ZSEEK64(pfile_in_zip_read_info->z_filefunc,
-                      pfile_in_zip_read_info->filestream,
-                      pfile_in_zip_read_info->pos_in_zipfile +
-                         pfile_in_zip_read_info->byte_before_the_zipfile,
-                         ZLIB_FILEFUNC_SEEK_SET)!=0)
-                return UNZ_ERRNO;
-            if (ZREAD64(pfile_in_zip_read_info->z_filefunc,
-                      pfile_in_zip_read_info->filestream,
-                      pfile_in_zip_read_info->read_buffer,
+            ಆದರೆ (pfile_ಒಳ_zip_read_info->rest_read_compressed<uReadThis)
+                uReadThis = (uInt)pfile_ಒಳ_zip_read_info->rest_read_compressed;
+            ಆದರೆ (uReadThis == 0)
+                ಹಿಂತಿರುಗಿ UNZ_EOF;
+            ಆದರೆ (ZSEEK64(pfile_ಒಳ_zip_read_info->z_filefunc,
+                      pfile_ಒಳ_zip_read_info->filestream,
+                      pfile_ಒಳ_zip_read_info->pos_ಒಳ_zipfile +
+                         pfile_ಒಳ_zip_read_info->byte_before_the_zipfile,
+                         ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+                ಹಿಂತಿರುಗಿ UNZ_ERRNO;
+            ಆದರೆ (ZREAD64(pfile_ಒಳ_zip_read_info->z_filefunc,
+                      pfile_ಒಳ_zip_read_info->filestream,
+                      pfile_ಒಳ_zip_read_info->read_ಬಫರ್,
                       uReadThis)!=uReadThis)
-                return UNZ_ERRNO;
+                ಹಿಂತಿರುಗಿ UNZ_ERRNO;
 
 
 #            ifndef NOUNCRYPT
-            if(s->encrypted)
+            ಆದರೆ(s->encrypted)
             {
                 uInt i;
-                for(i=0;i<uReadThis;i++)
-                  pfile_in_zip_read_info->read_buffer[i] =
-                      (char)zdecode(s->keys,s->pcrc_32_tab,
-                              pfile_in_zip_read_info->read_buffer[i]);
+                ಗಾಗಿ(i=0;i<uReadThis;i++)
+                  pfile_ಒಳ_zip_read_info->read_ಬಫರ್[i] =
+                      (ಅಕ್ಷರ)zdecode(s->ಕೀಲಿಗಳು,s->pcrc_32_tab,
+                              pfile_ಒಳ_zip_read_info->read_ಬಫರ್[i]);
             }
 #            endif
 
 
-            pfile_in_zip_read_info->pos_in_zipfile += uReadThis;
+            pfile_ಒಳ_zip_read_info->pos_ಒಳ_zipfile += uReadThis;
 
-            pfile_in_zip_read_info->rest_read_compressed-=uReadThis;
+            pfile_ಒಳ_zip_read_info->rest_read_compressed-=uReadThis;
 
-            pfile_in_zip_read_info->stream.next_in =
-                (Bytef*)pfile_in_zip_read_info->read_buffer;
-            pfile_in_zip_read_info->stream.avail_in = (uInt)uReadThis;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಒಳ =
+                (Bytef*)pfile_ಒಳ_zip_read_info->read_ಬಫರ್;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ = (uInt)uReadThis;
         }
 
-        if ((pfile_in_zip_read_info->compression_method==0) || (pfile_in_zip_read_info->raw))
+        ಆದರೆ ((pfile_ಒಳ_zip_read_info->compression_ವಿಧಾನ==0) || (pfile_ಒಳ_zip_read_info->raw))
         {
             uInt uDoCopy,i ;
 
-            if ((pfile_in_zip_read_info->stream.avail_in == 0) &&
-                (pfile_in_zip_read_info->rest_read_compressed == 0))
-                return (iRead==0) ? UNZ_EOF : (int)iRead;
+            ಆದರೆ ((pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ == 0) &&
+                (pfile_ಒಳ_zip_read_info->rest_read_compressed == 0))
+                ಹಿಂತಿರುಗಿ (iRead==0) ? UNZ_EOF : (ಪೂರ್ಣಾಂಕ)iRead;
 
-            if (pfile_in_zip_read_info->stream.avail_out <
-                            pfile_in_zip_read_info->stream.avail_in)
-                uDoCopy = pfile_in_zip_read_info->stream.avail_out ;
-            else
-                uDoCopy = pfile_in_zip_read_info->stream.avail_in ;
+            ಆದರೆ (pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು <
+                            pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ)
+                uDoCopy = pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು ;
+            ಇಲ್ಲದಿದ್ದರೆ
+                uDoCopy = pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ ;
 
-            for (i=0;i<uDoCopy;i++)
-                *(pfile_in_zip_read_info->stream.next_out+i) =
-                        *(pfile_in_zip_read_info->stream.next_in+i);
+            ಗಾಗಿ (i=0;i<uDoCopy;i++)
+                *(pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು+i) =
+                        *(pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಒಳ+i);
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uDoCopy;
+            pfile_ಒಳ_zip_read_info->ಒಟ್ಟು_ಹೊರಹೋಗು_64 = pfile_ಒಳ_zip_read_info->ಒಟ್ಟು_ಹೊರಹೋಗು_64 + uDoCopy;
 
-            pfile_in_zip_read_info->crc32 = crc32(pfile_in_zip_read_info->crc32,
-                                pfile_in_zip_read_info->stream.next_out,
+            pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2 = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2(pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2,
+                                pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು,
                                 uDoCopy);
-            pfile_in_zip_read_info->rest_read_uncompressed-=uDoCopy;
-            pfile_in_zip_read_info->stream.avail_in -= uDoCopy;
-            pfile_in_zip_read_info->stream.avail_out -= uDoCopy;
-            pfile_in_zip_read_info->stream.next_out += uDoCopy;
-            pfile_in_zip_read_info->stream.next_in += uDoCopy;
-            pfile_in_zip_read_info->stream.total_out += uDoCopy;
+            pfile_ಒಳ_zip_read_info->rest_read_uncompressed-=uDoCopy;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ -= uDoCopy;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು -= uDoCopy;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು += uDoCopy;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಒಳ += uDoCopy;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು += uDoCopy;
             iRead += uDoCopy;
         }
-        else if (pfile_in_zip_read_info->compression_method==Z_BZIP2ED)
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (pfile_ಒಳ_zip_read_info->compression_ವಿಧಾನ==Z_BZIP2ED)
         {
-#ifdef HAVE_BZIP2
-            uLong uTotalOutBefore,uTotalOutAfter;
-            const Bytef *bufBefore;
-            uLong uOutThis;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+            uLong u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before,u_ಒಟ್ಟು_ಹೊರಹೋಗು_After;
+            ಸ್ಥಿರಾಂಕ Bytef *bufBefore;
+            uLong u_ಹೊರಹೋಗು_This;
 
-            pfile_in_zip_read_info->bstream.next_in        = (char*)pfile_in_zip_read_info->stream.next_in;
-            pfile_in_zip_read_info->bstream.avail_in       = pfile_in_zip_read_info->stream.avail_in;
-            pfile_in_zip_read_info->bstream.total_in_lo32  = pfile_in_zip_read_info->stream.total_in;
-            pfile_in_zip_read_info->bstream.total_in_hi32  = 0;
-            pfile_in_zip_read_info->bstream.next_out       = (char*)pfile_in_zip_read_info->stream.next_out;
-            pfile_in_zip_read_info->bstream.avail_out      = pfile_in_zip_read_info->stream.avail_out;
-            pfile_in_zip_read_info->bstream.total_out_lo32 = pfile_in_zip_read_info->stream.total_out;
-            pfile_in_zip_read_info->bstream.total_out_hi32 = 0;
+            pfile_ಒಳ_zip_read_info->bstream.ಮುಂದಿನ_ಒಳ        = (ಅಕ್ಷರ*)pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಒಳ;
+            pfile_ಒಳ_zip_read_info->bstream.avail_ಒಳ       = pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ;
+            pfile_ಒಳ_zip_read_info->bstream.ಒಟ್ಟು_ಒಳ_lo32  = pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಒಳ;
+            pfile_ಒಳ_zip_read_info->bstream.ಒಟ್ಟು_ಒಳ_hi32  = 0;
+            pfile_ಒಳ_zip_read_info->bstream.ಮುಂದಿನ_ಹೊರಹೋಗು       = (ಅಕ್ಷರ*)pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು;
+            pfile_ಒಳ_zip_read_info->bstream.avail_ಹೊರಹೋಗು      = pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು;
+            pfile_ಒಳ_zip_read_info->bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32 = pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು;
+            pfile_ಒಳ_zip_read_info->bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_hi32 = 0;
 
-            uTotalOutBefore = pfile_in_zip_read_info->bstream.total_out_lo32;
-            bufBefore = (const Bytef *)pfile_in_zip_read_info->bstream.next_out;
+            u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before = pfile_ಒಳ_zip_read_info->bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32;
+            bufBefore = (ಸ್ಥಿರಾಂಕ Bytef *)pfile_ಒಳ_zip_read_info->bstream.ಮುಂದಿನ_ಹೊರಹೋಗು;
 
-            err=BZ2_bzDecompress(&pfile_in_zip_read_info->bstream);
+            err=BZ2_bzDecompress(&pfile_ಒಳ_zip_read_info->bstream);
 
-            uTotalOutAfter = pfile_in_zip_read_info->bstream.total_out_lo32;
-            uOutThis = uTotalOutAfter-uTotalOutBefore;
+            u_ಒಟ್ಟು_ಹೊರಹೋಗು_After = pfile_ಒಳ_zip_read_info->bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32;
+            u_ಹೊರಹೋಗು_This = u_ಒಟ್ಟು_ಹೊರಹೋಗು_After-u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before;
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uOutThis;
+            pfile_ಒಳ_zip_read_info->ಒಟ್ಟು_ಹೊರಹೋಗು_64 = pfile_ಒಳ_zip_read_info->ಒಟ್ಟು_ಹೊರಹೋಗು_64 + u_ಹೊರಹೋಗು_This;
 
-            pfile_in_zip_read_info->crc32 = crc32(pfile_in_zip_read_info->crc32,bufBefore, (uInt)(uOutThis));
-            pfile_in_zip_read_info->rest_read_uncompressed -= uOutThis;
-            iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
+            pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2 = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2(pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2,bufBefore, (uInt)(u_ಹೊರಹೋಗು_This));
+            pfile_ಒಳ_zip_read_info->rest_read_uncompressed -= u_ಹೊರಹೋಗು_This;
+            iRead += (uInt)(u_ಒಟ್ಟು_ಹೊರಹೋಗು_After - u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before);
 
-            pfile_in_zip_read_info->stream.next_in   = (Bytef*)pfile_in_zip_read_info->bstream.next_in;
-            pfile_in_zip_read_info->stream.avail_in  = pfile_in_zip_read_info->bstream.avail_in;
-            pfile_in_zip_read_info->stream.total_in  = pfile_in_zip_read_info->bstream.total_in_lo32;
-            pfile_in_zip_read_info->stream.next_out  = (Bytef*)pfile_in_zip_read_info->bstream.next_out;
-            pfile_in_zip_read_info->stream.avail_out = pfile_in_zip_read_info->bstream.avail_out;
-            pfile_in_zip_read_info->stream.total_out = pfile_in_zip_read_info->bstream.total_out_lo32;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಒಳ   = (Bytef*)pfile_ಒಳ_zip_read_info->bstream.ಮುಂದಿನ_ಒಳ;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಒಳ  = pfile_ಒಳ_zip_read_info->bstream.avail_ಒಳ;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಒಳ  = pfile_ಒಳ_zip_read_info->bstream.ಒಟ್ಟು_ಒಳ_lo32;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು  = (Bytef*)pfile_ಒಳ_zip_read_info->bstream.ಮುಂದಿನ_ಹೊರಹೋಗು;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.avail_ಹೊರಹೋಗು = pfile_ಒಳ_zip_read_info->bstream.avail_ಹೊರಹೋಗು;
+            pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು = pfile_ಒಳ_zip_read_info->bstream.ಒಟ್ಟು_ಹೊರಹೋಗು_lo32;
 
-            if (err==BZ_STREAM_END)
-              return (iRead==0) ? UNZ_EOF : iRead;
-            if (err!=BZ_OK)
-              break;
-#endif
+            ಆದರೆ (err==BZ_ಹರಿವು_ಕೊನೆ)
+              ಹಿಂತಿರುಗಿ (iRead==0) ? UNZ_EOF : iRead;
+            ಆದರೆ (err!=BZ_OK)
+              ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
         } /* end Z_BZIP2ED */
-        else
+        ಇಲ್ಲದಿದ್ದರೆ
         {
-            ZPOS64_T uTotalOutBefore,uTotalOutAfter;
-            const Bytef *bufBefore;
-            ZPOS64_T uOutThis;
-            int flush=Z_SYNC_FLUSH;
+            ZPOS64_T u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before,u_ಒಟ್ಟು_ಹೊರಹೋಗು_After;
+            ಸ್ಥಿರಾಂಕ Bytef *bufBefore;
+            ZPOS64_T u_ಹೊರಹೋಗು_This;
+            ಪೂರ್ಣಾಂಕ flush=Z_SYNC_FLUSH;
 
-            uTotalOutBefore = pfile_in_zip_read_info->stream.total_out;
-            bufBefore = pfile_in_zip_read_info->stream.next_out;
+            u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before = pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು;
+            bufBefore = pfile_ಒಳ_zip_read_info->ಹರಿವು.ಮುಂದಿನ_ಹೊರಹೋಗು;
 
             /*
             if ((pfile_in_zip_read_info->rest_read_uncompressed ==
@@ -1715,92 +1715,92 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
                 (pfile_in_zip_read_info->rest_read_compressed == 0))
                 flush = Z_FINISH;
             */
-            err=inflate(&pfile_in_zip_read_info->stream,flush);
+            err=inflate(&pfile_ಒಳ_zip_read_info->ಹರಿವು,flush);
 
-            if ((err>=0) && (pfile_in_zip_read_info->stream.msg!=NULL))
-              err = Z_DATA_ERROR;
+            ಆದರೆ ((err>=0) && (pfile_ಒಳ_zip_read_info->ಹರಿವು.ಸಂದೇಶ!=ಖಾಲಿ))
+              err = Z_ದತ್ತಾಂಶ_ERROR;
 
-            uTotalOutAfter = pfile_in_zip_read_info->stream.total_out;
+            u_ಒಟ್ಟು_ಹೊರಹೋಗು_After = pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು;
             /* Detect overflow, because z_stream.total_out is uLong (32 bits) */
-            if (uTotalOutAfter<uTotalOutBefore)
-                uTotalOutAfter += 1LL << 32; /* Add maximum value of uLong + 1 */
-            uOutThis = uTotalOutAfter-uTotalOutBefore;
+            ಆದರೆ (u_ಒಟ್ಟು_ಹೊರಹೋಗು_After<u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before)
+                u_ಒಟ್ಟು_ಹೊರಹೋಗು_After += 1LL << 32; /* Add maximum value of uLong + 1 */
+            u_ಹೊರಹೋಗು_This = u_ಒಟ್ಟು_ಹೊರಹೋಗು_After-u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before;
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uOutThis;
+            pfile_ಒಳ_zip_read_info->ಒಟ್ಟು_ಹೊರಹೋಗು_64 = pfile_ಒಳ_zip_read_info->ಒಟ್ಟು_ಹೊರಹೋಗು_64 + u_ಹೊರಹೋಗು_This;
 
-            pfile_in_zip_read_info->crc32 =
-                crc32(pfile_in_zip_read_info->crc32,bufBefore,
-                        (uInt)(uOutThis));
+            pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2 =
+                ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2(pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2,bufBefore,
+                        (uInt)(u_ಹೊರಹೋಗು_This));
 
-            pfile_in_zip_read_info->rest_read_uncompressed -=
-                uOutThis;
+            pfile_ಒಳ_zip_read_info->rest_read_uncompressed -=
+                u_ಹೊರಹೋಗು_This;
 
-            iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
+            iRead += (uInt)(u_ಒಟ್ಟು_ಹೊರಹೋಗು_After - u_ಒಟ್ಟು_ಹೊರಹೋಗು_Before);
 
-            if (err==Z_STREAM_END)
-                return (iRead==0) ? UNZ_EOF : (int)iRead;
-            if (err!=Z_OK)
-                break;
+            ಆದರೆ (err==Z_ಹರಿವು_ಕೊನೆ)
+                ಹಿಂತಿರುಗಿ (iRead==0) ? UNZ_EOF : (ಪೂರ್ಣಾಂಕ)iRead;
+            ಆದರೆ (err!=Z_OK)
+                ನಿಲ್ಲಿಸು;
         }
     }
 
-    if (err==Z_OK)
-        return (int)iRead;
-    return err;
+    ಆದರೆ (err==Z_OK)
+        ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)iRead;
+    ಹಿಂತಿರುಗಿ err;
 }
 
 
 /*
   Give the current position in uncompressed data
 */
-extern z_off_t ZEXPORT unztell(unzFile file) {
+ಬಾಹ್ಯ z_off_t ZEXPORT unztell(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read_info;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_ಒಳ_zip_read_info=s->pfile_ಒಳ_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
-    return (z_off_t)pfile_in_zip_read_info->stream.total_out;
+    ಹಿಂತಿರುಗಿ (z_off_t)pfile_ಒಳ_zip_read_info->ಹರಿವು.ಒಟ್ಟು_ಹೊರಹೋಗು;
 }
 
-extern ZPOS64_T ZEXPORT unztell64(unzFile file) {
+ಬಾಹ್ಯ ZPOS64_T ZEXPORT unztell64(unzFile file) {
 
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return (ZPOS64_T)-1;
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read_info;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ (ZPOS64_T)-1;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_ಒಳ_zip_read_info=s->pfile_ಒಳ_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return (ZPOS64_T)-1;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ (ZPOS64_T)-1;
 
-    return pfile_in_zip_read_info->total_out_64;
+    ಹಿಂತಿರುಗಿ pfile_ಒಳ_zip_read_info->ಒಟ್ಟು_ಹೊರಹೋಗು_64;
 }
 
 
 /*
   return 1 if the end of file was reached, 0 elsewhere
 */
-extern int ZEXPORT unzeof(unzFile file) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzeof(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read_info;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_ಒಳ_zip_read_info=s->pfile_ಒಳ_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
-    if (pfile_in_zip_read_info->rest_read_uncompressed == 0)
-        return 1;
-    else
-        return 0;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info->rest_read_uncompressed == 0)
+        ಹಿಂತಿರುಗಿ 1;
+    ಇಲ್ಲದಿದ್ದರೆ
+        ಹಿಂತಿರುಗಿ 0;
 }
 
 
@@ -1817,91 +1817,91 @@ more info in the local-header version than in the central-header)
   the return value is the number of bytes copied in buf, or (if <0)
     the error code
 */
-extern int ZEXPORT unzGetLocalExtrafield(unzFile file, voidp buf, unsigned len) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetLocalExtrafield(unzFile file, voidp buf, ಚಿಹ್ನೆರಹಿತ len) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read_info;
     uInt read_now;
-    ZPOS64_T size_to_read;
+    ZPOS64_T ಗಾತ್ರ_ಗಮ್ಯ_read;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_ಒಳ_zip_read_info=s->pfile_ಒಳ_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
-    size_to_read = (pfile_in_zip_read_info->size_local_extrafield -
-                pfile_in_zip_read_info->pos_local_extrafield);
+    ಗಾತ್ರ_ಗಮ್ಯ_read = (pfile_ಒಳ_zip_read_info->ಗಾತ್ರ_local_extrafield -
+                pfile_ಒಳ_zip_read_info->pos_local_extrafield);
 
-    if (buf==NULL)
-        return (int)size_to_read;
+    ಆದರೆ (buf==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ_ಗಮ್ಯ_read;
 
-    if (len>size_to_read)
-        read_now = (uInt)size_to_read;
-    else
+    ಆದರೆ (len>ಗಾತ್ರ_ಗಮ್ಯ_read)
+        read_now = (uInt)ಗಾತ್ರ_ಗಮ್ಯ_read;
+    ಇಲ್ಲದಿದ್ದರೆ
         read_now = (uInt)len ;
 
-    if (read_now==0)
-        return 0;
+    ಆದರೆ (read_now==0)
+        ಹಿಂತಿರುಗಿ 0;
 
-    if (ZSEEK64(pfile_in_zip_read_info->z_filefunc,
-              pfile_in_zip_read_info->filestream,
-              pfile_in_zip_read_info->offset_local_extrafield +
-              pfile_in_zip_read_info->pos_local_extrafield,
-              ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    ಆದರೆ (ZSEEK64(pfile_ಒಳ_zip_read_info->z_filefunc,
+              pfile_ಒಳ_zip_read_info->filestream,
+              pfile_ಒಳ_zip_read_info->ಸ್ಥಾನಾಂತರ_local_extrafield +
+              pfile_ಒಳ_zip_read_info->pos_local_extrafield,
+              ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+        ಹಿಂತಿರುಗಿ UNZ_ERRNO;
 
-    if (ZREAD64(pfile_in_zip_read_info->z_filefunc,
-              pfile_in_zip_read_info->filestream,
+    ಆದರೆ (ZREAD64(pfile_ಒಳ_zip_read_info->z_filefunc,
+              pfile_ಒಳ_zip_read_info->filestream,
               buf,read_now)!=read_now)
-        return UNZ_ERRNO;
+        ಹಿಂತಿರುಗಿ UNZ_ERRNO;
 
-    return (int)read_now;
+    ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)read_now;
 }
 
 /*
   Close the file in zip opened with unzOpenCurrentFile
   Return UNZ_CRCERROR if all the file was read but the CRC is not good
 */
-extern int ZEXPORT unzCloseCurrentFile(unzFile file) {
-    int err=UNZ_OK;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzCloseCurrentFile(unzFile file) {
+    ಪೂರ್ಣಾಂಕ err=UNZ_OK;
 
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_ಒಳ_zip64_read_info_s* pfile_ಒಳ_zip_read_info;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_ಒಳ_zip_read_info=s->pfile_ಒಳ_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
 
 
-    if ((pfile_in_zip_read_info->rest_read_uncompressed == 0) &&
-        (!pfile_in_zip_read_info->raw))
+    ಆದರೆ ((pfile_ಒಳ_zip_read_info->rest_read_uncompressed == 0) &&
+        (!pfile_ಒಳ_zip_read_info->raw))
     {
-        if (pfile_in_zip_read_info->crc32 != pfile_in_zip_read_info->crc32_wait)
+        ಆದರೆ (pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_2 != pfile_ಒಳ_zip_read_info->ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_wait)
             err=UNZ_CRCERROR;
     }
 
 
-    free(pfile_in_zip_read_info->read_buffer);
-    pfile_in_zip_read_info->read_buffer = NULL;
-    if (pfile_in_zip_read_info->stream_initialised == Z_DEFLATED)
-        inflateEnd(&pfile_in_zip_read_info->stream);
-#ifdef HAVE_BZIP2
-    else if (pfile_in_zip_read_info->stream_initialised == Z_BZIP2ED)
-        BZ2_bzDecompressEnd(&pfile_in_zip_read_info->bstream);
-#endif
+    ಬಿಡುಗಡೆ(pfile_ಒಳ_zip_read_info->read_ಬಫರ್);
+    pfile_ಒಳ_zip_read_info->read_ಬಫರ್ = ಖಾಲಿ;
+    ಆದರೆ (pfile_ಒಳ_zip_read_info->ಹರಿವು_initialised == Z_DEFLATED)
+        inflate_ಕೊನೆ(&pfile_ಒಳ_zip_read_info->ಹರಿವು);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BZIP2
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (pfile_ಒಳ_zip_read_info->ಹರಿವು_initialised == Z_BZIP2ED)
+        BZ2_bz_Decompress_ಕೊನೆ(&pfile_ಒಳ_zip_read_info->bstream);
+#ಆದರೆ_ಅಂತ್ಯ
 
 
-    pfile_in_zip_read_info->stream_initialised = 0;
-    free(pfile_in_zip_read_info);
+    pfile_ಒಳ_zip_read_info->ಹರಿವು_initialised = 0;
+    ಬಿಡುಗಡೆ(pfile_ಒಳ_zip_read_info);
 
-    s->pfile_in_zip_read=NULL;
+    s->pfile_ಒಳ_zip_read=ಖಾಲಿ;
 
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
 
@@ -1910,73 +1910,73 @@ extern int ZEXPORT unzCloseCurrentFile(unzFile file) {
   uSizeBuf is the size of the szComment buffer.
   return the number of byte copied or an error code <0
 */
-extern int ZEXPORT unzGetGlobalComment(unzFile file, char * szComment, uLong uSizeBuf) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unzGetGlobalComment(unzFile file, ಅಕ್ಷರ * szComment, uLong u_ಗಾತ್ರ_Buf) {
     unz64_s* s;
     uLong uReadThis ;
-    if (file==NULL)
-        return (int)UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    uReadThis = uSizeBuf;
-    if (uReadThis>s->gi.size_comment)
-        uReadThis = s->gi.size_comment;
+    uReadThis = u_ಗಾತ್ರ_Buf;
+    ಆದರೆ (uReadThis>s->gi.ಗಾತ್ರ_comment)
+        uReadThis = s->gi.ಗಾತ್ರ_comment;
 
-    if (ZSEEK64(s->z_filefunc,s->filestream,s->central_pos+22,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    ಆದರೆ (ZSEEK64(s->z_filefunc,s->filestream,s->central_pos+22,ZLIB_FILEFUNC_SEEK_ಗಣ)!=0)
+        ಹಿಂತಿರುಗಿ UNZ_ERRNO;
 
-    if (uReadThis>0)
+    ಆದರೆ (uReadThis>0)
     {
       *szComment='\0';
-      if (ZREAD64(s->z_filefunc,s->filestream,szComment,uReadThis)!=uReadThis)
-        return UNZ_ERRNO;
+      ಆದರೆ (ZREAD64(s->z_filefunc,s->filestream,szComment,uReadThis)!=uReadThis)
+        ಹಿಂತಿರುಗಿ UNZ_ERRNO;
     }
 
-    if ((szComment != NULL) && (uSizeBuf > s->gi.size_comment))
-        *(szComment+s->gi.size_comment)='\0';
-    return (int)uReadThis;
+    ಆದರೆ ((szComment != ಖಾಲಿ) && (u_ಗಾತ್ರ_Buf > s->gi.ಗಾತ್ರ_comment))
+        *(szComment+s->gi.ಗಾತ್ರ_comment)='\0';
+    ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)uReadThis;
 }
 
 /* Additions by RX '2004 */
-extern ZPOS64_T ZEXPORT unzGetOffset64(unzFile file) {
+ಬಾಹ್ಯ ZPOS64_T ZEXPORT unzGetOffset64(unzFile file) {
     unz64_s* s;
 
-    if (file==NULL)
-          return 0; /* UNZ_PARAMERROR; */
+    ಆದರೆ (file==ಖಾಲಿ)
+          ಹಿಂತಿರುಗಿ 0; /* UNZ_PARAMERROR; */
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-      return 0;
-    if (s->gi.number_entry != 0 && s->gi.number_entry != 0xffff)
-      if (s->num_file==s->gi.number_entry)
-         return 0;
-    return s->pos_in_central_dir;
+    ಆದರೆ (!s->current_file_ok)
+      ಹಿಂತಿರುಗಿ 0;
+    ಆದರೆ (s->gi.ಸಂಖ್ಯೆ_ನಮೂದು != 0 && s->gi.ಸಂಖ್ಯೆ_ನಮೂದು != 0xffff)
+      ಆದರೆ (s->ಅಂಕೆ_file==s->gi.ಸಂಖ್ಯೆ_ನಮೂದು)
+         ಹಿಂತಿರುಗಿ 0;
+    ಹಿಂತಿರುಗಿ s->pos_ಒಳ_central_dir;
 }
 
-extern uLong ZEXPORT unzGetOffset(unzFile file) {
+ಬಾಹ್ಯ uLong ZEXPORT unz_Get_ಸ್ಥಾನಾಂತರ(unzFile file) {
     ZPOS64_T offset64;
 
-    if (file==NULL)
-          return 0; /* UNZ_PARAMERROR; */
+    ಆದರೆ (file==ಖಾಲಿ)
+          ಹಿಂತಿರುಗಿ 0; /* UNZ_PARAMERROR; */
     offset64 = unzGetOffset64(file);
-    return (uLong)offset64;
+    ಹಿಂತಿರುಗಿ (uLong)offset64;
 }
 
-extern int ZEXPORT unzSetOffset64(unzFile file, ZPOS64_T pos) {
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_ಗಣ_Offset64(unzFile file, ZPOS64_T pos) {
     unz64_s* s;
-    int err;
+    ಪೂರ್ಣಾಂಕ err;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ಆದರೆ (file==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    s->pos_in_central_dir = pos;
-    s->num_file = s->gi.number_entry;      /* hack */
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                              &s->cur_file_info_internal,
-                                              NULL,0,NULL,0,NULL,0);
+    s->pos_ಒಳ_central_dir = pos;
+    s->ಅಂಕೆ_file = s->gi.ಸಂಖ್ಯೆ_ನಮೂದು;      /* hack */
+    err = unz64local_Get_Current_File_Info_ಆಂತರಿಕ(file,&s->cur_file_info,
+                                              &s->cur_file_info_ಆಂತರಿಕ,
+                                              ಖಾಲಿ,0,ಖಾಲಿ,0,ಖಾಲಿ,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    ಹಿಂತಿರುಗಿ err;
 }
 
-extern int ZEXPORT unzSetOffset (unzFile file, uLong pos) {
-    return unzSetOffset64(file,pos);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ ZEXPORT unz_ಗಣ_ಸ್ಥಾನಾಂತರ (unzFile file, uLong pos) {
+    ಹಿಂತಿರುಗಿ unz_ಗಣ_Offset64(file,pos);
 }

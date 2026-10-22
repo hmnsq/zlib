@@ -1,42 +1,42 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <windows.h>
 
-#include "zlib.h"
+#ಅನ್ತರ್ಭಾವ "zlib.h"
 
 
-void MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
+ಶೂನ್ಯ MyDoMinus64(LARGE_INTEGER *R,LARGE_INTEGER A,LARGE_INTEGER B)
 {
-    R->HighPart = A.HighPart - B.HighPart;
-    if (A.LowPart >= B.LowPart)
-        R->LowPart = A.LowPart - B.LowPart;
-    else
+    R->ಮೇಲಿನ_Part = A.ಮೇಲಿನ_Part - B.ಮೇಲಿನ_Part;
+    ಆದರೆ (A.ಕೆಳಗಿನ_Part >= B.ಕೆಳಗಿನ_Part)
+        R->ಕೆಳಗಿನ_Part = A.ಕೆಳಗಿನ_Part - B.ಕೆಳಗಿನ_Part;
+    ಇಲ್ಲದಿದ್ದರೆ
     {
-        R->LowPart = A.LowPart - B.LowPart;
-        R->HighPart --;
+        R->ಕೆಳಗಿನ_Part = A.ಕೆಳಗಿನ_Part - B.ಕೆಳಗಿನ_Part;
+        R->ಮೇಲಿನ_Part --;
     }
 }
 
-#ifdef _M_X64
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ _M_X64
 // see https://learn.microsoft.com/en-us/cpp/intrinsics/rdtsc?view=msvc-170 for __rdtsc
-unsigned __int64 __rdtsc(void);
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+ಚಿಹ್ನೆರಹಿತ __int64 __rdtsc(ಶೂನ್ಯ);
+ಶೂನ್ಯ Begin_ಎಣಿಕೆ_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
  //   printf("rdtsc = %I64x\n",__rdtsc());
    pbeginTime64->QuadPart=__rdtsc();
 }
 
-LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
+LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL f_Compute_ಸಮಯ_Query_Perf)
 {
     LARGE_INTEGER LIres;
-    unsigned _int64 res=__rdtsc()-((unsigned _int64)(beginTime64.QuadPart));
+    ಚಿಹ್ನೆರಹಿತ _int64 res=__rdtsc()-((ಚಿಹ್ನೆರಹಿತ _int64)(beginTime64.QuadPart));
     LIres.QuadPart=res;
    // printf("rdtsc = %I64x\n",__rdtsc());
-    return LIres;
+    ಹಿಂತಿರುಗಿ LIres;
 }
-#else
-#ifdef _M_IX86
-void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ _M_IX86
+ಶೂನ್ಯ myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
     DWORD dwEdx,dwEax;
     _asm
@@ -45,231 +45,231 @@ void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
         mov dwEax,eax
         mov dwEdx,edx
     }
-    pbeginTime64->LowPart=dwEax;
-    pbeginTime64->HighPart=dwEdx;
+    pbeginTime64->ಕೆಳಗಿನ_Part=dwEax;
+    pbeginTime64->ಮೇಲಿನ_Part=dwEdx;
 }
 
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+ಶೂನ್ಯ Begin_ಎಣಿಕೆ_Rdtsc(LARGE_INTEGER * pbeginTime64)
 {
     myGetRDTSC32(pbeginTime64);
 }
 
-LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
+LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL f_Compute_ಸಮಯ_Query_Perf)
 {
-    LARGE_INTEGER LIres,endTime64;
-    myGetRDTSC32(&endTime64);
+    LARGE_INTEGER LIres,ಕೊನೆ_Time64;
+    myGetRDTSC32(&ಕೊನೆ_Time64);
 
-    LIres.LowPart=LIres.HighPart=0;
-    MyDoMinus64(&LIres,endTime64,beginTime64);
-    return LIres;
+    LIres.ಕೆಳಗಿನ_Part=LIres.ಮೇಲಿನ_Part=0;
+    MyDoMinus64(&LIres,ಕೊನೆ_Time64,beginTime64);
+    ಹಿಂತಿರುಗಿ LIres;
 }
-#else
-void myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
-{
-}
-
-void BeginCountRdtsc(LARGE_INTEGER * pbeginTime64)
+#ಇಲ್ಲದಿದ್ದರೆ
+ಶೂನ್ಯ myGetRDTSC32(LARGE_INTEGER * pbeginTime64)
 {
 }
 
-LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
+ಶೂನ್ಯ Begin_ಎಣಿಕೆ_Rdtsc(LARGE_INTEGER * pbeginTime64)
+{
+}
+
+LARGE_INTEGER GetResRdtsc(LARGE_INTEGER beginTime64,BOOL f_Compute_ಸಮಯ_Query_Perf)
 {
     LARGE_INTEGER lr;
     lr.QuadPart=0;
-    return lr;
+    ಹಿಂತಿರುಗಿ lr;
 }
-#endif
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-void BeginCountPerfCounter(LARGE_INTEGER * pbeginTime64,BOOL fComputeTimeQueryPerf)
+ಶೂನ್ಯ Begin_ಎಣಿಕೆ_Perf_Counter(LARGE_INTEGER * pbeginTime64,BOOL f_Compute_ಸಮಯ_Query_Perf)
 {
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(pbeginTime64)))
+    ಆದರೆ ((!f_Compute_ಸಮಯ_Query_Perf) || (!QueryPerformanceCounter(pbeginTime64)))
     {
-        pbeginTime64->LowPart = GetTickCount();
-        pbeginTime64->HighPart = 0;
+        pbeginTime64->ಕೆಳಗಿನ_Part = Get_Tick_ಎಣಿಕೆ();
+        pbeginTime64->ಮೇಲಿನ_Part = 0;
     }
 }
 
-DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL fComputeTimeQueryPerf)
+DWORD GetMsecSincePerfCounter(LARGE_INTEGER beginTime64,BOOL f_Compute_ಸಮಯ_Query_Perf)
 {
-    LARGE_INTEGER endTime64,ticksPerSecond,ticks;
+    LARGE_INTEGER ಕೊನೆ_Time64,ticks_ಪ್ರತಿ_ಎರಡನೇ,ticks;
     DWORDLONG ticksShifted,tickSecShifted;
     DWORD dwLog=16+0;
     DWORD dwRet;
-    if ((!fComputeTimeQueryPerf) || (!QueryPerformanceCounter(&endTime64)))
-        dwRet = (GetTickCount() - beginTime64.LowPart)*1;
-    else
+    ಆದರೆ ((!f_Compute_ಸಮಯ_Query_Perf) || (!QueryPerformanceCounter(&ಕೊನೆ_Time64)))
+        dwRet = (Get_Tick_ಎಣಿಕೆ() - beginTime64.ಕೆಳಗಿನ_Part)*1;
+    ಇಲ್ಲದಿದ್ದರೆ
     {
-        MyDoMinus64(&ticks,endTime64,beginTime64);
-        QueryPerformanceFrequency(&ticksPerSecond);
+        MyDoMinus64(&ticks,ಕೊನೆ_Time64,beginTime64);
+        QueryPerformanceFrequency(&ticks_ಪ್ರತಿ_ಎರಡನೇ);
 
 
         {
             ticksShifted = Int64ShrlMod32(*(DWORDLONG*)&ticks,dwLog);
-            tickSecShifted = Int64ShrlMod32(*(DWORDLONG*)&ticksPerSecond,dwLog);
+            tickSecShifted = Int64ShrlMod32(*(DWORDLONG*)&ticks_ಪ್ರತಿ_ಎರಡನೇ,dwLog);
 
         }
 
         dwRet = (DWORD)((((DWORD)ticksShifted)*1000)/(DWORD)(tickSecShifted));
         dwRet *=1;
     }
-    return dwRet;
+    ಹಿಂತಿರುಗಿ dwRet;
 }
 
-int ReadFileMemory(const char* filename,long* plFileSize,unsigned char** pFilePtr)
+ಪೂರ್ಣಾಂಕ Read_File_ಸ್ಮರಣೆ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* filename,ದೀರ್ಘ* pl_File_ಗಾತ್ರ,ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ** pFilePtr)
 {
-    FILE* stream;
-    unsigned char* ptr;
-    int retVal=1;
-    stream=fopen(filename, "rb");
-    if (stream==NULL)
-        return 0;
+    FILE* ಹರಿವು;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* ptr;
+    ಪೂರ್ಣಾಂಕ retVal=1;
+    ಹರಿವು=fopen(filename, "rb");
+    ಆದರೆ (ಹರಿವು==ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ 0;
 
-    fseek(stream,0,SEEK_END);
+    fseek(ಹರಿವು,0,SEEK_END);
 
-    *plFileSize=ftell(stream);
-    fseek(stream,0,SEEK_SET);
-    ptr=malloc((*plFileSize)+1);
-    if (ptr==NULL)
+    *pl_File_ಗಾತ್ರ=ftell(ಹರಿವು);
+    fseek(ಹರಿವು,0,SEEK_SET);
+    ptr=ಸ್ಮರಣೆ_ಕೊಡು((*pl_File_ಗಾತ್ರ)+1);
+    ಆದರೆ (ptr==ಖಾಲಿ)
         retVal=0;
-    else
+    ಇಲ್ಲದಿದ್ದರೆ
     {
-        if (fread(ptr, 1, *plFileSize,stream) != (*plFileSize))
+        ಆದರೆ (fread(ptr, 1, *pl_File_ಗಾತ್ರ,ಹರಿವು) != (*pl_File_ಗಾತ್ರ))
             retVal=0;
     }
-    fclose(stream);
+    fclose(ಹರಿವು);
     *pFilePtr=ptr;
-    return retVal;
+    ಹಿಂತಿರುಗಿ retVal;
 }
 
-int main(int argc, char *argv[])
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ *argv[])
 {
-    int BlockSizeCompress=0x8000;
-    int BlockSizeUncompress=0x8000;
-    int cprLevel=Z_DEFAULT_COMPRESSION ;
-    long lFileSize;
-    unsigned char* FilePtr;
-    long lBufferSizeCpr;
-    long lBufferSizeUncpr;
-    long lCompressedSize=0;
-    unsigned char* CprPtr;
-    unsigned char* UncprPtr;
-    long lSizeCpr,lSizeUncpr;
+    ಪೂರ್ಣಾಂಕ ಖಂಡ_ಗಾತ್ರ_Compress=0x8000;
+    ಪೂರ್ಣಾಂಕ ಖಂಡ_ಗಾತ್ರ_Uncompress=0x8000;
+    ಪೂರ್ಣಾಂಕ cprLevel=Z_DEFAULT_COMPRESSION ;
+    ದೀರ್ಘ l_File_ಗಾತ್ರ;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* FilePtr;
+    ದೀರ್ಘ l_ಬಫರ್_ಗಾತ್ರ_Cpr;
+    ದೀರ್ಘ l_ಬಫರ್_ಗಾತ್ರ_Uncpr;
+    ದೀರ್ಘ l_Compressed_ಗಾತ್ರ=0;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* CprPtr;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ* UncprPtr;
+    ದೀರ್ಘ l_ಗಾತ್ರ_Cpr,l_ಗಾತ್ರ_Uncpr;
     DWORD dwGetTick,dwMsecQP;
     LARGE_INTEGER li_qp,li_rdtsc,dwResRdtsc;
 
-    if (argc<=1)
+    ಆದರೆ (argc<=1)
     {
-        printf("run TestZlib <File> [BlockSizeCompress] [BlockSizeUncompress] [compres. level]\n");
-        return 0;
+        ಬರೆ("run TestZlib <File> [BlockSizeCompress] [BlockSizeUncompress] [compres. level]\n");
+        ಹಿಂತಿರುಗಿ 0;
     }
 
-    if (ReadFileMemory(argv[1],&lFileSize,&FilePtr)==0)
+    ಆದರೆ (Read_File_ಸ್ಮರಣೆ(argv[1],&l_File_ಗಾತ್ರ,&FilePtr)==0)
     {
-        printf("error reading %s\n",argv[1]);
-        return 1;
+        ಬರೆ("error reading %s\n",argv[1]);
+        ಹಿಂತಿರುಗಿ 1;
     }
-    else printf("file %s read, %ld bytes\n",argv[1],lFileSize);
+    ಇಲ್ಲದಿದ್ದರೆ ಬರೆ("file %s read, %ld bytes\n",argv[1],l_File_ಗಾತ್ರ);
 
-    if (argc>=3)
-        BlockSizeCompress=atol(argv[2]);
+    ಆದರೆ (argc>=3)
+        ಖಂಡ_ಗಾತ್ರ_Compress=atol(argv[2]);
 
-    if (argc>=4)
-        BlockSizeUncompress=atol(argv[3]);
+    ಆದರೆ (argc>=4)
+        ಖಂಡ_ಗಾತ್ರ_Uncompress=atol(argv[3]);
 
-    if (argc>=5)
-        cprLevel=(int)atol(argv[4]);
+    ಆದರೆ (argc>=5)
+        cprLevel=(ಪೂರ್ಣಾಂಕ)atol(argv[4]);
 
-    lBufferSizeCpr = lFileSize + (lFileSize/0x10) + 0x200;
-    lBufferSizeUncpr = lBufferSizeCpr;
+    l_ಬಫರ್_ಗಾತ್ರ_Cpr = l_File_ಗಾತ್ರ + (l_File_ಗಾತ್ರ/0x10) + 0x200;
+    l_ಬಫರ್_ಗಾತ್ರ_Uncpr = l_ಬಫರ್_ಗಾತ್ರ_Cpr;
 
-    CprPtr=(unsigned char*)malloc(lBufferSizeCpr + BlockSizeCompress);
+    CprPtr=(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)ಸ್ಮರಣೆ_ಕೊಡು(l_ಬಫರ್_ಗಾತ್ರ_Cpr + ಖಂಡ_ಗಾತ್ರ_Compress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_ಎಣಿಕೆ_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_ಎಣಿಕೆ();
+    Begin_ಎಣಿಕೆ_Rdtsc(&li_rdtsc);
     {
-        z_stream zcpr;
-        int ret=Z_OK;
-        long lOrigToDo = lFileSize;
-        long lOrigDone = 0;
-        int step=0;
-        memset(&zcpr,0,sizeof(z_stream));
+        z_ಹರಿವು zcpr;
+        ಪೂರ್ಣಾಂಕ ret=Z_OK;
+        ದೀರ್ಘ l_Orig_ಗಮ್ಯ_Do = l_File_ಗಾತ್ರ;
+        ದೀರ್ಘ l_Orig_ಮುಗಿದ = 0;
+        ಪೂರ್ಣಾಂಕ ಹೆಜ್ಜೆ=0;
+        memset(&zcpr,0,ಗಾತ್ರ(z_ಹರಿವು));
         deflateInit(&zcpr,cprLevel);
 
-        zcpr.next_in = FilePtr;
-        zcpr.next_out = CprPtr;
+        zcpr.ಮುಂದಿನ_ಒಳ = FilePtr;
+        zcpr.ಮುಂದಿನ_ಹೊರಹೋಗು = CprPtr;
 
 
-        do
+        ಮಾಡು
         {
-            long all_read_before = zcpr.total_in;
-            zcpr.avail_in = min(lOrigToDo,BlockSizeCompress);
-            zcpr.avail_out = BlockSizeCompress;
-            ret=deflate(&zcpr,(zcpr.avail_in==lOrigToDo) ? Z_FINISH : Z_SYNC_FLUSH);
-            lOrigDone += (zcpr.total_in-all_read_before);
-            lOrigToDo -= (zcpr.total_in-all_read_before);
-            step++;
-        } while (ret==Z_OK);
+            ದೀರ್ಘ all_read_before = zcpr.ಒಟ್ಟು_ಒಳ;
+            zcpr.avail_ಒಳ = min(l_Orig_ಗಮ್ಯ_Do,ಖಂಡ_ಗಾತ್ರ_Compress);
+            zcpr.avail_ಹೊರಹೋಗು = ಖಂಡ_ಗಾತ್ರ_Compress;
+            ret=deflate(&zcpr,(zcpr.avail_ಒಳ==l_Orig_ಗಮ್ಯ_Do) ? Z_ಮುಕ್ತಾಯ : Z_SYNC_FLUSH);
+            l_Orig_ಮುಗಿದ += (zcpr.ಒಟ್ಟು_ಒಳ-all_read_before);
+            l_Orig_ಗಮ್ಯ_Do -= (zcpr.ಒಟ್ಟು_ಒಳ-all_read_before);
+            ಹೆಜ್ಜೆ++;
+        } ಆಗ (ret==Z_OK);
 
-        lSizeCpr=zcpr.total_out;
-        deflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        l_ಗಾತ್ರ_Cpr=zcpr.ಒಟ್ಟು_ಹೊರಹೋಗು;
+        deflate_ಕೊನೆ(&zcpr);
+        dwGetTick=Get_Tick_ಎಣಿಕೆ()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
-        printf("total compress size = %u, in %u step\n",lSizeCpr,step);
-        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(double)1000.);
-        printf("defcpr time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(double)1000.);
-        printf("defcpr result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
+        ಬರೆ("total compress size = %u, in %u step\n",l_ಗಾತ್ರ_Cpr,ಹೆಜ್ಜೆ);
+        ಬರೆ("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(ದ್ವಿಗುಣ)1000.);
+        ಬರೆ("defcpr time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(ದ್ವಿಗುಣ)1000.);
+        ಬರೆ("defcpr result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    CprPtr=(unsigned char*)realloc(CprPtr,lSizeCpr);
-    UncprPtr=(unsigned char*)malloc(lBufferSizeUncpr + BlockSizeUncompress);
+    CprPtr=(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)realloc(CprPtr,l_ಗಾತ್ರ_Cpr);
+    UncprPtr=(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ*)ಸ್ಮರಣೆ_ಕೊಡು(l_ಬಫರ್_ಗಾತ್ರ_Uncpr + ಖಂಡ_ಗಾತ್ರ_Uncompress);
 
-    BeginCountPerfCounter(&li_qp,TRUE);
-    dwGetTick=GetTickCount();
-    BeginCountRdtsc(&li_rdtsc);
+    Begin_ಎಣಿಕೆ_Perf_Counter(&li_qp,TRUE);
+    dwGetTick=Get_Tick_ಎಣಿಕೆ();
+    Begin_ಎಣಿಕೆ_Rdtsc(&li_rdtsc);
     {
-        z_stream zcpr;
-        int ret=Z_OK;
-        long lOrigToDo = lSizeCpr;
-        long lOrigDone = 0;
-        int step=0;
-        memset(&zcpr,0,sizeof(z_stream));
+        z_ಹರಿವು zcpr;
+        ಪೂರ್ಣಾಂಕ ret=Z_OK;
+        ದೀರ್ಘ l_Orig_ಗಮ್ಯ_Do = l_ಗಾತ್ರ_Cpr;
+        ದೀರ್ಘ l_Orig_ಮುಗಿದ = 0;
+        ಪೂರ್ಣಾಂಕ ಹೆಜ್ಜೆ=0;
+        memset(&zcpr,0,ಗಾತ್ರ(z_ಹರಿವು));
         inflateInit(&zcpr);
 
-        zcpr.next_in = CprPtr;
-        zcpr.next_out = UncprPtr;
+        zcpr.ಮುಂದಿನ_ಒಳ = CprPtr;
+        zcpr.ಮುಂದಿನ_ಹೊರಹೋಗು = UncprPtr;
 
 
-        do
+        ಮಾಡು
         {
-            long all_read_before = zcpr.total_in;
-            zcpr.avail_in = min(lOrigToDo,BlockSizeUncompress);
-            zcpr.avail_out = BlockSizeUncompress;
+            ದೀರ್ಘ all_read_before = zcpr.ಒಟ್ಟು_ಒಳ;
+            zcpr.avail_ಒಳ = min(l_Orig_ಗಮ್ಯ_Do,ಖಂಡ_ಗಾತ್ರ_Uncompress);
+            zcpr.avail_ಹೊರಹೋಗು = ಖಂಡ_ಗಾತ್ರ_Uncompress;
             ret=inflate(&zcpr,Z_SYNC_FLUSH);
-            lOrigDone += (zcpr.total_in-all_read_before);
-            lOrigToDo -= (zcpr.total_in-all_read_before);
-            step++;
-        } while (ret==Z_OK);
+            l_Orig_ಮುಗಿದ += (zcpr.ಒಟ್ಟು_ಒಳ-all_read_before);
+            l_Orig_ಗಮ್ಯ_Do -= (zcpr.ಒಟ್ಟು_ಒಳ-all_read_before);
+            ಹೆಜ್ಜೆ++;
+        } ಆಗ (ret==Z_OK);
 
-        lSizeUncpr=zcpr.total_out;
-        inflateEnd(&zcpr);
-        dwGetTick=GetTickCount()-dwGetTick;
+        l_ಗಾತ್ರ_Uncpr=zcpr.ಒಟ್ಟು_ಹೊರಹೋಗು;
+        inflate_ಕೊನೆ(&zcpr);
+        dwGetTick=Get_Tick_ಎಣಿಕೆ()-dwGetTick;
         dwMsecQP=GetMsecSincePerfCounter(li_qp,TRUE);
         dwResRdtsc=GetResRdtsc(li_rdtsc,TRUE);
-        printf("total uncompress size = %u, in %u step\n",lSizeUncpr,step);
-        printf("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(double)1000.);
-        printf("uncpr  time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(double)1000.);
-        printf("uncpr  result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
+        ಬರೆ("total uncompress size = %u, in %u step\n",l_ಗಾತ್ರ_Uncpr,ಹೆಜ್ಜೆ);
+        ಬರೆ("time = %u msec = %f sec\n",dwGetTick,dwGetTick/(ದ್ವಿಗುಣ)1000.);
+        ಬರೆ("uncpr  time QP = %u msec = %f sec\n",dwMsecQP,dwMsecQP/(ದ್ವಿಗುಣ)1000.);
+        ಬರೆ("uncpr  result rdtsc = %I64x\n\n",dwResRdtsc.QuadPart);
     }
 
-    if (lSizeUncpr==lFileSize)
+    ಆದರೆ (l_ಗಾತ್ರ_Uncpr==l_File_ಗಾತ್ರ)
     {
-        if (memcmp(FilePtr,UncprPtr,lFileSize)==0)
-            printf("compare ok\n");
+        ಆದರೆ (memcmp(FilePtr,UncprPtr,l_File_ಗಾತ್ರ)==0)
+            ಬರೆ("compare ok\n");
 
     }
 
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }

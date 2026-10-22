@@ -3,21 +3,21 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "gzguts.h"
+#ಅನ್ತರ್ಭಾವ "gzguts.h"
 
 /* gzclose() is in a separate file so that it is linked in only if it is used.
    That way the other gzclose functions can be used instead to avoid linking in
    unneeded compression or decompression routines. */
-int ZEXPORT gzclose(gzFile file) {
-#ifndef NO_GZCOMPRESS
+ಪೂರ್ಣಾಂಕ ZEXPORT gzclose(gzFile file) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NO_GZCOMPRESS
     gz_statep state;
 
-    if (file == NULL)
-        return Z_STREAM_ERROR;
+    ಆದರೆ (file == ಖಾಲಿ)
+        ಹಿಂತಿರುಗಿ Z_ಹರಿವು_ERROR;
     state = (gz_statep)file;
 
-    return state->mode == GZ_READ ? gzclose_r(file) : gzclose_w(file);
-#else
-    return gzclose_r(file);
-#endif
+    ಹಿಂತಿರುಗಿ state->ಬಹುಲಕ == GZ_READ ? gzclose_r(file) : gzclose_w(file);
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಹಿಂತಿರುಗಿ gzclose_r(file);
+#ಆದರೆ_ಅಂತ್ಯ
 }
