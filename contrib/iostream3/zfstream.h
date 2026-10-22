@@ -10,9 +10,9 @@
 #ifndef ZFSTREAM_H
 #define ZFSTREAM_H
 
-#include <istream>  // not iostream, since we don't need cin/cout
-#include <ostream>
-#include "zlib.h"
+#ضمن <istream>  // not iostream, since we don't need cin/cout
+#ضمن <ostream>
+#ضمن "zlib.h"
 
 /*****************************************************************************/
 
@@ -24,9 +24,9 @@
  *  (tricky). Otherwise, it attempts to be a drop-in replacement for the standard
  *  file streambuf.
 */
-class gzfilebuf : public std::streambuf
+class gzfilebuf : عام std::streambuf
 {
-public:
+عام:
   //  Default constructor.
   gzfilebuf();
 
@@ -45,16 +45,16 @@ public:
    *  it can default and setcompression(level) then becomes like the old
    *  setcompressionlevel(level).
   */
-  int
-  setcompression(int comp_level,
-                 int comp_strategy = Z_DEFAULT_STRATEGY);
+  صحيح
+  setcompression(صحيح comp_level,
+                 صحيح comp_strategy = Z_DEFAULT_STRATEGY);
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() const { return (file != NULL); }
+  is_open() ثابت { החזר (file != عدم); }
 
   /**
    *  @brief  Open gzipped file.
@@ -63,7 +63,7 @@ public:
    *  @return  @c this on success, NULL on failure.
   */
   gzfilebuf*
-  open(const char* name,
+  open(ثابت حرف* name,
        std::ios_base::openmode mode);
 
   /**
@@ -73,7 +73,7 @@ public:
    *  @return  @c this on success, NULL on failure.
   */
   gzfilebuf*
-  attach(int fd,
+  attach(صحيح fd,
          std::ios_base::openmode mode);
 
   /**
@@ -83,14 +83,14 @@ public:
   gzfilebuf*
   close();
 
-protected:
+محمي:
   /**
    *  @brief  Convert ios open mode int to mode string used by zlib.
    *  @return  True if valid mode flag combination.
   */
   bool
   open_mode(std::ios_base::openmode mode,
-            char* c_mode) const;
+            حرف* c_mode) ثابت;
 
   /**
    *  @brief  Number of characters available in stream buffer.
@@ -142,7 +142,7 @@ protected:
    *
    *  This calls underflow(EOF) to do the job.
   */
-  virtual int
+  virtual صحيح
   sync();
 
 //
@@ -158,7 +158,7 @@ protected:
 //  seekpos(pos_type sp,
 //          std::ios_base::openmode mode = std::ios_base::in|std::ios_base::out);
 
-private:
+خاص:
   /**
    *  @brief  Allocate internal buffer.
    *
@@ -167,7 +167,7 @@ private:
    *  buffer already exists or is external, the buffer pointers will be
    *  reset to their original state.
   */
-  void
+  فراغ
   enable_buffer();
 
   /**
@@ -177,7 +177,7 @@ private:
    *  that the internal buffer is deallocated if it exists. In any
    *  case, it will also reset the buffer pointers.
   */
-  void
+  فراغ
   disable_buffer();
 
   /**
@@ -231,9 +231,9 @@ private:
  *  This class implements ifstream for gzipped files. Seeking and putback
  *  is not supported yet.
 */
-class gzifstream : public std::istream
+class gzifstream : عام std::istream
 {
-public:
+عام:
   //  Default constructor
   gzifstream();
 
@@ -243,7 +243,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::in).
   */
   explicit
-  gzifstream(const char* name,
+  gzifstream(ثابت حرف* name,
              std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -252,22 +252,22 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::in).
   */
   explicit
-  gzifstream(int fd,
+  gzifstream(صحيح fd,
              std::ios_base::openmode mode = std::ios_base::in);
 
   /**
    *  Obtain underlying stream buffer.
   */
   gzfilebuf*
-  rdbuf() const
-  { return const_cast<gzfilebuf*>(&sb); }
+  rdbuf() ثابت
+  { החזר const_cast<gzfilebuf*>(&sb); }
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() { return sb.is_open(); }
+  is_open() { החזר sb.is_open(); }
 
   /**
    *  @brief  Open gzipped file.
@@ -281,8 +281,8 @@ public:
    *  you manually clear() the state. The choice is a matter of
    *  convenience.
   */
-  void
-  open(const char* name,
+  فراغ
+  open(ثابت حرف* name,
        std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -293,8 +293,8 @@ public:
    *  Stream will be in state good() if attach succeeded; otherwise
    *  in state fail().
   */
-  void
-  attach(int fd,
+  فراغ
+  attach(صحيح fd,
          std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -302,10 +302,10 @@ public:
    *
    *  Stream will be in state fail() if close failed.
   */
-  void
+  فراغ
   close();
 
-private:
+خاص:
   /**
    *  Underlying stream buffer.
   */
@@ -320,9 +320,9 @@ private:
  *  This class implements ofstream for gzipped files. Seeking and putback
  *  is not supported yet.
 */
-class gzofstream : public std::ostream
+class gzofstream : عام std::ostream
 {
-public:
+عام:
   //  Default constructor
   gzofstream();
 
@@ -332,7 +332,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::out).
   */
   explicit
-  gzofstream(const char* name,
+  gzofstream(ثابت حرف* name,
              std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -341,22 +341,22 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::out).
   */
   explicit
-  gzofstream(int fd,
+  gzofstream(صحيح fd,
              std::ios_base::openmode mode = std::ios_base::out);
 
   /**
    *  Obtain underlying stream buffer.
   */
   gzfilebuf*
-  rdbuf() const
-  { return const_cast<gzfilebuf*>(&sb); }
+  rdbuf() ثابت
+  { החזר const_cast<gzfilebuf*>(&sb); }
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() { return sb.is_open(); }
+  is_open() { החזר sb.is_open(); }
 
   /**
    *  @brief  Open gzipped file.
@@ -370,8 +370,8 @@ public:
    *  you manually clear() the state. The choice is a matter of
    *  convenience.
   */
-  void
-  open(const char* name,
+  فراغ
+  open(ثابت حرف* name,
        std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -382,8 +382,8 @@ public:
    *  Stream will be in state good() if attach succeeded; otherwise
    *  in state fail().
   */
-  void
-  attach(int fd,
+  فراغ
+  attach(صحيح fd,
          std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -391,10 +391,10 @@ public:
    *
    *  Stream will be in state fail() if close failed.
   */
-  void
+  فراغ
   close();
 
-private:
+خاص:
   /**
    *  Underlying stream buffer.
   */
@@ -412,18 +412,18 @@ private:
 template<typename T1, typename T2>
   class gzomanip2
   {
-  public:
+  عام:
     // Allows inserter to peek at internals
     template <typename Ta, typename Tb>
       friend gzofstream&
       operator<<(gzofstream&,
-                 const gzomanip2<Ta,Tb>&);
+                 ثابت gzomanip2<Ta,Tb>&);
 
     // Constructor
     gzomanip2(gzofstream& (*f)(gzofstream&, T1, T2),
               T1 v1,
               T2 v2);
-  private:
+  خاص:
     // Underlying manipulator function
     gzofstream&
     (*func)(gzofstream&, T1, T2);
@@ -436,16 +436,16 @@ template<typename T1, typename T2>
 /*****************************************************************************/
 
 // Manipulator function thunks through to stream buffer
-inline gzofstream&
-setcompression(gzofstream &gzs, int l, int s = Z_DEFAULT_STRATEGY)
+مضمن gzofstream&
+setcompression(gzofstream &gzs, صحيح l, صحيح s = Z_DEFAULT_STRATEGY)
 {
   (gzs.rdbuf())->setcompression(l, s);
-  return gzs;
+  החזר gzs;
 }
 
 // Manipulator constructor stores arguments
 template<typename T1, typename T2>
-  inline
+  مضمن
   gzomanip2<T1,T2>::gzomanip2(gzofstream &(*f)(gzofstream &, T1, T2),
                               T1 v1,
                               T2 v2)
@@ -454,13 +454,13 @@ template<typename T1, typename T2>
 
 // Inserter applies underlying manipulator function to stream
 template<typename T1, typename T2>
-  inline gzofstream&
-  operator<<(gzofstream& s, const gzomanip2<T1,T2>& m)
-  { return (*m.func)(s, m.val1, m.val2); }
+  مضمن gzofstream&
+  operator<<(gzofstream& s, ثابت gzomanip2<T1,T2>& m)
+  { החזר (*m.func)(s, m.val1, m.val2); }
 
 // Insert this onto stream to simplify setting of compression level
-inline gzomanip2<int,int>
-setcompression(int l, int s = Z_DEFAULT_STRATEGY)
-{ return gzomanip2<int,int>(&setcompression, l, s); }
+مضمن gzomanip2<صحيح,صحيح>
+setcompression(صحيح l, صحيح s = Z_DEFAULT_STRATEGY)
+{ החזר gzomanip2<صحيح,صحيح>(&setcompression, l, s); }
 
 #endif // ZFSTREAM_H
