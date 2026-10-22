@@ -40,35 +40,35 @@
 #define _zip12_H
 
 #ifdef __cplusplus
-extern "C" {
+बाह्य "C" {
 #endif
 
 /* #define HAVE_BZIP2 */
 
 #ifndef _ZLIB_H
-#include "zlib.h"
+#अन्तर्भाव "zlib.h"
 #endif
 
 #ifndef _ZLIBIOAPI_H
-#include "ioapi.h"
+#अन्तर्भाव "ioapi.h"
 #endif
 
 #ifdef HAVE_BZIP2
-#include "bzlib.h"
+#अन्तर्भाव "bzlib.h"
 #endif
 
 #define Z_BZIP2ED 12
 
-#if defined(STRICTZIP) || defined(STRICTZIPUNZIP)
+#जर defined(STRICTZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
-typedef struct TagzipFile__ { int unused; } zipFile__;
-typedef zipFile__ *zipFile;
-#else
-typedef voidp zipFile;
+प्रकारव्याख्या संरचना TagzipFile__ { पूर्णांक unused; } zipFile__;
+प्रकारव्याख्या zipFile__ *zipFile;
+#अन्यथा
+प्रकारव्याख्या voidp zipFile;
 #endif
 
-extern const char zip_copyright[];
+बाह्य स्थिरांक अक्षर zip_copyright[];
 
 #define ZIP_OK                          (0)
 #define ZIP_EOF                         (0)
@@ -78,26 +78,26 @@ extern const char zip_copyright[];
 #define ZIP_INTERNALERROR               (-104)
 
 #ifndef DEF_MEM_LEVEL
-#  if MAX_MEM_LEVEL >= 8
+#  जर MAX_MEM_LEVEL >= 8
 #    define DEF_MEM_LEVEL 8
-#  else
+#  अन्यथा
 #    define DEF_MEM_LEVEL  MAX_MEM_LEVEL
 #  endif
 #endif
 /* default memLevel */
 
 /* tm_zip contain date/time info */
-typedef struct tm_zip_s
+प्रकारव्याख्या संरचना tm_zip_s
 {
-    int tm_sec;             /* seconds after the minute - [0,59] */
-    int tm_min;             /* minutes after the hour - [0,59] */
-    int tm_hour;            /* hours since midnight - [0,23] */
-    int tm_mday;            /* day of the month - [1,31] */
-    int tm_mon;             /* months since January - [0,11] */
-    int tm_year;            /* years - [1980..2044] */
+    पूर्णांक tm_sec;             /* seconds after the minute - [0,59] */
+    पूर्णांक tm_min;             /* minutes after the hour - [0,59] */
+    पूर्णांक tm_hour;            /* hours since midnight - [0,23] */
+    पूर्णांक tm_mday;            /* day of the month - [1,31] */
+    पूर्णांक tm_mon;             /* months since January - [0,11] */
+    पूर्णांक tm_year;            /* years - [1980..2044] */
 } tm_zip;
 
-typedef struct
+प्रकारव्याख्या संरचना
 {
     tm_zip      tmz_date;       /* date in understandable format           */
     uLong       dosDate;       /* if dos_date == 0, tmu_date is used      */
@@ -107,15 +107,15 @@ typedef struct
     uLong       external_fa;    /* external file attributes        4 bytes */
 } zip_fileinfo;
 
-typedef const char* zipcharpc;
+प्रकारव्याख्या स्थिरांक अक्षर* zipcharpc;
 
 
 #define APPEND_STATUS_CREATE        (0)
 #define APPEND_STATUS_CREATEAFTER   (1)
 #define APPEND_STATUS_ADDINZIP      (2)
 
-extern zipFile ZEXPORT zipOpen(const char *pathname, int append);
-extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
+बाह्य zipFile ZEXPORT zipOpen(स्थिरांक अक्षर *pathname, पूर्णांक append);
+बाह्य zipFile ZEXPORT zipOpen64(स्थिरांक शून्य *pathname, पूर्णांक append);
 /*
   Create a zipfile.
      pathname contain on Windows XP a filename like "c:\\zlib\\zlib113.zip" or on
@@ -135,43 +135,43 @@ extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
    Of course, you can use RAW reading and writing to copy the file you did not want delete
  */
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname,
-                                int append,
+बाह्य zipFile ZEXPORT zipOpen2(स्थिरांक अक्षर *pathname,
+                                पूर्णांक append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname,
-                                   int append,
+बाह्य zipFile ZEXPORT zipOpen2_64(स्थिरांक शून्य *pathname,
+                                   पूर्णांक append,
                                    zipcharpc* globalcomment,
                                    zlib_filefunc64_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen3(const void *pathname,
-                                int append,
+बाह्य zipFile ZEXPORT zipOpen3(स्थिरांक शून्य *pathname,
+                                पूर्णांक append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc64_32_def* pzlib_filefunc64_32_def);
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file,
-                                       const char* filename,
-                                       const zip_fileinfo* zipfi,
-                                       const void* extrafield_local,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip(zipFile file,
+                                       स्थिरांक अक्षर* filename,
+                                       स्थिरांक zip_fileinfo* zipfi,
+                                       स्थिरांक शून्य* extrafield_local,
                                        uInt size_extrafield_local,
-                                       const void* extrafield_global,
+                                       स्थिरांक शून्य* extrafield_global,
                                        uInt size_extrafield_global,
-                                       const char* comment,
-                                       int method,
-                                       int level);
+                                       स्थिरांक अक्षर* comment,
+                                       पूर्णांक method,
+                                       पूर्णांक level);
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
-                                         const char* filename,
-                                         const zip_fileinfo* zipfi,
-                                         const void* extrafield_local,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip64(zipFile file,
+                                         स्थिरांक अक्षर* filename,
+                                         स्थिरांक zip_fileinfo* zipfi,
+                                         स्थिरांक शून्य* extrafield_local,
                                          uInt size_extrafield_local,
-                                         const void* extrafield_global,
+                                         स्थिरांक शून्य* extrafield_global,
                                          uInt size_extrafield_global,
-                                         const char* comment,
-                                         int method,
-                                         int level,
-                                         int zip64);
+                                         स्थिरांक अक्षर* comment,
+                                         पूर्णांक method,
+                                         पूर्णांक level,
+                                         पूर्णांक zip64);
 
 /*
   Open a file in the ZIP for writing.
@@ -190,69 +190,69 @@ extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
  */
 
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip2(zipFile file,
+                                        स्थिरांक अक्षर* filename,
+                                        स्थिरांक zip_fileinfo* zipfi,
+                                        स्थिरांक शून्य* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        स्थिरांक शून्य* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw);
+                                        स्थिरांक अक्षर* comment,
+                                        पूर्णांक method,
+                                        पूर्णांक level,
+                                        पूर्णांक raw);
 
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
+                                           स्थिरांक अक्षर* filename,
+                                           स्थिरांक zip_fileinfo* zipfi,
+                                           स्थिरांक शून्य* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           स्थिरांक शून्य* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int zip64);
+                                           स्थिरांक अक्षर* comment,
+                                           पूर्णांक method,
+                                           पूर्णांक level,
+                                           पूर्णांक raw,
+                                           पूर्णांक zip64);
 /*
   Same than zipOpenNewFileInZip, except if raw=1, we write raw file
  */
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip3(zipFile file,
+                                        स्थिरांक अक्षर* filename,
+                                        स्थिरांक zip_fileinfo* zipfi,
+                                        स्थिरांक शून्य* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        स्थिरांक शून्य* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
+                                        स्थिरांक अक्षर* comment,
+                                        पूर्णांक method,
+                                        पूर्णांक level,
+                                        पूर्णांक raw,
+                                        पूर्णांक windowBits,
+                                        पूर्णांक memLevel,
+                                        पूर्णांक strategy,
+                                        स्थिरांक अक्षर* password,
                                         uLong crcForCrypting);
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
+                                           स्थिरांक अक्षर* filename,
+                                           स्थिरांक zip_fileinfo* zipfi,
+                                           स्थिरांक शून्य* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           स्थिरांक शून्य* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
+                                           स्थिरांक अक्षर* comment,
+                                           पूर्णांक method,
+                                           पूर्णांक level,
+                                           पूर्णांक raw,
+                                           पूर्णांक windowBits,
+                                           पूर्णांक memLevel,
+                                           पूर्णांक strategy,
+                                           स्थिरांक अक्षर* password,
                                            uLong crcForCrypting,
-                                           int zip64);
+                                           पूर्णांक zip64);
 
 /*
   Same than zipOpenNewFileInZip2, except
@@ -261,45 +261,45 @@ extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
     crcForCrypting : crc of file to compress (needed for crypting)
  */
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip4(zipFile file,
+                                        स्थिरांक अक्षर* filename,
+                                        स्थिरांक zip_fileinfo* zipfi,
+                                        स्थिरांक शून्य* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        स्थिरांक शून्य* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
+                                        स्थिरांक अक्षर* comment,
+                                        पूर्णांक method,
+                                        पूर्णांक level,
+                                        पूर्णांक raw,
+                                        पूर्णांक windowBits,
+                                        पूर्णांक memLevel,
+                                        पूर्णांक strategy,
+                                        स्थिरांक अक्षर* password,
                                         uLong crcForCrypting,
                                         uLong versionMadeBy,
                                         uLong flagBase);
 
 
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+बाह्य पूर्णांक ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
+                                           स्थिरांक अक्षर* filename,
+                                           स्थिरांक zip_fileinfo* zipfi,
+                                           स्थिरांक शून्य* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           स्थिरांक शून्य* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
+                                           स्थिरांक अक्षर* comment,
+                                           पूर्णांक method,
+                                           पूर्णांक level,
+                                           पूर्णांक raw,
+                                           पूर्णांक windowBits,
+                                           पूर्णांक memLevel,
+                                           पूर्णांक strategy,
+                                           स्थिरांक अक्षर* password,
                                            uLong crcForCrypting,
                                            uLong versionMadeBy,
                                            uLong flagBase,
-                                           int zip64);
+                                           पूर्णांक zip64);
 /*
   Same than zipOpenNewFileInZip4, except
     versionMadeBy : value for Version made by field
@@ -307,28 +307,28 @@ extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
  */
 
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file,
-                                       const void* buf,
-                                       unsigned len);
+बाह्य पूर्णांक ZEXPORT zipWriteInFileInZip(zipFile file,
+                                       स्थिरांक शून्य* buf,
+                                       अचिन्हित len);
 /*
   Write data in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file);
+बाह्य पूर्णांक ZEXPORT zipCloseFileInZip(zipFile file);
 /*
   Close the current file in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file,
+बाह्य पूर्णांक ZEXPORT zipCloseFileInZipRaw(zipFile file,
                                         uLong uncompressed_size,
                                         uLong crc32);
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file,
+बाह्य पूर्णांक ZEXPORT zipCloseFileInZipRaw64(zipFile file,
                                           ZPOS64_T uncompressed_size,
                                           uLong crc32);
 
-extern int ZEXPORT zipAlreadyThere(zipFile file,
-                                   char const* name);
+बाह्य पूर्णांक ZEXPORT zipAlreadyThere(zipFile file,
+                                   अक्षर स्थिरांक* name);
 /*
   See if name is already in file's central directory.
  */
@@ -339,14 +339,14 @@ extern int ZEXPORT zipAlreadyThere(zipFile file,
   uncompressed_size and crc32 are value for the uncompressed size
  */
 
-extern int ZEXPORT zipClose(zipFile file,
-                            const char* global_comment);
+बाह्य पूर्णांक ZEXPORT zipClose(zipFile file,
+                            स्थिरांक अक्षर* global_comment);
 /*
   Close the zipfile
  */
 
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader);
+बाह्य पूर्णांक ZEXPORT zipRemoveExtraInfoBlock(अक्षर* pData, पूर्णांक* dataLen, लघु sHeader);
 /*
   zipRemoveExtraInfoBlock -  Added by Mathias Svensson
 

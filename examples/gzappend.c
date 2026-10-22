@@ -77,228 +77,228 @@
    as the trailer of the gzip file.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include "zlib.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव "zlib.h"
 
-#define local static
+#define local स्थिर
 #define LGCHUNK 14
 #define CHUNK (1U << LGCHUNK)
 #define DSIZE 32768U
 
 /* print an error message and terminate with extreme prejudice */
-local void bye(char *msg1, char *msg2)
+local शून्य bye(अक्षर *msg1, अक्षर *msg2)
 {
-    fprintf(stderr, "gzappend error: %s%s\n", msg1, msg2);
-    exit(1);
+    ख_लिखो(मानक_त्रुटि, "gzappend error: %s%s\n", msg1, msg2);
+    निकास(1);
 }
 
 /* return the greatest common divisor of a and b using Euclid's algorithm,
    modified to be fast when one argument much greater than the other, and
    coded to avoid unnecessary swapping */
-local unsigned gcd(unsigned a, unsigned b)
+local अचिन्हित gcd(अचिन्हित a, अचिन्हित b)
 {
-    unsigned c;
+    अचिन्हित c;
 
-    while (a && b)
-        if (a > b) {
+    पर्यंत (a && b)
+        जर (a > b) {
             c = b;
-            while (a - c >= c)
+            पर्यंत (a - c >= c)
                 c <<= 1;
             a -= c;
         }
-        else {
+        अन्यथा {
             c = a;
-            while (b - c >= c)
+            पर्यंत (b - c >= c)
                 c <<= 1;
             b -= c;
         }
-    return a + b;
+    परत a + b;
 }
 
 /* rotate list[0..len-1] left by rot positions, in place */
-local void rotate(unsigned char *list, unsigned len, unsigned rot)
+local शून्य rotate(अचिन्हित अक्षर *list, अचिन्हित len, अचिन्हित rot)
 {
-    unsigned char tmp;
-    unsigned cycles;
-    unsigned char *start, *last, *to, *from;
+    अचिन्हित अक्षर tmp;
+    अचिन्हित cycles;
+    अचिन्हित अक्षर *start, *last, *to, *from;
 
     /* normalize rot and handle degenerate cases */
-    if (len < 2) return;
-    if (rot >= len) rot %= len;
-    if (rot == 0) return;
+    जर (len < 2) परत;
+    जर (rot >= len) rot %= len;
+    जर (rot == 0) परत;
 
     /* pointer to last entry in list */
     last = list + (len - 1);
 
     /* do simple left shift by one */
-    if (rot == 1) {
+    जर (rot == 1) {
         tmp = *list;
-        memmove(list, list + 1, len - 1);
+        स_हटाओ(list, list + 1, len - 1);
         *last = tmp;
-        return;
+        परत;
     }
 
     /* do simple right shift by one */
-    if (rot == len - 1) {
+    जर (rot == len - 1) {
         tmp = *last;
-        memmove(list + 1, list, len - 1);
+        स_हटाओ(list + 1, list, len - 1);
         *list = tmp;
-        return;
+        परत;
     }
 
     /* otherwise do rotate as a set of cycles in place */
     cycles = gcd(len, rot);             /* number of cycles */
-    do {
+    करा {
         start = from = list + cycles;   /* start index is arbitrary */
         tmp = *from;                    /* save entry to be overwritten */
-        for (;;) {
+        साठी (;;) {
             to = from;                  /* next step in cycle */
             from += rot;                /* go right rot positions */
-            if (from > last) from -= len;   /* (pointer better not wrap) */
-            if (from == start) break;   /* all but one shifted */
+            जर (from > last) from -= len;   /* (pointer better not wrap) */
+            जर (from == start) थांबा;   /* all but one shifted */
             *to = *from;                /* shift left */
         }
         *to = tmp;                      /* complete the circle */
-    } while (--cycles);
+    } पर्यंत (--cycles);
 }
 
 /* structure for gzip file read operations */
-typedef struct {
-    int fd;                     /* file descriptor */
-    int size;                   /* 1 << size is bytes in buf */
-    unsigned left;              /* bytes available at next */
-    unsigned char *buf;         /* buffer */
-    z_const unsigned char *next;    /* next byte in buffer */
-    char *name;                 /* file name for error messages */
+प्रकारव्याख्या संरचना {
+    पूर्णांक fd;                     /* file descriptor */
+    पूर्णांक size;                   /* 1 << size is bytes in buf */
+    अचिन्हित डावा;              /* bytes available at next */
+    अचिन्हित अक्षर *buf;         /* buffer */
+    z_const अचिन्हित अक्षर *next;    /* next byte in buffer */
+    अक्षर *name;                 /* file name for error messages */
 } file;
 
 /* reload buffer */
-local int readin(file *in)
+local पूर्णांक readin(file *in)
 {
-    int len;
+    पूर्णांक len;
 
-    len = read(in->fd, in->buf, 1 << in->size);
-    if (len == -1) bye("error reading ", in->name);
-    in->left = (unsigned)len;
+    len = पठ(in->fd, in->buf, 1 << in->size);
+    जर (len == -1) bye("error reading ", in->name);
+    in->डावा = (अचिन्हित)len;
     in->next = in->buf;
-    return len;
+    परत len;
 }
 
 /* read from file in, exit if end-of-file */
-local int readmore(file *in)
+local पूर्णांक readmore(file *in)
 {
-    if (readin(in) == 0) bye("unexpected end of ", in->name);
-    return 0;
+    जर (readin(in) == 0) bye("unexpected end of ", in->name);
+    परत 0;
 }
 
-#define read1(in) (in->left == 0 ? readmore(in) : 0, \
-                   in->left--, *(in->next)++)
+#define read1(in) (in->डावा == 0 ? readmore(in) : 0, \
+                   in->डावा--, *(in->next)++)
 
 /* skip over n bytes of in */
-local void skip(file *in, unsigned n)
+local शून्य skip(file *in, अचिन्हित n)
 {
-    unsigned bypass;
+    अचिन्हित bypass;
 
-    if (n > in->left) {
-        n -= in->left;
+    जर (n > in->डावा) {
+        n -= in->डावा;
         bypass = n & ~((1U << in->size) - 1);
-        if (bypass) {
-            if (lseek(in->fd, (off_t)bypass, SEEK_CUR) == -1)
+        जर (bypass) {
+            जर (lseek(in->fd, (off_t)bypass, प्रस्तुत_से) == -1)
                 bye("seeking ", in->name);
             n -= bypass;
         }
         readmore(in);
-        if (n > in->left)
+        जर (n > in->डावा)
             bye("unexpected end of ", in->name);
     }
-    in->left -= n;
+    in->डावा -= n;
     in->next += n;
 }
 
 /* read a four-byte unsigned integer, little-endian, from in */
-unsigned long read4(file *in)
+अचिन्हित दीर्घ read4(file *in)
 {
-    unsigned long val;
+    अचिन्हित दीर्घ val;
 
     val = read1(in);
-    val += (unsigned)read1(in) << 8;
-    val += (unsigned long)read1(in) << 16;
-    val += (unsigned long)read1(in) << 24;
-    return val;
+    val += (अचिन्हित)read1(in) << 8;
+    val += (अचिन्हित दीर्घ)read1(in) << 16;
+    val += (अचिन्हित दीर्घ)read1(in) << 24;
+    परत val;
 }
 
 /* skip over gzip header */
-local void gzheader(file *in)
+local शून्य gzheader(file *in)
 {
-    int flags;
-    unsigned n;
+    पूर्णांक flags;
+    अचिन्हित n;
 
-    if (read1(in) != 31 || read1(in) != 139) bye(in->name, " not a gzip file");
-    if (read1(in) != 8) bye("unknown compression method in", in->name);
+    जर (read1(in) != 31 || read1(in) != 139) bye(in->name, " not a gzip file");
+    जर (read1(in) != 8) bye("unknown compression method in", in->name);
     flags = read1(in);
-    if (flags & 0xe0) bye("unknown header flags set in", in->name);
+    जर (flags & 0xe0) bye("unknown header flags set in", in->name);
     skip(in, 6);
-    if (flags & 4) {
+    जर (flags & 4) {
         n = read1(in);
-        n += (unsigned)(read1(in)) << 8;
+        n += (अचिन्हित)(read1(in)) << 8;
         skip(in, n);
     }
-    if (flags & 8) while (read1(in) != 0) ;
-    if (flags & 16) while (read1(in) != 0) ;
-    if (flags & 2) skip(in, 2);
+    जर (flags & 8) पर्यंत (read1(in) != 0) ;
+    जर (flags & 16) पर्यंत (read1(in) != 0) ;
+    जर (flags & 2) skip(in, 2);
 }
 
 /* decompress gzip file "name", return strm with a deflate stream ready to
    continue compression of the data in the gzip file, and return a file
    descriptor pointing to where to write the compressed data -- the deflate
    stream is initialized to compress using level "level" */
-local int gzscan(char *name, z_stream *strm, int level)
+local पूर्णांक gzscan(अक्षर *name, z_stream *strm, पूर्णांक level)
 {
-    int ret, lastbit, left, full;
-    unsigned have;
-    unsigned long crc, tot;
-    unsigned char *window;
+    पूर्णांक ret, lastbit, डावा, full;
+    अचिन्हित have;
+    अचिन्हित दीर्घ crc, tot;
+    अचिन्हित अक्षर *window;
     off_t lastoff, end;
     file gz;
 
     /* open gzip file */
     gz.name = name;
-    gz.fd = open(name, O_RDWR, 0);
-    if (gz.fd == -1) bye("cannot open ", name);
-    gz.buf = malloc(CHUNK);
-    if (gz.buf == NULL) bye("out of memory", "");
+    gz.fd = खोलो(name, O_RDWR, 0);
+    जर (gz.fd == -1) bye("cannot open ", name);
+    gz.buf = दो_स्मृति(CHUNK);
+    जर (gz.buf == रिक्त) bye("out of memory", "");
     gz.size = LGCHUNK;
-    gz.left = 0;
+    gz.डावा = 0;
 
     /* skip gzip header */
     gzheader(&gz);
 
     /* prepare to decompress */
-    window = malloc(DSIZE);
-    if (window == NULL) bye("out of memory", "");
+    window = दो_स्मृति(DSIZE);
+    जर (window == रिक्त) bye("out of memory", "");
     strm->zalloc = Z_NULL;
     strm->zfree = Z_NULL;
     strm->opaque = Z_NULL;
     ret = inflateInit2(strm, -15);
-    if (ret != Z_OK) bye("out of memory", " or library mismatch");
+    जर (ret != Z_OK) bye("out of memory", " or library mismatch");
 
     /* decompress the deflate stream, saving append information */
     lastbit = 0;
-    lastoff = lseek(gz.fd, 0L, SEEK_CUR) - gz.left;
-    left = 0;
-    strm->avail_in = gz.left;
+    lastoff = lseek(gz.fd, 0L, प्रस्तुत_से) - gz.डावा;
+    डावा = 0;
+    strm->avail_in = gz.डावा;
     strm->next_in = gz.next;
     crc = crc32(0L, Z_NULL, 0);
     have = full = 0;
-    do {
+    करा {
         /* if needed, get more input */
-        if (strm->avail_in == 0) {
+        जर (strm->avail_in == 0) {
             readmore(&gz);
-            strm->avail_in = gz.left;
+            strm->avail_in = gz.डावा;
             strm->next_in = gz.next;
         }
 
@@ -308,197 +308,197 @@ local int gzscan(char *name, z_stream *strm, int level)
 
         /* inflate and check for errors */
         ret = inflate(strm, Z_BLOCK);
-        if (ret == Z_STREAM_ERROR) bye("internal stream error!", "");
-        if (ret == Z_MEM_ERROR) bye("out of memory", "");
-        if (ret == Z_DATA_ERROR)
+        जर (ret == Z_STREAM_ERROR) bye("internal stream error!", "");
+        जर (ret == Z_MEM_ERROR) bye("out of memory", "");
+        जर (ret == Z_DATA_ERROR)
             bye("invalid compressed data--format violated in", name);
 
         /* update crc and sliding window pointer */
         crc = crc32(crc, window + have, DSIZE - have - strm->avail_out);
-        if (strm->avail_out)
+        जर (strm->avail_out)
             have = DSIZE - strm->avail_out;
-        else {
+        अन्यथा {
             have = 0;
             full = 1;
         }
 
         /* process end of block */
-        if (strm->data_type & 128) {
-            if (strm->data_type & 64)
-                left = strm->data_type & 0x1f;
-            else {
+        जर (strm->data_type & 128) {
+            जर (strm->data_type & 64)
+                डावा = strm->data_type & 0x1f;
+            अन्यथा {
                 lastbit = strm->data_type & 0x1f;
-                lastoff = lseek(gz.fd, 0L, SEEK_CUR) - strm->avail_in;
+                lastoff = lseek(gz.fd, 0L, प्रस्तुत_से) - strm->avail_in;
             }
         }
-    } while (ret != Z_STREAM_END);
+    } पर्यंत (ret != Z_STREAM_END);
     inflateEnd(strm);
-    gz.left = strm->avail_in;
+    gz.डावा = strm->avail_in;
     gz.next = strm->next_in;
 
     /* save the location of the end of the compressed data */
-    end = lseek(gz.fd, 0L, SEEK_CUR) - gz.left;
+    end = lseek(gz.fd, 0L, प्रस्तुत_से) - gz.डावा;
 
     /* check gzip trailer and save total for deflate */
-    if (crc != read4(&gz))
+    जर (crc != read4(&gz))
         bye("invalid compressed data--crc mismatch in ", name);
     tot = strm->total_out;
-    if ((tot & 0xffffffffUL) != read4(&gz))
+    जर ((tot & 0xffffffffUL) != read4(&gz))
         bye("invalid compressed data--length mismatch in", name);
 
     /* if not at end of file, warn */
-    if (gz.left || readin(&gz))
-        fprintf(stderr,
+    जर (gz.डावा || readin(&gz))
+        ख_लिखो(मानक_त्रुटि,
             "gzappend warning: junk at end of gzip file overwritten\n");
 
     /* clear last block bit */
-    lseek(gz.fd, lastoff - (lastbit != 0), SEEK_SET);
-    if (read(gz.fd, gz.buf, 1) != 1) bye("reading after seek on ", name);
-    *gz.buf = (unsigned char)(*gz.buf ^ (1 << ((8 - lastbit) & 7)));
-    lseek(gz.fd, -1L, SEEK_CUR);
-    if (write(gz.fd, gz.buf, 1) != 1) bye("writing after seek to ", name);
+    lseek(gz.fd, lastoff - (lastbit != 0), शुरू_से);
+    जर (पठ(gz.fd, gz.buf, 1) != 1) bye("reading after seek on ", name);
+    *gz.buf = (अचिन्हित अक्षर)(*gz.buf ^ (1 << ((8 - lastbit) & 7)));
+    lseek(gz.fd, -1L, प्रस्तुत_से);
+    जर (लिख(gz.fd, gz.buf, 1) != 1) bye("writing after seek to ", name);
 
     /* if window wrapped, build dictionary from window by rotating */
-    if (full) {
+    जर (full) {
         rotate(window, DSIZE, have);
         have = DSIZE;
     }
 
     /* set up deflate stream with window, crc, total_in, and leftover bits */
     ret = deflateInit2(strm, level, Z_DEFLATED, -15, 8, Z_DEFAULT_STRATEGY);
-    if (ret != Z_OK) bye("out of memory", "");
+    जर (ret != Z_OK) bye("out of memory", "");
     deflateSetDictionary(strm, window, have);
     strm->adler = crc;
     strm->total_in = tot;
-    if (left) {
-        lseek(gz.fd, --end, SEEK_SET);
-        if (read(gz.fd, gz.buf, 1) != 1) bye("reading after seek on ", name);
-        deflatePrime(strm, 8 - left, *gz.buf);
+    जर (डावा) {
+        lseek(gz.fd, --end, शुरू_से);
+        जर (पठ(gz.fd, gz.buf, 1) != 1) bye("reading after seek on ", name);
+        deflate_मूळसंख्या(strm, 8 - डावा, *gz.buf);
     }
-    lseek(gz.fd, end, SEEK_SET);
+    lseek(gz.fd, end, शुरू_से);
 
     /* clean up and return */
-    free(window);
-    free(gz.buf);
-    return gz.fd;
+    मुक्त(window);
+    मुक्त(gz.buf);
+    परत gz.fd;
 }
 
 /* append file "name" to gzip file gd using deflate stream strm -- if last
    is true, then finish off the deflate stream at the end */
-local void gztack(char *name, int gd, z_stream *strm, int last)
+local शून्य gztack(अक्षर *name, पूर्णांक gd, z_stream *strm, पूर्णांक last)
 {
-    int fd, len, ret;
-    unsigned left;
-    unsigned char *in, *out;
+    पूर्णांक fd, len, ret;
+    अचिन्हित डावा;
+    अचिन्हित अक्षर *in, *out;
 
     /* open file to compress and append */
     fd = 0;
-    if (name != NULL) {
-        fd = open(name, O_RDONLY, 0);
-        if (fd == -1)
-            fprintf(stderr, "gzappend warning: %s not found, skipping ...\n",
+    जर (name != रिक्त) {
+        fd = खोलो(name, O_RDONLY, 0);
+        जर (fd == -1)
+            ख_लिखो(मानक_त्रुटि, "gzappend warning: %s not found, skipping ...\n",
                     name);
     }
 
     /* allocate buffers */
-    in = malloc(CHUNK);
-    out = malloc(CHUNK);
-    if (in == NULL || out == NULL) bye("out of memory", "");
+    in = दो_स्मृति(CHUNK);
+    out = दो_स्मृति(CHUNK);
+    जर (in == रिक्त || out == रिक्त) bye("out of memory", "");
 
     /* compress input file and append to gzip file */
-    do {
+    करा {
         /* get more input */
-        len = read(fd, in, CHUNK);
-        if (len == -1) {
-            fprintf(stderr,
+        len = पठ(fd, in, CHUNK);
+        जर (len == -1) {
+            ख_लिखो(मानक_त्रुटि,
                     "gzappend warning: error reading %s, skipping rest ...\n",
                     name);
             len = 0;
         }
-        strm->avail_in = (unsigned)len;
+        strm->avail_in = (अचिन्हित)len;
         strm->next_in = in;
-        if (len) strm->adler = crc32(strm->adler, in, (unsigned)len);
+        जर (len) strm->adler = crc32(strm->adler, in, (अचिन्हित)len);
 
         /* compress and write all available output */
-        do {
+        करा {
             strm->avail_out = CHUNK;
             strm->next_out = out;
             ret = deflate(strm, last && len == 0 ? Z_FINISH : Z_NO_FLUSH);
-            left = CHUNK - strm->avail_out;
-            while (left) {
-                len = write(gd, out + CHUNK - strm->avail_out - left, left);
-                if (len == -1) bye("writing gzip file", "");
-                left -= (unsigned)len;
+            डावा = CHUNK - strm->avail_out;
+            पर्यंत (डावा) {
+                len = लिख(gd, out + CHUNK - strm->avail_out - डावा, डावा);
+                जर (len == -1) bye("writing gzip file", "");
+                डावा -= (अचिन्हित)len;
             }
-        } while (strm->avail_out == 0 && ret != Z_STREAM_END);
-    } while (len != 0);
+        } पर्यंत (strm->avail_out == 0 && ret != Z_STREAM_END);
+    } पर्यंत (len != 0);
 
     /* write trailer after last entry */
-    if (last) {
+    जर (last) {
         deflateEnd(strm);
-        out[0] = (unsigned char)(strm->adler);
-        out[1] = (unsigned char)(strm->adler >> 8);
-        out[2] = (unsigned char)(strm->adler >> 16);
-        out[3] = (unsigned char)(strm->adler >> 24);
-        out[4] = (unsigned char)(strm->total_in);
-        out[5] = (unsigned char)(strm->total_in >> 8);
-        out[6] = (unsigned char)(strm->total_in >> 16);
-        out[7] = (unsigned char)(strm->total_in >> 24);
+        out[0] = (अचिन्हित अक्षर)(strm->adler);
+        out[1] = (अचिन्हित अक्षर)(strm->adler >> 8);
+        out[2] = (अचिन्हित अक्षर)(strm->adler >> 16);
+        out[3] = (अचिन्हित अक्षर)(strm->adler >> 24);
+        out[4] = (अचिन्हित अक्षर)(strm->total_in);
+        out[5] = (अचिन्हित अक्षर)(strm->total_in >> 8);
+        out[6] = (अचिन्हित अक्षर)(strm->total_in >> 16);
+        out[7] = (अचिन्हित अक्षर)(strm->total_in >> 24);
         len = 8;
-        do {
-            ret = write(gd, out + 8 - len, len);
-            if (ret == -1) bye("writing gzip file", "");
+        करा {
+            ret = लिख(gd, out + 8 - len, len);
+            जर (ret == -1) bye("writing gzip file", "");
             len -= ret;
-        } while (len);
-        close(gd);
+        } पर्यंत (len);
+        बंद(gd);
     }
 
     /* clean up and return */
-    free(out);
-    free(in);
-    if (fd > 0) close(fd);
+    मुक्त(out);
+    मुक्त(in);
+    जर (fd > 0) बंद(fd);
 }
 
 /* process the compression level option if present, scan the gzip file, and
    append the specified files, or append the data from stdin if no other file
    names are provided on the command line -- the gzip file must be writable
    and seekable */
-int main(int argc, char **argv)
+पूर्णांक main(पूर्णांक argc, अक्षर **argv)
 {
-    int gd, level;
+    पूर्णांक gd, level;
     z_stream strm;
 
     /* ignore command name */
     argc--; argv++;
 
     /* provide usage if no arguments */
-    if (*argv == NULL) {
-        printf(
+    जर (*argv == रिक्त) {
+        म_लिखो(
             "gzappend 1.2 (11 Oct 2012) Copyright (C) 2003, 2012 Mark Adler\n"
                );
-        printf(
+        म_लिखो(
             "usage: gzappend [-level] file.gz [ addthis [ andthis ... ]]\n");
-        return 0;
+        परत 0;
     }
 
     /* set compression level */
     level = Z_DEFAULT_COMPRESSION;
-    if (argv[0][0] == '-') {
-        if (argv[0][1] < '0' || argv[0][1] > '9' || argv[0][2] != 0)
+    जर (argv[0][0] == '-') {
+        जर (argv[0][1] < '0' || argv[0][1] > '9' || argv[0][2] != 0)
             bye("invalid compression level", "");
         level = argv[0][1] - '0';
-        if (*++argv == NULL) bye("no gzip file name after options", "");
+        जर (*++argv == रिक्त) bye("no gzip file name after options", "");
     }
 
     /* prepare to append to gzip file */
     gd = gzscan(*argv++, &strm, level);
 
     /* append files on command line, or from stdin if none */
-    if (*argv == NULL)
-        gztack(NULL, gd, &strm, 1);
-    else
-        do {
-            gztack(*argv, gd, &strm, argv[1] == NULL);
-        } while (*++argv != NULL);
-    return 0;
+    जर (*argv == रिक्त)
+        gztack(रिक्त, gd, &strm, 1);
+    अन्यथा
+        करा {
+            gztack(*argv, gd, &strm, argv[1] == रिक्त);
+        } पर्यंत (*++argv != रिक्त);
+    परत 0;
 }

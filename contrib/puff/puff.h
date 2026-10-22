@@ -26,10 +26,10 @@
  * See puff.c for purpose and usage.
  */
 #ifndef NIL
-#  define NIL ((unsigned char *)0)      /* for no output option */
+#  define NIL ((अचिन्हित अक्षर *)0)      /* for no output option */
 #endif
 
-int puff(unsigned char *dest,           /* pointer to destination pointer */
-         unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
-         unsigned long *sourcelen);     /* amount of input available */
+पूर्णांक puff(अचिन्हित अक्षर *dest,           /* pointer to destination pointer */
+         अचिन्हित दीर्घ *destlen,        /* amount of output space */
+         स्थिरांक अचिन्हित अक्षर *source,   /* pointer to source data pointer */
+         अचिन्हित दीर्घ *sourcelen);     /* amount of input available */

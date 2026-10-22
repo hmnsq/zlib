@@ -3,10 +3,10 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "zutil.h"
-#include "infback9.h"
-#include "inftree9.h"
-#include "inflate9.h"
+#अन्तर्भाव "zutil.h"
+#अन्तर्भाव "infback9.h"
+#अन्तर्भाव "inftree9.h"
+#अन्तर्भाव "inflate9.h"
 
 #define WSIZE 65536UL
 
@@ -16,28 +16,28 @@
 
    window is a user-supplied window and output buffer that is 64K bytes.
  */
-int ZEXPORT inflateBack9Init_(z_stream FAR *strm, unsigned char FAR *window,
-                              const char *version, int stream_size) {
-    struct inflate_state FAR *state;
+पूर्णांक ZEXPORT inflateBack9Init_(z_stream FAR *strm, अचिन्हित अक्षर FAR *window,
+                              स्थिरांक अक्षर *version, पूर्णांक stream_size) {
+    संरचना inflate_state FAR *state;
 
-    if (version == Z_NULL || version[0] != ZLIB_VERSION[0] ||
-        stream_size != (int)(sizeof(z_stream)))
-        return Z_VERSION_ERROR;
-    if (strm == Z_NULL || window == Z_NULL)
-        return Z_STREAM_ERROR;
-    strm->msg = Z_NULL;                 /* in case we return an error */
-    if (strm->zalloc == (alloc_func)0) {
+    जर (version == Z_NULL || version[0] != ZLIB_VERSION[0] ||
+        stream_size != (पूर्णांक)(आकार(z_stream)))
+        परत Z_VERSION_ERROR;
+    जर (strm == Z_NULL || window == Z_NULL)
+        परत Z_STREAM_ERROR;
+    strm->संदेश = Z_NULL;                 /* in case we return an error */
+    जर (strm->zalloc == (alloc_func)0) {
         strm->zalloc = zcalloc;
         strm->opaque = (voidpf)0;
     }
-    if (strm->zfree == (free_func)0) strm->zfree = zcfree;
-    state = (struct inflate_state FAR *)ZALLOC(strm, 1,
-                                               sizeof(struct inflate_state));
-    if (state == Z_NULL) return Z_MEM_ERROR;
-    Tracev((stderr, "inflate: allocated\n"));
+    जर (strm->zfree == (free_func)0) strm->zfree = zcfree;
+    state = (संरचना inflate_state FAR *)ZALLOC(strm, 1,
+                                               आकार(संरचना inflate_state));
+    जर (state == Z_NULL) परत Z_MEM_ERROR;
+    Tracev((मानक_त्रुटि, "inflate: allocated\n"));
     strm->state = (voidpf)state;
     state->window = window;
-    return Z_OK;
+    परत Z_OK;
 }
 
 /*
@@ -45,20 +45,20 @@ int ZEXPORT inflateBack9Init_(z_stream FAR *strm, unsigned char FAR *window,
    decoding.
  */
 #ifdef MAKEFIXED
-#include <stdio.h>
+#अन्तर्भाव <stdio.h>
 
-void makefixed9(void) {
-    unsigned sym, bits, low, size;
+शून्य makefixed9(शून्य) {
+    अचिन्हित sym, bits, खालचा, size;
     code *next, *lenfix, *distfix;
-    struct inflate_state state;
+    संरचना inflate_state state;
     code fixed[544];
 
     /* literal/length table */
     sym = 0;
-    while (sym < 144) state.lens[sym++] = 8;
-    while (sym < 256) state.lens[sym++] = 9;
-    while (sym < 280) state.lens[sym++] = 7;
-    while (sym < 288) state.lens[sym++] = 8;
+    पर्यंत (sym < 144) state.lens[sym++] = 8;
+    पर्यंत (sym < 256) state.lens[sym++] = 9;
+    पर्यंत (sym < 280) state.lens[sym++] = 7;
+    पर्यंत (sym < 288) state.lens[sym++] = 8;
     next = fixed;
     lenfix = next;
     bits = 9;
@@ -66,43 +66,43 @@ void makefixed9(void) {
 
     /* distance table */
     sym = 0;
-    while (sym < 32) state.lens[sym++] = 5;
+    पर्यंत (sym < 32) state.lens[sym++] = 5;
     distfix = next;
     bits = 5;
     inflate_table9(DISTS, state.lens, 32, &(next), &(bits), state.work);
 
     /* write tables */
-    puts("    /* inffix9.h -- table for decoding deflate64 fixed codes");
-    puts("     * Generated automatically by makefixed9().");
-    puts("     */");
-    puts("");
-    puts("    /* WARNING: this file should *not* be used by applications.");
-    puts("       It is part of the implementation of this library and is");
-    puts("       subject to change. Applications should only use zlib.h.");
-    puts("     */");
-    puts("");
+    माला_दो("    /* inffix9.h -- table for decoding deflate64 fixed codes");
+    माला_दो("     * Generated automatically by makefixed9().");
+    माला_दो("     */");
+    माला_दो("");
+    माला_दो("    /* WARNING: this file should *not* be used by applications.");
+    माला_दो("       It is part of the implementation of this library and is");
+    माला_दो("       subject to change. Applications should only use zlib.h.");
+    माला_दो("     */");
+    माला_दो("");
     size = 1U << 9;
-    printf("    static const code lenfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 6) == 0) printf("\n        ");
-        printf("{%u,%u,%d}", lenfix[low].op, lenfix[low].bits,
-               lenfix[low].val);
-        if (++low == size) break;
-        putchar(',');
+    म_लिखो("    static const code lenfix[%u] = {", size);
+    खालचा = 0;
+    साठी (;;) {
+        जर ((खालचा % 6) == 0) म_लिखो("\n        ");
+        म_लिखो("{%u,%u,%d}", lenfix[खालचा].op, lenfix[खालचा].bits,
+               lenfix[खालचा].val);
+        जर (++खालचा == size) थांबा;
+        अक्षर_दो(',');
     }
-    puts("\n    };");
+    माला_दो("\n    };");
     size = 1U << 5;
-    printf("\n    static const code distfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 5) == 0) printf("\n        ");
-        printf("{%u,%u,%d}", distfix[low].op, distfix[low].bits,
-               distfix[low].val);
-        if (++low == size) break;
-        putchar(',');
+    म_लिखो("\n    static const code distfix[%u] = {", size);
+    खालचा = 0;
+    साठी (;;) {
+        जर ((खालचा % 5) == 0) म_लिखो("\n        ");
+        म_लिखो("{%u,%u,%d}", distfix[खालचा].op, distfix[खालचा].bits,
+               distfix[खालचा].val);
+        जर (++खालचा == size) थांबा;
+        अक्षर_दो(',');
     }
-    puts("\n    };");
+    माला_दो("\n    };");
 }
 #endif /* MAKEFIXED */
 
@@ -110,77 +110,77 @@ void makefixed9(void) {
 
 /* Clear the input bit accumulator */
 #define INITBITS() \
-    do { \
+    करा { \
         hold = 0; \
         bits = 0; \
-    } while (0)
+    } पर्यंत (0)
 
 /* Assure that some input is available.  If input is requested, but denied,
    then return a Z_BUF_ERROR from inflateBack(). */
 #define PULL() \
-    do { \
-        if (have == 0) { \
+    करा { \
+        जर (have == 0) { \
             have = in(in_desc, &next); \
-            if (have == 0) { \
+            जर (have == 0) { \
                 next = Z_NULL; \
                 ret = Z_BUF_ERROR; \
-                goto inf_leave; \
+                जा inf_leave; \
             } \
         } \
-    } while (0)
+    } पर्यंत (0)
 
 /* Get a byte of input into the bit accumulator, or return from inflateBack()
    with an error if there is no input available. */
 #define PULLBYTE() \
-    do { \
+    करा { \
         PULL(); \
         have--; \
-        hold += (unsigned long)(*next++) << bits; \
+        hold += (अचिन्हित दीर्घ)(*next++) << bits; \
         bits += 8; \
-    } while (0)
+    } पर्यंत (0)
 
 /* Assure that there are at least n bits in the bit accumulator.  If there is
    not enough available input to do that, then return from inflateBack() with
    an error. */
 #define NEEDBITS(n) \
-    do { \
-        while (bits < (unsigned)(n)) \
+    करा { \
+        पर्यंत (bits < (अचिन्हित)(n)) \
             PULLBYTE(); \
-    } while (0)
+    } पर्यंत (0)
 
 /* Return the low n bits of the bit accumulator (n <= 16) */
 #define BITS(n) \
-    ((unsigned)hold & ((1U << (n)) - 1))
+    ((अचिन्हित)hold & ((1U << (n)) - 1))
 
 /* Remove n bits from the bit accumulator */
 #define DROPBITS(n) \
-    do { \
+    करा { \
         hold >>= (n); \
-        bits -= (unsigned)(n); \
-    } while (0)
+        bits -= (अचिन्हित)(n); \
+    } पर्यंत (0)
 
 /* Remove zero to seven bits as needed to go to a byte boundary */
 #define BYTEBITS() \
-    do { \
+    करा { \
         hold >>= bits & 7; \
         bits -= bits & 7; \
-    } while (0)
+    } पर्यंत (0)
 
 /* Assure that some output space is available, by writing out the window
    if it's full.  If the write fails, return from inflateBack() with a
    Z_BUF_ERROR. */
 #define ROOM() \
-    do { \
-        if (left == 0) { \
+    करा { \
+        जर (डावा == 0) { \
             put = window; \
-            left = WSIZE; \
+            डावा = WSIZE; \
             wrap = 1; \
-            if (out(out_desc, put, (unsigned)left)) { \
+            जर (out(out_desc, put, (अचिन्हित)डावा)) { \
                 ret = Z_BUF_ERROR; \
-                goto inf_leave; \
+                जा inf_leave; \
             } \
         } \
-    } while (0)
+    } पर्यंत (0)
 
 /*
    strm provides the memory allocation functions and window buffer on input,
@@ -209,43 +209,43 @@ void makefixed9(void) {
    inflateBack() can also return Z_STREAM_ERROR if the input parameters
    are not correct, i.e. strm is Z_NULL or the state was not initialized.
  */
-int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
-                         out_func out, void FAR *out_desc) {
-    struct inflate_state FAR *state;
-    z_const unsigned char FAR *next;    /* next input */
-    unsigned char FAR *put;     /* next output */
-    unsigned have;              /* available input */
-    unsigned long left;         /* available output */
+पूर्णांक ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, शून्य FAR *in_desc,
+                         out_func out, शून्य FAR *out_desc) {
+    संरचना inflate_state FAR *state;
+    z_const अचिन्हित अक्षर FAR *next;    /* next input */
+    अचिन्हित अक्षर FAR *put;     /* next output */
+    अचिन्हित have;              /* available input */
+    अचिन्हित दीर्घ डावा;         /* available output */
     inflate_mode mode;          /* current inflate mode */
-    int lastblock;              /* true if processing last block */
-    int wrap;                   /* true if the window has wrapped */
-    unsigned char FAR *window;  /* allocated sliding window, if needed */
-    unsigned long hold;         /* bit buffer */
-    unsigned bits;              /* bits in bit buffer */
-    unsigned extra;             /* extra bits needed */
-    unsigned long length;       /* literal or length of data to copy */
-    unsigned long offset;       /* distance back to copy string from */
-    unsigned long copy;         /* number of stored or match bytes to copy */
-    unsigned char FAR *from;    /* where to copy match bytes from */
-    code const FAR *lencode;    /* starting table for length/literal codes */
-    code const FAR *distcode;   /* starting table for distance codes */
-    unsigned lenbits;           /* index bits for lencode */
-    unsigned distbits;          /* index bits for distcode */
+    पूर्णांक lastblock;              /* true if processing last block */
+    पूर्णांक wrap;                   /* true if the window has wrapped */
+    अचिन्हित अक्षर FAR *window;  /* allocated sliding window, if needed */
+    अचिन्हित दीर्घ hold;         /* bit buffer */
+    अचिन्हित bits;              /* bits in bit buffer */
+    अचिन्हित extra;             /* extra bits needed */
+    अचिन्हित दीर्घ length;       /* literal or length of data to copy */
+    अचिन्हित दीर्घ offset;       /* distance back to copy string from */
+    अचिन्हित दीर्घ copy;         /* number of stored or match bytes to copy */
+    अचिन्हित अक्षर FAR *from;    /* where to copy match bytes from */
+    code स्थिरांक FAR *lencode;    /* starting table for length/literal codes */
+    code स्थिरांक FAR *distcode;   /* starting table for distance codes */
+    अचिन्हित lenbits;           /* index bits for lencode */
+    अचिन्हित distbits;          /* index bits for distcode */
     code here;                  /* current decoding table entry */
     code last;                  /* parent table entry */
-    unsigned len;               /* length to copy for repeats, bits to drop */
-    int ret;                    /* return code */
-    static const unsigned short order[19] = /* permutation of code lengths */
+    अचिन्हित len;               /* length to copy for repeats, bits to drop */
+    पूर्णांक ret;                    /* return code */
+    स्थिर स्थिरांक अचिन्हित लघु order[19] = /* permutation of code lengths */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
-#include "inffix9.h"
+#अन्तर्भाव "inffix9.h"
 
     /* Check that the strm exists and that the state was initialized */
-    if (strm == Z_NULL || strm->state == Z_NULL)
-        return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
+    जर (strm == Z_NULL || strm->state == Z_NULL)
+        परत Z_STREAM_ERROR;
+    state = (संरचना inflate_state FAR *)strm->state;
 
     /* Reset the state */
-    strm->msg = Z_NULL;
+    strm->संदेश = Z_NULL;
     mode = TYPE;
     lastblock = 0;
     wrap = 0;
@@ -255,83 +255,83 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
     hold = 0;
     bits = 0;
     put = window;
-    left = WSIZE;
+    डावा = WSIZE;
     lencode = Z_NULL;
     distcode = Z_NULL;
 
     /* Inflate until end of block marked as last */
-    for (;;)
-        switch (mode) {
-        case TYPE:
+    साठी (;;)
+        निवड (mode) {
+        स्थिती TYPE:
             /* determine and dispatch block type */
-            if (lastblock) {
+            जर (lastblock) {
                 BYTEBITS();
                 mode = DONE;
-                break;
+                थांबा;
             }
             NEEDBITS(3);
             lastblock = BITS(1);
             DROPBITS(1);
-            switch (BITS(2)) {
-            case 0:                             /* stored block */
-                Tracev((stderr, "inflate:     stored block%s\n",
+            निवड (BITS(2)) {
+            स्थिती 0:                             /* stored block */
+                Tracev((मानक_त्रुटि, "inflate:     stored block%s\n",
                         lastblock ? " (last)" : ""));
                 mode = STORED;
-                break;
-            case 1:                             /* fixed block */
+                थांबा;
+            स्थिती 1:                             /* fixed block */
                 lencode = lenfix;
                 lenbits = 9;
                 distcode = distfix;
                 distbits = 5;
-                Tracev((stderr, "inflate:     fixed codes block%s\n",
+                Tracev((मानक_त्रुटि, "inflate:     fixed codes block%s\n",
                         lastblock ? " (last)" : ""));
                 mode = LEN;                     /* decode codes */
-                break;
-            case 2:                             /* dynamic block */
-                Tracev((stderr, "inflate:     dynamic codes block%s\n",
+                थांबा;
+            स्थिती 2:                             /* dynamic block */
+                Tracev((मानक_त्रुटि, "inflate:     dynamic codes block%s\n",
                         lastblock ? " (last)" : ""));
                 mode = TABLE;
-                break;
-            case 3:
-                strm->msg = (z_const char *)"invalid block type";
+                थांबा;
+            स्थिती 3:
+                strm->संदेश = (z_const अक्षर *)"invalid block type";
                 mode = BAD;
             }
             DROPBITS(2);
-            break;
+            थांबा;
 
-        case STORED:
+        स्थिती STORED:
             /* get and verify stored block length */
             BYTEBITS();                         /* go to byte boundary */
             NEEDBITS(32);
-            if ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
-                strm->msg = (z_const char *)"invalid stored block lengths";
+            जर ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
+                strm->संदेश = (z_const अक्षर *)"invalid stored block lengths";
                 mode = BAD;
-                break;
+                थांबा;
             }
-            length = (unsigned)hold & 0xffff;
-            Tracev((stderr, "inflate:       stored length %lu\n",
+            length = (अचिन्हित)hold & 0xffff;
+            Tracev((मानक_त्रुटि, "inflate:       stored length %lu\n",
                     length));
             INITBITS();
 
             /* copy stored block from input to output */
-            while (length != 0) {
+            पर्यंत (length != 0) {
                 copy = length;
                 PULL();
                 ROOM();
-                if (copy > have) copy = have;
-                if (copy > left) copy = left;
+                जर (copy > have) copy = have;
+                जर (copy > डावा) copy = डावा;
                 zmemcpy(put, next, copy);
                 have -= copy;
                 next += copy;
-                left -= copy;
+                डावा -= copy;
                 put += copy;
                 length -= copy;
             }
-            Tracev((stderr, "inflate:       stored end\n"));
+            Tracev((मानक_त्रुटि, "inflate:       stored end\n"));
             mode = TYPE;
-            break;
+            थांबा;
 
-        case TABLE:
+        स्थिती TABLE:
             /* get dynamic table entries descriptor */
             NEEDBITS(14);
             state->nlen = BITS(5) + 257;
@@ -340,264 +340,264 @@ int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
             DROPBITS(5);
             state->ncode = BITS(4) + 4;
             DROPBITS(4);
-            if (state->nlen > 286) {
-                strm->msg = (z_const char *)"too many length symbols";
+            जर (state->nlen > 286) {
+                strm->संदेश = (z_const अक्षर *)"too many length symbols";
                 mode = BAD;
-                break;
+                थांबा;
             }
-            Tracev((stderr, "inflate:       table sizes ok\n"));
+            Tracev((मानक_त्रुटि, "inflate:       table sizes ok\n"));
 
             /* get code length code lengths (not a typo) */
             state->have = 0;
-            while (state->have < state->ncode) {
+            पर्यंत (state->have < state->ncode) {
                 NEEDBITS(3);
-                state->lens[order[state->have++]] = (unsigned short)BITS(3);
+                state->lens[order[state->have++]] = (अचिन्हित लघु)BITS(3);
                 DROPBITS(3);
             }
-            while (state->have < 19)
+            पर्यंत (state->have < 19)
                 state->lens[order[state->have++]] = 0;
             state->next = state->codes;
-            lencode = (code const FAR *)(state->next);
+            lencode = (code स्थिरांक FAR *)(state->next);
             lenbits = 7;
             ret = inflate_table9(CODES, state->lens, 19, &(state->next),
                                 &(lenbits), state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid code lengths set";
+            जर (ret) {
+                strm->संदेश = (z_const अक्षर *)"invalid code lengths set";
                 mode = BAD;
-                break;
+                थांबा;
             }
-            Tracev((stderr, "inflate:       code lengths ok\n"));
+            Tracev((मानक_त्रुटि, "inflate:       code lengths ok\n"));
 
             /* get length and distance code code lengths */
             state->have = 0;
-            while (state->have < state->nlen + state->ndist) {
-                for (;;) {
+            पर्यंत (state->have < state->nlen + state->ndist) {
+                साठी (;;) {
                     here = lencode[BITS(lenbits)];
-                    if ((unsigned)(here.bits) <= bits) break;
+                    जर ((अचिन्हित)(here.bits) <= bits) थांबा;
                     PULLBYTE();
                 }
-                if (here.val < 16) {
+                जर (here.val < 16) {
                     NEEDBITS(here.bits);
                     DROPBITS(here.bits);
                     state->lens[state->have++] = here.val;
                 }
-                else {
-                    if (here.val == 16) {
+                अन्यथा {
+                    जर (here.val == 16) {
                         NEEDBITS(here.bits + 2);
                         DROPBITS(here.bits);
-                        if (state->have == 0) {
-                            strm->msg = (z_const char *)"invalid bit length repeat";
+                        जर (state->have == 0) {
+                            strm->संदेश = (z_const अक्षर *)"invalid bit length repeat";
                             mode = BAD;
-                            break;
+                            थांबा;
                         }
-                        len = (unsigned)(state->lens[state->have - 1]);
+                        len = (अचिन्हित)(state->lens[state->have - 1]);
                         copy = 3 + BITS(2);
                         DROPBITS(2);
                     }
-                    else if (here.val == 17) {
+                    अन्यथा जर (here.val == 17) {
                         NEEDBITS(here.bits + 3);
                         DROPBITS(here.bits);
                         len = 0;
                         copy = 3 + BITS(3);
                         DROPBITS(3);
                     }
-                    else {
+                    अन्यथा {
                         NEEDBITS(here.bits + 7);
                         DROPBITS(here.bits);
                         len = 0;
                         copy = 11 + BITS(7);
                         DROPBITS(7);
                     }
-                    if (state->have + copy > state->nlen + state->ndist) {
-                        strm->msg = (z_const char *)"invalid bit length repeat";
+                    जर (state->have + copy > state->nlen + state->ndist) {
+                        strm->संदेश = (z_const अक्षर *)"invalid bit length repeat";
                         mode = BAD;
-                        break;
+                        थांबा;
                     }
-                    while (copy--)
-                        state->lens[state->have++] = (unsigned short)len;
+                    पर्यंत (copy--)
+                        state->lens[state->have++] = (अचिन्हित लघु)len;
                 }
             }
 
             /* handle error breaks in while */
-            if (mode == BAD) break;
+            जर (mode == BAD) थांबा;
 
             /* check for end-of-block code (better have one) */
-            if (state->lens[256] == 0) {
-                strm->msg = (z_const char *)"invalid code -- missing end-of-block";
+            जर (state->lens[256] == 0) {
+                strm->संदेश = (z_const अक्षर *)"invalid code -- missing end-of-block";
                 mode = BAD;
-                break;
+                थांबा;
             }
 
             /* build code tables -- note: do not change the lenbits or distbits
                values here (9 and 6) without reading the comments in inftree9.h
                concerning the ENOUGH constants, which depend on those values */
             state->next = state->codes;
-            lencode = (code const FAR *)(state->next);
+            lencode = (code स्थिरांक FAR *)(state->next);
             lenbits = 9;
             ret = inflate_table9(LENS, state->lens, state->nlen,
                             &(state->next), &(lenbits), state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid literal/lengths set";
+            जर (ret) {
+                strm->संदेश = (z_const अक्षर *)"invalid literal/lengths set";
                 mode = BAD;
-                break;
+                थांबा;
             }
-            distcode = (code const FAR *)(state->next);
+            distcode = (code स्थिरांक FAR *)(state->next);
             distbits = 6;
             ret = inflate_table9(DISTS, state->lens + state->nlen,
                             state->ndist, &(state->next), &(distbits),
                             state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid distances set";
+            जर (ret) {
+                strm->संदेश = (z_const अक्षर *)"invalid distances set";
                 mode = BAD;
-                break;
+                थांबा;
             }
-            Tracev((stderr, "inflate:       codes ok\n"));
+            Tracev((मानक_त्रुटि, "inflate:       codes ok\n"));
             mode = LEN;
 
-        case LEN:
+        स्थिती LEN:
             /* get a literal, length, or end-of-block code */
-            for (;;) {
+            साठी (;;) {
                 here = lencode[BITS(lenbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+                जर ((अचिन्हित)(here.bits) <= bits) थांबा;
                 PULLBYTE();
             }
-            if (here.op && (here.op & 0xf0) == 0) {
+            जर (here.op && (here.op & 0xf0) == 0) {
                 last = here;
-                for (;;) {
+                साठी (;;) {
                     here = lencode[last.val +
                             (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+                    जर ((अचिन्हित)(last.bits + here.bits) <= bits) थांबा;
                     PULLBYTE();
                 }
                 DROPBITS(last.bits);
             }
             DROPBITS(here.bits);
-            length = (unsigned)here.val;
+            length = (अचिन्हित)here.val;
 
             /* process literal */
-            if (here.op == 0) {
-                Tracevv((stderr, here.val >= 0x20 && here.val < 0x7f ?
+            जर (here.op == 0) {
+                Tracevv((मानक_त्रुटि, here.val >= 0x20 && here.val < 0x7f ?
                         "inflate:         literal '%c'\n" :
                         "inflate:         literal 0x%02x\n", here.val));
                 ROOM();
-                *put++ = (unsigned char)(length);
-                left--;
+                *put++ = (अचिन्हित अक्षर)(length);
+                डावा--;
                 mode = LEN;
-                break;
+                थांबा;
             }
 
             /* process end of block */
-            if (here.op & 32) {
-                Tracevv((stderr, "inflate:         end of block\n"));
+            जर (here.op & 32) {
+                Tracevv((मानक_त्रुटि, "inflate:         end of block\n"));
                 mode = TYPE;
-                break;
+                थांबा;
             }
 
             /* invalid code */
-            if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid literal/length code";
+            जर (here.op & 64) {
+                strm->संदेश = (z_const अक्षर *)"invalid literal/length code";
                 mode = BAD;
-                break;
+                थांबा;
             }
 
             /* length code -- get extra bits, if any */
-            extra = (unsigned)(here.op) & 31;
-            if (extra != 0) {
+            extra = (अचिन्हित)(here.op) & 31;
+            जर (extra != 0) {
                 NEEDBITS(extra);
                 length += BITS(extra);
                 DROPBITS(extra);
             }
-            Tracevv((stderr, "inflate:         length %lu\n", length));
+            Tracevv((मानक_त्रुटि, "inflate:         length %lu\n", length));
 
             /* get distance code */
-            for (;;) {
+            साठी (;;) {
                 here = distcode[BITS(distbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+                जर ((अचिन्हित)(here.bits) <= bits) थांबा;
                 PULLBYTE();
             }
-            if ((here.op & 0xf0) == 0) {
+            जर ((here.op & 0xf0) == 0) {
                 last = here;
-                for (;;) {
+                साठी (;;) {
                     here = distcode[last.val +
                             (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+                    जर ((अचिन्हित)(last.bits + here.bits) <= bits) थांबा;
                     PULLBYTE();
                 }
                 DROPBITS(last.bits);
             }
             DROPBITS(here.bits);
-            if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid distance code";
+            जर (here.op & 64) {
+                strm->संदेश = (z_const अक्षर *)"invalid distance code";
                 mode = BAD;
-                break;
+                थांबा;
             }
-            offset = (unsigned)here.val;
+            offset = (अचिन्हित)here.val;
 
             /* get distance extra bits, if any */
-            extra = (unsigned)(here.op) & 15;
-            if (extra != 0) {
+            extra = (अचिन्हित)(here.op) & 15;
+            जर (extra != 0) {
                 NEEDBITS(extra);
                 offset += BITS(extra);
                 DROPBITS(extra);
             }
-            if (offset > WSIZE - (wrap ? 0: left)) {
-                strm->msg = (z_const char *)"invalid distance too far back";
+            जर (offset > WSIZE - (wrap ? 0: डावा)) {
+                strm->संदेश = (z_const अक्षर *)"invalid distance too far back";
                 mode = BAD;
-                break;
+                थांबा;
             }
-            Tracevv((stderr, "inflate:         distance %lu\n", offset));
+            Tracevv((मानक_त्रुटि, "inflate:         distance %lu\n", offset));
 
             /* copy match from window to output */
-            do {
+            करा {
                 ROOM();
                 copy = WSIZE - offset;
-                if (copy < left) {
+                जर (copy < डावा) {
                     from = put + copy;
-                    copy = left - copy;
+                    copy = डावा - copy;
                 }
-                else {
+                अन्यथा {
                     from = put - offset;
-                    copy = left;
+                    copy = डावा;
                 }
-                if (copy > length) copy = length;
+                जर (copy > length) copy = length;
                 length -= copy;
-                left -= copy;
-                do {
+                डावा -= copy;
+                करा {
                     *put++ = *from++;
-                } while (--copy);
-            } while (length != 0);
-            break;
+                } पर्यंत (--copy);
+            } पर्यंत (length != 0);
+            थांबा;
 
-        case DONE:
+        स्थिती DONE:
             /* inflate stream terminated properly -- write leftover output */
             ret = Z_STREAM_END;
-            if (left < WSIZE) {
-                if (out(out_desc, window, (unsigned)(WSIZE - left)))
+            जर (डावा < WSIZE) {
+                जर (out(out_desc, window, (अचिन्हित)(WSIZE - डावा)))
                     ret = Z_BUF_ERROR;
             }
-            goto inf_leave;
+            जा inf_leave;
 
-        case BAD:
+        स्थिती BAD:
             ret = Z_DATA_ERROR;
-            goto inf_leave;
+            जा inf_leave;
 
-        default:                /* can't happen, but makes compilers happy */
+        पूर्वनिर्धारित:                /* can't happen, but makes compilers happy */
             ret = Z_STREAM_ERROR;
-            goto inf_leave;
+            जा inf_leave;
         }
 
     /* Return unused input */
   inf_leave:
     strm->next_in = next;
     strm->avail_in = have;
-    return ret;
+    परत ret;
 }
 
-int ZEXPORT inflateBack9End(z_stream FAR *strm) {
-    if (strm == Z_NULL || strm->state == Z_NULL || strm->zfree == (free_func)0)
-        return Z_STREAM_ERROR;
+पूर्णांक ZEXPORT inflateBack9End(z_stream FAR *strm) {
+    जर (strm == Z_NULL || strm->state == Z_NULL || strm->zfree == (free_func)0)
+        परत Z_STREAM_ERROR;
     ZFREE(strm, strm->state);
     strm->state = Z_NULL;
-    Tracev((stderr, "inflate: end\n"));
-    return Z_OK;
+    Tracev((मानक_त्रुटि, "inflate: end\n"));
+    परत Z_OK;
 }

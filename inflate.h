@@ -17,7 +17,7 @@
 #endif
 
 /* Possible inflate modes between inflate() calls */
-typedef enum {
+प्रकारव्याख्या गणना {
     HEAD = 16180,   /* i: waiting for magic header */
     FLAGS,      /* i: waiting for method and flags (gzip) */
     TIME,       /* i: waiting for modification time (gzip) */
@@ -79,48 +79,48 @@ typedef enum {
 
 /* State maintained between inflate() calls -- approximately 7K bytes, not
    including the allocated sliding window, which is up to 32K bytes. */
-struct inflate_state {
+संरचना inflate_state {
     z_streamp strm;             /* pointer back to this zlib stream */
     inflate_mode mode;          /* current inflate mode */
-    int last;                   /* true if processing last block */
-    int wrap;                   /* bit 0 true for zlib, bit 1 true for gzip,
+    पूर्णांक last;                   /* true if processing last block */
+    पूर्णांक wrap;                   /* bit 0 true for zlib, bit 1 true for gzip,
                                    bit 2 true to validate check value */
-    int havedict;               /* true if dictionary provided */
-    int flags;                  /* gzip header method and flags, 0 if zlib, or
+    पूर्णांक havedict;               /* true if dictionary provided */
+    पूर्णांक flags;                  /* gzip header method and flags, 0 if zlib, or
                                    -1 if raw or no header yet */
-    unsigned dmax;              /* zlib header max distance (INFLATE_STRICT) */
-    unsigned long check;        /* protected copy of check value */
-    unsigned long total;        /* protected copy of output count */
+    अचिन्हित dmax;              /* zlib header max distance (INFLATE_STRICT) */
+    अचिन्हित दीर्घ check;        /* protected copy of check value */
+    अचिन्हित दीर्घ total;        /* protected copy of output count */
     gz_headerp head;            /* where to save gzip header information */
         /* sliding window */
-    unsigned wbits;             /* log base 2 of requested window size */
-    unsigned wsize;             /* window size or zero if not using window */
-    unsigned whave;             /* valid bytes in the window */
-    unsigned wnext;             /* window write index */
-    unsigned char FAR *window;  /* allocated sliding window, if needed */
+    अचिन्हित wbits;             /* log base 2 of requested window size */
+    अचिन्हित wsize;             /* window size or zero if not using window */
+    अचिन्हित whave;             /* valid bytes in the window */
+    अचिन्हित wnext;             /* window write index */
+    अचिन्हित अक्षर FAR *window;  /* allocated sliding window, if needed */
         /* bit accumulator */
-    unsigned long hold;         /* input bit accumulator */
-    unsigned bits;              /* number of bits in hold */
+    अचिन्हित दीर्घ hold;         /* input bit accumulator */
+    अचिन्हित bits;              /* number of bits in hold */
         /* for string and stored block copying */
-    unsigned length;            /* literal or length of data to copy */
-    unsigned offset;            /* distance back to copy string from */
+    अचिन्हित length;            /* literal or length of data to copy */
+    अचिन्हित offset;            /* distance back to copy string from */
         /* for table and code decoding */
-    unsigned extra;             /* extra bits needed */
+    अचिन्हित extra;             /* extra bits needed */
         /* fixed and dynamic code tables */
-    code const FAR *lencode;    /* starting table for length/literal codes */
-    code const FAR *distcode;   /* starting table for distance codes */
-    unsigned lenbits;           /* index bits for lencode */
-    unsigned distbits;          /* index bits for distcode */
+    code स्थिरांक FAR *lencode;    /* starting table for length/literal codes */
+    code स्थिरांक FAR *distcode;   /* starting table for distance codes */
+    अचिन्हित lenbits;           /* index bits for lencode */
+    अचिन्हित distbits;          /* index bits for distcode */
         /* dynamic table building */
-    unsigned ncode;             /* number of code length code lengths */
-    unsigned nlen;              /* number of length code lengths */
-    unsigned ndist;             /* number of distance code lengths */
-    unsigned have;              /* number of code lengths in lens[] */
+    अचिन्हित ncode;             /* number of code length code lengths */
+    अचिन्हित nlen;              /* number of length code lengths */
+    अचिन्हित ndist;             /* number of distance code lengths */
+    अचिन्हित have;              /* number of code lengths in lens[] */
     code FAR *next;             /* next available space in codes[] */
-    unsigned short lens[320];   /* temporary storage for code lengths */
-    unsigned short work[288];   /* work area for code table building */
+    अचिन्हित लघु lens[320];   /* temporary storage for code lengths */
+    अचिन्हित लघु work[288];   /* work area for code table building */
     code codes[ENOUGH];         /* space for code tables */
-    int sane;                   /* if false, allow invalid distance too far */
-    int back;                   /* bits back of last unprocessed length/lit */
-    unsigned was;               /* initial length of match */
+    पूर्णांक sane;                   /* if false, allow invalid distance too far */
+    पूर्णांक back;                   /* bits back of last unprocessed length/lit */
+    अचिन्हित was;               /* initial length of match */
 };

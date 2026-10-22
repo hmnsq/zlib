@@ -21,10 +21,10 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
-    unsigned short val;         /* offset in table or code value */
+प्रकारव्याख्या संरचना {
+    अचिन्हित अक्षर op;           /* operation, extra bits, table bits */
+    अचिन्हित अक्षर bits;         /* bits in this part of the code */
+    अचिन्हित लघु val;         /* offset in table or code value */
 } code;
 
 /* op values as set by inflate_table():
@@ -49,7 +49,7 @@ typedef struct {
 #ifndef PKZIP_BUG_WORKAROUND
 #  define ENOUGH_LENS 852
 #  define ENOUGH_DISTS 592
-#else
+#अन्यथा
 /* That workaround permits 288 literal/length codes and 32 distance codes. */
 #  define ENOUGH_LENS 854
 #  define ENOUGH_DISTS 594
@@ -57,14 +57,14 @@ typedef struct {
 #define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table() */
-typedef enum {
+प्रकारव्याख्या गणना {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
-                                unsigned codes, code FAR * FAR *table,
-                                unsigned FAR *bits, unsigned short FAR *work);
-struct inflate_state;
-void ZLIB_INTERNAL inflate_fixed(struct inflate_state FAR *state);
+पूर्णांक ZLIB_INTERNAL inflate_table(codetype type, अचिन्हित लघु FAR *lens,
+                                अचिन्हित codes, code FAR * FAR *table,
+                                अचिन्हित FAR *bits, अचिन्हित लघु FAR *work);
+संरचना inflate_state;
+शून्य ZLIB_INTERNAL inflate_fixed(संरचना inflate_state FAR *state);

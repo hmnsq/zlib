@@ -10,9 +10,9 @@
 #ifndef ZFSTREAM_H
 #define ZFSTREAM_H
 
-#include <istream>  // not iostream, since we don't need cin/cout
-#include <ostream>
-#include "zlib.h"
+#अन्तर्भाव <istream>  // not iostream, since we don't need cin/cout
+#अन्तर्भाव <ostream>
+#अन्तर्भाव "zlib.h"
 
 /*****************************************************************************/
 
@@ -24,14 +24,14 @@
  *  (tricky). Otherwise, it attempts to be a drop-in replacement for the standard
  *  file streambuf.
 */
-class gzfilebuf : public std::streambuf
+class gzfilebuf : सार्वजनिक std::streambuf
 {
-public:
+सार्वजनिक:
   //  Default constructor.
   gzfilebuf();
 
   //  Destructor.
-  virtual
+  आभासी
   ~gzfilebuf();
 
   /**
@@ -45,16 +45,16 @@ public:
    *  it can default and setcompression(level) then becomes like the old
    *  setcompressionlevel(level).
   */
-  int
-  setcompression(int comp_level,
-                 int comp_strategy = Z_DEFAULT_STRATEGY);
+  पूर्णांक
+  setcompression(पूर्णांक comp_level,
+                 पूर्णांक comp_strategy = Z_DEFAULT_STRATEGY);
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() const { return (file != NULL); }
+  is_open() स्थिरांक { परत (file != रिक्त); }
 
   /**
    *  @brief  Open gzipped file.
@@ -63,7 +63,7 @@ public:
    *  @return  @c this on success, NULL on failure.
   */
   gzfilebuf*
-  open(const char* name,
+  खोलो(स्थिरांक अक्षर* name,
        std::ios_base::openmode mode);
 
   /**
@@ -73,7 +73,7 @@ public:
    *  @return  @c this on success, NULL on failure.
   */
   gzfilebuf*
-  attach(int fd,
+  attach(पूर्णांक fd,
          std::ios_base::openmode mode);
 
   /**
@@ -81,16 +81,16 @@ public:
    *  @return  @c this on success, NULL on failure.
   */
   gzfilebuf*
-  close();
+  बंद();
 
-protected:
+संरक्षित:
   /**
    *  @brief  Convert ios open mode int to mode string used by zlib.
    *  @return  True if valid mode flag combination.
   */
   bool
   open_mode(std::ios_base::openmode mode,
-            char* c_mode) const;
+            अक्षर* c_mode) स्थिरांक;
 
   /**
    *  @brief  Number of characters available in stream buffer.
@@ -99,7 +99,7 @@ protected:
    *  This indicates number of characters in get area of stream buffer.
    *  These characters can be read without accessing the gzipped file.
   */
-  virtual std::streamsize
+  आभासी std::streamsize
   showmanyc();
 
   /**
@@ -109,7 +109,7 @@ protected:
    *  This actually reads characters from gzipped file to stream
    *  buffer. Always buffered.
   */
-  virtual int_type
+  आभासी int_type
   underflow();
 
   /**
@@ -121,7 +121,7 @@ protected:
    *  gzipped file. With unbuffered output this is done one
    *  character at a time.
   */
-  virtual int_type
+  आभासी int_type
   overflow(int_type c = traits_type::eof());
 
   /**
@@ -132,8 +132,8 @@ protected:
    *
    *  Call setbuf(0,0) to enable unbuffered output.
   */
-  virtual std::streambuf*
-  setbuf(char_type* p,
+  आभासी std::streambuf*
+  रखो_बफ(char_type* p,
          std::streamsize n);
 
   /**
@@ -142,7 +142,7 @@ protected:
    *
    *  This calls underflow(EOF) to do the job.
   */
-  virtual int
+  आभासी पूर्णांक
   sync();
 
 //
@@ -158,7 +158,7 @@ protected:
 //  seekpos(pos_type sp,
 //          std::ios_base::openmode mode = std::ios_base::in|std::ios_base::out);
 
-private:
+खाजगी:
   /**
    *  @brief  Allocate internal buffer.
    *
@@ -167,7 +167,7 @@ private:
    *  buffer already exists or is external, the buffer pointers will be
    *  reset to their original state.
   */
-  void
+  शून्य
   enable_buffer();
 
   /**
@@ -177,7 +177,7 @@ private:
    *  that the internal buffer is deallocated if it exists. In any
    *  case, it will also reset the buffer pointers.
   */
-  void
+  शून्य
   disable_buffer();
 
   /**
@@ -231,9 +231,9 @@ private:
  *  This class implements ifstream for gzipped files. Seeking and putback
  *  is not supported yet.
 */
-class gzifstream : public std::istream
+class gzifstream : सार्वजनिक std::istream
 {
-public:
+सार्वजनिक:
   //  Default constructor
   gzifstream();
 
@@ -243,7 +243,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::in).
   */
   explicit
-  gzifstream(const char* name,
+  gzifstream(स्थिरांक अक्षर* name,
              std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -252,22 +252,22 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::in).
   */
   explicit
-  gzifstream(int fd,
+  gzifstream(पूर्णांक fd,
              std::ios_base::openmode mode = std::ios_base::in);
 
   /**
    *  Obtain underlying stream buffer.
   */
   gzfilebuf*
-  rdbuf() const
-  { return const_cast<gzfilebuf*>(&sb); }
+  rdbuf() स्थिरांक
+  { परत const_cast<gzfilebuf*>(&sb); }
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() { return sb.is_open(); }
+  is_open() { परत sb.is_open(); }
 
   /**
    *  @brief  Open gzipped file.
@@ -281,8 +281,8 @@ public:
    *  you manually clear() the state. The choice is a matter of
    *  convenience.
   */
-  void
-  open(const char* name,
+  शून्य
+  खोलो(स्थिरांक अक्षर* name,
        std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -293,8 +293,8 @@ public:
    *  Stream will be in state good() if attach succeeded; otherwise
    *  in state fail().
   */
-  void
-  attach(int fd,
+  शून्य
+  attach(पूर्णांक fd,
          std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -302,10 +302,10 @@ public:
    *
    *  Stream will be in state fail() if close failed.
   */
-  void
-  close();
+  शून्य
+  बंद();
 
-private:
+खाजगी:
   /**
    *  Underlying stream buffer.
   */
@@ -320,9 +320,9 @@ private:
  *  This class implements ofstream for gzipped files. Seeking and putback
  *  is not supported yet.
 */
-class gzofstream : public std::ostream
+class gzofstream : सार्वजनिक std::ostream
 {
-public:
+सार्वजनिक:
   //  Default constructor
   gzofstream();
 
@@ -332,7 +332,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::out).
   */
   explicit
-  gzofstream(const char* name,
+  gzofstream(स्थिरांक अक्षर* name,
              std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -341,22 +341,22 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::out).
   */
   explicit
-  gzofstream(int fd,
+  gzofstream(पूर्णांक fd,
              std::ios_base::openmode mode = std::ios_base::out);
 
   /**
    *  Obtain underlying stream buffer.
   */
   gzfilebuf*
-  rdbuf() const
-  { return const_cast<gzfilebuf*>(&sb); }
+  rdbuf() स्थिरांक
+  { परत const_cast<gzfilebuf*>(&sb); }
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() { return sb.is_open(); }
+  is_open() { परत sb.is_open(); }
 
   /**
    *  @brief  Open gzipped file.
@@ -370,8 +370,8 @@ public:
    *  you manually clear() the state. The choice is a matter of
    *  convenience.
   */
-  void
-  open(const char* name,
+  शून्य
+  खोलो(स्थिरांक अक्षर* name,
        std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -382,8 +382,8 @@ public:
    *  Stream will be in state good() if attach succeeded; otherwise
    *  in state fail().
   */
-  void
-  attach(int fd,
+  शून्य
+  attach(पूर्णांक fd,
          std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -391,10 +391,10 @@ public:
    *
    *  Stream will be in state fail() if close failed.
   */
-  void
-  close();
+  शून्य
+  बंद();
 
-private:
+खाजगी:
   /**
    *  Underlying stream buffer.
   */
@@ -409,21 +409,21 @@ private:
  *  This class defines a two-argument manipulator for gzofstream. It is used
  *  as base for the setcompression(int,int) manipulator.
 */
-template<typename T1, typename T2>
+ढाँचा<typename T1, typename T2>
   class gzomanip2
   {
-  public:
+  सार्वजनिक:
     // Allows inserter to peek at internals
-    template <typename Ta, typename Tb>
-      friend gzofstream&
-      operator<<(gzofstream&,
-                 const gzomanip2<Ta,Tb>&);
+    ढाँचा <typename Ta, typename Tb>
+      मित्र gzofstream&
+      चालक<<(gzofstream&,
+                 स्थिरांक gzomanip2<Ta,Tb>&);
 
     // Constructor
     gzomanip2(gzofstream& (*f)(gzofstream&, T1, T2),
               T1 v1,
               T2 v2);
-  private:
+  खाजगी:
     // Underlying manipulator function
     gzofstream&
     (*func)(gzofstream&, T1, T2);
@@ -436,16 +436,16 @@ template<typename T1, typename T2>
 /*****************************************************************************/
 
 // Manipulator function thunks through to stream buffer
-inline gzofstream&
-setcompression(gzofstream &gzs, int l, int s = Z_DEFAULT_STRATEGY)
+ओळीत gzofstream&
+setcompression(gzofstream &gzs, पूर्णांक l, पूर्णांक s = Z_DEFAULT_STRATEGY)
 {
   (gzs.rdbuf())->setcompression(l, s);
-  return gzs;
+  परत gzs;
 }
 
 // Manipulator constructor stores arguments
-template<typename T1, typename T2>
-  inline
+ढाँचा<typename T1, typename T2>
+  ओळीत
   gzomanip2<T1,T2>::gzomanip2(gzofstream &(*f)(gzofstream &, T1, T2),
                               T1 v1,
                               T2 v2)
@@ -453,14 +453,14 @@ template<typename T1, typename T2>
   { }
 
 // Inserter applies underlying manipulator function to stream
-template<typename T1, typename T2>
-  inline gzofstream&
-  operator<<(gzofstream& s, const gzomanip2<T1,T2>& m)
-  { return (*m.func)(s, m.val1, m.val2); }
+ढाँचा<typename T1, typename T2>
+  ओळीत gzofstream&
+  चालक<<(gzofstream& s, स्थिरांक gzomanip2<T1,T2>& m)
+  { परत (*m.func)(s, m.val1, m.val2); }
 
 // Insert this onto stream to simplify setting of compression level
-inline gzomanip2<int,int>
-setcompression(int l, int s = Z_DEFAULT_STRATEGY)
-{ return gzomanip2<int,int>(&setcompression, l, s); }
+ओळीत gzomanip2<पूर्णांक,पूर्णांक>
+setcompression(पूर्णांक l, पूर्णांक s = Z_DEFAULT_STRATEGY)
+{ परत gzomanip2<पूर्णांक,पूर्णांक>(&setcompression, l, s); }
 
 #endif // ZFSTREAM_H
