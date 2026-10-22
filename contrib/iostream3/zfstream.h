@@ -45,16 +45,16 @@ public:
    *  it can default and setcompression(level) then becomes like the old
    *  setcompressionlevel(level).
   */
-  int
-  setcompression(int comp_level,
-                 int comp_strategy = Z_DEFAULT_STRATEGY);
+  целое
+  setcompression(целое comp_level,
+                 целое comp_strategy = Z_DEFAULT_STRATEGY);
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() const { return (file != NULL); }
+  is_open() const { вернуть (file != NULL); }
 
   /**
    *  @brief  Open gzipped file.
@@ -73,7 +73,7 @@ public:
    *  @return  @c this on success, NULL on failure.
   */
   gzfilebuf*
-  attach(int fd,
+  attach(целое fd,
          std::ios_base::openmode mode);
 
   /**
@@ -142,7 +142,7 @@ protected:
    *
    *  This calls underflow(EOF) to do the job.
   */
-  virtual int
+  virtual целое
   sync();
 
 //
@@ -252,7 +252,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::in).
   */
   explicit
-  gzifstream(int fd,
+  gzifstream(целое fd,
              std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -260,14 +260,14 @@ public:
   */
   gzfilebuf*
   rdbuf() const
-  { return const_cast<gzfilebuf*>(&sb); }
+  { вернуть const_cast<gzfilebuf*>(&sb); }
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() { return sb.is_open(); }
+  is_open() { вернуть sb.is_open(); }
 
   /**
    *  @brief  Open gzipped file.
@@ -294,7 +294,7 @@ public:
    *  in state fail().
   */
   void
-  attach(int fd,
+  attach(целое fd,
          std::ios_base::openmode mode = std::ios_base::in);
 
   /**
@@ -341,7 +341,7 @@ public:
    *  @param  mode  Open mode flags (forced to contain ios::out).
   */
   explicit
-  gzofstream(int fd,
+  gzofstream(целое fd,
              std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -349,14 +349,14 @@ public:
   */
   gzfilebuf*
   rdbuf() const
-  { return const_cast<gzfilebuf*>(&sb); }
+  { вернуть const_cast<gzfilebuf*>(&sb); }
 
   /**
    *  @brief  Check if file is open.
    *  @return  True if file is open.
   */
   bool
-  is_open() { return sb.is_open(); }
+  is_open() { вернуть sb.is_open(); }
 
   /**
    *  @brief  Open gzipped file.
@@ -383,7 +383,7 @@ public:
    *  in state fail().
   */
   void
-  attach(int fd,
+  attach(целое fd,
          std::ios_base::openmode mode = std::ios_base::out);
 
   /**
@@ -437,10 +437,10 @@ template<typename T1, typename T2>
 
 // Manipulator function thunks through to stream buffer
 inline gzofstream&
-setcompression(gzofstream &gzs, int l, int s = Z_DEFAULT_STRATEGY)
+setcompression(gzofstream &gzs, целое l, целое s = Z_DEFAULT_STRATEGY)
 {
   (gzs.rdbuf())->setcompression(l, s);
-  return gzs;
+  вернуть gzs;
 }
 
 // Manipulator constructor stores arguments
@@ -456,11 +456,11 @@ template<typename T1, typename T2>
 template<typename T1, typename T2>
   inline gzofstream&
   operator<<(gzofstream& s, const gzomanip2<T1,T2>& m)
-  { return (*m.func)(s, m.val1, m.val2); }
+  { вернуть (*m.func)(s, m.val1, m.val2); }
 
 // Insert this onto stream to simplify setting of compression level
-inline gzomanip2<int,int>
-setcompression(int l, int s = Z_DEFAULT_STRATEGY)
-{ return gzomanip2<int,int>(&setcompression, l, s); }
+inline gzomanip2<целое,целое>
+setcompression(целое l, целое s = Z_DEFAULT_STRATEGY)
+{ вернуть gzomanip2<целое,целое>(&setcompression, l, s); }
 
 #endif // ZFSTREAM_H

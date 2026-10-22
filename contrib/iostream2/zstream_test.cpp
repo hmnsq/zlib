@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <iomanip.h>
 
-void main() {
+void основной() {
     char h[256] = "Hello";
     char* g = "Goodbye";
     ozstream out("temp.gz");
