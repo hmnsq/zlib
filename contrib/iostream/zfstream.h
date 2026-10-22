@@ -1,128 +1,128 @@
 
-#ifndef zfstream_h
-#define zfstream_h
+#جے_بنا_تعریف zfstream_h
+#تعریف_کرو zfstream_h
 
-#include <fstream.h>
-#include "zlib.h"
+#ضمن <fstream.h>
+#ضمن "zlib.h"
 
-class gzfilebuf : public streambuf {
+class gzfilebuf : عام streambuf {
 
-public:
+عام:
 
   gzfilebuf( );
-  virtual ~gzfilebuf();
+  مجازی ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( ثابت حرف *name, صحيح io_منوال );
+  gzfilebuf *attach( صحيح file_descriptor, صحيح io_منوال );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  صحيح setcompressionlevel( صحيح comp_level );
+  صحيح setcompressionstrategy( صحيح comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  مضمن صحيح is_open() ثابت { أرجع (file !=عدم); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  مجازی streampos seekoff( streamoff, ios::seek_dir, صحيح );
 
-  virtual int sync();
+  مجازی صحيح sync();
 
-protected:
+محمي:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  مجازی صحيح underflow();
+  مجازی صحيح حد_توں_ودھ( صحيح = EOF );
 
-private:
+خاص:
 
   gzFile file;
-  short mode;
-  short own_file_descriptor;
+  چھوٹا منوال;
+  چھوٹا own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  صحيح flushbuf();
+  صحيح fillbuf();
 
 };
 
-class gzfilestream_common : virtual public ios {
+class gzfilestream_common : مجازی عام ios {
 
-  friend class gzifstream;
-  friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  یار class gzifstream;
+  یار class gzofstream;
+  یار gzofstream &setcompressionlevel( gzofstream &, صحيح );
+  یار gzofstream &setcompressionstrategy( gzofstream &, صحيح );
 
-public:
-  virtual ~gzfilestream_common();
+عام:
+  مجازی ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
-  void close();
+  فراغ attach( صحيح fd, صحيح io_منوال );
+  فراغ open( ثابت حرف *name, صحيح io_منوال );
+  فراغ close();
 
-protected:
+محمي:
   gzfilestream_common();
 
-private:
+خاص:
   gzfilebuf *rdbuf();
 
-  gzfilebuf buffer;
+  gzfilebuf بفر;
 
 };
 
-class gzifstream : public gzfilestream_common, public istream {
+class gzifstream : عام gzfilestream_common, عام istream {
 
-public:
+عام:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( ثابت حرف *name, صحيح io_منوال = ios::وچ );
+  gzifstream( صحيح fd, صحيح io_منوال = ios::وچ );
 
-  virtual ~gzifstream();
+  مجازی ~gzifstream();
 
 };
 
-class gzofstream : public gzfilestream_common, public ostream {
+class gzofstream : عام gzfilestream_common, عام ostream {
 
-public:
+عام:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( ثابت حرف *name, صحيح io_منوال = ios::باہرلا );
+  gzofstream( صحيح fd, صحيح io_منوال = ios::باہرلا );
 
-  virtual ~gzofstream();
+  مجازی ~gzofstream();
 
 };
 
-template<class T> class gzomanip {
-  friend gzofstream &operator<<(gzofstream &, const gzomanip<T> &);
-public:
+سانچا<class T> class gzomanip {
+  یار gzofstream &عامل<<(gzofstream &, ثابت gzomanip<T> &);
+عام:
   gzomanip(gzofstream &(*f)(gzofstream &, T), T v) : func(f), val(v) { }
-private:
+خاص:
   gzofstream &(*func)(gzofstream &, T);
   T val;
 };
 
-template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
+سانچا<class T> gzofstream &عامل<<(gzofstream &s, ثابت gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  أرجع (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+مضمن gzofstream &setcompressionlevel( gzofstream &s, صحيح l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  أرجع s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+مضمن gzofstream &setcompressionstrategy( gzofstream &s, صحيح l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  أرجع s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+مضمن gzomanip<صحيح> setcompressionlevel(صحيح l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  أرجع gzomanip<صحيح>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+مضمن gzomanip<صحيح> setcompressionstrategy(صحيح l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  أرجع gzomanip<صحيح>(&setcompressionstrategy,l);
 }
 
-#endif
+#جے_انت

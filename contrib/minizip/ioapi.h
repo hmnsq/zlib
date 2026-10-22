@@ -18,107 +18,107 @@
 
 */
 
-#ifndef ZLIBIOAPI64_H
-#define ZLIBIOAPI64_H
+#جے_بنا_تعریف ZLIBIOAPI64_H
+#تعریف_کرو ZLIBIOAPI64_H
 
-#if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__)) && (!(defined(__ANDROID_API__) || __ANDROID_API__ >= 24))
+#إذا (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__)) && (!(defined(__ANDROID_API__) || __ANDROID_API__ >= 24))
 
   /* Linux needs this to support file operation on files larger then 4+GB */
   /* But might need better if/def to select just the platforms that needs them.*/
 
-        #ifndef __USE_FILE_OFFSET64
-                #define __USE_FILE_OFFSET64
-        #endif
-        #ifndef __USE_LARGEFILE64
-                #define __USE_LARGEFILE64
-        #endif
-        #ifndef _LARGEFILE64_SOURCE
-                #define _LARGEFILE64_SOURCE
-        #endif
-        #ifndef _FILE_OFFSET_BIT
-                #define _FILE_OFFSET_BIT 64
-        #endif
+        #جے_بنا_تعریف __USE_FILE_OFFSET64
+                #تعریف_کرو __USE_FILE_OFFSET64
+        #جے_انت
+        #جے_بنا_تعریف __USE_LARGEFILE64
+                #تعریف_کرو __USE_LARGEFILE64
+        #جے_انت
+        #جے_بنا_تعریف LARGEFILE64_سروت
+                #تعریف_کرو LARGEFILE64_سروت
+        #جے_انت
+        #جے_بنا_تعریف FILE_وتھ_ثنائی_ہندسہ
+                #تعریف_کرو FILE_وتھ_ثنائی_ہندسہ 64
+        #جے_انت
 
-#endif
+#جے_انت
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "zlib.h"
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن "zlib.h"
 
-#if defined(USE_FILE32API)
-#define fopen64 fopen
-#define ftello64 ftell
-#define fseeko64 fseek
-#else
-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
-#define fopen64 fopen
-#define ftello64 ftello
-#define fseeko64 fseeko
-#endif
-#ifdef _MSC_VER
- #define fopen64 fopen
- #if (_MSC_VER >= 1400) && (!(defined(NO_MSCVER_FILE64_FUNC)))
-  #define ftello64 _ftelli64
-  #define fseeko64 _fseeki64
- #else // old MSC
-  #define ftello64 ftell
-  #define fseeko64 fseek
- #endif
-#endif
-#endif
+#إذا defined(USE_FILE32API)
+#تعریف_کرو fopen64 fopen
+#تعریف_کرو ftello64 ftell
+#تعریف_کرو fseeko64 fseek
+#وإلا
+#إذا defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64)
+#تعریف_کرو fopen64 fopen
+#تعریف_کرو ftello64 ftello
+#تعریف_کرو fseeko64 fseeko
+#جے_انت
+#جے_تعریف_شدہ _MSC_VER
+ #تعریف_کرو fopen64 fopen
+ #إذا (_MSC_VER >= 1400) && (!(defined(NO_MSCVER_FILE64_FUNC)))
+  #تعریف_کرو ftello64 _ftelli64
+  #تعریف_کرو fseeko64 _fseeki64
+ #وإلا // old MSC
+  #تعریف_کرو ftello64 ftell
+  #تعریف_کرو fseeko64 fseek
+ #جے_انت
+#جے_انت
+#جے_انت
 
-#ifdef HAVE_MINIZIP64_CONF_H
-#include "mz64conf.h"
-#endif
+#جے_تعریف_شدہ HAVE_MINIZIP64_CONF_H
+#ضمن "mz64conf.h"
+#جے_انت
 
-#include "ints.h"
-typedef ui64_t ZPOS64_T;
+#ضمن "ints.h"
+تعريفنوع ui64_t ZPOS64_T;
 
 /* Maximum unsigned 32-bit value used as placeholder for zip64 */
-#ifndef MAXU32
-#define MAXU32 (0xffffffff)
-#endif
+#جے_بنا_تعریف MAXU32
+#تعریف_کرو MAXU32 (0xffffffff)
+#جے_انت
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-#define ZLIB_FILEFUNC_SEEK_CUR (1)
-#define ZLIB_FILEFUNC_SEEK_END (2)
-#define ZLIB_FILEFUNC_SEEK_SET (0)
-
-#define ZLIB_FILEFUNC_MODE_READ      (1)
-#define ZLIB_FILEFUNC_MODE_WRITE     (2)
-#define ZLIB_FILEFUNC_MODE_READWRITEFILTER (3)
-
-#define ZLIB_FILEFUNC_MODE_EXISTING (4)
-#define ZLIB_FILEFUNC_MODE_CREATE   (8)
+#جے_تعریف_شدہ __cplusplus
+خارجي "C" {
+#جے_انت
 
 
-#ifndef ZCALLBACK
- #if (defined(WIN32) || defined(_WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
-   #define ZCALLBACK CALLBACK
- #else
-   #define ZCALLBACK
- #endif
-#endif
+#تعریف_کرو ZLIB_FILEFUNC_SEEK_CUR (1)
+#تعریف_کرو ZLIB_FILEFUNC_SEEK_سرا (2)
+#تعریف_کرو ZLIB_FILEFUNC_SEEK_سیٹ (0)
+
+#تعریف_کرو ZLIB_FILEFUNC_منوال_READ      (1)
+#تعریف_کرو ZLIB_FILEFUNC_منوال_WRITE     (2)
+#تعریف_کرو ZLIB_FILEFUNC_منوال_READWRITEFILTER (3)
+
+#تعریف_کرو ZLIB_FILEFUNC_منوال_EXISTING (4)
+#تعریف_کرو ZLIB_FILEFUNC_منوال_CREATE   (8)
+
+
+#جے_بنا_تعریف ZCALLBACK
+ #إذا (defined(WIN32) || defined(_WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
+   #تعریف_کرو ZCALLBACK CALLBACK
+ #وإلا
+   #تعریف_کرو ZCALLBACK
+ #جے_انت
+#جے_انت
 
 
 
 
-typedef voidpf   (ZCALLBACK *open_file_func)      (voidpf opaque, const char* filename, int mode);
-typedef uLong    (ZCALLBACK *read_file_func)      (voidpf opaque, voidpf stream, void* buf, uLong size);
-typedef uLong    (ZCALLBACK *write_file_func)     (voidpf opaque, voidpf stream, const void* buf, uLong size);
-typedef int      (ZCALLBACK *close_file_func)     (voidpf opaque, voidpf stream);
-typedef int      (ZCALLBACK *testerror_file_func) (voidpf opaque, voidpf stream);
+تعريفنوع voidpf   (ZCALLBACK *open_file_func)      (voidpf opaque, ثابت حرف* filename, صحيح منوال);
+تعريفنوع uLong    (ZCALLBACK *read_file_func)      (voidpf opaque, voidpf دھارا, فراغ* buf, uLong ناپ);
+تعريفنوع uLong    (ZCALLBACK *write_file_func)     (voidpf opaque, voidpf دھارا, ثابت فراغ* buf, uLong ناپ);
+تعريفنوع صحيح      (ZCALLBACK *close_file_func)     (voidpf opaque, voidpf دھارا);
+تعريفنوع صحيح      (ZCALLBACK *testerror_file_func) (voidpf opaque, voidpf دھارا);
 
-typedef long     (ZCALLBACK *tell_file_func)      (voidpf opaque, voidpf stream);
-typedef long     (ZCALLBACK *seek_file_func)      (voidpf opaque, voidpf stream, uLong offset, int origin);
+تعريفنوع لما     (ZCALLBACK *tell_file_func)      (voidpf opaque, voidpf دھارا);
+تعريفنوع لما     (ZCALLBACK *seek_file_func)      (voidpf opaque, voidpf دھارا, uLong وتھ, صحيح origin);
 
 
 /* here is the "old" 32 bits structure */
-typedef struct zlib_filefunc_def_s
+تعريفنوع بنية zlib_filefunc_def_s
 {
     open_file_func      zopen_file;
     read_file_func      zread_file;
@@ -130,11 +130,11 @@ typedef struct zlib_filefunc_def_s
     voidpf              opaque;
 } zlib_filefunc_def;
 
-typedef ZPOS64_T (ZCALLBACK *tell64_file_func)    (voidpf opaque, voidpf stream);
-typedef long     (ZCALLBACK *seek64_file_func)    (voidpf opaque, voidpf stream, ZPOS64_T offset, int origin);
-typedef voidpf   (ZCALLBACK *open64_file_func)    (voidpf opaque, const void* filename, int mode);
+تعريفنوع ZPOS64_T (ZCALLBACK *tell64_file_func)    (voidpf opaque, voidpf دھارا);
+تعريفنوع لما     (ZCALLBACK *seek64_file_func)    (voidpf opaque, voidpf دھارا, ZPOS64_T وتھ, صحيح origin);
+تعريفنوع voidpf   (ZCALLBACK *open64_file_func)    (voidpf opaque, ثابت فراغ* filename, صحيح منوال);
 
-typedef struct zlib_filefunc64_def_s
+تعريفنوع بنية zlib_filefunc64_def_s
 {
     open64_file_func    zopen64_file;
     read_file_func      zread_file;
@@ -146,11 +146,11 @@ typedef struct zlib_filefunc64_def_s
     voidpf              opaque;
 } zlib_filefunc64_def;
 
-void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def);
-void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def);
+فراغ fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def);
+فراغ fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def);
 
 /* now internal definition, only for zip.c and unzip.h */
-typedef struct zlib_filefunc64_32_def_s
+تعريفنوع بنية zlib_filefunc64_32_def_s
 {
     zlib_filefunc64_def zfile_func64;
     open_file_func      zopen32_file;
@@ -159,25 +159,25 @@ typedef struct zlib_filefunc64_32_def_s
 } zlib_filefunc64_32_def;
 
 
-#define ZREAD64(filefunc,filestream,buf,size)     ((*((filefunc).zfile_func64.zread_file))   ((filefunc).zfile_func64.opaque,filestream,buf,size))
-#define ZWRITE64(filefunc,filestream,buf,size)    ((*((filefunc).zfile_func64.zwrite_file))  ((filefunc).zfile_func64.opaque,filestream,buf,size))
+#تعریف_کرو ZREAD64(filefunc,filestream,buf,ناپ)     ((*((filefunc).zfile_func64.zread_file))   ((filefunc).zfile_func64.opaque,filestream,buf,ناپ))
+#تعریف_کرو ZWRITE64(filefunc,filestream,buf,ناپ)    ((*((filefunc).zfile_func64.zwrite_file))  ((filefunc).zfile_func64.opaque,filestream,buf,ناپ))
 /*#define ZTELL64(filefunc,filestream)            ((*((filefunc).ztell64_file)) ((filefunc).opaque,filestream)) */
 /*#define ZSEEK64(filefunc,filestream,pos,mode)   ((*((filefunc).zseek64_file)) ((filefunc).opaque,filestream,pos,mode)) */
-#define ZCLOSE64(filefunc,filestream)             ((*((filefunc).zfile_func64.zclose_file))  ((filefunc).zfile_func64.opaque,filestream))
-#define ZERROR64(filefunc,filestream)             ((*((filefunc).zfile_func64.zerror_file))  ((filefunc).zfile_func64.opaque,filestream))
+#تعریف_کرو ZCLOSE64(filefunc,filestream)             ((*((filefunc).zfile_func64.zclose_file))  ((filefunc).zfile_func64.opaque,filestream))
+#تعریف_کرو ZERROR64(filefunc,filestream)             ((*((filefunc).zfile_func64.zerror_file))  ((filefunc).zfile_func64.opaque,filestream))
 
-voidpf call_zopen64(const zlib_filefunc64_32_def* pfilefunc,const void*filename,int mode);
-long call_zseek64(const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, int origin);
-ZPOS64_T call_ztell64(const zlib_filefunc64_32_def* pfilefunc,voidpf filestream);
+voidpf call_zopen64(ثابت zlib_filefunc64_32_def* pfilefunc,ثابت فراغ*filename,صحيح منوال);
+لما call_zseek64(ثابت zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T وتھ, صحيح origin);
+ZPOS64_T call_ztell64(ثابت zlib_filefunc64_32_def* pfilefunc,voidpf filestream);
 
-void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32,const zlib_filefunc_def* p_filefunc32);
+فراغ fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32,ثابت zlib_filefunc_def* p_filefunc32);
 
-#define ZOPEN64(filefunc,filename,mode)         (call_zopen64((&(filefunc)),(filename),(mode)))
-#define ZTELL64(filefunc,filestream)            (call_ztell64((&(filefunc)),(filestream)))
-#define ZSEEK64(filefunc,filestream,pos,mode)   (call_zseek64((&(filefunc)),(filestream),(pos),(mode)))
+#تعریف_کرو ZOPEN64(filefunc,filename,منوال)         (call_zopen64((&(filefunc)),(filename),(منوال)))
+#تعریف_کرو ZTELL64(filefunc,filestream)            (call_ztell64((&(filefunc)),(filestream)))
+#تعریف_کرو ZSEEK64(filefunc,filestream,pos,منوال)   (call_zseek64((&(filefunc)),(filestream),(pos),(منوال)))
 
-#ifdef __cplusplus
+#جے_تعریف_شدہ __cplusplus
 }
-#endif
+#جے_انت
 
-#endif
+#جے_انت

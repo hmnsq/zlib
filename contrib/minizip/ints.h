@@ -5,53 +5,53 @@
  * There exist compilers with limits.h, but not stdint.h or inttypes.h.
  */
 
-#ifndef INTS_H
-#define INTS_H
-#include <limits.h>
-#if defined(UCHAR_MAX) && UCHAR_MAX == 0xff
-    typedef signed char i8_t;
-    typedef unsigned char ui8_t;
-#else
+#جے_بنا_تعریف INTS_H
+#تعریف_کرو INTS_H
+#ضمن <limits.h>
+#إذا defined(UCHAR_MAX) && UCHAR_MAX == 0xff
+    تعريفنوع نشانیوالا حرف i8_t;
+    تعريفنوع بنانشانی حرف ui8_t;
+#وإلا
 #   error "no 8-bit integer"
-#endif
-#if defined(USHRT_MAX) && USHRT_MAX == 0xffff
-    typedef short i16_t;
-    typedef unsigned short ui16_t;
-#elif defined(UINT_MAX) && UINT_MAX == 0xffff
-    typedef int i16_t;
-    typedef unsigned ui16_t;
-#else
+#جے_انت
+#إذا defined(USHRT_MAX) && USHRT_MAX == 0xffff
+    تعريفنوع چھوٹا i16_t;
+    تعريفنوع بنانشانی چھوٹا ui16_t;
+#وإلاإذا defined(UINT_MAX) && UINT_MAX == 0xffff
+    تعريفنوع صحيح i16_t;
+    تعريفنوع بنانشانی ui16_t;
+#وإلا
 #   error "no 16-bit integer"
-#endif
-#if defined(UINT_MAX) && UINT_MAX == 0xffffffff
-    typedef int i32_t;
-    typedef unsigned ui32_t;
+#جے_انت
+#إذا defined(UINT_MAX) && UINT_MAX == 0xffffffff
+    تعريفنوع صحيح i32_t;
+    تعريفنوع بنانشانی ui32_t;
 #   define PI32 "d"
 #   define PUI32 "u"
-#elif defined(ULONG_MAX) && ULONG_MAX == 0xffffffff
-    typedef long i32_t;
-    typedef unsigned long ui32_t;
+#وإلاإذا defined(ULONG_MAX) && ULONG_MAX == 0xffffffff
+    تعريفنوع لما i32_t;
+    تعريفنوع بنانشانی لما ui32_t;
 #   define PI32 "ld"
 #   define PUI32 "lu"
-#else
+#وإلا
 #   error "no 32-bit integer"
-#endif
-#if defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
-    typedef long i64_t;
-    typedef unsigned long ui64_t;
+#جے_انت
+#إذا defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
+    تعريفنوع لما i64_t;
+    تعريفنوع بنانشانی لما ui64_t;
 #   define PI64 "ld"
 #   define PUI64 "lu"
-#elif defined(ULLONG_MAX) && ULLONG_MAX == 0xffffffffffffffff
-    typedef long long i64_t;
-    typedef unsigned long long ui64_t;
+#وإلاإذا defined(ULLONG_MAX) && ULLONG_MAX == 0xffffffffffffffff
+    تعريفنوع لما لما i64_t;
+    تعريفنوع بنانشانی لما لما ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#elif defined(ULONG_LONG_MAX) && ULONG_LONG_MAX == 0xffffffffffffffff
-    typedef long long i64_t;
-    typedef unsigned long long ui64_t;
+#وإلاإذا defined(ULONG_LONG_MAX) && ULONG_LONG_MAX == 0xffffffffffffffff
+    تعريفنوع لما لما i64_t;
+    تعريفنوع بنانشانی لما لما ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#else
+#وإلا
 #   error "no 64-bit integer"
-#endif
-#endif
+#جے_انت
+#جے_انت
