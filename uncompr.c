@@ -26,20 +26,20 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
+puur_naa_nka ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
                           z_size_t *sourceLen) {
     z_stream stream;
-    int err;
+    puur_naa_nka err;
     const uInt max = (uInt)-1;
     z_size_t len, left;
 
-    if (sourceLen == NULL || (*sourceLen > 0 && source == NULL) ||
+    ပေႃး (sourceLen == NULL || (*sourceLen > 0 && source == NULL) ||
         destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+        ပွၵ်ႈ Z_STREAM_ERROR;
 
     len = *sourceLen;
     left = *destLen;
-    if (left == 0 && dest == Z_NULL)
+    ပေႃး (left == 0 && dest == Z_NULL)
         dest = (Bytef *)&stream.reserved;       /* next_out cannot be NULL */
 
     stream.next_in = (z_const Bytef *)source;
@@ -49,22 +49,22 @@ int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
     stream.opaque = (voidpf)0;
 
     err = inflateInit(&stream);
-    if (err != Z_OK) return err;
+    ပေႃး (err != Z_OK) ပွၵ်ႈ err;
 
     stream.next_out = dest;
     stream.avail_out = 0;
 
     do {
-        if (stream.avail_out == 0) {
+        ပေႃး (stream.avail_out == 0) {
             stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
             left -= stream.avail_out;
         }
-        if (stream.avail_in == 0) {
+        ပေႃး (stream.avail_in == 0) {
             stream.avail_in = len > (z_size_t)max ? max : (uInt)len;
             len -= stream.avail_in;
         }
         err = inflate(&stream, Z_NO_FLUSH);
-    } while (err == Z_OK);
+    } ၶၢဝ်း (err == Z_OK);
 
     /* Set len and left to the unused input data and unused output space. Set
        *sourceLen to the amount of input consumed. Set *destLen to the amount
@@ -75,27 +75,27 @@ int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
     *destLen -= left;
 
     inflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK :
+    ပွၵ်ႈ err == Z_STREAM_END ? Z_OK :
            err == Z_NEED_DICT ? Z_DATA_ERROR  :
            err == Z_BUF_ERROR && len == 0 ? Z_DATA_ERROR :
            err;
 }
-int ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
+puur_naa_nka ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
                         uLong *sourceLen) {
-    int ret;
+    puur_naa_nka ret;
     z_size_t got = *destLen, used = *sourceLen;
     ret = uncompress2_z(dest, &got, source, &used);
     *sourceLen = (uLong)used;
     *destLen = (uLong)got;
-    return ret;
+    ပွၵ်ႈ ret;
 }
-int ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
+puur_naa_nka ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
                          z_size_t sourceLen) {
     z_size_t used = sourceLen;
-    return uncompress2_z(dest, destLen, source, &used);
+    ပွၵ်ႈ uncompress2_z(dest, destLen, source, &used);
 }
-int ZEXPORT uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
+puur_naa_nka ZEXPORT uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
                        uLong sourceLen) {
     uLong used = sourceLen;
-    return uncompress2(dest, destLen, source, &used);
+    ပွၵ်ႈ uncompress2(dest, destLen, source, &used);
 }
