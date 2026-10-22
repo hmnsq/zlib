@@ -8,23 +8,23 @@
 #define _zip_tools_H
 
 #ifdef __cplusplus
-extern "C" {
+வெளி "C" {
 #endif
 
 #ifndef _ZLIB_H
-#include "zlib.h"
+#அந்தர்பாவ "zlib.h"
 #endif
 
-#include "unzip.h"
+#அந்தர்பாவ "unzip.h"
 
 /* Repair a ZIP file (missing central directory)
    file: file to recover
    fileOut: output file after recovery
    fileOutTmp: temporary file name used for recovery
 */
-extern int ZEXPORT unzRepair(const char* file,
-                             const char* fileOut,
-                             const char* fileOutTmp,
+வெளி முழு ZEXPORT unzRepair(மாறிலி எழுத்து* file,
+                             மாறிலி எழுத்து* fileOut,
+                             மாறிலி எழுத்து* fileOutTmp,
                              uLong* nRecovered,
                              uLong* bytesRecovered);
 

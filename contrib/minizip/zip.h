@@ -40,35 +40,35 @@
 #define _zip12_H
 
 #ifdef __cplusplus
-extern "C" {
+வெளி "C" {
 #endif
 
 /* #define HAVE_BZIP2 */
 
 #ifndef _ZLIB_H
-#include "zlib.h"
+#அந்தர்பாவ "zlib.h"
 #endif
 
 #ifndef _ZLIBIOAPI_H
-#include "ioapi.h"
+#அந்தர்பாவ "ioapi.h"
 #endif
 
 #ifdef HAVE_BZIP2
-#include "bzlib.h"
+#அந்தர்பாவ "bzlib.h"
 #endif
 
 #define Z_BZIP2ED 12
 
-#if defined(STRICTZIP) || defined(STRICTZIPUNZIP)
+#எனில் defined(STRICTZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
-typedef struct TagzipFile__ { int unused; } zipFile__;
-typedef zipFile__ *zipFile;
-#else
-typedef voidp zipFile;
+வகைவரை கட்டமைப்பு TagzipFile__ { முழு unused; } zipFile__;
+வகைவரை zipFile__ *zipFile;
+#இல்லையெனில்
+வகைவரை voidp zipFile;
 #endif
 
-extern const char zip_copyright[];
+வெளி மாறிலி எழுத்து zip_copyright[];
 
 #define ZIP_OK                          (0)
 #define ZIP_EOF                         (0)
@@ -78,26 +78,26 @@ extern const char zip_copyright[];
 #define ZIP_INTERNALERROR               (-104)
 
 #ifndef DEF_MEM_LEVEL
-#  if MAX_MEM_LEVEL >= 8
+#  எனில் MAX_MEM_LEVEL >= 8
 #    define DEF_MEM_LEVEL 8
-#  else
+#  இல்லையெனில்
 #    define DEF_MEM_LEVEL  MAX_MEM_LEVEL
 #  endif
 #endif
 /* default memLevel */
 
 /* tm_zip contain date/time info */
-typedef struct tm_zip_s
+வகைவரை கட்டமைப்பு tm_zip_s
 {
-    int tm_sec;             /* seconds after the minute - [0,59] */
-    int tm_min;             /* minutes after the hour - [0,59] */
-    int tm_hour;            /* hours since midnight - [0,23] */
-    int tm_mday;            /* day of the month - [1,31] */
-    int tm_mon;             /* months since January - [0,11] */
-    int tm_year;            /* years - [1980..2044] */
+    முழு tm_sec;             /* seconds after the minute - [0,59] */
+    முழு tm_min;             /* minutes after the hour - [0,59] */
+    முழு tm_hour;            /* hours since midnight - [0,23] */
+    முழு tm_mday;            /* day of the month - [1,31] */
+    முழு tm_mon;             /* months since January - [0,11] */
+    முழு tm_year;            /* years - [1980..2044] */
 } tm_zip;
 
-typedef struct
+வகைவரை கட்டமைப்பு
 {
     tm_zip      tmz_date;       /* date in understandable format           */
     uLong       dosDate;       /* if dos_date == 0, tmu_date is used      */
@@ -107,15 +107,15 @@ typedef struct
     uLong       external_fa;    /* external file attributes        4 bytes */
 } zip_fileinfo;
 
-typedef const char* zipcharpc;
+வகைவரை மாறிலி எழுத்து* zipcharpc;
 
 
 #define APPEND_STATUS_CREATE        (0)
 #define APPEND_STATUS_CREATEAFTER   (1)
 #define APPEND_STATUS_ADDINZIP      (2)
 
-extern zipFile ZEXPORT zipOpen(const char *pathname, int append);
-extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
+வெளி zipFile ZEXPORT zipOpen(மாறிலி எழுத்து *pathname, முழு append);
+வெளி zipFile ZEXPORT zipOpen64(மாறிலி வெறுமை *pathname, முழு append);
 /*
   Create a zipfile.
      pathname contain on Windows XP a filename like "c:\\zlib\\zlib113.zip" or on
@@ -135,43 +135,43 @@ extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
    Of course, you can use RAW reading and writing to copy the file you did not want delete
  */
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname,
-                                int append,
+வெளி zipFile ZEXPORT zipOpen2(மாறிலி எழுத்து *pathname,
+                                முழு append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname,
-                                   int append,
+வெளி zipFile ZEXPORT zipOpen2_64(மாறிலி வெறுமை *pathname,
+                                   முழு append,
                                    zipcharpc* globalcomment,
                                    zlib_filefunc64_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen3(const void *pathname,
-                                int append,
+வெளி zipFile ZEXPORT zipOpen3(மாறிலி வெறுமை *pathname,
+                                முழு append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc64_32_def* pzlib_filefunc64_32_def);
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file,
-                                       const char* filename,
-                                       const zip_fileinfo* zipfi,
-                                       const void* extrafield_local,
+வெளி முழு ZEXPORT zipOpenNewFileInZip(zipFile file,
+                                       மாறிலி எழுத்து* filename,
+                                       மாறிலி zip_fileinfo* zipfi,
+                                       மாறிலி வெறுமை* extrafield_local,
                                        uInt size_extrafield_local,
-                                       const void* extrafield_global,
+                                       மாறிலி வெறுமை* extrafield_global,
                                        uInt size_extrafield_global,
-                                       const char* comment,
-                                       int method,
-                                       int level);
+                                       மாறிலி எழுத்து* comment,
+                                       முழு method,
+                                       முழு level);
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
-                                         const char* filename,
-                                         const zip_fileinfo* zipfi,
-                                         const void* extrafield_local,
+வெளி முழு ZEXPORT zipOpenNewFileInZip64(zipFile file,
+                                         மாறிலி எழுத்து* filename,
+                                         மாறிலி zip_fileinfo* zipfi,
+                                         மாறிலி வெறுமை* extrafield_local,
                                          uInt size_extrafield_local,
-                                         const void* extrafield_global,
+                                         மாறிலி வெறுமை* extrafield_global,
                                          uInt size_extrafield_global,
-                                         const char* comment,
-                                         int method,
-                                         int level,
-                                         int zip64);
+                                         மாறிலி எழுத்து* comment,
+                                         முழு method,
+                                         முழு level,
+                                         முழு zip64);
 
 /*
   Open a file in the ZIP for writing.
@@ -190,69 +190,69 @@ extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
  */
 
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+வெளி முழு ZEXPORT zipOpenNewFileInZip2(zipFile file,
+                                        மாறிலி எழுத்து* filename,
+                                        மாறிலி zip_fileinfo* zipfi,
+                                        மாறிலி வெறுமை* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        மாறிலி வெறுமை* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw);
+                                        மாறிலி எழுத்து* comment,
+                                        முழு method,
+                                        முழு level,
+                                        முழு raw);
 
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+வெளி முழு ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
+                                           மாறிலி எழுத்து* filename,
+                                           மாறிலி zip_fileinfo* zipfi,
+                                           மாறிலி வெறுமை* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           மாறிலி வெறுமை* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int zip64);
+                                           மாறிலி எழுத்து* comment,
+                                           முழு method,
+                                           முழு level,
+                                           முழு raw,
+                                           முழு zip64);
 /*
   Same than zipOpenNewFileInZip, except if raw=1, we write raw file
  */
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+வெளி முழு ZEXPORT zipOpenNewFileInZip3(zipFile file,
+                                        மாறிலி எழுத்து* filename,
+                                        மாறிலி zip_fileinfo* zipfi,
+                                        மாறிலி வெறுமை* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        மாறிலி வெறுமை* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
+                                        மாறிலி எழுத்து* comment,
+                                        முழு method,
+                                        முழு level,
+                                        முழு raw,
+                                        முழு windowBits,
+                                        முழு memLevel,
+                                        முழு strategy,
+                                        மாறிலி எழுத்து* password,
                                         uLong crcForCrypting);
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+வெளி முழு ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
+                                           மாறிலி எழுத்து* filename,
+                                           மாறிலி zip_fileinfo* zipfi,
+                                           மாறிலி வெறுமை* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           மாறிலி வெறுமை* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
+                                           மாறிலி எழுத்து* comment,
+                                           முழு method,
+                                           முழு level,
+                                           முழு raw,
+                                           முழு windowBits,
+                                           முழு memLevel,
+                                           முழு strategy,
+                                           மாறிலி எழுத்து* password,
                                            uLong crcForCrypting,
-                                           int zip64);
+                                           முழு zip64);
 
 /*
   Same than zipOpenNewFileInZip2, except
@@ -261,45 +261,45 @@ extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
     crcForCrypting : crc of file to compress (needed for crypting)
  */
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
+வெளி முழு ZEXPORT zipOpenNewFileInZip4(zipFile file,
+                                        மாறிலி எழுத்து* filename,
+                                        மாறிலி zip_fileinfo* zipfi,
+                                        மாறிலி வெறுமை* extrafield_local,
                                         uInt size_extrafield_local,
-                                        const void* extrafield_global,
+                                        மாறிலி வெறுமை* extrafield_global,
                                         uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
+                                        மாறிலி எழுத்து* comment,
+                                        முழு method,
+                                        முழு level,
+                                        முழு raw,
+                                        முழு windowBits,
+                                        முழு memLevel,
+                                        முழு strategy,
+                                        மாறிலி எழுத்து* password,
                                         uLong crcForCrypting,
                                         uLong versionMadeBy,
                                         uLong flagBase);
 
 
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
+வெளி முழு ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
+                                           மாறிலி எழுத்து* filename,
+                                           மாறிலி zip_fileinfo* zipfi,
+                                           மாறிலி வெறுமை* extrafield_local,
                                            uInt size_extrafield_local,
-                                           const void* extrafield_global,
+                                           மாறிலி வெறுமை* extrafield_global,
                                            uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
+                                           மாறிலி எழுத்து* comment,
+                                           முழு method,
+                                           முழு level,
+                                           முழு raw,
+                                           முழு windowBits,
+                                           முழு memLevel,
+                                           முழு strategy,
+                                           மாறிலி எழுத்து* password,
                                            uLong crcForCrypting,
                                            uLong versionMadeBy,
                                            uLong flagBase,
-                                           int zip64);
+                                           முழு zip64);
 /*
   Same than zipOpenNewFileInZip4, except
     versionMadeBy : value for Version made by field
@@ -307,28 +307,28 @@ extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
  */
 
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file,
-                                       const void* buf,
+வெளி முழு ZEXPORT zipWriteInFileInZip(zipFile file,
+                                       மாறிலி வெறுமை* buf,
                                        unsigned len);
 /*
   Write data in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file);
+வெளி முழு ZEXPORT zipCloseFileInZip(zipFile file);
 /*
   Close the current file in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file,
+வெளி முழு ZEXPORT zipCloseFileInZipRaw(zipFile file,
                                         uLong uncompressed_size,
                                         uLong crc32);
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file,
+வெளி முழு ZEXPORT zipCloseFileInZipRaw64(zipFile file,
                                           ZPOS64_T uncompressed_size,
                                           uLong crc32);
 
-extern int ZEXPORT zipAlreadyThere(zipFile file,
-                                   char const* name);
+வெளி முழு ZEXPORT zipAlreadyThere(zipFile file,
+                                   எழுத்து மாறிலி* name);
 /*
   See if name is already in file's central directory.
  */
@@ -339,14 +339,14 @@ extern int ZEXPORT zipAlreadyThere(zipFile file,
   uncompressed_size and crc32 are value for the uncompressed size
  */
 
-extern int ZEXPORT zipClose(zipFile file,
-                            const char* global_comment);
+வெளி முழு ZEXPORT zipClose(zipFile file,
+                            மாறிலி எழுத்து* global_comment);
 /*
   Close the zipfile
  */
 
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader);
+வெளி முழு ZEXPORT zipRemoveExtraInfoBlock(எழுத்து* pData, முழு* dataLen, short sHeader);
 /*
   zipRemoveExtraInfoBlock -  Added by Mathias Svensson
 

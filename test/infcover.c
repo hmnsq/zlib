@@ -5,19 +5,19 @@
 
 /* to use, do: ./configure --cover && make cover */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include "zlib.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ "zlib.h"
 
 /* get definition of internal structure so we can mess with it (see pull()),
    and so we can call inflate_trees() (see cover5()) */
 #define ZLIB_INTERNAL
-#include "inftrees.h"
-#include "inflate.h"
+#அந்தர்பாவ "inftrees.h"
+#அந்தர்பாவ "inflate.h"
 
-#define local static
+#define local நிலையான
 
 /* -- memory tracking routines -- */
 
@@ -53,44 +53,44 @@
  */
 
 /* these items are strung together in a linked list, one for each allocation */
-struct mem_item {
-    void *ptr;                  /* pointer to allocated memory */
+கட்டமைப்பு mem_item {
+    வெறுமை *ptr;                  /* pointer to allocated memory */
     size_t size;                /* requested size of allocation */
-    struct mem_item *next;      /* pointer to next item in list, or NULL */
+    கட்டமைப்பு mem_item *next;      /* pointer to next item in list, or NULL */
 };
 
 /* this structure is at the root of the linked list, and tracks statistics */
-struct mem_zone {
-    struct mem_item *first;     /* pointer to first item in list, or NULL */
+கட்டமைப்பு mem_zone {
+    கட்டமைப்பு mem_item *first;     /* pointer to first item in list, or NULL */
     size_t total, highwater;    /* total allocations, and largest total */
     size_t limit;               /* memory allocation limit, or 0 if no limit */
-    int notlifo, rogue;         /* counts of non-LIFO frees and rogue frees */
+    முழு notlifo, rogue;         /* counts of non-LIFO frees and rogue frees */
 };
 
 /* memory allocation routine to pass to zlib */
-local void *mem_alloc(void *mem, unsigned count, unsigned size)
+local வெறுமை *mem_alloc(வெறுமை *mem, unsigned மொத்தம், unsigned size)
 {
-    void *ptr;
-    struct mem_item *item;
-    struct mem_zone *zone = mem;
-    size_t len = count * (size_t)size;
+    வெறுமை *ptr;
+    கட்டமைப்பு mem_item *item;
+    கட்டமைப்பு mem_zone *zone = mem;
+    size_t len = மொத்தம் * (size_t)size;
 
     /* induced allocation failure */
-    if (zone == NULL || (zone->limit && zone->total + len > zone->limit))
-        return NULL;
+    எனில் (zone == வெற்று || (zone->limit && zone->total + len > zone->limit))
+        திரும்பு வெற்று;
 
     /* perform allocation using the standard library, fill memory with a
        non-zero value to make sure that the code isn't depending on zeros */
     ptr = malloc(len);
-    if (ptr == NULL)
-        return NULL;
+    எனில் (ptr == வெற்று)
+        திரும்பு வெற்று;
     memset(ptr, 0xa5, len);
 
     /* create a new item for the list */
-    item = malloc(sizeof(struct mem_item));
-    if (item == NULL) {
-        free(ptr);
-        return NULL;
+    item = malloc(அளவு(கட்டமைப்பு mem_item));
+    எனில் (item == வெற்று) {
+        விடுவி(ptr);
+        திரும்பு வெற்று;
     }
     item->ptr = ptr;
     item->size = len;
@@ -101,37 +101,37 @@ local void *mem_alloc(void *mem, unsigned count, unsigned size)
 
     /* update the statistics */
     zone->total += item->size;
-    if (zone->total > zone->highwater)
+    எனில் (zone->total > zone->highwater)
         zone->highwater = zone->total;
 
     /* return the allocated memory */
-    return ptr;
+    திரும்பு ptr;
 }
 
 /* memory free routine to pass to zlib */
-local void mem_free(void *mem, void *ptr)
+local வெறுமை mem_free(வெறுமை *mem, வெறுமை *ptr)
 {
-    struct mem_item *item, *next;
-    struct mem_zone *zone = mem;
+    கட்டமைப்பு mem_item *item, *next;
+    கட்டமைப்பு mem_zone *zone = mem;
 
     /* if no zone, just do a free */
-    if (zone == NULL) {
-        free(ptr);
-        return;
+    எனில் (zone == வெற்று) {
+        விடுவி(ptr);
+        திரும்பு;
     }
 
     /* point next to the item that matches ptr, or NULL if not found -- remove
        the item from the linked list if found */
     next = zone->first;
-    if (next) {
-        if (next->ptr == ptr)
+    எனில் (next) {
+        எனில் (next->ptr == ptr)
             zone->first = next->next;   /* first one is it, remove from list */
-        else {
-            do {                        /* search the linked list */
+        இல்லையெனில் {
+            செய் {                        /* search the linked list */
                 item = next;
                 next = item->next;
-            } while (next != NULL && next->ptr != ptr);
-            if (next) {                 /* if found, remove from linked list */
+            } போது (next != வெற்று && next->ptr != ptr);
+            எனில் (next) {                 /* if found, remove from linked list */
                 item->next = next->next;
                 zone->notlifo++;        /* not a LIFO free */
             }
@@ -140,28 +140,28 @@ local void mem_free(void *mem, void *ptr)
     }
 
     /* if found, update the statistics and free the item */
-    if (next) {
+    எனில் (next) {
         zone->total -= next->size;
-        free(next);
+        விடுவி(next);
     }
 
     /* if not found, update the rogue count */
-    else
+    இல்லையெனில்
         zone->rogue++;
 
     /* in any case, do the requested free with the standard library function */
-    free(ptr);
+    விடுவி(ptr);
 }
 
 /* set up a controlled memory allocation space for monitoring, set the stream
    parameters to the controlled routines, with opaque pointing to the space */
-local void mem_setup(z_stream *strm)
+local வெறுமை mem_setup(z_stream *strm)
 {
-    struct mem_zone *zone;
+    கட்டமைப்பு mem_zone *zone;
 
-    zone = malloc(sizeof(struct mem_zone));
-    assert(zone != NULL);
-    zone->first = NULL;
+    zone = malloc(அளவு(கட்டமைப்பு mem_zone));
+    ப்ரதிஜ்ஞா(zone != வெற்று);
+    zone->first = வெற்று;
     zone->total = 0;
     zone->highwater = 0;
     zone->limit = 0;
@@ -173,61 +173,61 @@ local void mem_setup(z_stream *strm)
 }
 
 /* set a limit on the total memory allocation, or 0 to remove the limit */
-local void mem_limit(z_stream *strm, size_t limit)
+local வெறுமை mem_limit(z_stream *strm, size_t limit)
 {
-    struct mem_zone *zone = strm->opaque;
+    கட்டமைப்பு mem_zone *zone = strm->opaque;
 
     zone->limit = limit;
 }
 
 /* show the current total requested allocations in bytes */
-local void mem_used(z_stream *strm, char *prefix)
+local வெறுமை mem_used(z_stream *strm, எழுத்து *prefix)
 {
-    struct mem_zone *zone = strm->opaque;
+    கட்டமைப்பு mem_zone *zone = strm->opaque;
 
     fprintf(stderr, "%s: %zu allocated\n", prefix, zone->total);
 }
 
 /* show the high water allocation in bytes */
-local void mem_high(z_stream *strm, char *prefix)
+local வெறுமை mem_உயர்வு(z_stream *strm, எழுத்து *prefix)
 {
-    struct mem_zone *zone = strm->opaque;
+    கட்டமைப்பு mem_zone *zone = strm->opaque;
 
     fprintf(stderr, "%s: %zu high water mark\n", prefix, zone->highwater);
 }
 
 /* release the memory allocation zone -- if there are any surprises, notify */
-local void mem_done(z_stream *strm, char *prefix)
+local வெறுமை mem_done(z_stream *strm, எழுத்து *prefix)
 {
-    int count = 0;
-    struct mem_item *item, *next;
-    struct mem_zone *zone = strm->opaque;
+    முழு மொத்தம் = 0;
+    கட்டமைப்பு mem_item *item, *next;
+    கட்டமைப்பு mem_zone *zone = strm->opaque;
 
     /* show high water mark */
-    mem_high(strm, prefix);
+    mem_உயர்வு(strm, prefix);
 
     /* free leftover allocations and item structures, if any */
     item = zone->first;
-    while (item != NULL) {
-        free(item->ptr);
+    போது (item != வெற்று) {
+        விடுவி(item->ptr);
         next = item->next;
-        free(item);
+        விடுவி(item);
         item = next;
-        count++;
+        மொத்தம்++;
     }
 
     /* issue alerts about anything unexpected */
-    if (count || zone->total)
+    எனில் (மொத்தம் || zone->total)
         fprintf(stderr, "** %s: %zu bytes in %d blocks not freed\n",
-                prefix, zone->total, count);
-    if (zone->notlifo)
+                prefix, zone->total, மொத்தம்);
+    எனில் (zone->notlifo)
         fprintf(stderr, "** %s: %d frees not LIFO\n", prefix, zone->notlifo);
-    if (zone->rogue)
+    எனில் (zone->rogue)
         fprintf(stderr, "** %s: %d frees not recognized\n",
                 prefix, zone->rogue);
 
     /* free the zone and delete from the stream */
-    free(zone);
+    விடுவி(zone);
     strm->opaque = Z_NULL;
     strm->zalloc = Z_NULL;
     strm->zfree = Z_NULL;
@@ -242,34 +242,34 @@ local void mem_done(z_stream *strm, char *prefix)
    by a delimiter, where that single digit writes a byte.  The returned data is
    allocated and must eventually be freed.  NULL is returned if out of memory.
    If the length is not needed, then len can be NULL. */
-local unsigned char *h2b(const char *hex, unsigned *len)
+local unsigned எழுத்து *h2b(மாறிலி எழுத்து *hex, unsigned *len)
 {
-    unsigned char *in, *re;
+    unsigned எழுத்து *in, *re;
     unsigned next, val;
 
     in = malloc((strlen(hex) + 1) >> 1);
-    if (in == NULL)
-        return NULL;
+    எனில் (in == வெற்று)
+        திரும்பு வெற்று;
     next = 0;
     val = 1;
-    do {
-        if (*hex >= '0' && *hex <= '9')
+    செய் {
+        எனில் (*hex >= '0' && *hex <= '9')
             val = (val << 4) + *hex - '0';
-        else if (*hex >= 'A' && *hex <= 'F')
+        இல்லையெனில் எனில் (*hex >= 'A' && *hex <= 'F')
             val = (val << 4) + *hex - 'A' + 10;
-        else if (*hex >= 'a' && *hex <= 'f')
+        இல்லையெனில் எனில் (*hex >= 'a' && *hex <= 'f')
             val = (val << 4) + *hex - 'a' + 10;
-        else if (val != 1 && val < 32)  /* one digit followed by delimiter */
+        இல்லையெனில் எனில் (val != 1 && val < 32)  /* one digit followed by delimiter */
             val += 240;                 /* make it look like two digits */
-        if (val > 255) {                /* have two digits */
+        எனில் (val > 255) {                /* have two digits */
             in[next++] = val & 0xff;    /* save the decoded byte */
             val = 1;                    /* start over */
         }
-    } while (*hex++);       /* go through the loop with the terminating null */
-    if (len != NULL)
+    } போது (*hex++);       /* go through the loop with the terminating null */
+    எனில் (len != வெற்று)
         *len = next;
     re = realloc(in, next);
-    return re == NULL ? in : re;
+    திரும்பு re == வெற்று ? in : re;
 }
 
 /* generic inflate() run, where hex is the hexadecimal input data, what is the
@@ -281,12 +281,12 @@ local unsigned char *h2b(const char *hex, unsigned *len)
    header information is collected with inflateGetHeader().  If a zlib stream
    is looking for a dictionary, then an empty dictionary is provided.
    inflate() is run until all of the input data is consumed. */
-local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
-               int err)
+local வெறுமை inf(எழுத்து *hex, எழுத்து *what, unsigned step, முழு win, unsigned len,
+               முழு err)
 {
-    int ret;
+    முழு ret;
     unsigned have;
-    unsigned char *in, *out;
+    unsigned எழுத்து *in, *out;
     z_stream strm, copy;
     gz_header head;
 
@@ -294,74 +294,74 @@ local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
     ret = inflateInit2(&strm, win);
-    if (ret != Z_OK) {
+    எனில் (ret != Z_OK) {
         mem_done(&strm, what);
-        return;
+        திரும்பு;
     }
-    out = malloc(len);                          assert(out != NULL);
-    if (win == 47) {
+    out = malloc(len);                          ப்ரதிஜ்ஞா(out != வெற்று);
+    எனில் (win == 47) {
         head.extra = out;
         head.extra_max = len;
         head.name = out;
         head.name_max = len;
         head.comment = out;
         head.comm_max = len;
-        ret = inflateGetHeader(&strm, &head);   assert(ret == Z_OK);
+        ret = inflateGetHeader(&strm, &head);   ப்ரதிஜ்ஞா(ret == Z_OK);
     }
-    in = h2b(hex, &have);                       assert(in != NULL);
-    if (step == 0 || step > have)
+    in = h2b(hex, &have);                       ப்ரதிஜ்ஞா(in != வெற்று);
+    எனில் (step == 0 || step > have)
         step = have;
     strm.avail_in = step;
     have -= step;
     strm.next_in = in;
-    do {
+    செய் {
         strm.avail_out = len;
         strm.next_out = out;
-        ret = inflate(&strm, Z_NO_FLUSH);       assert(err == 9 || ret == err);
-        if (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_NEED_DICT)
-            break;
-        if (ret == Z_NEED_DICT) {
+        ret = inflate(&strm, Z_NO_FLUSH);       ப்ரதிஜ்ஞா(err == 9 || ret == err);
+        எனில் (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_NEED_DICT)
+            நிறுத்து;
+        எனில் (ret == Z_NEED_DICT) {
             ret = inflateSetDictionary(&strm, in, 1);
-                                                assert(ret == Z_DATA_ERROR);
+                                                ப்ரதிஜ்ஞா(ret == Z_DATA_ERROR);
             mem_limit(&strm, 1);
             ret = inflateSetDictionary(&strm, out, 0);
-                                                assert(ret == Z_MEM_ERROR);
+                                                ப்ரதிஜ்ஞா(ret == Z_MEM_ERROR);
             mem_limit(&strm, 0);
-            ((struct inflate_state *)strm.state)->mode = DICT;
+            ((கட்டமைப்பு inflate_state *)strm.state)->mode = DICT;
             ret = inflateSetDictionary(&strm, out, 0);
-                                                assert(ret == Z_OK);
-            ret = inflate(&strm, Z_NO_FLUSH);   assert(ret == Z_BUF_ERROR);
+                                                ப்ரதிஜ்ஞா(ret == Z_OK);
+            ret = inflate(&strm, Z_NO_FLUSH);   ப்ரதிஜ்ஞா(ret == Z_BUF_ERROR);
         }
-        ret = inflateCopy(&copy, &strm);        assert(ret == Z_OK);
-        ret = inflateEnd(&copy);                assert(ret == Z_OK);
+        ret = inflateCopy(&copy, &strm);        ப்ரதிஜ்ஞா(ret == Z_OK);
+        ret = inflateEnd(&copy);                ப்ரதிஜ்ஞா(ret == Z_OK);
         err = 9;                        /* don't care next time around */
         have += strm.avail_in;
         strm.avail_in = step > have ? have : step;
         have -= strm.avail_in;
-    } while (strm.avail_in);
-    free(in);
-    free(out);
-    ret = inflateReset2(&strm, -8);             assert(ret == Z_OK);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+    } போது (strm.avail_in);
+    விடுவி(in);
+    விடுவி(out);
+    ret = inflateReset2(&strm, -8);             ப்ரதிஜ்ஞா(ret == Z_OK);
+    ret = inflateEnd(&strm);                    ப்ரதிஜ்ஞா(ret == Z_OK);
     mem_done(&strm, what);
 }
 
 /* cover all of the lines in inflate.c up to inflate() */
-local void cover_support(void)
+local வெறுமை cover_support(வெறுமை)
 {
-    int ret;
+    முழு ret;
     z_stream strm;
 
     mem_setup(&strm);
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
-    ret = inflateInit(&strm);                   assert(ret == Z_OK);
+    ret = inflateInit(&strm);                   ப்ரதிஜ்ஞா(ret == Z_OK);
     mem_used(&strm, "inflate init");
-    ret = inflatePrime(&strm, 5, 31);           assert(ret == Z_OK);
-    ret = inflatePrime(&strm, -1, 0);           assert(ret == Z_OK);
+    ret = inflate_பகாஎண்(&strm, 5, 31);           ப்ரதிஜ்ஞா(ret == Z_OK);
+    ret = inflate_பகாஎண்(&strm, -1, 0);           ப்ரதிஜ்ஞா(ret == Z_OK);
     ret = inflateSetDictionary(&strm, Z_NULL, 0);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+                                                ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
+    ret = inflateEnd(&strm);                    ப்ரதிஜ்ஞா(ret == Z_OK);
     mem_done(&strm, "prime");
 
     inf("63 0", "force window allocation", 0, -15, 1, Z_OK);
@@ -373,27 +373,27 @@ local void cover_support(void)
     mem_setup(&strm);
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
-    ret = inflateInit_(&strm, "!", (int)sizeof(z_stream));
-                                                assert(ret == Z_VERSION_ERROR);
+    ret = inflateInit_(&strm, "!", (முழு)அளவு(z_stream));
+                                                ப்ரதிஜ்ஞா(ret == Z_VERSION_ERROR);
     mem_done(&strm, "wrong version");
 
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
-    ret = inflateInit(&strm);                   assert(ret == Z_OK);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+    ret = inflateInit(&strm);                   ப்ரதிஜ்ஞா(ret == Z_OK);
+    ret = inflateEnd(&strm);                    ப்ரதிஜ்ஞா(ret == Z_OK);
     fputs("inflate built-in memory routines\n", stderr);
 }
 
 /* cover all inflate() header and trailer cases and code after inflate() */
-local void cover_wrap(void)
+local வெறுமை cover_wrap(வெறுமை)
 {
-    int ret;
+    முழு ret;
     z_stream strm, copy;
-    unsigned char dict[257];
+    unsigned எழுத்து dict[257];
 
-    ret = inflate(Z_NULL, 0);                   assert(ret == Z_STREAM_ERROR);
-    ret = inflateEnd(Z_NULL);                   assert(ret == Z_STREAM_ERROR);
-    ret = inflateCopy(Z_NULL, Z_NULL);          assert(ret == Z_STREAM_ERROR);
+    ret = inflate(Z_NULL, 0);                   ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
+    ret = inflateEnd(Z_NULL);                   ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
+    ret = inflateCopy(Z_NULL, Z_NULL);          ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
     fputs("inflate bad parameters\n", stderr);
 
     inf("1f 8b 0 0", "bad gzip method", 0, 31, 0, Z_DATA_ERROR);
@@ -415,116 +415,116 @@ local void cover_wrap(void)
     strm.next_in = Z_NULL;
     ret = inflateInit2(&strm, -8);
     strm.avail_in = 2;
-    strm.next_in = (void *)"\x63";
+    strm.next_in = (வெறுமை *)"\x63";
     strm.avail_out = 1;
-    strm.next_out = (void *)&ret;
+    strm.next_out = (வெறுமை *)&ret;
     mem_limit(&strm, 1);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_MEM_ERROR);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_MEM_ERROR);
+    ret = inflate(&strm, Z_NO_FLUSH);           ப்ரதிஜ்ஞா(ret == Z_MEM_ERROR);
+    ret = inflate(&strm, Z_NO_FLUSH);           ப்ரதிஜ்ஞா(ret == Z_MEM_ERROR);
     mem_limit(&strm, 0);
     memset(dict, 0, 257);
     ret = inflateSetDictionary(&strm, dict, 257);
-                                                assert(ret == Z_OK);
-    mem_limit(&strm, (sizeof(struct inflate_state) << 1) + 256);
-    ret = inflatePrime(&strm, 16, 0);           assert(ret == Z_OK);
+                                                ப்ரதிஜ்ஞா(ret == Z_OK);
+    mem_limit(&strm, (அளவு(கட்டமைப்பு inflate_state) << 1) + 256);
+    ret = inflate_பகாஎண்(&strm, 16, 0);           ப்ரதிஜ்ஞா(ret == Z_OK);
     strm.avail_in = 2;
-    strm.next_in = (void *)"\x80";
-    ret = inflateSync(&strm);                   assert(ret == Z_DATA_ERROR);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_STREAM_ERROR);
+    strm.next_in = (வெறுமை *)"\x80";
+    ret = inflateSync(&strm);                   ப்ரதிஜ்ஞா(ret == Z_DATA_ERROR);
+    ret = inflate(&strm, Z_NO_FLUSH);           ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
     strm.avail_in = 4;
-    strm.next_in = (void *)"\0\0\xff\xff";
-    ret = inflateSync(&strm);                   assert(ret == Z_OK);
-    (void)inflateSyncPoint(&strm);
-    ret = inflateCopy(&copy, &strm);            assert(ret == Z_MEM_ERROR);
+    strm.next_in = (வெறுமை *)"\0\0\xff\xff";
+    ret = inflateSync(&strm);                   ப்ரதிஜ்ஞா(ret == Z_OK);
+    (வெறுமை)inflateSyncPoint(&strm);
+    ret = inflateCopy(&copy, &strm);            ப்ரதிஜ்ஞா(ret == Z_MEM_ERROR);
     mem_limit(&strm, 0);
-    ret = inflateUndermine(&strm, 1);           assert(ret == Z_DATA_ERROR);
-    (void)inflateMark(&strm);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+    ret = inflateUndermine(&strm, 1);           ப்ரதிஜ்ஞா(ret == Z_DATA_ERROR);
+    (வெறுமை)inflateMark(&strm);
+    ret = inflateEnd(&strm);                    ப்ரதிஜ்ஞா(ret == Z_OK);
     mem_done(&strm, "miscellaneous, force memory errors");
 }
 
 /* input and output functions for inflateBack() */
-local unsigned pull(void *desc, unsigned char z_const **buf)
+local unsigned pull(வெறுமை *desc, unsigned எழுத்து z_const **buf)
 {
-    static unsigned int next = 0;
-    static unsigned char dat[] = {0x63, 0, 2, 0};
-    struct inflate_state *state;
+    நிலையான unsigned முழு next = 0;
+    நிலையான unsigned எழுத்து dat[] = {0x63, 0, 2, 0};
+    கட்டமைப்பு inflate_state *state;
 
-    if (desc == Z_NULL) {
+    எனில் (desc == Z_NULL) {
         next = 0;
-        return 0;   /* no input (already provided at next_in) */
+        திரும்பு 0;   /* no input (already provided at next_in) */
     }
-    state = (void *)((z_stream *)desc)->state;
-    if (state != Z_NULL)
+    state = (வெறுமை *)((z_stream *)desc)->state;
+    எனில் (state != Z_NULL)
         state->mode = SYNC;     /* force an otherwise impossible situation */
-    return next < sizeof(dat) ? (*buf = dat + next++, 1) : 0;
+    திரும்பு next < அளவு(dat) ? (*buf = dat + next++, 1) : 0;
 }
 
-local int push(void *desc, unsigned char *buf, unsigned len)
+local முழு தள்ளு(வெறுமை *desc, unsigned எழுத்து *buf, unsigned len)
 {
-    (void)buf;
-    (void)len;
-    return desc != Z_NULL;      /* force error if desc not null */
+    (வெறுமை)buf;
+    (வெறுமை)len;
+    திரும்பு desc != Z_NULL;      /* force error if desc not null */
 }
 
 /* cover inflateBack() up to common deflate data cases and after those */
-local void cover_back(void)
+local வெறுமை cover_back(வெறுமை)
 {
-    int ret;
+    முழு ret;
     z_stream strm;
-    unsigned char win[32768];
+    unsigned எழுத்து win[32768];
 
     ret = inflateBackInit_(Z_NULL, 0, win, 0, 0);
-                                                assert(ret == Z_VERSION_ERROR);
-    ret = inflateBackInit(Z_NULL, 0, win);      assert(ret == Z_STREAM_ERROR);
+                                                ப்ரதிஜ்ஞா(ret == Z_VERSION_ERROR);
+    ret = inflateBackInit(Z_NULL, 0, win);      ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
     ret = inflateBack(Z_NULL, Z_NULL, Z_NULL, Z_NULL, Z_NULL);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateBackEnd(Z_NULL);               assert(ret == Z_STREAM_ERROR);
+                                                ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
+    ret = inflateBackEnd(Z_NULL);               ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
     fputs("inflateBack bad parameters\n", stderr);
 
     mem_setup(&strm);
-    ret = inflateBackInit(&strm, 15, win);      assert(ret == Z_OK);
+    ret = inflateBackInit(&strm, 15, win);      ப்ரதிஜ்ஞா(ret == Z_OK);
     strm.avail_in = 2;
-    strm.next_in = (void *)"\x03";
-    ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
-                                                assert(ret == Z_STREAM_END);
+    strm.next_in = (வெறுமை *)"\x03";
+    ret = inflateBack(&strm, pull, Z_NULL, தள்ளு, Z_NULL);
+                                                ப்ரதிஜ்ஞா(ret == Z_STREAM_END);
         /* force output error */
     strm.avail_in = 3;
-    strm.next_in = (void *)"\x63\x00";
-    ret = inflateBack(&strm, pull, Z_NULL, push, &strm);
-                                                assert(ret == Z_BUF_ERROR);
+    strm.next_in = (வெறுமை *)"\x63\x00";
+    ret = inflateBack(&strm, pull, Z_NULL, தள்ளு, &strm);
+                                                ப்ரதிஜ்ஞா(ret == Z_BUF_ERROR);
         /* force mode error by mucking with state */
-    ret = inflateBack(&strm, pull, &strm, push, Z_NULL);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateBackEnd(&strm);                assert(ret == Z_OK);
+    ret = inflateBack(&strm, pull, &strm, தள்ளு, Z_NULL);
+                                                ப்ரதிஜ்ஞா(ret == Z_STREAM_ERROR);
+    ret = inflateBackEnd(&strm);                ப்ரதிஜ்ஞா(ret == Z_OK);
     mem_done(&strm, "inflateBack bad state");
 
-    ret = inflateBackInit(&strm, 15, win);      assert(ret == Z_OK);
-    ret = inflateBackEnd(&strm);                assert(ret == Z_OK);
+    ret = inflateBackInit(&strm, 15, win);      ப்ரதிஜ்ஞா(ret == Z_OK);
+    ret = inflateBackEnd(&strm);                ப்ரதிஜ்ஞா(ret == Z_OK);
     fputs("inflateBack built-in memory routines\n", stderr);
 }
 
 /* do a raw inflate of data in hexadecimal with both inflate and inflateBack */
-local int try(char *hex, char *id, int err)
+local முழு try(எழுத்து *hex, எழுத்து *id, முழு err)
 {
-    int ret;
+    முழு ret;
     unsigned len, size;
-    unsigned char *in, *out, *win;
-    char *prefix;
+    unsigned எழுத்து *in, *out, *win;
+    எழுத்து *prefix;
     z_stream strm;
 
     /* convert to hex */
     in = h2b(hex, &len);
-    assert(in != NULL);
+    ப்ரதிஜ்ஞா(in != வெற்று);
 
     /* allocate work areas */
     size = len << 3;
     out = malloc(size);
-    assert(out != NULL);
+    ப்ரதிஜ்ஞா(out != வெற்று);
     win = malloc(32768);
-    assert(win != NULL);
+    ப்ரதிஜ்ஞா(win != வெற்று);
     prefix = malloc(strlen(id) + 6);
-    assert(prefix != NULL);
+    ப்ரதிஜ்ஞா(prefix != வெற்று);
 
     /* first with inflate */
     strcpy(prefix, id);
@@ -533,53 +533,53 @@ local int try(char *hex, char *id, int err)
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
     ret = inflateInit2(&strm, err < 0 ? 47 : -15);
-    assert(ret == Z_OK);
+    ப்ரதிஜ்ஞா(ret == Z_OK);
     strm.avail_in = len;
     strm.next_in = in;
-    do {
+    செய் {
         strm.avail_out = size;
         strm.next_out = out;
         ret = inflate(&strm, Z_TREES);
-        assert(ret != Z_STREAM_ERROR && ret != Z_MEM_ERROR);
-        if (ret == Z_DATA_ERROR || ret == Z_NEED_DICT)
-            break;
-    } while (strm.avail_in || strm.avail_out == 0);
-    if (err) {
-        assert(ret == Z_DATA_ERROR);
-        assert(strcmp(id, strm.msg) == 0);
+        ப்ரதிஜ்ஞா(ret != Z_STREAM_ERROR && ret != Z_MEM_ERROR);
+        எனில் (ret == Z_DATA_ERROR || ret == Z_NEED_DICT)
+            நிறுத்து;
+    } போது (strm.avail_in || strm.avail_out == 0);
+    எனில் (err) {
+        ப்ரதிஜ்ஞா(ret == Z_DATA_ERROR);
+        ப்ரதிஜ்ஞா(strcmp(id, strm.செய்தி) == 0);
     }
     inflateEnd(&strm);
     mem_done(&strm, prefix);
 
     /* then with inflateBack */
-    if (err >= 0) {
+    எனில் (err >= 0) {
         strcpy(prefix, id);
         strcat(prefix, "-back");
         mem_setup(&strm);
         ret = inflateBackInit(&strm, 15, win);
-        assert(ret == Z_OK);
+        ப்ரதிஜ்ஞா(ret == Z_OK);
         strm.avail_in = len;
         strm.next_in = in;
-        ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
-        assert(ret != Z_STREAM_ERROR);
-        if (err) {
-            assert(ret == Z_DATA_ERROR);
-            assert(strcmp(id, strm.msg) == 0);
+        ret = inflateBack(&strm, pull, Z_NULL, தள்ளு, Z_NULL);
+        ப்ரதிஜ்ஞா(ret != Z_STREAM_ERROR);
+        எனில் (err) {
+            ப்ரதிஜ்ஞா(ret == Z_DATA_ERROR);
+            ப்ரதிஜ்ஞா(strcmp(id, strm.செய்தி) == 0);
         }
         inflateBackEnd(&strm);
         mem_done(&strm, prefix);
     }
 
     /* clean up */
-    free(prefix);
-    free(win);
-    free(out);
-    free(in);
-    return ret;
+    விடுவி(prefix);
+    விடுவி(win);
+    விடுவி(out);
+    விடுவி(in);
+    திரும்பு ret;
 }
 
 /* cover deflate data cases in both inflate() and inflateBack() */
-local void cover_inflate(void)
+local வெறுமை cover_inflate(வெறுமை)
 {
     try("0 0 0 0 0", "invalid stored block lengths", 1);
     try("3 0", "fixed", 0);
@@ -615,31 +615,31 @@ local void cover_inflate(void)
 }
 
 /* cover remaining lines in inftrees.c */
-local void cover_trees(void)
+local வெறுமை cover_trees(வெறுமை)
 {
-    int ret;
+    முழு ret;
     unsigned bits;
     unsigned short lens[16], work[16];
     code *next, table[ENOUGH_DISTS];
 
     /* we need to call inflate_table() directly in order to manifest not-
        enough errors, since zlib insures that enough is always enough */
-    for (bits = 0; bits < 15; bits++)
+    க்கு (bits = 0; bits < 15; bits++)
         lens[bits] = (unsigned short)(bits + 1);
     lens[15] = 15;
     next = table;
     bits = 15;
     ret = inflate_table(DISTS, lens, 16, &next, &bits, work);
-                                                assert(ret == 1);
+                                                ப்ரதிஜ்ஞா(ret == 1);
     next = table;
     bits = 1;
     ret = inflate_table(DISTS, lens, 16, &next, &bits, work);
-                                                assert(ret == 1);
+                                                ப்ரதிஜ்ஞா(ret == 1);
     fputs("inflate_table not enough errors\n", stderr);
 }
 
 /* cover remaining inffast.c decoding and window copying */
-local void cover_fast(void)
+local வெறுமை cover_fast(வெறுமை)
 {
     inf("e5 e0 81 ad 6d cb b2 2c c9 01 1e 59 63 ae 7d ee fb 4d fd b5 35 41 68"
         " ff 7f 0f 0 0 0", "fast length extra bits", 0, -8, 258, Z_DATA_ERROR);
@@ -659,7 +659,7 @@ local void cover_fast(void)
         Z_STREAM_END);
 }
 
-int main(void)
+முழு முதன்மை(வெறுமை)
 {
     fprintf(stderr, "%s\n", zlibVersion());
     cover_support();
@@ -668,5 +668,5 @@ int main(void)
     cover_inflate();
     cover_trees();
     cover_fast();
-    return 0;
+    திரும்பு 0;
 }

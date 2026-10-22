@@ -2,127 +2,127 @@
 #ifndef zfstream_h
 #define zfstream_h
 
-#include <fstream.h>
-#include "zlib.h"
+#அந்தர்பாவ <fstream.h>
+#அந்தர்பாவ "zlib.h"
 
-class gzfilebuf : public streambuf {
+class gzfilebuf : பொது streambuf {
 
-public:
+பொது:
 
   gzfilebuf( );
-  virtual ~gzfilebuf();
+  மெய்நிகர் ~gzfilebuf();
 
-  gzfilebuf *open( const char *name, int io_mode );
-  gzfilebuf *attach( int file_descriptor, int io_mode );
+  gzfilebuf *open( மாறிலி எழுத்து *name, முழு io_mode );
+  gzfilebuf *attach( முழு file_descriptor, முழு io_mode );
   gzfilebuf *close();
 
-  int setcompressionlevel( int comp_level );
-  int setcompressionstrategy( int comp_strategy );
+  முழு setcompressionlevel( முழு comp_level );
+  முழு setcompressionstrategy( முழு comp_strategy );
 
-  inline int is_open() const { return (file !=NULL); }
+  உள்வரி முழு is_open() மாறிலி { திரும்பு (file !=வெற்று); }
 
-  virtual streampos seekoff( streamoff, ios::seek_dir, int );
+  மெய்நிகர் streampos seekoff( streamoff, ios::seek_dir, முழு );
 
-  virtual int sync();
+  மெய்நிகர் முழு sync();
 
-protected:
+பாதுகாக்கப்பட்ட:
 
-  virtual int underflow();
-  virtual int overflow( int = EOF );
+  மெய்நிகர் முழு underflow();
+  மெய்நிகர் முழு overflow( முழு = EOF );
 
-private:
+தனிப்பட்ட:
 
   gzFile file;
   short mode;
   short own_file_descriptor;
 
-  int flushbuf();
-  int fillbuf();
+  முழு flushbuf();
+  முழு fillbuf();
 
 };
 
-class gzfilestream_common : virtual public ios {
+class gzfilestream_common : மெய்நிகர் பொது ios {
 
   friend class gzifstream;
   friend class gzofstream;
-  friend gzofstream &setcompressionlevel( gzofstream &, int );
-  friend gzofstream &setcompressionstrategy( gzofstream &, int );
+  friend gzofstream &setcompressionlevel( gzofstream &, முழு );
+  friend gzofstream &setcompressionstrategy( gzofstream &, முழு );
 
-public:
-  virtual ~gzfilestream_common();
+பொது:
+  மெய்நிகர் ~gzfilestream_common();
 
-  void attach( int fd, int io_mode );
-  void open( const char *name, int io_mode );
-  void close();
+  வெறுமை attach( முழு fd, முழு io_mode );
+  வெறுமை open( மாறிலி எழுத்து *name, முழு io_mode );
+  வெறுமை close();
 
-protected:
+பாதுகாக்கப்பட்ட:
   gzfilestream_common();
 
-private:
+தனிப்பட்ட:
   gzfilebuf *rdbuf();
 
   gzfilebuf buffer;
 
 };
 
-class gzifstream : public gzfilestream_common, public istream {
+class gzifstream : பொது gzfilestream_common, பொது istream {
 
-public:
+பொது:
 
   gzifstream();
-  gzifstream( const char *name, int io_mode = ios::in );
-  gzifstream( int fd, int io_mode = ios::in );
+  gzifstream( மாறிலி எழுத்து *name, முழு io_mode = ios::in );
+  gzifstream( முழு fd, முழு io_mode = ios::in );
 
-  virtual ~gzifstream();
+  மெய்நிகர் ~gzifstream();
 
 };
 
-class gzofstream : public gzfilestream_common, public ostream {
+class gzofstream : பொது gzfilestream_common, பொது ostream {
 
-public:
+பொது:
 
   gzofstream();
-  gzofstream( const char *name, int io_mode = ios::out );
-  gzofstream( int fd, int io_mode = ios::out );
+  gzofstream( மாறிலி எழுத்து *name, முழு io_mode = ios::out );
+  gzofstream( முழு fd, முழு io_mode = ios::out );
 
-  virtual ~gzofstream();
+  மெய்நிகர் ~gzofstream();
 
 };
 
 template<class T> class gzomanip {
-  friend gzofstream &operator<<(gzofstream &, const gzomanip<T> &);
-public:
+  friend gzofstream &operator<<(gzofstream &, மாறிலி gzomanip<T> &);
+பொது:
   gzomanip(gzofstream &(*f)(gzofstream &, T), T v) : func(f), val(v) { }
-private:
+தனிப்பட்ட:
   gzofstream &(*func)(gzofstream &, T);
   T val;
 };
 
-template<class T> gzofstream &operator<<(gzofstream &s, const gzomanip<T> &m)
+template<class T> gzofstream &operator<<(gzofstream &s, மாறிலி gzomanip<T> &m)
 {
-  return (*m.func)(s, m.val);
+  திரும்பு (*m.func)(s, m.val);
 }
 
-inline gzofstream &setcompressionlevel( gzofstream &s, int l )
+உள்வரி gzofstream &setcompressionlevel( gzofstream &s, முழு l )
 {
   (s.rdbuf())->setcompressionlevel(l);
-  return s;
+  திரும்பு s;
 }
 
-inline gzofstream &setcompressionstrategy( gzofstream &s, int l )
+உள்வரி gzofstream &setcompressionstrategy( gzofstream &s, முழு l )
 {
   (s.rdbuf())->setcompressionstrategy(l);
-  return s;
+  திரும்பு s;
 }
 
-inline gzomanip<int> setcompressionlevel(int l)
+உள்வரி gzomanip<முழு> setcompressionlevel(முழு l)
 {
-  return gzomanip<int>(&setcompressionlevel,l);
+  திரும்பு gzomanip<முழு>(&setcompressionlevel,l);
 }
 
-inline gzomanip<int> setcompressionstrategy(int l)
+உள்வரி gzomanip<முழு> setcompressionstrategy(முழு l)
 {
-  return gzomanip<int>(&setcompressionstrategy,l);
+  திரும்பு gzomanip<முழு>(&setcompressionstrategy,l);
 }
 
 #endif

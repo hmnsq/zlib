@@ -5,108 +5,108 @@
 
 /* @(#) $Id$ */
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#எனில் defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "zlib.h"
-#include <stdio.h>
+#அந்தர்பாவ "zlib.h"
+#அந்தர்பாவ <stdio.h>
 
 #ifdef STDC
 #  include <string.h>
 #  include <stdlib.h>
 #endif
 
-#if defined(VMS)
+#எனில் defined(VMS)
 #  define TESTFILE "foo-gz"
-#elif defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#அல்லதெனில் defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define TESTFILE "foo/gz"
-#else
+#இல்லையெனில்
 #  define TESTFILE "foo.gz"
 #endif
 
-#define CHECK_ERR(err, msg) { \
-    if (err != Z_OK) { \
-        fprintf(stderr, "%s error: %d\n", msg, err); \
+#define CHECK_ERR(err, செய்தி) { \
+    எனில் (err != Z_OK) { \
+        fprintf(stderr, "%s error: %d\n", செய்தி, err); \
         exit(1); \
     } \
 }
 
-static z_const char hello[] = "hello, hello!";
+நிலையான z_const எழுத்து hello[] = "hello, hello!";
 /* "hello world" would be more standard, but the repeated "hello"
  * stresses the compression code better, sorry...
  */
 
-static const char dictionary[] = "hello";
-static uLong dictId;    /* Adler32 value of the dictionary */
+நிலையான மாறிலி எழுத்து dictionary[] = "hello";
+நிலையான uLong dictId;    /* Adler32 value of the dictionary */
 
 #ifdef Z_SOLO
 
-static void *myalloc(void *q, unsigned n, unsigned m) {
-    (void)q;
-    return calloc(n, m);
+நிலையான வெறுமை *myalloc(வெறுமை *q, unsigned n, unsigned m) {
+    (வெறுமை)q;
+    திரும்பு calloc(n, m);
 }
 
-static void myfree(void *q, void *p) {
-    (void)q;
-    free(p);
+நிலையான வெறுமை myfree(வெறுமை *q, வெறுமை *p) {
+    (வெறுமை)q;
+    விடுவி(p);
 }
 
-static alloc_func zalloc = myalloc;
-static free_func zfree = myfree;
+நிலையான alloc_func zalloc = myalloc;
+நிலையான free_func zfree = myfree;
 
-#else /* !Z_SOLO */
+#இல்லையெனில் /* !Z_SOLO */
 
-static alloc_func zalloc = (alloc_func)0;
-static free_func zfree = (free_func)0;
+நிலையான alloc_func zalloc = (alloc_func)0;
+நிலையான free_func zfree = (free_func)0;
 
 /* ===========================================================================
  * Test compress() and uncompress()
  */
-static void test_compress(Byte *compr, uLong comprLen, Byte *uncompr,
+நிலையான வெறுமை test_compress(Byte *compr, uLong comprLen, Byte *uncompr,
                    uLong uncomprLen) {
-    int err;
+    முழு err;
     uLong len = (uLong)strlen(hello)+1;
 
-    err = compress(compr, &comprLen, (const Bytef*)hello, len);
+    err = compress(compr, &comprLen, (மாறிலி Bytef*)hello, len);
     CHECK_ERR(err, "compress");
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((எழுத்து*)uncompr, "garbage");
 
     err = uncompress(uncompr, &uncomprLen, compr, comprLen);
     CHECK_ERR(err, "uncompress");
 
-    if (strcmp((char*)uncompr, hello)) {
+    எனில் (strcmp((எழுத்து*)uncompr, hello)) {
         fprintf(stderr, "bad uncompress\n");
         exit(1);
-    } else {
-        printf("uncompress(): %s\n", (char *)uncompr);
+    } இல்லையெனில் {
+        printf("uncompress(): %s\n", (எழுத்து *)uncompr);
     }
 }
 
 /* ===========================================================================
  * Test read/write of .gz files
  */
-static void test_gzio(const char *fname, Byte *uncompr, uLong uncomprLen) {
+நிலையான வெறுமை test_gzio(மாறிலி எழுத்து *fname, Byte *uncompr, uLong uncomprLen) {
 #ifdef NO_GZCOMPRESS
     fprintf(stderr, "NO_GZCOMPRESS -- gz* functions cannot compress\n");
-#else
-    int err;
-    int len = (int)strlen(hello)+1;
+#இல்லையெனில்
+    முழு err;
+    முழு len = (முழு)strlen(hello)+1;
     gzFile file;
     z_off_t pos;
 
     file = gzopen(fname, "wb");
-    if (file == NULL) {
+    எனில் (file == வெற்று) {
         fprintf(stderr, "gzopen error\n");
         exit(1);
     }
     gzputc(file, 'h');
-    if (gzputs(file, "ello") != 4) {
+    எனில் (gzputs(file, "ello") != 4) {
         fprintf(stderr, "gzputs err: %s\n", gzerror(file, &err));
         exit(1);
     }
-    if (gzprintf(file, ", %s!", "hello") != 8) {
+    எனில் (gzprintf(file, ", %s!", "hello") != 8) {
         fprintf(stderr, "gzprintf err: %s\n", gzerror(file, &err));
         exit(1);
     }
@@ -114,50 +114,50 @@ static void test_gzio(const char *fname, Byte *uncompr, uLong uncomprLen) {
     gzclose(file);
 
     file = gzopen(fname, "rb");
-    if (file == NULL) {
+    எனில் (file == வெற்று) {
         fprintf(stderr, "gzopen error\n");
         exit(1);
     }
-    strcpy((char*)uncompr, "garbage");
+    strcpy((எழுத்து*)uncompr, "garbage");
 
-    if (gzread(file, uncompr, (unsigned)uncomprLen) != len) {
+    எனில் (gzread(file, uncompr, (unsigned)uncomprLen) != len) {
         fprintf(stderr, "gzread err: %s\n", gzerror(file, &err));
         exit(1);
     }
-    if (strcmp((char*)uncompr, hello)) {
-        fprintf(stderr, "bad gzread: %s\n", (char*)uncompr);
+    எனில் (strcmp((எழுத்து*)uncompr, hello)) {
+        fprintf(stderr, "bad gzread: %s\n", (எழுத்து*)uncompr);
         exit(1);
-    } else {
-        printf("gzread(): %s\n", (char*)uncompr);
+    } இல்லையெனில் {
+        printf("gzread(): %s\n", (எழுத்து*)uncompr);
     }
 
     pos = gzseek(file, -8L, SEEK_CUR);
-    if (pos != 6 || gztell(file) != pos) {
+    எனில் (pos != 6 || gztell(file) != pos) {
         fprintf(stderr, "gzseek error, pos=%ld, gztell=%ld\n",
                 (long)pos, (long)gztell(file));
         exit(1);
     }
 
-    if (gzgetc(file) != ' ') {
+    எனில் (gzgetc(file) != ' ') {
         fprintf(stderr, "gzgetc error\n");
         exit(1);
     }
 
-    if (gzungetc(' ', file) != ' ') {
+    எனில் (gzungetc(' ', file) != ' ') {
         fprintf(stderr, "gzungetc error\n");
         exit(1);
     }
 
-    gzgets(file, (char*)uncompr, (int)uncomprLen);
-    if (strlen((char*)uncompr) != 7) { /* " hello!" */
+    gzgets(file, (எழுத்து*)uncompr, (முழு)uncomprLen);
+    எனில் (strlen((எழுத்து*)uncompr) != 7) { /* " hello!" */
         fprintf(stderr, "gzgets err after gzseek: %s\n", gzerror(file, &err));
         exit(1);
     }
-    if (strcmp((char*)uncompr, hello + 6)) {
+    எனில் (strcmp((எழுத்து*)uncompr, hello + 6)) {
         fprintf(stderr, "bad gzgets after gzseek\n");
         exit(1);
-    } else {
-        printf("gzgets() after gzseek: %s\n", (char*)uncompr);
+    } இல்லையெனில் {
+        printf("gzgets() after gzseek: %s\n", (எழுத்து*)uncompr);
     }
 
     gzclose(file);
@@ -169,9 +169,9 @@ static void test_gzio(const char *fname, Byte *uncompr, uLong uncomprLen) {
 /* ===========================================================================
  * Test deflate() with small buffers
  */
-static void test_deflate(Byte *compr, uLong comprLen) {
+நிலையான வெறுமை test_deflate(Byte *compr, uLong comprLen) {
     z_stream c_stream; /* compression stream */
-    int err;
+    முழு err;
     uLong len = (uLong)strlen(hello)+1;
 
     c_stream.zalloc = zalloc;
@@ -181,19 +181,19 @@ static void test_deflate(Byte *compr, uLong comprLen) {
     err = deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_in  = (z_const unsigned char *)hello;
+    c_stream.next_in  = (z_const unsigned எழுத்து *)hello;
     c_stream.next_out = compr;
 
-    while (c_stream.total_in != len && c_stream.total_out < comprLen) {
+    போது (c_stream.total_in != len && c_stream.total_out < comprLen) {
         c_stream.avail_in = c_stream.avail_out = 1; /* force small buffers */
         err = deflate(&c_stream, Z_NO_FLUSH);
         CHECK_ERR(err, "deflate");
     }
     /* Finish the stream, still forcing small buffers: */
-    for (;;) {
+    க்கு (;;) {
         c_stream.avail_out = 1;
         err = deflate(&c_stream, Z_FINISH);
-        if (err == Z_STREAM_END) break;
+        எனில் (err == Z_STREAM_END) நிறுத்து;
         CHECK_ERR(err, "deflate");
     }
 
@@ -204,12 +204,12 @@ static void test_deflate(Byte *compr, uLong comprLen) {
 /* ===========================================================================
  * Test inflate() with small buffers
  */
-static void test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+நிலையான வெறுமை test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                   uLong uncomprLen) {
-    int err;
+    முழு err;
     z_stream d_stream; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((எழுத்து*)uncompr, "garbage");
 
     d_stream.zalloc = zalloc;
     d_stream.zfree = zfree;
@@ -222,31 +222,31 @@ static void test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
     err = inflateInit(&d_stream);
     CHECK_ERR(err, "inflateInit");
 
-    while (d_stream.total_out < uncomprLen && d_stream.total_in < comprLen) {
+    போது (d_stream.total_out < uncomprLen && d_stream.total_in < comprLen) {
         d_stream.avail_in = d_stream.avail_out = 1; /* force small buffers */
         err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
+        எனில் (err == Z_STREAM_END) நிறுத்து;
         CHECK_ERR(err, "inflate");
     }
 
     err = inflateEnd(&d_stream);
     CHECK_ERR(err, "inflateEnd");
 
-    if (strcmp((char*)uncompr, hello)) {
+    எனில் (strcmp((எழுத்து*)uncompr, hello)) {
         fprintf(stderr, "bad inflate\n");
         exit(1);
-    } else {
-        printf("inflate(): %s\n", (char *)uncompr);
+    } இல்லையெனில் {
+        printf("inflate(): %s\n", (எழுத்து *)uncompr);
     }
 }
 
 /* ===========================================================================
  * Test deflate() with large buffers and dynamic change of compression level
  */
-static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
+நிலையான வெறுமை test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
                         uLong uncomprLen) {
     z_stream c_stream; /* compression stream */
-    int err;
+    முழு err;
 
     c_stream.zalloc = zalloc;
     c_stream.zfree = zfree;
@@ -265,7 +265,7 @@ static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
     c_stream.avail_in = (uInt)uncomprLen;
     err = deflate(&c_stream, Z_NO_FLUSH);
     CHECK_ERR(err, "deflate");
-    if (c_stream.avail_in != 0) {
+    எனில் (c_stream.avail_in != 0) {
         fprintf(stderr, "deflate not greedy\n");
         exit(1);
     }
@@ -285,7 +285,7 @@ static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
     CHECK_ERR(err, "deflate");
 
     err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    எனில் (err != Z_STREAM_END) {
         fprintf(stderr, "deflate should report Z_STREAM_END\n");
         exit(1);
     }
@@ -296,12 +296,12 @@ static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
 /* ===========================================================================
  * Test inflate() with large buffers
  */
-static void test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+நிலையான வெறுமை test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                         uLong uncomprLen) {
-    int err;
+    முழு err;
     z_stream d_stream; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((எழுத்து*)uncompr, "garbage");
 
     d_stream.zalloc = zalloc;
     d_stream.zfree = zfree;
@@ -313,21 +313,21 @@ static void test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
     err = inflateInit(&d_stream);
     CHECK_ERR(err, "inflateInit");
 
-    for (;;) {
+    க்கு (;;) {
         d_stream.next_out = uncompr;            /* discard the output */
         d_stream.avail_out = (uInt)uncomprLen;
         err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
+        எனில் (err == Z_STREAM_END) நிறுத்து;
         CHECK_ERR(err, "large inflate");
     }
 
     err = inflateEnd(&d_stream);
     CHECK_ERR(err, "inflateEnd");
 
-    if (d_stream.total_out != 2*uncomprLen + uncomprLen/2) {
+    எனில் (d_stream.total_out != 2*uncomprLen + uncomprLen/2) {
         fprintf(stderr, "bad large inflate: %lu\n", d_stream.total_out);
         exit(1);
-    } else {
+    } இல்லையெனில் {
         printf("large_inflate(): OK\n");
     }
 }
@@ -335,9 +335,9 @@ static void test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
 /* ===========================================================================
  * Test deflate() with full flush
  */
-static void test_flush(Byte *compr, uLong *comprLen) {
+நிலையான வெறுமை test_flush(Byte *compr, uLong *comprLen) {
     z_stream c_stream; /* compression stream */
-    int err;
+    முழு err;
     uInt len = (uInt)strlen(hello)+1;
 
     c_stream.zalloc = zalloc;
@@ -347,7 +347,7 @@ static void test_flush(Byte *compr, uLong *comprLen) {
     err = deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_in  = (z_const unsigned char *)hello;
+    c_stream.next_in  = (z_const unsigned எழுத்து *)hello;
     c_stream.next_out = compr;
     c_stream.avail_in = 3;
     c_stream.avail_out = (uInt)*comprLen;
@@ -358,7 +358,7 @@ static void test_flush(Byte *compr, uLong *comprLen) {
     c_stream.avail_in = len - 3;
 
     err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    எனில் (err != Z_STREAM_END) {
         CHECK_ERR(err, "deflate");
     }
     err = deflateEnd(&c_stream);
@@ -370,12 +370,12 @@ static void test_flush(Byte *compr, uLong *comprLen) {
 /* ===========================================================================
  * Test inflateSync()
  */
-static void test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
+நிலையான வெறுமை test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
                       uLong uncomprLen) {
-    int err;
+    முழு err;
     z_stream d_stream; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((எழுத்து*)uncompr, "garbage");
 
     d_stream.zalloc = zalloc;
     d_stream.zfree = zfree;
@@ -398,22 +398,22 @@ static void test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
     CHECK_ERR(err, "inflateSync");
 
     err = inflate(&d_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    எனில் (err != Z_STREAM_END) {
         fprintf(stderr, "inflate should report Z_STREAM_END\n");
         exit(1);
     }
     err = inflateEnd(&d_stream);
     CHECK_ERR(err, "inflateEnd");
 
-    printf("after inflateSync(): hel%s\n", (char *)uncompr);
+    printf("after inflateSync(): hel%s\n", (எழுத்து *)uncompr);
 }
 
 /* ===========================================================================
  * Test deflate() with preset dictionary
  */
-static void test_dict_deflate(Byte *compr, uLong comprLen) {
+நிலையான வெறுமை test_dict_deflate(Byte *compr, uLong comprLen) {
     z_stream c_stream; /* compression stream */
-    int err;
+    முழு err;
 
     c_stream.zalloc = zalloc;
     c_stream.zfree = zfree;
@@ -423,18 +423,18 @@ static void test_dict_deflate(Byte *compr, uLong comprLen) {
     CHECK_ERR(err, "deflateInit");
 
     err = deflateSetDictionary(&c_stream,
-                (const Bytef*)dictionary, (int)sizeof(dictionary));
+                (மாறிலி Bytef*)dictionary, (முழு)அளவு(dictionary));
     CHECK_ERR(err, "deflateSetDictionary");
 
     dictId = c_stream.adler;
     c_stream.next_out = compr;
     c_stream.avail_out = (uInt)comprLen;
 
-    c_stream.next_in = (z_const unsigned char *)hello;
+    c_stream.next_in = (z_const unsigned எழுத்து *)hello;
     c_stream.avail_in = (uInt)strlen(hello)+1;
 
     err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    எனில் (err != Z_STREAM_END) {
         fprintf(stderr, "deflate should report Z_STREAM_END\n");
         exit(1);
     }
@@ -445,12 +445,12 @@ static void test_dict_deflate(Byte *compr, uLong comprLen) {
 /* ===========================================================================
  * Test inflate() with a preset dictionary
  */
-static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+நிலையான வெறுமை test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                        uLong uncomprLen) {
-    int err;
+    முழு err;
     z_stream d_stream; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((எழுத்து*)uncompr, "garbage");
 
     d_stream.zalloc = zalloc;
     d_stream.zfree = zfree;
@@ -465,16 +465,16 @@ static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
     d_stream.next_out = uncompr;
     d_stream.avail_out = (uInt)uncomprLen;
 
-    for (;;) {
+    க்கு (;;) {
         err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
-        if (err == Z_NEED_DICT) {
-            if (d_stream.adler != dictId) {
+        எனில் (err == Z_STREAM_END) நிறுத்து;
+        எனில் (err == Z_NEED_DICT) {
+            எனில் (d_stream.adler != dictId) {
                 fprintf(stderr, "unexpected dictionary");
                 exit(1);
             }
-            err = inflateSetDictionary(&d_stream, (const Bytef*)dictionary,
-                                       (int)sizeof(dictionary));
+            err = inflateSetDictionary(&d_stream, (மாறிலி Bytef*)dictionary,
+                                       (முழு)அளவு(dictionary));
         }
         CHECK_ERR(err, "inflate with dict");
     }
@@ -482,11 +482,11 @@ static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
     err = inflateEnd(&d_stream);
     CHECK_ERR(err, "inflateEnd");
 
-    if (strcmp((char*)uncompr, hello)) {
+    எனில் (strcmp((எழுத்து*)uncompr, hello)) {
         fprintf(stderr, "bad inflate with dict\n");
         exit(1);
-    } else {
-        printf("inflate with dictionary: %s\n", (char *)uncompr);
+    } இல்லையெனில் {
+        printf("inflate with dictionary: %s\n", (எழுத்து *)uncompr);
     }
 }
 
@@ -494,17 +494,17 @@ static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
  * Usage:  example [output.gz  [input.gz]]
  */
 
-int main(int argc, char *argv[]) {
+முழு முதன்மை(முழு argc, எழுத்து *argv[]) {
     Byte *compr, *uncompr;
     uLong uncomprLen = 20000;
     uLong comprLen = 3 * uncomprLen;
-    static const char* myVersion = ZLIB_VERSION;
+    நிலையான மாறிலி எழுத்து* myVersion = ZLIB_VERSION;
 
-    if (zlibVersion()[0] != myVersion[0]) {
+    எனில் (zlibVersion()[0] != myVersion[0]) {
         fprintf(stderr, "incompatible zlib version\n");
         exit(1);
 
-    } else if (strcmp(zlibVersion(), ZLIB_VERSION) != 0) {
+    } இல்லையெனில் எனில் (strcmp(zlibVersion(), ZLIB_VERSION) != 0) {
         fprintf(stderr, "warning: different zlib version linked: %s\n",
                 zlibVersion());
     }
@@ -517,15 +517,15 @@ int main(int argc, char *argv[]) {
     /* compr and uncompr are cleared to avoid reading uninitialized
      * data and to ensure that uncompr compresses well.
      */
-    if (compr == Z_NULL || uncompr == Z_NULL) {
+    எனில் (compr == Z_NULL || uncompr == Z_NULL) {
         printf("out of memory\n");
         exit(1);
     }
 
 #ifdef Z_SOLO
-    (void)argc;
-    (void)argv;
-#else
+    (வெறுமை)argc;
+    (வெறுமை)argv;
+#இல்லையெனில்
     test_compress(compr, comprLen, uncompr, uncomprLen);
 
     test_gzio((argc > 1 ? argv[1] : TESTFILE),
@@ -545,8 +545,8 @@ int main(int argc, char *argv[]) {
     test_dict_deflate(compr, comprLen);
     test_dict_inflate(compr, comprLen, uncompr, uncomprLen);
 
-    free(compr);
-    free(uncompr);
+    விடுவி(compr);
+    விடுவி(uncompr);
 
-    return 0;
+    திரும்பு 0;
 }

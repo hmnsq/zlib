@@ -3,12 +3,12 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "zutil.h"
-#include "inftree9.h"
+#அந்தர்பாவ "zutil.h"
+#அந்தர்பாவ "inftree9.h"
 
 #define MAXBITS 15
 
-const char inflate9_copyright[] =
+மாறிலி எழுத்து inflate9_copyright[] =
    " inflate9 1.3.2.1 Copyright 1995-2026 Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -29,42 +29,42 @@ const char inflate9_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
+முழு inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
                    code FAR * FAR *table, unsigned FAR *bits,
                    unsigned short FAR *work) {
     unsigned len;               /* a code's length in bits */
     unsigned sym;               /* index of code symbols */
     unsigned min, max;          /* minimum and maximum code lengths */
-    unsigned root;              /* number of index bits for root table */
+    unsigned வேர்;              /* number of index bits for root table */
     unsigned curr;              /* number of index bits for current table */
     unsigned drop;              /* code bits to drop for sub-table */
-    int left;                   /* number of prefix codes available */
+    முழு இடது;                   /* number of prefix codes available */
     unsigned used;              /* code entries in table used */
     unsigned huff;              /* Huffman code */
     unsigned incr;              /* for incrementing code, index */
     unsigned fill;              /* index for replicating entries */
-    unsigned low;               /* low bits for current root entry */
+    unsigned கீழ்;               /* low bits for current root entry */
     unsigned mask;              /* mask for low root bits */
     code this;                  /* table entry for duplication */
     code FAR *next;             /* next available space in table */
-    const unsigned short FAR *base;     /* base value table to use */
-    const unsigned short FAR *extra;    /* extra bits table to use */
-    int end;                    /* use base and extra for symbol > end */
-    unsigned short count[MAXBITS+1];    /* number of codes of each length */
+    மாறிலி unsigned short FAR *base;     /* base value table to use */
+    மாறிலி unsigned short FAR *extra;    /* extra bits table to use */
+    முழு end;                    /* use base and extra for symbol > end */
+    unsigned short மொத்தம்[MAXBITS+1];    /* number of codes of each length */
     unsigned short offs[MAXBITS+1];     /* offsets in table for each length */
-    static const unsigned short lbase[31] = { /* Length codes 257..285 base */
+    நிலையான மாறிலி unsigned short lbase[31] = { /* Length codes 257..285 base */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17,
         19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115,
         131, 163, 195, 227, 3, 0, 0};
-    static const unsigned short lext[31] = { /* Length codes 257..285 extra */
+    நிலையான மாறிலி unsigned short lext[31] = { /* Length codes 257..285 extra */
         128, 128, 128, 128, 128, 128, 128, 128, 129, 129, 129, 129,
         130, 130, 130, 130, 131, 131, 131, 131, 132, 132, 132, 132,
         133, 133, 133, 133, 144, 68, 193};
-    static const unsigned short dbase[32] = { /* Distance codes 0..31 base */
+    நிலையான மாறிலி unsigned short dbase[32] = { /* Distance codes 0..31 base */
         1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49,
         65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073,
         4097, 6145, 8193, 12289, 16385, 24577, 32769, 49153};
-    static const unsigned short dext[32] = { /* Distance codes 0..31 extra */
+    நிலையான மாறிலி unsigned short dext[32] = { /* Distance codes 0..31 extra */
         128, 128, 128, 128, 129, 129, 130, 130, 131, 131, 132, 132,
         133, 133, 134, 134, 135, 135, 136, 136, 137, 137, 138, 138,
         139, 139, 140, 140, 141, 141, 142, 142};
@@ -101,39 +101,39 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
      */
 
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    for (len = 0; len <= MAXBITS; len++)
-        count[len] = 0;
-    for (sym = 0; sym < codes; sym++)
-        count[lens[sym]]++;
+    க்கு (len = 0; len <= MAXBITS; len++)
+        மொத்தம்[len] = 0;
+    க்கு (sym = 0; sym < codes; sym++)
+        மொத்தம்[lens[sym]]++;
 
     /* bound code lengths, force root to be within code lengths */
-    root = *bits;
-    for (max = MAXBITS; max >= 1; max--)
-        if (count[max] != 0) break;
-    if (root > max) root = max;
-    if (max == 0) return -1;            /* no codes! */
-    for (min = 1; min <= MAXBITS; min++)
-        if (count[min] != 0) break;
-    if (root < min) root = min;
+    வேர் = *bits;
+    க்கு (max = MAXBITS; max >= 1; max--)
+        எனில் (மொத்தம்[max] != 0) நிறுத்து;
+    எனில் (வேர் > max) வேர் = max;
+    எனில் (max == 0) திரும்பு -1;            /* no codes! */
+    க்கு (min = 1; min <= MAXBITS; min++)
+        எனில் (மொத்தம்[min] != 0) நிறுத்து;
+    எனில் (வேர் < min) வேர் = min;
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;
-        left -= count[len];
-        if (left < 0) return -1;        /* over-subscribed */
+    இடது = 1;
+    க்கு (len = 1; len <= MAXBITS; len++) {
+        இடது <<= 1;
+        இடது -= மொத்தம்[len];
+        எனில் (இடது < 0) திரும்பு -1;        /* over-subscribed */
     }
-    if (left > 0 && (type == CODES || max != 1))
-        return -1;                      /* incomplete set */
+    எனில் (இடது > 0 && (type == CODES || max != 1))
+        திரும்பு -1;                      /* incomplete set */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + count[len];
+    க்கு (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + மொத்தம்[len];
 
     /* sort symbols by length, by symbol order within each length */
-    for (sym = 0; sym < codes; sym++)
-        if (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
+    க்கு (sym = 0; sym < codes; sym++)
+        எனில் (lens[sym] != 0) work[offs[lens[sym]]++] = (unsigned short)sym;
 
     /*
        Create and fill in decoding tables.  In this loop, the table being
@@ -167,19 +167,19 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
      */
 
     /* set up for code type */
-    switch (type) {
-    case CODES:
+    தேர்வு (type) {
+    நிலை CODES:
         base = extra = work;    /* dummy value--not used */
         end = 19;
-        break;
-    case LENS:
+        நிறுத்து;
+    நிலை LENS:
         base = lbase;
         base -= 257;
         extra = lext;
         extra -= 257;
         end = 256;
-        break;
-    default:            /* DISTS */
+        நிறுத்து;
+    இயல்பு:            /* DISTS */
         base = dbase;
         extra = dext;
         end = -1;
@@ -190,90 +190,90 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
     sym = 0;                    /* starting code symbol */
     len = min;                  /* starting code length */
     next = *table;              /* current table to fill in */
-    curr = root;                /* current table index bits */
+    curr = வேர்;                /* current table index bits */
     drop = 0;                   /* current bits to drop from code for index */
-    low = (unsigned)(-1);       /* trigger new sub-table when len > root */
-    used = 1U << root;          /* use root table entries */
+    கீழ் = (unsigned)(-1);       /* trigger new sub-table when len > root */
+    used = 1U << வேர்;          /* use root table entries */
     mask = used - 1;            /* mask for comparing low */
 
     /* check available table space */
-    if ((type == LENS && used >= ENOUGH_LENS) ||
+    எனில் ((type == LENS && used >= ENOUGH_LENS) ||
         (type == DISTS && used >= ENOUGH_DISTS))
-        return 1;
+        திரும்பு 1;
 
     /* process all codes and make table entries */
-    for (;;) {
+    க்கு (;;) {
         /* create table entry */
-        this.bits = (unsigned char)(len - drop);
-        if ((int)(work[sym]) < end) {
-            this.op = (unsigned char)0;
+        this.bits = (unsigned எழுத்து)(len - drop);
+        எனில் ((முழு)(work[sym]) < end) {
+            this.op = (unsigned எழுத்து)0;
             this.val = work[sym];
         }
-        else if ((int)(work[sym]) > end) {
-            this.op = (unsigned char)(extra[work[sym]]);
+        இல்லையெனில் எனில் ((முழு)(work[sym]) > end) {
+            this.op = (unsigned எழுத்து)(extra[work[sym]]);
             this.val = base[work[sym]];
         }
-        else {
-            this.op = (unsigned char)(32 + 64);         /* end of block */
+        இல்லையெனில் {
+            this.op = (unsigned எழுத்து)(32 + 64);         /* end of block */
             this.val = 0;
         }
 
         /* replicate for those indices with low len bits equal to huff */
         incr = 1U << (len - drop);
         fill = 1U << curr;
-        do {
+        செய் {
             fill -= incr;
             next[(huff >> drop) + fill] = this;
-        } while (fill != 0);
+        } போது (fill != 0);
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        போது (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        எனில் (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        இல்லையெனில்
             huff = 0;
 
         /* go to next symbol, update count, len */
         sym++;
-        if (--(count[len]) == 0) {
-            if (len == max) break;
+        எனில் (--(மொத்தம்[len]) == 0) {
+            எனில் (len == max) நிறுத்து;
             len = lens[work[sym]];
         }
 
         /* create new sub-table if needed */
-        if (len > root && (huff & mask) != low) {
+        எனில் (len > வேர் && (huff & mask) != கீழ்) {
             /* if first time, transition to sub-tables */
-            if (drop == 0)
-                drop = root;
+            எனில் (drop == 0)
+                drop = வேர்;
 
             /* increment past last table */
             next += 1U << curr;
 
             /* determine length of next table */
             curr = len - drop;
-            left = (int)(1 << curr);
-            while (curr + drop < max) {
-                left -= count[curr + drop];
-                if (left <= 0) break;
+            இடது = (முழு)(1 << curr);
+            போது (curr + drop < max) {
+                இடது -= மொத்தம்[curr + drop];
+                எனில் (இடது <= 0) நிறுத்து;
                 curr++;
-                left <<= 1;
+                இடது <<= 1;
             }
 
             /* check for enough space */
             used += 1U << curr;
-            if ((type == LENS && used >= ENOUGH_LENS) ||
+            எனில் ((type == LENS && used >= ENOUGH_LENS) ||
                 (type == DISTS && used >= ENOUGH_DISTS))
-                return 1;
+                திரும்பு 1;
 
             /* point entry in root table to sub-table */
-            low = huff & mask;
-            (*table)[low].op = (unsigned char)curr;
-            (*table)[low].bits = (unsigned char)root;
-            (*table)[low].val = (unsigned short)(next - *table);
+            கீழ் = huff & mask;
+            (*table)[கீழ்].op = (unsigned எழுத்து)curr;
+            (*table)[கீழ்].bits = (unsigned எழுத்து)வேர்;
+            (*table)[கீழ்].val = (unsigned short)(next - *table);
         }
     }
 
@@ -284,17 +284,17 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
        through high index bits.  When the current sub-table is filled, the loop
        drops back to the root table to fill in any remaining entries there.
      */
-    this.op = (unsigned char)64;                /* invalid code marker */
-    this.bits = (unsigned char)(len - drop);
+    this.op = (unsigned எழுத்து)64;                /* invalid code marker */
+    this.bits = (unsigned எழுத்து)(len - drop);
     this.val = (unsigned short)0;
-    while (huff != 0) {
+    போது (huff != 0) {
         /* when done with sub-table, drop back to root table */
-        if (drop != 0 && (huff & mask) != low) {
+        எனில் (drop != 0 && (huff & mask) != கீழ்) {
             drop = 0;
-            len = root;
+            len = வேர்;
             next = *table;
-            curr = root;
-            this.bits = (unsigned char)len;
+            curr = வேர்;
+            this.bits = (unsigned எழுத்து)len;
         }
 
         /* put invalid code marker in table */
@@ -302,18 +302,18 @@ int inflate_table9(codetype type, unsigned short FAR *lens, unsigned codes,
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
-        while (huff & incr)
+        போது (huff & incr)
             incr >>= 1;
-        if (incr != 0) {
+        எனில் (incr != 0) {
             huff &= incr - 1;
             huff += incr;
         }
-        else
+        இல்லையெனில்
             huff = 0;
     }
 
     /* set return parameters */
     *table += used;
-    *bits = root;
-    return 0;
+    *bits = வேர்;
+    திரும்பு 0;
 }

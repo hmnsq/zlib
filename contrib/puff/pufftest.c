@@ -15,23 +15,23 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#எனில் defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "puff.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#எனில் defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
+#  define SET_இருமம்_MODE(file) setmode(fileno(file), O_இருமம்)
+#இல்லையெனில்
+#  define SET_இருமம்_MODE(file)
 #endif
 
-#define local static
+#define local நிலையான
 
 /* Return size times approximately the cube root of 2, keeping the result as 1,
    3, or 5 times a power of 2 -- the result is always > size, until the result
@@ -39,19 +39,19 @@
    to keep reallocations less than ~33% over the actual data. */
 local size_t bythirds(size_t size)
 {
-    int n;
+    முழு n;
     size_t m;
 
     m = size;
-    for (n = 0; m; n++)
+    க்கு (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    எனில் (n < 3)
+        திரும்பு size + 1;
     n -= 3;
     m = size >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    திரும்பு m > size ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,109 +60,109 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local வெறுமை *load(மாறிலி எழுத்து *name, size_t *len)
 {
     size_t size;
-    void *buf, *swap;
+    வெறுமை *buf, *swap;
     FILE *in;
 
     *len = 0;
     buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
-    in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
+    எனில் (buf == வெற்று)
+        திரும்பு வெற்று;
+    in = name == வெற்று ? stdin : fopen(name, "rb");
+    எனில் (in != வெற்று) {
+        க்கு (;;) {
+            *len += fread((எழுத்து *)buf + *len, 1, size - *len, in);
+            எனில் (*len < size) நிறுத்து;
             size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
-                free(buf);
-                buf = NULL;
-                break;
+            எனில் (size == *len || (swap = realloc(buf, size)) == வெற்று) {
+                விடுவி(buf);
+                buf = வெற்று;
+                நிறுத்து;
             }
             buf = swap;
         }
         fclose(in);
     }
-    return buf;
+    திரும்பு buf;
 }
 
-int main(int argc, char **argv)
+முழு முதன்மை(முழு argc, எழுத்து **argv)
 {
-    int ret, put = 0, fail = 0;
+    முழு ret, put = 0, fail = 0;
     unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
+    எழுத்து *arg, *name = வெற்று;
+    unsigned எழுத்து *source = வெற்று, *dest;
     size_t len = 0;
     unsigned long sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    போது (arg = *++argv, --argc)
+        எனில் (arg[0] == '-') {
+            எனில் (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            இல்லையெனில் எனில் (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
+            இல்லையெனில் எனில் (arg[1] >= '0' && arg[1] <= '9')
                 skip = (unsigned)atoi(arg + 1);
-            else {
+            இல்லையெனில் {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                திரும்பு 3;
             }
         }
-        else if (name != NULL) {
+        இல்லையெனில் எனில் (name != வெற்று) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            திரும்பு 3;
         }
-        else
+        இல்லையெனில்
             name = arg;
     source = load(name, &len);
-    if (source == NULL) {
+    எனில் (source == வெற்று) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        திரும்பு 4;
     }
-    if (len == 0) {
+    எனில் (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
-                name == NULL ? "<stdin>" : name);
-        free(source);
-        return 3;
+                name == வெற்று ? "<stdin>" : name);
+        விடுவி(source);
+        திரும்பு 3;
     }
-    if (skip >= len) {
+    எனில் (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
-        free(source);
-        return 3;
+        விடுவி(source);
+        திரும்பு 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
     sourcelen = (unsigned long)len;
     ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    எனில் (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    இல்லையெனில் {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        எனில் (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    எனில் (put && ret == 0) {
+        எனில் (fail)
             destlen >>= 1;
         dest = malloc(destlen);
-        if (dest == NULL) {
+        எனில் (dest == வெற்று) {
             fprintf(stderr, "memory allocation failure\n");
-            free(source);
-            return 4;
+            விடுவி(source);
+            திரும்பு 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
-        SET_BINARY_MODE(stdout);
+        SET_இருமம்_MODE(stdout);
         fwrite(dest, 1, destlen, stdout);
-        free(dest);
+        விடுவி(dest);
     }
 
     /* clean up */
-    free(source);
-    return ret;
+    விடுவி(source);
+    திரும்பு ret;
 }
