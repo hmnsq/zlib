@@ -8,16 +8,16 @@
 /* gzclose() is in a separate file so that it is linked in only if it is used.
    That way the other gzclose functions can be used instead to avoid linking in
    unneeded compression or decompression routines. */
-int ZEXPORT gzclose(gzFile file) {
+ཧྲིལ ZEXPORT gzclose(gzFile file) {
 #ifndef NO_GZCOMPRESS
     gz_statep state;
 
-    if (file == NULL)
-        return Z_STREAM_ERROR;
+    གལ་ཏེ (file == NULL)
+        ཕྱིར Z_STREAM_ERROR;
     state = (gz_statep)file;
 
-    return state->mode == GZ_READ ? gzclose_r(file) : gzclose_w(file);
-#else
-    return gzclose_r(file);
+    ཕྱིར state->mode == GZ_READ ? gzclose_r(file) : gzclose_w(file);
+#དེ་མིན
+    ཕྱིར gzclose_r(file);
 #endif
 }

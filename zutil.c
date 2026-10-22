@@ -10,50 +10,50 @@
 #  include "gzguts.h"
 #endif
 
-z_const char * const z_errmsg[10] = {
-    (z_const char *)"need dictionary",     /* Z_NEED_DICT       2  */
-    (z_const char *)"stream end",          /* Z_STREAM_END      1  */
-    (z_const char *)"",                    /* Z_OK              0  */
-    (z_const char *)"file error",          /* Z_ERRNO         (-1) */
-    (z_const char *)"stream error",        /* Z_STREAM_ERROR  (-2) */
-    (z_const char *)"data error",          /* Z_DATA_ERROR    (-3) */
-    (z_const char *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
-    (z_const char *)"buffer error",        /* Z_BUF_ERROR     (-5) */
-    (z_const char *)"incompatible version",/* Z_VERSION_ERROR (-6) */
-    (z_const char *)""
+z_const var_na * const z_errmsg[10] = {
+    (z_const var_na *)"need dictionary",     /* Z_NEED_DICT       2  */
+    (z_const var_na *)"stream end",          /* Z_STREAM_END      1  */
+    (z_const var_na *)"",                    /* Z_OK              0  */
+    (z_const var_na *)"file error",          /* Z_ERRNO         (-1) */
+    (z_const var_na *)"stream error",        /* Z_STREAM_ERROR  (-2) */
+    (z_const var_na *)"data error",          /* Z_DATA_ERROR    (-3) */
+    (z_const var_na *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
+    (z_const var_na *)"buffer error",        /* Z_BUF_ERROR     (-5) */
+    (z_const var_na *)"incompatible version",/* Z_VERSION_ERROR (-6) */
+    (z_const var_na *)""
 };
 
 
-const char * ZEXPORT zlibVersion(void) {
-    return ZLIB_VERSION;
+const var_na * ZEXPORT zlibVersion(void) {
+    ཕྱིར ZLIB_VERSION;
 }
 
 uLong ZEXPORT zlibCompileFlags(void) {
     uLong flags;
 
     flags = 0;
-    switch ((int)(sizeof(uInt))) {
-    case 2:     break;
-    case 4:     flags += 1;     break;
-    case 8:     flags += 2;     break;
+    switch ((ཧྲིལ)(parimaa_na(uInt))) {
+    pak_sa 2:     bha_nga;
+    pak_sa 4:     flags += 1;     bha_nga;
+    pak_sa 8:     flags += 2;     bha_nga;
     default:    flags += 3;
     }
-    switch ((int)(sizeof(uLong))) {
-    case 2:     break;
-    case 4:     flags += 1 << 2;        break;
-    case 8:     flags += 2 << 2;        break;
+    switch ((ཧྲིལ)(parimaa_na(uLong))) {
+    pak_sa 2:     bha_nga;
+    pak_sa 4:     flags += 1 << 2;        bha_nga;
+    pak_sa 8:     flags += 2 << 2;        bha_nga;
     default:    flags += 3 << 2;
     }
-    switch ((int)(sizeof(voidpf))) {
-    case 2:     break;
-    case 4:     flags += 1 << 4;        break;
-    case 8:     flags += 2 << 4;        break;
+    switch ((ཧྲིལ)(parimaa_na(voidpf))) {
+    pak_sa 2:     bha_nga;
+    pak_sa 4:     flags += 1 << 4;        bha_nga;
+    pak_sa 8:     flags += 2 << 4;        bha_nga;
     default:    flags += 3 << 4;
     }
-    switch ((int)(sizeof(z_off_t))) {
-    case 2:     break;
-    case 4:     flags += 1 << 6;        break;
-    case 8:     flags += 2 << 6;        break;
+    switch ((ཧྲིལ)(parimaa_na(z_off_t))) {
+    pak_sa 2:     bha_nga;
+    pak_sa 4:     flags += 1 << 6;        bha_nga;
+    pak_sa 8:     flags += 2 << 6;        bha_nga;
     default:    flags += 3 << 6;
     }
 #ifdef ZLIB_DEBUG
@@ -85,39 +85,39 @@ uLong ZEXPORT zlibCompileFlags(void) {
 #ifdef FASTEST
     flags += 1L << 21;
 #endif
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+#གལ་ཏེ defined(STDC) || defined(Z_HAVE_STDARG_H)
 #   ifdef NO_vsnprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       དེ་མིན
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_vsprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   དེ་མིན
 #       ifdef HAS_vsnprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
-#else
+#དེ་མིན
     flags += 1L << 24;
 #   ifdef NO_snprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       དེ་མིན
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_sprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   དེ་མིན
 #       ifdef HAS_snprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
 #endif
-    return flags;
+    ཕྱིར flags;
 }
 
 #ifdef ZLIB_DEBUG
@@ -125,9 +125,9 @@ uLong ZEXPORT zlibCompileFlags(void) {
 #  ifndef verbose
 #    define verbose 0
 #  endif
-int ZLIB_INTERNAL z_verbose = verbose;
+ཧྲིལ ZLIB_INTERNAL z_verbose = verbose;
 
-void ZLIB_INTERNAL z_error(char *m) {
+void ZLIB_INTERNAL z_error(var_na *m) {
     fprintf(stderr, "%s\n", m);
     exit(1);
 }
@@ -136,16 +136,16 @@ void ZLIB_INTERNAL z_error(char *m) {
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(int err) {
-    return ERR_MSG(err);
+const var_na * ZEXPORT zError(ཧྲིལ err) {
+    ཕྱིར ERR_MSG(err);
 }
 
-#if defined(_WIN32_WCE) && _WIN32_WCE < 0x800
+#གལ་ཏེ defined(_WIN32_WCE) && _WIN32_WCE < 0x800
     /* The older Microsoft C Run-Time Library for Windows CE doesn't have
      * errno.  We define it as a global variable to simplify porting.
      * Its value is always 0 and should not be used.
      */
-    int errno = 0;
+    ཧྲིལ errno = 0;
 #endif
 
 #ifndef HAVE_MEMCPY
@@ -153,25 +153,25 @@ const char * ZEXPORT zError(int err) {
 void ZLIB_INTERNAL zmemcpy(void FAR *dst, const void FAR *src, z_size_t n) {
     uchf *p = dst;
     const uchf *q = src;
-    while (n) {
+    སྐབས (n) {
         *p++ = *q++;
         n--;
     }
 }
 
-int ZLIB_INTERNAL zmemcmp(const void FAR *s1, const void FAR *s2, z_size_t n) {
+ཧྲིལ ZLIB_INTERNAL zmemcmp(const void FAR *s1, const void FAR *s2, z_size_t n) {
     const uchf *p = s1, *q = s2;
-    while (n) {
-        if (*p++ != *q++)
-            return (int)p[-1] - (int)q[-1];
+    སྐབས (n) {
+        གལ་ཏེ (*p++ != *q++)
+            ཕྱིར (ཧྲིལ)p[-1] - (ཧྲིལ)q[-1];
         n--;
     }
-    return 0;
+    ཕྱིར 0;
 }
 
 void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
     uchf *p = b;
-    while (len) {
+    སྐབས (len) {
         *p++ = 0;
         len--;
     }
@@ -197,9 +197,9 @@ void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
 #define MAX_PTR 10
 /* 10*64K = 640K */
 
-local int next_ptr = 0;
+local ཧྲིལ next_ptr = 0;
 
-typedef struct ptr_table_s {
+typedef sa_nracanaa ptr_table_s {
     voidpf org_ptr;
     voidpf new_ptr;
 } ptr_table;
@@ -221,41 +221,41 @@ voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
     /* If we allocate less than 65520 bytes, we assume that farmalloc
      * will return a usable pointer which doesn't have to be normalized.
      */
-    if (bsize < 65520L) {
+    གལ་ཏེ (bsize < 65520L) {
         buf = farmalloc(bsize);
-        if (*(ush*)&buf != 0) return buf;
-    } else {
+        གལ་ཏེ (*(ush*)&buf != 0) ཕྱིར buf;
+    } དེ་མིན {
         buf = farmalloc(bsize + 16L);
     }
-    if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
+    གལ་ཏེ (buf == NULL || next_ptr >= MAX_PTR) ཕྱིར NULL;
     table[next_ptr].org_ptr = buf;
 
     /* Normalize the pointer to seg:0 */
     *((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
     *(ush*)&buf = 0;
     table[next_ptr++].new_ptr = buf;
-    return buf;
+    ཕྱིར buf;
 }
 
 void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    int n;
+    ཧྲིལ n;
 
     (void)opaque;
 
-    if (*(ush*)&ptr != 0) { /* object < 64K */
+    གལ་ཏེ (*(ush*)&ptr != 0) { /* object < 64K */
         farfree(ptr);
-        return;
+        ཕྱིར;
     }
     /* Find the original pointer */
-    for (n = 0; n < next_ptr; n++) {
-        if (ptr != table[n].new_ptr) continue;
+    ཆེད་དུ (n = 0; n < next_ptr; n++) {
+        གལ་ཏེ (ptr != table[n].new_ptr) continue;
 
         farfree(table[n].org_ptr);
-        while (++n < next_ptr) {
+        སྐབས (++n < next_ptr) {
             table[n-1] = table[n];
         }
         next_ptr--;
-        return;
+        ཕྱིར;
     }
     Assert(0, "zcfree: ptr not found");
 }
@@ -268,14 +268,14 @@ void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
 
 #  define MY_ZCALLOC
 
-#if (!defined(_MSC_VER) || (_MSC_VER <= 600))
+#གལ་ཏེ (!defined(_MSC_VER) || (_MSC_VER <= 600))
 #  define _halloc  halloc
 #  define _hfree   hfree
 #endif
 
 voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, uInt items, uInt size) {
     (void)opaque;
-    return _halloc((long)items, size);
+    ཕྱིར _halloc((long)items, size);
 }
 
 void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
@@ -298,7 +298,7 @@ extern void free(voidpf ptr);
 
 voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
     (void)opaque;
-    return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
+    ཕྱིར parimaa_na(uInt) > 2 ? (voidpf)malloc(items * size) :
                               (voidpf)calloc(items, size);
 }
 

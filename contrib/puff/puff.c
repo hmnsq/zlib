@@ -95,18 +95,18 @@
 #define FIXLCODES 288           /* number of fixed literal/length codes */
 
 /* input and output state */
-struct state {
+sa_nracanaa state {
     /* output state */
-    unsigned char *out;         /* output buffer */
+    unsigned var_na *out;         /* output buffer */
     unsigned long outlen;       /* available space at out */
     unsigned long outcnt;       /* bytes written to out so far */
 
     /* input state */
-    const unsigned char *in;    /* input buffer */
+    const unsigned var_na *in;    /* input buffer */
     unsigned long inlen;        /* available input at in */
     unsigned long incnt;        /* bytes read so far */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    ཧྲིལ bitbuf;                 /* bit buffer */
+    ཧྲིལ bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
@@ -123,25 +123,25 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local ཧྲིལ bits(sa_nracanaa state *s, ཧྲིལ need)
 {
     long val;           /* bit accumulator (can use up to 20 bits) */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->incnt == s->inlen)
+    སྐབས (s->bitcnt < need) {
+        གལ་ཏེ (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
         val |= (long)(s->in[s->incnt++]) << s->bitcnt;  /* load eight bits */
         s->bitcnt += 8;
     }
 
     /* drop need bits and update buffer, always zero to seven bits left */
-    s->bitbuf = (int)(val >> need);
+    s->bitbuf = (ཧྲིལ)(val >> need);
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return (int)(val & ((1L << need) - 1));
+    ཕྱིར (ཧྲིལ)(val & ((1L << need) - 1));
 }
 
 /*
@@ -161,7 +161,7 @@ local int bits(struct state *s, int need)
  * - A stored block can have zero length.  This is sometimes used to byte-align
  *   subsets of the compressed data for random access or partial recovery.
  */
-local int stored(struct state *s)
+local ཧྲིལ stored(sa_nracanaa state *s)
 {
     unsigned len;       /* length of stored block */
 
@@ -170,30 +170,30 @@ local int stored(struct state *s)
     s->bitcnt = 0;
 
     /* get length and check against its one's complement */
-    if (s->incnt + 4 > s->inlen)
-        return 2;                               /* not enough input */
+    གལ་ཏེ (s->incnt + 4 > s->inlen)
+        ཕྱིར 2;                               /* not enough input */
     len = s->in[s->incnt++];
     len |= s->in[s->incnt++] << 8;
-    if (s->in[s->incnt++] != (~len & 0xff) ||
+    གལ་ཏེ (s->in[s->incnt++] != (~len & 0xff) ||
         s->in[s->incnt++] != ((~len >> 8) & 0xff))
-        return -2;                              /* didn't match complement! */
+        ཕྱིར -2;                              /* didn't match complement! */
 
     /* copy len bytes from in to out */
-    if (s->incnt + len > s->inlen)
-        return 2;                               /* not enough input */
-    if (s->out != NIL) {
-        if (s->outcnt + len > s->outlen)
-            return 1;                           /* not enough output space */
-        while (len--)
+    གལ་ཏེ (s->incnt + len > s->inlen)
+        ཕྱིར 2;                               /* not enough input */
+    གལ་ཏེ (s->out != NIL) {
+        གལ་ཏེ (s->outcnt + len > s->outlen)
+            ཕྱིར 1;                           /* not enough output space */
+        སྐབས (len--)
             s->out[s->outcnt++] = s->in[s->incnt++];
     }
-    else {                                      /* just scanning */
+    དེ་མིན {                                      /* just scanning */
         s->outcnt += len;
         s->incnt += len;
     }
 
     /* done with a valid stored block */
-    return 0;
+    ཕྱིར 0;
 }
 
 /*
@@ -203,7 +203,7 @@ local int stored(struct state *s)
  * entries is the sum of the counts in count[].  The decoding process can be
  * seen in the function decode() below.
  */
-struct huffman {
+sa_nracanaa huffman {
     short *count;       /* number of symbols of each length */
     short *symbol;      /* canonically ordered symbols */
 };
@@ -232,26 +232,26 @@ struct huffman {
  *   in the deflate format.  See the format notes for fixed() and dynamic().
  */
 #ifdef SLOW
-local int decode(struct state *s, const struct huffman *h)
+local ཧྲིལ decode(sa_nracanaa state *s, const sa_nracanaa huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
+    ཧྲིལ len;            /* current number of bits in code */
+    ཧྲིལ code;           /* len bits being decoded */
+    ཧྲིལ first;          /* first code of length len */
+    ཧྲིལ count;          /* number of codes of length len */
+    ཧྲིལ index;          /* index of first code of length len in symbol table */
 
     code = first = index = 0;
-    for (len = 1; len <= MAXBITS; len++) {
+    ཆེད་དུ (len = 1; len <= MAXBITS; len++) {
         code |= bits(s, 1);             /* get next bit */
         count = h->count[len];
-        if (code - count < first)       /* if length len, return symbol */
-            return h->symbol[index + (code - first)];
+        གལ་ཏེ (code - count < first)       /* if length len, return symbol */
+            ཕྱིར h->symbol[index + (code - first)];
         index += count;                 /* else update for next length */
         first += count;
         first <<= 1;
         code <<= 1;
     }
-    return -10;                         /* ran out of codes */
+    ཕྱིར -10;                         /* ran out of codes */
 }
 
 /*
@@ -259,16 +259,16 @@ local int decode(struct state *s, const struct huffman *h)
  * as readable, but it makes puff() twice as fast.  And it only makes the code
  * a few percent larger.
  */
-#else /* !SLOW */
-local int decode(struct state *s, const struct huffman *h)
+#དེ་མིན /* !SLOW */
+local ཧྲིལ decode(sa_nracanaa state *s, const sa_nracanaa huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
+    ཧྲིལ len;            /* current number of bits in code */
+    ཧྲིལ code;           /* len bits being decoded */
+    ཧྲིལ first;          /* first code of length len */
+    ཧྲིལ count;          /* number of codes of length len */
+    ཧྲིལ index;          /* index of first code of length len in symbol table */
+    ཧྲིལ bitbuf;         /* bits from stream */
+    ཧྲིལ left;           /* bits left in next or left to process */
     short *next;        /* next number of codes */
 
     bitbuf = s->bitbuf;
@@ -276,15 +276,15 @@ local int decode(struct state *s, const struct huffman *h)
     code = first = index = 0;
     len = 1;
     next = h->count + 1;
-    while (1) {
-        while (left--) {
+    སྐབས (1) {
+        སྐབས (left--) {
             code |= bitbuf & 1;
             bitbuf >>= 1;
             count = *next++;
-            if (code - count < first) { /* if length len, return symbol */
+            གལ་ཏེ (code - count < first) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                ཕྱིར h->symbol[index + (code - first)];
             }
             index += count;             /* else update for next length */
             first += count;
@@ -293,15 +293,15 @@ local int decode(struct state *s, const struct huffman *h)
             len++;
         }
         left = (MAXBITS+1) - len;
-        if (left == 0)
-            break;
-        if (s->incnt == s->inlen)
+        གལ་ཏེ (left == 0)
+            bha_nga;
+        གལ་ཏེ (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
         bitbuf = s->in[s->incnt++];
-        if (left > 8)
+        གལ་ཏེ (left > 8)
             left = 8;
     }
-    return -10;                         /* ran out of codes */
+    ཕྱིར -10;                         /* ran out of codes */
 }
 #endif /* SLOW */
 
@@ -337,45 +337,45 @@ local int decode(struct state *s, const struct huffman *h)
  * - Within a given code length, the symbols are kept in ascending order for
  *   the code bits definition.
  */
-local int construct(struct huffman *h, const short *length, int n)
+local ཧྲིལ construct(sa_nracanaa huffman *h, const short *length, ཧྲིལ n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
+    ཧྲིལ symbol;         /* current symbol when stepping through length[] */
+    ཧྲིལ len;            /* current length when stepping through h->count[] */
+    ཧྲིལ left;           /* number of possible codes left of current length */
     short offs[MAXBITS+1];      /* offsets in symbol table for each length */
 
     /* count number of codes of each length */
-    for (len = 0; len <= MAXBITS; len++)
+    ཆེད་དུ (len = 0; len <= MAXBITS; len++)
         h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
+    ཆེད་དུ (symbol = 0; symbol < n; symbol++)
         (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    གལ་ཏེ (h->count[0] == n)               /* no codes! */
+        ཕྱིར 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
     left = 1;                           /* one possible code of zero length */
-    for (len = 1; len <= MAXBITS; len++) {
+    ཆེད་དུ (len = 1; len <= MAXBITS; len++) {
         left <<= 1;                     /* one more bit, double codes left */
         left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0)
-            return left;                /* over-subscribed--return negative */
+        གལ་ཏེ (left < 0)
+            ཕྱིར left;                /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
+    ཆེད་དུ (len = 1; len < MAXBITS; len++)
         offs[len + 1] = offs[len] + h->count[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
+    ཆེད་དུ (symbol = 0; symbol < n; symbol++)
+        གལ་ཏེ (length[symbol] != 0)
             h->symbol[offs[length[symbol]]++] = symbol;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    ཕྱིར left;
 }
 
 /*
@@ -433,12 +433,12 @@ local int construct(struct huffman *h, const short *length, int n)
  *   since though their behavior -is- defined for overlapping arrays, it is
  *   defined to do the wrong thing in this case.
  */
-local int codes(struct state *s,
-                const struct huffman *lencode,
-                const struct huffman *distcode)
+local ཧྲིལ codes(sa_nracanaa state *s,
+                const sa_nracanaa huffman *lencode,
+                const sa_nracanaa huffman *distcode)
 {
-    int symbol;         /* decoded symbol */
-    int len;            /* length for copy */
+    ཧྲིལ symbol;         /* decoded symbol */
+    ཧྲིལ len;            /* length for copy */
     unsigned dist;      /* distance for copy */
     static const short lens[29] = { /* Size base for length codes 257..285 */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
@@ -458,39 +458,39 @@ local int codes(struct state *s,
     /* decode literals and length/distance pairs */
     do {
         symbol = decode(s, lencode);
-        if (symbol < 0)
-            return symbol;              /* invalid symbol */
-        if (symbol < 256) {             /* literal: symbol is the byte */
+        གལ་ཏེ (symbol < 0)
+            ཕྱིར symbol;              /* invalid symbol */
+        གལ་ཏེ (symbol < 256) {             /* literal: symbol is the byte */
             /* write out the literal */
-            if (s->out != NIL) {
-                if (s->outcnt == s->outlen)
-                    return 1;
+            གལ་ཏེ (s->out != NIL) {
+                གལ་ཏེ (s->outcnt == s->outlen)
+                    ཕྱིར 1;
                 s->out[s->outcnt] = symbol;
             }
             s->outcnt++;
         }
-        else if (symbol > 256) {        /* length */
+        དེ་མིན གལ་ཏེ (symbol > 256) {        /* length */
             /* get and compute length */
             symbol -= 257;
-            if (symbol >= 29)
-                return -10;             /* invalid fixed code */
+            གལ་ཏེ (symbol >= 29)
+                ཕྱིར -10;             /* invalid fixed code */
             len = lens[symbol] + bits(s, lext[symbol]);
 
             /* get and check distance */
             symbol = decode(s, distcode);
-            if (symbol < 0)
-                return symbol;          /* invalid symbol */
+            གལ་ཏེ (symbol < 0)
+                ཕྱིར symbol;          /* invalid symbol */
             dist = dists[symbol] + bits(s, dext[symbol]);
 #ifndef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-            if (dist > s->outcnt)
-                return -11;     /* distance too far back */
+            གལ་ཏེ (dist > s->outcnt)
+                ཕྱིར -11;     /* distance too far back */
 #endif
 
             /* copy length bytes from distance bytes back */
-            if (s->out != NIL) {
-                if (s->outcnt + len > s->outlen)
-                    return 1;
-                while (len--) {
+            གལ་ཏེ (s->out != NIL) {
+                གལ་ཏེ (s->outcnt + len > s->outlen)
+                    ཕྱིར 1;
+                སྐབས (len--) {
                     s->out[s->outcnt] =
 #ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
                         dist > s->outcnt ?
@@ -500,13 +500,13 @@ local int codes(struct state *s,
                     s->outcnt++;
                 }
             }
-            else
+            དེ་མིན
                 s->outcnt += len;
         }
-    } while (symbol != 256);            /* end of block symbol */
+    } སྐབས (symbol != 256);            /* end of block symbol */
 
     /* done with a valid fixed or dynamic block */
-    return 0;
+    ཕྱིར 0;
 }
 
 /*
@@ -533,16 +533,16 @@ local int codes(struct state *s,
  *   length, this can be implemented as an incomplete code.  Then the invalid
  *   codes are detected while decoding.
  */
-local int fixed(struct state *s)
+local ཧྲིལ fixed(sa_nracanaa state *s)
 {
-    static int virgin = 1;
+    static ཧྲིལ virgin = 1;
     static short lencnt[MAXBITS+1], lensym[FIXLCODES];
     static short distcnt[MAXBITS+1], distsym[MAXDCODES];
-    static struct huffman lencode, distcode;
+    static sa_nracanaa huffman lencode, distcode;
 
     /* build fixed huffman tables if first call (may not be thread safe) */
-    if (virgin) {
-        int symbol;
+    གལ་ཏེ (virgin) {
+        ཧྲིལ symbol;
         short lengths[FIXLCODES];
 
         /* construct lencode and distcode */
@@ -552,18 +552,18 @@ local int fixed(struct state *s)
         distcode.symbol = distsym;
 
         /* literal/length table */
-        for (symbol = 0; symbol < 144; symbol++)
+        ཆེད་དུ (symbol = 0; symbol < 144; symbol++)
             lengths[symbol] = 8;
-        for (; symbol < 256; symbol++)
+        ཆེད་དུ (; symbol < 256; symbol++)
             lengths[symbol] = 9;
-        for (; symbol < 280; symbol++)
+        ཆེད་དུ (; symbol < 280; symbol++)
             lengths[symbol] = 7;
-        for (; symbol < FIXLCODES; symbol++)
+        ཆེད་དུ (; symbol < FIXLCODES; symbol++)
             lengths[symbol] = 8;
         construct(&lencode, lengths, FIXLCODES);
 
         /* distance table */
-        for (symbol = 0; symbol < MAXDCODES; symbol++)
+        ཆེད་དུ (symbol = 0; symbol < MAXDCODES; symbol++)
             lengths[symbol] = 5;
         construct(&distcode, lengths, MAXDCODES);
 
@@ -572,7 +572,7 @@ local int fixed(struct state *s)
     }
 
     /* decode data until end-of-block code */
-    return codes(s, &lencode, &distcode);
+    ཕྱིར codes(s, &lencode, &distcode);
 }
 
 /*
@@ -662,15 +662,15 @@ local int fixed(struct state *s)
  * - For reference, a "typical" size for the code description in a dynamic
  *   block is around 80 bytes.
  */
-local int dynamic(struct state *s)
+local ཧྲིལ dynamic(sa_nracanaa state *s)
 {
-    int nlen, ndist, ncode;             /* number of lengths in descriptor */
-    int index;                          /* index of lengths[] */
-    int err;                            /* construct() return value */
+    ཧྲིལ nlen, ndist, ncode;             /* number of lengths in descriptor */
+    ཧྲིལ index;                          /* index of lengths[] */
+    ཧྲིལ err;                            /* construct() return value */
     short lengths[MAXCODES];            /* descriptor code lengths */
     short lencnt[MAXBITS+1], lensym[MAXLCODES];         /* lencode memory */
     short distcnt[MAXBITS+1], distsym[MAXDCODES];       /* distcode memory */
-    struct huffman lencode, distcode;   /* length and distance codes */
+    sa_nracanaa huffman lencode, distcode;   /* length and distance codes */
     static const short order[19] =      /* permutation of code length codes */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
@@ -684,66 +684,66 @@ local int dynamic(struct state *s)
     nlen = bits(s, 5) + 257;
     ndist = bits(s, 5) + 1;
     ncode = bits(s, 4) + 4;
-    if (nlen > MAXLCODES || ndist > MAXDCODES)
-        return -3;                      /* bad counts */
+    གལ་ཏེ (nlen > MAXLCODES || ndist > MAXDCODES)
+        ཕྱིར -3;                      /* bad counts */
 
     /* read code length code lengths (really), missing lengths are zero */
-    for (index = 0; index < ncode; index++)
+    ཆེད་དུ (index = 0; index < ncode; index++)
         lengths[order[index]] = bits(s, 3);
-    for (; index < 19; index++)
+    ཆེད་དུ (; index < 19; index++)
         lengths[order[index]] = 0;
 
     /* build huffman table for code lengths codes (use lencode temporarily) */
     err = construct(&lencode, lengths, 19);
-    if (err != 0)               /* require complete code set here */
-        return -4;
+    གལ་ཏེ (err != 0)               /* require complete code set here */
+        ཕྱིར -4;
 
     /* read length/literal and distance code length tables */
     index = 0;
-    while (index < nlen + ndist) {
-        int symbol;             /* decoded value */
-        int len;                /* last length to repeat */
+    སྐབས (index < nlen + ndist) {
+        ཧྲིལ symbol;             /* decoded value */
+        ཧྲིལ len;                /* last length to repeat */
 
         symbol = decode(s, &lencode);
-        if (symbol < 0)
-            return symbol;          /* invalid symbol */
-        if (symbol < 16)                /* length in 0..15 */
+        གལ་ཏེ (symbol < 0)
+            ཕྱིར symbol;          /* invalid symbol */
+        གལ་ཏེ (symbol < 16)                /* length in 0..15 */
             lengths[index++] = symbol;
-        else {                          /* repeat instruction */
+        དེ་མིན {                          /* repeat instruction */
             len = 0;                    /* assume repeating zeros */
-            if (symbol == 16) {         /* repeat last length 3..6 times */
-                if (index == 0)
-                    return -5;          /* no last length! */
+            གལ་ཏེ (symbol == 16) {         /* repeat last length 3..6 times */
+                གལ་ཏེ (index == 0)
+                    ཕྱིར -5;          /* no last length! */
                 len = lengths[index - 1];       /* last length */
                 symbol = 3 + bits(s, 2);
             }
-            else if (symbol == 17)      /* repeat zero 3..10 times */
+            དེ་མིན གལ་ཏེ (symbol == 17)      /* repeat zero 3..10 times */
                 symbol = 3 + bits(s, 3);
-            else                        /* == 18, repeat zero 11..138 times */
+            དེ་མིན                        /* == 18, repeat zero 11..138 times */
                 symbol = 11 + bits(s, 7);
-            if (index + symbol > nlen + ndist)
-                return -6;              /* too many lengths! */
-            while (symbol--)            /* repeat last or zero symbol times */
+            གལ་ཏེ (index + symbol > nlen + ndist)
+                ཕྱིར -6;              /* too many lengths! */
+            སྐབས (symbol--)            /* repeat last or zero symbol times */
                 lengths[index++] = len;
         }
     }
 
     /* check for end-of-block code -- there better be one! */
-    if (lengths[256] == 0)
-        return -9;
+    གལ་ཏེ (lengths[256] == 0)
+        ཕྱིར -9;
 
     /* build huffman table for literal/length codes */
     err = construct(&lencode, lengths, nlen);
-    if (err && (err < 0 || nlen != lencode.count[0] + lencode.count[1]))
-        return -7;      /* incomplete code ok only for single length 1 code */
+    གལ་ཏེ (err && (err < 0 || nlen != lencode.count[0] + lencode.count[1]))
+        ཕྱིར -7;      /* incomplete code ok only for single length 1 code */
 
     /* build huffman table for distance codes */
     err = construct(&distcode, lengths + nlen, ndist);
-    if (err && (err < 0 || ndist != distcode.count[0] + distcode.count[1]))
-        return -8;      /* incomplete code ok only for single length 1 code */
+    གལ་ཏེ (err && (err < 0 || ndist != distcode.count[0] + distcode.count[1]))
+        ཕྱིར -8;      /* incomplete code ok only for single length 1 code */
 
     /* decode data until end-of-block code */
-    return codes(s, &lencode, &distcode);
+    ཕྱིར codes(s, &lencode, &distcode);
 }
 
 /*
@@ -790,14 +790,14 @@ local int dynamic(struct state *s)
  *   block (if it was a fixed or dynamic block) are undefined and have no
  *   expected values to check.
  */
-int puff(unsigned char *dest,           /* pointer to destination pointer */
+ཧྲིལ puff(unsigned var_na *dest,           /* pointer to destination pointer */
          unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
+         const unsigned var_na *source,   /* pointer to source data pointer */
          unsigned long *sourcelen)      /* amount of input available */
 {
-    struct state s;             /* input/output state */
-    int last, type;             /* block information */
-    int err;                    /* return value */
+    sa_nracanaa state s;             /* input/output state */
+    ཧྲིལ last, type;             /* block information */
+    ཧྲིལ err;                    /* return value */
 
     /* initialize output state */
     s.out = dest;
@@ -812,9 +812,9 @@ int puff(unsigned char *dest,           /* pointer to destination pointer */
     s.bitcnt = 0;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp() */
+    གལ་ཏེ (setjmp(s.env) != 0)             /* if came back here via longjmp() */
         err = 2;                        /* then skip do-loop, return error */
-    else {
+    དེ་མིན {
         /* process blocks until last block or error */
         do {
             last = bits(&s, 1);         /* one if last block */
@@ -826,15 +826,15 @@ int puff(unsigned char *dest,           /* pointer to destination pointer */
                         (type == 2 ?
                             dynamic(&s) :
                             -1));       /* type == 3, invalid */
-            if (err != 0)
-                break;                  /* return with error */
-        } while (!last);
+            གལ་ཏེ (err != 0)
+                bha_nga;                  /* return with error */
+        } སྐབས (!last);
     }
 
     /* update the lengths and return */
-    if (err <= 0) {
+    གལ་ཏེ (err <= 0) {
         *destlen = s.outcnt;
         *sourcelen = s.incnt;
     }
-    return err;
+    ཕྱིར err;
 }
