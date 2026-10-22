@@ -15,43 +15,43 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#اگر defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
-#endif
+#اگر_ختم
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "puff.h"
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#اگر defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define سیٹ_ثنائی_منوال(file) setmode(fileno(file), O_ثنائی)
+#ورنہ
+#  define سیٹ_ثنائی_منوال(file)
+#اگر_ختم
 
-#define local static
+#تعریف_کرو local ساکن
 
 /* Return size times approximately the cube root of 2, keeping the result as 1,
    3, or 5 times a power of 2 -- the result is always > size, until the result
    is the maximum value of an unsigned long, where it remains.  This is useful
    to keep reallocations less than ~33% over the actual data. */
-local size_t bythirds(size_t size)
+local size_t bythirds(size_t سائز)
 {
-    int n;
+    صحیح n;
     size_t m;
 
-    m = size;
-    for (n = 0; m; n++)
+    m = سائز;
+    برائے (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    اگر (n < 3)
+        واپس سائز + 1;
     n -= 3;
-    m = size >> n;
+    m = سائز >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    واپس m > سائز ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,109 +60,109 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local خالی *بھرو(ثابت حرف *name, size_t *len)
 {
-    size_t size;
-    void *buf, *swap;
-    FILE *in;
+    size_t سائز;
+    خالی *buf, *تبادلہ;
+    FILE *اندر;
 
     *len = 0;
-    buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
-    in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
-            size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
-                free(buf);
-                buf = NULL;
-                break;
+    buf = حافظہ_دو(سائز = 4096);
+    اگر (buf == تہی)
+        واپس تہی;
+    اندر = name == تہی ? stdin : fopen(name, "rb");
+    اگر (اندر != تہی) {
+        برائے (;;) {
+            *len += fread((حرف *)buf + *len, 1, سائز - *len, اندر);
+            اگر (*len < سائز) توڑو;
+            سائز = bythirds(سائز);
+            اگر (سائز == *len || (تبادلہ = realloc(buf, سائز)) == تہی) {
+                آزاد(buf);
+                buf = تہی;
+                توڑو;
             }
-            buf = swap;
+            buf = تبادلہ;
         }
-        fclose(in);
+        fclose(اندر);
     }
-    return buf;
+    واپس buf;
 }
 
-int main(int argc, char **argv)
+صحیح مین(صحیح argc, حرف **argv)
 {
-    int ret, put = 0, fail = 0;
-    unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
+    صحیح ret, put = 0, fail = 0;
+    غیرعلامتی skip = 0;
+    حرف *arg, *name = تہی;
+    غیرعلامتی حرف *ماخذ = تہی, *dest;
     size_t len = 0;
-    unsigned long sourcelen, destlen;
+    غیرعلامتی طویل sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    جب (arg = *++argv, --argc)
+        اگر (arg[0] == '-') {
+            اگر (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            ورنہ اگر (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
-                skip = (unsigned)atoi(arg + 1);
-            else {
+            ورنہ اگر (arg[1] >= '0' && arg[1] <= '9')
+                skip = (غیرعلامتی)atoi(arg + 1);
+            ورنہ {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                واپس 3;
             }
         }
-        else if (name != NULL) {
+        ورنہ اگر (name != تہی) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            واپس 3;
         }
-        else
+        ورنہ
             name = arg;
-    source = load(name, &len);
-    if (source == NULL) {
+    ماخذ = بھرو(name, &len);
+    اگر (ماخذ == تہی) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        واپس 4;
     }
-    if (len == 0) {
+    اگر (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
-                name == NULL ? "<stdin>" : name);
-        free(source);
-        return 3;
+                name == تہی ? "<stdin>" : name);
+        آزاد(ماخذ);
+        واپس 3;
     }
-    if (skip >= len) {
+    اگر (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
-        free(source);
-        return 3;
+        آزاد(ماخذ);
+        واپس 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
-    sourcelen = (unsigned long)len;
-    ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    sourcelen = (غیرعلامتی طویل)len;
+    ret = puff(NIL, &destlen, ماخذ + skip, &sourcelen);
+    اگر (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    ورنہ {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        اگر (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    اگر (put && ret == 0) {
+        اگر (fail)
             destlen >>= 1;
-        dest = malloc(destlen);
-        if (dest == NULL) {
+        dest = حافظہ_دو(destlen);
+        اگر (dest == تہی) {
             fprintf(stderr, "memory allocation failure\n");
-            free(source);
-            return 4;
+            آزاد(ماخذ);
+            واپس 4;
         }
-        puff(dest, &destlen, source + skip, &sourcelen);
-        SET_BINARY_MODE(stdout);
+        puff(dest, &destlen, ماخذ + skip, &sourcelen);
+        سیٹ_ثنائی_منوال(stdout);
         fwrite(dest, 1, destlen, stdout);
-        free(dest);
+        آزاد(dest);
     }
 
     /* clean up */
-    free(source);
-    return ret;
+    آزاد(ماخذ);
+    واپس ret;
 }

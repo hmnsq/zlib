@@ -57,58 +57,58 @@
  */
 
 /* external functions and related types and constants */
-#include <stdio.h>          /* fprintf() */
-#include <stdlib.h>         /* malloc(), free() */
-#include <string.h>         /* strerror(), strcmp(), strlen(), memcpy() */
-#include <errno.h>          /* errno */
-#include <fcntl.h>          /* open() */
-#include <unistd.h>         /* read(), write(), close(), chown(), unlink() */
-#include <sys/types.h>
-#include <sys/stat.h>       /* stat(), chmod() */
-#include <utime.h>          /* utime() */
-#include "zlib.h"           /* inflateBackInit(), inflateBack(), */
+#شامل <stdio.h>          /* fprintf() */
+#شامل <stdlib.h>         /* malloc(), free() */
+#شامل <string.h>         /* strerror(), strcmp(), strlen(), memcpy() */
+#شامل <errno.h>          /* errno */
+#شامل <fcntl.h>          /* open() */
+#شامل <unistd.h>         /* read(), write(), close(), chown(), unlink() */
+#شامل <sys/types.h>
+#شامل <sys/stat.h>       /* stat(), chmod() */
+#شامل <utime.h>          /* utime() */
+#شامل "zlib.h"           /* inflateBackInit(), inflateBack(), */
                             /* inflateBackEnd(), crc32() */
 
 /* function declaration */
-#define local static
+#تعریف_کرو local ساکن
 
 /* buffer constants */
-#define SIZE 32768U         /* input and output buffer sizes */
-#define PIECE 16384         /* limits i/o chunks for 16-bit int case */
+#تعریف_کرو سائز_2 32768U         /* input and output buffer sizes */
+#تعریف_کرو PIECE 16384         /* limits i/o chunks for 16-bit int case */
 
 /* structure for infback() to pass to input function in() -- it maintains the
    input file and a buffer of size SIZE */
-struct ind {
-    int infile;
-    unsigned char *inbuf;
+ساخت ind {
+    صحیح infile;
+    غیرعلامتی حرف *inbuf;
 };
 
 /* Load input buffer, assumed to be empty, and return bytes loaded and a
    pointer to them.  read() is called until the buffer is full, or until it
    returns end-of-file or error.  Return 0 on error. */
-local unsigned in(void *in_desc, z_const unsigned char **buf)
+local غیرعلامتی اندر(خالی *اندر_desc, z_const غیرعلامتی حرف **buf)
 {
-    int ret;
-    unsigned len;
-    unsigned char *next;
-    struct ind *me = (struct ind *)in_desc;
+    صحیح ret;
+    غیرعلامتی len;
+    غیرعلامتی حرف *اگلا;
+    ساخت ind *me = (ساخت ind *)اندر_desc;
 
-    next = me->inbuf;
-    *buf = next;
+    اگلا = me->inbuf;
+    *buf = اگلا;
     len = 0;
-    do {
+    کرو {
         ret = PIECE;
-        if ((unsigned)ret > SIZE - len)
-            ret = (int)(SIZE - len);
-        ret = (int)read(me->infile, next, ret);
-        if (ret == -1) {
+        اگر ((غیرعلامتی)ret > سائز_2 - len)
+            ret = (صحیح)(سائز_2 - len);
+        ret = (صحیح)اقرأ(me->infile, اگلا, ret);
+        اگر (ret == -1) {
             len = 0;
-            break;
+            توڑو;
         }
-        next += ret;
+        اگلا += ret;
         len += ret;
-    } while (ret != 0 && len < SIZE);
-    return len;
+    } جب (ret != 0 && len < سائز_2);
+    واپس len;
 }
 
 /* structure for infback() to pass to output function out() -- it maintains the
@@ -116,11 +116,11 @@ local unsigned in(void *in_desc, z_const unsigned char **buf)
    bytes output, both for checking against the gzip trailer.  (The length in
    the gzip trailer is stored modulo 2^32, so it's ok if a long is 32 bits and
    the output is greater than 4 GB.) */
-struct outd {
-    int outfile;
-    int check;                  /* true if checking crc and total */
-    unsigned long crc;
-    unsigned long total;
+ساخت outd {
+    صحیح outfile;
+    صحیح check;                  /* true if checking crc and total */
+    غیرعلامتی طویل چکری_جانچ;
+    غیرعلامتی طویل کل;
 };
 
 /* Write output buffer and update the CRC-32 and total bytes written.  write()
@@ -128,65 +128,65 @@ struct outd {
    On success out() returns 0.  For a write failure, out() returns 1.  If the
    output file descriptor is -1, then nothing is written.
  */
-local int out(void *out_desc, unsigned char *buf, unsigned len)
+local صحیح برآمد(خالی *برآمد_desc, غیرعلامتی حرف *buf, غیرعلامتی len)
 {
-    int ret;
-    struct outd *me = (struct outd *)out_desc;
+    صحیح ret;
+    ساخت outd *me = (ساخت outd *)برآمد_desc;
 
-    if (me->check) {
-        me->crc = crc32(me->crc, buf, len);
-        me->total += len;
+    اگر (me->check) {
+        me->چکری_جانچ = چکری_جانچ_32_2(me->چکری_جانچ, buf, len);
+        me->کل += len;
     }
-    if (me->outfile != -1)
-        do {
+    اگر (me->outfile != -1)
+        کرو {
             ret = PIECE;
-            if ((unsigned)ret > len)
-                ret = (int)len;
-            ret = (int)write(me->outfile, buf, ret);
-            if (ret == -1)
-                return 1;
+            اگر ((غیرعلامتی)ret > len)
+                ret = (صحیح)len;
+            ret = (صحیح)اكتب(me->outfile, buf, ret);
+            اگر (ret == -1)
+                واپس 1;
             buf += ret;
             len -= ret;
-        } while (len != 0);
-    return 0;
+        } جب (len != 0);
+    واپس 0;
 }
 
 /* next input byte macro for use inside lunpipe() and gunpipe() */
-#define NEXT() (have ? 0 : (have = in(indp, &next)), \
-                last = have ? (have--, (int)(*next++)) : -1)
+#تعریف_کرو اگلا_2() (have ? 0 : (have = اندر(indp, &اگلا)), \
+                آخری = have ? (have--, (صحیح)(*اگلا++)) : -1)
 
 /* memory for gunpipe() and lunpipe() --
    the first 256 entries of prefix[] and suffix[] are never used, could
    have offset the index, but it's faster to waste the memory */
-unsigned char inbuf[SIZE];              /* input buffer */
-unsigned char outbuf[SIZE];             /* output buffer */
-unsigned short prefix[65536];           /* index to LZW prefix string */
-unsigned char suffix[65536];            /* one-character LZW suffix */
-unsigned char match[65280 + 2];         /* buffer for reversed match or gzip
+غیرعلامتی حرف inbuf[سائز_2];              /* input buffer */
+غیرعلامتی حرف outbuf[سائز_2];             /* output buffer */
+غیرعلامتی مختصر سابقہ[65536];           /* index to LZW prefix string */
+غیرعلامتی حرف suffix[65536];            /* one-character LZW suffix */
+غیرعلامتی حرف مطابقت[65280 + 2];         /* buffer for reversed match or gzip
                                            32K sliding window */
 
 /* throw out what's left in the current bits byte buffer (this is a vestigial
    aspect of the compressed data format derived from an implementation that
    made use of a special VAX machine instruction!) */
-#define FLUSHCODE() \
-    do { \
-        left = 0; \
+#تعریف_کرو FLUSHCODE() \
+    کرو { \
+        بایاں = 0; \
         rem = 0; \
-        if (chunk > have) { \
+        اگر (chunk > have) { \
             chunk -= have; \
             have = 0; \
-            if (NEXT() == -1) \
-                break; \
+            اگر (اگلا_2() == -1) \
+                توڑو; \
             chunk--; \
-            if (chunk > have) { \
+            اگر (chunk > have) { \
                 chunk = have = 0; \
-                break; \
+                توڑو; \
             } \
         } \
         have -= chunk; \
-        next += chunk; \
+        اگلا += chunk; \
         chunk = 0; \
-    } while (0)
+    } جب (0)
 
 /* Decompress a compress (LZW) file from indp to outfile.  The compress magic
    header (two bytes) has already been read and verified.  There are have bytes
@@ -197,119 +197,119 @@ unsigned char match[65280 + 2];         /* buffer for reversed match or gzip
    file, read error, or write error (a write error indicated by strm->next_in
    not equal to Z_NULL), or Z_DATA_ERROR for invalid input.
  */
-local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
-                  int outfile, z_stream *strm)
+local صحیح lunpipe(غیرعلامتی have, z_const غیرعلامتی حرف *اگلا, ساخت ind *indp,
+                  صحیح outfile, z_دھارا *strm)
 {
-    int last;                   /* last byte read by NEXT(), or -1 if EOF */
-    unsigned chunk;             /* bytes left in current chunk */
-    int left;                   /* bits left in rem */
-    unsigned rem;               /* unused bits from input */
-    int bits;                   /* current bits per code */
-    unsigned code;              /* code, table traversal index */
-    unsigned mask;              /* mask for current bits codes */
-    int max;                    /* maximum bits per code for this stream */
-    unsigned flags;             /* compress flags, then block compress flag */
-    unsigned end;               /* last valid entry in prefix/suffix tables */
-    unsigned temp;              /* current code */
-    unsigned prev;              /* previous code */
-    unsigned final;             /* last character written for previous code */
-    unsigned stack;             /* next position for reversed string */
-    unsigned outcnt;            /* bytes in output buffer */
-    struct outd outd;           /* output structure */
-    unsigned char *p;
+    صحیح آخری;                   /* last byte read by NEXT(), or -1 if EOF */
+    غیرعلامتی chunk;             /* bytes left in current chunk */
+    صحیح بایاں;                   /* bits left in rem */
+    غیرعلامتی rem;               /* unused bits from input */
+    صحیح بٹ;                   /* current bits per code */
+    غیرعلامتی رمز;              /* code, table traversal index */
+    غیرعلامتی نقاب;              /* mask for current bits codes */
+    صحیح max;                    /* maximum bits per code for this stream */
+    غیرعلامتی flags;             /* compress flags, then block compress flag */
+    غیرعلامتی انتہا;               /* last valid entry in prefix/suffix tables */
+    غیرعلامتی عارضی;              /* current code */
+    غیرعلامتی پچھلا;              /* previous code */
+    غیرعلامتی final;             /* last character written for previous code */
+    غیرعلامتی ڈھیر_2;             /* next position for reversed string */
+    غیرعلامتی outcnt;            /* bytes in output buffer */
+    ساخت outd outd;           /* output structure */
+    غیرعلامتی حرف *p;
 
     /* set up output */
     outd.outfile = outfile;
     outd.check = 0;
 
     /* process remainder of compress header -- a flags byte */
-    flags = NEXT();
-    if (last == -1)
-        return Z_BUF_ERROR;
-    if (flags & 0x60) {
-        strm->msg = (z_const char *)"unknown lzw flags set";
-        return Z_DATA_ERROR;
+    flags = اگلا_2();
+    اگر (آخری == -1)
+        واپس Z_BUF_ERROR;
+    اگر (flags & 0x60) {
+        strm->پیغام = (z_const حرف *)"unknown lzw flags set";
+        واپس Z_ڈیٹا_ERROR;
     }
     max = flags & 0x1f;
-    if (max < 9 || max > 16) {
-        strm->msg = (z_const char *)"lzw bits out of range";
-        return Z_DATA_ERROR;
+    اگر (max < 9 || max > 16) {
+        strm->پیغام = (z_const حرف *)"lzw bits out of range";
+        واپس Z_ڈیٹا_ERROR;
     }
-    if (max == 9)                           /* 9 doesn't really mean 9 */
+    اگر (max == 9)                           /* 9 doesn't really mean 9 */
         max = 10;
     flags &= 0x80;                          /* true if block compress */
 
     /* clear table */
-    bits = 9;
-    mask = 0x1ff;
-    end = flags ? 256 : 255;
+    بٹ = 9;
+    نقاب = 0x1ff;
+    انتہا = flags ? 256 : 255;
 
     /* set up: get first 9-bit code, which is the first decompressed byte, but
        don't create a table entry until the next code */
-    if (NEXT() == -1)                       /* no compressed data is ok */
-        return Z_OK;
-    final = prev = (unsigned)last;          /* low 8 bits of code */
-    if (NEXT() == -1)                       /* missing a bit */
-        return Z_BUF_ERROR;
-    if (last & 1) {                         /* code must be < 256 */
-        strm->msg = (z_const char *)"invalid lzw code";
-        return Z_DATA_ERROR;
+    اگر (اگلا_2() == -1)                       /* no compressed data is ok */
+        واپس Z_OK;
+    final = پچھلا = (غیرعلامتی)آخری;          /* low 8 bits of code */
+    اگر (اگلا_2() == -1)                       /* missing a bit */
+        واپس Z_BUF_ERROR;
+    اگر (آخری & 1) {                         /* code must be < 256 */
+        strm->پیغام = (z_const حرف *)"invalid lzw code";
+        واپس Z_ڈیٹا_ERROR;
     }
-    rem = (unsigned)last >> 1;              /* remaining 7 bits */
-    left = 7;
-    chunk = bits - 2;                       /* 7 bytes left in this chunk */
-    outbuf[0] = (unsigned char)final;       /* write first decompressed byte */
+    rem = (غیرعلامتی)آخری >> 1;              /* remaining 7 bits */
+    بایاں = 7;
+    chunk = بٹ - 2;                       /* 7 bytes left in this chunk */
+    outbuf[0] = (غیرعلامتی حرف)final;       /* write first decompressed byte */
     outcnt = 1;
 
     /* decode codes */
-    stack = 0;
-    for (;;) {
+    ڈھیر_2 = 0;
+    برائے (;;) {
         /* if the table will be full after this, increment the code size */
-        if (end >= mask && bits < max) {
+        اگر (انتہا >= نقاب && بٹ < max) {
             FLUSHCODE();
-            bits++;
-            mask <<= 1;
-            mask++;
+            بٹ++;
+            نقاب <<= 1;
+            نقاب++;
         }
 
         /* get a code of length bits */
-        if (chunk == 0)                     /* decrement chunk modulo bits */
-            chunk = bits;
-        code = rem;                         /* low bits of code */
-        if (NEXT() == -1) {                 /* EOF is end of compressed data */
+        اگر (chunk == 0)                     /* decrement chunk modulo bits */
+            chunk = بٹ;
+        رمز = rem;                         /* low bits of code */
+        اگر (اگلا_2() == -1) {                 /* EOF is end of compressed data */
             /* write remaining buffered output */
-            if (outcnt && out(&outd, outbuf, outcnt)) {
-                strm->next_in = outbuf;     /* signal write error */
-                return Z_BUF_ERROR;
+            اگر (outcnt && برآمد(&outd, outbuf, outcnt)) {
+                strm->اگلا_اندر = outbuf;     /* signal write error */
+                واپس Z_BUF_ERROR;
             }
-            return Z_OK;
+            واپس Z_OK;
         }
-        code += (unsigned)last << left;     /* middle (or high) bits of code */
-        left += 8;
+        رمز += (غیرعلامتی)آخری << بایاں;     /* middle (or high) bits of code */
+        بایاں += 8;
         chunk--;
-        if (bits > left) {                  /* need more bits */
-            if (NEXT() == -1)               /* can't end in middle of code */
-                return Z_BUF_ERROR;
-            code += (unsigned)last << left; /* high bits of code */
-            left += 8;
+        اگر (بٹ > بایاں) {                  /* need more bits */
+            اگر (اگلا_2() == -1)               /* can't end in middle of code */
+                واپس Z_BUF_ERROR;
+            رمز += (غیرعلامتی)آخری << بایاں; /* high bits of code */
+            بایاں += 8;
             chunk--;
         }
-        code &= mask;                       /* mask to current code length */
-        left -= bits;                       /* number of unused bits */
-        rem = (unsigned)last >> (8 - left); /* unused bits from last byte */
+        رمز &= نقاب;                       /* mask to current code length */
+        بایاں -= بٹ;                       /* number of unused bits */
+        rem = (غیرعلامتی)آخری >> (8 - بایاں); /* unused bits from last byte */
 
         /* process clear code (256) */
-        if (code == 256 && flags) {
+        اگر (رمز == 256 && flags) {
             FLUSHCODE();
-            bits = 9;                       /* initialize bits and mask */
-            mask = 0x1ff;
-            end = 255;                      /* empty table */
-            continue;                       /* get next code */
+            بٹ = 9;                       /* initialize bits and mask */
+            نقاب = 0x1ff;
+            انتہا = 255;                      /* empty table */
+            جاری;                       /* get next code */
         }
 
         /* special code to reuse last match */
-        temp = code;                        /* save the current code */
-        if (code > end) {
+        عارضی = رمز;                        /* save the current code */
+        اگر (رمز > انتہا) {
             /* Be picky on the allowed code here, and make sure that the code
                we drop through (prev) will be a valid index so that random
                input does not cause an exception.  The code != end + 1 check is
@@ -318,49 +318,49 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
                removed.  Leaving this check in greatly improves gun's ability
                to detect random or corrupted input after a compress header.
                In any case, the prev > end check must be retained. */
-            if (code != end + 1 || prev > end) {
-                strm->msg = (z_const char *)"invalid lzw code";
-                return Z_DATA_ERROR;
+            اگر (رمز != انتہا + 1 || پچھلا > انتہا) {
+                strm->پیغام = (z_const حرف *)"invalid lzw code";
+                واپس Z_ڈیٹا_ERROR;
             }
-            match[stack++] = (unsigned char)final;
-            code = prev;
+            مطابقت[ڈھیر_2++] = (غیرعلامتی حرف)final;
+            رمز = پچھلا;
         }
 
         /* walk through linked list to generate output in reverse order */
-        p = match + stack;
-        while (code >= 256) {
-            *p++ = suffix[code];
-            code = prefix[code];
+        p = مطابقت + ڈھیر_2;
+        جب (رمز >= 256) {
+            *p++ = suffix[رمز];
+            رمز = سابقہ[رمز];
         }
-        stack = p - match;
-        match[stack++] = (unsigned char)code;
-        final = code;
+        ڈھیر_2 = p - مطابقت;
+        مطابقت[ڈھیر_2++] = (غیرعلامتی حرف)رمز;
+        final = رمز;
 
         /* link new table entry */
-        if (end < mask) {
-            end++;
-            prefix[end] = (unsigned short)prev;
-            suffix[end] = (unsigned char)final;
+        اگر (انتہا < نقاب) {
+            انتہا++;
+            سابقہ[انتہا] = (غیرعلامتی مختصر)پچھلا;
+            suffix[انتہا] = (غیرعلامتی حرف)final;
         }
 
         /* set previous code for next iteration */
-        prev = temp;
+        پچھلا = عارضی;
 
         /* write output in forward order */
-        while (stack > SIZE - outcnt) {
-            while (outcnt < SIZE)
-                outbuf[outcnt++] = match[--stack];
-            if (out(&outd, outbuf, outcnt)) {
-                strm->next_in = outbuf; /* signal write error */
-                return Z_BUF_ERROR;
+        جب (ڈھیر_2 > سائز_2 - outcnt) {
+            جب (outcnt < سائز_2)
+                outbuf[outcnt++] = مطابقت[--ڈھیر_2];
+            اگر (برآمد(&outd, outbuf, outcnt)) {
+                strm->اگلا_اندر = outbuf; /* signal write error */
+                واپس Z_BUF_ERROR;
             }
             outcnt = 0;
         }
-        p = match + stack;
-        do {
+        p = مطابقت + ڈھیر_2;
+        کرو {
             outbuf[outcnt++] = *--p;
-        } while (p > match);
-        stack = 0;
+        } جب (p > مطابقت);
+        ڈھیر_2 = 0;
 
         /* loop for next code with final and prev as the last match, rem and
            left provide the first 0..7 bits of the next code, end is the last
@@ -380,13 +380,13 @@ local int lunpipe(unsigned have, z_const unsigned char *next, struct ind *indp,
    prematurely or a write error occurs, or Z_ERRNO if junk (not a another gzip
    stream) follows a valid gzip stream.
  */
-local int gunpipe(z_stream *strm, int infile, int outfile)
+local صحیح gunpipe(z_دھارا *strm, صحیح infile, صحیح outfile)
 {
-    int ret, first, last;
-    unsigned have, flags, len;
-    z_const unsigned char *next = NULL;
-    struct ind ind, *indp;
-    struct outd outd;
+    صحیح ret, پہلا, آخری;
+    غیرعلامتی have, flags, len;
+    z_const غیرعلامتی حرف *اگلا = تہی;
+    ساخت ind ind, *indp;
+    ساخت outd outd;
 
     /* setup input buffer */
     ind.infile = infile;
@@ -395,144 +395,144 @@ local int gunpipe(z_stream *strm, int infile, int outfile)
 
     /* decompress concatenated gzip streams */
     have = 0;                               /* no input data read in yet */
-    first = 1;                              /* looking for first gzip header */
-    strm->next_in = Z_NULL;                 /* so Z_BUF_ERROR means EOF */
-    for (;;) {
+    پہلا = 1;                              /* looking for first gzip header */
+    strm->اگلا_اندر = Z_NULL;                 /* so Z_BUF_ERROR means EOF */
+    برائے (;;) {
         /* look for the two magic header bytes for a gzip stream */
-        if (NEXT() == -1) {
+        اگر (اگلا_2() == -1) {
             ret = Z_OK;
-            break;                          /* empty gzip stream is ok */
+            توڑو;                          /* empty gzip stream is ok */
         }
-        if (last != 31 || (NEXT() != 139 && last != 157)) {
-            strm->msg = (z_const char *)"incorrect header check";
-            ret = first ? Z_DATA_ERROR : Z_ERRNO;
-            break;                          /* not a gzip or compress header */
+        اگر (آخری != 31 || (اگلا_2() != 139 && آخری != 157)) {
+            strm->پیغام = (z_const حرف *)"incorrect header check";
+            ret = پہلا ? Z_ڈیٹا_ERROR : Z_ERRNO;
+            توڑو;                          /* not a gzip or compress header */
         }
-        first = 0;                          /* next non-header is junk */
+        پہلا = 0;                          /* next non-header is junk */
 
         /* process a compress (LZW) file -- can't be concatenated after this */
-        if (last == 157) {
-            ret = lunpipe(have, next, indp, outfile, strm);
-            break;
+        اگر (آخری == 157) {
+            ret = lunpipe(have, اگلا, indp, outfile, strm);
+            توڑو;
         }
 
         /* process remainder of gzip header */
         ret = Z_BUF_ERROR;
-        if (NEXT() != 8) {                  /* only deflate method allowed */
-            if (last == -1) break;
-            strm->msg = (z_const char *)"unknown compression method";
-            ret = Z_DATA_ERROR;
-            break;
+        اگر (اگلا_2() != 8) {                  /* only deflate method allowed */
+            اگر (آخری == -1) توڑو;
+            strm->پیغام = (z_const حرف *)"unknown compression method";
+            ret = Z_ڈیٹا_ERROR;
+            توڑو;
         }
-        flags = NEXT();                     /* header flags */
-        NEXT();                             /* discard mod time, xflgs, os */
-        NEXT();
-        NEXT();
-        NEXT();
-        NEXT();
-        NEXT();
-        if (last == -1) break;
-        if (flags & 0xe0) {
-            strm->msg = (z_const char *)"unknown header flags set";
-            ret = Z_DATA_ERROR;
-            break;
+        flags = اگلا_2();                     /* header flags */
+        اگلا_2();                             /* discard mod time, xflgs, os */
+        اگلا_2();
+        اگلا_2();
+        اگلا_2();
+        اگلا_2();
+        اگلا_2();
+        اگر (آخری == -1) توڑو;
+        اگر (flags & 0xe0) {
+            strm->پیغام = (z_const حرف *)"unknown header flags set";
+            ret = Z_ڈیٹا_ERROR;
+            توڑو;
         }
-        if (flags & 4) {                    /* extra field */
-            len = NEXT();
-            len += (unsigned)(NEXT()) << 8;
-            if (last == -1) break;
-            while (len > have) {
+        اگر (flags & 4) {                    /* extra field */
+            len = اگلا_2();
+            len += (غیرعلامتی)(اگلا_2()) << 8;
+            اگر (آخری == -1) توڑو;
+            جب (len > have) {
                 len -= have;
                 have = 0;
-                if (NEXT() == -1) break;
+                اگر (اگلا_2() == -1) توڑو;
                 len--;
             }
-            if (last == -1) break;
+            اگر (آخری == -1) توڑو;
             have -= len;
-            next += len;
+            اگلا += len;
         }
-        if (flags & 8)                      /* file name */
-            while (NEXT() != 0 && last != -1)
+        اگر (flags & 8)                      /* file name */
+            جب (اگلا_2() != 0 && آخری != -1)
                 ;
-        if (flags & 16)                     /* comment */
-            while (NEXT() != 0 && last != -1)
+        اگر (flags & 16)                     /* comment */
+            جب (اگلا_2() != 0 && آخری != -1)
                 ;
-        if (flags & 2) {                    /* header crc */
-            NEXT();
-            NEXT();
+        اگر (flags & 2) {                    /* header crc */
+            اگلا_2();
+            اگلا_2();
         }
-        if (last == -1) break;
+        اگر (آخری == -1) توڑو;
 
         /* set up output */
         outd.outfile = outfile;
         outd.check = 1;
-        outd.crc = crc32(0L, Z_NULL, 0);
-        outd.total = 0;
+        outd.چکری_جانچ = چکری_جانچ_32_2(0L, Z_NULL, 0);
+        outd.کل = 0;
 
         /* decompress data to output */
-        strm->next_in = next;
-        strm->avail_in = have;
-        ret = inflateBack(strm, in, indp, out, &outd);
-        if (ret != Z_STREAM_END) break;
-        next = strm->next_in;
-        have = strm->avail_in;
-        strm->next_in = Z_NULL;             /* so Z_BUF_ERROR means EOF */
+        strm->اگلا_اندر = اگلا;
+        strm->avail_اندر = have;
+        ret = inflate_عقب(strm, اندر, indp, برآمد, &outd);
+        اگر (ret != Z_دھارا_انتہا) توڑو;
+        اگلا = strm->اگلا_اندر;
+        have = strm->avail_اندر;
+        strm->اگلا_اندر = Z_NULL;             /* so Z_BUF_ERROR means EOF */
 
         /* check trailer */
         ret = Z_BUF_ERROR;
-        if (NEXT() != (int)(outd.crc & 0xff) ||
-            NEXT() != (int)((outd.crc >> 8) & 0xff) ||
-            NEXT() != (int)((outd.crc >> 16) & 0xff) ||
-            NEXT() != (int)((outd.crc >> 24) & 0xff)) {
+        اگر (اگلا_2() != (صحیح)(outd.چکری_جانچ & 0xff) ||
+            اگلا_2() != (صحیح)((outd.چکری_جانچ >> 8) & 0xff) ||
+            اگلا_2() != (صحیح)((outd.چکری_جانچ >> 16) & 0xff) ||
+            اگلا_2() != (صحیح)((outd.چکری_جانچ >> 24) & 0xff)) {
             /* crc error */
-            if (last != -1) {
-                strm->msg = (z_const char *)"incorrect data check";
-                ret = Z_DATA_ERROR;
+            اگر (آخری != -1) {
+                strm->پیغام = (z_const حرف *)"incorrect data check";
+                ret = Z_ڈیٹا_ERROR;
             }
-            break;
+            توڑو;
         }
-        if (NEXT() != (int)(outd.total & 0xff) ||
-            NEXT() != (int)((outd.total >> 8) & 0xff) ||
-            NEXT() != (int)((outd.total >> 16) & 0xff) ||
-            NEXT() != (int)((outd.total >> 24) & 0xff)) {
+        اگر (اگلا_2() != (صحیح)(outd.کل & 0xff) ||
+            اگلا_2() != (صحیح)((outd.کل >> 8) & 0xff) ||
+            اگلا_2() != (صحیح)((outd.کل >> 16) & 0xff) ||
+            اگلا_2() != (صحیح)((outd.کل >> 24) & 0xff)) {
             /* length error */
-            if (last != -1) {
-                strm->msg = (z_const char *)"incorrect length check";
-                ret = Z_DATA_ERROR;
+            اگر (آخری != -1) {
+                strm->پیغام = (z_const حرف *)"incorrect length check";
+                ret = Z_ڈیٹا_ERROR;
             }
-            break;
+            توڑو;
         }
 
         /* go back and look for another gzip stream */
     }
 
     /* clean up and return */
-    return ret;
+    واپس ret;
 }
 
 /* Copy file attributes, from -> to, as best we can.  This is best effort, so
    no errors are reported.  The mode bits, including suid, sgid, and the sticky
    bit are copied (if allowed), the owner's user id and group id are copied
    (again if allowed), and the access and modify times are copied. */
-local void copymeta(char *from, char *to)
+local خالی copymeta(حرف *from, حرف *مقصد)
 {
-    struct stat was;
-    struct utimbuf when;
+    ساخت stat was;
+    ساخت utimbuf when;
 
     /* get all of from's Unix meta data, return if not a regular file */
-    if (stat(from, &was) != 0 || (was.st_mode & S_IFMT) != S_IFREG)
-        return;
+    اگر (stat(from, &was) != 0 || (was.st_mode & S_IFMT) != S_IFREG)
+        واپس;
 
     /* set to's mode bits, ignore errors */
-    (void)chmod(to, was.st_mode & 07777);
+    (خالی)chmod(مقصد, was.st_mode & 07777);
 
     /* copy owner's user and group, ignore errors */
-    (void)chown(to, was.st_uid, was.st_gid);
+    (خالی)chown(مقصد, was.st_uid, was.st_gid);
 
     /* copy access and modify times, ignore errors */
     when.actime = was.st_atime;
     when.modtime = was.st_mtime;
-    (void)utime(to, &when);
+    (خالی)utime(مقصد, &when);
 }
 
 /* Decompress the file inname to the file outnname, of if test is true, just
@@ -545,158 +545,158 @@ local void copymeta(char *from, char *to)
    gunzip() returns 1 if there is an out-of-memory error or an unexpected
    return code from gunpipe().  Otherwise it returns 0.
  */
-local int gunzip(z_stream *strm, char *inname, char *outname, int test)
+local صحیح gunzip(z_دھارا *strm, حرف *inname, حرف *outname, صحیح test)
 {
-    int ret;
-    int infile, outfile;
+    صحیح ret;
+    صحیح infile, outfile;
 
     /* open files */
-    if (inname == NULL || *inname == 0) {
+    اگر (inname == تہی || *inname == 0) {
         inname = "-";
         infile = 0;     /* stdin */
     }
-    else {
+    ورنہ {
         infile = open(inname, O_RDONLY, 0);
-        if (infile == -1) {
+        اگر (infile == -1) {
             fprintf(stderr, "gun cannot open %s\n", inname);
-            return 0;
+            واپس 0;
         }
     }
-    if (test)
+    اگر (test)
         outfile = -1;
-    else if (outname == NULL || *outname == 0) {
+    ورنہ اگر (outname == تہی || *outname == 0) {
         outname = "-";
         outfile = 1;    /* stdout */
     }
-    else {
+    ورنہ {
         outfile = open(outname, O_CREAT | O_TRUNC | O_WRONLY, 0666);
-        if (outfile == -1) {
+        اگر (outfile == -1) {
             close(infile);
             fprintf(stderr, "gun cannot create %s\n", outname);
-            return 0;
+            واپس 0;
         }
     }
     errno = 0;
 
     /* decompress */
     ret = gunpipe(strm, infile, outfile);
-    if (outfile > 2) close(outfile);
-    if (infile > 2) close(infile);
+    اگر (outfile > 2) close(outfile);
+    اگر (infile > 2) close(infile);
 
     /* interpret result */
-    switch (ret) {
-    case Z_OK:
-    case Z_ERRNO:
-        if (infile > 2 && outfile > 2) {
+    انتخاب (ret) {
+    حالت Z_OK:
+    حالت Z_ERRNO:
+        اگر (infile > 2 && outfile > 2) {
             copymeta(inname, outname);          /* copy attributes */
             unlink(inname);
         }
-        if (ret == Z_ERRNO)
+        اگر (ret == Z_ERRNO)
             fprintf(stderr, "gun warning: trailing garbage ignored in %s\n",
                     inname);
-        break;
-    case Z_DATA_ERROR:
-        if (outfile > 2) unlink(outname);
-        fprintf(stderr, "gun data error on %s: %s\n", inname, strm->msg);
-        break;
-    case Z_MEM_ERROR:
-        if (outfile > 2) unlink(outname);
+        توڑو;
+    حالت Z_ڈیٹا_ERROR:
+        اگر (outfile > 2) unlink(outname);
+        fprintf(stderr, "gun data error on %s: %s\n", inname, strm->پیغام);
+        توڑو;
+    حالت Z_MEM_ERROR:
+        اگر (outfile > 2) unlink(outname);
         fprintf(stderr, "gun out of memory error--aborting\n");
-        return 1;
-    case Z_BUF_ERROR:
-        if (outfile > 2) unlink(outname);
-        if (strm->next_in != Z_NULL) {
+        واپس 1;
+    حالت Z_BUF_ERROR:
+        اگر (outfile > 2) unlink(outname);
+        اگر (strm->اگلا_اندر != Z_NULL) {
             fprintf(stderr, "gun write error on %s: %s\n",
                     outname, strerror(errno));
         }
-        else if (errno) {
+        ورنہ اگر (errno) {
             fprintf(stderr, "gun read error on %s: %s\n",
                     inname, strerror(errno));
         }
-        else {
+        ورنہ {
             fprintf(stderr, "gun unexpected end of file on %s\n",
                     inname);
         }
-        break;
-    default:
-        if (outfile > 2) unlink(outname);
+        توڑو;
+    طےشدہ:
+        اگر (outfile > 2) unlink(outname);
         fprintf(stderr, "gun internal error--aborting\n");
-        return 1;
+        واپس 1;
     }
-    return 0;
+    واپس 0;
 }
 
 /* Process the gun command line arguments.  See the command syntax near the
    beginning of this source file. */
-int main(int argc, char **argv)
+صحیح مین(صحیح argc, حرف **argv)
 {
-    int ret, len, test;
-    char *outname;
-    unsigned char *window;
-    z_stream strm;
+    صحیح ret, len, test;
+    حرف *outname;
+    غیرعلامتی حرف *کھڑکی;
+    z_دھارا strm;
 
     /* initialize inflateBack state for repeated use */
-    window = match;                         /* reuse LZW match buffer */
+    کھڑکی = مطابقت;                         /* reuse LZW match buffer */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
-    ret = inflateBackInit(&strm, 15, window);
-    if (ret != Z_OK) {
+    ret = inflate_عقب_Init(&strm, 15, کھڑکی);
+    اگر (ret != Z_OK) {
         fprintf(stderr, "gun out of memory error--aborting\n");
-        return 1;
+        واپس 1;
     }
 
     /* decompress each file to the same name with the suffix removed */
     argc--;
     argv++;
     test = 0;
-    if (argc && strcmp(*argv, "-h") == 0) {
+    اگر (argc && strcmp(*argv, "-h") == 0) {
         fprintf(stderr, "gun 1.6 (17 Jan 2010)\n");
         fprintf(stderr, "Copyright (C) 2003-2010 Mark Adler\n");
         fprintf(stderr, "usage: gun [-t] [file1.gz [file2.Z ...]]\n");
-        return 0;
+        واپس 0;
     }
-    if (argc && strcmp(*argv, "-t") == 0) {
+    اگر (argc && strcmp(*argv, "-t") == 0) {
         test = 1;
         argc--;
         argv++;
     }
-    if (argc)
-        do {
-            if (test)
-                outname = NULL;
-            else {
-                len = (int)strlen(*argv);
-                if (strcmp(*argv + len - 3, ".gz") == 0 ||
+    اگر (argc)
+        کرو {
+            اگر (test)
+                outname = تہی;
+            ورنہ {
+                len = (صحیح)لڑی_لمبائی(*argv);
+                اگر (strcmp(*argv + len - 3, ".gz") == 0 ||
                     strcmp(*argv + len - 3, "-gz") == 0)
                     len -= 3;
-                else if (strcmp(*argv + len - 2, ".z") == 0 ||
+                ورنہ اگر (strcmp(*argv + len - 2, ".z") == 0 ||
                     strcmp(*argv + len - 2, "-z") == 0 ||
                     strcmp(*argv + len - 2, "_z") == 0 ||
                     strcmp(*argv + len - 2, ".Z") == 0)
                     len -= 2;
-                else {
+                ورنہ {
                     fprintf(stderr, "gun error: no gz type on %s--skipping\n",
                             *argv);
-                    continue;
+                    جاری;
                 }
-                outname = malloc(len + 1);
-                if (outname == NULL) {
+                outname = حافظہ_دو(len + 1);
+                اگر (outname == تہی) {
                     fprintf(stderr, "gun out of memory error--aborting\n");
                     ret = 1;
-                    break;
+                    توڑو;
                 }
-                memcpy(outname, *argv, len);
+                حافظہ_نقل(outname, *argv, len);
                 outname[len] = 0;
             }
             ret = gunzip(&strm, *argv, outname, test);
-            if (outname != NULL) free(outname);
-            if (ret) break;
-        } while (argv++, --argc);
-    else
-        ret = gunzip(&strm, NULL, NULL, test);
+            اگر (outname != تہی) آزاد(outname);
+            اگر (ret) توڑو;
+        } جب (argv++, --argc);
+    ورنہ
+        ret = gunzip(&strm, تہی, تہی, test);
 
     /* clean up */
-    inflateBackEnd(&strm);
-    return ret;
+    inflate_عقب_انتہا(&strm);
+    واپس ret;
 }

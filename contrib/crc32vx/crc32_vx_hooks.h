@@ -1,9 +1,9 @@
-#ifndef CRC32_VX_HOOKS_H
-#define CRC32_VX_HOOKS_H
+#اگر_غیر_تعریف_شدہ چکری_جانچ_32_VX_HOOKS_H
+#تعریف_کرو چکری_جانچ_32_VX_HOOKS_H
 
 /**
  * CRC HOOKS
  */
-ZLIB_INTERNAL extern unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len);
+ZLIB_اندرونی خارجی غیرعلامتی طویل (*چکری_جانچ_32_z_hook)(غیرعلامتی طویل چکری_جانچ, ثابت غیرعلامتی حرف FAR *buf, z_سائز_t len);
 
-#endif /* CRC32_VX_HOOKS_H */
+#اگر_ختم /* CRC32_VX_HOOKS_H */

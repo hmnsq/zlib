@@ -1,253 +1,253 @@
 
-#include "zfstream.h"
+#شامل "zfstream.h"
 
 gzfilebuf::gzfilebuf() :
-  file(NULL),
-  mode(0),
+  file(تہی),
+  منوال(0),
   own_file_descriptor(0)
 { }
 
 gzfilebuf::~gzfilebuf() {
 
-  sync();
-  if ( own_file_descriptor )
+  ہمآہنگ();
+  اگر ( own_file_descriptor )
     close();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::open( ثابت حرف *name,
+                            صحیح io_منوال ) {
 
-  if ( is_open() )
-    return NULL;
+  اگر ( is_open() )
+    واپس تہی;
 
-  char char_mode[10];
-  char *p = char_mode;
+  حرف char_منوال[10];
+  حرف *p = char_منوال;
 
-  if ( io_mode & ios::in ) {
-    mode = ios::in;
+  اگر ( io_منوال & ios::in ) {
+    منوال = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
-    mode = ios::app;
+  } ورنہ اگر ( io_منوال & ios::app ) {
+    منوال = ios::app;
     *p++ = 'a';
-  } else {
-    mode = ios::out;
+  } ورنہ {
+    منوال = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
-    mode |= ios::binary;
+  اگر ( io_منوال & ios::binary ) {
+    منوال |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  اگر ( io_منوال & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  اگر ( (file = gzopen(name, char_منوال)) == تہی )
+    واپس تہی;
 
   own_file_descriptor = 1;
 
-  return this;
+  واپس یہ;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( صحیح file_descriptor,
+                              صحیح io_منوال ) {
 
-  if ( is_open() )
-    return NULL;
+  اگر ( is_open() )
+    واپس تہی;
 
-  char char_mode[10];
-  char *p = char_mode;
+  حرف char_منوال[10];
+  حرف *p = char_منوال;
 
-  if ( io_mode & ios::in ) {
-    mode = ios::in;
+  اگر ( io_منوال & ios::in ) {
+    منوال = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
-    mode = ios::app;
+  } ورنہ اگر ( io_منوال & ios::app ) {
+    منوال = ios::app;
     *p++ = 'a';
-  } else {
-    mode = ios::out;
+  } ورنہ {
+    منوال = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
-    mode |= ios::binary;
+  اگر ( io_منوال & ios::binary ) {
+    منوال |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  اگر ( io_منوال & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  اگر ( (file = gzdopen(file_descriptor, char_منوال)) == تہی )
+    واپس تہی;
 
   own_file_descriptor = 0;
 
-  return this;
+  واپس یہ;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  اگر ( is_open() ) {
 
-    sync();
+    ہمآہنگ();
     gzclose( file );
-    file = NULL;
+    file = تہی;
 
   }
 
-  return this;
+  واپس یہ;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+صحیح gzfilebuf::setcompressionlevel( صحیح comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  واپس gzsetparams(file, comp_level, -2);
 
 }
 
+صحیح gzfilebuf::setcompressionstrategy( صحیح comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  واپس gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, صحیح which ) {
+
+  واپس streampos(EOF);
+
+}
+
+صحیح gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  اگر ( !is_open() || !(منوال & ios::in) )
+    واپس EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  اگر ( !بنیاد_2() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    اگر ( (allocate()) == EOF )
+      واپس EOF;
     setp(0,0);
 
-  } else {
+  } ورنہ {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    اگر ( in_avail() )
+      واپس (غیرعلامتی حرف) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    اگر ( برآمد_انتظار() ) {
+      اگر ( flushbuf() == EOF )
+        واپس EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  صحیح نتیجہ = fillbuf();
+  اگر ( نتیجہ == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    واپس EOF;
   }
 
-  return (unsigned char) *gptr();
+  واپس (غیرعلامتی حرف) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+صحیح gzfilebuf::overflow( صحیح c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  اگر ( !is_open() || !(منوال & ios::out) )
+    واپس EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  اگر ( !بنیاد_2() ) {
+    اگر ( allocate() == EOF )
+      واپس EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } ورنہ {
+    اگر (in_avail()) {
+        واپس EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    اگر (برآمد_انتظار()) {
+      اگر (flushbuf() == EOF)
+        واپس EOF;
     }
   }
 
-  int bl = blen();
-  setp( base(), base() + bl);
+  صحیح bl = blen();
+  setp( بنیاد_2(), بنیاد_2() + bl);
 
-  if ( c != EOF ) {
+  اگر ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  واپس 0;
 
 }
 
-int gzfilebuf::sync() {
+صحیح gzfilebuf::ہمآہنگ() {
 
-  if ( !is_open() )
-    return EOF;
+  اگر ( !is_open() )
+    واپس EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  اگر ( برآمد_انتظار() )
+    واپس flushbuf();
 
-  return 0;
+  واپس 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+صحیح gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  صحیح n;
+  حرف *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  اگر ( gzwrite( file, q, n) < n )
+    واپس EOF;
 
   setp(0,0);
 
-  return 0;
+  واپس 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+صحیح gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  صحیح required;
+  حرف *p;
 
-  p = base();
+  p = بنیاد_2();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  صحیح t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  اگر ( t <= 0) واپس EOF;
 
-  setg( base(), base(), base()+t);
+  setg( بنیاد_2(), بنیاد_2(), بنیاد_2()+t);
 
-  return t;
+  واپس t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+خالی gzfilestream_common::attach( صحیح fd, صحیح io_منوال ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  اگر ( !بفر.attach( fd, io_منوال) )
     clear( ios::failbit | ios::badbit );
-  else
+  ورنہ
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+خالی gzfilestream_common::open( ثابت حرف *name, صحیح io_منوال ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  اگر ( !بفر.open( name, io_منوال ) )
     clear( ios::failbit | ios::badbit );
-  else
+  ورنہ
     clear();
 
 }
 
-void gzfilestream_common::close() {
+خالی gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  اگر ( !بفر.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  واپس &بفر;
 }
 
 gzifstream::gzifstream() :
@@ -294,16 +294,16 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( ثابت حرف *name, صحیح io_منوال ) :
   ios( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::open( name, io_mode );
+  gzfilestream_common::open( name, io_منوال );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( صحیح fd, صحیح io_منوال ) :
   ios( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::attach( fd, io_mode );
+  gzfilestream_common::attach( fd, io_منوال );
 }
 
 gzifstream::~gzifstream() { }
@@ -314,16 +314,16 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( ثابت حرف *name, صحیح io_منوال ) :
   ios( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::open( name, io_mode );
+  gzfilestream_common::open( name, io_منوال );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( صحیح fd, صحیح io_منوال ) :
   ios( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::attach( fd, io_mode );
+  gzfilestream_common::attach( fd, io_منوال );
 }
 
 gzofstream::~gzofstream() { }
