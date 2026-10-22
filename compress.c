@@ -6,7 +6,7 @@
 /* @(#) $Id$ */
 
 #define ZLIB_INTERNAL
-#include "zlib.h"
+#अन्तर्भाव "zlib.h"
 
 /* ===========================================================================
      Compresses the source buffer into the destination buffer. The level
@@ -21,18 +21,18 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                        z_size_t sourceLen, int level) {
+पूर्णाङ्क ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, ध्रुव Bytef *source,
+                        z_size_t sourceLen, पूर्णाङ्क level) {
     z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t left;
+    पूर्णाङ्क err;
+    ध्रुव uInt max = (uInt)-1;
+    z_size_t डावा;
 
-    if ((sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    यदि ((sourceLen > 0 && source == रिक्त) ||
+        destLen == रिक्त || (*destLen > 0 && dest == रिक्त))
+        प्रत्यागम Z_STREAM_ERROR;
 
-    left = *destLen;
+    डावा = *destLen;
     *destLen = 0;
 
     stream.zalloc = (alloc_func)0;
@@ -40,48 +40,48 @@ int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
     stream.opaque = (voidpf)0;
 
     err = deflateInit(&stream, level);
-    if (err != Z_OK) return err;
+    यदि (err != Z_OK) प्रत्यागम err;
 
     stream.next_out = dest;
     stream.avail_out = 0;
     stream.next_in = (z_const Bytef *)source;
     stream.avail_in = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    कुरु {
+        यदि (stream.avail_out == 0) {
+            stream.avail_out = डावा > (z_size_t)max ? max : (uInt)डावा;
+            डावा -= stream.avail_out;
         }
-        if (stream.avail_in == 0) {
+        यदि (stream.avail_in == 0) {
             stream.avail_in = sourceLen > (z_size_t)max ? max :
                                                           (uInt)sourceLen;
             sourceLen -= stream.avail_in;
         }
         err = deflate(&stream, sourceLen ? Z_NO_FLUSH : Z_FINISH);
-    } while (err == Z_OK);
+    } यावत् (err == Z_OK);
 
     *destLen = (z_size_t)(stream.next_out - dest);
     deflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK : err;
+    प्रत्यागम err == Z_STREAM_END ? Z_OK : err;
 }
-int ZEXPORT compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen, int level) {
-    int ret;
+पूर्णाङ्क ZEXPORT compress2(Bytef *dest, uLongf *destLen, ध्रुव Bytef *source,
+                      uLong sourceLen, पूर्णाङ्क level) {
+    पूर्णाङ्क ret;
     z_size_t got = *destLen;
     ret = compress2_z(dest, &got, source, sourceLen, level);
     *destLen = (uLong)got;
-    return ret;
+    प्रत्यागम ret;
 }
 /* ===========================================================================
  */
-int ZEXPORT compress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
+पूर्णाङ्क ZEXPORT compress_z(Bytef *dest, z_size_t *destLen, ध्रुव Bytef *source,
                        z_size_t sourceLen) {
-    return compress2_z(dest, destLen, source, sourceLen,
+    प्रत्यागम compress2_z(dest, destLen, source, sourceLen,
                        Z_DEFAULT_COMPRESSION);
 }
-int ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
+पूर्णाङ्क ZEXPORT compress(Bytef *dest, uLongf *destLen, ध्रुव Bytef *source,
                      uLong sourceLen) {
-    return compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
+    प्रत्यागम compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
 }
 
 /* ===========================================================================
@@ -91,9 +91,9 @@ int ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
 z_size_t ZEXPORT compressBound_z(z_size_t sourceLen) {
     z_size_t bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
                      (sourceLen >> 25) + 13;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+    प्रत्यागम bound < sourceLen ? (z_size_t)-1 : bound;
 }
 uLong ZEXPORT compressBound(uLong sourceLen) {
     z_size_t bound = compressBound_z(sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+    प्रत्यागम (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }
