@@ -10,397 +10,397 @@
 
 */
 
-#include <stdlib.h>
+#ضمن <stdlib.h>
 
-#include "zlib.h"
-#include "ioapi.h"
-#include "iowin32.h"
+#ضمن "zlib.h"
+#ضمن "ioapi.h"
+#ضمن "iowin32.h"
 
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE (0xFFFFFFFF)
-#endif
+#اگر_تعریف_نشده INVALID_HANDLE_مقدار
+#تعریف_کن INVALID_HANDLE_مقدار (0xFFFFFFFF)
+#پایان_اگر
 
-#ifndef INVALID_SET_FILE_POINTER
-#define INVALID_SET_FILE_POINTER ((DWORD)-1)
-#endif
+#اگر_تعریف_نشده INVALID_مجموعه_FILE_اشاره_گر
+#تعریف_کن INVALID_مجموعه_FILE_اشاره_گر ((DWORD)-1)
+#پایان_اگر
 
 
 /* see Include/shared/winapifamily.h in the Windows Kit */
-#if defined(WINAPI_FAMILY_PARTITION) && (!(defined(IOWIN32_USING_WINRT_API)))
+#إذا defined(WINAPI_FAMILY_افراز) && (!(defined(IOWIN32_USING_WINRT_API)))
 
-#if !defined(WINAPI_FAMILY_ONE_PARTITION)
-#define WINAPI_FAMILY_ONE_PARTITION(PartitionSet, Partition) ((WINAPI_FAMILY & PartitionSet) == Partition)
-#endif
+#إذا !defined(WINAPI_FAMILY_ONE_افراز)
+#تعریف_کن WINAPI_FAMILY_ONE_افراز(افراز_مجموعه, افراز) ((WINAPI_FAMILY & افراز_مجموعه) == افراز)
+#پایان_اگر
 
-#if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
-#define IOWIN32_USING_WINRT_API 1
-#endif
-#endif
+#إذا WINAPI_FAMILY_ONE_افراز(WINAPI_FAMILY, WINAPI_افراز_APP)
+#تعریف_کن IOWIN32_USING_WINRT_API 1
+#پایان_اگر
+#پایان_اگر
 
-typedef struct
+تعريفنوع بنية
 {
     HANDLE hf;
-    int error;
+    صحيح error;
 } WIN32FILE_IOWIN;
 
 
-static void win32_translate_open_mode(int mode,
+ساكن فراغ win32_translate_open_نما(صحيح نما,
                                       DWORD* lpdwDesiredAccess,
                                       DWORD* lpdwCreationDisposition,
-                                      DWORD* lpdwShareMode,
-                                      DWORD* lpdwFlagsAndAttributes) {
-    *lpdwDesiredAccess = *lpdwShareMode = *lpdwFlagsAndAttributes = *lpdwCreationDisposition = 0;
+                                      DWORD* lpdw_Share_نما,
+                                      DWORD* lpdw_Flags_And_صفات) {
+    *lpdwDesiredAccess = *lpdw_Share_نما = *lpdw_Flags_And_صفات = *lpdwCreationDisposition = 0;
 
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+    إذا ((نما & ZLIB_FILEFUNC_نما_READWRITEFILTER)==ZLIB_FILEFUNC_نما_READ)
     {
         *lpdwDesiredAccess = GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
-        *lpdwShareMode = FILE_SHARE_READ;
+        *lpdw_Share_نما = FILE_SHARE_READ;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+    وإلا إذا (نما & ZLIB_FILEFUNC_نما_EXISTING)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+    وإلا إذا (نما & ZLIB_FILEFUNC_نما_CREATE)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = CREATE_ALWAYS;
     }
 }
 
-static voidpf win32_build_iowin(HANDLE hFile) {
-    voidpf ret=NULL;
+ساكن voidpf win32_build_iowin(HANDLE hFile) {
+    voidpf ret=عدم;
 
-    if ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE))
+    إذا ((hFile != عدم) && (hFile != INVALID_HANDLE_مقدار))
     {
         WIN32FILE_IOWIN w32fiow;
         w32fiow.hf = hFile;
         w32fiow.error = 0;
-        ret = malloc(sizeof(WIN32FILE_IOWIN));
+        ret = حافظه_بده(حجم(WIN32FILE_IOWIN));
 
-        if (ret==NULL)
+        إذا (ret==عدم)
             CloseHandle(hFile);
-        else
+        وإلا
             *((WIN32FILE_IOWIN*)ret) = w32fiow;
     }
-    return ret;
+    أرجع ret;
 }
 
-voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, ثابت فراغ* filename, صحيح نما) {
+    (فراغ)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_نما,dw_Flags_And_صفات ;
+    HANDLE hFile = عدم;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_نما(نما,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_نما,&dw_Flags_And_صفات);
 
-#ifdef IOWIN32_USING_WINRT_API
-#ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#اگر_تعریف_شده IOWIN32_USING_WINRT_API
+#اگر_تعریف_شده UNICODE
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dw_Share_نما, dwCreationDisposition, عدم);
+#وإلا
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_مقصد_Wide_Char(CP_ACP,0,(ثابت حرف*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_نما, dwCreationDisposition, عدم);
     }
-#endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#پایان_اگر
+#وإلا
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
+        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dw_Share_نما, عدم, dwCreationDisposition, dw_Flags_And_صفات, عدم);
+#پایان_اگر
 
-    return win32_build_iowin(hFile);
+    أرجع win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, ثابت فراغ* filename, صحيح نما) {
+    (فراغ)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_نما,dw_Flags_And_صفات ;
+    HANDLE hFile = عدم;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_نما(نما,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_نما,&dw_Flags_And_صفات);
 
-#ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#اگر_تعریف_شده IOWIN32_USING_WINRT_API
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_مقصد_Wide_Char(CP_ACP,0,(ثابت حرف*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_نما, dwCreationDisposition, عدم);
     }
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#وإلا
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
+        hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dw_Share_نما, عدم, dwCreationDisposition, dw_Flags_And_صفات, عدم);
+#پایان_اگر
 
-    return win32_build_iowin(hFile);
+    أرجع win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, ثابت فراغ* filename, صحيح نما) {
+    (فراغ)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_نما,dw_Flags_And_صفات ;
+    HANDLE hFile = عدم;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_نما(نما,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_نما,&dw_Flags_And_صفات);
 
-#ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition,NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#اگر_تعریف_شده IOWIN32_USING_WINRT_API
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dw_Share_نما, dwCreationDisposition,عدم);
+#وإلا
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
+        hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dw_Share_نما, عدم, dwCreationDisposition, dw_Flags_And_صفات, عدم);
+#پایان_اگر
 
-    return win32_build_iowin(hFile);
+    أرجع win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open_file_func(voidpf opaque, const char* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open_file_func(voidpf opaque, ثابت حرف* filename, صحيح نما) {
+    (فراغ)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_نما,dw_Flags_And_صفات ;
+    HANDLE hFile = عدم;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_نما(نما,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_نما,&dw_Flags_And_صفات);
 
-#ifdef IOWIN32_USING_WINRT_API
-#ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#اگر_تعریف_شده IOWIN32_USING_WINRT_API
+#اگر_تعریف_شده UNICODE
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dw_Share_نما, dwCreationDisposition, عدم);
+#وإلا
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_مقصد_Wide_Char(CP_ACP,0,(ثابت حرف*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_نما, dwCreationDisposition, عدم);
     }
-#endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#پایان_اگر
+#وإلا
+    إذا ((filename!=عدم) && (dwDesiredAccess != 0))
+        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dw_Share_نما, عدم, dwCreationDisposition, dw_Flags_And_صفات, عدم);
+#پایان_اگر
 
-    return win32_build_iowin(hFile);
+    أرجع win32_build_iowin(hFile);
 }
 
 
-uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf stream, void* buf,uLong size) {
-    (void)opaque;
+uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf جریان, فراغ* buf,uLong اندازه) {
+    (فراغ)opaque;
     uLong ret=0;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
+    HANDLE hFile = عدم;
+    إذا (جریان!=عدم)
+        hFile = ((WIN32FILE_IOWIN*)جریان) -> hf;
 
-    if (hFile != NULL)
+    إذا (hFile != عدم)
     {
-        if (!ReadFile(hFile, buf, size, &ret, NULL))
+        إذا (!ReadFile(hFile, buf, اندازه, &ret, عدم))
         {
-            DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            DWORD dwErr = Get_آخرین_Error();
+            إذا (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)جریان) -> error=(صحيح)dwErr;
         }
     }
 
-    return ret;
+    أرجع ret;
 }
 
 
-uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf stream, const void* buf, uLong size) {
-    (void)opaque;
+uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf جریان, ثابت فراغ* buf, uLong اندازه) {
+    (فراغ)opaque;
     uLong ret=0;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
+    HANDLE hFile = عدم;
+    إذا (جریان!=عدم)
+        hFile = ((WIN32FILE_IOWIN*)جریان) -> hf;
 
-    if (hFile != NULL)
+    إذا (hFile != عدم)
     {
-        if (!WriteFile(hFile, buf, size, &ret, NULL))
+        إذا (!WriteFile(hFile, buf, اندازه, &ret, عدم))
         {
-            DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            DWORD dwErr = Get_آخرین_Error();
+            إذا (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)جریان) -> error=(صحيح)dwErr;
         }
     }
 
-    return ret;
+    أرجع ret;
 }
 
-static BOOL MySetFilePointerEx(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dwMoveMethod) {
-#ifdef IOWIN32_USING_WINRT_API
-    return SetFilePointerEx(hFile, pos, newPos, dwMoveMethod);
-#else
-    LONG lHigh = pos.HighPart;
-    DWORD dwNewPos = SetFilePointer(hFile, pos.LowPart, &lHigh, dwMoveMethod);
+ساكن BOOL My_مجموعه_File_اشاره_گر_Ex(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dw_Move_روش) {
+#اگر_تعریف_شده IOWIN32_USING_WINRT_API
+    أرجع مجموعه_File_اشاره_گر_Ex(hFile, pos, newPos, dw_Move_روش);
+#وإلا
+    LONG l_بالا = pos.بالا_Part;
+    DWORD dwNewPos = مجموعه_File_اشاره_گر(hFile, pos.کم_Part, &l_بالا, dw_Move_روش);
     BOOL fOk = TRUE;
-    if (dwNewPos == 0xFFFFFFFF)
-        if (GetLastError() != NO_ERROR)
+    إذا (dwNewPos == 0xFFFFFFFF)
+        إذا (Get_آخرین_Error() != NO_ERROR)
             fOk = FALSE;
-    if ((newPos != NULL) && (fOk))
+    إذا ((newPos != عدم) && (fOk))
     {
-        newPos->LowPart = dwNewPos;
-        newPos->HighPart = lHigh;
+        newPos->کم_Part = dwNewPos;
+        newPos->بالا_Part = l_بالا;
     }
-    return fOk;
-#endif
+    أرجع fOk;
+#پایان_اگر
 }
 
-long ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    long ret=-1;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    if (hFile != NULL)
+دراز ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf جریان) {
+    (فراغ)opaque;
+    دراز ret=-1;
+    HANDLE hFile = عدم;
+    إذا (جریان!=عدم)
+        hFile = ((WIN32FILE_IOWIN*)جریان) -> hf;
+    إذا (hFile != عدم)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        إذا (!My_مجموعه_File_اشاره_گر_Ex(hFile, pos, &pos, FILE_CURRENT))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_آخرین_Error();
+            ((WIN32FILE_IOWIN*)جریان) -> error=(صحيح)dwErr;
             ret = -1;
         }
-        else
-            ret=(long)pos.LowPart;
+        وإلا
+            ret=(دراز)pos.کم_Part;
     }
-    return ret;
+    أرجع ret;
 }
 
-ZPOS64_T ZCALLBACK win32_tell64_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
+ZPOS64_T ZCALLBACK win32_tell64_file_func(voidpf opaque, voidpf جریان) {
+    (فراغ)opaque;
     ZPOS64_T ret= (ZPOS64_T)-1;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream)->hf;
+    HANDLE hFile = عدم;
+    إذا (جریان!=عدم)
+        hFile = ((WIN32FILE_IOWIN*)جریان)->hf;
 
-    if (hFile)
+    إذا (hFile)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        إذا (!My_مجموعه_File_اشاره_گر_Ex(hFile, pos, &pos, FILE_CURRENT))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_آخرین_Error();
+            ((WIN32FILE_IOWIN*)جریان) -> error=(صحيح)dwErr;
             ret = (ZPOS64_T)-1;
         }
-        else
+        وإلا
             ret=pos.QuadPart;
     }
-    return ret;
+    أرجع ret;
 }
 
 
-long ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf stream, uLong offset, int origin) {
-    (void)opaque;
-    DWORD dwMoveMethod=0xFFFFFFFF;
-    HANDLE hFile = NULL;
+دراز ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf جریان, uLong جابه_جایی, صحيح origin) {
+    (فراغ)opaque;
+    DWORD dw_Move_روش=0xFFFFFFFF;
+    HANDLE hFile = عدم;
 
-    long ret=-1;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    switch (origin)
+    دراز ret=-1;
+    إذا (جریان!=عدم)
+        hFile = ((WIN32FILE_IOWIN*)جریان) -> hf;
+    بدل (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
-        dwMoveMethod = FILE_CURRENT;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
-        dwMoveMethod = FILE_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
-        dwMoveMethod = FILE_BEGIN;
-        break;
-    default: return -1;
+    حالة ZLIB_FILEFUNC_SEEK_CUR :
+        dw_Move_روش = FILE_CURRENT;
+        اكسر;
+    حالة ZLIB_FILEFUNC_SEEK_انتها :
+        dw_Move_روش = FILE_انتها;
+        اكسر;
+    حالة ZLIB_FILEFUNC_SEEK_مجموعه :
+        dw_Move_روش = FILE_BEGIN;
+        اكسر;
+    افتراضي: أرجع -1;
     }
 
-    if (hFile != NULL)
+    إذا (hFile != عدم)
     {
         LARGE_INTEGER pos;
-        pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        pos.QuadPart = جابه_جایی;
+        إذا (!My_مجموعه_File_اشاره_گر_Ex(hFile, pos, عدم, dw_Move_روش))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_آخرین_Error();
+            ((WIN32FILE_IOWIN*)جریان) -> error=(صحيح)dwErr;
             ret = -1;
         }
-        else
+        وإلا
             ret=0;
     }
-    return ret;
+    أرجع ret;
 }
 
-long ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, int origin) {
-    (void)opaque;
-    DWORD dwMoveMethod=0xFFFFFFFF;
-    HANDLE hFile = NULL;
-    long ret=-1;
+دراز ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf جریان, ZPOS64_T جابه_جایی, صحيح origin) {
+    (فراغ)opaque;
+    DWORD dw_Move_روش=0xFFFFFFFF;
+    HANDLE hFile = عدم;
+    دراز ret=-1;
 
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream)->hf;
+    إذا (جریان!=عدم)
+        hFile = ((WIN32FILE_IOWIN*)جریان)->hf;
 
-    switch (origin)
+    بدل (origin)
     {
-        case ZLIB_FILEFUNC_SEEK_CUR :
-            dwMoveMethod = FILE_CURRENT;
-            break;
-        case ZLIB_FILEFUNC_SEEK_END :
-            dwMoveMethod = FILE_END;
-            break;
-        case ZLIB_FILEFUNC_SEEK_SET :
-            dwMoveMethod = FILE_BEGIN;
-            break;
-        default: return -1;
+        حالة ZLIB_FILEFUNC_SEEK_CUR :
+            dw_Move_روش = FILE_CURRENT;
+            اكسر;
+        حالة ZLIB_FILEFUNC_SEEK_انتها :
+            dw_Move_روش = FILE_انتها;
+            اكسر;
+        حالة ZLIB_FILEFUNC_SEEK_مجموعه :
+            dw_Move_روش = FILE_BEGIN;
+            اكسر;
+        افتراضي: أرجع -1;
     }
 
-    if (hFile)
+    إذا (hFile)
     {
         LARGE_INTEGER pos;
-        pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        pos.QuadPart = جابه_جایی;
+        إذا (!My_مجموعه_File_اشاره_گر_Ex(hFile, pos, عدم, dw_Move_روش))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_آخرین_Error();
+            ((WIN32FILE_IOWIN*)جریان) -> error=(صحيح)dwErr;
             ret = -1;
         }
-        else
+        وإلا
             ret=0;
     }
-    return ret;
+    أرجع ret;
 }
 
-int ZCALLBACK win32_close_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    int ret=-1;
+صحيح ZCALLBACK win32_close_file_func(voidpf opaque, voidpf جریان) {
+    (فراغ)opaque;
+    صحيح ret=-1;
 
-    if (stream!=NULL)
+    إذا (جریان!=عدم)
     {
         HANDLE hFile;
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-        if (hFile != NULL)
+        hFile = ((WIN32FILE_IOWIN*)جریان) -> hf;
+        إذا (hFile != عدم)
         {
             CloseHandle(hFile);
             ret=0;
         }
-        free(stream);
+        حرر(جریان);
     }
-    return ret;
+    أرجع ret;
 }
 
-int ZCALLBACK win32_error_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    int ret=-1;
-    if (stream!=NULL)
+صحيح ZCALLBACK win32_error_file_func(voidpf opaque, voidpf جریان) {
+    (فراغ)opaque;
+    صحيح ret=-1;
+    إذا (جریان!=عدم)
     {
-        ret = ((WIN32FILE_IOWIN*)stream) -> error;
+        ret = ((WIN32FILE_IOWIN*)جریان) -> error;
     }
-    return ret;
+    أرجع ret;
 }
 
-void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
+فراغ fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen_file = win32_open_file_func;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -408,10 +408,10 @@ void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek_file = win32_seek_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = عدم;
 }
 
-void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
+فراغ fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_func;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -419,11 +419,11 @@ void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = عدم;
 }
 
 
-void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
+فراغ fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_funcA;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -431,11 +431,11 @@ void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = عدم;
 }
 
 
-void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
+فراغ fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_funcW;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -443,5 +443,5 @@ void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = عدم;
 }

@@ -29,32 +29,32 @@
  *                      - Enable the provision of initial input to blast()
  */
 
-#include <stddef.h>             /* for NULL */
-#include <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
-#include "blast.h"              /* prototype for blast() */
+#ضمن <stddef.h>             /* for NULL */
+#ضمن <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
+#ضمن "blast.h"              /* prototype for blast() */
 
-#define MAXBITS 13              /* maximum code length */
-#define MAXWIN 4096             /* maximum window size */
+#تعریف_کن MAXBITS 13              /* maximum code length */
+#تعریف_کن MAXWIN 4096             /* maximum window size */
 
 /* input and output state */
-struct state {
+بنية state {
     /* input state */
-    blast_in infun;             /* input function provided by user */
-    void *inhow;                /* opaque information passed to infun() */
-    unsigned char *in;          /* next input location */
-    unsigned left;              /* available input at in */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    blast_درون infun;             /* input function provided by user */
+    فراغ *inhow;                /* opaque information passed to infun() */
+    بیعلامت حرف *درون;          /* next input location */
+    بیعلامت چپ;              /* available input at in */
+    صحيح bitbuf;                 /* bit buffer */
+    صحيح bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
 
     /* output state */
-    blast_out outfun;           /* output function provided by user */
-    void *outhow;               /* opaque information passed to outfun() */
-    unsigned next;              /* index of next write location in out[] */
-    int first;                  /* true to check distances (for first 4K) */
-    unsigned char out[MAXWIN];  /* output buffer and sliding window */
+    blast_بیرون outfun;           /* output function provided by user */
+    فراغ *outhow;               /* opaque information passed to outfun() */
+    بیعلامت بعدی;              /* index of next write location in out[] */
+    صحيح اولی;                  /* true to check distances (for first 4K) */
+    بیعلامت حرف بیرون[MAXWIN];  /* output buffer and sliding window */
 };
 
 /*
@@ -68,19 +68,19 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local صحيح بیتها(بنية state *s, صحيح need)
 {
-    int val;            /* bit accumulator */
+    صحيح val;            /* bit accumulator */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->left == 0) {
-            s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+    طالما (s->bitcnt < need) {
+        إذا (s->چپ == 0) {
+            s->چپ = s->infun(s->inhow, &(s->درون));
+            إذا (s->چپ == 0) longjmp(s->env, 1);       /* out of input */
         }
-        val |= (int)(*(s->in)++) << s->bitcnt;          /* load eight bits */
-        s->left--;
+        val |= (صحيح)(*(s->درون)++) << s->bitcnt;          /* load eight bits */
+        s->چپ--;
         s->bitcnt += 8;
     }
 
@@ -89,7 +89,7 @@ local int bits(struct state *s, int need)
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return val & ((1 << need) - 1);
+    أرجع val & ((1 << need) - 1);
 }
 
 /*
@@ -99,9 +99,9 @@ local int bits(struct state *s, int need)
  * entries is the sum of the counts in count[].  The decoding process can be
  * seen in the function decode() below.
  */
-struct huffman {
-    short *count;       /* number of symbols of each length */
-    short *symbol;      /* canonically ordered symbols */
+بنية huffman {
+    کوتاه *شمار;       /* number of symbols of each length */
+    کوتاه *نماد;      /* canonically ordered symbols */
 };
 
 /*
@@ -125,49 +125,49 @@ struct huffman {
  *   this ordering, the bits pulled during decoding are inverted to apply the
  *   more "natural" ordering starting with all zeros and incrementing.
  */
-local int decode(struct state *s, struct huffman *h)
+local صحيح decode(بنية state *s, بنية huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
-    short *next;        /* next number of codes */
+    صحيح len;            /* current number of bits in code */
+    صحيح کد;           /* len bits being decoded */
+    صحيح اولی;          /* first code of length len */
+    صحيح شمار;          /* number of codes of length len */
+    صحيح شاخص;          /* index of first code of length len in symbol table */
+    صحيح bitbuf;         /* bits from stream */
+    صحيح چپ;           /* bits left in next or left to process */
+    کوتاه *بعدی;        /* next number of codes */
 
     bitbuf = s->bitbuf;
-    left = s->bitcnt;
-    code = first = index = 0;
+    چپ = s->bitcnt;
+    کد = اولی = شاخص = 0;
     len = 1;
-    next = h->count + 1;
-    while (1) {
-        while (left--) {
-            code |= (bitbuf & 1) ^ 1;   /* invert code */
+    بعدی = h->شمار + 1;
+    طالما (1) {
+        طالما (چپ--) {
+            کد |= (bitbuf & 1) ^ 1;   /* invert code */
             bitbuf >>= 1;
-            count = *next++;
-            if (code < first + count) { /* if length len, return symbol */
+            شمار = *بعدی++;
+            إذا (کد < اولی + شمار) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                أرجع h->نماد[شاخص + (کد - اولی)];
             }
-            index += count;             /* else update for next length */
-            first += count;
-            first <<= 1;
-            code <<= 1;
+            شاخص += شمار;             /* else update for next length */
+            اولی += شمار;
+            اولی <<= 1;
+            کد <<= 1;
             len++;
         }
-        left = (MAXBITS+1) - len;
-        if (left == 0) break;
-        if (s->left == 0) {
-            s->left = s->infun(s->inhow, &(s->in));
-            if (s->left == 0) longjmp(s->env, 1);       /* out of input */
+        چپ = (MAXBITS+1) - len;
+        إذا (چپ == 0) اكسر;
+        إذا (s->چپ == 0) {
+            s->چپ = s->infun(s->inhow, &(s->درون));
+            إذا (s->چپ == 0) longjmp(s->env, 1);       /* out of input */
         }
-        bitbuf = *(s->in)++;
-        s->left--;
-        if (left > 8) left = 8;
+        bitbuf = *(s->درون)++;
+        s->چپ--;
+        إذا (چپ > 8) چپ = 8;
     }
-    return -9;                          /* ran out of codes */
+    أرجع -9;                          /* ran out of codes */
 }
 
 /*
@@ -187,57 +187,57 @@ local int decode(struct state *s, struct huffman *h)
  * it is possible for decode() using that table to return an error for received
  * codes past the end of the incomplete lengths.
  */
-local int construct(struct huffman *h, const unsigned char *rep, int n)
+local صحيح construct(بنية huffman *h, ثابت بیعلامت حرف *rep, صحيح n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
-    short offs[MAXBITS+1];      /* offsets in symbol table for each length */
-    short length[256];  /* code lengths */
+    صحيح نماد;         /* current symbol when stepping through length[] */
+    صحيح len;            /* current length when stepping through h->count[] */
+    صحيح چپ;           /* number of possible codes left of current length */
+    کوتاه offs[MAXBITS+1];      /* offsets in symbol table for each length */
+    کوتاه درازی[256];  /* code lengths */
 
     /* convert compact repeat counts into symbol bit length list */
-    symbol = 0;
-    do {
+    نماد = 0;
+    افعل {
         len = *rep++;
-        left = (len >> 4) + 1;
+        چپ = (len >> 4) + 1;
         len &= 15;
-        do {
-            length[symbol++] = len;
-        } while (--left);
-    } while (--n);
-    n = symbol;
+        افعل {
+            درازی[نماد++] = len;
+        } طالما (--چپ);
+    } طالما (--n);
+    n = نماد;
 
     /* count number of codes of each length */
-    for (len = 0; len <= MAXBITS; len++)
-        h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
-        (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    لكل (len = 0; len <= MAXBITS; len++)
+        h->شمار[len] = 0;
+    لكل (نماد = 0; نماد < n; نماد++)
+        (h->شمار[درازی[نماد]])++;   /* assumes lengths are within bounds */
+    إذا (h->شمار[0] == n)               /* no codes! */
+        أرجع 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;                           /* one possible code of zero length */
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;                     /* one more bit, double codes left */
-        left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0) return left;      /* over-subscribed--return negative */
+    چپ = 1;                           /* one possible code of zero length */
+    لكل (len = 1; len <= MAXBITS; len++) {
+        چپ <<= 1;                     /* one more bit, double codes left */
+        چپ -= h->شمار[len];          /* deduct count from possible codes */
+        إذا (چپ < 0) أرجع چپ;      /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + h->count[len];
+    لكل (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + h->شمار[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
-            h->symbol[offs[length[symbol]]++] = symbol;
+    لكل (نماد = 0; نماد < n; نماد++)
+        إذا (درازی[نماد] != 0)
+            h->نماد[offs[درازی[نماد]]++] = نماد;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    أرجع چپ;
 }
 
 /*
@@ -278,24 +278,24 @@ local int construct(struct huffman *h, const unsigned char *rep, int n)
  *   ignoring whether the length is greater than the distance or not implements
  *   this correctly.
  */
-local int decomp(struct state *s)
+local صحيح decomp(بنية state *s)
 {
-    int lit;            /* true if literals are coded */
-    int dict;           /* log2(dictionary size) - 6 */
-    int symbol;         /* decoded symbol, extra bits for distance */
-    int len;            /* length for copy */
-    unsigned dist;      /* distance for copy */
-    int copy;           /* copy counter */
-    unsigned char *from, *to;   /* copy pointers */
-    static int virgin = 1;                              /* build tables once */
-    static short litcnt[MAXBITS+1], litsym[256];        /* litcode memory */
-    static short lencnt[MAXBITS+1], lensym[16];         /* lencode memory */
-    static short distcnt[MAXBITS+1], distsym[64];       /* distcode memory */
-    static struct huffman litcode = {litcnt, litsym};   /* length code */
-    static struct huffman lencode = {lencnt, lensym};   /* length code */
-    static struct huffman distcode = {distcnt, distsym};/* distance code */
+    صحيح lit;            /* true if literals are coded */
+    صحيح dict;           /* log2(dictionary size) - 6 */
+    صحيح نماد;         /* decoded symbol, extra bits for distance */
+    صحيح len;            /* length for copy */
+    بیعلامت dist;      /* distance for copy */
+    صحيح copy;           /* copy counter */
+    بیعلامت حرف *from, *مقصد;   /* copy pointers */
+    ساكن صحيح virgin = 1;                              /* build tables once */
+    ساكن کوتاه litcnt[MAXBITS+1], litsym[256];        /* litcode memory */
+    ساكن کوتاه lencnt[MAXBITS+1], lensym[16];         /* lencode memory */
+    ساكن کوتاه distcnt[MAXBITS+1], distsym[64];       /* distcode memory */
+    ساكن بنية huffman litcode = {litcnt, litsym};   /* length code */
+    ساكن بنية huffman lencode = {lencnt, lensym};   /* length code */
+    ساكن بنية huffman distcode = {distcnt, distsym};/* distance code */
         /* bit lengths of literal codes */
-    static const unsigned char litlen[] = {
+    ساكن ثابت بیعلامت حرف litlen[] = {
         11, 124, 8, 7, 28, 7, 188, 13, 76, 4, 10, 8, 12, 10, 12, 10, 8, 23, 8,
         9, 7, 6, 7, 8, 7, 6, 55, 8, 23, 24, 12, 11, 7, 9, 11, 12, 6, 7, 22, 5,
         7, 24, 6, 11, 9, 6, 7, 22, 7, 11, 38, 7, 9, 8, 25, 11, 8, 11, 9, 12,
@@ -303,120 +303,120 @@ local int decomp(struct state *s)
         44, 253, 253, 253, 252, 252, 252, 13, 12, 45, 12, 45, 12, 61, 12, 45,
         44, 173};
         /* bit lengths of length codes 0..15 */
-    static const unsigned char lenlen[] = {2, 35, 36, 53, 38, 23};
+    ساكن ثابت بیعلامت حرف lenlen[] = {2, 35, 36, 53, 38, 23};
         /* bit lengths of distance codes 0..63 */
-    static const unsigned char distlen[] = {2, 20, 53, 230, 247, 151, 248};
-    static const short base[16] = {     /* base for length codes */
+    ساكن ثابت بیعلامت حرف distlen[] = {2, 20, 53, 230, 247, 151, 248};
+    ساكن ثابت کوتاه پایه_2[16] = {     /* base for length codes */
         3, 2, 4, 5, 6, 7, 8, 9, 10, 12, 16, 24, 40, 72, 136, 264};
-    static const char extra[16] = {     /* extra bits for length codes */
+    ساكن ثابت حرف extra[16] = {     /* extra bits for length codes */
         0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     /* set up decoding tables (once--might not be thread-safe) */
-    if (virgin) {
-        construct(&litcode, litlen, sizeof(litlen));
-        construct(&lencode, lenlen, sizeof(lenlen));
-        construct(&distcode, distlen, sizeof(distlen));
+    إذا (virgin) {
+        construct(&litcode, litlen, حجم(litlen));
+        construct(&lencode, lenlen, حجم(lenlen));
+        construct(&distcode, distlen, حجم(distlen));
         virgin = 0;
     }
 
     /* read header */
-    lit = bits(s, 8);
-    if (lit > 1) return -1;
-    dict = bits(s, 8);
-    if (dict < 4 || dict > 6) return -2;
+    lit = بیتها(s, 8);
+    إذا (lit > 1) أرجع -1;
+    dict = بیتها(s, 8);
+    إذا (dict < 4 || dict > 6) أرجع -2;
 
     /* decode literals and length/distance pairs */
-    do {
-        if (bits(s, 1)) {
+    افعل {
+        إذا (بیتها(s, 1)) {
             /* get length */
-            symbol = decode(s, &lencode);
-            len = base[symbol] + bits(s, extra[symbol]);
-            if (len == 519) break;              /* end code */
+            نماد = decode(s, &lencode);
+            len = پایه_2[نماد] + بیتها(s, extra[نماد]);
+            إذا (len == 519) اكسر;              /* end code */
 
             /* get distance */
-            symbol = len == 2 ? 2 : dict;
-            dist = decode(s, &distcode) << symbol;
-            dist += bits(s, symbol);
+            نماد = len == 2 ? 2 : dict;
+            dist = decode(s, &distcode) << نماد;
+            dist += بیتها(s, نماد);
             dist++;
-            if (s->first && dist > s->next)
-                return -3;              /* distance too far back */
+            إذا (s->اولی && dist > s->بعدی)
+                أرجع -3;              /* distance too far back */
 
             /* copy length bytes from distance bytes back */
-            do {
-                to = s->out + s->next;
-                from = to - dist;
+            افعل {
+                مقصد = s->بیرون + s->بعدی;
+                from = مقصد - dist;
                 copy = MAXWIN;
-                if (s->next < dist) {
+                إذا (s->بعدی < dist) {
                     from += copy;
                     copy = dist;
                 }
-                copy -= s->next;
-                if (copy > len) copy = len;
+                copy -= s->بعدی;
+                إذا (copy > len) copy = len;
                 len -= copy;
-                s->next += copy;
-                do {
-                    *to++ = *from++;
-                } while (--copy);
-                if (s->next == MAXWIN) {
-                    if (s->outfun(s->outhow, s->out, s->next)) return 1;
-                    s->next = 0;
-                    s->first = 0;
+                s->بعدی += copy;
+                افعل {
+                    *مقصد++ = *from++;
+                } طالما (--copy);
+                إذا (s->بعدی == MAXWIN) {
+                    إذا (s->outfun(s->outhow, s->بیرون, s->بعدی)) أرجع 1;
+                    s->بعدی = 0;
+                    s->اولی = 0;
                 }
-            } while (len != 0);
+            } طالما (len != 0);
         }
-        else {
+        وإلا {
             /* get literal and write it */
-            symbol = lit ? decode(s, &litcode) : bits(s, 8);
-            s->out[s->next++] = symbol;
-            if (s->next == MAXWIN) {
-                if (s->outfun(s->outhow, s->out, s->next)) return 1;
-                s->next = 0;
-                s->first = 0;
+            نماد = lit ? decode(s, &litcode) : بیتها(s, 8);
+            s->بیرون[s->بعدی++] = نماد;
+            إذا (s->بعدی == MAXWIN) {
+                إذا (s->outfun(s->outhow, s->بیرون, s->بعدی)) أرجع 1;
+                s->بعدی = 0;
+                s->اولی = 0;
             }
         }
-    } while (1);
-    return 0;
+    } طالما (1);
+    أرجع 0;
 }
 
 /* See comments in blast.h */
-int blast(blast_in infun, void *inhow, blast_out outfun, void *outhow,
-          unsigned *left, unsigned char **in)
+صحيح blast(blast_درون infun, فراغ *inhow, blast_بیرون outfun, فراغ *outhow,
+          بیعلامت *چپ, بیعلامت حرف **درون)
 {
-    struct state s;             /* input/output state */
-    int err;                    /* return value */
+    بنية state s;             /* input/output state */
+    صحيح err;                    /* return value */
 
     /* initialize input state */
     s.infun = infun;
     s.inhow = inhow;
-    if (left != NULL && *left) {
-        s.left = *left;
-        s.in = *in;
+    إذا (چپ != عدم && *چپ) {
+        s.چپ = *چپ;
+        s.درون = *درون;
     }
-    else
-        s.left = 0;
+    وإلا
+        s.چپ = 0;
     s.bitbuf = 0;
     s.bitcnt = 0;
 
     /* initialize output state */
     s.outfun = outfun;
     s.outhow = outhow;
-    s.next = 0;
-    s.first = 1;
+    s.بعدی = 0;
+    s.اولی = 1;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
+    إذا (setjmp(s.env) != 0)             /* if came back here via longjmp(), */
         err = 2;                        /*  then skip decomp(), return error */
-    else
+    وإلا
         err = decomp(&s);               /* decompress */
 
     /* return unused input */
-    if (left != NULL)
-        *left = s.left;
-    if (in != NULL)
-        *in = s.left ? s.in : NULL;
+    إذا (چپ != عدم)
+        *چپ = s.چپ;
+    إذا (درون != عدم)
+        *درون = s.چپ ? s.درون : عدم;
 
     /* write any leftover output and update the error code if needed */
-    if (err != 1 && s.next && s.outfun(s.outhow, s.out, s.next) && err == 0)
+    إذا (err != 1 && s.بعدی && s.outfun(s.outhow, s.بیرون, s.بعدی) && err == 0)
         err = 1;
-    return err;
+    أرجع err;
 }

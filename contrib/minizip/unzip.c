@@ -63,231 +63,231 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#ifdef ZLIB_DLL
+#اگر_تعریف_شده ZLIB_DLL
 #  undef ZLIB_DLL
-#endif
-#include "zlib.h"
-#include "unzip.h"
+#پایان_اگر
+#ضمن "zlib.h"
+#ضمن "unzip.h"
 
-#ifdef STDC
+#اگر_تعریف_شده STDC
 #  include <stddef.h>
-#endif
-#ifdef NO_ERRNO_H
-    extern int errno;
-#else
+#پایان_اگر
+#اگر_تعریف_شده NO_ERRNO_H
+    خارجي صحيح errno;
+#وإلا
 #   include <errno.h>
-#endif
+#پایان_اگر
 
 
-#ifndef local
-#  define local static
-#endif
+#اگر_تعریف_نشده local
+#  define local ساكن
+#پایان_اگر
 /* compile with -Dlocal if your debugger can't find static symbols */
 
 
-#ifndef CASESENSITIVITYDEFAULT_NO
-#  if (!defined(__unix__) && !defined(__unix) || defined(__CYGWIN__))  && !defined(CASESENSITIVITYDEFAULT_YES)
+#اگر_تعریف_نشده CASESENSITIVITYDEFAULT_NO
+#  إذا (!defined(__unix__) && !defined(__unix) || defined(__CYGWIN__))  && !defined(CASESENSITIVITYDEFAULT_YES)
 #    define CASESENSITIVITYDEFAULT_NO
 #  endif
-#endif
+#پایان_اگر
 
 
-#ifndef UNZ_BUFSIZE
-#define UNZ_BUFSIZE (16384)
-#endif
+#اگر_تعریف_نشده UNZ_BUFSIZE
+#تعریف_کن UNZ_BUFSIZE (16384)
+#پایان_اگر
 
-#ifndef UNZ_MAXFILENAMEINZIP
-#define UNZ_MAXFILENAMEINZIP (256)
-#endif
+#اگر_تعریف_نشده UNZ_MAXFILENAMEINZIP
+#تعریف_کن UNZ_MAXFILENAMEINZIP (256)
+#پایان_اگر
 
-#ifndef ALLOC
-# define ALLOC(size) (malloc(size))
-#endif
+#اگر_تعریف_نشده ALLOC
+# define ALLOC(اندازه) (حافظه_بده(اندازه))
+#پایان_اگر
 
-#define SIZECENTRALDIRITEM (0x2e)
-#define SIZEZIPLOCALHEADER (0x1e)
+#تعریف_کن SIZECENTRALDIRITEM (0x2e)
+#تعریف_کن SIZEZIPLOCALHEADER (0x1e)
 
 
-const char unz_copyright[] =
+ثابت حرف unz_copyright[] =
    " unzip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
 
 /* unz_file_info64_internal contain internal info about a file in zipfile*/
-typedef struct unz_file_info64_internal_s
+تعريفنوع بنية unz_file_info64_داخلی_s
 {
-    ZPOS64_T offset_curfile;/* relative offset of local header 8 bytes */
-} unz_file_info64_internal;
+    ZPOS64_T جابه_جایی_curfile;/* relative offset of local header 8 bytes */
+} unz_file_info64_داخلی;
 
 
 /* file_in_zip_read_info_s contain internal information about a file in zipfile,
     when reading and decompress it */
-typedef struct
+تعريفنوع بنية
 {
-    char  *read_buffer;         /* internal buffer for compressed data */
-    z_stream stream;            /* zLib stream structure for inflate */
+    حرف  *read_میانگیر;         /* internal buffer for compressed data */
+    z_جریان جریان;            /* zLib stream structure for inflate */
 
-#ifdef HAVE_BZIP2
-    bz_stream bstream;          /* bzLib stream structure for bziped */
-#endif
+#اگر_تعریف_شده HAVE_BZIP2
+    bz_جریان bstream;          /* bzLib stream structure for bziped */
+#پایان_اگر
 
-    ZPOS64_T pos_in_zipfile;       /* position in byte on the zipfile, for fseek*/
-    uLong stream_initialised;   /* flag set if stream structure is initialised*/
+    ZPOS64_T pos_درون_zipfile;       /* position in byte on the zipfile, for fseek*/
+    uLong جریان_initialised;   /* flag set if stream structure is initialised*/
 
-    ZPOS64_T offset_local_extrafield;/* offset of the local extra field */
-    uInt  size_local_extrafield;/* size of the local extra field */
+    ZPOS64_T جابه_جایی_local_extrafield;/* offset of the local extra field */
+    uInt  اندازه_local_extrafield;/* size of the local extra field */
     ZPOS64_T pos_local_extrafield;   /* position in the local extra field in read*/
-    ZPOS64_T total_out_64;
+    ZPOS64_T مجموع_بیرون_64;
 
-    uLong crc32;                /* crc32 of all data uncompressed */
-    uLong crc32_wait;           /* crc32 we must obtain after decompress all */
+    uLong بررسی_چرخهای_32_2;                /* crc32 of all data uncompressed */
+    uLong بررسی_چرخهای_32_wait;           /* crc32 we must obtain after decompress all */
     ZPOS64_T rest_read_compressed; /* number of byte to be decompressed */
     ZPOS64_T rest_read_uncompressed;/*number of byte to be obtained after decomp*/
     zlib_filefunc64_32_def z_filefunc;
     voidpf filestream;        /* io structure of the zipfile */
-    uLong compression_method;   /* compression method (0==store) */
+    uLong compression_روش;   /* compression method (0==store) */
     ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
-    int   raw;
-} file_in_zip64_read_info_s;
+    صحيح   raw;
+} file_درون_zip64_read_info_s;
 
 
 /* unz64_s contain internal information about the zipfile
 */
-typedef struct
+تعريفنوع بنية
 {
     zlib_filefunc64_32_def z_filefunc;
-    int is64bitOpenFunction;
+    صحيح is64bitOpenFunction;
     voidpf filestream;        /* io structure of the zipfile */
     unz_global_info64 gi;       /* public global information */
     ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
-    ZPOS64_T num_file;             /* number of the current file in the zipfile*/
-    ZPOS64_T pos_in_central_dir;   /* pos of the current file in the central dir*/
+    ZPOS64_T رقم_file;             /* number of the current file in the zipfile*/
+    ZPOS64_T pos_درون_central_dir;   /* pos of the current file in the central dir*/
     ZPOS64_T current_file_ok;      /* flag about the usability of the current file*/
     ZPOS64_T central_pos;          /* position of the beginning of the central dir*/
 
-    ZPOS64_T size_central_dir;     /* size of the central directory  */
-    ZPOS64_T offset_central_dir;   /* offset of start of central directory with
+    ZPOS64_T اندازه_central_dir;     /* size of the central directory  */
+    ZPOS64_T جابه_جایی_central_dir;   /* offset of start of central directory with
                                    respect to the starting disk number */
 
     unz_file_info64 cur_file_info; /* public info about the current file in zip*/
-    unz_file_info64_internal cur_file_info_internal; /* private info about it*/
-    file_in_zip64_read_info_s* pfile_in_zip_read; /* structure about the current
+    unz_file_info64_داخلی cur_file_info_داخلی; /* private info about it*/
+    file_درون_zip64_read_info_s* pfile_درون_zip_read; /* structure about the current
                                         file if we are decompressing it */
-    int encrypted;
+    صحيح encrypted;
 
-    int isZip64;
+    صحيح isZip64;
 
 #    ifndef NOUNCRYPT
-    unsigned long keys[3];     /* keys defining the pseudo-random sequence */
-    const z_crc_t* pcrc_32_tab;
+    بیعلامت دراز کلیدها[3];     /* keys defining the pseudo-random sequence */
+    ثابت z_بررسی_چرخهای_t* pcrc_32_tab;
 #    endif
 } unz64_s;
 
 
-#ifndef NOUNCRYPT
-#include "crypt.h"
-#endif
+#اگر_تعریف_نشده NOUNCRYPT
+#ضمن "crypt.h"
+#پایان_اگر
 
 
 /* ===========================================================================
    Reads a long in LSB order from the given gz_stream. Sets
 */
 
-local int unz64local_getShort(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local صحيح unz64local_getShort(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def,
                               voidpf filestream,
                               uLong *pX) {
-    unsigned char c[2];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,2);
-    if (err==2)
+    بیعلامت حرف c[2];
+    صحيح err = (صحيح)ZREAD64(*pzlib_filefunc_def,filestream,c,2);
+    إذا (err==2)
     {
         *pX = c[0] | ((uLong)c[1] << 8);
-        return UNZ_OK;
+        أرجع UNZ_OK;
     }
-    else
+    وإلا
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        إذا (ZERROR64(*pzlib_filefunc_def,filestream))
+            أرجع UNZ_ERRNO;
+        وإلا
+            أرجع UNZ_EOF;
     }
 }
 
-local int unz64local_getLong(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local صحيح unz64local_getLong(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def,
                              voidpf filestream,
                              uLong *pX) {
-    unsigned char c[4];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,4);
-    if (err==4)
+    بیعلامت حرف c[4];
+    صحيح err = (صحيح)ZREAD64(*pzlib_filefunc_def,filestream,c,4);
+    إذا (err==4)
     {
         *pX = c[0] | ((uLong)c[1] << 8) | ((uLong)c[2] << 16) | ((uLong)c[3] << 24);
-        return UNZ_OK;
+        أرجع UNZ_OK;
     }
-    else
+    وإلا
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        إذا (ZERROR64(*pzlib_filefunc_def,filestream))
+            أرجع UNZ_ERRNO;
+        وإلا
+            أرجع UNZ_EOF;
     }
 }
 
 
-local int unz64local_getLong64(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local صحيح unz64local_getLong64(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def,
                                voidpf filestream,
                                ZPOS64_T *pX) {
-    unsigned char c[8];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,8);
-    if (err==8)
+    بیعلامت حرف c[8];
+    صحيح err = (صحيح)ZREAD64(*pzlib_filefunc_def,filestream,c,8);
+    إذا (err==8)
     {
         *pX = c[0] | ((ZPOS64_T)c[1] << 8) | ((ZPOS64_T)c[2] << 16) | ((ZPOS64_T)c[3] << 24)
             | ((ZPOS64_T)c[4] << 32) | ((ZPOS64_T)c[5] << 40) | ((ZPOS64_T)c[6] << 48) | ((ZPOS64_T)c[7] << 56);
-        return UNZ_OK;
+        أرجع UNZ_OK;
     }
-    else
+    وإلا
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        إذا (ZERROR64(*pzlib_filefunc_def,filestream))
+            أرجع UNZ_ERRNO;
+        وإلا
+            أرجع UNZ_EOF;
     }
 }
 
 /* My own strcmpi / strcasecmp */
-local int strcmpcasenosensitive_internal(const char* fileName1, const char* fileName2) {
-    for (;;)
+local صحيح strcmpcasenosensitive_داخلی(ثابت حرف* fileName1, ثابت حرف* fileName2) {
+    لكل (;;)
     {
-        char c1=*(fileName1++);
-        char c2=*(fileName2++);
-        if ((c1>='a') && (c1<='z'))
+        حرف c1=*(fileName1++);
+        حرف c2=*(fileName2++);
+        إذا ((c1>='a') && (c1<='z'))
             c1 -= 0x20;
-        if ((c2>='a') && (c2<='z'))
+        إذا ((c2>='a') && (c2<='z'))
             c2 -= 0x20;
-        if (c1=='\0')
-            return ((c2=='\0') ? 0 : -1);
-        if (c2=='\0')
-            return 1;
-        if (c1<c2)
-            return -1;
-        if (c1>c2)
-            return 1;
+        إذا (c1=='\0')
+            أرجع ((c2=='\0') ? 0 : -1);
+        إذا (c2=='\0')
+            أرجع 1;
+        إذا (c1<c2)
+            أرجع -1;
+        إذا (c1>c2)
+            أرجع 1;
     }
 }
 
 
-#ifdef  CASESENSITIVITYDEFAULT_NO
-#define CASESENSITIVITYDEFAULTVALUE 2
-#else
-#define CASESENSITIVITYDEFAULTVALUE 1
-#endif
+#اگر_تعریف_شده  CASESENSITIVITYDEFAULT_NO
+#تعریف_کن CASESENSITIVITYDEFAULTVALUE 2
+#وإلا
+#تعریف_کن CASESENSITIVITYDEFAULTVALUE 1
+#پایان_اگر
 
-#ifndef STRCMPCASENOSENTIVEFUNCTION
-#define STRCMPCASENOSENTIVEFUNCTION strcmpcasenosensitive_internal
-#endif
+#اگر_تعریف_نشده STRCMPCASENOSENTIVEFUNCTION
+#تعریف_کن STRCMPCASENOSENTIVEFUNCTION strcmpcasenosensitive_داخلی
+#پایان_اگر
 
 /*
    Compare two filenames (fileName1,fileName2).
@@ -298,83 +298,83 @@ local int strcmpcasenosensitive_internal(const char* fileName1, const char* file
         (like 1 on Unix, 2 on Windows)
 
 */
-extern int ZEXPORT unzStringFileNameCompare (const char*  fileName1,
-                                             const char*  fileName2,
-                                             int iCaseSensitivity) {
-    if (iCaseSensitivity==0)
-        iCaseSensitivity=CASESENSITIVITYDEFAULTVALUE;
+خارجي صحيح ZEXPORT unzStringFileNameCompare (ثابت حرف*  fileName1,
+                                             ثابت حرف*  fileName2,
+                                             صحيح i_Case_حساسیت) {
+    إذا (i_Case_حساسیت==0)
+        i_Case_حساسیت=CASESENSITIVITYDEFAULTVALUE;
 
-    if (iCaseSensitivity==1)
-        return strcmp(fileName1,fileName2);
+    إذا (i_Case_حساسیت==1)
+        أرجع strcmp(fileName1,fileName2);
 
-    return STRCMPCASENOSENTIVEFUNCTION(fileName1,fileName2);
+    أرجع STRCMPCASENOSENTIVEFUNCTION(fileName1,fileName2);
 }
 
-#ifndef BUFREADCOMMENT
-#define BUFREADCOMMENT (0x400)
-#endif
+#اگر_تعریف_نشده BUFREADCOMMENT
+#تعریف_کن BUFREADCOMMENT (0x400)
+#پایان_اگر
 
-#ifndef CENTRALDIRINVALID
-#define CENTRALDIRINVALID ((ZPOS64_T)(-1))
-#endif
+#اگر_تعریف_نشده CENTRALDIRINVALID
+#تعریف_کن CENTRALDIRINVALID ((ZPOS64_T)(-1))
+#پایان_اگر
 
 /*
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-    unsigned char* buf;
-    ZPOS64_T uSizeFile;
-    ZPOS64_T uBackRead;
-    ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-    ZPOS64_T uPosFound=CENTRALDIRINVALID;
+local ZPOS64_T unz64local_جستجو_Central_Dir(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+    بیعلامت حرف* buf;
+    ZPOS64_T u_اندازه_File;
+    ZPOS64_T u_پشت_Read;
+    ZPOS64_T u_Max_پشت=0xffff; /* maximum size of global comment */
+    ZPOS64_T u_Pos_یافت=CENTRALDIRINVALID;
 
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-        return CENTRALDIRINVALID;
+    إذا (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_انتها) != 0)
+        أرجع CENTRALDIRINVALID;
 
 
-    uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+    u_اندازه_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-    if (uMaxBack>uSizeFile)
-        uMaxBack = uSizeFile;
+    إذا (u_Max_پشت>u_اندازه_File)
+        u_Max_پشت = u_اندازه_File;
 
-    buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-    if (buf==NULL)
-        return CENTRALDIRINVALID;
+    buf = (بیعلامت حرف*)ALLOC(BUFREADCOMMENT+4);
+    إذا (buf==عدم)
+        أرجع CENTRALDIRINVALID;
 
-    uBackRead = 4;
-    while (uBackRead<uMaxBack)
+    u_پشت_Read = 4;
+    طالما (u_پشت_Read<u_Max_پشت)
     {
-        uLong uReadSize;
+        uLong u_Read_اندازه;
         ZPOS64_T uReadPos ;
-        int i;
-        if (uBackRead+BUFREADCOMMENT>uMaxBack)
-            uBackRead = uMaxBack;
-        else
-            uBackRead+=BUFREADCOMMENT;
-        uReadPos = uSizeFile-uBackRead ;
+        صحيح i;
+        إذا (u_پشت_Read+BUFREADCOMMENT>u_Max_پشت)
+            u_پشت_Read = u_Max_پشت;
+        وإلا
+            u_پشت_Read+=BUFREADCOMMENT;
+        uReadPos = u_اندازه_File-u_پشت_Read ;
 
-        uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-                     (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-        if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-            break;
+        u_Read_اندازه = ((BUFREADCOMMENT+4) < (u_اندازه_File-uReadPos)) ?
+                     (BUFREADCOMMENT+4) : (uLong)(u_اندازه_File-uReadPos);
+        إذا (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+            اكسر;
 
-        if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-            break;
+        إذا (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_اندازه)!=u_Read_اندازه)
+            اكسر;
 
-        for (i=(int)uReadSize-3; (i--)>0;)
-            if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+        لكل (i=(صحيح)u_Read_اندازه-3; (i--)>0;)
+            إذا (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
                 ((*(buf+i+2))==0x05) && ((*(buf+i+3))==0x06))
             {
-                uPosFound = uReadPos+(unsigned)i;
-                break;
+                u_Pos_یافت = uReadPos+(بیعلامت)i;
+                اكسر;
             }
 
-        if (uPosFound!=CENTRALDIRINVALID)
-            break;
+        إذا (u_Pos_یافت!=CENTRALDIRINVALID)
+            اكسر;
     }
-    free(buf);
-    return uPosFound;
+    حرر(buf);
+    أرجع u_Pos_یافت;
 }
 
 
@@ -382,100 +382,100 @@ local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_f
   Locate the Central directory 64 of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local ZPOS64_T unz64local_جستجو_Central_Dir64(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def,
                                              voidpf filestream) {
-    unsigned char* buf;
-    ZPOS64_T uSizeFile;
-    ZPOS64_T uBackRead;
-    ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-    ZPOS64_T uPosFound=CENTRALDIRINVALID;
+    بیعلامت حرف* buf;
+    ZPOS64_T u_اندازه_File;
+    ZPOS64_T u_پشت_Read;
+    ZPOS64_T u_Max_پشت=0xffff; /* maximum size of global comment */
+    ZPOS64_T u_Pos_یافت=CENTRALDIRINVALID;
     uLong uL;
-                ZPOS64_T relativeOffset;
+                ZPOS64_T relative_جابه_جایی;
 
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-        return CENTRALDIRINVALID;
+    إذا (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_انتها) != 0)
+        أرجع CENTRALDIRINVALID;
 
 
-    uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+    u_اندازه_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-    if (uMaxBack>uSizeFile)
-        uMaxBack = uSizeFile;
+    إذا (u_Max_پشت>u_اندازه_File)
+        u_Max_پشت = u_اندازه_File;
 
-    buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-    if (buf==NULL)
-        return CENTRALDIRINVALID;
+    buf = (بیعلامت حرف*)ALLOC(BUFREADCOMMENT+4);
+    إذا (buf==عدم)
+        أرجع CENTRALDIRINVALID;
 
-    uBackRead = 4;
-    while (uBackRead<uMaxBack)
+    u_پشت_Read = 4;
+    طالما (u_پشت_Read<u_Max_پشت)
     {
-        uLong uReadSize;
+        uLong u_Read_اندازه;
         ZPOS64_T uReadPos;
-        int i;
-        if (uBackRead+BUFREADCOMMENT>uMaxBack)
-            uBackRead = uMaxBack;
-        else
-            uBackRead+=BUFREADCOMMENT;
-        uReadPos = uSizeFile-uBackRead ;
+        صحيح i;
+        إذا (u_پشت_Read+BUFREADCOMMENT>u_Max_پشت)
+            u_پشت_Read = u_Max_پشت;
+        وإلا
+            u_پشت_Read+=BUFREADCOMMENT;
+        uReadPos = u_اندازه_File-u_پشت_Read ;
 
-        uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-                     (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-        if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-            break;
+        u_Read_اندازه = ((BUFREADCOMMENT+4) < (u_اندازه_File-uReadPos)) ?
+                     (BUFREADCOMMENT+4) : (uLong)(u_اندازه_File-uReadPos);
+        إذا (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+            اكسر;
 
-        if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-            break;
+        إذا (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_اندازه)!=u_Read_اندازه)
+            اكسر;
 
-        for (i=(int)uReadSize-3; (i--)>0;)
-            if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+        لكل (i=(صحيح)u_Read_اندازه-3; (i--)>0;)
+            إذا (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
                 ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
             {
-                uPosFound = uReadPos+(unsigned)i;
-                break;
+                u_Pos_یافت = uReadPos+(بیعلامت)i;
+                اكسر;
             }
 
-        if (uPosFound!=CENTRALDIRINVALID)
-            break;
+        إذا (u_Pos_یافت!=CENTRALDIRINVALID)
+            اكسر;
     }
-    free(buf);
-    if (uPosFound == CENTRALDIRINVALID)
-        return CENTRALDIRINVALID;
+    حرر(buf);
+    إذا (u_Pos_یافت == CENTRALDIRINVALID)
+        أرجع CENTRALDIRINVALID;
 
     /* Zip64 end of central directory locator */
-    if (ZSEEK64(*pzlib_filefunc_def,filestream, uPosFound,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return CENTRALDIRINVALID;
+    إذا (ZSEEK64(*pzlib_filefunc_def,filestream, u_Pos_یافت,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+        أرجع CENTRALDIRINVALID;
 
     /* the signature, already checked */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    إذا (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        أرجع CENTRALDIRINVALID;
 
     /* number of the disk with the start of the zip64 end of central directory */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
-    if (uL != 0)
-        return CENTRALDIRINVALID;
+    إذا (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        أرجع CENTRALDIRINVALID;
+    إذا (uL != 0)
+        أرجع CENTRALDIRINVALID;
 
     /* relative offset of the zip64 end of central directory record */
-    if (unz64local_getLong64(pzlib_filefunc_def,filestream,&relativeOffset)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    إذا (unz64local_getLong64(pzlib_filefunc_def,filestream,&relative_جابه_جایی)!=UNZ_OK)
+        أرجع CENTRALDIRINVALID;
 
     /* total number of disks */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
-    if (uL != 1)
-        return CENTRALDIRINVALID;
+    إذا (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        أرجع CENTRALDIRINVALID;
+    إذا (uL != 1)
+        أرجع CENTRALDIRINVALID;
 
     /* Goto end of central directory record */
-    if (ZSEEK64(*pzlib_filefunc_def,filestream, relativeOffset,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return CENTRALDIRINVALID;
+    إذا (ZSEEK64(*pzlib_filefunc_def,filestream, relative_جابه_جایی,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+        أرجع CENTRALDIRINVALID;
 
      /* the signature */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    إذا (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        أرجع CENTRALDIRINVALID;
 
-    if (uL != 0x06064b50)
-        return CENTRALDIRINVALID;
+    إذا (uL != 0x06064b50)
+        أرجع CENTRALDIRINVALID;
 
-    return relativeOffset;
+    أرجع relative_جابه_جایی;
 }
 
 /*
@@ -487,219 +487,219 @@ local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
      Else, the return value is a unzFile Handle, usable with other function
        of this unzip package.
 */
-local unzFile unzOpenInternal(const void *path,
+local unzFile unz_Open_داخلی(ثابت فراغ *مسیر,
                               zlib_filefunc64_32_def* pzlib_filefunc64_32_def,
-                              int is64bitOpenFunction) {
+                              صحيح is64bitOpenFunction) {
     unz64_s us;
     unz64_s *s;
     ZPOS64_T central_pos;
     uLong   uL;
 
-    uLong number_disk;          /* number of the current disk, used for
+    uLong عدد_disk;          /* number of the current disk, used for
                                    spanning ZIP, unsupported, always 0*/
-    uLong number_disk_with_CD;  /* number the disk with central dir, used
+    uLong عدد_disk_with_CD;  /* number the disk with central dir, used
                                    for spanning ZIP, unsupported, always 0*/
-    ZPOS64_T number_entry_CD;      /* total number of entries in
+    ZPOS64_T عدد_مدخل_CD;      /* total number of entries in
                                    the central dir
                                    (same than number_entry on nospan) */
 
-    int err=UNZ_OK;
+    صحيح err=UNZ_OK;
 
-    if (unz_copyright[0]!=' ')
-        return NULL;
+    إذا (unz_copyright[0]!=' ')
+        أرجع عدم;
 
-    us.z_filefunc.zseek32_file = NULL;
-    us.z_filefunc.ztell32_file = NULL;
-    if (pzlib_filefunc64_32_def==NULL)
+    us.z_filefunc.zseek32_file = عدم;
+    us.z_filefunc.ztell32_file = عدم;
+    إذا (pzlib_filefunc64_32_def==عدم)
         fill_fopen64_filefunc(&us.z_filefunc.zfile_func64);
-    else
+    وإلا
         us.z_filefunc = *pzlib_filefunc64_32_def;
     us.is64bitOpenFunction = is64bitOpenFunction;
 
 
 
     us.filestream = ZOPEN64(us.z_filefunc,
-                                                 path,
-                                                 ZLIB_FILEFUNC_MODE_READ |
-                                                 ZLIB_FILEFUNC_MODE_EXISTING);
-    if (us.filestream==NULL)
-        return NULL;
+                                                 مسیر,
+                                                 ZLIB_FILEFUNC_نما_READ |
+                                                 ZLIB_FILEFUNC_نما_EXISTING);
+    إذا (us.filestream==عدم)
+        أرجع عدم;
 
-    central_pos = unz64local_SearchCentralDir64(&us.z_filefunc,us.filestream);
-    if (central_pos!=CENTRALDIRINVALID)
+    central_pos = unz64local_جستجو_Central_Dir64(&us.z_filefunc,us.filestream);
+    إذا (central_pos!=CENTRALDIRINVALID)
     {
         uLong uS;
         ZPOS64_T uL64;
 
         us.isZip64 = 1;
 
-        if (ZSEEK64(us.z_filefunc, us.filestream,
-                                      central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        إذا (ZSEEK64(us.z_filefunc, us.filestream,
+                                      central_pos,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
         err=UNZ_ERRNO;
 
         /* the signature, already checked */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        إذا (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* size of zip64 end of central directory record */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&uL64)!=UNZ_OK)
+        إذا (unz64local_getLong64(&us.z_filefunc, us.filestream,&uL64)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* version made by */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
+        إذا (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* version needed to extract */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
+        إذا (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of this disk */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&number_disk)!=UNZ_OK)
+        إذا (unz64local_getLong(&us.z_filefunc, us.filestream,&عدد_disk)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of the disk with the start of the central directory */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&number_disk_with_CD)!=UNZ_OK)
+        إذا (unz64local_getLong(&us.z_filefunc, us.filestream,&عدد_disk_with_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central directory on this disk */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.gi.number_entry)!=UNZ_OK)
+        إذا (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.gi.عدد_مدخل)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central directory */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&number_entry_CD)!=UNZ_OK)
+        إذا (unz64local_getLong64(&us.z_filefunc, us.filestream,&عدد_مدخل_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
-        if ((number_entry_CD!=us.gi.number_entry) ||
-            (number_disk_with_CD!=0) ||
-            (number_disk!=0))
+        إذا ((عدد_مدخل_CD!=us.gi.عدد_مدخل) ||
+            (عدد_disk_with_CD!=0) ||
+            (عدد_disk!=0))
             err=UNZ_BADZIPFILE;
 
         /* size of the central directory */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.size_central_dir)!=UNZ_OK)
+        إذا (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.اندازه_central_dir)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* offset of start of central directory with respect to the
           starting disk number */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.offset_central_dir)!=UNZ_OK)
+        إذا (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.جابه_جایی_central_dir)!=UNZ_OK)
             err=UNZ_ERRNO;
 
-        us.gi.size_comment = 0;
+        us.gi.اندازه_comment = 0;
     }
-    else
+    وإلا
     {
-        central_pos = unz64local_SearchCentralDir(&us.z_filefunc,us.filestream);
-        if (central_pos==CENTRALDIRINVALID)
+        central_pos = unz64local_جستجو_Central_Dir(&us.z_filefunc,us.filestream);
+        إذا (central_pos==CENTRALDIRINVALID)
             err=UNZ_ERRNO;
 
         us.isZip64 = 0;
 
-        if (ZSEEK64(us.z_filefunc, us.filestream,
-                                        central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        إذا (ZSEEK64(us.z_filefunc, us.filestream,
+                                        central_pos,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
             err=UNZ_ERRNO;
 
         /* the signature, already checked */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        إذا (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of this disk */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&number_disk)!=UNZ_OK)
+        إذا (unz64local_getShort(&us.z_filefunc, us.filestream,&عدد_disk)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of the disk with the start of the central directory */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&number_disk_with_CD)!=UNZ_OK)
+        إذا (unz64local_getShort(&us.z_filefunc, us.filestream,&عدد_disk_with_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central dir on this disk */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        إذا (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.gi.number_entry = uL;
+        us.gi.عدد_مدخل = uL;
 
         /* total number of entries in the central dir */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        إذا (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        number_entry_CD = uL;
+        عدد_مدخل_CD = uL;
 
-        if ((number_entry_CD!=us.gi.number_entry) ||
-            (number_disk_with_CD!=0) ||
-            (number_disk!=0))
+        إذا ((عدد_مدخل_CD!=us.gi.عدد_مدخل) ||
+            (عدد_disk_with_CD!=0) ||
+            (عدد_disk!=0))
             err=UNZ_BADZIPFILE;
 
         /* size of the central directory */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        إذا (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.size_central_dir = uL;
+        us.اندازه_central_dir = uL;
 
         /* offset of start of central directory with respect to the
             starting disk number */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        إذا (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.offset_central_dir = uL;
+        us.جابه_جایی_central_dir = uL;
 
         /* zipfile comment length */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&us.gi.size_comment)!=UNZ_OK)
+        إذا (unz64local_getShort(&us.z_filefunc, us.filestream,&us.gi.اندازه_comment)!=UNZ_OK)
             err=UNZ_ERRNO;
     }
 
-    if ((central_pos<us.offset_central_dir+us.size_central_dir) &&
+    إذا ((central_pos<us.جابه_جایی_central_dir+us.اندازه_central_dir) &&
         (err==UNZ_OK))
         err=UNZ_BADZIPFILE;
 
-    if (err!=UNZ_OK)
+    إذا (err!=UNZ_OK)
     {
         ZCLOSE64(us.z_filefunc, us.filestream);
-        return NULL;
+        أرجع عدم;
     }
 
     us.byte_before_the_zipfile = central_pos -
-                            (us.offset_central_dir+us.size_central_dir);
+                            (us.جابه_جایی_central_dir+us.اندازه_central_dir);
     us.central_pos = central_pos;
-    us.pfile_in_zip_read = NULL;
+    us.pfile_درون_zip_read = عدم;
     us.encrypted = 0;
 
 
-    s=(unz64_s*)ALLOC(sizeof(unz64_s));
-    if( s != NULL)
+    s=(unz64_s*)ALLOC(حجم(unz64_s));
+    إذا( s != عدم)
     {
         *s=us;
-        unzGoToFirstFile((unzFile)s);
+        unz_Go_مقصد_اولی_File((unzFile)s);
     }
-    return (unzFile)s;
+    أرجع (unzFile)s;
 }
 
 
-extern unzFile ZEXPORT unzOpen2(const char *path,
+خارجي unzFile ZEXPORT unzOpen2(ثابت حرف *مسیر,
                                 zlib_filefunc_def* pzlib_filefunc32_def) {
-    if (pzlib_filefunc32_def != NULL)
+    إذا (pzlib_filefunc32_def != عدم)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
-        return unzOpenInternal(path, &zlib_filefunc64_32_def_fill, 0);
+        أرجع unz_Open_داخلی(مسیر, &zlib_filefunc64_32_def_fill, 0);
     }
-    else
-        return unzOpenInternal(path, NULL, 0);
+    وإلا
+        أرجع unz_Open_داخلی(مسیر, عدم, 0);
 }
 
-extern unzFile ZEXPORT unzOpen2_64(const void *path,
+خارجي unzFile ZEXPORT unzOpen2_64(ثابت فراغ *مسیر,
                                    zlib_filefunc64_def* pzlib_filefunc_def) {
-    if (pzlib_filefunc_def != NULL)
+    إذا (pzlib_filefunc_def != عدم)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
-        zlib_filefunc64_32_def_fill.zopen32_file = NULL;
-        zlib_filefunc64_32_def_fill.ztell32_file = NULL;
-        zlib_filefunc64_32_def_fill.zseek32_file = NULL;
-        return unzOpenInternal(path, &zlib_filefunc64_32_def_fill, 1);
+        zlib_filefunc64_32_def_fill.zopen32_file = عدم;
+        zlib_filefunc64_32_def_fill.ztell32_file = عدم;
+        zlib_filefunc64_32_def_fill.zseek32_file = عدم;
+        أرجع unz_Open_داخلی(مسیر, &zlib_filefunc64_32_def_fill, 1);
     }
-    else
-        return unzOpenInternal(path, NULL, 1);
+    وإلا
+        أرجع unz_Open_داخلی(مسیر, عدم, 1);
 }
 
-extern unzFile ZEXPORT unzOpen(const char *path) {
-    return unzOpenInternal(path, NULL, 0);
+خارجي unzFile ZEXPORT unzOpen(ثابت حرف *مسیر) {
+    أرجع unz_Open_داخلی(مسیر, عدم, 0);
 }
 
-extern unzFile ZEXPORT unzOpen64(const void *path) {
-    return unzOpenInternal(path, NULL, 1);
+خارجي unzFile ZEXPORT unzOpen64(ثابت فراغ *مسیر) {
+    أرجع unz_Open_داخلی(مسیر, عدم, 1);
 }
 
 /*
@@ -707,18 +707,18 @@ extern unzFile ZEXPORT unzOpen64(const void *path) {
   If there is files inside the .Zip opened with unzOpenCurrentFile (see later),
     these files MUST be closed with unzCloseCurrentFile before call unzClose.
   return UNZ_OK if there is no problem. */
-extern int ZEXPORT unzClose(unzFile file) {
+خارجي صحيح ZEXPORT unzClose(unzFile file) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    if (s->pfile_in_zip_read!=NULL)
+    إذا (s->pfile_درون_zip_read!=عدم)
         unzCloseCurrentFile(file);
 
     ZCLOSE64(s->z_filefunc, s->filestream);
-    free(s);
-    return UNZ_OK;
+    حرر(s);
+    أرجع UNZ_OK;
 }
 
 
@@ -726,276 +726,276 @@ extern int ZEXPORT unzClose(unzFile file) {
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed
   return UNZ_OK if there is no problem. */
-extern int ZEXPORT unzGetGlobalInfo64(unzFile file, unz_global_info64* pglobal_info) {
+خارجي صحيح ZEXPORT unzGetGlobalInfo64(unzFile file, unz_global_info64* pglobal_info) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
     *pglobal_info=s->gi;
-    return UNZ_OK;
+    أرجع UNZ_OK;
 }
 
-extern int ZEXPORT unzGetGlobalInfo(unzFile file, unz_global_info* pglobal_info32) {
+خارجي صحيح ZEXPORT unzGetGlobalInfo(unzFile file, unz_global_info* pglobal_info32) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
     /* to do : check if number_entry is not truncated */
-    pglobal_info32->number_entry = (uLong)s->gi.number_entry;
-    pglobal_info32->size_comment = s->gi.size_comment;
-    return UNZ_OK;
+    pglobal_info32->عدد_مدخل = (uLong)s->gi.عدد_مدخل;
+    pglobal_info32->اندازه_comment = s->gi.اندازه_comment;
+    أرجع UNZ_OK;
 }
 /*
    Translate date/time from Dos format to tm_unz (readable more easily)
 */
-local void unz64local_DosDateToTmuDate(ZPOS64_T ulDosDate, tm_unz* ptm) {
+local فراغ unz64local_Dos_Date_مقصد_Tmu_Date(ZPOS64_T ulDosDate, tm_unz* ptm) {
     ZPOS64_T uDate;
     uDate = (ZPOS64_T)(ulDosDate>>16);
-    ptm->tm_mday = (int)(uDate&0x1f) ;
-    ptm->tm_mon =  (int)((((uDate)&0x1E0)/0x20)-1) ;
-    ptm->tm_year = (int)(((uDate&0x0FE00)/0x0200)+1980) ;
+    ptm->tm_mday = (صحيح)(uDate&0x1f) ;
+    ptm->tm_mon =  (صحيح)((((uDate)&0x1E0)/0x20)-1) ;
+    ptm->tm_year = (صحيح)(((uDate&0x0FE00)/0x0200)+1980) ;
 
-    ptm->tm_hour = (int) ((ulDosDate &0xF800)/0x800);
-    ptm->tm_min =  (int) ((ulDosDate&0x7E0)/0x20) ;
-    ptm->tm_sec =  (int) (2*(ulDosDate&0x1f)) ;
+    ptm->tm_hour = (صحيح) ((ulDosDate &0xF800)/0x800);
+    ptm->tm_min =  (صحيح) ((ulDosDate&0x7E0)/0x20) ;
+    ptm->tm_sec =  (صحيح) (2*(ulDosDate&0x1f)) ;
 }
 
 /*
   Get Info about the current file in the zipfile, with internal only info
 */
-local int unz64local_GetCurrentFileInfoInternal(unzFile file,
+local صحيح unz64local_Get_Current_File_Info_داخلی(unzFile file,
                                                 unz_file_info64 *pfile_info,
-                                                unz_file_info64_internal
-                                                *pfile_info_internal,
-                                                char *szFileName,
-                                                uLong fileNameBufferSize,
-                                                void *extraField,
-                                                uLong extraFieldBufferSize,
-                                                char *szComment,
-                                                uLong commentBufferSize) {
+                                                unz_file_info64_داخلی
+                                                *pfile_info_داخلی,
+                                                حرف *szFileName,
+                                                uLong file_Name_میانگیر_اندازه,
+                                                فراغ *extra_فیلد,
+                                                uLong extra_فیلد_میانگیر_اندازه,
+                                                حرف *szComment,
+                                                uLong comment_میانگیر_اندازه) {
     unz64_s* s;
     unz_file_info64 file_info;
-    unz_file_info64_internal file_info_internal;
-    int err=UNZ_OK;
+    unz_file_info64_داخلی file_info_داخلی;
+    صحيح err=UNZ_OK;
     uLong uMagic;
-    long lSeek=0;
+    دراز lSeek=0;
     uLong uL;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (ZSEEK64(s->z_filefunc, s->filestream,
-              s->pos_in_central_dir+s->byte_before_the_zipfile,
-              ZLIB_FILEFUNC_SEEK_SET)!=0)
+    إذا (ZSEEK64(s->z_filefunc, s->filestream,
+              s->pos_درون_central_dir+s->byte_before_the_zipfile,
+              ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
         err=UNZ_ERRNO;
 
 
     /* we check the magic */
-    if (err==UNZ_OK)
+    إذا (err==UNZ_OK)
     {
-        if (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
+        إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
             err=UNZ_ERRNO;
-        else if (uMagic!=0x02014b50)
+        وإلا إذا (uMagic!=0x02014b50)
             err=UNZ_BADZIPFILE;
     }
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.version) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.نسخه) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.version_needed) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.نسخه_needed) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.flag) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.flag) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.compression_method) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.compression_روش) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.dosDate) != UNZ_OK)
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.dosDate) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    unz64local_DosDateToTmuDate(file_info.dosDate,&file_info.tmu_date);
+    unz64local_Dos_Date_مقصد_Tmu_Date(file_info.dosDate,&file_info.tmu_date);
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.crc) != UNZ_OK)
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.بررسی_چرخهای) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info.compressed_size = uL;
+    file_info.compressed_اندازه = uL;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info.uncompressed_size = uL;
+    file_info.uncompressed_اندازه = uL;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_filename) != UNZ_OK)
-        err=UNZ_ERRNO;
-
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_file_extra) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.اندازه_filename) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_file_comment) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.اندازه_file_extra) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.disk_num_start) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.اندازه_file_comment) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.internal_fa) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.disk_رقم_شروع) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.external_fa) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.داخلی_fa) != UNZ_OK)
+        err=UNZ_ERRNO;
+
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.external_fa) != UNZ_OK)
         err=UNZ_ERRNO;
 
                 /* relative offset of local header */
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info_internal.offset_curfile = uL;
+    file_info_داخلی.جابه_جایی_curfile = uL;
 
-    lSeek+=file_info.size_filename;
-    if ((err==UNZ_OK) && (szFileName!=NULL))
+    lSeek+=file_info.اندازه_filename;
+    إذا ((err==UNZ_OK) && (szFileName!=عدم))
     {
-        uLong uSizeRead ;
-        if (file_info.size_filename<fileNameBufferSize)
+        uLong u_اندازه_Read ;
+        إذا (file_info.اندازه_filename<file_Name_میانگیر_اندازه)
         {
-            *(szFileName+file_info.size_filename)='\0';
-            uSizeRead = file_info.size_filename;
+            *(szFileName+file_info.اندازه_filename)='\0';
+            u_اندازه_Read = file_info.اندازه_filename;
         }
-        else
-            uSizeRead = fileNameBufferSize;
+        وإلا
+            u_اندازه_Read = file_Name_میانگیر_اندازه;
 
-        if ((file_info.size_filename>0) && (fileNameBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,szFileName,uSizeRead)!=uSizeRead)
+        إذا ((file_info.اندازه_filename>0) && (file_Name_میانگیر_اندازه>0))
+            إذا (ZREAD64(s->z_filefunc, s->filestream,szFileName,u_اندازه_Read)!=u_اندازه_Read)
                 err=UNZ_ERRNO;
-        lSeek -= uSizeRead;
+        lSeek -= u_اندازه_Read;
     }
 
     /* Read extrafield */
-    if ((err==UNZ_OK) && (extraField!=NULL))
+    إذا ((err==UNZ_OK) && (extra_فیلد!=عدم))
     {
-        ZPOS64_T uSizeRead ;
-        if (file_info.size_file_extra<extraFieldBufferSize)
-            uSizeRead = file_info.size_file_extra;
-        else
-            uSizeRead = extraFieldBufferSize;
+        ZPOS64_T u_اندازه_Read ;
+        إذا (file_info.اندازه_file_extra<extra_فیلد_میانگیر_اندازه)
+            u_اندازه_Read = file_info.اندازه_file_extra;
+        وإلا
+            u_اندازه_Read = extra_فیلد_میانگیر_اندازه;
 
-        if (lSeek!=0)
+        إذا (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            إذا (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            وإلا
                 err=UNZ_ERRNO;
         }
 
-        if ((file_info.size_file_extra>0) && (extraFieldBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,extraField,(uLong)uSizeRead)!=uSizeRead)
+        إذا ((file_info.اندازه_file_extra>0) && (extra_فیلد_میانگیر_اندازه>0))
+            إذا (ZREAD64(s->z_filefunc, s->filestream,extra_فیلد,(uLong)u_اندازه_Read)!=u_اندازه_Read)
                 err=UNZ_ERRNO;
 
-        lSeek += file_info.size_file_extra - (uLong)uSizeRead;
+        lSeek += file_info.اندازه_file_extra - (uLong)u_اندازه_Read;
     }
-    else
-        lSeek += file_info.size_file_extra;
+    وإلا
+        lSeek += file_info.اندازه_file_extra;
 
 
-    if ((err==UNZ_OK) && (file_info.size_file_extra != 0))
+    إذا ((err==UNZ_OK) && (file_info.اندازه_file_extra != 0))
     {
                                 uLong acc = 0;
 
         /* since lSeek now points to after the extra field we need to move back */
-        lSeek -= file_info.size_file_extra;
+        lSeek -= file_info.اندازه_file_extra;
 
-        if (lSeek!=0)
+        إذا (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            إذا (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            وإلا
                 err=UNZ_ERRNO;
         }
 
-        while(acc < file_info.size_file_extra)
+        طالما(acc < file_info.اندازه_file_extra)
         {
-            uLong headerId;
-                                                uLong dataSize;
+            uLong سرآیند_Id;
+                                                uLong داده_اندازه;
 
-            if (unz64local_getShort(&s->z_filefunc, s->filestream,&headerId) != UNZ_OK)
+            إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&سرآیند_Id) != UNZ_OK)
                 err=UNZ_ERRNO;
 
-            if (unz64local_getShort(&s->z_filefunc, s->filestream,&dataSize) != UNZ_OK)
+            إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&داده_اندازه) != UNZ_OK)
                 err=UNZ_ERRNO;
 
             /* ZIP64 extra fields */
-            if (headerId == 0x0001)
+            إذا (سرآیند_Id == 0x0001)
             {
-                if(file_info.uncompressed_size == MAXU32)
+                إذا(file_info.uncompressed_اندازه == MAXU32)
                 {
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.uncompressed_size) != UNZ_OK)
+                    إذا (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.uncompressed_اندازه) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info.compressed_size == MAXU32)
+                إذا(file_info.compressed_اندازه == MAXU32)
                 {
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.compressed_size) != UNZ_OK)
+                    إذا (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.compressed_اندازه) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info_internal.offset_curfile == MAXU32)
+                إذا(file_info_داخلی.جابه_جایی_curfile == MAXU32)
                 {
                     /* Relative Header offset */
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info_internal.offset_curfile) != UNZ_OK)
+                    إذا (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info_داخلی.جابه_جایی_curfile) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info.disk_num_start == 0xffff)
+                إذا(file_info.disk_رقم_شروع == 0xffff)
                 {
                     /* Disk Start Number */
-                    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.disk_num_start) != UNZ_OK)
+                    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.disk_رقم_شروع) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
             }
-            else
+            وإلا
             {
-                if (ZSEEK64(s->z_filefunc, s->filestream,dataSize,ZLIB_FILEFUNC_SEEK_CUR)!=0)
+                إذا (ZSEEK64(s->z_filefunc, s->filestream,داده_اندازه,ZLIB_FILEFUNC_SEEK_CUR)!=0)
                     err=UNZ_ERRNO;
             }
 
-            acc += 2 + 2 + dataSize;
+            acc += 2 + 2 + داده_اندازه;
         }
     }
 
-    if ((err==UNZ_OK) && (szComment!=NULL))
+    إذا ((err==UNZ_OK) && (szComment!=عدم))
     {
-        uLong uSizeRead ;
-        if (file_info.size_file_comment<commentBufferSize)
+        uLong u_اندازه_Read ;
+        إذا (file_info.اندازه_file_comment<comment_میانگیر_اندازه)
         {
-            *(szComment+file_info.size_file_comment)='\0';
-            uSizeRead = file_info.size_file_comment;
+            *(szComment+file_info.اندازه_file_comment)='\0';
+            u_اندازه_Read = file_info.اندازه_file_comment;
         }
-        else
-            uSizeRead = commentBufferSize;
+        وإلا
+            u_اندازه_Read = comment_میانگیر_اندازه;
 
-        if (lSeek!=0)
+        إذا (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            إذا (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            وإلا
                 err=UNZ_ERRNO;
         }
 
-        if ((file_info.size_file_comment>0) && (commentBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,szComment,uSizeRead)!=uSizeRead)
+        إذا ((file_info.اندازه_file_comment>0) && (comment_میانگیر_اندازه>0))
+            إذا (ZREAD64(s->z_filefunc, s->filestream,szComment,u_اندازه_Read)!=u_اندازه_Read)
                 err=UNZ_ERRNO;
-        lSeek+=file_info.size_file_comment - uSizeRead;
+        lSeek+=file_info.اندازه_file_comment - u_اندازه_Read;
     }
-    else
-        lSeek+=file_info.size_file_comment;
+    وإلا
+        lSeek+=file_info.اندازه_file_comment;
 
 
-    if ((err==UNZ_OK) && (pfile_info!=NULL))
+    إذا ((err==UNZ_OK) && (pfile_info!=عدم))
         *pfile_info=file_info;
 
-    if ((err==UNZ_OK) && (pfile_info_internal!=NULL))
-        *pfile_info_internal=file_info_internal;
+    إذا ((err==UNZ_OK) && (pfile_info_داخلی!=عدم))
+        *pfile_info_داخلی=file_info_داخلی;
 
-    return err;
+    أرجع err;
 }
 
 
@@ -1005,71 +1005,71 @@ local int unz64local_GetCurrentFileInfoInternal(unzFile file,
   No preparation of the structure is needed
   return UNZ_OK if there is no problem.
 */
-extern int ZEXPORT unzGetCurrentFileInfo64(unzFile file,
+خارجي صحيح ZEXPORT unzGetCurrentFileInfo64(unzFile file,
                                            unz_file_info64 * pfile_info,
-                                           char * szFileName, uLong fileNameBufferSize,
-                                           void *extraField, uLong extraFieldBufferSize,
-                                           char* szComment,  uLong commentBufferSize) {
-    return unz64local_GetCurrentFileInfoInternal(file,pfile_info,NULL,
-                                                 szFileName,fileNameBufferSize,
-                                                 extraField,extraFieldBufferSize,
-                                                 szComment,commentBufferSize);
+                                           حرف * szFileName, uLong file_Name_میانگیر_اندازه,
+                                           فراغ *extra_فیلد, uLong extra_فیلد_میانگیر_اندازه,
+                                           حرف* szComment,  uLong comment_میانگیر_اندازه) {
+    أرجع unz64local_Get_Current_File_Info_داخلی(file,pfile_info,عدم,
+                                                 szFileName,file_Name_میانگیر_اندازه,
+                                                 extra_فیلد,extra_فیلد_میانگیر_اندازه,
+                                                 szComment,comment_میانگیر_اندازه);
 }
 
-extern int ZEXPORT unzGetCurrentFileInfo(unzFile file,
+خارجي صحيح ZEXPORT unzGetCurrentFileInfo(unzFile file,
                                          unz_file_info * pfile_info,
-                                         char * szFileName, uLong fileNameBufferSize,
-                                         void *extraField, uLong extraFieldBufferSize,
-                                         char* szComment,  uLong commentBufferSize) {
-    int err;
+                                         حرف * szFileName, uLong file_Name_میانگیر_اندازه,
+                                         فراغ *extra_فیلد, uLong extra_فیلد_میانگیر_اندازه,
+                                         حرف* szComment,  uLong comment_میانگیر_اندازه) {
+    صحيح err;
     unz_file_info64 file_info64;
-    err = unz64local_GetCurrentFileInfoInternal(file,&file_info64,NULL,
-                                                szFileName,fileNameBufferSize,
-                                                extraField,extraFieldBufferSize,
-                                                szComment,commentBufferSize);
-    if ((err==UNZ_OK) && (pfile_info != NULL))
+    err = unz64local_Get_Current_File_Info_داخلی(file,&file_info64,عدم,
+                                                szFileName,file_Name_میانگیر_اندازه,
+                                                extra_فیلد,extra_فیلد_میانگیر_اندازه,
+                                                szComment,comment_میانگیر_اندازه);
+    إذا ((err==UNZ_OK) && (pfile_info != عدم))
     {
-        pfile_info->version = file_info64.version;
-        pfile_info->version_needed = file_info64.version_needed;
+        pfile_info->نسخه = file_info64.نسخه;
+        pfile_info->نسخه_needed = file_info64.نسخه_needed;
         pfile_info->flag = file_info64.flag;
-        pfile_info->compression_method = file_info64.compression_method;
+        pfile_info->compression_روش = file_info64.compression_روش;
         pfile_info->dosDate = file_info64.dosDate;
-        pfile_info->crc = file_info64.crc;
+        pfile_info->بررسی_چرخهای = file_info64.بررسی_چرخهای;
 
-        pfile_info->size_filename = file_info64.size_filename;
-        pfile_info->size_file_extra = file_info64.size_file_extra;
-        pfile_info->size_file_comment = file_info64.size_file_comment;
+        pfile_info->اندازه_filename = file_info64.اندازه_filename;
+        pfile_info->اندازه_file_extra = file_info64.اندازه_file_extra;
+        pfile_info->اندازه_file_comment = file_info64.اندازه_file_comment;
 
-        pfile_info->disk_num_start = file_info64.disk_num_start;
-        pfile_info->internal_fa = file_info64.internal_fa;
+        pfile_info->disk_رقم_شروع = file_info64.disk_رقم_شروع;
+        pfile_info->داخلی_fa = file_info64.داخلی_fa;
         pfile_info->external_fa = file_info64.external_fa;
 
         pfile_info->tmu_date = file_info64.tmu_date;
 
 
-        pfile_info->compressed_size = (uLong)file_info64.compressed_size;
-        pfile_info->uncompressed_size = (uLong)file_info64.uncompressed_size;
+        pfile_info->compressed_اندازه = (uLong)file_info64.compressed_اندازه;
+        pfile_info->uncompressed_اندازه = (uLong)file_info64.uncompressed_اندازه;
 
     }
-    return err;
+    أرجع err;
 }
 /*
   Set the current file of the zipfile to the first file.
   return UNZ_OK if there is no problem
 */
-extern int ZEXPORT unzGoToFirstFile(unzFile file) {
-    int err=UNZ_OK;
+خارجي صحيح ZEXPORT unz_Go_مقصد_اولی_File(unzFile file) {
+    صحيح err=UNZ_OK;
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    s->pos_in_central_dir=s->offset_central_dir;
-    s->num_file=0;
-    err=unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                             &s->cur_file_info_internal,
-                                             NULL,0,NULL,0,NULL,0);
+    s->pos_درون_central_dir=s->جابه_جایی_central_dir;
+    s->رقم_file=0;
+    err=unz64local_Get_Current_File_Info_داخلی(file,&s->cur_file_info,
+                                             &s->cur_file_info_داخلی,
+                                             عدم,0,عدم,0,عدم,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    أرجع err;
 }
 
 /*
@@ -1077,27 +1077,27 @@ extern int ZEXPORT unzGoToFirstFile(unzFile file) {
   return UNZ_OK if there is no problem
   return UNZ_END_OF_LIST_OF_FILE if the actual file was the latest.
 */
-extern int ZEXPORT unzGoToNextFile(unzFile file) {
+خارجي صحيح ZEXPORT unz_Go_مقصد_بعدی_File(unzFile file) {
     unz64_s* s;
-    int err;
+    صحيح err;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
-    if (s->gi.number_entry != 0xffff)    /* 2^16 files overflow hack */
-      if (s->num_file+1==s->gi.number_entry)
-        return UNZ_END_OF_LIST_OF_FILE;
+    إذا (!s->current_file_ok)
+        أرجع UNZ_انتها_از_LIST_از_FILE;
+    إذا (s->gi.عدد_مدخل != 0xffff)    /* 2^16 files overflow hack */
+      إذا (s->رقم_file+1==s->gi.عدد_مدخل)
+        أرجع UNZ_انتها_از_LIST_از_FILE;
 
-    s->pos_in_central_dir += SIZECENTRALDIRITEM + s->cur_file_info.size_filename +
-            s->cur_file_info.size_file_extra + s->cur_file_info.size_file_comment ;
-    s->num_file++;
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                               &s->cur_file_info_internal,
-                                               NULL,0,NULL,0,NULL,0);
+    s->pos_درون_central_dir += SIZECENTRALDIRITEM + s->cur_file_info.اندازه_filename +
+            s->cur_file_info.اندازه_file_extra + s->cur_file_info.اندازه_file_comment ;
+    s->رقم_file++;
+    err = unz64local_Get_Current_File_Info_داخلی(file,&s->cur_file_info,
+                                               &s->cur_file_info_داخلی,
+                                               عدم,0,عدم,0,عدم,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    أرجع err;
 }
 
 
@@ -1109,60 +1109,60 @@ extern int ZEXPORT unzGoToNextFile(unzFile file) {
   UNZ_OK if the file is found. It becomes the current file.
   UNZ_END_OF_LIST_OF_FILE if the file is not found
 */
-extern int ZEXPORT unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
+خارجي صحيح ZEXPORT unzLocateFile(unzFile file, ثابت حرف *szFileName, صحيح i_Case_حساسیت) {
     unz64_s* s;
-    int err;
+    صحيح err;
 
     /* We remember the 'current' position in the file so that we can jump
      * back there if we fail.
      */
     unz_file_info64 cur_file_infoSaved;
-    unz_file_info64_internal cur_file_info_internalSaved;
-    ZPOS64_T num_fileSaved;
-    ZPOS64_T pos_in_central_dirSaved;
+    unz_file_info64_داخلی cur_file_info_داخلی_Saved;
+    ZPOS64_T رقم_file_Saved;
+    ZPOS64_T pos_درون_central_dir_Saved;
 
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
 
-    if (strlen(szFileName)>=UNZ_MAXFILENAMEINZIP)
-        return UNZ_PARAMERROR;
+    إذا (طول_رشته(szFileName)>=UNZ_MAXFILENAMEINZIP)
+        أرجع UNZ_PARAMERROR;
 
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
+    إذا (!s->current_file_ok)
+        أرجع UNZ_انتها_از_LIST_از_FILE;
 
     /* Save the current state */
-    num_fileSaved = s->num_file;
-    pos_in_central_dirSaved = s->pos_in_central_dir;
+    رقم_file_Saved = s->رقم_file;
+    pos_درون_central_dir_Saved = s->pos_درون_central_dir;
     cur_file_infoSaved = s->cur_file_info;
-    cur_file_info_internalSaved = s->cur_file_info_internal;
+    cur_file_info_داخلی_Saved = s->cur_file_info_داخلی;
 
-    err = unzGoToFirstFile(file);
+    err = unz_Go_مقصد_اولی_File(file);
 
-    while (err == UNZ_OK)
+    طالما (err == UNZ_OK)
     {
-        char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
-        err = unzGetCurrentFileInfo64(file,NULL,
-                                    szCurrentFileName,sizeof(szCurrentFileName)-1,
-                                    NULL,0,NULL,0);
-        if (err == UNZ_OK)
+        حرف szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
+        err = unzGetCurrentFileInfo64(file,عدم,
+                                    szCurrentFileName,حجم(szCurrentFileName)-1,
+                                    عدم,0,عدم,0);
+        إذا (err == UNZ_OK)
         {
-            if (unzStringFileNameCompare(szCurrentFileName,
-                                            szFileName,iCaseSensitivity)==0)
-                return UNZ_OK;
-            err = unzGoToNextFile(file);
+            إذا (unzStringFileNameCompare(szCurrentFileName,
+                                            szFileName,i_Case_حساسیت)==0)
+                أرجع UNZ_OK;
+            err = unz_Go_مقصد_بعدی_File(file);
         }
     }
 
     /* We failed, so restore the state of the 'current file' to where we
      * were.
      */
-    s->num_file = num_fileSaved ;
-    s->pos_in_central_dir = pos_in_central_dirSaved ;
+    s->رقم_file = رقم_file_Saved ;
+    s->pos_درون_central_dir = pos_درون_central_dir_Saved ;
     s->cur_file_info = cur_file_infoSaved;
-    s->cur_file_info_internal = cur_file_info_internalSaved;
-    return err;
+    s->cur_file_info_داخلی = cur_file_info_داخلی_Saved;
+    أرجع err;
 }
 
 
@@ -1183,61 +1183,61 @@ typedef struct unz_file_pos_s
 } unz_file_pos;
 */
 
-extern int ZEXPORT unzGetFilePos64(unzFile file, unz64_file_pos* file_pos) {
+خارجي صحيح ZEXPORT unzGetFilePos64(unzFile file, unz64_file_pos* file_pos) {
     unz64_s* s;
 
-    if (file==NULL || file_pos==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم || file_pos==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
+    إذا (!s->current_file_ok)
+        أرجع UNZ_انتها_از_LIST_از_FILE;
 
-    file_pos->pos_in_zip_directory  = s->pos_in_central_dir;
-    file_pos->num_of_file           = s->num_file;
+    file_pos->pos_درون_zip_directory  = s->pos_درون_central_dir;
+    file_pos->رقم_از_file           = s->رقم_file;
 
-    return UNZ_OK;
+    أرجع UNZ_OK;
 }
 
-extern int ZEXPORT unzGetFilePos(unzFile file, unz_file_pos* file_pos) {
+خارجي صحيح ZEXPORT unzGetFilePos(unzFile file, unz_file_pos* file_pos) {
     unz64_file_pos file_pos64;
-    int err = unzGetFilePos64(file,&file_pos64);
-    if (err==UNZ_OK)
+    صحيح err = unzGetFilePos64(file,&file_pos64);
+    إذا (err==UNZ_OK)
     {
-        file_pos->pos_in_zip_directory = (uLong)file_pos64.pos_in_zip_directory;
-        file_pos->num_of_file = (uLong)file_pos64.num_of_file;
+        file_pos->pos_درون_zip_directory = (uLong)file_pos64.pos_درون_zip_directory;
+        file_pos->رقم_از_file = (uLong)file_pos64.رقم_از_file;
     }
-    return err;
+    أرجع err;
 }
 
-extern int ZEXPORT unzGoToFilePos64(unzFile file, const unz64_file_pos* file_pos) {
+خارجي صحيح ZEXPORT unz_Go_مقصد_File_Pos64(unzFile file, ثابت unz64_file_pos* file_pos) {
     unz64_s* s;
-    int err;
+    صحيح err;
 
-    if (file==NULL || file_pos==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم || file_pos==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
     /* jump to the right spot */
-    s->pos_in_central_dir = file_pos->pos_in_zip_directory;
-    s->num_file           = file_pos->num_of_file;
+    s->pos_درون_central_dir = file_pos->pos_درون_zip_directory;
+    s->رقم_file           = file_pos->رقم_از_file;
 
     /* set the current file */
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                               &s->cur_file_info_internal,
-                                               NULL,0,NULL,0,NULL,0);
+    err = unz64local_Get_Current_File_Info_داخلی(file,&s->cur_file_info,
+                                               &s->cur_file_info_داخلی,
+                                               عدم,0,عدم,0,عدم,0);
     /* return results */
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    أرجع err;
 }
 
-extern int ZEXPORT unzGoToFilePos(unzFile file, unz_file_pos* file_pos) {
+خارجي صحيح ZEXPORT unz_Go_مقصد_File_Pos(unzFile file, unz_file_pos* file_pos) {
     unz64_file_pos file_pos64;
-    if (file_pos == NULL)
-        return UNZ_PARAMERROR;
+    إذا (file_pos == عدم)
+        أرجع UNZ_PARAMERROR;
 
-    file_pos64.pos_in_zip_directory = file_pos->pos_in_zip_directory;
-    file_pos64.num_of_file = file_pos->num_of_file;
-    return unzGoToFilePos64(file,&file_pos64);
+    file_pos64.pos_درون_zip_directory = file_pos->pos_درون_zip_directory;
+    file_pos64.رقم_از_file = file_pos->رقم_از_file;
+    أرجع unz_Go_مقصد_File_Pos64(file,&file_pos64);
 }
 
 /*
@@ -1251,212 +1251,212 @@ extern int ZEXPORT unzGoToFilePos(unzFile file, unz_file_pos* file_pos) {
   store in *piSizeVar the size of extra info in local header
         (filename and size of extra field data)
 */
-local int unz64local_CheckCurrentFileCoherencyHeader(unz64_s* s, uInt* piSizeVar,
+local صحيح unz64local_Check_Current_File_Coherency_سرآیند(unz64_s* s, uInt* pi_اندازه_Var,
                                                      ZPOS64_T * poffset_local_extrafield,
                                                      uInt  * psize_local_extrafield) {
-    uLong uMagic,uData,uFlags;
-    uLong size_filename;
-    uLong size_extra_field;
-    int err=UNZ_OK;
+    uLong uMagic,u_داده,uFlags;
+    uLong اندازه_filename;
+    uLong اندازه_extra_فیلد;
+    صحيح err=UNZ_OK;
 
-    *piSizeVar = 0;
+    *pi_اندازه_Var = 0;
     *poffset_local_extrafield = 0;
     *psize_local_extrafield = 0;
 
-    if (ZSEEK64(s->z_filefunc, s->filestream,s->cur_file_info_internal.offset_curfile +
-                                s->byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    إذا (ZSEEK64(s->z_filefunc, s->filestream,s->cur_file_info_داخلی.جابه_جایی_curfile +
+                                s->byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+        أرجع UNZ_ERRNO;
 
 
-    if (err==UNZ_OK)
+    إذا (err==UNZ_OK)
     {
-        if (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
+        إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
             err=UNZ_ERRNO;
-        else if (uMagic!=0x04034b50)
+        وإلا إذا (uMagic!=0x04034b50)
             err=UNZ_BADZIPFILE;
     }
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uData) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&u_داده) != UNZ_OK)
         err=UNZ_ERRNO;
 /*
     else if ((err==UNZ_OK) && (uData!=s->cur_file_info.wVersion))
         err=UNZ_BADZIPFILE;
 */
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uFlags) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&uFlags) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uData) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&u_داده) != UNZ_OK)
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (uData!=s->cur_file_info.compression_method))
+    وإلا إذا ((err==UNZ_OK) && (u_داده!=s->cur_file_info.compression_روش))
         err=UNZ_BADZIPFILE;
 
-    if ((err==UNZ_OK) && (s->cur_file_info.compression_method!=0) &&
+    إذا ((err==UNZ_OK) && (s->cur_file_info.compression_روش!=0) &&
 /* #ifdef HAVE_BZIP2 */
-                         (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
+                         (s->cur_file_info.compression_روش!=Z_BZIP2ED) &&
 /* #endif */
-                         (s->cur_file_info.compression_method!=Z_DEFLATED))
+                         (s->cur_file_info.compression_روش!=Z_DEFLATED))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* date/time */
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&u_داده) != UNZ_OK) /* date/time */
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* crc */
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&u_داده) != UNZ_OK) /*بررسی_چرخهای*/
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (uData!=s->cur_file_info.crc) && ((uFlags & 8)==0))
+    وإلا إذا ((err==UNZ_OK) && (u_داده!=s->cur_file_info.بررسی_چرخهای) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* size compr */
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&u_داده) != UNZ_OK) /* size compr */
         err=UNZ_ERRNO;
-    else if (uData != 0xFFFFFFFF && (err==UNZ_OK) && (uData!=s->cur_file_info.compressed_size) && ((uFlags & 8)==0))
+    وإلا إذا (u_داده != 0xFFFFFFFF && (err==UNZ_OK) && (u_داده!=s->cur_file_info.compressed_اندازه) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* size uncompr */
+    إذا (unz64local_getLong(&s->z_filefunc, s->filestream,&u_داده) != UNZ_OK) /* size uncompr */
         err=UNZ_ERRNO;
-    else if (uData != 0xFFFFFFFF && (err==UNZ_OK) && (uData!=s->cur_file_info.uncompressed_size) && ((uFlags & 8)==0))
+    وإلا إذا (u_داده != 0xFFFFFFFF && (err==UNZ_OK) && (u_داده!=s->cur_file_info.uncompressed_اندازه) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&size_filename) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&اندازه_filename) != UNZ_OK)
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (size_filename!=s->cur_file_info.size_filename))
+    وإلا إذا ((err==UNZ_OK) && (اندازه_filename!=s->cur_file_info.اندازه_filename))
         err=UNZ_BADZIPFILE;
 
-    *piSizeVar += (uInt)size_filename;
+    *pi_اندازه_Var += (uInt)اندازه_filename;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&size_extra_field) != UNZ_OK)
+    إذا (unz64local_getShort(&s->z_filefunc, s->filestream,&اندازه_extra_فیلد) != UNZ_OK)
         err=UNZ_ERRNO;
-    *poffset_local_extrafield= s->cur_file_info_internal.offset_curfile +
-                                    SIZEZIPLOCALHEADER + size_filename;
-    *psize_local_extrafield = (uInt)size_extra_field;
+    *poffset_local_extrafield= s->cur_file_info_داخلی.جابه_جایی_curfile +
+                                    SIZEZIPLOCALHEADER + اندازه_filename;
+    *psize_local_extrafield = (uInt)اندازه_extra_فیلد;
 
-    *piSizeVar += (uInt)size_extra_field;
+    *pi_اندازه_Var += (uInt)اندازه_extra_فیلد;
 
-    return err;
+    أرجع err;
 }
 
 /*
   Open for reading data the current file in the zipfile.
   If there is no error and the file is opened, the return value is UNZ_OK.
 */
-extern int ZEXPORT unzOpenCurrentFile3(unzFile file, int* method,
-                                       int* level, int raw, const char* password) {
-    int err=UNZ_OK;
-    uInt iSizeVar;
+خارجي صحيح ZEXPORT unzOpenCurrentFile3(unzFile file, صحيح* روش,
+                                       صحيح* level, صحيح raw, ثابت حرف* password) {
+    صحيح err=UNZ_OK;
+    uInt i_اندازه_Var;
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    ZPOS64_T offset_local_extrafield;  /* offset of the local extra field */
-    uInt  size_local_extrafield;    /* size of the local extra field */
+    file_درون_zip64_read_info_s* pfile_درون_zip_read_info;
+    ZPOS64_T جابه_جایی_local_extrafield;  /* offset of the local extra field */
+    uInt  اندازه_local_extrafield;    /* size of the local extra field */
 #    ifndef NOUNCRYPT
-    char source[12];
-#    else
-    if (password != NULL)
-        return UNZ_PARAMERROR;
+    حرف منبع[12];
+#    وإلا
+    إذا (password != عدم)
+        أرجع UNZ_PARAMERROR;
 #    endif
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_PARAMERROR;
+    إذا (!s->current_file_ok)
+        أرجع UNZ_PARAMERROR;
 
-    if (s->pfile_in_zip_read != NULL)
+    إذا (s->pfile_درون_zip_read != عدم)
         unzCloseCurrentFile(file);
 
-    if (unz64local_CheckCurrentFileCoherencyHeader(s,&iSizeVar, &offset_local_extrafield,&size_local_extrafield)!=UNZ_OK)
-        return UNZ_BADZIPFILE;
+    إذا (unz64local_Check_Current_File_Coherency_سرآیند(s,&i_اندازه_Var, &جابه_جایی_local_extrafield,&اندازه_local_extrafield)!=UNZ_OK)
+        أرجع UNZ_BADZIPFILE;
 
-    pfile_in_zip_read_info = (file_in_zip64_read_info_s*)ALLOC(sizeof(file_in_zip64_read_info_s));
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_INTERNALERROR;
+    pfile_درون_zip_read_info = (file_درون_zip64_read_info_s*)ALLOC(حجم(file_درون_zip64_read_info_s));
+    إذا (pfile_درون_zip_read_info==عدم)
+        أرجع UNZ_INTERNALERROR;
 
-    pfile_in_zip_read_info->read_buffer=(char*)ALLOC(UNZ_BUFSIZE);
-    pfile_in_zip_read_info->offset_local_extrafield = offset_local_extrafield;
-    pfile_in_zip_read_info->size_local_extrafield = size_local_extrafield;
-    pfile_in_zip_read_info->pos_local_extrafield=0;
-    pfile_in_zip_read_info->raw=raw;
+    pfile_درون_zip_read_info->read_میانگیر=(حرف*)ALLOC(UNZ_BUFSIZE);
+    pfile_درون_zip_read_info->جابه_جایی_local_extrafield = جابه_جایی_local_extrafield;
+    pfile_درون_zip_read_info->اندازه_local_extrafield = اندازه_local_extrafield;
+    pfile_درون_zip_read_info->pos_local_extrafield=0;
+    pfile_درون_zip_read_info->raw=raw;
 
-    if (pfile_in_zip_read_info->read_buffer==NULL)
+    إذا (pfile_درون_zip_read_info->read_میانگیر==عدم)
     {
-        free(pfile_in_zip_read_info);
-        return UNZ_INTERNALERROR;
+        حرر(pfile_درون_zip_read_info);
+        أرجع UNZ_INTERNALERROR;
     }
 
-    pfile_in_zip_read_info->stream_initialised=0;
+    pfile_درون_zip_read_info->جریان_initialised=0;
 
-    if (method!=NULL)
-        *method = (int)s->cur_file_info.compression_method;
+    إذا (روش!=عدم)
+        *روش = (صحيح)s->cur_file_info.compression_روش;
 
-    if (level!=NULL)
+    إذا (level!=عدم)
     {
         *level = 6;
-        switch (s->cur_file_info.flag & 0x06)
+        بدل (s->cur_file_info.flag & 0x06)
         {
-          case 6 : *level = 1; break;
-          case 4 : *level = 2; break;
-          case 2 : *level = 9; break;
+          حالة 6 : *level = 1; اكسر;
+          حالة 4 : *level = 2; اكسر;
+          حالة 2 : *level = 9; اكسر;
         }
     }
 
-    if ((s->cur_file_info.compression_method!=0) &&
+    إذا ((s->cur_file_info.compression_روش!=0) &&
 /* #ifdef HAVE_BZIP2 */
-        (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
+        (s->cur_file_info.compression_روش!=Z_BZIP2ED) &&
 /* #endif */
-        (s->cur_file_info.compression_method!=Z_DEFLATED))
+        (s->cur_file_info.compression_روش!=Z_DEFLATED))
 
         err=UNZ_BADZIPFILE;
 
-    pfile_in_zip_read_info->crc32_wait=s->cur_file_info.crc;
-    pfile_in_zip_read_info->crc32=0;
-    pfile_in_zip_read_info->total_out_64=0;
-    pfile_in_zip_read_info->compression_method = s->cur_file_info.compression_method;
-    pfile_in_zip_read_info->filestream=s->filestream;
-    pfile_in_zip_read_info->z_filefunc=s->z_filefunc;
-    pfile_in_zip_read_info->byte_before_the_zipfile=s->byte_before_the_zipfile;
+    pfile_درون_zip_read_info->بررسی_چرخهای_32_wait=s->cur_file_info.بررسی_چرخهای;
+    pfile_درون_zip_read_info->بررسی_چرخهای_32_2=0;
+    pfile_درون_zip_read_info->مجموع_بیرون_64=0;
+    pfile_درون_zip_read_info->compression_روش = s->cur_file_info.compression_روش;
+    pfile_درون_zip_read_info->filestream=s->filestream;
+    pfile_درون_zip_read_info->z_filefunc=s->z_filefunc;
+    pfile_درون_zip_read_info->byte_before_the_zipfile=s->byte_before_the_zipfile;
 
-    pfile_in_zip_read_info->stream.total_out = 0;
+    pfile_درون_zip_read_info->جریان.مجموع_بیرون = 0;
 
-    if ((s->cur_file_info.compression_method==Z_BZIP2ED) && (!raw))
+    إذا ((s->cur_file_info.compression_روش==Z_BZIP2ED) && (!raw))
     {
-#ifdef HAVE_BZIP2
-      pfile_in_zip_read_info->bstream.bzalloc = (void *(*) (void *, int, int))0;
-      pfile_in_zip_read_info->bstream.bzfree = (free_func)0;
-      pfile_in_zip_read_info->bstream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->bstream.state = (voidpf)0;
+#اگر_تعریف_شده HAVE_BZIP2
+      pfile_درون_zip_read_info->bstream.bzalloc = (فراغ *(*) (فراغ *, صحيح, صحيح))0;
+      pfile_درون_zip_read_info->bstream.bzfree = (free_func)0;
+      pfile_درون_zip_read_info->bstream.opaque = (voidpf)0;
+      pfile_درون_zip_read_info->bstream.state = (voidpf)0;
 
-      pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
-      pfile_in_zip_read_info->stream.zfree = (free_func)0;
-      pfile_in_zip_read_info->stream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->stream.next_in = (voidpf)0;
-      pfile_in_zip_read_info->stream.avail_in = 0;
+      pfile_درون_zip_read_info->جریان.zalloc = (alloc_func)0;
+      pfile_درون_zip_read_info->جریان.zfree = (free_func)0;
+      pfile_درون_zip_read_info->جریان.opaque = (voidpf)0;
+      pfile_درون_zip_read_info->جریان.بعدی_درون = (voidpf)0;
+      pfile_درون_zip_read_info->جریان.avail_درون = 0;
 
-      err=BZ2_bzDecompressInit(&pfile_in_zip_read_info->bstream, 0, 0);
-      if (err == Z_OK)
-        pfile_in_zip_read_info->stream_initialised=Z_BZIP2ED;
-      else
+      err=BZ2_bzDecompressInit(&pfile_درون_zip_read_info->bstream, 0, 0);
+      إذا (err == Z_OK)
+        pfile_درون_zip_read_info->جریان_initialised=Z_BZIP2ED;
+      وإلا
       {
-        free(pfile_in_zip_read_info->read_buffer);
-        free(pfile_in_zip_read_info);
-        return err;
+        حرر(pfile_درون_zip_read_info->read_میانگیر);
+        حرر(pfile_درون_zip_read_info);
+        أرجع err;
       }
-#else
-      pfile_in_zip_read_info->raw=1;
-#endif
+#وإلا
+      pfile_درون_zip_read_info->raw=1;
+#پایان_اگر
     }
-    else if ((s->cur_file_info.compression_method==Z_DEFLATED) && (!raw))
+    وإلا إذا ((s->cur_file_info.compression_روش==Z_DEFLATED) && (!raw))
     {
-      pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
-      pfile_in_zip_read_info->stream.zfree = (free_func)0;
-      pfile_in_zip_read_info->stream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->stream.next_in = 0;
-      pfile_in_zip_read_info->stream.avail_in = 0;
+      pfile_درون_zip_read_info->جریان.zalloc = (alloc_func)0;
+      pfile_درون_zip_read_info->جریان.zfree = (free_func)0;
+      pfile_درون_zip_read_info->جریان.opaque = (voidpf)0;
+      pfile_درون_zip_read_info->جریان.بعدی_درون = 0;
+      pfile_درون_zip_read_info->جریان.avail_درون = 0;
 
-      err=inflateInit2(&pfile_in_zip_read_info->stream, -MAX_WBITS);
-      if (err == Z_OK)
-        pfile_in_zip_read_info->stream_initialised=Z_DEFLATED;
-      else
+      err=inflateInit2(&pfile_درون_zip_read_info->جریان, -MAX_WBITS);
+      إذا (err == Z_OK)
+        pfile_درون_zip_read_info->جریان_initialised=Z_DEFLATED;
+      وإلا
       {
-        free(pfile_in_zip_read_info->read_buffer);
-        free(pfile_in_zip_read_info);
-        return err;
+        حرر(pfile_درون_zip_read_info->read_میانگیر);
+        حرر(pfile_درون_zip_read_info);
+        أرجع err;
       }
         /* windowBits is passed < 0 to tell that there is no zlib header.
          * Note that in this case inflate *requires* an extra "dummy" byte
@@ -1466,72 +1466,72 @@ extern int ZEXPORT unzOpenCurrentFile3(unzFile file, int* method,
          * size of both compressed and uncompressed data
          */
     }
-    pfile_in_zip_read_info->rest_read_compressed =
-            s->cur_file_info.compressed_size ;
-    pfile_in_zip_read_info->rest_read_uncompressed =
-            s->cur_file_info.uncompressed_size ;
+    pfile_درون_zip_read_info->rest_read_compressed =
+            s->cur_file_info.compressed_اندازه ;
+    pfile_درون_zip_read_info->rest_read_uncompressed =
+            s->cur_file_info.uncompressed_اندازه ;
 
 
-    pfile_in_zip_read_info->pos_in_zipfile =
-            s->cur_file_info_internal.offset_curfile + SIZEZIPLOCALHEADER +
-              iSizeVar;
+    pfile_درون_zip_read_info->pos_درون_zipfile =
+            s->cur_file_info_داخلی.جابه_جایی_curfile + SIZEZIPLOCALHEADER +
+              i_اندازه_Var;
 
-    pfile_in_zip_read_info->stream.avail_in = (uInt)0;
+    pfile_درون_zip_read_info->جریان.avail_درون = (uInt)0;
 
-    s->pfile_in_zip_read = pfile_in_zip_read_info;
+    s->pfile_درون_zip_read = pfile_درون_zip_read_info;
                 s->encrypted = 0;
 
 #    ifndef NOUNCRYPT
-    if (password != NULL)
+    إذا (password != عدم)
     {
-        int i;
-        s->pcrc_32_tab = get_crc_table();
-        init_keys(password,s->keys,s->pcrc_32_tab);
-        if (ZSEEK64(s->z_filefunc, s->filestream,
-                  s->pfile_in_zip_read->pos_in_zipfile +
-                     s->pfile_in_zip_read->byte_before_the_zipfile,
+        صحيح i;
+        s->pcrc_32_tab = get_بررسی_چرخهای_جدول();
+        init_کلیدها(password,s->کلیدها,s->pcrc_32_tab);
+        إذا (ZSEEK64(s->z_filefunc, s->filestream,
+                  s->pfile_درون_zip_read->pos_درون_zipfile +
+                     s->pfile_درون_zip_read->byte_before_the_zipfile,
                   SEEK_SET)!=0)
-            return UNZ_INTERNALERROR;
-        if(ZREAD64(s->z_filefunc, s->filestream,source, 12)<12)
-            return UNZ_INTERNALERROR;
+            أرجع UNZ_INTERNALERROR;
+        إذا(ZREAD64(s->z_filefunc, s->filestream,منبع, 12)<12)
+            أرجع UNZ_INTERNALERROR;
 
-        for (i = 0; i<12; i++)
-            zdecode(s->keys,s->pcrc_32_tab,source[i]);
+        لكل (i = 0; i<12; i++)
+            zdecode(s->کلیدها,s->pcrc_32_tab,منبع[i]);
 
-        s->pfile_in_zip_read->pos_in_zipfile+=12;
+        s->pfile_درون_zip_read->pos_درون_zipfile+=12;
         s->encrypted=1;
     }
 #    endif
 
 
-    return UNZ_OK;
+    أرجع UNZ_OK;
 }
 
-extern int ZEXPORT unzOpenCurrentFile(unzFile file) {
-    return unzOpenCurrentFile3(file, NULL, NULL, 0, NULL);
+خارجي صحيح ZEXPORT unzOpenCurrentFile(unzFile file) {
+    أرجع unzOpenCurrentFile3(file, عدم, عدم, 0, عدم);
 }
 
-extern int ZEXPORT unzOpenCurrentFilePassword(unzFile file, const char* password) {
-    return unzOpenCurrentFile3(file, NULL, NULL, 0, password);
+خارجي صحيح ZEXPORT unzOpenCurrentFilePassword(unzFile file, ثابت حرف* password) {
+    أرجع unzOpenCurrentFile3(file, عدم, عدم, 0, password);
 }
 
-extern int ZEXPORT unzOpenCurrentFile2(unzFile file, int* method, int* level, int raw) {
-    return unzOpenCurrentFile3(file, method, level, raw, NULL);
+خارجي صحيح ZEXPORT unzOpenCurrentFile2(unzFile file, صحيح* روش, صحيح* level, صحيح raw) {
+    أرجع unzOpenCurrentFile3(file, روش, level, raw, عدم);
 }
 
 /** Addition for GDAL : START */
 
-extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
+خارجي ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
+    file_درون_zip64_read_info_s* pfile_درون_zip_read_info;
     s=(unz64_s*)file;
-    if (file==NULL)
-        return 0; /* UNZ_PARAMERROR; */
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
-    if (pfile_in_zip_read_info==NULL)
-        return 0; /* UNZ_PARAMERROR; */
-    return pfile_in_zip_read_info->pos_in_zipfile +
-                         pfile_in_zip_read_info->byte_before_the_zipfile;
+    إذا (file==عدم)
+        أرجع 0; /* UNZ_PARAMERROR; */
+    pfile_درون_zip_read_info=s->pfile_درون_zip_read;
+    إذا (pfile_درون_zip_read_info==عدم)
+        أرجع 0; /* UNZ_PARAMERROR; */
+    أرجع pfile_درون_zip_read_info->pos_درون_zipfile +
+                         pfile_درون_zip_read_info->byte_before_the_zipfile;
 }
 
 /** Addition for GDAL : END */
@@ -1546,168 +1546,168 @@ extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
   return <0 with error code if there is an error
     (UNZ_ERRNO for IO error, or zLib error for uncompress error)
 */
-extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
-    int err=UNZ_OK;
+خارجي صحيح ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, بیعلامت len) {
+    صحيح err=UNZ_OK;
     uInt iRead = 0;
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_درون_zip64_read_info_s* pfile_درون_zip_read_info;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_درون_zip_read_info=s->pfile_درون_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    إذا (pfile_درون_zip_read_info==عدم)
+        أرجع UNZ_PARAMERROR;
 
 
-    if (pfile_in_zip_read_info->read_buffer == NULL)
-        return UNZ_END_OF_LIST_OF_FILE;
-    if (len==0)
-        return 0;
+    إذا (pfile_درون_zip_read_info->read_میانگیر == عدم)
+        أرجع UNZ_انتها_از_LIST_از_FILE;
+    إذا (len==0)
+        أرجع 0;
 
-    pfile_in_zip_read_info->stream.next_out = (Bytef*)buf;
+    pfile_درون_zip_read_info->جریان.بعدی_بیرون = (Bytef*)buf;
 
-    pfile_in_zip_read_info->stream.avail_out = (uInt)len;
+    pfile_درون_zip_read_info->جریان.avail_بیرون = (uInt)len;
 
-    if ((len>pfile_in_zip_read_info->rest_read_uncompressed) &&
-        (!(pfile_in_zip_read_info->raw)))
-        pfile_in_zip_read_info->stream.avail_out =
-            (uInt)pfile_in_zip_read_info->rest_read_uncompressed;
+    إذا ((len>pfile_درون_zip_read_info->rest_read_uncompressed) &&
+        (!(pfile_درون_zip_read_info->raw)))
+        pfile_درون_zip_read_info->جریان.avail_بیرون =
+            (uInt)pfile_درون_zip_read_info->rest_read_uncompressed;
 
-    if ((len>pfile_in_zip_read_info->rest_read_compressed+
-           pfile_in_zip_read_info->stream.avail_in) &&
-         (pfile_in_zip_read_info->raw))
-        pfile_in_zip_read_info->stream.avail_out =
-            (uInt)pfile_in_zip_read_info->rest_read_compressed+
-            pfile_in_zip_read_info->stream.avail_in;
+    إذا ((len>pfile_درون_zip_read_info->rest_read_compressed+
+           pfile_درون_zip_read_info->جریان.avail_درون) &&
+         (pfile_درون_zip_read_info->raw))
+        pfile_درون_zip_read_info->جریان.avail_بیرون =
+            (uInt)pfile_درون_zip_read_info->rest_read_compressed+
+            pfile_درون_zip_read_info->جریان.avail_درون;
 
-    while (pfile_in_zip_read_info->stream.avail_out>0)
+    طالما (pfile_درون_zip_read_info->جریان.avail_بیرون>0)
     {
-        if ((pfile_in_zip_read_info->stream.avail_in==0) &&
-            (pfile_in_zip_read_info->rest_read_compressed>0))
+        إذا ((pfile_درون_zip_read_info->جریان.avail_درون==0) &&
+            (pfile_درون_zip_read_info->rest_read_compressed>0))
         {
             uInt uReadThis = UNZ_BUFSIZE;
-            if (pfile_in_zip_read_info->rest_read_compressed<uReadThis)
-                uReadThis = (uInt)pfile_in_zip_read_info->rest_read_compressed;
-            if (uReadThis == 0)
-                return UNZ_EOF;
-            if (ZSEEK64(pfile_in_zip_read_info->z_filefunc,
-                      pfile_in_zip_read_info->filestream,
-                      pfile_in_zip_read_info->pos_in_zipfile +
-                         pfile_in_zip_read_info->byte_before_the_zipfile,
-                         ZLIB_FILEFUNC_SEEK_SET)!=0)
-                return UNZ_ERRNO;
-            if (ZREAD64(pfile_in_zip_read_info->z_filefunc,
-                      pfile_in_zip_read_info->filestream,
-                      pfile_in_zip_read_info->read_buffer,
+            إذا (pfile_درون_zip_read_info->rest_read_compressed<uReadThis)
+                uReadThis = (uInt)pfile_درون_zip_read_info->rest_read_compressed;
+            إذا (uReadThis == 0)
+                أرجع UNZ_EOF;
+            إذا (ZSEEK64(pfile_درون_zip_read_info->z_filefunc,
+                      pfile_درون_zip_read_info->filestream,
+                      pfile_درون_zip_read_info->pos_درون_zipfile +
+                         pfile_درون_zip_read_info->byte_before_the_zipfile,
+                         ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+                أرجع UNZ_ERRNO;
+            إذا (ZREAD64(pfile_درون_zip_read_info->z_filefunc,
+                      pfile_درون_zip_read_info->filestream,
+                      pfile_درون_zip_read_info->read_میانگیر,
                       uReadThis)!=uReadThis)
-                return UNZ_ERRNO;
+                أرجع UNZ_ERRNO;
 
 
 #            ifndef NOUNCRYPT
-            if(s->encrypted)
+            إذا(s->encrypted)
             {
                 uInt i;
-                for(i=0;i<uReadThis;i++)
-                  pfile_in_zip_read_info->read_buffer[i] =
-                      (char)zdecode(s->keys,s->pcrc_32_tab,
-                              pfile_in_zip_read_info->read_buffer[i]);
+                لكل(i=0;i<uReadThis;i++)
+                  pfile_درون_zip_read_info->read_میانگیر[i] =
+                      (حرف)zdecode(s->کلیدها,s->pcrc_32_tab,
+                              pfile_درون_zip_read_info->read_میانگیر[i]);
             }
 #            endif
 
 
-            pfile_in_zip_read_info->pos_in_zipfile += uReadThis;
+            pfile_درون_zip_read_info->pos_درون_zipfile += uReadThis;
 
-            pfile_in_zip_read_info->rest_read_compressed-=uReadThis;
+            pfile_درون_zip_read_info->rest_read_compressed-=uReadThis;
 
-            pfile_in_zip_read_info->stream.next_in =
-                (Bytef*)pfile_in_zip_read_info->read_buffer;
-            pfile_in_zip_read_info->stream.avail_in = (uInt)uReadThis;
+            pfile_درون_zip_read_info->جریان.بعدی_درون =
+                (Bytef*)pfile_درون_zip_read_info->read_میانگیر;
+            pfile_درون_zip_read_info->جریان.avail_درون = (uInt)uReadThis;
         }
 
-        if ((pfile_in_zip_read_info->compression_method==0) || (pfile_in_zip_read_info->raw))
+        إذا ((pfile_درون_zip_read_info->compression_روش==0) || (pfile_درون_zip_read_info->raw))
         {
             uInt uDoCopy,i ;
 
-            if ((pfile_in_zip_read_info->stream.avail_in == 0) &&
-                (pfile_in_zip_read_info->rest_read_compressed == 0))
-                return (iRead==0) ? UNZ_EOF : (int)iRead;
+            إذا ((pfile_درون_zip_read_info->جریان.avail_درون == 0) &&
+                (pfile_درون_zip_read_info->rest_read_compressed == 0))
+                أرجع (iRead==0) ? UNZ_EOF : (صحيح)iRead;
 
-            if (pfile_in_zip_read_info->stream.avail_out <
-                            pfile_in_zip_read_info->stream.avail_in)
-                uDoCopy = pfile_in_zip_read_info->stream.avail_out ;
-            else
-                uDoCopy = pfile_in_zip_read_info->stream.avail_in ;
+            إذا (pfile_درون_zip_read_info->جریان.avail_بیرون <
+                            pfile_درون_zip_read_info->جریان.avail_درون)
+                uDoCopy = pfile_درون_zip_read_info->جریان.avail_بیرون ;
+            وإلا
+                uDoCopy = pfile_درون_zip_read_info->جریان.avail_درون ;
 
-            for (i=0;i<uDoCopy;i++)
-                *(pfile_in_zip_read_info->stream.next_out+i) =
-                        *(pfile_in_zip_read_info->stream.next_in+i);
+            لكل (i=0;i<uDoCopy;i++)
+                *(pfile_درون_zip_read_info->جریان.بعدی_بیرون+i) =
+                        *(pfile_درون_zip_read_info->جریان.بعدی_درون+i);
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uDoCopy;
+            pfile_درون_zip_read_info->مجموع_بیرون_64 = pfile_درون_zip_read_info->مجموع_بیرون_64 + uDoCopy;
 
-            pfile_in_zip_read_info->crc32 = crc32(pfile_in_zip_read_info->crc32,
-                                pfile_in_zip_read_info->stream.next_out,
+            pfile_درون_zip_read_info->بررسی_چرخهای_32_2 = بررسی_چرخهای_32_2(pfile_درون_zip_read_info->بررسی_چرخهای_32_2,
+                                pfile_درون_zip_read_info->جریان.بعدی_بیرون,
                                 uDoCopy);
-            pfile_in_zip_read_info->rest_read_uncompressed-=uDoCopy;
-            pfile_in_zip_read_info->stream.avail_in -= uDoCopy;
-            pfile_in_zip_read_info->stream.avail_out -= uDoCopy;
-            pfile_in_zip_read_info->stream.next_out += uDoCopy;
-            pfile_in_zip_read_info->stream.next_in += uDoCopy;
-            pfile_in_zip_read_info->stream.total_out += uDoCopy;
+            pfile_درون_zip_read_info->rest_read_uncompressed-=uDoCopy;
+            pfile_درون_zip_read_info->جریان.avail_درون -= uDoCopy;
+            pfile_درون_zip_read_info->جریان.avail_بیرون -= uDoCopy;
+            pfile_درون_zip_read_info->جریان.بعدی_بیرون += uDoCopy;
+            pfile_درون_zip_read_info->جریان.بعدی_درون += uDoCopy;
+            pfile_درون_zip_read_info->جریان.مجموع_بیرون += uDoCopy;
             iRead += uDoCopy;
         }
-        else if (pfile_in_zip_read_info->compression_method==Z_BZIP2ED)
+        وإلا إذا (pfile_درون_zip_read_info->compression_روش==Z_BZIP2ED)
         {
-#ifdef HAVE_BZIP2
-            uLong uTotalOutBefore,uTotalOutAfter;
-            const Bytef *bufBefore;
-            uLong uOutThis;
+#اگر_تعریف_شده HAVE_BZIP2
+            uLong u_مجموع_بیرون_Before,u_مجموع_بیرون_After;
+            ثابت Bytef *bufBefore;
+            uLong u_بیرون_This;
 
-            pfile_in_zip_read_info->bstream.next_in        = (char*)pfile_in_zip_read_info->stream.next_in;
-            pfile_in_zip_read_info->bstream.avail_in       = pfile_in_zip_read_info->stream.avail_in;
-            pfile_in_zip_read_info->bstream.total_in_lo32  = pfile_in_zip_read_info->stream.total_in;
-            pfile_in_zip_read_info->bstream.total_in_hi32  = 0;
-            pfile_in_zip_read_info->bstream.next_out       = (char*)pfile_in_zip_read_info->stream.next_out;
-            pfile_in_zip_read_info->bstream.avail_out      = pfile_in_zip_read_info->stream.avail_out;
-            pfile_in_zip_read_info->bstream.total_out_lo32 = pfile_in_zip_read_info->stream.total_out;
-            pfile_in_zip_read_info->bstream.total_out_hi32 = 0;
+            pfile_درون_zip_read_info->bstream.بعدی_درون        = (حرف*)pfile_درون_zip_read_info->جریان.بعدی_درون;
+            pfile_درون_zip_read_info->bstream.avail_درون       = pfile_درون_zip_read_info->جریان.avail_درون;
+            pfile_درون_zip_read_info->bstream.مجموع_درون_lo32  = pfile_درون_zip_read_info->جریان.مجموع_درون;
+            pfile_درون_zip_read_info->bstream.مجموع_درون_hi32  = 0;
+            pfile_درون_zip_read_info->bstream.بعدی_بیرون       = (حرف*)pfile_درون_zip_read_info->جریان.بعدی_بیرون;
+            pfile_درون_zip_read_info->bstream.avail_بیرون      = pfile_درون_zip_read_info->جریان.avail_بیرون;
+            pfile_درون_zip_read_info->bstream.مجموع_بیرون_lo32 = pfile_درون_zip_read_info->جریان.مجموع_بیرون;
+            pfile_درون_zip_read_info->bstream.مجموع_بیرون_hi32 = 0;
 
-            uTotalOutBefore = pfile_in_zip_read_info->bstream.total_out_lo32;
-            bufBefore = (const Bytef *)pfile_in_zip_read_info->bstream.next_out;
+            u_مجموع_بیرون_Before = pfile_درون_zip_read_info->bstream.مجموع_بیرون_lo32;
+            bufBefore = (ثابت Bytef *)pfile_درون_zip_read_info->bstream.بعدی_بیرون;
 
-            err=BZ2_bzDecompress(&pfile_in_zip_read_info->bstream);
+            err=BZ2_bzDecompress(&pfile_درون_zip_read_info->bstream);
 
-            uTotalOutAfter = pfile_in_zip_read_info->bstream.total_out_lo32;
-            uOutThis = uTotalOutAfter-uTotalOutBefore;
+            u_مجموع_بیرون_After = pfile_درون_zip_read_info->bstream.مجموع_بیرون_lo32;
+            u_بیرون_This = u_مجموع_بیرون_After-u_مجموع_بیرون_Before;
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uOutThis;
+            pfile_درون_zip_read_info->مجموع_بیرون_64 = pfile_درون_zip_read_info->مجموع_بیرون_64 + u_بیرون_This;
 
-            pfile_in_zip_read_info->crc32 = crc32(pfile_in_zip_read_info->crc32,bufBefore, (uInt)(uOutThis));
-            pfile_in_zip_read_info->rest_read_uncompressed -= uOutThis;
-            iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
+            pfile_درون_zip_read_info->بررسی_چرخهای_32_2 = بررسی_چرخهای_32_2(pfile_درون_zip_read_info->بررسی_چرخهای_32_2,bufBefore, (uInt)(u_بیرون_This));
+            pfile_درون_zip_read_info->rest_read_uncompressed -= u_بیرون_This;
+            iRead += (uInt)(u_مجموع_بیرون_After - u_مجموع_بیرون_Before);
 
-            pfile_in_zip_read_info->stream.next_in   = (Bytef*)pfile_in_zip_read_info->bstream.next_in;
-            pfile_in_zip_read_info->stream.avail_in  = pfile_in_zip_read_info->bstream.avail_in;
-            pfile_in_zip_read_info->stream.total_in  = pfile_in_zip_read_info->bstream.total_in_lo32;
-            pfile_in_zip_read_info->stream.next_out  = (Bytef*)pfile_in_zip_read_info->bstream.next_out;
-            pfile_in_zip_read_info->stream.avail_out = pfile_in_zip_read_info->bstream.avail_out;
-            pfile_in_zip_read_info->stream.total_out = pfile_in_zip_read_info->bstream.total_out_lo32;
+            pfile_درون_zip_read_info->جریان.بعدی_درون   = (Bytef*)pfile_درون_zip_read_info->bstream.بعدی_درون;
+            pfile_درون_zip_read_info->جریان.avail_درون  = pfile_درون_zip_read_info->bstream.avail_درون;
+            pfile_درون_zip_read_info->جریان.مجموع_درون  = pfile_درون_zip_read_info->bstream.مجموع_درون_lo32;
+            pfile_درون_zip_read_info->جریان.بعدی_بیرون  = (Bytef*)pfile_درون_zip_read_info->bstream.بعدی_بیرون;
+            pfile_درون_zip_read_info->جریان.avail_بیرون = pfile_درون_zip_read_info->bstream.avail_بیرون;
+            pfile_درون_zip_read_info->جریان.مجموع_بیرون = pfile_درون_zip_read_info->bstream.مجموع_بیرون_lo32;
 
-            if (err==BZ_STREAM_END)
-              return (iRead==0) ? UNZ_EOF : iRead;
-            if (err!=BZ_OK)
-              break;
-#endif
+            إذا (err==BZ_جریان_انتها)
+              أرجع (iRead==0) ? UNZ_EOF : iRead;
+            إذا (err!=BZ_OK)
+              اكسر;
+#پایان_اگر
         } /* end Z_BZIP2ED */
-        else
+        وإلا
         {
-            ZPOS64_T uTotalOutBefore,uTotalOutAfter;
-            const Bytef *bufBefore;
-            ZPOS64_T uOutThis;
-            int flush=Z_SYNC_FLUSH;
+            ZPOS64_T u_مجموع_بیرون_Before,u_مجموع_بیرون_After;
+            ثابت Bytef *bufBefore;
+            ZPOS64_T u_بیرون_This;
+            صحيح flush=Z_SYNC_FLUSH;
 
-            uTotalOutBefore = pfile_in_zip_read_info->stream.total_out;
-            bufBefore = pfile_in_zip_read_info->stream.next_out;
+            u_مجموع_بیرون_Before = pfile_درون_zip_read_info->جریان.مجموع_بیرون;
+            bufBefore = pfile_درون_zip_read_info->جریان.بعدی_بیرون;
 
             /*
             if ((pfile_in_zip_read_info->rest_read_uncompressed ==
@@ -1715,92 +1715,92 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
                 (pfile_in_zip_read_info->rest_read_compressed == 0))
                 flush = Z_FINISH;
             */
-            err=inflate(&pfile_in_zip_read_info->stream,flush);
+            err=inflate(&pfile_درون_zip_read_info->جریان,flush);
 
-            if ((err>=0) && (pfile_in_zip_read_info->stream.msg!=NULL))
-              err = Z_DATA_ERROR;
+            إذا ((err>=0) && (pfile_درون_zip_read_info->جریان.پیام!=عدم))
+              err = Z_داده_ERROR;
 
-            uTotalOutAfter = pfile_in_zip_read_info->stream.total_out;
+            u_مجموع_بیرون_After = pfile_درون_zip_read_info->جریان.مجموع_بیرون;
             /* Detect overflow, because z_stream.total_out is uLong (32 bits) */
-            if (uTotalOutAfter<uTotalOutBefore)
-                uTotalOutAfter += 1LL << 32; /* Add maximum value of uLong + 1 */
-            uOutThis = uTotalOutAfter-uTotalOutBefore;
+            إذا (u_مجموع_بیرون_After<u_مجموع_بیرون_Before)
+                u_مجموع_بیرون_After += 1LL << 32; /* Add maximum value of uLong + 1 */
+            u_بیرون_This = u_مجموع_بیرون_After-u_مجموع_بیرون_Before;
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uOutThis;
+            pfile_درون_zip_read_info->مجموع_بیرون_64 = pfile_درون_zip_read_info->مجموع_بیرون_64 + u_بیرون_This;
 
-            pfile_in_zip_read_info->crc32 =
-                crc32(pfile_in_zip_read_info->crc32,bufBefore,
-                        (uInt)(uOutThis));
+            pfile_درون_zip_read_info->بررسی_چرخهای_32_2 =
+                بررسی_چرخهای_32_2(pfile_درون_zip_read_info->بررسی_چرخهای_32_2,bufBefore,
+                        (uInt)(u_بیرون_This));
 
-            pfile_in_zip_read_info->rest_read_uncompressed -=
-                uOutThis;
+            pfile_درون_zip_read_info->rest_read_uncompressed -=
+                u_بیرون_This;
 
-            iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
+            iRead += (uInt)(u_مجموع_بیرون_After - u_مجموع_بیرون_Before);
 
-            if (err==Z_STREAM_END)
-                return (iRead==0) ? UNZ_EOF : (int)iRead;
-            if (err!=Z_OK)
-                break;
+            إذا (err==Z_جریان_انتها)
+                أرجع (iRead==0) ? UNZ_EOF : (صحيح)iRead;
+            إذا (err!=Z_OK)
+                اكسر;
         }
     }
 
-    if (err==Z_OK)
-        return (int)iRead;
-    return err;
+    إذا (err==Z_OK)
+        أرجع (صحيح)iRead;
+    أرجع err;
 }
 
 
 /*
   Give the current position in uncompressed data
 */
-extern z_off_t ZEXPORT unztell(unzFile file) {
+خارجي z_off_t ZEXPORT unztell(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_درون_zip64_read_info_s* pfile_درون_zip_read_info;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_درون_zip_read_info=s->pfile_درون_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    إذا (pfile_درون_zip_read_info==عدم)
+        أرجع UNZ_PARAMERROR;
 
-    return (z_off_t)pfile_in_zip_read_info->stream.total_out;
+    أرجع (z_off_t)pfile_درون_zip_read_info->جریان.مجموع_بیرون;
 }
 
-extern ZPOS64_T ZEXPORT unztell64(unzFile file) {
+خارجي ZPOS64_T ZEXPORT unztell64(unzFile file) {
 
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return (ZPOS64_T)-1;
+    file_درون_zip64_read_info_s* pfile_درون_zip_read_info;
+    إذا (file==عدم)
+        أرجع (ZPOS64_T)-1;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_درون_zip_read_info=s->pfile_درون_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return (ZPOS64_T)-1;
+    إذا (pfile_درون_zip_read_info==عدم)
+        أرجع (ZPOS64_T)-1;
 
-    return pfile_in_zip_read_info->total_out_64;
+    أرجع pfile_درون_zip_read_info->مجموع_بیرون_64;
 }
 
 
 /*
   return 1 if the end of file was reached, 0 elsewhere
 */
-extern int ZEXPORT unzeof(unzFile file) {
+خارجي صحيح ZEXPORT unzeof(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_درون_zip64_read_info_s* pfile_درون_zip_read_info;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_درون_zip_read_info=s->pfile_درون_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    إذا (pfile_درون_zip_read_info==عدم)
+        أرجع UNZ_PARAMERROR;
 
-    if (pfile_in_zip_read_info->rest_read_uncompressed == 0)
-        return 1;
-    else
-        return 0;
+    إذا (pfile_درون_zip_read_info->rest_read_uncompressed == 0)
+        أرجع 1;
+    وإلا
+        أرجع 0;
 }
 
 
@@ -1817,91 +1817,91 @@ more info in the local-header version than in the central-header)
   the return value is the number of bytes copied in buf, or (if <0)
     the error code
 */
-extern int ZEXPORT unzGetLocalExtrafield(unzFile file, voidp buf, unsigned len) {
+خارجي صحيح ZEXPORT unzGetLocalExtrafield(unzFile file, voidp buf, بیعلامت len) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
+    file_درون_zip64_read_info_s* pfile_درون_zip_read_info;
     uInt read_now;
-    ZPOS64_T size_to_read;
+    ZPOS64_T اندازه_مقصد_read;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_درون_zip_read_info=s->pfile_درون_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    إذا (pfile_درون_zip_read_info==عدم)
+        أرجع UNZ_PARAMERROR;
 
-    size_to_read = (pfile_in_zip_read_info->size_local_extrafield -
-                pfile_in_zip_read_info->pos_local_extrafield);
+    اندازه_مقصد_read = (pfile_درون_zip_read_info->اندازه_local_extrafield -
+                pfile_درون_zip_read_info->pos_local_extrafield);
 
-    if (buf==NULL)
-        return (int)size_to_read;
+    إذا (buf==عدم)
+        أرجع (صحيح)اندازه_مقصد_read;
 
-    if (len>size_to_read)
-        read_now = (uInt)size_to_read;
-    else
+    إذا (len>اندازه_مقصد_read)
+        read_now = (uInt)اندازه_مقصد_read;
+    وإلا
         read_now = (uInt)len ;
 
-    if (read_now==0)
-        return 0;
+    إذا (read_now==0)
+        أرجع 0;
 
-    if (ZSEEK64(pfile_in_zip_read_info->z_filefunc,
-              pfile_in_zip_read_info->filestream,
-              pfile_in_zip_read_info->offset_local_extrafield +
-              pfile_in_zip_read_info->pos_local_extrafield,
-              ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    إذا (ZSEEK64(pfile_درون_zip_read_info->z_filefunc,
+              pfile_درون_zip_read_info->filestream,
+              pfile_درون_zip_read_info->جابه_جایی_local_extrafield +
+              pfile_درون_zip_read_info->pos_local_extrafield,
+              ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+        أرجع UNZ_ERRNO;
 
-    if (ZREAD64(pfile_in_zip_read_info->z_filefunc,
-              pfile_in_zip_read_info->filestream,
+    إذا (ZREAD64(pfile_درون_zip_read_info->z_filefunc,
+              pfile_درون_zip_read_info->filestream,
               buf,read_now)!=read_now)
-        return UNZ_ERRNO;
+        أرجع UNZ_ERRNO;
 
-    return (int)read_now;
+    أرجع (صحيح)read_now;
 }
 
 /*
   Close the file in zip opened with unzOpenCurrentFile
   Return UNZ_CRCERROR if all the file was read but the CRC is not good
 */
-extern int ZEXPORT unzCloseCurrentFile(unzFile file) {
-    int err=UNZ_OK;
+خارجي صحيح ZEXPORT unzCloseCurrentFile(unzFile file) {
+    صحيح err=UNZ_OK;
 
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_درون_zip64_read_info_s* pfile_درون_zip_read_info;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_درون_zip_read_info=s->pfile_درون_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    إذا (pfile_درون_zip_read_info==عدم)
+        أرجع UNZ_PARAMERROR;
 
 
-    if ((pfile_in_zip_read_info->rest_read_uncompressed == 0) &&
-        (!pfile_in_zip_read_info->raw))
+    إذا ((pfile_درون_zip_read_info->rest_read_uncompressed == 0) &&
+        (!pfile_درون_zip_read_info->raw))
     {
-        if (pfile_in_zip_read_info->crc32 != pfile_in_zip_read_info->crc32_wait)
+        إذا (pfile_درون_zip_read_info->بررسی_چرخهای_32_2 != pfile_درون_zip_read_info->بررسی_چرخهای_32_wait)
             err=UNZ_CRCERROR;
     }
 
 
-    free(pfile_in_zip_read_info->read_buffer);
-    pfile_in_zip_read_info->read_buffer = NULL;
-    if (pfile_in_zip_read_info->stream_initialised == Z_DEFLATED)
-        inflateEnd(&pfile_in_zip_read_info->stream);
-#ifdef HAVE_BZIP2
-    else if (pfile_in_zip_read_info->stream_initialised == Z_BZIP2ED)
-        BZ2_bzDecompressEnd(&pfile_in_zip_read_info->bstream);
-#endif
+    حرر(pfile_درون_zip_read_info->read_میانگیر);
+    pfile_درون_zip_read_info->read_میانگیر = عدم;
+    إذا (pfile_درون_zip_read_info->جریان_initialised == Z_DEFLATED)
+        inflate_انتها(&pfile_درون_zip_read_info->جریان);
+#اگر_تعریف_شده HAVE_BZIP2
+    وإلا إذا (pfile_درون_zip_read_info->جریان_initialised == Z_BZIP2ED)
+        BZ2_bz_Decompress_انتها(&pfile_درون_zip_read_info->bstream);
+#پایان_اگر
 
 
-    pfile_in_zip_read_info->stream_initialised = 0;
-    free(pfile_in_zip_read_info);
+    pfile_درون_zip_read_info->جریان_initialised = 0;
+    حرر(pfile_درون_zip_read_info);
 
-    s->pfile_in_zip_read=NULL;
+    s->pfile_درون_zip_read=عدم;
 
-    return err;
+    أرجع err;
 }
 
 
@@ -1910,73 +1910,73 @@ extern int ZEXPORT unzCloseCurrentFile(unzFile file) {
   uSizeBuf is the size of the szComment buffer.
   return the number of byte copied or an error code <0
 */
-extern int ZEXPORT unzGetGlobalComment(unzFile file, char * szComment, uLong uSizeBuf) {
+خارجي صحيح ZEXPORT unzGetGlobalComment(unzFile file, حرف * szComment, uLong u_اندازه_Buf) {
     unz64_s* s;
     uLong uReadThis ;
-    if (file==NULL)
-        return (int)UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع (صحيح)UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    uReadThis = uSizeBuf;
-    if (uReadThis>s->gi.size_comment)
-        uReadThis = s->gi.size_comment;
+    uReadThis = u_اندازه_Buf;
+    إذا (uReadThis>s->gi.اندازه_comment)
+        uReadThis = s->gi.اندازه_comment;
 
-    if (ZSEEK64(s->z_filefunc,s->filestream,s->central_pos+22,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    إذا (ZSEEK64(s->z_filefunc,s->filestream,s->central_pos+22,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+        أرجع UNZ_ERRNO;
 
-    if (uReadThis>0)
+    إذا (uReadThis>0)
     {
       *szComment='\0';
-      if (ZREAD64(s->z_filefunc,s->filestream,szComment,uReadThis)!=uReadThis)
-        return UNZ_ERRNO;
+      إذا (ZREAD64(s->z_filefunc,s->filestream,szComment,uReadThis)!=uReadThis)
+        أرجع UNZ_ERRNO;
     }
 
-    if ((szComment != NULL) && (uSizeBuf > s->gi.size_comment))
-        *(szComment+s->gi.size_comment)='\0';
-    return (int)uReadThis;
+    إذا ((szComment != عدم) && (u_اندازه_Buf > s->gi.اندازه_comment))
+        *(szComment+s->gi.اندازه_comment)='\0';
+    أرجع (صحيح)uReadThis;
 }
 
 /* Additions by RX '2004 */
-extern ZPOS64_T ZEXPORT unzGetOffset64(unzFile file) {
+خارجي ZPOS64_T ZEXPORT unzGetOffset64(unzFile file) {
     unz64_s* s;
 
-    if (file==NULL)
-          return 0; /* UNZ_PARAMERROR; */
+    إذا (file==عدم)
+          أرجع 0; /* UNZ_PARAMERROR; */
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-      return 0;
-    if (s->gi.number_entry != 0 && s->gi.number_entry != 0xffff)
-      if (s->num_file==s->gi.number_entry)
-         return 0;
-    return s->pos_in_central_dir;
+    إذا (!s->current_file_ok)
+      أرجع 0;
+    إذا (s->gi.عدد_مدخل != 0 && s->gi.عدد_مدخل != 0xffff)
+      إذا (s->رقم_file==s->gi.عدد_مدخل)
+         أرجع 0;
+    أرجع s->pos_درون_central_dir;
 }
 
-extern uLong ZEXPORT unzGetOffset(unzFile file) {
+خارجي uLong ZEXPORT unz_Get_جابه_جایی(unzFile file) {
     ZPOS64_T offset64;
 
-    if (file==NULL)
-          return 0; /* UNZ_PARAMERROR; */
+    إذا (file==عدم)
+          أرجع 0; /* UNZ_PARAMERROR; */
     offset64 = unzGetOffset64(file);
-    return (uLong)offset64;
+    أرجع (uLong)offset64;
 }
 
-extern int ZEXPORT unzSetOffset64(unzFile file, ZPOS64_T pos) {
+خارجي صحيح ZEXPORT unz_مجموعه_Offset64(unzFile file, ZPOS64_T pos) {
     unz64_s* s;
-    int err;
+    صحيح err;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    إذا (file==عدم)
+        أرجع UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    s->pos_in_central_dir = pos;
-    s->num_file = s->gi.number_entry;      /* hack */
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                              &s->cur_file_info_internal,
-                                              NULL,0,NULL,0,NULL,0);
+    s->pos_درون_central_dir = pos;
+    s->رقم_file = s->gi.عدد_مدخل;      /* hack */
+    err = unz64local_Get_Current_File_Info_داخلی(file,&s->cur_file_info,
+                                              &s->cur_file_info_داخلی,
+                                              عدم,0,عدم,0,عدم,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    أرجع err;
 }
 
-extern int ZEXPORT unzSetOffset (unzFile file, uLong pos) {
-    return unzSetOffset64(file,pos);
+خارجي صحيح ZEXPORT unz_مجموعه_جابه_جایی (unzFile file, uLong pos) {
+    أرجع unz_مجموعه_Offset64(file,pos);
 }

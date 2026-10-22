@@ -223,87 +223,87 @@
    - Log the repair with a date stamp in foo.repairs
  */
 
-#include <sys/types.h>
-#include <stdio.h>      /* rename, fopen, fprintf, fclose */
-#include <stdlib.h>     /* malloc, free */
-#include <string.h>     /* strlen, strrchr, strcpy, strncpy, strcmp */
-#include <fcntl.h>      /* open */
-#include <unistd.h>     /* lseek, read, write, close, unlink, sleep, */
+#ضمن <sys/types.h>
+#ضمن <stdio.h>      /* rename, fopen, fprintf, fclose */
+#ضمن <stdlib.h>     /* malloc, free */
+#ضمن <string.h>     /* strlen, strrchr, strcpy, strncpy, strcmp */
+#ضمن <fcntl.h>      /* open */
+#ضمن <unistd.h>     /* lseek, read, write, close, unlink, sleep, */
                         /* ftruncate, fsync */
-#include <errno.h>      /* errno */
-#include <time.h>       /* time, ctime */
-#include <sys/stat.h>   /* stat */
-#include <sys/time.h>   /* utimes */
-#include "zlib.h"       /* crc32 */
+#ضمن <errno.h>      /* errno */
+#ضمن <time.h>       /* time, ctime */
+#ضمن <sys/stat.h>   /* stat */
+#ضمن <sys/time.h>   /* utimes */
+#ضمن "zlib.h"       /*بررسی_چرخهای_32*/
 
-#include "gzlog.h"      /* header for external access */
+#ضمن "gzlog.h"      /* header for external access */
 
-#define local static
-typedef unsigned int uint;
-typedef unsigned long ulong;
+#تعریف_کن local ساكن
+تعريفنوع بیعلامت صحيح uint;
+تعريفنوع بیعلامت دراز ulong;
 
 /* Macro for debugging to deterministically force recovery operations */
-#ifdef GZLOG_DEBUG
-    #include <setjmp.h>         /* longjmp */
+#اگر_تعریف_شده GZLOG_DEBUG
+    #ضمن <setjmp.h>         /* longjmp */
     jmp_buf gzlog_jump;         /* where to go back to */
-    int gzlog_bail = 0;         /* which point to bail at (1..8) */
-    int gzlog_count = -1;       /* number of times through to wait */
-#   define BAIL(n) do { if (n == gzlog_bail && gzlog_count-- == 0) \
-                            longjmp(gzlog_jump, gzlog_bail); } while (0)
-#else
+    صحيح gzlog_bail = 0;         /* which point to bail at (1..8) */
+    صحيح gzlog_شمار = -1;       /* number of times through to wait */
+#   define BAIL(n) افعل { إذا (n == gzlog_bail && gzlog_شمار-- == 0) \
+                            longjmp(gzlog_jump, gzlog_bail); } طالما (0)
+#وإلا
 #   define BAIL(n)
-#endif
+#پایان_اگر
 
 /* how old the lock file can be in seconds before considering it stale */
-#define PATIENCE 300
+#تعریف_کن PATIENCE 300
 
 /* maximum stored block size in Kbytes -- must be in 1..63 */
-#define MAX_STORE 16
+#تعریف_کن MAX_STORE 16
 
 /* number of stored Kbytes to trigger compression (must be >= 32 to allow
    dictionary construction, and <= 204 * MAX_STORE, in order for >> 10 to
    discard the stored block headers contribution of five bytes each) */
-#define TRIGGER 1024
+#تعریف_کن TRIGGER 1024
 
 /* size of a deflate dictionary (this cannot be changed) */
-#define DICT 32768U
+#تعریف_کن DICT 32768U
 
 /* values for the operation (2 bits) */
-#define NO_OP 0
-#define APPEND_OP 1
-#define COMPRESS_OP 2
-#define REPLACE_OP 3
+#تعریف_کن NO_OP 0
+#تعریف_کن APPEND_OP 1
+#تعریف_کن COMPRESS_OP 2
+#تعریف_کن REPLACE_OP 3
 
 /* macros to extract little-endian integers from an unsigned byte buffer */
-#define PULL2(p) ((p)[0]+((uint)((p)[1])<<8))
-#define PULL4(p) (PULL2(p)+((ulong)PULL2(p+2)<<16))
-#define PULL8(p) (PULL4(p)+((off_t)PULL4(p+4)<<32))
+#تعریف_کن PULL2(p) ((p)[0]+((uint)((p)[1])<<8))
+#تعریف_کن PULL4(p) (PULL2(p)+((ulong)PULL2(p+2)<<16))
+#تعریف_کن PULL8(p) (PULL4(p)+((off_t)PULL4(p+4)<<32))
 
 /* macros to store integers into a byte buffer in little-endian order */
-#define PUT2(p,a) do {(p)[0]=a;(p)[1]=(a)>>8;} while(0)
-#define PUT4(p,a) do {PUT2(p,a);PUT2(p+2,a>>16);} while(0)
-#define PUT8(p,a) do {PUT4(p,a);PUT4(p+4,a>>32);} while(0)
+#تعریف_کن PUT2(p,a) افعل {(p)[0]=a;(p)[1]=(a)>>8;} طالما(0)
+#تعریف_کن PUT4(p,a) افعل {PUT2(p,a);PUT2(p+2,a>>16);} طالما(0)
+#تعریف_کن PUT8(p,a) افعل {PUT4(p,a);PUT4(p+4,a>>32);} طالما(0)
 
 /* internal structure for log information */
-#define LOGID "\106\035\172"    /* should be three non-zero characters */
-struct log {
-    char id[4];     /* contains LOGID to detect inadvertent overwrites */
-    int fd;         /* file descriptor for .gz file, opened read/write */
-    char *path;     /* allocated path, e.g. "/var/log/foo" or "foo" */
-    char *end;      /* end of path, for appending suffices such as ".gz" */
-    off_t first;    /* offset of first stored block first length byte */
-    int back;       /* location of first block id in bits back from first */
+#تعریف_کن LOGID "\106\035\172"    /* should be three non-zero characters */
+بنية لگاریتم {
+    حرف id[4];     /* contains LOGID to detect inadvertent overwrites */
+    صحيح fd;         /* file descriptor for .gz file, opened read/write */
+    حرف *مسیر;     /* allocated path, e.g. "/var/log/foo" or "foo" */
+    حرف *انتها;      /* end of path, for appending suffices such as ".gz" */
+    off_t اولی;    /* offset of first stored block first length byte */
+    صحيح پشت;       /* location of first block id in bits back from first */
     uint stored;    /* bytes currently in last stored block */
-    off_t last;     /* offset of last stored block first length byte */
+    off_t آخرین;     /* offset of last stored block first length byte */
     ulong ccrc;     /* crc of compressed data */
     ulong clen;     /* length (modulo 2^32) of compressed data */
     ulong tcrc;     /* crc of total data */
     ulong tlen;     /* length (modulo 2^32) of total data */
-    time_t lock;    /* last modify time of our lock file */
+    time_t قفل_2;    /* last modify time of our lock file */
 };
 
 /* gzip header for gzlog */
-local unsigned char log_gzhead[] = {
+local بیعلامت حرف log_gzhead[] = {
     0x1f, 0x8b,                 /* magic gzip id */
     8,                          /* compression method is deflate */
     4,                          /* there is an extra field (no file name) */
@@ -313,10 +313,10 @@ local unsigned char log_gzhead[] = {
                                 /* 35 is EXTRA, 39 is EXTRA + 4 */
 };
 
-#define HEAD sizeof(log_gzhead)     /* should be 16 */
+#تعریف_کن سر_2 حجم(log_gzhead)     /* should be 16 */
 
 /* initial gzip extra field content (52 == HEAD + EXTRA + 1) */
-local unsigned char log_gzext[] = {
+local بیعلامت حرف log_gzext[] = {
     52, 0, 0, 0, 0, 0, 0, 0,    /* offset of first stored block length */
     52, 0, 0, 0, 0, 0, 0, 0,    /* offset of last stored block length */
     0, 0, 0, 0, 0, 0, 0, 0,     /* compressed data crc and length */
@@ -325,16 +325,16 @@ local unsigned char log_gzext[] = {
     5                           /* op is NO_OP, last bit 8 bits back */
 };
 
-#define EXTRA sizeof(log_gzext)     /* should be 35 */
+#تعریف_کن EXTRA حجم(log_gzext)     /* should be 35 */
 
 /* initial gzip data and trailer */
-local unsigned char log_gzbody[] = {
+local بیعلامت حرف log_gzbody[] = {
     1, 0, 0, 0xff, 0xff,        /* empty stored block (last) */
-    0, 0, 0, 0,                 /* crc */
+    0, 0, 0, 0,                 /*بررسی_چرخهای*/
     0, 0, 0, 0                  /* uncompressed length */
 };
 
-#define BODY sizeof(log_gzbody)
+#تعریف_کن BODY حجم(log_gzbody)
 
 /* Exclusively create foo.lock in order to negotiate exclusive access to the
    foo.* files.  If the modify time of an existing lock file is greater than
@@ -345,61 +345,61 @@ local unsigned char log_gzbody[] = {
    if stat() or unlink() fails, it may be due to another process noticing the
    abandoned lock file a smidge sooner and deleting it, so those are not
    flagged as an error. */
-local int log_lock(struct log *log)
+local صحيح log_قفل(بنية لگاریتم *لگاریتم)
 {
-    int fd;
-    struct stat st;
+    صحيح fd;
+    بنية stat st;
 
-    strcpy(log->end, ".lock");
-    while ((fd = open(log->path, O_CREAT | O_EXCL, 0644)) < 0) {
-        if (errno != EEXIST)
-            return -1;
-        if (stat(log->path, &st) == 0 && time(NULL) - st.st_mtime > PATIENCE) {
-            unlink(log->path);
-            continue;
+    strcpy(لگاریتم->انتها, ".lock");
+    طالما ((fd = open(لگاریتم->مسیر, O_CREAT | O_EXCL, 0644)) < 0) {
+        إذا (errno != EEXIST)
+            أرجع -1;
+        إذا (stat(لگاریتم->مسیر, &st) == 0 && time(عدم) - st.st_mtime > PATIENCE) {
+            unlink(لگاریتم->مسیر);
+            استمر;
         }
         sleep(2);       /* relinquish the CPU for two seconds while waiting */
     }
     close(fd);
-    if (stat(log->path, &st) == 0)
-        log->lock = st.st_mtime;
-    return 0;
+    إذا (stat(لگاریتم->مسیر, &st) == 0)
+        لگاریتم->قفل_2 = st.st_mtime;
+    أرجع 0;
 }
 
 /* Update the modify time of the lock file to now, in order to prevent another
    task from thinking that the lock is stale.  Save the lock file modify time
    for verification of ownership. */
-local void log_touch(struct log *log)
+local فراغ log_touch(بنية لگاریتم *لگاریتم)
 {
-    struct stat st;
+    بنية stat st;
 
-    strcpy(log->end, ".lock");
-    utimes(log->path, NULL);
-    if (stat(log->path, &st) == 0)
-        log->lock = st.st_mtime;
+    strcpy(لگاریتم->انتها, ".lock");
+    utimes(لگاریتم->مسیر, عدم);
+    إذا (stat(لگاریتم->مسیر, &st) == 0)
+        لگاریتم->قفل_2 = st.st_mtime;
 }
 
 /* Check the log file modify time against what is expected.  Return true if
    this is not our lock.  If it is our lock, touch it to keep it. */
-local int log_check(struct log *log)
+local صحيح log_check(بنية لگاریتم *لگاریتم)
 {
-    struct stat st;
+    بنية stat st;
 
-    strcpy(log->end, ".lock");
-    if (stat(log->path, &st) || st.st_mtime != log->lock)
-        return 1;
-    log_touch(log);
-    return 0;
+    strcpy(لگاریتم->انتها, ".lock");
+    إذا (stat(لگاریتم->مسیر, &st) || st.st_mtime != لگاریتم->قفل_2)
+        أرجع 1;
+    log_touch(لگاریتم);
+    أرجع 0;
 }
 
 /* Unlock a previously acquired lock, but only if it's ours. */
-local void log_unlock(struct log *log)
+local فراغ log_unlock(بنية لگاریتم *لگاریتم)
 {
-    if (log_check(log))
-        return;
-    strcpy(log->end, ".lock");
-    unlink(log->path);
-    log->lock = 0;
+    إذا (log_check(لگاریتم))
+        أرجع;
+    strcpy(لگاریتم->انتها, ".lock");
+    unlink(لگاریتم->مسیر);
+    لگاریتم->قفل_2 = 0;
 }
 
 /* Check the gzip header and read in the extra field, filling in the values in
@@ -407,26 +407,26 @@ local void log_unlock(struct log *log)
    expected.  op is the current operation in progress last written to the extra
    field.  This assumes that the gzip file has already been opened, with the
    file descriptor log->fd. */
-local int log_head(struct log *log)
+local صحيح log_سر(بنية لگاریتم *لگاریتم)
 {
-    int op;
-    unsigned char buf[HEAD + EXTRA];
+    صحيح op;
+    بیعلامت حرف buf[سر_2 + EXTRA];
 
-    if (lseek(log->fd, 0, SEEK_SET) < 0 ||
-        read(log->fd, buf, HEAD + EXTRA) != HEAD + EXTRA ||
-        memcmp(buf, log_gzhead, HEAD)) {
-        return -1;
+    إذا (lseek(لگاریتم->fd, 0, SEEK_SET) < 0 ||
+        اقرأ(لگاریتم->fd, buf, سر_2 + EXTRA) != سر_2 + EXTRA ||
+        memcmp(buf, log_gzhead, سر_2)) {
+        أرجع -1;
     }
-    log->first = PULL8(buf + HEAD);
-    log->last = PULL8(buf + HEAD + 8);
-    log->ccrc = PULL4(buf + HEAD + 16);
-    log->clen = PULL4(buf + HEAD + 20);
-    log->tcrc = PULL4(buf + HEAD + 24);
-    log->tlen = PULL4(buf + HEAD + 28);
-    log->stored = PULL2(buf + HEAD + 32);
-    log->back = 3 + (buf[HEAD + 34] & 7);
-    op = (buf[HEAD + 34] >> 3) & 3;
-    return op;
+    لگاریتم->اولی = PULL8(buf + سر_2);
+    لگاریتم->آخرین = PULL8(buf + سر_2 + 8);
+    لگاریتم->ccrc = PULL4(buf + سر_2 + 16);
+    لگاریتم->clen = PULL4(buf + سر_2 + 20);
+    لگاریتم->tcrc = PULL4(buf + سر_2 + 24);
+    لگاریتم->tlen = PULL4(buf + سر_2 + 28);
+    لگاریتم->stored = PULL2(buf + سر_2 + 32);
+    لگاریتم->پشت = 3 + (buf[سر_2 + 34] & 7);
+    op = (buf[سر_2 + 34] >> 3) & 3;
+    أرجع op;
 }
 
 /* Write over the extra field contents, marking the operation as op.  Use fsync
@@ -434,24 +434,24 @@ local int log_head(struct log *log)
    operation, and only this operation, is assumed to be atomic in order to
    assure that the log is recoverable in the event of an interruption at any
    point in the process.  Return -1 if the write to foo.gz failed. */
-local int log_mark(struct log *log, int op)
+local صحيح log_mark(بنية لگاریتم *لگاریتم, صحيح op)
 {
-    int ret;
-    unsigned char ext[EXTRA];
+    صحيح ret;
+    بیعلامت حرف ext[EXTRA];
 
-    PUT8(ext, log->first);
-    PUT8(ext + 8, log->last);
-    PUT4(ext + 16, log->ccrc);
-    PUT4(ext + 20, log->clen);
-    PUT4(ext + 24, log->tcrc);
-    PUT4(ext + 28, log->tlen);
-    PUT2(ext + 32, log->stored);
-    ext[34] = log->back - 3 + (op << 3);
-    fsync(log->fd);
-    ret = lseek(log->fd, HEAD, SEEK_SET) < 0 ||
-          write(log->fd, ext, EXTRA) != EXTRA ? -1 : 0;
-    fsync(log->fd);
-    return ret;
+    PUT8(ext, لگاریتم->اولی);
+    PUT8(ext + 8, لگاریتم->آخرین);
+    PUT4(ext + 16, لگاریتم->ccrc);
+    PUT4(ext + 20, لگاریتم->clen);
+    PUT4(ext + 24, لگاریتم->tcrc);
+    PUT4(ext + 28, لگاریتم->tlen);
+    PUT2(ext + 32, لگاریتم->stored);
+    ext[34] = لگاریتم->پشت - 3 + (op << 3);
+    fsync(لگاریتم->fd);
+    ret = lseek(لگاریتم->fd, سر_2, SEEK_SET) < 0 ||
+          اكتب(لگاریتم->fd, ext, EXTRA) != EXTRA ? -1 : 0;
+    fsync(لگاریتم->fd);
+    أرجع ret;
 }
 
 /* Rewrite the last block header bits and subsequent zero bits to get to a byte
@@ -459,38 +459,38 @@ local int log_mark(struct log *log, int op)
    remainder of the stored block header (length and one's complement).  Leave
    the file pointer after the end of the last stored block data.  Return -1 if
    there is a read or write failure on the foo.gz file */
-local int log_last(struct log *log, int last)
+local صحيح log_آخرین(بنية لگاریتم *لگاریتم, صحيح آخرین)
 {
-    int back, len, mask;
-    unsigned char buf[6];
+    صحيح پشت, len, ماسک;
+    بیعلامت حرف buf[6];
 
     /* determine the locations of the bytes and bits to modify */
-    back = log->last == log->first ? log->back : 8;
-    len = back > 8 ? 2 : 1;                 /* bytes back from log->last */
-    mask = 0x80 >> ((back - 1) & 7);        /* mask for block last-bit */
+    پشت = لگاریتم->آخرین == لگاریتم->اولی ? لگاریتم->پشت : 8;
+    len = پشت > 8 ? 2 : 1;                 /* bytes back from log->last */
+    ماسک = 0x80 >> ((پشت - 1) & 7);        /* mask for block last-bit */
 
     /* get the byte to modify (one or two back) into buf[0] -- don't need to
        read the byte if the last-bit is eight bits back, since in that case
        the entire byte will be modified */
     buf[0] = 0;
-    if (back != 8 && (lseek(log->fd, log->last - len, SEEK_SET) < 0 ||
-                      read(log->fd, buf, 1) != 1))
-        return -1;
+    إذا (پشت != 8 && (lseek(لگاریتم->fd, لگاریتم->آخرین - len, SEEK_SET) < 0 ||
+                      اقرأ(لگاریتم->fd, buf, 1) != 1))
+        أرجع -1;
 
     /* change the last-bit of the last stored block as requested -- note
        that all bits above the last-bit are set to zero, per the type bits
        of a stored block being 00 and per the convention that the bits to
        bring the stream to a byte boundary are also zeros */
     buf[1] = 0;
-    buf[2 - len] = (*buf & (mask - 1)) + (last ? mask : 0);
+    buf[2 - len] = (*buf & (ماسک - 1)) + (آخرین ? ماسک : 0);
 
     /* write the modified stored block header and lengths, move the file
        pointer to after the last stored block data */
-    PUT2(buf + 2, log->stored);
-    PUT2(buf + 4, log->stored ^ 0xffff);
-    return lseek(log->fd, log->last - len, SEEK_SET) < 0 ||
-           write(log->fd, buf + 2 - len, len + 4) != len + 4 ||
-           lseek(log->fd, log->stored, SEEK_CUR) < 0 ? -1 : 0;
+    PUT2(buf + 2, لگاریتم->stored);
+    PUT2(buf + 4, لگاریتم->stored ^ 0xffff);
+    أرجع lseek(لگاریتم->fd, لگاریتم->آخرین - len, SEEK_SET) < 0 ||
+           اكتب(لگاریتم->fd, buf + 2 - len, len + 4) != len + 4 ||
+           lseek(لگاریتم->fd, لگاریتم->stored, SEEK_CUR) < 0 ? -1 : 0;
 }
 
 /* Append len bytes from data to the locked and open log file.  len may be zero
@@ -498,67 +498,67 @@ local int log_last(struct log *log, int last)
    of the foo.gz file is restored.  The data is appended uncompressed in
    deflate stored blocks.  Return -1 if there was an error reading or writing
    the foo.gz file. */
-local int log_append(struct log *log, unsigned char *data, size_t len)
+local صحيح log_append(بنية لگاریتم *لگاریتم, بیعلامت حرف *داده, size_t len)
 {
     uint put;
-    off_t end;
-    unsigned char buf[8];
+    off_t انتها;
+    بیعلامت حرف buf[8];
 
     /* set the last block last-bit and length, in case recovering an
        interrupted append, then position the file pointer to append to the
-       block */
-    if (log_last(log, 1))
-        return -1;
+بلوک*/
+    إذا (log_آخرین(لگاریتم, 1))
+        أرجع -1;
 
     /* append, adding stored blocks and updating the offset of the last stored
        block as needed, and update the total crc and length */
-    while (len) {
+    طالما (len) {
         /* append as much as we can to the last block */
-        put = (MAX_STORE << 10) - log->stored;
-        if (put > len)
+        put = (MAX_STORE << 10) - لگاریتم->stored;
+        إذا (put > len)
             put = (uint)len;
-        if (put) {
-            if (write(log->fd, data, put) != put)
-                return -1;
+        إذا (put) {
+            إذا (اكتب(لگاریتم->fd, داده, put) != put)
+                أرجع -1;
             BAIL(1);
-            log->tcrc = crc32(log->tcrc, data, put);
-            log->tlen += put;
-            log->stored += put;
-            data += put;
+            لگاریتم->tcrc = بررسی_چرخهای_32_2(لگاریتم->tcrc, داده, put);
+            لگاریتم->tlen += put;
+            لگاریتم->stored += put;
+            داده += put;
             len -= put;
         }
 
         /* if we need to, add a new empty stored block */
-        if (len) {
+        إذا (len) {
             /* mark current block as not last */
-            if (log_last(log, 0))
-                return -1;
+            إذا (log_آخرین(لگاریتم, 0))
+                أرجع -1;
 
             /* point to new, empty stored block */
-            log->last += 4 + log->stored + 1;
-            log->stored = 0;
+            لگاریتم->آخرین += 4 + لگاریتم->stored + 1;
+            لگاریتم->stored = 0;
         }
 
         /* mark last block as last, update its length */
-        if (log_last(log, 1))
-            return -1;
+        إذا (log_آخرین(لگاریتم, 1))
+            أرجع -1;
         BAIL(2);
     }
 
     /* write the new crc and length trailer, and truncate just in case (could
        be recovering from partial append with a missing foo.add file) */
-    PUT4(buf, log->tcrc);
-    PUT4(buf + 4, log->tlen);
-    if (write(log->fd, buf, 8) != 8 ||
-        (end = lseek(log->fd, 0, SEEK_CUR)) < 0 || ftruncate(log->fd, end))
-        return -1;
+    PUT4(buf, لگاریتم->tcrc);
+    PUT4(buf + 4, لگاریتم->tlen);
+    إذا (اكتب(لگاریتم->fd, buf, 8) != 8 ||
+        (انتها = lseek(لگاریتم->fd, 0, SEEK_CUR)) < 0 || ftruncate(لگاریتم->fd, انتها))
+        أرجع -1;
 
     /* write the extra field, marking the log file as done, delete .add file */
-    if (log_mark(log, NO_OP))
-        return -1;
-    strcpy(log->end, ".add");
-    unlink(log->path);          /* ignore error, since may not exist */
-    return 0;
+    إذا (log_mark(لگاریتم, NO_OP))
+        أرجع -1;
+    strcpy(لگاریتم->انتها, ".add");
+    unlink(لگاریتم->مسیر);          /* ignore error, since may not exist */
+    أرجع 0;
 }
 
 /* Replace the foo.dict file with the foo.temp file.  Also delete the foo.add
@@ -568,31 +568,31 @@ local int log_append(struct log *log, unsigned char *data, size_t len)
    foo.temp not existing.  foo.temp not existing is a permitted error, since
    the replace operation may have been interrupted after the rename is done,
    but before foo.gz is marked as complete. */
-local int log_replace(struct log *log)
+local صحيح log_replace(بنية لگاریتم *لگاریتم)
 {
-    int ret;
-    char *dest;
+    صحيح ret;
+    حرف *dest;
 
     /* delete foo.add file */
-    strcpy(log->end, ".add");
-    unlink(log->path);         /* ignore error, since may not exist */
+    strcpy(لگاریتم->انتها, ".add");
+    unlink(لگاریتم->مسیر);         /* ignore error, since may not exist */
     BAIL(3);
 
     /* rename foo.name to foo.dict, replacing foo.dict if it exists */
-    strcpy(log->end, ".dict");
-    dest = malloc(strlen(log->path) + 1);
-    if (dest == NULL)
-        return -2;
-    strcpy(dest, log->path);
-    strcpy(log->end, ".temp");
-    ret = rename(log->path, dest);
-    free(dest);
-    if (ret && errno != ENOENT)
-        return -1;
+    strcpy(لگاریتم->انتها, ".dict");
+    dest = حافظه_بده(طول_رشته(لگاریتم->مسیر) + 1);
+    إذا (dest == عدم)
+        أرجع -2;
+    strcpy(dest, لگاریتم->مسیر);
+    strcpy(لگاریتم->انتها, ".temp");
+    ret = rename(لگاریتم->مسیر, dest);
+    حرر(dest);
+    إذا (ret && errno != ENOENT)
+        أرجع -1;
     BAIL(4);
 
     /* mark the foo.gz file as done */
-    return log_mark(log, NO_OP);
+    أرجع log_mark(لگاریتم, NO_OP);
 }
 
 /* Compress the len bytes at data and append the compressed data to the
@@ -605,202 +605,202 @@ local int log_replace(struct log *log)
    appending a final empty stored block and the gzip trailer.  Return -1 if
    reading or writing the log.gz file failed, or -2 if there was a memory
    allocation failure. */
-local int log_compress(struct log *log, unsigned char *data, size_t len)
+local صحيح log_compress(بنية لگاریتم *لگاریتم, بیعلامت حرف *داده, size_t len)
 {
-    int fd;
+    صحيح fd;
     uint got, max;
     ssize_t dict;
-    off_t end;
-    z_stream strm;
-    unsigned char buf[DICT];
+    off_t انتها;
+    z_جریان strm;
+    بیعلامت حرف buf[DICT];
 
     /* compress and append compressed data */
-    if (len) {
+    إذا (len) {
         /* set up for deflate, allocating memory */
         strm.zalloc = Z_NULL;
         strm.zfree = Z_NULL;
         strm.opaque = Z_NULL;
-        if (deflateInit2(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED, -15, 8,
+        إذا (deflateInit2(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED, -15, 8,
                          Z_DEFAULT_STRATEGY) != Z_OK)
-            return -2;
+            أرجع -2;
 
         /* read in dictionary (last 32K of data that was compressed) */
-        strcpy(log->end, ".dict");
-        fd = open(log->path, O_RDONLY, 0);
-        if (fd >= 0) {
-            dict = read(fd, buf, DICT);
+        strcpy(لگاریتم->انتها, ".dict");
+        fd = open(لگاریتم->مسیر, O_RDONLY, 0);
+        إذا (fd >= 0) {
+            dict = اقرأ(fd, buf, DICT);
             close(fd);
-            if (dict < 0) {
-                deflateEnd(&strm);
-                return -1;
+            إذا (dict < 0) {
+                deflate_انتها(&strm);
+                أرجع -1;
             }
-            if (dict)
-                deflateSetDictionary(&strm, buf, (uint)dict);
+            إذا (dict)
+                deflate_مجموعه_Dictionary(&strm, buf, (uint)dict);
         }
-        log_touch(log);
+        log_touch(لگاریتم);
 
         /* prime deflate with last bits of previous block, position write
            pointer to write those bits and overwrite what follows */
-        if (lseek(log->fd, log->first - (log->back > 8 ? 2 : 1),
+        إذا (lseek(لگاریتم->fd, لگاریتم->اولی - (لگاریتم->پشت > 8 ? 2 : 1),
                 SEEK_SET) < 0 ||
-            read(log->fd, buf, 1) != 1 || lseek(log->fd, -1, SEEK_CUR) < 0) {
-            deflateEnd(&strm);
-            return -1;
+            اقرأ(لگاریتم->fd, buf, 1) != 1 || lseek(لگاریتم->fd, -1, SEEK_CUR) < 0) {
+            deflate_انتها(&strm);
+            أرجع -1;
         }
-        deflatePrime(&strm, (8 - log->back) & 7, *buf);
+        deflate_اول(&strm, (8 - لگاریتم->پشت) & 7, *buf);
 
         /* compress, finishing with a partial non-last empty static block */
-        strm.next_in = data;
+        strm.بعدی_درون = داده;
         max = (((uint)0 - 1) >> 1) + 1; /* in case int smaller than size_t */
-        do {
-            strm.avail_in = len > max ? max : (uint)len;
-            len -= strm.avail_in;
-            do {
-                strm.avail_out = DICT;
-                strm.next_out = buf;
+        افعل {
+            strm.avail_درون = len > max ? max : (uint)len;
+            len -= strm.avail_درون;
+            افعل {
+                strm.avail_بیرون = DICT;
+                strm.بعدی_بیرون = buf;
                 deflate(&strm, len ? Z_NO_FLUSH : Z_PARTIAL_FLUSH);
-                got = DICT - strm.avail_out;
-                if (got && write(log->fd, buf, got) != got) {
-                    deflateEnd(&strm);
-                    return -1;
+                got = DICT - strm.avail_بیرون;
+                إذا (got && اكتب(لگاریتم->fd, buf, got) != got) {
+                    deflate_انتها(&strm);
+                    أرجع -1;
                 }
-                log_touch(log);
-            } while (strm.avail_out == 0);
-        } while (len);
-        deflateEnd(&strm);
+                log_touch(لگاریتم);
+            } طالما (strm.avail_بیرون == 0);
+        } طالما (len);
+        deflate_انتها(&strm);
         BAIL(5);
 
         /* find start of empty static block -- scanning backwards the first one
            bit is the second bit of the block, if the last byte is zero, then
            we know the byte before that has a one in the top bit, since an
            empty static block is ten bits long */
-        if ((log->first = lseek(log->fd, -1, SEEK_CUR)) < 0 ||
-            read(log->fd, buf, 1) != 1)
-            return -1;
-        log->first++;
-        if (*buf) {
-            log->back = 1;
-            while ((*buf & ((uint)1 << (8 - log->back++))) == 0)
+        إذا ((لگاریتم->اولی = lseek(لگاریتم->fd, -1, SEEK_CUR)) < 0 ||
+            اقرأ(لگاریتم->fd, buf, 1) != 1)
+            أرجع -1;
+        لگاریتم->اولی++;
+        إذا (*buf) {
+            لگاریتم->پشت = 1;
+            طالما ((*buf & ((uint)1 << (8 - لگاریتم->پشت++))) == 0)
                 ;       /* guaranteed to terminate, since *buf != 0 */
         }
-        else
-            log->back = 10;
+        وإلا
+            لگاریتم->پشت = 10;
 
         /* update compressed crc and length */
-        log->ccrc = log->tcrc;
-        log->clen = log->tlen;
+        لگاریتم->ccrc = لگاریتم->tcrc;
+        لگاریتم->clen = لگاریتم->tlen;
     }
-    else {
+    وإلا {
         /* no data to compress -- fix up existing gzip stream */
-        log->tcrc = log->ccrc;
-        log->tlen = log->clen;
+        لگاریتم->tcrc = لگاریتم->ccrc;
+        لگاریتم->tlen = لگاریتم->clen;
     }
 
     /* complete and truncate gzip stream */
-    log->last = log->first;
-    log->stored = 0;
-    PUT4(buf, log->tcrc);
-    PUT4(buf + 4, log->tlen);
-    if (log_last(log, 1) || write(log->fd, buf, 8) != 8 ||
-        (end = lseek(log->fd, 0, SEEK_CUR)) < 0 || ftruncate(log->fd, end))
-        return -1;
+    لگاریتم->آخرین = لگاریتم->اولی;
+    لگاریتم->stored = 0;
+    PUT4(buf, لگاریتم->tcrc);
+    PUT4(buf + 4, لگاریتم->tlen);
+    إذا (log_آخرین(لگاریتم, 1) || اكتب(لگاریتم->fd, buf, 8) != 8 ||
+        (انتها = lseek(لگاریتم->fd, 0, SEEK_CUR)) < 0 || ftruncate(لگاریتم->fd, انتها))
+        أرجع -1;
     BAIL(6);
 
     /* mark as being in the replace operation */
-    if (log_mark(log, REPLACE_OP))
-        return -1;
+    إذا (log_mark(لگاریتم, REPLACE_OP))
+        أرجع -1;
 
     /* execute the replace operation and mark the file as done */
-    return log_replace(log);
+    أرجع log_replace(لگاریتم);
 }
 
 /* log a repair record to the .repairs file */
-local void log_log(struct log *log, int op, char *record)
+local فراغ log_log(بنية لگاریتم *لگاریتم, صحيح op, حرف *رکورد)
 {
     time_t now;
     FILE *rec;
 
-    now = time(NULL);
-    strcpy(log->end, ".repairs");
-    rec = fopen(log->path, "a");
-    if (rec == NULL)
-        return;
+    now = time(عدم);
+    strcpy(لگاریتم->انتها, ".repairs");
+    rec = fopen(لگاریتم->مسیر, "a");
+    إذا (rec == عدم)
+        أرجع;
     fprintf(rec, "%.24s %s recovery: %s\n", ctime(&now), op == APPEND_OP ?
-            "append" : (op == COMPRESS_OP ? "compress" : "replace"), record);
+            "append" : (op == COMPRESS_OP ? "compress" : "replace"), رکورد);
     fclose(rec);
-    return;
+    أرجع;
 }
 
 /* Recover the interrupted operation op.  First read foo.add for recovering an
    append or compress operation.  Return -1 if there was an error reading or
    writing foo.gz or reading an existing foo.add, or -2 if there was a memory
    allocation failure. */
-local int log_recover(struct log *log, int op)
+local صحيح log_recover(بنية لگاریتم *لگاریتم, صحيح op)
 {
-    int fd, ret = 0;
-    unsigned char *data = NULL;
+    صحيح fd, ret = 0;
+    بیعلامت حرف *داده = عدم;
     size_t len = 0;
-    struct stat st;
+    بنية stat st;
 
     /* log recovery */
-    log_log(log, op, "start");
+    log_log(لگاریتم, op, "start");
 
     /* load foo.add file if expected and present */
-    if (op == APPEND_OP || op == COMPRESS_OP) {
-        strcpy(log->end, ".add");
-        if (stat(log->path, &st) == 0 && st.st_size) {
+    إذا (op == APPEND_OP || op == COMPRESS_OP) {
+        strcpy(لگاریتم->انتها, ".add");
+        إذا (stat(لگاریتم->مسیر, &st) == 0 && st.st_size) {
             len = (size_t)(st.st_size);
-            if ((off_t)len != st.st_size ||
-                    (data = malloc(st.st_size)) == NULL) {
-                log_log(log, op, "allocation failure");
-                return -2;
+            إذا ((off_t)len != st.st_size ||
+                    (داده = حافظه_بده(st.st_size)) == عدم) {
+                log_log(لگاریتم, op, "allocation failure");
+                أرجع -2;
             }
-            if ((fd = open(log->path, O_RDONLY, 0)) < 0) {
-                free(data);
-                log_log(log, op, ".add file read failure");
-                return -1;
+            إذا ((fd = open(لگاریتم->مسیر, O_RDONLY, 0)) < 0) {
+                حرر(داده);
+                log_log(لگاریتم, op, ".add file read failure");
+                أرجع -1;
             }
-            ret = (size_t)read(fd, data, len) != len;
+            ret = (size_t)اقرأ(fd, داده, len) != len;
             close(fd);
-            if (ret) {
-                free(data);
-                log_log(log, op, ".add file read failure");
-                return -1;
+            إذا (ret) {
+                حرر(داده);
+                log_log(لگاریتم, op, ".add file read failure");
+                أرجع -1;
             }
-            log_log(log, op, "loaded .add file");
+            log_log(لگاریتم, op, "loaded .add file");
         }
-        else
-            log_log(log, op, "missing .add file!");
+        وإلا
+            log_log(لگاریتم, op, "missing .add file!");
     }
 
     /* recover the interrupted operation */
-    switch (op) {
-    case APPEND_OP:
-        ret = log_append(log, data, len);
-        break;
-    case COMPRESS_OP:
-        ret = log_compress(log, data, len);
-        break;
-    case REPLACE_OP:
-        ret = log_replace(log);
+    بدل (op) {
+    حالة APPEND_OP:
+        ret = log_append(لگاریتم, داده, len);
+        اكسر;
+    حالة COMPRESS_OP:
+        ret = log_compress(لگاریتم, داده, len);
+        اكسر;
+    حالة REPLACE_OP:
+        ret = log_replace(لگاریتم);
     }
 
     /* log status */
-    log_log(log, op, ret ? "failure" : "complete");
+    log_log(لگاریتم, op, ret ? "failure" : "complete");
 
     /* clean up */
-    if (data != NULL)
-        free(data);
-    return ret;
+    إذا (داده != عدم)
+        حرر(داده);
+    أرجع ret;
 }
 
 /* Close the foo.gz file (if open) and release the lock. */
-local void log_close(struct log *log)
+local فراغ log_close(بنية لگاریتم *لگاریتم)
 {
-    if (log->fd >= 0)
-        close(log->fd);
-    log->fd = -1;
-    log_unlock(log);
+    إذا (لگاریتم->fd >= 0)
+        close(لگاریتم->fd);
+    لگاریتم->fd = -1;
+    log_unlock(لگاریتم);
 }
 
 /* Open foo.gz, verify the header, and load the extra field contents, after
@@ -812,94 +812,94 @@ local void log_close(struct log *log)
    this object (e.g. not a gzip file or does not contain the expected extra
    field), then return true.  If there is an error, the lock is released.
    Otherwise, the lock is left in place. */
-local int log_open(struct log *log)
+local صحيح log_open(بنية لگاریتم *لگاریتم)
 {
-    int op;
+    صحيح op;
 
     /* release open file resource if left over -- can occur if lock lost
        between gzlog_open() and gzlog_write() */
-    if (log->fd >= 0)
-        close(log->fd);
-    log->fd = -1;
+    إذا (لگاریتم->fd >= 0)
+        close(لگاریتم->fd);
+    لگاریتم->fd = -1;
 
     /* negotiate exclusive access */
-    if (log_lock(log) < 0)
-        return -1;
+    إذا (log_قفل(لگاریتم) < 0)
+        أرجع -1;
 
     /* open the log file, foo.gz */
-    strcpy(log->end, ".gz");
-    log->fd = open(log->path, O_RDWR | O_CREAT, 0644);
-    if (log->fd < 0) {
-        log_close(log);
-        return -1;
+    strcpy(لگاریتم->انتها, ".gz");
+    لگاریتم->fd = open(لگاریتم->مسیر, O_RDWR | O_CREAT, 0644);
+    إذا (لگاریتم->fd < 0) {
+        log_close(لگاریتم);
+        أرجع -1;
     }
 
     /* if new, initialize foo.gz with an empty log, delete old dictionary */
-    if (lseek(log->fd, 0, SEEK_END) == 0) {
-        if (write(log->fd, log_gzhead, HEAD) != HEAD ||
-            write(log->fd, log_gzext, EXTRA) != EXTRA ||
-            write(log->fd, log_gzbody, BODY) != BODY) {
-            log_close(log);
-            return -1;
+    إذا (lseek(لگاریتم->fd, 0, SEEK_END) == 0) {
+        إذا (اكتب(لگاریتم->fd, log_gzhead, سر_2) != سر_2 ||
+            اكتب(لگاریتم->fd, log_gzext, EXTRA) != EXTRA ||
+            اكتب(لگاریتم->fd, log_gzbody, BODY) != BODY) {
+            log_close(لگاریتم);
+            أرجع -1;
         }
-        strcpy(log->end, ".dict");
-        unlink(log->path);
+        strcpy(لگاریتم->انتها, ".dict");
+        unlink(لگاریتم->مسیر);
     }
 
     /* verify log file and load extra field information */
-    if ((op = log_head(log)) < 0) {
-        log_close(log);
-        return -1;
+    إذا ((op = log_سر(لگاریتم)) < 0) {
+        log_close(لگاریتم);
+        أرجع -1;
     }
 
     /* check for interrupted process and if so, recover */
-    if (op != NO_OP && log_recover(log, op)) {
-        log_close(log);
-        return -1;
+    إذا (op != NO_OP && log_recover(لگاریتم, op)) {
+        log_close(لگاریتم);
+        أرجع -1;
     }
 
     /* touch the lock file to prevent another process from grabbing it */
-    log_touch(log);
-    return 0;
+    log_touch(لگاریتم);
+    أرجع 0;
 }
 
 /* See gzlog.h for the description of the external methods below */
-gzlog *gzlog_open(char *path)
+gzlog *gzlog_open(حرف *مسیر)
 {
     size_t n;
-    struct log *log;
+    بنية لگاریتم *لگاریتم;
 
     /* check arguments */
-    if (path == NULL || *path == 0)
-        return NULL;
+    إذا (مسیر == عدم || *مسیر == 0)
+        أرجع عدم;
 
     /* allocate and initialize log structure */
-    log = malloc(sizeof(struct log));
-    if (log == NULL)
-        return NULL;
-    strcpy(log->id, LOGID);
-    log->fd = -1;
+    لگاریتم = حافظه_بده(حجم(بنية لگاریتم));
+    إذا (لگاریتم == عدم)
+        أرجع عدم;
+    strcpy(لگاریتم->id, LOGID);
+    لگاریتم->fd = -1;
 
     /* save path and end of path for name construction */
-    n = strlen(path);
-    log->path = malloc(n + 9);              /* allow for ".repairs" */
-    if (log->path == NULL) {
-        free(log);
-        return NULL;
+    n = طول_رشته(مسیر);
+    لگاریتم->مسیر = حافظه_بده(n + 9);              /* allow for ".repairs" */
+    إذا (لگاریتم->مسیر == عدم) {
+        حرر(لگاریتم);
+        أرجع عدم;
     }
-    strcpy(log->path, path);
-    log->end = log->path + n;
+    strcpy(لگاریتم->مسیر, مسیر);
+    لگاریتم->انتها = لگاریتم->مسیر + n;
 
     /* gain exclusive access and verify log file -- may perform a
        recovery operation if needed */
-    if (log_open(log)) {
-        free(log->path);
-        free(log);
-        return NULL;
+    إذا (log_open(لگاریتم)) {
+        حرر(لگاریتم->مسیر);
+        حرر(لگاریتم);
+        أرجع عدم;
     }
 
     /* return pointer to log structure */
-    return log;
+    أرجع لگاریتم;
 }
 
 /* gzlog_compress() return values:
@@ -907,86 +907,86 @@ gzlog *gzlog_open(char *path)
    -1: file i/o error (usually access issue)
    -2: memory allocation failure
    -3: invalid log pointer argument */
-int gzlog_compress(gzlog *logd)
+صحيح gzlog_compress(gzlog *logd)
 {
-    int fd, ret;
-    uint block;
-    size_t len, next;
-    unsigned char *data, buf[5];
-    struct log *log = logd;
+    صحيح fd, ret;
+    uint بلوک;
+    size_t len, بعدی;
+    بیعلامت حرف *داده, buf[5];
+    بنية لگاریتم *لگاریتم = logd;
 
     /* check arguments */
-    if (log == NULL || strcmp(log->id, LOGID))
-        return -3;
+    إذا (لگاریتم == عدم || strcmp(لگاریتم->id, LOGID))
+        أرجع -3;
 
     /* see if we lost the lock -- if so get it again and reload the extra
        field information (it probably changed), recover last operation if
        necessary */
-    if (log_check(log) && log_open(log))
-        return -1;
+    إذا (log_check(لگاریتم) && log_open(لگاریتم))
+        أرجع -1;
 
     /* create space for uncompressed data */
-    len = ((size_t)(log->last - log->first) & ~(((size_t)1 << 10) - 1)) +
-          log->stored;
-    if ((data = malloc(len)) == NULL)
-        return -2;
+    len = ((size_t)(لگاریتم->آخرین - لگاریتم->اولی) & ~(((size_t)1 << 10) - 1)) +
+          لگاریتم->stored;
+    إذا ((داده = حافظه_بده(len)) == عدم)
+        أرجع -2;
 
     /* do statement here is just a cheap trick for error handling */
-    do {
+    افعل {
         /* read in the uncompressed data */
-        if (lseek(log->fd, log->first - 1, SEEK_SET) < 0)
-            break;
-        next = 0;
-        while (next < len) {
-            if (read(log->fd, buf, 5) != 5)
-                break;
-            block = PULL2(buf + 1);
-            if (next + block > len ||
-                read(log->fd, (char *)data + next, block) != block)
-                break;
-            next += block;
+        إذا (lseek(لگاریتم->fd, لگاریتم->اولی - 1, SEEK_SET) < 0)
+            اكسر;
+        بعدی = 0;
+        طالما (بعدی < len) {
+            إذا (اقرأ(لگاریتم->fd, buf, 5) != 5)
+                اكسر;
+            بلوک = PULL2(buf + 1);
+            إذا (بعدی + بلوک > len ||
+                اقرأ(لگاریتم->fd, (حرف *)داده + بعدی, بلوک) != بلوک)
+                اكسر;
+            بعدی += بلوک;
         }
-        if (lseek(log->fd, 0, SEEK_CUR) != log->last + 4 + log->stored)
-            break;
-        log_touch(log);
+        إذا (lseek(لگاریتم->fd, 0, SEEK_CUR) != لگاریتم->آخرین + 4 + لگاریتم->stored)
+            اكسر;
+        log_touch(لگاریتم);
 
         /* write the uncompressed data to the .add file */
-        strcpy(log->end, ".add");
-        fd = open(log->path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (fd < 0)
-            break;
-        ret = (size_t)write(fd, data, len) != len;
-        if (ret | close(fd))
-            break;
-        log_touch(log);
+        strcpy(لگاریتم->انتها, ".add");
+        fd = open(لگاریتم->مسیر, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        إذا (fd < 0)
+            اكسر;
+        ret = (size_t)اكتب(fd, داده, len) != len;
+        إذا (ret | close(fd))
+            اكسر;
+        log_touch(لگاریتم);
 
         /* write the dictionary for the next compress to the .temp file */
-        strcpy(log->end, ".temp");
-        fd = open(log->path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (fd < 0)
-            break;
-        next = DICT > len ? len : DICT;
-        ret = (size_t)write(fd, (char *)data + len - next, next) != next;
-        if (ret | close(fd))
-            break;
-        log_touch(log);
+        strcpy(لگاریتم->انتها, ".temp");
+        fd = open(لگاریتم->مسیر, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        إذا (fd < 0)
+            اكسر;
+        بعدی = DICT > len ? len : DICT;
+        ret = (size_t)اكتب(fd, (حرف *)داده + len - بعدی, بعدی) != بعدی;
+        إذا (ret | close(fd))
+            اكسر;
+        log_touch(لگاریتم);
 
         /* roll back to compressed data, mark the compress in progress */
-        log->last = log->first;
-        log->stored = 0;
-        if (log_mark(log, COMPRESS_OP))
-            break;
+        لگاریتم->آخرین = لگاریتم->اولی;
+        لگاریتم->stored = 0;
+        إذا (log_mark(لگاریتم, COMPRESS_OP))
+            اكسر;
         BAIL(7);
 
         /* compress and append the data (clears mark) */
-        ret = log_compress(log, data, len);
-        free(data);
-        return ret;
-    } while (0);
+        ret = log_compress(لگاریتم, داده, len);
+        حرر(داده);
+        أرجع ret;
+    } طالما (0);
 
     /* broke out of do above on i/o error */
-    free(data);
-    return -1;
+    حرر(داده);
+    أرجع -1;
 }
 
 /* gzlog_write() return values:
@@ -994,68 +994,68 @@ int gzlog_compress(gzlog *logd)
    -1: file i/o error (usually access issue)
    -2: memory allocation failure
    -3: invalid log pointer argument */
-int gzlog_write(gzlog *logd, void *data, size_t len)
+صحيح gzlog_write(gzlog *logd, فراغ *داده, size_t len)
 {
-    int fd, ret;
-    struct log *log = logd;
+    صحيح fd, ret;
+    بنية لگاریتم *لگاریتم = logd;
 
     /* check arguments */
-    if (log == NULL || strcmp(log->id, LOGID))
-        return -3;
-    if (data == NULL || len <= 0)
-        return 0;
+    إذا (لگاریتم == عدم || strcmp(لگاریتم->id, LOGID))
+        أرجع -3;
+    إذا (داده == عدم || len <= 0)
+        أرجع 0;
 
     /* see if we lost the lock -- if so get it again and reload the extra
        field information (it probably changed), recover last operation if
        necessary */
-    if (log_check(log) && log_open(log))
-        return -1;
+    إذا (log_check(لگاریتم) && log_open(لگاریتم))
+        أرجع -1;
 
     /* create and write .add file */
-    strcpy(log->end, ".add");
-    fd = open(log->path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd < 0)
-        return -1;
-    ret = (size_t)write(fd, data, len) != len;
-    if (ret | close(fd))
-        return -1;
-    log_touch(log);
+    strcpy(لگاریتم->انتها, ".add");
+    fd = open(لگاریتم->مسیر, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    إذا (fd < 0)
+        أرجع -1;
+    ret = (size_t)اكتب(fd, داده, len) != len;
+    إذا (ret | close(fd))
+        أرجع -1;
+    log_touch(لگاریتم);
 
     /* mark log file with append in progress */
-    if (log_mark(log, APPEND_OP))
-        return -1;
+    إذا (log_mark(لگاریتم, APPEND_OP))
+        أرجع -1;
     BAIL(8);
 
     /* append data (clears mark) */
-    if (log_append(log, data, len))
-        return -1;
+    إذا (log_append(لگاریتم, داده, len))
+        أرجع -1;
 
     /* check to see if it's time to compress -- if not, then done */
-    if (((log->last - log->first) >> 10) + (log->stored >> 10) < TRIGGER)
-        return 0;
+    إذا (((لگاریتم->آخرین - لگاریتم->اولی) >> 10) + (لگاریتم->stored >> 10) < TRIGGER)
+        أرجع 0;
 
     /* time to compress */
-    return gzlog_compress(log);
+    أرجع gzlog_compress(لگاریتم);
 }
 
 /* gzlog_close() return values:
     0: ok
    -3: invalid log pointer argument */
-int gzlog_close(gzlog *logd)
+صحيح gzlog_close(gzlog *logd)
 {
-    struct log *log = logd;
+    بنية لگاریتم *لگاریتم = logd;
 
     /* check arguments */
-    if (log == NULL || strcmp(log->id, LOGID))
-        return -3;
+    إذا (لگاریتم == عدم || strcmp(لگاریتم->id, LOGID))
+        أرجع -3;
 
     /* close the log file and release the lock */
-    log_close(log);
+    log_close(لگاریتم);
 
     /* free structure and return */
-    if (log->path != NULL)
-        free(log->path);
-    strcpy(log->id, "bad");
-    free(log);
-    return 0;
+    إذا (لگاریتم->مسیر != عدم)
+        حرر(لگاریتم->مسیر);
+    strcpy(لگاریتم->id, "bad");
+    حرر(لگاریتم);
+    أرجع 0;
 }

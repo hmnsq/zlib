@@ -5,185 +5,185 @@
 
 /* @(#) $Id$ */
 
-#include "zutil.h"
-#ifndef Z_SOLO
+#ضمن "zutil.h"
+#اگر_تعریف_نشده Z_SOLO
 #  include "gzguts.h"
-#endif
+#پایان_اگر
 
-z_const char * const z_errmsg[10] = {
-    (z_const char *)"need dictionary",     /* Z_NEED_DICT       2  */
-    (z_const char *)"stream end",          /* Z_STREAM_END      1  */
-    (z_const char *)"",                    /* Z_OK              0  */
-    (z_const char *)"file error",          /* Z_ERRNO         (-1) */
-    (z_const char *)"stream error",        /* Z_STREAM_ERROR  (-2) */
-    (z_const char *)"data error",          /* Z_DATA_ERROR    (-3) */
-    (z_const char *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
-    (z_const char *)"buffer error",        /* Z_BUF_ERROR     (-5) */
-    (z_const char *)"incompatible version",/* Z_VERSION_ERROR (-6) */
-    (z_const char *)""
+z_const حرف * ثابت z_errmsg[10] = {
+    (z_const حرف *)"need dictionary",     /* Z_NEED_DICT       2  */
+    (z_const حرف *)"stream end",          /* Z_STREAM_END      1  */
+    (z_const حرف *)"",                    /* Z_OK              0  */
+    (z_const حرف *)"file error",          /* Z_ERRNO         (-1) */
+    (z_const حرف *)"stream error",        /* Z_STREAM_ERROR  (-2) */
+    (z_const حرف *)"data error",          /* Z_DATA_ERROR    (-3) */
+    (z_const حرف *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
+    (z_const حرف *)"buffer error",        /* Z_BUF_ERROR     (-5) */
+    (z_const حرف *)"incompatible version",/* Z_VERSION_ERROR (-6) */
+    (z_const حرف *)""
 };
 
 
-const char * ZEXPORT zlibVersion(void) {
-    return ZLIB_VERSION;
+ثابت حرف * ZEXPORT zlib_نسخه(فراغ) {
+    أرجع ZLIB_نسخه;
 }
 
-uLong ZEXPORT zlibCompileFlags(void) {
+uLong ZEXPORT zlibCompileFlags(فراغ) {
     uLong flags;
 
     flags = 0;
-    switch ((int)(sizeof(uInt))) {
-    case 2:     break;
-    case 4:     flags += 1;     break;
-    case 8:     flags += 2;     break;
-    default:    flags += 3;
+    بدل ((صحيح)(حجم(uInt))) {
+    حالة 2:     اكسر;
+    حالة 4:     flags += 1;     اكسر;
+    حالة 8:     flags += 2;     اكسر;
+    افتراضي:    flags += 3;
     }
-    switch ((int)(sizeof(uLong))) {
-    case 2:     break;
-    case 4:     flags += 1 << 2;        break;
-    case 8:     flags += 2 << 2;        break;
-    default:    flags += 3 << 2;
+    بدل ((صحيح)(حجم(uLong))) {
+    حالة 2:     اكسر;
+    حالة 4:     flags += 1 << 2;        اكسر;
+    حالة 8:     flags += 2 << 2;        اكسر;
+    افتراضي:    flags += 3 << 2;
     }
-    switch ((int)(sizeof(voidpf))) {
-    case 2:     break;
-    case 4:     flags += 1 << 4;        break;
-    case 8:     flags += 2 << 4;        break;
-    default:    flags += 3 << 4;
+    بدل ((صحيح)(حجم(voidpf))) {
+    حالة 2:     اكسر;
+    حالة 4:     flags += 1 << 4;        اكسر;
+    حالة 8:     flags += 2 << 4;        اكسر;
+    افتراضي:    flags += 3 << 4;
     }
-    switch ((int)(sizeof(z_off_t))) {
-    case 2:     break;
-    case 4:     flags += 1 << 6;        break;
-    case 8:     flags += 2 << 6;        break;
-    default:    flags += 3 << 6;
+    بدل ((صحيح)(حجم(z_off_t))) {
+    حالة 2:     اكسر;
+    حالة 4:     flags += 1 << 6;        اكسر;
+    حالة 8:     flags += 2 << 6;        اكسر;
+    افتراضي:    flags += 3 << 6;
     }
-#ifdef ZLIB_DEBUG
+#اگر_تعریف_شده ZLIB_DEBUG
     flags += 1 << 8;
-#endif
+#پایان_اگر
     /*
 #if defined(ASMV) || defined(ASMINF)
     flags += 1 << 9;
 #endif
      */
-#ifdef ZLIB_WINAPI
+#اگر_تعریف_شده ZLIB_WINAPI
     flags += 1 << 10;
-#endif
-#ifdef BUILDFIXED
+#پایان_اگر
+#اگر_تعریف_شده BUILDFIXED
     flags += 1 << 12;
-#endif
-#ifdef DYNAMIC_CRC_TABLE
+#پایان_اگر
+#اگر_تعریف_شده DYNAMIC_بررسی_چرخهای_جدول
     flags += 1 << 13;
-#endif
-#ifdef NO_GZCOMPRESS
+#پایان_اگر
+#اگر_تعریف_شده NO_GZCOMPRESS
     flags += 1L << 16;
-#endif
-#ifdef NO_GZIP
+#پایان_اگر
+#اگر_تعریف_شده NO_GZIP
     flags += 1L << 17;
-#endif
-#ifdef PKZIP_BUG_WORKAROUND
+#پایان_اگر
+#اگر_تعریف_شده PKZIP_BUG_WORKAROUND
     flags += 1L << 20;
-#endif
-#ifdef FASTEST
+#پایان_اگر
+#اگر_تعریف_شده FASTEST
     flags += 1L << 21;
-#endif
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+#پایان_اگر
+#إذا defined(STDC) || defined(Z_HAVE_STDARG_H)
 #   ifdef NO_vsnprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       وإلا
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_vsprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   وإلا
 #       ifdef HAS_vsnprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
-#else
+#وإلا
     flags += 1L << 24;
 #   ifdef NO_snprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       وإلا
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_sprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   وإلا
 #       ifdef HAS_snprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
-#endif
-    return flags;
+#پایان_اگر
+    أرجع flags;
 }
 
-#ifdef ZLIB_DEBUG
-#include <stdlib.h>
+#اگر_تعریف_شده ZLIB_DEBUG
+#ضمن <stdlib.h>
 #  ifndef verbose
 #    define verbose 0
 #  endif
-int ZLIB_INTERNAL z_verbose = verbose;
+صحيح ZLIB_داخلی z_verbose = verbose;
 
-void ZLIB_INTERNAL z_error(char *m) {
+فراغ ZLIB_داخلی z_error(حرف *m) {
     fprintf(stderr, "%s\n", m);
-    exit(1);
+    خروج(1);
 }
-#endif
+#پایان_اگر
 
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(int err) {
-    return ERR_MSG(err);
+ثابت حرف * ZEXPORT zError(صحيح err) {
+    أرجع ERR_پیام(err);
 }
 
-#if defined(_WIN32_WCE) && _WIN32_WCE < 0x800
+#إذا defined(_WIN32_WCE) && _WIN32_WCE < 0x800
     /* The older Microsoft C Run-Time Library for Windows CE doesn't have
      * errno.  We define it as a global variable to simplify porting.
      * Its value is always 0 and should not be used.
      */
-    int errno = 0;
-#endif
+    صحيح errno = 0;
+#پایان_اگر
 
-#ifndef HAVE_MEMCPY
+#اگر_تعریف_نشده HAVE_MEMCPY
 
-void ZLIB_INTERNAL zmemcpy(void FAR *dst, const void FAR *src, z_size_t n) {
+فراغ ZLIB_داخلی zmemcpy(فراغ FAR *dst, ثابت فراغ FAR *src, z_اندازه_t n) {
     uchf *p = dst;
-    const uchf *q = src;
-    while (n) {
+    ثابت uchf *q = src;
+    طالما (n) {
         *p++ = *q++;
         n--;
     }
 }
 
-int ZLIB_INTERNAL zmemcmp(const void FAR *s1, const void FAR *s2, z_size_t n) {
-    const uchf *p = s1, *q = s2;
-    while (n) {
-        if (*p++ != *q++)
-            return (int)p[-1] - (int)q[-1];
+صحيح ZLIB_داخلی zmemcmp(ثابت فراغ FAR *s1, ثابت فراغ FAR *s2, z_اندازه_t n) {
+    ثابت uchf *p = s1, *q = s2;
+    طالما (n) {
+        إذا (*p++ != *q++)
+            أرجع (صحيح)p[-1] - (صحيح)q[-1];
         n--;
     }
-    return 0;
+    أرجع 0;
 }
 
-void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
+فراغ ZLIB_داخلی zmemzero(فراغ FAR *b, z_اندازه_t len) {
     uchf *p = b;
-    while (len) {
+    طالما (len) {
         *p++ = 0;
         len--;
     }
 }
 
-#endif
+#پایان_اگر
 
-#ifndef Z_SOLO
+#اگر_تعریف_نشده Z_SOLO
 
-#ifdef SYS16BIT
+#اگر_تعریف_شده SYS16_بیت
 
-#ifdef __TURBOC__
+#اگر_تعریف_شده __TURBOC__
 /* Turbo C in 16-bit mode */
 
 #  define MY_ZCALLOC
@@ -194,17 +194,17 @@ void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
  * original form in order to free it, use zcfree().
  */
 
-#define MAX_PTR 10
+#تعریف_کن MAX_PTR 10
 /* 10*64K = 640K */
 
-local int next_ptr = 0;
+local صحيح بعدی_ptr = 0;
 
-typedef struct ptr_table_s {
+تعريفنوع بنية ptr_جدول_s {
     voidpf org_ptr;
     voidpf new_ptr;
-} ptr_table;
+} ptr_جدول;
 
-local ptr_table table[MAX_PTR];
+local ptr_جدول جدول_2[MAX_PTR];
 /* This table is used to remember the original form of pointers
  * to large buffers (64K). Such pointers are normalized with a zero offset.
  * Since MSDOS is not a preemptive multitasking OS, this table is not
@@ -212,101 +212,101 @@ local ptr_table table[MAX_PTR];
  * a protected system like OS/2. Use Microsoft C instead.
  */
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
+voidpf ZLIB_داخلی zcalloc(voidpf opaque, بیعلامت اقلام_2, بیعلامت اندازه) {
     voidpf buf;
-    ulg bsize = (ulg)items*size;
+    ulg bsize = (ulg)اقلام_2*اندازه;
 
-    (void)opaque;
+    (فراغ)opaque;
 
     /* If we allocate less than 65520 bytes, we assume that farmalloc
      * will return a usable pointer which doesn't have to be normalized.
      */
-    if (bsize < 65520L) {
+    إذا (bsize < 65520L) {
         buf = farmalloc(bsize);
-        if (*(ush*)&buf != 0) return buf;
-    } else {
+        إذا (*(ush*)&buf != 0) أرجع buf;
+    } وإلا {
         buf = farmalloc(bsize + 16L);
     }
-    if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
-    table[next_ptr].org_ptr = buf;
+    إذا (buf == عدم || بعدی_ptr >= MAX_PTR) أرجع عدم;
+    جدول_2[بعدی_ptr].org_ptr = buf;
 
     /* Normalize the pointer to seg:0 */
     *((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
     *(ush*)&buf = 0;
-    table[next_ptr++].new_ptr = buf;
-    return buf;
+    جدول_2[بعدی_ptr++].new_ptr = buf;
+    أرجع buf;
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    int n;
+فراغ ZLIB_داخلی zcfree(voidpf opaque, voidpf ptr) {
+    صحيح n;
 
-    (void)opaque;
+    (فراغ)opaque;
 
-    if (*(ush*)&ptr != 0) { /* object < 64K */
+    إذا (*(ush*)&ptr != 0) { /* object < 64K */
         farfree(ptr);
-        return;
+        أرجع;
     }
     /* Find the original pointer */
-    for (n = 0; n < next_ptr; n++) {
-        if (ptr != table[n].new_ptr) continue;
+    لكل (n = 0; n < بعدی_ptr; n++) {
+        إذا (ptr != جدول_2[n].new_ptr) استمر;
 
-        farfree(table[n].org_ptr);
-        while (++n < next_ptr) {
-            table[n-1] = table[n];
+        farfree(جدول_2[n].org_ptr);
+        طالما (++n < بعدی_ptr) {
+            جدول_2[n-1] = جدول_2[n];
         }
-        next_ptr--;
-        return;
+        بعدی_ptr--;
+        أرجع;
     }
     Assert(0, "zcfree: ptr not found");
 }
 
-#endif /* __TURBOC__ */
+#پایان_اگر /* __TURBOC__ */
 
 
-#ifdef M_I86
+#اگر_تعریف_شده M_I86
 /* Microsoft C in 16-bit mode */
 
 #  define MY_ZCALLOC
 
-#if (!defined(_MSC_VER) || (_MSC_VER <= 600))
+#إذا (!defined(_MSC_VER) || (_MSC_VER <= 600))
 #  define _halloc  halloc
 #  define _hfree   hfree
-#endif
+#پایان_اگر
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, uInt items, uInt size) {
-    (void)opaque;
-    return _halloc((long)items, size);
+voidpf ZLIB_داخلی zcalloc(voidpf opaque, uInt اقلام_2, uInt اندازه) {
+    (فراغ)opaque;
+    أرجع _halloc((دراز)اقلام_2, اندازه);
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    (void)opaque;
+فراغ ZLIB_داخلی zcfree(voidpf opaque, voidpf ptr) {
+    (فراغ)opaque;
     _hfree(ptr);
 }
 
-#endif /* M_I86 */
+#پایان_اگر /* M_I86 */
 
-#endif /* SYS16BIT */
+#پایان_اگر /* SYS16BIT */
 
 
-#ifndef MY_ZCALLOC /* Any system without a special alloc function */
+#اگر_تعریف_نشده MY_ZCALLOC /* Any system without a special alloc function */
 
-#ifndef STDC
-extern voidp malloc(uInt size);
-extern voidp calloc(uInt items, uInt size);
-extern void free(voidpf ptr);
-#endif
+#اگر_تعریف_نشده STDC
+خارجي voidp حافظه_بده(uInt اندازه);
+خارجي voidp حافظه_صفر_بده(uInt اقلام_2, uInt اندازه);
+خارجي فراغ حرر(voidpf ptr);
+#پایان_اگر
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
-    (void)opaque;
-    return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
-                              (voidpf)calloc(items, size);
+voidpf ZLIB_داخلی zcalloc(voidpf opaque, بیعلامت اقلام_2, بیعلامت اندازه) {
+    (فراغ)opaque;
+    أرجع حجم(uInt) > 2 ? (voidpf)حافظه_بده(اقلام_2 * اندازه) :
+                              (voidpf)حافظه_صفر_بده(اقلام_2, اندازه);
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    (void)opaque;
-    free(ptr);
+فراغ ZLIB_داخلی zcfree(voidpf opaque, voidpf ptr) {
+    (فراغ)opaque;
+    حرر(ptr);
 }
 
-#endif /* MY_ZCALLOC */
+#پایان_اگر /* MY_ZCALLOC */
 
-#endif /* !Z_SOLO */
+#پایان_اگر /* !Z_SOLO */

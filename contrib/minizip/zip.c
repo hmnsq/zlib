@@ -21,49 +21,49 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#ifndef ZLIB_CONST
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <time.h>
+#اگر_تعریف_نشده ZLIB_CONST
 #  define ZLIB_CONST
-#endif
-#ifdef ZLIB_DLL
+#پایان_اگر
+#اگر_تعریف_شده ZLIB_DLL
 #  undef ZLIB_DLL
-#endif
-#include "zlib.h"
-#include "zip.h"
+#پایان_اگر
+#ضمن "zlib.h"
+#ضمن "zip.h"
 
-#ifdef STDC
+#اگر_تعریف_شده STDC
 #  include <stddef.h>
-#endif
-#ifdef NO_ERRNO_H
-    extern int errno;
-#else
+#پایان_اگر
+#اگر_تعریف_شده NO_ERRNO_H
+    خارجي صحيح errno;
+#وإلا
 #   include <errno.h>
-#endif
+#پایان_اگر
 
 
-#ifndef local
-#  define local static
-#endif
+#اگر_تعریف_نشده local
+#  define local ساكن
+#پایان_اگر
 /* compile with -Dlocal if your debugger can't find static symbols */
 
-#ifndef VERSIONMADEBY
+#اگر_تعریف_نشده VERSIONMADEBY
 # define VERSIONMADEBY   (0x0) /* platform dependent */
-#endif
+#پایان_اگر
 
-#ifndef Z_BUFSIZE
-#define Z_BUFSIZE (64*1024) /* (16384) */
-#endif
+#اگر_تعریف_نشده Z_BUFSIZE
+#تعریف_کن Z_BUFSIZE (64*1024) /* (16384) */
+#پایان_اگر
 
-#ifndef Z_MAXFILENAMEINZIP
-#define Z_MAXFILENAMEINZIP (256)
-#endif
+#اگر_تعریف_نشده Z_MAXFILENAMEINZIP
+#تعریف_کن Z_MAXFILENAMEINZIP (256)
+#پایان_اگر
 
-#ifndef ALLOC
-# define ALLOC(size) (malloc(size))
-#endif
+#اگر_تعریف_نشده ALLOC
+# define ALLOC(اندازه) (حافظه_بده(اندازه))
+#پایان_اگر
 
 /*
 #define SIZECENTRALDIRITEM (0x2e)
@@ -74,216 +74,216 @@
 
 
 /* NOT sure that this work on ALL platform */
-#define MAKEULONG64(a, b) ((ZPOS64_T)(((unsigned long)(a)) | ((ZPOS64_T)((unsigned long)(b))) << 32))
+#تعریف_کن MAKEULONG64(a, b) ((ZPOS64_T)(((بیعلامت دراز)(a)) | ((ZPOS64_T)((بیعلامت دراز)(b))) << 32))
 
-#ifndef SEEK_CUR
-#define SEEK_CUR    1
-#endif
+#اگر_تعریف_نشده SEEK_CUR
+#تعریف_کن SEEK_CUR    1
+#پایان_اگر
 
-#ifndef SEEK_END
-#define SEEK_END    2
-#endif
+#اگر_تعریف_نشده SEEK_END
+#تعریف_کن SEEK_END    2
+#پایان_اگر
 
-#ifndef SEEK_SET
-#define SEEK_SET    0
-#endif
+#اگر_تعریف_نشده SEEK_SET
+#تعریف_کن SEEK_SET    0
+#پایان_اگر
 
-#ifndef DEF_MEM_LEVEL
-#if MAX_MEM_LEVEL >= 8
+#اگر_تعریف_نشده DEF_MEM_LEVEL
+#إذا MAX_MEM_LEVEL >= 8
 #  define DEF_MEM_LEVEL 8
-#else
+#وإلا
 #  define DEF_MEM_LEVEL  MAX_MEM_LEVEL
-#endif
-#endif
-const char zip_copyright[] =" zip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
+#پایان_اگر
+#پایان_اگر
+ثابت حرف zip_copyright[] =" zip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
 
 
-#define SIZEDATA_INDATABLOCK (4096-(4*4))
+#تعریف_کن SIZEDATA_INDATABLOCK (4096-(4*4))
 
-#define LOCALHEADERMAGIC    (0x04034b50)
-#define CENTRALHEADERMAGIC  (0x02014b50)
-#define ENDHEADERMAGIC      (0x06054b50)
-#define ZIP64ENDHEADERMAGIC      (0x6064b50)
-#define ZIP64ENDLOCHEADERMAGIC   (0x7064b50)
+#تعریف_کن LOCALHEADERMAGIC    (0x04034b50)
+#تعریف_کن CENTRALHEADERMAGIC  (0x02014b50)
+#تعریف_کن ENDHEADERMAGIC      (0x06054b50)
+#تعریف_کن ZIP64ENDHEADERMAGIC      (0x6064b50)
+#تعریف_کن ZIP64ENDLOCHEADERMAGIC   (0x7064b50)
 
-#define FLAG_LOCALHEADER_OFFSET (0x06)
-#define CRC_LOCALHEADER_OFFSET  (0x0e)
+#تعریف_کن FLAG_LOCALHEADER_جابه_جایی (0x06)
+#تعریف_کن بررسی_چرخهای_LOCALHEADER_جابه_جایی  (0x0e)
 
-#define SIZECENTRALHEADER (0x2e) /* 46 */
+#تعریف_کن SIZECENTRALHEADER (0x2e) /* 46 */
 
-typedef struct linkedlist_datablock_internal_s
+تعريفنوع بنية linkedlist_datablock_داخلی_s
 {
-  struct linkedlist_datablock_internal_s* next_datablock;
-  uLong  avail_in_this_block;
-  uLong  filled_in_this_block;
-  uLong  unused; /* for future use and alignment */
-  unsigned char data[SIZEDATA_INDATABLOCK];
-} linkedlist_datablock_internal;
+  بنية linkedlist_datablock_داخلی_s* بعدی_datablock;
+  uLong  avail_درون_this_بلوک;
+  uLong  filled_درون_this_بلوک;
+  uLong  استفادهنشده; /* for future use and alignment */
+  بیعلامت حرف داده[SIZEDATA_INDATABLOCK];
+} linkedlist_datablock_داخلی;
 
-typedef struct linkedlist_data_s
+تعريفنوع بنية linkedlist_داده_s
 {
-    linkedlist_datablock_internal* first_block;
-    linkedlist_datablock_internal* last_block;
-} linkedlist_data;
+    linkedlist_datablock_داخلی* اولی_بلوک;
+    linkedlist_datablock_داخلی* آخرین_بلوک;
+} linkedlist_داده;
 
 
 /* zipAlreadyThere() set functions for a set of zero-terminated strings, and
    a block_t type for reading the central directory datablocks. */
-#define SKIPSET_EXPORT static
-typedef char *set_key_t;
-#define set_cmp(a, b) strcmp(a, b)
-#define set_drop(s, k) set_free(s, k)
-#include "skipset.h"
-typedef struct {
-    unsigned char *next;        /* next byte in datablock data */
-    size_t left;                /* number of bytes left in data (at least) */
-    linkedlist_datablock_internal *node;    /* current datablock */
-} block_t;
+#تعریف_کن SKIPSET_EXPORT ساكن
+تعريفنوع حرف *مجموعه_کلید_t;
+#تعریف_کن مجموعه_cmp(a, b) strcmp(a, b)
+#تعریف_کن مجموعه_drop(s, k) مجموعه_free(s, k)
+#ضمن "skipset.h"
+تعريفنوع بنية {
+    بیعلامت حرف *بعدی;        /* next byte in datablock data */
+    size_t چپ;                /* number of bytes left in data (at least) */
+    linkedlist_datablock_داخلی *گره;    /* current datablock */
+} بلوک_t;
 
 
-typedef struct
+تعريفنوع بنية
 {
-    z_stream stream;            /* zLib stream structure for inflate */
-#ifdef HAVE_BZIP2
-    bz_stream bstream;          /* bzLib stream structure for bziped */
-#endif
+    z_جریان جریان;            /* zLib stream structure for inflate */
+#اگر_تعریف_شده HAVE_BZIP2
+    bz_جریان bstream;          /* bzLib stream structure for bziped */
+#پایان_اگر
 
-    int  stream_initialised;    /* 1 is stream is initialised */
-    uInt pos_in_buffered_data;  /* last written byte in buffered_data */
+    صحيح  جریان_initialised;    /* 1 is stream is initialised */
+    uInt pos_درون_buffered_داده;  /* last written byte in buffered_data */
 
-    ZPOS64_T pos_local_header;     /* offset of the local header of the file
+    ZPOS64_T pos_local_سرآیند;     /* offset of the local header of the file
                                      currently writing */
-    char* central_header;       /* central header data for the current file */
-    uLong size_centralExtra;
-    uLong size_centralheader;   /* size of the central header for cur file */
-    uLong size_centralExtraFree; /* Extra bytes allocated to the centralheader but that are not used */
+    حرف* central_سرآیند;       /* central header data for the current file */
+    uLong اندازه_central_Extra;
+    uLong اندازه_centralheader;   /* size of the central header for cur file */
+    uLong اندازه_central_Extra_Free; /* Extra bytes allocated to the centralheader but that are not used */
     uLong flag;                 /* flag of the file currently writing */
 
-    int  method;                /* compression method of file currently wr.*/
-    int  raw;                   /* 1 for directly writing raw data */
-    Byte buffered_data[Z_BUFSIZE];/* buffer contain compressed data to be writ*/
+    صحيح  روش;                /* compression method of file currently wr.*/
+    صحيح  raw;                   /* 1 for directly writing raw data */
+    Byte buffered_داده[Z_BUFSIZE];/* buffer contain compressed data to be writ*/
     uLong dosDate;
-    uLong crc32;
-    int  encrypt;
-    int  zip64;               /* Add ZIP64 extended information in the extra field */
+    uLong بررسی_چرخهای_32_2;
+    صحيح  encrypt;
+    صحيح  zip64;               /* Add ZIP64 extended information in the extra field */
     ZPOS64_T pos_zip64extrainfo;
-    ZPOS64_T totalCompressedData;
-    ZPOS64_T totalUncompressedData;
-#ifndef NOCRYPT
-    unsigned long keys[3];     /* keys defining the pseudo-random sequence */
-    const z_crc_t* pcrc_32_tab;
-    unsigned crypt_header_size;
-#endif
+    ZPOS64_T مجموع_Compressed_داده;
+    ZPOS64_T مجموع_Uncompressed_داده;
+#اگر_تعریف_نشده NOCRYPT
+    بیعلامت دراز کلیدها[3];     /* keys defining the pseudo-random sequence */
+    ثابت z_بررسی_چرخهای_t* pcrc_32_tab;
+    بیعلامت crypt_سرآیند_اندازه;
+#پایان_اگر
 } curfile64_info;
 
-typedef struct
+تعريفنوع بنية
 {
     zlib_filefunc64_32_def z_filefunc;
     voidpf filestream;        /* io structure of the zipfile */
-    linkedlist_data central_dir;/* datablock with central dir in construction*/
-    int  in_opened_file_inzip;  /* 1 if a file in the zip is currently writ.*/
+    linkedlist_داده central_dir;/* datablock with central dir in construction*/
+    صحيح  درون_opened_file_inzip;  /* 1 if a file in the zip is currently writ.*/
     curfile64_info ci;            /* info on the file currently writing */
 
     ZPOS64_T begin_pos;            /* position of the beginning of the zipfile */
-    ZPOS64_T add_position_when_writing_offset;
-    ZPOS64_T number_entry;
+    ZPOS64_T جمع_کن_position_when_writing_جابه_جایی;
+    ZPOS64_T عدد_مدخل;
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    char *globalcomment;
-#endif
+#اگر_تعریف_نشده NO_ADDFILEINEXISTINGZIP
+    حرف *globalcomment;
+#پایان_اگر
 
     /* Support for zipAlreadyThere(). */
-    set_t set;              /* set for detecting name collisions */
-    block_t block;          /* block for reading the central directory */
+    مجموعه_t مجموعه;              /* set for detecting name collisions */
+    بلوک_t بلوک;          /* block for reading the central directory */
 
-} zip64_internal;
+} zip64_داخلی;
 
 
-#ifndef NOCRYPT
-#define INCLUDECRYPTINGCODE_IFCRYPTALLOWED
-#include "crypt.h"
-#endif
+#اگر_تعریف_نشده NOCRYPT
+#تعریف_کن INCLUDECRYPTINGCODE_IFCRYPTALLOWED
+#ضمن "crypt.h"
+#پایان_اگر
 
-local linkedlist_datablock_internal* allocate_new_datablock(void) {
-    linkedlist_datablock_internal* ldi;
-    ldi = (linkedlist_datablock_internal*)
-                 ALLOC(sizeof(linkedlist_datablock_internal));
-    if (ldi!=NULL)
+local linkedlist_datablock_داخلی* allocate_new_datablock(فراغ) {
+    linkedlist_datablock_داخلی* ldi;
+    ldi = (linkedlist_datablock_داخلی*)
+                 ALLOC(حجم(linkedlist_datablock_داخلی));
+    إذا (ldi!=عدم)
     {
-        ldi->next_datablock = NULL ;
-        ldi->filled_in_this_block = 0 ;
-        ldi->avail_in_this_block = SIZEDATA_INDATABLOCK ;
+        ldi->بعدی_datablock = عدم ;
+        ldi->filled_درون_this_بلوک = 0 ;
+        ldi->avail_درون_this_بلوک = SIZEDATA_INDATABLOCK ;
     }
-    return ldi;
+    أرجع ldi;
 }
 
-local void free_datablock(linkedlist_datablock_internal* ldi) {
-    while (ldi!=NULL)
+local فراغ free_datablock(linkedlist_datablock_داخلی* ldi) {
+    طالما (ldi!=عدم)
     {
-        linkedlist_datablock_internal* ldinext = ldi->next_datablock;
-        free(ldi);
+        linkedlist_datablock_داخلی* ldinext = ldi->بعدی_datablock;
+        حرر(ldi);
         ldi = ldinext;
     }
 }
 
-local void init_linkedlist(linkedlist_data* ll) {
-    ll->first_block = ll->last_block = NULL;
+local فراغ init_linkedlist(linkedlist_داده* ll) {
+    ll->اولی_بلوک = ll->آخرین_بلوک = عدم;
 }
 
-local void free_linkedlist(linkedlist_data* ll) {
-    free_datablock(ll->first_block);
-    ll->first_block = ll->last_block = NULL;
+local فراغ free_linkedlist(linkedlist_داده* ll) {
+    free_datablock(ll->اولی_بلوک);
+    ll->اولی_بلوک = ll->آخرین_بلوک = عدم;
 }
 
 
-local int add_data_in_datablock(linkedlist_data* ll, const void* buf, uLong len) {
-    linkedlist_datablock_internal* ldi;
-    const unsigned char* from_copy;
+local صحيح جمع_کن_داده_درون_datablock(linkedlist_داده* ll, ثابت فراغ* buf, uLong len) {
+    linkedlist_datablock_داخلی* ldi;
+    ثابت بیعلامت حرف* from_copy;
 
-    if (ll==NULL)
-        return ZIP_INTERNALERROR;
+    إذا (ll==عدم)
+        أرجع ZIP_INTERNALERROR;
 
-    if (ll->last_block == NULL)
+    إذا (ll->آخرین_بلوک == عدم)
     {
-        ll->first_block = ll->last_block = allocate_new_datablock();
-        if (ll->first_block == NULL)
-            return ZIP_INTERNALERROR;
+        ll->اولی_بلوک = ll->آخرین_بلوک = allocate_new_datablock();
+        إذا (ll->اولی_بلوک == عدم)
+            أرجع ZIP_INTERNALERROR;
     }
 
-    ldi = ll->last_block;
-    from_copy = (const unsigned char*)buf;
+    ldi = ll->آخرین_بلوک;
+    from_copy = (ثابت بیعلامت حرف*)buf;
 
-    while (len>0)
+    طالما (len>0)
     {
         uInt copy_this;
         uInt i;
-        unsigned char* to_copy;
+        بیعلامت حرف* مقصد_copy;
 
-        if (ldi->avail_in_this_block==0)
+        إذا (ldi->avail_درون_this_بلوک==0)
         {
-            ldi->next_datablock = allocate_new_datablock();
-            if (ldi->next_datablock == NULL)
-                return ZIP_INTERNALERROR;
-            ldi = ldi->next_datablock ;
-            ll->last_block = ldi;
+            ldi->بعدی_datablock = allocate_new_datablock();
+            إذا (ldi->بعدی_datablock == عدم)
+                أرجع ZIP_INTERNALERROR;
+            ldi = ldi->بعدی_datablock ;
+            ll->آخرین_بلوک = ldi;
         }
 
-        if (ldi->avail_in_this_block < len)
-            copy_this = (uInt)ldi->avail_in_this_block;
-        else
+        إذا (ldi->avail_درون_this_بلوک < len)
+            copy_this = (uInt)ldi->avail_درون_this_بلوک;
+        وإلا
             copy_this = (uInt)len;
 
-        to_copy = &(ldi->data[ldi->filled_in_this_block]);
+        مقصد_copy = &(ldi->داده[ldi->filled_درون_this_بلوک]);
 
-        for (i=0;i<copy_this;i++)
-            *(to_copy+i)=*(from_copy+i);
+        لكل (i=0;i<copy_this;i++)
+            *(مقصد_copy+i)=*(from_copy+i);
 
-        ldi->filled_in_this_block += copy_this;
-        ldi->avail_in_this_block -= copy_this;
+        ldi->filled_درون_this_بلوک += copy_this;
+        ldi->avail_درون_this_بلوک -= copy_this;
         from_copy += copy_this ;
         len -= copy_this;
     }
-    return ZIP_OK;
+    أرجع ZIP_OK;
 }
 
 /* zipAlreadyThere() operations. "set" in the zip internal structure keeps the
@@ -299,264 +299,264 @@ local int add_data_in_datablock(linkedlist_data* ll, const void* buf, uLong len)
 
    Initialize *block to the head of list. This should only be called once the
    list has at least some data in it, i.e. list->first_block is not NULL. */
-local void block_init(block_t *block, linkedlist_data *list) {
-    block->node = list->first_block;
-    block->next = block->node->data;
-    block->left = block->node->filled_in_this_block;
+local فراغ بلوک_init(بلوک_t *بلوک, linkedlist_داده *list) {
+    بلوک->گره = list->اولی_بلوک;
+    بلوک->بعدی = بلوک->گره->داده;
+    بلوک->چپ = بلوک->گره->filled_درون_this_بلوک;
 }
 
 /* Mark *block as bad, with all subsequent reads returning end, even if more
    data is added to the datablocks. This is invoked if the central directory is
    invalid, so there is no longer any point in attempting to interpret it. */
-local void block_stop(block_t *block) {
-    block->left = 0;
-    block->next = NULL;
+local فراغ بلوک_stop(بلوک_t *بلوک) {
+    بلوک->چپ = 0;
+    بلوک->بعدی = عدم;
 }
 
 /* Return true if *block has reached the end of the data in the datablocks. */
-local int block_end(block_t *block) {
-    linkedlist_datablock_internal *node = block->node;
-    if (node == NULL)
+local صحيح بلوک_انتها(بلوک_t *بلوک) {
+    linkedlist_datablock_داخلی *گره = بلوک->گره;
+    إذا (گره == عدم)
         /* This block was previously terminated with extreme prejudice. */
-        return 1;
-    if (block->next < node->data + node->filled_in_this_block)
+        أرجع 1;
+    إذا (بلوک->بعدی < گره->داده + گره->filled_درون_this_بلوک)
         /* There are more bytes to read in the current datablock. */
-        return 0;
-    while (node->next_datablock != NULL) {
-        if (node->filled_in_this_block != 0)
+        أرجع 0;
+    طالما (گره->بعدی_datablock != عدم) {
+        إذا (گره->filled_درون_this_بلوک != 0)
             /* There are some bytes in a later datablock. */
-            return 0;
-        node = node->next_datablock;
+            أرجع 0;
+        گره = گره->بعدی_datablock;
     }
     /* Reached the end of the list of datablocks. There's nothing. */
-    return 1;
+    أرجع 1;
 }
 
 /* Return one byte from *block, or -1 if the end is reached. */
-local int block_get(block_t *block) {
-    while (block->left == 0) {
-        if (block->node == NULL)
+local صحيح بلوک_get(بلوک_t *بلوک) {
+    طالما (بلوک->چپ == 0) {
+        إذا (بلوک->گره == عدم)
             /* We've been marked bad. Return end. */
-            return -1;
+            أرجع -1;
         /* Update left in case more was filled in since we were last here. */
-        block->left = block->node->filled_in_this_block -
-                      (size_t)(block->next - block->node->data);
-        if (block->left != 0)
+        بلوک->چپ = بلوک->گره->filled_درون_this_بلوک -
+                      (size_t)(بلوک->بعدی - بلوک->گره->داده);
+        إذا (بلوک->چپ != 0)
             /* There was indeed more data appended in the current datablock. */
-            break;
-        if (block->node->next_datablock == NULL)
+            اكسر;
+        إذا (بلوک->گره->بعدی_datablock == عدم)
             /* No more data here, and there is no next datablock. At the end. */
-            return -1;
+            أرجع -1;
         /* Try the next datablock for more data. */
-        block->node = block->node->next_datablock;
-        block->next = block->node->data;
-        block->left = block->node->filled_in_this_block;
+        بلوک->گره = بلوک->گره->بعدی_datablock;
+        بلوک->بعدی = بلوک->گره->داده;
+        بلوک->چپ = بلوک->گره->filled_درون_this_بلوک;
     }
     /* We have a byte to return. */
-    block->left--;
-    return *block->next++;
+    بلوک->چپ--;
+    أرجع *بلوک->بعدی++;
 }
 
 /* Return a 16-bit unsigned little-endian value from block, or a negative value
    if the end is reached. */
-local long block_get2(block_t *block) {
-    int low = block_get(block);
-    int high = block_get(block);
-    return low < 0 || high < 0 ? -1 : low | ((long)high << 8);
+local دراز بلوک_get2(بلوک_t *بلوک) {
+    صحيح کم = بلوک_get(بلوک);
+    صحيح بالا = بلوک_get(بلوک);
+    أرجع کم < 0 || بالا < 0 ? -1 : کم | ((دراز)بالا << 8);
 }
 
 /* Read up to len bytes from block into buf. Return the number of bytes read. */
-local size_t block_read(block_t *block, unsigned char *buf, size_t len) {
+local size_t بلوک_read(بلوک_t *بلوک, بیعلامت حرف *buf, size_t len) {
     size_t need = len;
     size_t take;
-    while (need) {
-        if (block->left == 0) {
+    طالما (need) {
+        إذا (بلوک->چپ == 0) {
             /* Get a byte to update and step through the linked list as needed. */
-            int got = block_get(block);
-            if (got == -1)
+            صحيح got = بلوک_get(بلوک);
+            إذا (got == -1)
                 /* Reached the end. */
-                break;
-            *buf++ = (unsigned char)got;
+                اكسر;
+            *buf++ = (بیعلامت حرف)got;
             need--;
-            continue;
+            استمر;
         }
-        take = need > block->left ? block->left : need;
-        memcpy(buf, block->next, take);
-        block->next += take;
-        block->left -= take;
+        take = need > بلوک->چپ ? بلوک->چپ : need;
+        کپی_حافظه(buf, بلوک->بعدی, take);
+        بلوک->بعدی += take;
+        بلوک->چپ -= take;
         buf += take;
         need -= take;
     }
-    return len - need;      /* return the number of bytes copied */
+    أرجع len - need;      /* return the number of bytes copied */
 }
 
 /* Skip n bytes in block. Return 0 on success or -1 if there are less than n
    bytes to the end. */
-local int block_skip(block_t *block, size_t n) {
-    while (n > block->left) {
-        n -= block->left;
-        block->next += block->left;
-        block->left = 0;
-        if (block_get(block) == -1)
-            return -1;
+local صحيح بلوک_skip(بلوک_t *بلوک, size_t n) {
+    طالما (n > بلوک->چپ) {
+        n -= بلوک->چپ;
+        بلوک->بعدی += بلوک->چپ;
+        بلوک->چپ = 0;
+        إذا (بلوک_get(بلوک) == -1)
+            أرجع -1;
         n--;
     }
-    block->next += n;
-    block->left -= n;
-    return 0;
+    بلوک->بعدی += n;
+    بلوک->چپ -= n;
+    أرجع 0;
 }
 
 /* Process the next central directory record at *block. Return the allocated,
    zero-terminated file name, or NULL for end of input or invalid data. If
    invalid, *block is marked bad. This uses *set for the allocation of memory. */
-local char *block_central_name(block_t *block, set_t *set) {
-    unsigned flen, xlen, clen;
-    char *name = NULL;
-    for (;;) {
-        if (block_end(block))
+local حرف *بلوک_central_name(بلوک_t *بلوک, مجموعه_t *مجموعه) {
+    بیعلامت flen, xlen, clen;
+    حرف *name = عدم;
+    لكل (;;) {
+        إذا (بلوک_انتها(بلوک))
             /* At the end of the central directory (so far). */
-            return NULL;
+            أرجع عدم;
 
         /* Check for a central directory record signature. */
-        if (block_get2(block) != (CENTRALHEADERMAGIC & 0xffff) ||
-            block_get2(block) != (CENTRALHEADERMAGIC >> 16))
+        إذا (بلوک_get2(بلوک) != (CENTRALHEADERMAGIC & 0xffff) ||
+            بلوک_get2(بلوک) != (CENTRALHEADERMAGIC >> 16))
             /* Incorrect signature. */
-            break;
+            اكسر;
 
         /* Go through the remaining fixed-length portion of the record,
            extracting the lengths of the three variable-length fields. */
-        block_skip(block, 24);
-        flen = (unsigned)block_get2(block);    /* file name length */
-        xlen = (unsigned)block_get2(block);    /* extra length */
-        clen = (unsigned)block_get2(block);    /* comment length */
-        if (block_skip(block, 12) == -1)
+        بلوک_skip(بلوک, 24);
+        flen = (بیعلامت)بلوک_get2(بلوک);    /* file name length */
+        xlen = (بیعلامت)بلوک_get2(بلوک);    /* extra length */
+        clen = (بیعلامت)بلوک_get2(بلوک);    /* comment length */
+        إذا (بلوک_skip(بلوک, 12) == -1)
             /* Premature end of the record. */
-            break;
+            اكسر;
 
         /* Extract the name and skip over the extra and comment fields. */
-        name = set_alloc(set, NULL, flen + 1);
-        if (block_read(block, (unsigned char *)name, flen) < flen ||
-            block_skip(block, xlen + clen) == -1)
+        name = مجموعه_alloc(مجموعه, عدم, flen + 1);
+        إذا (بلوک_read(بلوک, (بیعلامت حرف *)name, flen) < flen ||
+            بلوک_skip(بلوک, xlen + clen) == -1)
             /* Premature end of the record. */
-            break;
+            اكسر;
 
         /* Check for embedded nuls in the name. */
-        if (memchr(name, 0, flen) != NULL) {
+        إذا (memchr(name, 0, flen) != عدم) {
             /* This name can never match the zero-terminated name provided to
                zipAlreadyThere(), so we discard it and go back to get another
                name. (Who the heck is putting nuls inside their zip file entry
                names anyway?) */
-            set_free(set, name);
-            continue;
+            مجموعه_free(مجموعه, name);
+            استمر;
         }
 
         /* All good. Return the zero-terminated file name. */
         name[flen] = 0;
-        return name;
+        أرجع name;
     }
 
     /* Invalid signature or premature end of the central directory record.
        Abandon trying to process the central directory. */
-    set_free(set, name);
-    block_stop(block);
-    return NULL;
+    مجموعه_free(مجموعه, name);
+    بلوک_stop(بلوک);
+    أرجع عدم;
 }
 
 /* Return 0 if name is not in the central directory so far, 1 if it is, -1 if
    the central directory is invalid, -2 if out of memory, or ZIP_PARAMERROR if
    file is NULL. */
-extern int ZEXPORT zipAlreadyThere(zipFile file, char const *name) {
+خارجي صحيح ZEXPORT zipAlreadyThere(zipFile file, حرف ثابت *name) {
     size_t len;
-    char *copy;
-    int found;
-    zip64_internal *zip = file;
-    if (zip == NULL)
-        return ZIP_PARAMERROR;
-    if (zip->central_dir.first_block == NULL)
+    حرف *copy;
+    صحيح یافت;
+    zip64_داخلی *zip = file;
+    إذا (zip == عدم)
+        أرجع ZIP_PARAMERROR;
+    إذا (zip->central_dir.اولی_بلوک == عدم)
         /* No central directory yet, so no, name isn't there. */
-        return 0;
-    if (setjmp(zip->set.env)) {
+        أرجع 0;
+    إذا (setjmp(zip->مجموعه.env)) {
         /* Memory allocation failure. */
-        set_end(&zip->set);
-        return -2;
+        مجموعه_انتها(&zip->مجموعه);
+        أرجع -2;
     }
-    if (!set_ok(&zip->set)) {
+    إذا (!مجموعه_ok(&zip->مجموعه)) {
         /* This is the first time here with some central directory content. We
            construct this set of names only on demand. Prepare set and block. */
-        set_start(&zip->set);
-        block_init(&zip->block, &zip->central_dir);
+        مجموعه_شروع(&zip->مجموعه);
+        بلوک_init(&zip->بلوک, &zip->central_dir);
     }
 
     /* Update the set of names from the current central directory contents.
        This reads any new central directory records since the last time we were
        here. */
-    for (;;) {
-        char *there = block_central_name(&zip->block, &zip->set);
-        if (there == NULL) {
-            if (zip->block.next == NULL)
+    لكل (;;) {
+        حرف *there = بلوک_central_name(&zip->بلوک, &zip->مجموعه);
+        إذا (there == عدم) {
+            إذا (zip->بلوک.بعدی == عدم)
                 /* The central directory is invalid. */
-                return -1;
-            break;
+                أرجع -1;
+            اكسر;
         }
 
         /* Add there to the set. */
-        if (set_insert(&zip->set, there))
+        إذا (مجموعه_درج(&zip->مجموعه, there))
             /* There's already a duplicate in the central directory! We'll just
                let this be and carry on. */
-            set_free(&zip->set, there);
+            مجموعه_free(&zip->مجموعه, there);
     }
 
     /* Return true if name is in the central directory. */
-    len = strlen(name);
-    copy = set_alloc(&zip->set, NULL, len + 1);
-    memcpy(copy, name, len + 1);
-    found = set_found(&zip->set, copy);
-    set_free(&zip->set, copy);
-    return found;
+    len = طول_رشته(name);
+    copy = مجموعه_alloc(&zip->مجموعه, عدم, len + 1);
+    کپی_حافظه(copy, name, len + 1);
+    یافت = مجموعه_یافت(&zip->مجموعه, copy);
+    مجموعه_free(&zip->مجموعه, copy);
+    أرجع یافت;
 }
 
 
 /****************************************************************************/
 
-#ifndef NO_ADDFILEINEXISTINGZIP
+#اگر_تعریف_نشده NO_ADDFILEINEXISTINGZIP
 /* ===========================================================================
    Inputs a long in LSB order to the given file
    nbByte == 1, 2 ,4 or 8 (byte, short or long, ZPOS64_T)
 */
 
-local int zip64local_putValue(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T x, int nbByte) {
-    unsigned char buf[8];
-    int n;
-    for (n = 0; n < nbByte; n++)
+local صحيح zip64local_put_مقدار(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T x, صحيح nbByte) {
+    بیعلامت حرف buf[8];
+    صحيح n;
+    لكل (n = 0; n < nbByte; n++)
     {
-        buf[n] = (unsigned char)(x & 0xff);
+        buf[n] = (بیعلامت حرف)(x & 0xff);
         x >>= 8;
     }
-    if (x != 0)
+    إذا (x != 0)
       {     /* data overflow - hack for ZIP64 (X Roche) */
-      for (n = 0; n < nbByte; n++)
+      لكل (n = 0; n < nbByte; n++)
         {
           buf[n] = 0xff;
         }
       }
 
-    if (ZWRITE64(*pzlib_filefunc_def,filestream,buf,(uLong)nbByte)!=(uLong)nbByte)
-        return ZIP_ERRNO;
-    else
-        return ZIP_OK;
+    إذا (ZWRITE64(*pzlib_filefunc_def,filestream,buf,(uLong)nbByte)!=(uLong)nbByte)
+        أرجع ZIP_ERRNO;
+    وإلا
+        أرجع ZIP_OK;
 }
 
-local void zip64local_putValue_inmemory (void* dest, ZPOS64_T x, int nbByte) {
-    unsigned char* buf=(unsigned char*)dest;
-    int n;
-    for (n = 0; n < nbByte; n++) {
-        buf[n] = (unsigned char)(x & 0xff);
+local فراغ zip64local_put_مقدار_inmemory (فراغ* dest, ZPOS64_T x, صحيح nbByte) {
+    بیعلامت حرف* buf=(بیعلامت حرف*)dest;
+    صحيح n;
+    لكل (n = 0; n < nbByte; n++) {
+        buf[n] = (بیعلامت حرف)(x & 0xff);
         x >>= 8;
     }
 
-    if (x != 0)
+    إذا (x != 0)
     {     /* data overflow - hack for ZIP64 */
-       for (n = 0; n < nbByte; n++)
+       لكل (n = 0; n < nbByte; n++)
        {
           buf[n] = 0xff;
        }
@@ -566,13 +566,13 @@ local void zip64local_putValue_inmemory (void* dest, ZPOS64_T x, int nbByte) {
 /****************************************************************************/
 
 
-local uLong zip64local_TmzDateToDosDate(const tm_zip* ptm) {
+local uLong zip64local_Tmz_Date_مقصد_Dos_Date(ثابت tm_zip* ptm) {
     uLong year = (uLong)ptm->tm_year;
-    if (year>=1980)
+    إذا (year>=1980)
         year-=1980;
-    else if (year>=80)
+    وإلا إذا (year>=80)
         year-=80;
-    return
+    أرجع
       (uLong) (((uLong)(ptm->tm_mday) + (32 * (uLong)(ptm->tm_mon+1)) + (512 * year)) << 16) |
         (((uLong)ptm->tm_sec/2) + (32 * (uLong)ptm->tm_min) + (2048 * (uLong)ptm->tm_hour));
 }
@@ -580,20 +580,20 @@ local uLong zip64local_TmzDateToDosDate(const tm_zip* ptm) {
 
 /****************************************************************************/
 
-local int zip64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, int* pi) {
-    unsigned char c;
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,&c,1);
-    if (err==1)
+local صحيح zip64local_getByte(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, صحيح* pi) {
+    بیعلامت حرف c;
+    صحيح err = (صحيح)ZREAD64(*pzlib_filefunc_def,filestream,&c,1);
+    إذا (err==1)
     {
-        *pi = (int)c;
-        return ZIP_OK;
+        *pi = (صحيح)c;
+        أرجع ZIP_OK;
     }
-    else
+    وإلا
     {
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return ZIP_ERRNO;
-        else
-            return ZIP_EOF;
+        إذا (ZERROR64(*pzlib_filefunc_def,filestream))
+            أرجع ZIP_ERRNO;
+        وإلا
+            أرجع ZIP_EOF;
     }
 }
 
@@ -601,292 +601,292 @@ local int zip64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, v
 /* ===========================================================================
    Reads a long in LSB order from the given gz_stream. Sets
 */
-local int zip64local_getShort(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
+local صحيح zip64local_getShort(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
     uLong x ;
-    int i = 0;
-    int err;
+    صحيح i = 0;
+    صحيح err;
 
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x = (uLong)i;
 
-    if (err==ZIP_OK)
+    إذا (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<8;
 
-    if (err==ZIP_OK)
+    إذا (err==ZIP_OK)
         *pX = x;
-    else
+    وإلا
         *pX = 0;
-    return err;
+    أرجع err;
 }
 
-local int zip64local_getLong(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
+local صحيح zip64local_getLong(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, uLong* pX) {
     uLong x ;
-    int i = 0;
-    int err;
+    صحيح i = 0;
+    صحيح err;
 
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x = (uLong)i;
 
-    if (err==ZIP_OK)
+    إذا (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<8;
 
-    if (err==ZIP_OK)
+    إذا (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<16;
 
-    if (err==ZIP_OK)
+    إذا (err==ZIP_OK)
         err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
     x += ((uLong)i)<<24;
 
-    if (err==ZIP_OK)
+    إذا (err==ZIP_OK)
         *pX = x;
-    else
+    وإلا
         *pX = 0;
-    return err;
+    أرجع err;
 }
 
 
-local int zip64local_getLong64(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T *pX) {
+local صحيح zip64local_getLong64(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream, ZPOS64_T *pX) {
   ZPOS64_T x;
-  int i = 0;
-  int err;
+  صحيح i = 0;
+  صحيح err;
 
   err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x = (ZPOS64_T)i;
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<8;
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<16;
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<24;
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<32;
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<40;
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<48;
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
     err = zip64local_getByte(pzlib_filefunc_def,filestream,&i);
   x += ((ZPOS64_T)i)<<56;
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
     *pX = x;
-  else
+  وإلا
     *pX = 0;
 
-  return err;
+  أرجع err;
 }
 
-#ifndef BUFREADCOMMENT
-#define BUFREADCOMMENT (0x400)
-#endif
+#اگر_تعریف_نشده BUFREADCOMMENT
+#تعریف_کن BUFREADCOMMENT (0x400)
+#پایان_اگر
 /*
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T zip64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-  unsigned char* buf;
-  ZPOS64_T uSizeFile;
-  ZPOS64_T uBackRead;
-  ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-  ZPOS64_T uPosFound=0;
+local ZPOS64_T zip64local_جستجو_Central_Dir(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+  بیعلامت حرف* buf;
+  ZPOS64_T u_اندازه_File;
+  ZPOS64_T u_پشت_Read;
+  ZPOS64_T u_Max_پشت=0xffff; /* maximum size of global comment */
+  ZPOS64_T u_Pos_یافت=0;
 
-  if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-    return 0;
+  إذا (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_انتها) != 0)
+    أرجع 0;
 
 
-  uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+  u_اندازه_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-  if (uMaxBack>uSizeFile)
-    uMaxBack = uSizeFile;
+  إذا (u_Max_پشت>u_اندازه_File)
+    u_Max_پشت = u_اندازه_File;
 
-  buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-  if (buf==NULL)
-    return 0;
+  buf = (بیعلامت حرف*)ALLOC(BUFREADCOMMENT+4);
+  إذا (buf==عدم)
+    أرجع 0;
 
-  uBackRead = 4;
-  while (uBackRead<uMaxBack)
+  u_پشت_Read = 4;
+  طالما (u_پشت_Read<u_Max_پشت)
   {
-    uLong uReadSize;
+    uLong u_Read_اندازه;
     ZPOS64_T uReadPos ;
-    int i;
-    if (uBackRead+BUFREADCOMMENT>uMaxBack)
-      uBackRead = uMaxBack;
-    else
-      uBackRead+=BUFREADCOMMENT;
-    uReadPos = uSizeFile-uBackRead ;
+    صحيح i;
+    إذا (u_پشت_Read+BUFREADCOMMENT>u_Max_پشت)
+      u_پشت_Read = u_Max_پشت;
+    وإلا
+      u_پشت_Read+=BUFREADCOMMENT;
+    uReadPos = u_اندازه_File-u_پشت_Read ;
 
-    uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-      (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-      break;
+    u_Read_اندازه = ((BUFREADCOMMENT+4) < (u_اندازه_File-uReadPos)) ?
+      (BUFREADCOMMENT+4) : (uLong)(u_اندازه_File-uReadPos);
+    إذا (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+      اكسر;
 
-    if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-      break;
+    إذا (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_اندازه)!=u_Read_اندازه)
+      اكسر;
 
-    for (i=(int)uReadSize-3; (i--)>0;)
-      if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+    لكل (i=(صحيح)u_Read_اندازه-3; (i--)>0;)
+      إذا (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
         ((*(buf+i+2))==0x05) && ((*(buf+i+3))==0x06))
       {
-        uPosFound = uReadPos+(unsigned)i;
-        break;
+        u_Pos_یافت = uReadPos+(بیعلامت)i;
+        اكسر;
       }
 
-    if (uPosFound!=0)
-      break;
+    إذا (u_Pos_یافت!=0)
+      اكسر;
   }
-  free(buf);
-  return uPosFound;
+  حرر(buf);
+  أرجع u_Pos_یافت;
 }
 
 /*
 Locate the End of Zip64 Central directory locator and from there find the CD of a zipfile (at the end, just before
 the global comment)
 */
-local ZPOS64_T zip64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-  unsigned char* buf;
-  ZPOS64_T uSizeFile;
-  ZPOS64_T uBackRead;
-  ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-  ZPOS64_T uPosFound=0;
+local ZPOS64_T zip64local_جستجو_Central_Dir64(ثابت zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+  بیعلامت حرف* buf;
+  ZPOS64_T u_اندازه_File;
+  ZPOS64_T u_پشت_Read;
+  ZPOS64_T u_Max_پشت=0xffff; /* maximum size of global comment */
+  ZPOS64_T u_Pos_یافت=0;
   uLong uL;
-  ZPOS64_T relativeOffset;
+  ZPOS64_T relative_جابه_جایی;
 
-  if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-    return 0;
+  إذا (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_انتها) != 0)
+    أرجع 0;
 
-  uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+  u_اندازه_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-  if (uMaxBack>uSizeFile)
-    uMaxBack = uSizeFile;
+  إذا (u_Max_پشت>u_اندازه_File)
+    u_Max_پشت = u_اندازه_File;
 
-  buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-  if (buf==NULL)
-    return 0;
+  buf = (بیعلامت حرف*)ALLOC(BUFREADCOMMENT+4);
+  إذا (buf==عدم)
+    أرجع 0;
 
-  uBackRead = 4;
-  while (uBackRead<uMaxBack)
+  u_پشت_Read = 4;
+  طالما (u_پشت_Read<u_Max_پشت)
   {
-    uLong uReadSize;
+    uLong u_Read_اندازه;
     ZPOS64_T uReadPos;
-    int i;
-    if (uBackRead+BUFREADCOMMENT>uMaxBack)
-      uBackRead = uMaxBack;
-    else
-      uBackRead+=BUFREADCOMMENT;
-    uReadPos = uSizeFile-uBackRead ;
+    صحيح i;
+    إذا (u_پشت_Read+BUFREADCOMMENT>u_Max_پشت)
+      u_پشت_Read = u_Max_پشت;
+    وإلا
+      u_پشت_Read+=BUFREADCOMMENT;
+    uReadPos = u_اندازه_File-u_پشت_Read ;
 
-    uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-      (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-      break;
+    u_Read_اندازه = ((BUFREADCOMMENT+4) < (u_اندازه_File-uReadPos)) ?
+      (BUFREADCOMMENT+4) : (uLong)(u_اندازه_File-uReadPos);
+    إذا (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+      اكسر;
 
-    if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-      break;
+    إذا (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_اندازه)!=u_Read_اندازه)
+      اكسر;
 
-    for (i=(int)uReadSize-3; (i--)>0;)
+    لكل (i=(صحيح)u_Read_اندازه-3; (i--)>0;)
     {
       /* Signature "0x07064b50" Zip64 end of central directory locator */
-      if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) && ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
+      إذا (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) && ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
       {
-        uPosFound = uReadPos+(unsigned)i;
-        break;
+        u_Pos_یافت = uReadPos+(بیعلامت)i;
+        اكسر;
       }
     }
 
-      if (uPosFound!=0)
-        break;
+      إذا (u_Pos_یافت!=0)
+        اكسر;
   }
 
-  free(buf);
-  if (uPosFound == 0)
-    return 0;
+  حرر(buf);
+  إذا (u_Pos_یافت == 0)
+    أرجع 0;
 
   /* Zip64 end of central directory locator */
-  if (ZSEEK64(*pzlib_filefunc_def,filestream, uPosFound,ZLIB_FILEFUNC_SEEK_SET)!=0)
-    return 0;
+  إذا (ZSEEK64(*pzlib_filefunc_def,filestream, u_Pos_یافت,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+    أرجع 0;
 
   /* the signature, already checked */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
+  إذا (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    أرجع 0;
 
   /* number of the disk with the start of the zip64 end of central directory */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
-  if (uL != 0)
-    return 0;
+  إذا (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    أرجع 0;
+  إذا (uL != 0)
+    أرجع 0;
 
   /* relative offset of the zip64 end of central directory record */
-  if (zip64local_getLong64(pzlib_filefunc_def,filestream,&relativeOffset)!=ZIP_OK)
-    return 0;
+  إذا (zip64local_getLong64(pzlib_filefunc_def,filestream,&relative_جابه_جایی)!=ZIP_OK)
+    أرجع 0;
 
   /* total number of disks */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
-  if (uL != 1)
-    return 0;
+  إذا (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    أرجع 0;
+  إذا (uL != 1)
+    أرجع 0;
 
   /* Goto Zip64 end of central directory record */
-  if (ZSEEK64(*pzlib_filefunc_def,filestream, relativeOffset,ZLIB_FILEFUNC_SEEK_SET)!=0)
-    return 0;
+  إذا (ZSEEK64(*pzlib_filefunc_def,filestream, relative_جابه_جایی,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
+    أرجع 0;
 
   /* the signature */
-  if (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
-    return 0;
+  إذا (zip64local_getLong(pzlib_filefunc_def,filestream,&uL)!=ZIP_OK)
+    أرجع 0;
 
-  if (uL != 0x06064b50) /* signature of 'Zip64 end of central directory' */
-    return 0;
+  إذا (uL != 0x06064b50) /* signature of 'Zip64 end of central directory' */
+    أرجع 0;
 
-  return relativeOffset;
+  أرجع relative_جابه_جایی;
 }
 
-local int LoadCentralDirectoryRecord(zip64_internal* pziinit) {
-  int err=ZIP_OK;
+local صحيح بارگیری_Central_Directory_رکورد(zip64_داخلی* pziinit) {
+  صحيح err=ZIP_OK;
   ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
 
-  ZPOS64_T size_central_dir;     /* size of the central directory  */
-  ZPOS64_T offset_central_dir;   /* offset of start of central directory */
+  ZPOS64_T اندازه_central_dir;     /* size of the central directory  */
+  ZPOS64_T جابه_جایی_central_dir;   /* offset of start of central directory */
   ZPOS64_T central_pos;
   uLong uL;
 
-  uLong number_disk;          /* number of the current disk, used for
+  uLong عدد_disk;          /* number of the current disk, used for
                               spanning ZIP, unsupported, always 0*/
-  uLong number_disk_with_CD;  /* number of the disk with central dir, used
+  uLong عدد_disk_with_CD;  /* number of the disk with central dir, used
                               for spanning ZIP, unsupported, always 0*/
-  ZPOS64_T number_entry;
-  ZPOS64_T number_entry_CD;      /* total number of entries in
+  ZPOS64_T عدد_مدخل;
+  ZPOS64_T عدد_مدخل_CD;      /* total number of entries in
                                 the central dir
                                 (same than number_entry on nospan) */
-  uLong VersionMadeBy;
-  uLong VersionNeeded;
-  uLong size_comment;
+  uLong نسخه_Made_By;
+  uLong نسخه_Needed;
+  uLong اندازه_comment;
 
-  int hasZIP64Record = 0;
+  صحيح has_ZIP64_رکورد = 0;
 
   /* check first if we find a ZIP64 record */
-  central_pos = zip64local_SearchCentralDir64(&pziinit->z_filefunc,pziinit->filestream);
-  if(central_pos > 0)
+  central_pos = zip64local_جستجو_Central_Dir64(&pziinit->z_filefunc,pziinit->filestream);
+  إذا(central_pos > 0)
   {
-    hasZIP64Record = 1;
+    has_ZIP64_رکورد = 1;
   }
-  else if(central_pos == 0)
+  وإلا إذا(central_pos == 0)
   {
-    central_pos = zip64local_SearchCentralDir(&pziinit->z_filefunc,pziinit->filestream);
+    central_pos = zip64local_جستجو_Central_Dir(&pziinit->z_filefunc,pziinit->filestream);
   }
 
 /* disable to allow appending to empty ZIP archive
@@ -894,367 +894,367 @@ local int LoadCentralDirectoryRecord(zip64_internal* pziinit) {
             err=ZIP_ERRNO;
 */
 
-  if(hasZIP64Record)
+  إذا(has_ZIP64_رکورد)
   {
-    ZPOS64_T sizeEndOfCentralDirectory;
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos, ZLIB_FILEFUNC_SEEK_SET) != 0)
+    ZPOS64_T اندازه_انتها_از_Central_Directory;
+    إذا (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos, ZLIB_FILEFUNC_SEEK_مجموعه) != 0)
       err=ZIP_ERRNO;
 
     /* the signature, already checked */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
+    إذا (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* size of zip64 end of central directory record */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &sizeEndOfCentralDirectory)!=ZIP_OK)
+    إذا (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &اندازه_انتها_از_Central_Directory)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* version made by */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &VersionMadeBy)!=ZIP_OK)
+    إذا (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &نسخه_Made_By)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* version needed to extract */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &VersionNeeded)!=ZIP_OK)
+    إذا (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &نسخه_Needed)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of this disk */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&number_disk)!=ZIP_OK)
+    إذا (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&عدد_disk)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of the disk with the start of the central directory */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&number_disk_with_CD)!=ZIP_OK)
+    إذا (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&عدد_disk_with_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central directory on this disk */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &number_entry)!=ZIP_OK)
+    إذا (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream, &عدد_مدخل)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central directory */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&number_entry_CD)!=ZIP_OK)
+    إذا (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&عدد_مدخل_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
-    if ((number_entry_CD!=number_entry) || (number_disk_with_CD!=0) || (number_disk!=0))
+    إذا ((عدد_مدخل_CD!=عدد_مدخل) || (عدد_disk_with_CD!=0) || (عدد_disk!=0))
       err=ZIP_BADZIPFILE;
 
     /* size of the central directory */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&size_central_dir)!=ZIP_OK)
+    إذا (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&اندازه_central_dir)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* offset of start of central directory with respect to the
     starting disk number */
-    if (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&offset_central_dir)!=ZIP_OK)
+    إذا (zip64local_getLong64(&pziinit->z_filefunc, pziinit->filestream,&جابه_جایی_central_dir)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* TODO..
        read the comment from the standard central header. */
-    size_comment = 0;
+    اندازه_comment = 0;
   }
-  else
+  وإلا
   {
     /* Read End of central Directory info */
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+    إذا (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, central_pos,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
       err=ZIP_ERRNO;
 
     /* the signature, already checked */
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
+    إذا (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream,&uL)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of this disk */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&number_disk)!=ZIP_OK)
+    إذا (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&عدد_disk)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* number of the disk with the start of the central directory */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&number_disk_with_CD)!=ZIP_OK)
+    إذا (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream,&عدد_disk_with_CD)!=ZIP_OK)
       err=ZIP_ERRNO;
 
     /* total number of entries in the central dir on this disk */
-    number_entry = 0;
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    عدد_مدخل = 0;
+    إذا (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      number_entry = uL;
+    وإلا
+      عدد_مدخل = uL;
 
     /* total number of entries in the central dir */
-    number_entry_CD = 0;
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    عدد_مدخل_CD = 0;
+    إذا (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      number_entry_CD = uL;
+    وإلا
+      عدد_مدخل_CD = uL;
 
-    if ((number_entry_CD!=number_entry) || (number_disk_with_CD!=0) || (number_disk!=0))
+    إذا ((عدد_مدخل_CD!=عدد_مدخل) || (عدد_disk_with_CD!=0) || (عدد_disk!=0))
       err=ZIP_BADZIPFILE;
 
     /* size of the central directory */
-    size_central_dir = 0;
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    اندازه_central_dir = 0;
+    إذا (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      size_central_dir = uL;
+    وإلا
+      اندازه_central_dir = uL;
 
     /* offset of start of central directory with respect to the starting disk number */
-    offset_central_dir = 0;
-    if (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
+    جابه_جایی_central_dir = 0;
+    إذا (zip64local_getLong(&pziinit->z_filefunc, pziinit->filestream, &uL)!=ZIP_OK)
       err=ZIP_ERRNO;
-    else
-      offset_central_dir = uL;
+    وإلا
+      جابه_جایی_central_dir = uL;
 
 
     /* zipfile global comment length */
-    if (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &size_comment)!=ZIP_OK)
+    إذا (zip64local_getShort(&pziinit->z_filefunc, pziinit->filestream, &اندازه_comment)!=ZIP_OK)
       err=ZIP_ERRNO;
   }
 
-  if ((central_pos<offset_central_dir+size_central_dir) &&
+  إذا ((central_pos<جابه_جایی_central_dir+اندازه_central_dir) &&
     (err==ZIP_OK))
     err=ZIP_BADZIPFILE;
 
-  if (err!=ZIP_OK)
+  إذا (err!=ZIP_OK)
   {
     ZCLOSE64(pziinit->z_filefunc, pziinit->filestream);
-    return ZIP_ERRNO;
+    أرجع ZIP_ERRNO;
   }
 
-  if (size_comment>0)
+  إذا (اندازه_comment>0)
   {
-    pziinit->globalcomment = (char*)ALLOC(size_comment+1);
-    if (pziinit->globalcomment)
+    pziinit->globalcomment = (حرف*)ALLOC(اندازه_comment+1);
+    إذا (pziinit->globalcomment)
     {
-      size_comment = ZREAD64(pziinit->z_filefunc, pziinit->filestream, pziinit->globalcomment,size_comment);
-      pziinit->globalcomment[size_comment]=0;
+      اندازه_comment = ZREAD64(pziinit->z_filefunc, pziinit->filestream, pziinit->globalcomment,اندازه_comment);
+      pziinit->globalcomment[اندازه_comment]=0;
     }
   }
 
-  byte_before_the_zipfile = central_pos - (offset_central_dir+size_central_dir);
-  pziinit->add_position_when_writing_offset = byte_before_the_zipfile;
+  byte_before_the_zipfile = central_pos - (جابه_جایی_central_dir+اندازه_central_dir);
+  pziinit->جمع_کن_position_when_writing_جابه_جایی = byte_before_the_zipfile;
 
   {
-    ZPOS64_T size_central_dir_to_read = size_central_dir;
-    size_t buf_size = SIZEDATA_INDATABLOCK;
-    void* buf_read = (void*)ALLOC(buf_size);
-    if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, offset_central_dir + byte_before_the_zipfile, ZLIB_FILEFUNC_SEEK_SET) != 0)
+    ZPOS64_T اندازه_central_dir_مقصد_read = اندازه_central_dir;
+    size_t buf_اندازه_2 = SIZEDATA_INDATABLOCK;
+    فراغ* buf_read = (فراغ*)ALLOC(buf_اندازه_2);
+    إذا (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, جابه_جایی_central_dir + byte_before_the_zipfile, ZLIB_FILEFUNC_SEEK_مجموعه) != 0)
       err=ZIP_ERRNO;
 
-    while ((size_central_dir_to_read>0) && (err==ZIP_OK))
+    طالما ((اندازه_central_dir_مقصد_read>0) && (err==ZIP_OK))
     {
       ZPOS64_T read_this = SIZEDATA_INDATABLOCK;
-      if (read_this > size_central_dir_to_read)
-        read_this = size_central_dir_to_read;
+      إذا (read_this > اندازه_central_dir_مقصد_read)
+        read_this = اندازه_central_dir_مقصد_read;
 
-      if (ZREAD64(pziinit->z_filefunc, pziinit->filestream,buf_read,(uLong)read_this) != read_this)
+      إذا (ZREAD64(pziinit->z_filefunc, pziinit->filestream,buf_read,(uLong)read_this) != read_this)
         err=ZIP_ERRNO;
 
-      if (err==ZIP_OK)
-        err = add_data_in_datablock(&pziinit->central_dir,buf_read, (uLong)read_this);
+      إذا (err==ZIP_OK)
+        err = جمع_کن_داده_درون_datablock(&pziinit->central_dir,buf_read, (uLong)read_this);
 
-      size_central_dir_to_read-=read_this;
+      اندازه_central_dir_مقصد_read-=read_this;
     }
-    free(buf_read);
+    حرر(buf_read);
   }
   pziinit->begin_pos = byte_before_the_zipfile;
-  pziinit->number_entry = number_entry_CD;
+  pziinit->عدد_مدخل = عدد_مدخل_CD;
 
-  if (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, offset_central_dir+byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_SET) != 0)
+  إذا (ZSEEK64(pziinit->z_filefunc, pziinit->filestream, جابه_جایی_central_dir+byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_مجموعه) != 0)
     err=ZIP_ERRNO;
 
-  return err;
+  أرجع err;
 }
 
 
-#endif /* !NO_ADDFILEINEXISTINGZIP*/
+#پایان_اگر /* !NO_ADDFILEINEXISTINGZIP*/
 
 
 /************************************************************/
-extern zipFile ZEXPORT zipOpen3(const void *pathname, int append, zipcharpc* globalcomment, zlib_filefunc64_32_def* pzlib_filefunc64_32_def) {
-    zip64_internal ziinit;
-    zip64_internal* zi;
-    int err=ZIP_OK;
+خارجي zipFile ZEXPORT zipOpen3(ثابت فراغ *pathname, صحيح append, zipcharpc* globalcomment, zlib_filefunc64_32_def* pzlib_filefunc64_32_def) {
+    zip64_داخلی ziinit;
+    zip64_داخلی* zi;
+    صحيح err=ZIP_OK;
 
-    ziinit.z_filefunc.zseek32_file = NULL;
-    ziinit.z_filefunc.ztell32_file = NULL;
-    if (pzlib_filefunc64_32_def==NULL)
+    ziinit.z_filefunc.zseek32_file = عدم;
+    ziinit.z_filefunc.ztell32_file = عدم;
+    إذا (pzlib_filefunc64_32_def==عدم)
         fill_fopen64_filefunc(&ziinit.z_filefunc.zfile_func64);
-    else
+    وإلا
         ziinit.z_filefunc = *pzlib_filefunc64_32_def;
 
     ziinit.filestream = ZOPEN64(ziinit.z_filefunc,
                   pathname,
-                  (append == APPEND_STATUS_CREATE) ?
-                  (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_CREATE) :
-                    (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_EXISTING));
+                  (append == APPEND_وضعیت_CREATE) ?
+                  (ZLIB_FILEFUNC_نما_READ | ZLIB_FILEFUNC_نما_WRITE | ZLIB_FILEFUNC_نما_CREATE) :
+                    (ZLIB_FILEFUNC_نما_READ | ZLIB_FILEFUNC_نما_WRITE | ZLIB_FILEFUNC_نما_EXISTING));
 
-    if (ziinit.filestream == NULL)
-        return NULL;
+    إذا (ziinit.filestream == عدم)
+        أرجع عدم;
 
-    if (append == APPEND_STATUS_CREATEAFTER)
+    إذا (append == APPEND_وضعیت_CREATEAFTER)
         ZSEEK64(ziinit.z_filefunc,ziinit.filestream,0,SEEK_END);
 
     ziinit.begin_pos = ZTELL64(ziinit.z_filefunc,ziinit.filestream);
-    ziinit.in_opened_file_inzip = 0;
-    ziinit.ci.stream_initialised = 0;
-    ziinit.number_entry = 0;
-    ziinit.add_position_when_writing_offset = 0;
+    ziinit.درون_opened_file_inzip = 0;
+    ziinit.ci.جریان_initialised = 0;
+    ziinit.عدد_مدخل = 0;
+    ziinit.جمع_کن_position_when_writing_جابه_جایی = 0;
     init_linkedlist(&(ziinit.central_dir));
-    memset(&ziinit.set, 0, sizeof(set_t));  /* make sure set appears dormant */
+    memset(&ziinit.مجموعه, 0, حجم(مجموعه_t));  /* make sure set appears dormant */
 
 
 
-    zi = (zip64_internal*)ALLOC(sizeof(zip64_internal));
-    if (zi==NULL)
+    zi = (zip64_داخلی*)ALLOC(حجم(zip64_داخلی));
+    إذا (zi==عدم)
     {
         ZCLOSE64(ziinit.z_filefunc,ziinit.filestream);
-        return NULL;
+        أرجع عدم;
     }
 
     /* now we add file in a zipfile */
 #    ifndef NO_ADDFILEINEXISTINGZIP
-    ziinit.globalcomment = NULL;
-    if (append == APPEND_STATUS_ADDINZIP)
+    ziinit.globalcomment = عدم;
+    إذا (append == APPEND_وضعیت_ADDINZIP)
     {
       /* Read and Cache Central Directory Records */
-      err = LoadCentralDirectoryRecord(&ziinit);
+      err = بارگیری_Central_Directory_رکورد(&ziinit);
     }
 
-    if (globalcomment)
+    إذا (globalcomment)
     {
       *globalcomment = ziinit.globalcomment;
     }
 #    endif /* !NO_ADDFILEINEXISTINGZIP*/
 
-    if (err != ZIP_OK)
+    إذا (err != ZIP_OK)
     {
 #    ifndef NO_ADDFILEINEXISTINGZIP
-        free(ziinit.globalcomment);
+        حرر(ziinit.globalcomment);
 #    endif /* !NO_ADDFILEINEXISTINGZIP*/
-        free(zi);
-        return NULL;
+        حرر(zi);
+        أرجع عدم;
     }
-    else
+    وإلا
     {
         *zi = ziinit;
-        return (zipFile)zi;
+        أرجع (zipFile)zi;
     }
 }
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname, int append, zipcharpc* globalcomment, zlib_filefunc_def* pzlib_filefunc32_def) {
-    if (pzlib_filefunc32_def != NULL)
+خارجي zipFile ZEXPORT zipOpen2(ثابت حرف *pathname, صحيح append, zipcharpc* globalcomment, zlib_filefunc_def* pzlib_filefunc32_def) {
+    إذا (pzlib_filefunc32_def != عدم)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
-        return zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
+        أرجع zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
     }
-    else
-        return zipOpen3(pathname, append, globalcomment, NULL);
+    وإلا
+        أرجع zipOpen3(pathname, append, globalcomment, عدم);
 }
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname, int append, zipcharpc* globalcomment, zlib_filefunc64_def* pzlib_filefunc_def) {
-    if (pzlib_filefunc_def != NULL)
+خارجي zipFile ZEXPORT zipOpen2_64(ثابت فراغ *pathname, صحيح append, zipcharpc* globalcomment, zlib_filefunc64_def* pzlib_filefunc_def) {
+    إذا (pzlib_filefunc_def != عدم)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
-        zlib_filefunc64_32_def_fill.zopen32_file = NULL;
-        zlib_filefunc64_32_def_fill.ztell32_file = NULL;
-        zlib_filefunc64_32_def_fill.zseek32_file = NULL;
-        return zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
+        zlib_filefunc64_32_def_fill.zopen32_file = عدم;
+        zlib_filefunc64_32_def_fill.ztell32_file = عدم;
+        zlib_filefunc64_32_def_fill.zseek32_file = عدم;
+        أرجع zipOpen3(pathname, append, globalcomment, &zlib_filefunc64_32_def_fill);
     }
-    else
-        return zipOpen3(pathname, append, globalcomment, NULL);
+    وإلا
+        أرجع zipOpen3(pathname, append, globalcomment, عدم);
 }
 
 
 
-extern zipFile ZEXPORT zipOpen(const char* pathname, int append) {
-    return zipOpen3((const void*)pathname,append,NULL,NULL);
+خارجي zipFile ZEXPORT zipOpen(ثابت حرف* pathname, صحيح append) {
+    أرجع zipOpen3((ثابت فراغ*)pathname,append,عدم,عدم);
 }
 
-extern zipFile ZEXPORT zipOpen64(const void* pathname, int append) {
-    return zipOpen3(pathname,append,NULL,NULL);
+خارجي zipFile ZEXPORT zipOpen64(ثابت فراغ* pathname, صحيح append) {
+    أرجع zipOpen3(pathname,append,عدم,عدم);
 }
 
-local int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt size_extrafield_local, const void* extrafield_local) {
+local صحيح Write_Local_File_سرآیند(zip64_داخلی* zi, ثابت حرف* filename, uInt اندازه_extrafield_local, ثابت فراغ* extrafield_local) {
   /* write the local header */
-  int err;
-  uInt size_filename = (uInt)strlen(filename);
-  uInt size_extrafield = size_extrafield_local;
+  صحيح err;
+  uInt اندازه_filename = (uInt)طول_رشته(filename);
+  uInt اندازه_extrafield = اندازه_extrafield_local;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)LOCALHEADERMAGIC, 4);
+  err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)LOCALHEADERMAGIC, 4);
 
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);/* version needed to extract */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)20,2);/* version needed to extract */
+    إذا(zi->ci.zip64)
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)45,2);/* version needed to extract */
+    وإلا
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)20,2);/* version needed to extract */
   }
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.flag,2);
+  إذا (err==ZIP_OK)
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.flag,2);
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.method,2);
+  إذا (err==ZIP_OK)
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.روش,2);
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.dosDate,4);
+  إذا (err==ZIP_OK)
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.dosDate,4);
 
   /* CRC / Compressed size / Uncompressed size will be filled in later and rewritten later */
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* crc 32, unknown */
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* crc 32, unknown */
+  إذا (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* compressed size, unknown */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* compressed size, unknown */
+    إذا(zi->ci.zip64)
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* compressed size, unknown */
+    وإلا
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* compressed size, unknown */
   }
-  if (err==ZIP_OK)
+  إذا (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* uncompressed size, unknown */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* uncompressed size, unknown */
-  }
-
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_filename,2);
-
-  if(zi->ci.zip64)
-  {
-    size_extrafield += 20;
+    إذا(zi->ci.zip64)
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0xFFFFFFFF,4); /* uncompressed size, unknown */
+    وإلا
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0,4); /* uncompressed size, unknown */
   }
 
-  if (err==ZIP_OK)
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_extrafield,2);
+  إذا (err==ZIP_OK)
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)اندازه_filename,2);
 
-  if ((err==ZIP_OK) && (size_filename > 0))
+  إذا(zi->ci.zip64)
   {
-    if (ZWRITE64(zi->z_filefunc,zi->filestream,filename,size_filename)!=size_filename)
+    اندازه_extrafield += 20;
+  }
+
+  إذا (err==ZIP_OK)
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)اندازه_extrafield,2);
+
+  إذا ((err==ZIP_OK) && (اندازه_filename > 0))
+  {
+    إذا (ZWRITE64(zi->z_filefunc,zi->filestream,filename,اندازه_filename)!=اندازه_filename)
       err = ZIP_ERRNO;
   }
 
-  if ((err==ZIP_OK) && (size_extrafield_local > 0))
+  إذا ((err==ZIP_OK) && (اندازه_extrafield_local > 0))
   {
-    if (ZWRITE64(zi->z_filefunc, zi->filestream, extrafield_local, size_extrafield_local) != size_extrafield_local)
+    إذا (ZWRITE64(zi->z_filefunc, zi->filestream, extrafield_local, اندازه_extrafield_local) != اندازه_extrafield_local)
       err = ZIP_ERRNO;
   }
 
 
-  if ((err==ZIP_OK) && (zi->ci.zip64))
+  إذا ((err==ZIP_OK) && (zi->ci.zip64))
   {
       /* write the Zip64 extended info */
-      short HeaderID = 1;
-      short DataSize = 16;
-      ZPOS64_T CompressedSize = 0;
-      ZPOS64_T UncompressedSize = 0;
+      کوتاه سرآیند_ID = 1;
+      کوتاه داده_اندازه_2 = 16;
+      ZPOS64_T Compressed_اندازه = 0;
+      ZPOS64_T Uncompressed_اندازه = 0;
 
       /* Remember position of Zip64 extended info for the local file header. (needed when we update size after done with file) */
       zi->ci.pos_zip64extrainfo = ZTELL64(zi->z_filefunc,zi->filestream);
 
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)HeaderID,2);
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)DataSize,2);
+      err = zip64local_put_مقدار(&zi->z_filefunc, zi->filestream, (ZPOS64_T)سرآیند_ID,2);
+      err = zip64local_put_مقدار(&zi->z_filefunc, zi->filestream, (ZPOS64_T)داده_اندازه_2,2);
 
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)UncompressedSize,8);
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)CompressedSize,8);
+      err = zip64local_put_مقدار(&zi->z_filefunc, zi->filestream, (ZPOS64_T)Uncompressed_اندازه,8);
+      err = zip64local_put_مقدار(&zi->z_filefunc, zi->filestream, (ZPOS64_T)Compressed_اندازه,8);
   }
 
-  return err;
+  أرجع err;
 }
 
 /* Return the length of the UTF-8 code at str[0..len-1] in [1..4], or negative
@@ -1262,8 +1262,8 @@ local int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt s
    of bytes examined in order to determine it was bad. Or if minus the return
    code is one less than len, then at least one more byte than provided would
    be needed to complete the code. */
-local int utf8len(unsigned char const *str, size_t len) {
-    return
+local صحيح utf8len(بیعلامت حرف ثابت *str, size_t len) {
+    أرجع
         len == 0 ? -1 :                         /* empty input */
         str[0] < 0x80 ? 1 :                     /* good one-byte */
         str[0] < 0xc0 ? -1 :                    /* bad first byte */
@@ -1283,18 +1283,18 @@ local int utf8len(unsigned char const *str, size_t len) {
 /* Return true if str[0..len-1] is valid UTF-8 *and* it contains at least one
    code of two or more bytes. This is used to determine whether or not to set
    bit 11 in the zip header flags. */
-local int isutf8(char const *str, size_t len) {
-    int utf8 = 0;
-    while (len) {
-        int code = utf8len((unsigned char const *)str, len);
-        if (code < 0)
-            return 0;
-        if (code > 1)
+local صحيح isutf8(حرف ثابت *str, size_t len) {
+    صحيح utf8 = 0;
+    طالما (len) {
+        صحيح کد = utf8len((بیعلامت حرف ثابت *)str, len);
+        إذا (کد < 0)
+            أرجع 0;
+        إذا (کد > 1)
             utf8 = 1;
-        str += code;
-        len -= (unsigned)code;
+        str += کد;
+        len -= (بیعلامت)کد;
     }
-    return utf8;
+    أرجع utf8;
 }
 
 /*
@@ -1305,948 +1305,948 @@ local int isutf8(char const *str, size_t len) {
  It is not done here because then we need to realloc a new buffer since parameters are 'const' and I want to minimize
  unnecessary allocations.
  */
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                           const void* extrafield_local, uInt size_extrafield_local,
-                                           const void* extrafield_global, uInt size_extrafield_global,
-                                           const char* comment, int method, int level, int raw,
-                                           int windowBits,int memLevel, int strategy,
-                                           const char* password, uLong crcForCrypting,
-                                           uLong versionMadeBy, uLong flagBase, int zip64) {
-    zip64_internal* zi;
-    uInt size_filename;
-    uInt size_comment;
+خارجي صحيح ZEXPORT zip_Open_New_File_درون_Zip4_64(zipFile file, ثابت حرف* filename, ثابت zip_fileinfo* zipfi,
+                                           ثابت فراغ* extrafield_local, uInt اندازه_extrafield_local,
+                                           ثابت فراغ* extrafield_global, uInt اندازه_extrafield_global,
+                                           ثابت حرف* comment, صحيح روش, صحيح level, صحيح raw,
+                                           صحيح پنجره_بیتها,صحيح memLevel, صحيح strategy,
+                                           ثابت حرف* password, uLong بررسی_چرخهای_For_Crypting,
+                                           uLong نسخه_Made_By_2, uLong flag_پایه, صحيح zip64) {
+    zip64_داخلی* zi;
+    uInt اندازه_filename;
+    uInt اندازه_comment;
     uInt i;
-    int err = ZIP_OK;
+    صحيح err = ZIP_OK;
 
 #    ifdef NOCRYPT
-    if (password != NULL)
-        return ZIP_PARAMERROR;
+    إذا (password != عدم)
+        أرجع ZIP_PARAMERROR;
 #    endif
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
+    إذا (file == عدم)
+        أرجع ZIP_PARAMERROR;
 
-#ifdef HAVE_BZIP2
-    if ((method!=0) && (method!=Z_DEFLATED) && (method!=Z_BZIP2ED))
-      return ZIP_PARAMERROR;
-#else
-    if ((method!=0) && (method!=Z_DEFLATED))
-      return ZIP_PARAMERROR;
-#endif
+#اگر_تعریف_شده HAVE_BZIP2
+    إذا ((روش!=0) && (روش!=Z_DEFLATED) && (روش!=Z_BZIP2ED))
+      أرجع ZIP_PARAMERROR;
+#وإلا
+    إذا ((روش!=0) && (روش!=Z_DEFLATED))
+      أرجع ZIP_PARAMERROR;
+#پایان_اگر
 
     /* The filename and comment length must fit in 16 bits. */
-    if ((filename!=NULL) && (strlen(filename)>0xffff))
-        return ZIP_PARAMERROR;
-    if ((comment!=NULL) && (strlen(comment)>0xffff))
-        return ZIP_PARAMERROR;
+    إذا ((filename!=عدم) && (طول_رشته(filename)>0xffff))
+        أرجع ZIP_PARAMERROR;
+    إذا ((comment!=عدم) && (طول_رشته(comment)>0xffff))
+        أرجع ZIP_PARAMERROR;
     /* The extra field length must fit in 16 bits. If the member also requires
        a Zip64 extra block, that will also need to fit within that 16-bit
        length, but that will be checked for later. */
-    if ((size_extrafield_local>0xffff) || (size_extrafield_global>0xffff))
-        return ZIP_PARAMERROR;
+    إذا ((اندازه_extrafield_local>0xffff) || (اندازه_extrafield_global>0xffff))
+        أرجع ZIP_PARAMERROR;
 
-    zi = (zip64_internal*)file;
+    zi = (zip64_داخلی*)file;
 
-    if (zi->in_opened_file_inzip == 1)
+    إذا (zi->درون_opened_file_inzip == 1)
     {
-        err = zipCloseFileInZip (file);
-        if (err != ZIP_OK)
-            return err;
+        err = zip_Close_File_درون_Zip (file);
+        إذا (err != ZIP_OK)
+            أرجع err;
     }
 
-    if (filename==NULL)
+    إذا (filename==عدم)
         filename="-";
 
-    if (comment==NULL)
-        size_comment = 0;
-    else
-        size_comment = (uInt)strlen(comment);
+    إذا (comment==عدم)
+        اندازه_comment = 0;
+    وإلا
+        اندازه_comment = (uInt)طول_رشته(comment);
 
-    size_filename = (uInt)strlen(filename);
+    اندازه_filename = (uInt)طول_رشته(filename);
 
-    if (zipfi == NULL)
+    إذا (zipfi == عدم)
         zi->ci.dosDate = 0;
-    else
+    وإلا
     {
-        if (zipfi->dosDate != 0)
+        إذا (zipfi->dosDate != 0)
             zi->ci.dosDate = zipfi->dosDate;
-        else
-          zi->ci.dosDate = zip64local_TmzDateToDosDate(&zipfi->tmz_date);
+        وإلا
+          zi->ci.dosDate = zip64local_Tmz_Date_مقصد_Dos_Date(&zipfi->tmz_date);
     }
 
-    zi->ci.flag = flagBase;
-    if ((level==8) || (level==9))
+    zi->ci.flag = flag_پایه;
+    إذا ((level==8) || (level==9))
       zi->ci.flag |= 2;
-    if (level==2)
+    إذا (level==2)
       zi->ci.flag |= 4;
-    if (level==1)
+    إذا (level==1)
       zi->ci.flag |= 6;
-    if (password != NULL)
+    إذا (password != عدم)
       zi->ci.flag |= 1;
-    if (isutf8(filename, size_filename) &&
-        (size_comment == 0 || isutf8(comment, size_comment)))
+    إذا (isutf8(filename, اندازه_filename) &&
+        (اندازه_comment == 0 || isutf8(comment, اندازه_comment)))
       zi->ci.flag |= (1 << 11);
 
-    zi->ci.crc32 = 0;
-    zi->ci.method = method;
+    zi->ci.بررسی_چرخهای_32_2 = 0;
+    zi->ci.روش = روش;
     zi->ci.encrypt = 0;
-    zi->ci.stream_initialised = 0;
-    zi->ci.pos_in_buffered_data = 0;
+    zi->ci.جریان_initialised = 0;
+    zi->ci.pos_درون_buffered_داده = 0;
     zi->ci.raw = raw;
-    zi->ci.pos_local_header = ZTELL64(zi->z_filefunc,zi->filestream);
+    zi->ci.pos_local_سرآیند = ZTELL64(zi->z_filefunc,zi->filestream);
 
-    zi->ci.size_centralheader = SIZECENTRALHEADER + size_filename + size_extrafield_global + size_comment;
-    zi->ci.size_centralExtraFree = 32; /* Extra space we have reserved in case we need to add ZIP64 extra info data */
+    zi->ci.اندازه_centralheader = SIZECENTRALHEADER + اندازه_filename + اندازه_extrafield_global + اندازه_comment;
+    zi->ci.اندازه_central_Extra_Free = 32; /* Extra space we have reserved in case we need to add ZIP64 extra info data */
 
-    zi->ci.central_header = (char*)ALLOC((uInt)zi->ci.size_centralheader + zi->ci.size_centralExtraFree);
+    zi->ci.central_سرآیند = (حرف*)ALLOC((uInt)zi->ci.اندازه_centralheader + zi->ci.اندازه_central_Extra_Free);
 
-    zi->ci.size_centralExtra = size_extrafield_global;
-    zip64local_putValue_inmemory(zi->ci.central_header,(uLong)CENTRALHEADERMAGIC,4);
+    zi->ci.اندازه_central_Extra = اندازه_extrafield_global;
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند,(uLong)CENTRALHEADERMAGIC,4);
     /* version info */
-    zip64local_putValue_inmemory(zi->ci.central_header+4,(uLong)versionMadeBy,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+6,(uLong)20,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+8,(uLong)zi->ci.flag,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+10,(uLong)zi->ci.method,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+12,(uLong)zi->ci.dosDate,4);
-    zip64local_putValue_inmemory(zi->ci.central_header+16,(uLong)0,4); /*crc*/
-    zip64local_putValue_inmemory(zi->ci.central_header+20,(uLong)0,4); /*compr size*/
-    zip64local_putValue_inmemory(zi->ci.central_header+24,(uLong)0,4); /*uncompr size*/
-    zip64local_putValue_inmemory(zi->ci.central_header+28,(uLong)size_filename,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+30,(uLong)size_extrafield_global,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+32,(uLong)size_comment,2);
-    zip64local_putValue_inmemory(zi->ci.central_header+34,(uLong)0,2); /*disk nm start*/
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+4,(uLong)نسخه_Made_By_2,2);
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+6,(uLong)20,2);
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+8,(uLong)zi->ci.flag,2);
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+10,(uLong)zi->ci.روش,2);
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+12,(uLong)zi->ci.dosDate,4);
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+16,(uLong)0,4); /*crc*/
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+20,(uLong)0,4); /*compr size*/
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+24,(uLong)0,4); /*uncompr size*/
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+28,(uLong)اندازه_filename,2);
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+30,(uLong)اندازه_extrafield_global,2);
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+32,(uLong)اندازه_comment,2);
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+34,(uLong)0,2); /*disk nm start*/
 
-    if (zipfi==NULL)
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)0,2);
-    else
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)zipfi->internal_fa,2);
+    إذا (zipfi==عدم)
+        zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+36,(uLong)0,2);
+    وإلا
+        zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+36,(uLong)zipfi->داخلی_fa,2);
 
-    if (zipfi==NULL)
-        zip64local_putValue_inmemory(zi->ci.central_header+38,(uLong)0,4);
-    else
-        zip64local_putValue_inmemory(zi->ci.central_header+38,(uLong)zipfi->external_fa,4);
+    إذا (zipfi==عدم)
+        zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+38,(uLong)0,4);
+    وإلا
+        zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+38,(uLong)zipfi->external_fa,4);
 
-    if(zi->ci.pos_local_header >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+42,(uLong)0xffffffff,4);
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+42,(uLong)zi->ci.pos_local_header - zi->add_position_when_writing_offset,4);
+    إذا(zi->ci.pos_local_سرآیند >= 0xffffffff)
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+42,(uLong)0xffffffff,4);
+    وإلا
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+42,(uLong)zi->ci.pos_local_سرآیند - zi->جمع_کن_position_when_writing_جابه_جایی,4);
 
-    for (i=0;i<size_filename;i++)
-        *(zi->ci.central_header+SIZECENTRALHEADER+i) = *(filename+i);
+    لكل (i=0;i<اندازه_filename;i++)
+        *(zi->ci.central_سرآیند+SIZECENTRALHEADER+i) = *(filename+i);
 
-    for (i=0;i<size_extrafield_global;i++)
-        *(zi->ci.central_header+SIZECENTRALHEADER+size_filename+i) =
-              *(((const char*)extrafield_global)+i);
+    لكل (i=0;i<اندازه_extrafield_global;i++)
+        *(zi->ci.central_سرآیند+SIZECENTRALHEADER+اندازه_filename+i) =
+              *(((ثابت حرف*)extrafield_global)+i);
 
-    for (i=0;i<size_comment;i++)
-        *(zi->ci.central_header+SIZECENTRALHEADER+size_filename+
-              size_extrafield_global+i) = *(comment+i);
-    if (zi->ci.central_header == NULL)
-        return ZIP_INTERNALERROR;
+    لكل (i=0;i<اندازه_comment;i++)
+        *(zi->ci.central_سرآیند+SIZECENTRALHEADER+اندازه_filename+
+              اندازه_extrafield_global+i) = *(comment+i);
+    إذا (zi->ci.central_سرآیند == عدم)
+        أرجع ZIP_INTERNALERROR;
 
     zi->ci.zip64 = zip64;
-    zi->ci.totalCompressedData = 0;
-    zi->ci.totalUncompressedData = 0;
+    zi->ci.مجموع_Compressed_داده = 0;
+    zi->ci.مجموع_Uncompressed_داده = 0;
     zi->ci.pos_zip64extrainfo = 0;
 
-    err = Write_LocalFileHeader(zi, filename, size_extrafield_local, extrafield_local);
+    err = Write_Local_File_سرآیند(zi, filename, اندازه_extrafield_local, extrafield_local);
 
-#ifdef HAVE_BZIP2
-    zi->ci.bstream.avail_in = (uInt)0;
-    zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-    zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
-    zi->ci.bstream.total_in_hi32 = 0;
-    zi->ci.bstream.total_in_lo32 = 0;
-    zi->ci.bstream.total_out_hi32 = 0;
-    zi->ci.bstream.total_out_lo32 = 0;
-#endif
+#اگر_تعریف_شده HAVE_BZIP2
+    zi->ci.bstream.avail_درون = (uInt)0;
+    zi->ci.bstream.avail_بیرون = (uInt)Z_BUFSIZE;
+    zi->ci.bstream.بعدی_بیرون = (حرف*)zi->ci.buffered_داده;
+    zi->ci.bstream.مجموع_درون_hi32 = 0;
+    zi->ci.bstream.مجموع_درون_lo32 = 0;
+    zi->ci.bstream.مجموع_بیرون_hi32 = 0;
+    zi->ci.bstream.مجموع_بیرون_lo32 = 0;
+#پایان_اگر
 
-    zi->ci.stream.avail_in = (uInt)0;
-    zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-    zi->ci.stream.next_out = zi->ci.buffered_data;
-    zi->ci.stream.total_in = 0;
-    zi->ci.stream.total_out = 0;
-    zi->ci.stream.data_type = Z_BINARY;
+    zi->ci.جریان.avail_درون = (uInt)0;
+    zi->ci.جریان.avail_بیرون = (uInt)Z_BUFSIZE;
+    zi->ci.جریان.بعدی_بیرون = zi->ci.buffered_داده;
+    zi->ci.جریان.مجموع_درون = 0;
+    zi->ci.جریان.مجموع_بیرون = 0;
+    zi->ci.جریان.داده_type = Z_دودویی;
 
-#ifdef HAVE_BZIP2
-    if ((err==ZIP_OK) && (zi->ci.method == Z_DEFLATED || zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
-#else
-    if ((err==ZIP_OK) && (zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
-#endif
+#اگر_تعریف_شده HAVE_BZIP2
+    إذا ((err==ZIP_OK) && (zi->ci.روش == Z_DEFLATED || zi->ci.روش == Z_BZIP2ED) && (!zi->ci.raw))
+#وإلا
+    إذا ((err==ZIP_OK) && (zi->ci.روش == Z_DEFLATED) && (!zi->ci.raw))
+#پایان_اگر
     {
-        if(zi->ci.method == Z_DEFLATED)
+        إذا(zi->ci.روش == Z_DEFLATED)
         {
-          zi->ci.stream.zalloc = (alloc_func)0;
-          zi->ci.stream.zfree = (free_func)0;
-          zi->ci.stream.opaque = (voidpf)0;
+          zi->ci.جریان.zalloc = (alloc_func)0;
+          zi->ci.جریان.zfree = (free_func)0;
+          zi->ci.جریان.opaque = (voidpf)0;
 
-          if (windowBits>0)
-              windowBits = -windowBits;
+          إذا (پنجره_بیتها>0)
+              پنجره_بیتها = -پنجره_بیتها;
 
-          err = deflateInit2(&zi->ci.stream, level, Z_DEFLATED, windowBits, memLevel, strategy);
+          err = deflateInit2(&zi->ci.جریان, level, Z_DEFLATED, پنجره_بیتها, memLevel, strategy);
 
-          if (err==Z_OK)
-              zi->ci.stream_initialised = Z_DEFLATED;
+          إذا (err==Z_OK)
+              zi->ci.جریان_initialised = Z_DEFLATED;
         }
-        else if(zi->ci.method == Z_BZIP2ED)
+        وإلا إذا(zi->ci.روش == Z_BZIP2ED)
         {
-#ifdef HAVE_BZIP2
+#اگر_تعریف_شده HAVE_BZIP2
             /* Init BZip stuff here */
           zi->ci.bstream.bzalloc = 0;
           zi->ci.bstream.bzfree = 0;
           zi->ci.bstream.opaque = (voidpf)0;
 
           err = BZ2_bzCompressInit(&zi->ci.bstream, level, 0,35);
-          if(err == BZ_OK)
-            zi->ci.stream_initialised = Z_BZIP2ED;
-#endif
+          إذا(err == BZ_OK)
+            zi->ci.جریان_initialised = Z_BZIP2ED;
+#پایان_اگر
         }
 
     }
 
 #    ifndef NOCRYPT
-    zi->ci.crypt_header_size = 0;
-    if ((err==Z_OK) && (password != NULL))
+    zi->ci.crypt_سرآیند_اندازه = 0;
+    إذا ((err==Z_OK) && (password != عدم))
     {
-        unsigned char bufHead[RAND_HEAD_LEN];
-        unsigned int sizeHead;
+        بیعلامت حرف buf_سر[RAND_سر_LEN];
+        بیعلامت صحيح اندازه_سر;
         zi->ci.encrypt = 1;
-        zi->ci.pcrc_32_tab = get_crc_table();
+        zi->ci.pcrc_32_tab = get_بررسی_چرخهای_جدول();
         /*init_keys(password,zi->ci.keys,zi->ci.pcrc_32_tab);*/
 
-        sizeHead=crypthead(password,bufHead,RAND_HEAD_LEN,zi->ci.keys,zi->ci.pcrc_32_tab,crcForCrypting);
-        zi->ci.crypt_header_size = sizeHead;
+        اندازه_سر=crypthead(password,buf_سر,RAND_سر_LEN,zi->ci.کلیدها,zi->ci.pcrc_32_tab,بررسی_چرخهای_For_Crypting);
+        zi->ci.crypt_سرآیند_اندازه = اندازه_سر;
 
-        if (ZWRITE64(zi->z_filefunc,zi->filestream,bufHead,sizeHead) != sizeHead)
+        إذا (ZWRITE64(zi->z_filefunc,zi->filestream,buf_سر,اندازه_سر) != اندازه_سر)
                 err = ZIP_ERRNO;
     }
 #    endif
 
-    if (err==Z_OK)
-        zi->in_opened_file_inzip = 1;
-    return err;
+    إذا (err==Z_OK)
+        zi->درون_opened_file_inzip = 1;
+    أرجع err;
 }
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw,
-                                        int windowBits,int memLevel, int strategy,
-                                        const char* password, uLong crcForCrypting,
-                                        uLong versionMadeBy, uLong flagBase) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
-                                   windowBits, memLevel, strategy,
-                                   password, crcForCrypting, versionMadeBy, flagBase, 0);
+خارجي صحيح ZEXPORT zip_Open_New_File_درون_Zip4(zipFile file, ثابت حرف* filename, ثابت zip_fileinfo* zipfi,
+                                        ثابت فراغ* extrafield_local, uInt اندازه_extrafield_local,
+                                        ثابت فراغ* extrafield_global, uInt اندازه_extrafield_global,
+                                        ثابت حرف* comment, صحيح روش, صحيح level, صحيح raw,
+                                        صحيح پنجره_بیتها,صحيح memLevel, صحيح strategy,
+                                        ثابت حرف* password, uLong بررسی_چرخهای_For_Crypting,
+                                        uLong نسخه_Made_By_2, uLong flag_پایه) {
+    أرجع zip_Open_New_File_درون_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, اندازه_extrafield_local,
+                                   extrafield_global, اندازه_extrafield_global,
+                                   comment, روش, level, raw,
+                                   پنجره_بیتها, memLevel, strategy,
+                                   password, بررسی_چرخهای_For_Crypting, نسخه_Made_By_2, flag_پایه, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw,
-                                        int windowBits,int memLevel, int strategy,
-                                        const char* password, uLong crcForCrypting) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
-                                   windowBits, memLevel, strategy,
-                                   password, crcForCrypting, VERSIONMADEBY, 0, 0);
+خارجي صحيح ZEXPORT zip_Open_New_File_درون_Zip3(zipFile file, ثابت حرف* filename, ثابت zip_fileinfo* zipfi,
+                                        ثابت فراغ* extrafield_local, uInt اندازه_extrafield_local,
+                                        ثابت فراغ* extrafield_global, uInt اندازه_extrafield_global,
+                                        ثابت حرف* comment, صحيح روش, صحيح level, صحيح raw,
+                                        صحيح پنجره_بیتها,صحيح memLevel, صحيح strategy,
+                                        ثابت حرف* password, uLong بررسی_چرخهای_For_Crypting) {
+    أرجع zip_Open_New_File_درون_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, اندازه_extrafield_local,
+                                   extrafield_global, اندازه_extrafield_global,
+                                   comment, روش, level, raw,
+                                   پنجره_بیتها, memLevel, strategy,
+                                   password, بررسی_چرخهای_For_Crypting, VERSIONMADEBY, 0, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                         const void* extrafield_local, uInt size_extrafield_local,
-                                         const void* extrafield_global, uInt size_extrafield_global,
-                                         const char* comment, int method, int level, int raw,
-                                         int windowBits,int memLevel, int strategy,
-                                         const char* password, uLong crcForCrypting, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
-                                   windowBits, memLevel, strategy,
-                                   password, crcForCrypting, VERSIONMADEBY, 0, zip64);
+خارجي صحيح ZEXPORT zip_Open_New_File_درون_Zip3_64(zipFile file, ثابت حرف* filename, ثابت zip_fileinfo* zipfi,
+                                         ثابت فراغ* extrafield_local, uInt اندازه_extrafield_local,
+                                         ثابت فراغ* extrafield_global, uInt اندازه_extrafield_global,
+                                         ثابت حرف* comment, صحيح روش, صحيح level, صحيح raw,
+                                         صحيح پنجره_بیتها,صحيح memLevel, صحيح strategy,
+                                         ثابت حرف* password, uLong بررسی_چرخهای_For_Crypting, صحيح zip64) {
+    أرجع zip_Open_New_File_درون_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, اندازه_extrafield_local,
+                                   extrafield_global, اندازه_extrafield_global,
+                                   comment, روش, level, raw,
+                                   پنجره_بیتها, memLevel, strategy,
+                                   password, بررسی_چرخهای_For_Crypting, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                        const void* extrafield_local, uInt size_extrafield_local,
-                                        const void* extrafield_global, uInt size_extrafield_global,
-                                        const char* comment, int method, int level, int raw) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
+خارجي صحيح ZEXPORT zip_Open_New_File_درون_Zip2(zipFile file, ثابت حرف* filename, ثابت zip_fileinfo* zipfi,
+                                        ثابت فراغ* extrafield_local, uInt اندازه_extrafield_local,
+                                        ثابت فراغ* extrafield_global, uInt اندازه_extrafield_global,
+                                        ثابت حرف* comment, صحيح روش, صحيح level, صحيح raw) {
+    أرجع zip_Open_New_File_درون_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, اندازه_extrafield_local,
+                                   extrafield_global, اندازه_extrafield_global,
+                                   comment, روش, level, raw,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, 0);
+                                   عدم, 0, VERSIONMADEBY, 0, 0);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                           const void* extrafield_local, uInt size_extrafield_local,
-                                           const void* extrafield_global, uInt size_extrafield_global,
-                                           const char* comment, int method, int level, int raw, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, raw,
+خارجي صحيح ZEXPORT zip_Open_New_File_درون_Zip2_64(zipFile file, ثابت حرف* filename, ثابت zip_fileinfo* zipfi,
+                                           ثابت فراغ* extrafield_local, uInt اندازه_extrafield_local,
+                                           ثابت فراغ* extrafield_global, uInt اندازه_extrafield_global,
+                                           ثابت حرف* comment, صحيح روش, صحيح level, صحيح raw, صحيح zip64) {
+    أرجع zip_Open_New_File_درون_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, اندازه_extrafield_local,
+                                   extrafield_global, اندازه_extrafield_global,
+                                   comment, روش, level, raw,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, zip64);
+                                   عدم, 0, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                         const void* extrafield_local, uInt size_extrafield_local,
-                                         const void*extrafield_global, uInt size_extrafield_global,
-                                         const char* comment, int method, int level, int zip64) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, 0,
+خارجي صحيح ZEXPORT zip_Open_New_File_درون_Zip64(zipFile file, ثابت حرف* filename, ثابت zip_fileinfo* zipfi,
+                                         ثابت فراغ* extrafield_local, uInt اندازه_extrafield_local,
+                                         ثابت فراغ*extrafield_global, uInt اندازه_extrafield_global,
+                                         ثابت حرف* comment, صحيح روش, صحيح level, صحيح zip64) {
+    أرجع zip_Open_New_File_درون_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, اندازه_extrafield_local,
+                                   extrafield_global, اندازه_extrafield_global,
+                                   comment, روش, level, 0,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, zip64);
+                                   عدم, 0, VERSIONMADEBY, 0, zip64);
 }
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file, const char* filename, const zip_fileinfo* zipfi,
-                                       const void* extrafield_local, uInt size_extrafield_local,
-                                       const void*extrafield_global, uInt size_extrafield_global,
-                                       const char* comment, int method, int level) {
-    return zipOpenNewFileInZip4_64(file, filename, zipfi,
-                                   extrafield_local, size_extrafield_local,
-                                   extrafield_global, size_extrafield_global,
-                                   comment, method, level, 0,
+خارجي صحيح ZEXPORT zip_Open_New_File_درون_Zip(zipFile file, ثابت حرف* filename, ثابت zip_fileinfo* zipfi,
+                                       ثابت فراغ* extrafield_local, uInt اندازه_extrafield_local,
+                                       ثابت فراغ*extrafield_global, uInt اندازه_extrafield_global,
+                                       ثابت حرف* comment, صحيح روش, صحيح level) {
+    أرجع zip_Open_New_File_درون_Zip4_64(file, filename, zipfi,
+                                   extrafield_local, اندازه_extrafield_local,
+                                   extrafield_global, اندازه_extrafield_global,
+                                   comment, روش, level, 0,
                                    -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
-                                   NULL, 0, VERSIONMADEBY, 0, 0);
+                                   عدم, 0, VERSIONMADEBY, 0, 0);
 }
 
-local int zip64FlushWriteBuffer(zip64_internal* zi) {
-    int err=ZIP_OK;
+local صحيح zip64_Flush_Write_میانگیر(zip64_داخلی* zi) {
+    صحيح err=ZIP_OK;
 
-    if (zi->ci.encrypt != 0)
+    إذا (zi->ci.encrypt != 0)
     {
-#ifndef NOCRYPT
+#اگر_تعریف_نشده NOCRYPT
         uInt i;
-        int t;
-        for (i=0;i<zi->ci.pos_in_buffered_data;i++)
-            zi->ci.buffered_data[i] = zencode(zi->ci.keys, zi->ci.pcrc_32_tab, zi->ci.buffered_data[i],t);
-#endif
+        صحيح t;
+        لكل (i=0;i<zi->ci.pos_درون_buffered_داده;i++)
+            zi->ci.buffered_داده[i] = zencode(zi->ci.کلیدها, zi->ci.pcrc_32_tab, zi->ci.buffered_داده[i],t);
+#پایان_اگر
     }
 
-    if (ZWRITE64(zi->z_filefunc,zi->filestream,zi->ci.buffered_data,zi->ci.pos_in_buffered_data) != zi->ci.pos_in_buffered_data)
+    إذا (ZWRITE64(zi->z_filefunc,zi->filestream,zi->ci.buffered_داده,zi->ci.pos_درون_buffered_داده) != zi->ci.pos_درون_buffered_داده)
       err = ZIP_ERRNO;
 
-    zi->ci.totalCompressedData += zi->ci.pos_in_buffered_data;
+    zi->ci.مجموع_Compressed_داده += zi->ci.pos_درون_buffered_داده;
 
-#ifdef HAVE_BZIP2
-    if(zi->ci.method == Z_BZIP2ED)
+#اگر_تعریف_شده HAVE_BZIP2
+    إذا(zi->ci.روش == Z_BZIP2ED)
     {
-      zi->ci.totalUncompressedData += zi->ci.bstream.total_in_lo32;
-      zi->ci.bstream.total_in_lo32 = 0;
-      zi->ci.bstream.total_in_hi32 = 0;
+      zi->ci.مجموع_Uncompressed_داده += zi->ci.bstream.مجموع_درون_lo32;
+      zi->ci.bstream.مجموع_درون_lo32 = 0;
+      zi->ci.bstream.مجموع_درون_hi32 = 0;
     }
-    else
-#endif
+    وإلا
+#پایان_اگر
     {
-      zi->ci.totalUncompressedData += zi->ci.stream.total_in;
-      zi->ci.stream.total_in = 0;
+      zi->ci.مجموع_Uncompressed_داده += zi->ci.جریان.مجموع_درون;
+      zi->ci.جریان.مجموع_درون = 0;
     }
 
 
-    zi->ci.pos_in_buffered_data = 0;
+    zi->ci.pos_درون_buffered_داده = 0;
 
-    return err;
+    أرجع err;
 }
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file, const void* buf, unsigned int len) {
-    zip64_internal* zi;
-    int err=ZIP_OK;
+خارجي صحيح ZEXPORT zip_Write_درون_File_درون_Zip(zipFile file, ثابت فراغ* buf, بیعلامت صحيح len) {
+    zip64_داخلی* zi;
+    صحيح err=ZIP_OK;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
-    zi = (zip64_internal*)file;
+    إذا (file == عدم)
+        أرجع ZIP_PARAMERROR;
+    zi = (zip64_داخلی*)file;
 
-    if (zi->in_opened_file_inzip == 0)
-        return ZIP_PARAMERROR;
+    إذا (zi->درون_opened_file_inzip == 0)
+        أرجع ZIP_PARAMERROR;
 
-    zi->ci.crc32 = crc32(zi->ci.crc32,buf,(uInt)len);
+    zi->ci.بررسی_چرخهای_32_2 = بررسی_چرخهای_32_2(zi->ci.بررسی_چرخهای_32_2,buf,(uInt)len);
 
-#ifdef HAVE_BZIP2
-    if(zi->ci.method == Z_BZIP2ED && (!zi->ci.raw))
+#اگر_تعریف_شده HAVE_BZIP2
+    إذا(zi->ci.روش == Z_BZIP2ED && (!zi->ci.raw))
     {
-      zi->ci.bstream.next_in = (void*)buf;
-      zi->ci.bstream.avail_in = len;
-      err = BZ_RUN_OK;
+      zi->ci.bstream.بعدی_درون = (فراغ*)buf;
+      zi->ci.bstream.avail_درون = len;
+      err = BZ_پیاپی_OK;
 
-      while ((err==BZ_RUN_OK) && (zi->ci.bstream.avail_in>0))
+      طالما ((err==BZ_پیاپی_OK) && (zi->ci.bstream.avail_درون>0))
       {
-        if (zi->ci.bstream.avail_out == 0)
+        إذا (zi->ci.bstream.avail_بیرون == 0)
         {
-          if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+          إذا (zip64_Flush_Write_میانگیر(zi) == ZIP_ERRNO)
             err = ZIP_ERRNO;
-          zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-          zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
+          zi->ci.bstream.avail_بیرون = (uInt)Z_BUFSIZE;
+          zi->ci.bstream.بعدی_بیرون = (حرف*)zi->ci.buffered_داده;
         }
 
 
-        if(err != BZ_RUN_OK)
-          break;
+        إذا(err != BZ_پیاپی_OK)
+          اكسر;
 
-        if ((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+        إذا ((zi->ci.روش == Z_BZIP2ED) && (!zi->ci.raw))
         {
-          uLong uTotalOutBefore_lo = zi->ci.bstream.total_out_lo32;
+          uLong u_مجموع_بیرون_Before_lo = zi->ci.bstream.مجموع_بیرون_lo32;
 /*          uLong uTotalOutBefore_hi = zi->ci.bstream.total_out_hi32; */
-          err=BZ2_bzCompress(&zi->ci.bstream,  BZ_RUN);
+          err=BZ2_bzCompress(&zi->ci.bstream,  BZ_پیاپی);
 
-          zi->ci.pos_in_buffered_data += (uInt)(zi->ci.bstream.total_out_lo32 - uTotalOutBefore_lo) ;
+          zi->ci.pos_درون_buffered_داده += (uInt)(zi->ci.bstream.مجموع_بیرون_lo32 - u_مجموع_بیرون_Before_lo) ;
         }
       }
 
-      if(err == BZ_RUN_OK)
+      إذا(err == BZ_پیاپی_OK)
         err = ZIP_OK;
     }
-    else
-#endif
+    وإلا
+#پایان_اگر
     {
-      zi->ci.stream.next_in = buf;
-      zi->ci.stream.avail_in = len;
+      zi->ci.جریان.بعدی_درون = buf;
+      zi->ci.جریان.avail_درون = len;
 
-      while ((err==ZIP_OK) && (zi->ci.stream.avail_in>0))
+      طالما ((err==ZIP_OK) && (zi->ci.جریان.avail_درون>0))
       {
-          if (zi->ci.stream.avail_out == 0)
+          إذا (zi->ci.جریان.avail_بیرون == 0)
           {
-              if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+              إذا (zip64_Flush_Write_میانگیر(zi) == ZIP_ERRNO)
                   err = ZIP_ERRNO;
-              zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-              zi->ci.stream.next_out = zi->ci.buffered_data;
+              zi->ci.جریان.avail_بیرون = (uInt)Z_BUFSIZE;
+              zi->ci.جریان.بعدی_بیرون = zi->ci.buffered_داده;
           }
 
 
-          if(err != ZIP_OK)
-              break;
+          إذا(err != ZIP_OK)
+              اكسر;
 
-          if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+          إذا ((zi->ci.روش == Z_DEFLATED) && (!zi->ci.raw))
           {
-              uLong uTotalOutBefore = zi->ci.stream.total_out;
-              err=deflate(&zi->ci.stream,  Z_NO_FLUSH);
+              uLong u_مجموع_بیرون_Before = zi->ci.جریان.مجموع_بیرون;
+              err=deflate(&zi->ci.جریان,  Z_NO_FLUSH);
 
-              zi->ci.pos_in_buffered_data += (uInt)(zi->ci.stream.total_out - uTotalOutBefore) ;
+              zi->ci.pos_درون_buffered_داده += (uInt)(zi->ci.جریان.مجموع_بیرون - u_مجموع_بیرون_Before) ;
           }
-          else
+          وإلا
           {
               uInt copy_this,i;
-              if (zi->ci.stream.avail_in < zi->ci.stream.avail_out)
-                  copy_this = zi->ci.stream.avail_in;
-              else
-                  copy_this = zi->ci.stream.avail_out;
+              إذا (zi->ci.جریان.avail_درون < zi->ci.جریان.avail_بیرون)
+                  copy_this = zi->ci.جریان.avail_درون;
+              وإلا
+                  copy_this = zi->ci.جریان.avail_بیرون;
 
-              for (i = 0; i < copy_this; i++)
-                  *(((char*)zi->ci.stream.next_out)+i) =
-                      *(((const char*)zi->ci.stream.next_in)+i);
+              لكل (i = 0; i < copy_this; i++)
+                  *(((حرف*)zi->ci.جریان.بعدی_بیرون)+i) =
+                      *(((ثابت حرف*)zi->ci.جریان.بعدی_درون)+i);
               {
-                  zi->ci.stream.avail_in -= copy_this;
-                  zi->ci.stream.avail_out-= copy_this;
-                  zi->ci.stream.next_in+= copy_this;
-                  zi->ci.stream.next_out+= copy_this;
-                  zi->ci.stream.total_in+= copy_this;
-                  zi->ci.stream.total_out+= copy_this;
-                  zi->ci.pos_in_buffered_data += copy_this;
+                  zi->ci.جریان.avail_درون -= copy_this;
+                  zi->ci.جریان.avail_بیرون-= copy_this;
+                  zi->ci.جریان.بعدی_درون+= copy_this;
+                  zi->ci.جریان.بعدی_بیرون+= copy_this;
+                  zi->ci.جریان.مجموع_درون+= copy_this;
+                  zi->ci.جریان.مجموع_بیرون+= copy_this;
+                  zi->ci.pos_درون_buffered_داده += copy_this;
               }
           }
       }/* while(...) */
     }
 
-    return err;
+    أرجع err;
 }
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file, uLong uncompressed_size, uLong crc32) {
-    return zipCloseFileInZipRaw64 (file, uncompressed_size, crc32);
+خارجي صحيح ZEXPORT zip_Close_File_درون_Zip_Raw(zipFile file, uLong uncompressed_اندازه, uLong بررسی_چرخهای_32_2) {
+    أرجع zip_Close_File_درون_Zip_Raw64 (file, uncompressed_اندازه, بررسی_چرخهای_32_2);
 }
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file, ZPOS64_T uncompressed_size, uLong crc32) {
-    zip64_internal* zi;
-    ZPOS64_T compressed_size;
-    uLong invalidValue = 0xffffffff;
-    unsigned datasize = 0;
-    int err=ZIP_OK;
+خارجي صحيح ZEXPORT zip_Close_File_درون_Zip_Raw64(zipFile file, ZPOS64_T uncompressed_اندازه, uLong بررسی_چرخهای_32_2) {
+    zip64_داخلی* zi;
+    ZPOS64_T compressed_اندازه;
+    uLong invalid_مقدار = 0xffffffff;
+    بیعلامت datasize = 0;
+    صحيح err=ZIP_OK;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
-    zi = (zip64_internal*)file;
+    إذا (file == عدم)
+        أرجع ZIP_PARAMERROR;
+    zi = (zip64_داخلی*)file;
 
-    if (zi->in_opened_file_inzip == 0)
-        return ZIP_PARAMERROR;
-    zi->ci.stream.avail_in = 0;
+    إذا (zi->درون_opened_file_inzip == 0)
+        أرجع ZIP_PARAMERROR;
+    zi->ci.جریان.avail_درون = 0;
 
-    if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+    إذا ((zi->ci.روش == Z_DEFLATED) && (!zi->ci.raw))
                 {
-                        while (err==ZIP_OK)
+                        طالما (err==ZIP_OK)
                         {
-                                uLong uTotalOutBefore;
-                                if (zi->ci.stream.avail_out == 0)
+                                uLong u_مجموع_بیرون_Before;
+                                إذا (zi->ci.جریان.avail_بیرون == 0)
                                 {
-                                        if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+                                        إذا (zip64_Flush_Write_میانگیر(zi) == ZIP_ERRNO)
                                                 err = ZIP_ERRNO;
-                                        zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-                                        zi->ci.stream.next_out = zi->ci.buffered_data;
+                                        zi->ci.جریان.avail_بیرون = (uInt)Z_BUFSIZE;
+                                        zi->ci.جریان.بعدی_بیرون = zi->ci.buffered_داده;
                                 }
-                                uTotalOutBefore = zi->ci.stream.total_out;
-                                err=deflate(&zi->ci.stream,  Z_FINISH);
-                                zi->ci.pos_in_buffered_data += (uInt)(zi->ci.stream.total_out - uTotalOutBefore) ;
+                                u_مجموع_بیرون_Before = zi->ci.جریان.مجموع_بیرون;
+                                err=deflate(&zi->ci.جریان,  Z_پایان);
+                                zi->ci.pos_درون_buffered_داده += (uInt)(zi->ci.جریان.مجموع_بیرون - u_مجموع_بیرون_Before) ;
                         }
                 }
-    else if ((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+    وإلا إذا ((zi->ci.روش == Z_BZIP2ED) && (!zi->ci.raw))
     {
-#ifdef HAVE_BZIP2
-      err = BZ_FINISH_OK;
-      while (err==BZ_FINISH_OK)
+#اگر_تعریف_شده HAVE_BZIP2
+      err = BZ_پایان_OK;
+      طالما (err==BZ_پایان_OK)
       {
-        uLong uTotalOutBefore;
-        if (zi->ci.bstream.avail_out == 0)
+        uLong u_مجموع_بیرون_Before;
+        إذا (zi->ci.bstream.avail_بیرون == 0)
         {
-          if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
+          إذا (zip64_Flush_Write_میانگیر(zi) == ZIP_ERRNO)
             err = ZIP_ERRNO;
-          zi->ci.bstream.avail_out = (uInt)Z_BUFSIZE;
-          zi->ci.bstream.next_out = (char*)zi->ci.buffered_data;
+          zi->ci.bstream.avail_بیرون = (uInt)Z_BUFSIZE;
+          zi->ci.bstream.بعدی_بیرون = (حرف*)zi->ci.buffered_داده;
         }
-        uTotalOutBefore = zi->ci.bstream.total_out_lo32;
-        err=BZ2_bzCompress(&zi->ci.bstream,  BZ_FINISH);
-        if(err == BZ_STREAM_END)
-          err = Z_STREAM_END;
+        u_مجموع_بیرون_Before = zi->ci.bstream.مجموع_بیرون_lo32;
+        err=BZ2_bzCompress(&zi->ci.bstream,  BZ_پایان);
+        إذا(err == BZ_جریان_انتها)
+          err = Z_جریان_انتها;
 
-        zi->ci.pos_in_buffered_data += (uInt)(zi->ci.bstream.total_out_lo32 - uTotalOutBefore);
+        zi->ci.pos_درون_buffered_داده += (uInt)(zi->ci.bstream.مجموع_بیرون_lo32 - u_مجموع_بیرون_Before);
       }
 
-      if(err == BZ_FINISH_OK)
+      إذا(err == BZ_پایان_OK)
         err = ZIP_OK;
-#endif
+#پایان_اگر
     }
 
-    if (err==Z_STREAM_END)
+    إذا (err==Z_جریان_انتها)
         err=ZIP_OK; /* this is normal */
 
-    if ((zi->ci.pos_in_buffered_data>0) && (err==ZIP_OK))
+    إذا ((zi->ci.pos_درون_buffered_داده>0) && (err==ZIP_OK))
                 {
-        if (zip64FlushWriteBuffer(zi)==ZIP_ERRNO)
+        إذا (zip64_Flush_Write_میانگیر(zi)==ZIP_ERRNO)
             err = ZIP_ERRNO;
                 }
 
-    if ((zi->ci.method == Z_DEFLATED) && (!zi->ci.raw))
+    إذا ((zi->ci.روش == Z_DEFLATED) && (!zi->ci.raw))
     {
-        int tmp_err = deflateEnd(&zi->ci.stream);
-        if (err == ZIP_OK)
+        صحيح tmp_err = deflate_انتها(&zi->ci.جریان);
+        إذا (err == ZIP_OK)
             err = tmp_err;
-        zi->ci.stream_initialised = 0;
+        zi->ci.جریان_initialised = 0;
     }
-#ifdef HAVE_BZIP2
-    else if((zi->ci.method == Z_BZIP2ED) && (!zi->ci.raw))
+#اگر_تعریف_شده HAVE_BZIP2
+    وإلا إذا((zi->ci.روش == Z_BZIP2ED) && (!zi->ci.raw))
     {
-      int tmperr = BZ2_bzCompressEnd(&zi->ci.bstream);
-                        if (err==ZIP_OK)
+      صحيح tmperr = BZ2_bz_Compress_انتها(&zi->ci.bstream);
+                        إذا (err==ZIP_OK)
                                 err = tmperr;
-                        zi->ci.stream_initialised = 0;
+                        zi->ci.جریان_initialised = 0;
     }
-#endif
+#پایان_اگر
 
-    if (!zi->ci.raw)
+    إذا (!zi->ci.raw)
     {
-        crc32 = (uLong)zi->ci.crc32;
-        uncompressed_size = zi->ci.totalUncompressedData;
+        بررسی_چرخهای_32_2 = (uLong)zi->ci.بررسی_چرخهای_32_2;
+        uncompressed_اندازه = zi->ci.مجموع_Uncompressed_داده;
     }
-    compressed_size = zi->ci.totalCompressedData;
+    compressed_اندازه = zi->ci.مجموع_Compressed_داده;
 
 #    ifndef NOCRYPT
-    compressed_size += zi->ci.crypt_header_size;
+    compressed_اندازه += zi->ci.crypt_سرآیند_اندازه;
 #    endif
 
     /* update Current Item crc and sizes, */
-    if(compressed_size >= 0xffffffff || uncompressed_size >= 0xffffffff || zi->ci.pos_local_header >= 0xffffffff)
+    إذا(compressed_اندازه >= 0xffffffff || uncompressed_اندازه >= 0xffffffff || zi->ci.pos_local_سرآیند >= 0xffffffff)
     {
       /*version Made by*/
-      zip64local_putValue_inmemory(zi->ci.central_header+4,(uLong)45,2);
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+4,(uLong)45,2);
       /*version needed*/
-      zip64local_putValue_inmemory(zi->ci.central_header+6,(uLong)45,2);
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+6,(uLong)45,2);
 
     }
 
-    zip64local_putValue_inmemory(zi->ci.central_header+16,crc32,4); /*crc*/
+    zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+16,بررسی_چرخهای_32_2,4); /*crc*/
 
 
-    if(compressed_size >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+20, invalidValue,4); /*compr size*/
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+20, compressed_size,4); /*compr size*/
+    إذا(compressed_اندازه >= 0xffffffff)
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+20, invalid_مقدار,4); /*compr size*/
+    وإلا
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+20, compressed_اندازه,4); /*compr size*/
 
     /* set internal file attributes field */
-    if (zi->ci.stream.data_type == Z_ASCII)
-        zip64local_putValue_inmemory(zi->ci.central_header+36,(uLong)Z_ASCII,2);
+    إذا (zi->ci.جریان.داده_type == Z_ASCII)
+        zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+36,(uLong)Z_ASCII,2);
 
-    if(uncompressed_size >= 0xffffffff)
-      zip64local_putValue_inmemory(zi->ci.central_header+24, invalidValue,4); /*uncompr size*/
-    else
-      zip64local_putValue_inmemory(zi->ci.central_header+24, uncompressed_size,4); /*uncompr size*/
+    إذا(uncompressed_اندازه >= 0xffffffff)
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+24, invalid_مقدار,4); /*uncompr size*/
+    وإلا
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+24, uncompressed_اندازه,4); /*uncompr size*/
 
     /* Add ZIP64 extra info field for uncompressed size */
-    if(uncompressed_size >= 0xffffffff)
+    إذا(uncompressed_اندازه >= 0xffffffff)
       datasize += 8;
 
     /* Add ZIP64 extra info field for compressed size */
-    if(compressed_size >= 0xffffffff)
+    إذا(compressed_اندازه >= 0xffffffff)
       datasize += 8;
 
     /* Add ZIP64 extra info field for relative offset to local file header of current file */
-    if(zi->ci.pos_local_header >= 0xffffffff)
+    إذا(zi->ci.pos_local_سرآیند >= 0xffffffff)
       datasize += 8;
 
-    if(datasize > 0)
+    إذا(datasize > 0)
     {
-      char* p = NULL;
+      حرف* p = عدم;
 
-      if((uLong)(datasize + 4) > zi->ci.size_centralExtraFree)
+      إذا((uLong)(datasize + 4) > zi->ci.اندازه_central_Extra_Free)
       {
         /* we cannot write more data to the buffer that we have room for. */
-        return ZIP_BADZIPFILE;
+        أرجع ZIP_BADZIPFILE;
       }
 
-      p = zi->ci.central_header + zi->ci.size_centralheader;
+      p = zi->ci.central_سرآیند + zi->ci.اندازه_centralheader;
 
       /* Add Extra Information Header for 'ZIP64 information' */
-      zip64local_putValue_inmemory(p, 0x0001, 2); /* HeaderID */
+      zip64local_put_مقدار_inmemory(p, 0x0001, 2); /* HeaderID */
       p += 2;
-      zip64local_putValue_inmemory(p, datasize, 2); /* DataSize */
+      zip64local_put_مقدار_inmemory(p, datasize, 2); /* DataSize */
       p += 2;
 
-      if(uncompressed_size >= 0xffffffff)
+      إذا(uncompressed_اندازه >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, uncompressed_size, 8);
+        zip64local_put_مقدار_inmemory(p, uncompressed_اندازه, 8);
         p += 8;
       }
 
-      if(compressed_size >= 0xffffffff)
+      إذا(compressed_اندازه >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, compressed_size, 8);
+        zip64local_put_مقدار_inmemory(p, compressed_اندازه, 8);
         p += 8;
       }
 
-      if(zi->ci.pos_local_header >= 0xffffffff)
+      إذا(zi->ci.pos_local_سرآیند >= 0xffffffff)
       {
-        zip64local_putValue_inmemory(p, zi->ci.pos_local_header, 8);
+        zip64local_put_مقدار_inmemory(p, zi->ci.pos_local_سرآیند, 8);
         p += 8;
       }
 
       /* Update how much extra free space we got in the memory buffer
          and increase the centralheader size so the new ZIP64 fields are included
          ( 4 below is the size of HeaderID and DataSize field ) */
-      zi->ci.size_centralExtraFree -= datasize + 4;
-      zi->ci.size_centralheader += datasize + 4;
+      zi->ci.اندازه_central_Extra_Free -= datasize + 4;
+      zi->ci.اندازه_centralheader += datasize + 4;
 
       /* Update the extra info size field */
-      zi->ci.size_centralExtra += datasize + 4;
-      zip64local_putValue_inmemory(zi->ci.central_header+30,(uLong)zi->ci.size_centralExtra,2);
+      zi->ci.اندازه_central_Extra += datasize + 4;
+      zip64local_put_مقدار_inmemory(zi->ci.central_سرآیند+30,(uLong)zi->ci.اندازه_central_Extra,2);
     }
 
-    if (err==ZIP_OK)
-        err = add_data_in_datablock(&zi->central_dir, zi->ci.central_header, (uLong)zi->ci.size_centralheader);
+    إذا (err==ZIP_OK)
+        err = جمع_کن_داده_درون_datablock(&zi->central_dir, zi->ci.central_سرآیند, (uLong)zi->ci.اندازه_centralheader);
 
-    free(zi->ci.central_header);
+    حرر(zi->ci.central_سرآیند);
 
-    if (err==ZIP_OK)
+    إذا (err==ZIP_OK)
     {
         /* Update the LocalFileHeader with the new values. */
 
         ZPOS64_T cur_pos_inzip = ZTELL64(zi->z_filefunc,zi->filestream);
 
-        if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_local_header + 14,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        إذا (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_local_سرآیند + 14,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
             err = ZIP_ERRNO;
 
-        if (err==ZIP_OK)
-            err = zip64local_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
+        إذا (err==ZIP_OK)
+            err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,بررسی_چرخهای_32_2,4); /* crc 32, unknown */
 
-        if(uncompressed_size >= 0xffffffff || compressed_size >= 0xffffffff )
+        إذا(uncompressed_اندازه >= 0xffffffff || compressed_اندازه >= 0xffffffff )
         {
-          if(zi->ci.pos_zip64extrainfo > 0)
+          إذا(zi->ci.pos_zip64extrainfo > 0)
           {
             /* Update the size in the ZIP64 extended field. */
-            if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_zip64extrainfo + 4,ZLIB_FILEFUNC_SEEK_SET)!=0)
+            إذا (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_zip64extrainfo + 4,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
               err = ZIP_ERRNO;
 
-            if (err==ZIP_OK) /* compressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc, zi->filestream, uncompressed_size, 8);
+            إذا (err==ZIP_OK) /* compressed size, unknown */
+              err = zip64local_put_مقدار(&zi->z_filefunc, zi->filestream, uncompressed_اندازه, 8);
 
-            if (err==ZIP_OK) /* uncompressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc, zi->filestream, compressed_size, 8);
+            إذا (err==ZIP_OK) /* uncompressed size, unknown */
+              err = zip64local_put_مقدار(&zi->z_filefunc, zi->filestream, compressed_اندازه, 8);
           }
-          else
+          وإلا
               err = ZIP_BADZIPFILE; /* Caller passed zip64 = 0, so no room for zip64 info -> fatal */
         }
-        else
+        وإلا
         {
-          if (err==ZIP_OK) /* compressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
+          إذا (err==ZIP_OK) /* compressed size, unknown */
+              err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,compressed_اندازه,4);
 
-          if (err==ZIP_OK) /* uncompressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+          إذا (err==ZIP_OK) /* uncompressed size, unknown */
+              err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,uncompressed_اندازه,4);
         }
 
-        if (ZSEEK64(zi->z_filefunc,zi->filestream, cur_pos_inzip,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        إذا (ZSEEK64(zi->z_filefunc,zi->filestream, cur_pos_inzip,ZLIB_FILEFUNC_SEEK_مجموعه)!=0)
             err = ZIP_ERRNO;
     }
 
-    zi->number_entry ++;
-    zi->in_opened_file_inzip = 0;
+    zi->عدد_مدخل ++;
+    zi->درون_opened_file_inzip = 0;
 
-    return err;
+    أرجع err;
 }
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file) {
-    return zipCloseFileInZipRaw (file,0,0);
+خارجي صحيح ZEXPORT zip_Close_File_درون_Zip(zipFile file) {
+    أرجع zip_Close_File_درون_Zip_Raw (file,0,0);
 }
 
-local int Write_Zip64EndOfCentralDirectoryLocator(zip64_internal* zi, ZPOS64_T zip64eocd_pos_inzip) {
-  int err = ZIP_OK;
-  ZPOS64_T pos = zip64eocd_pos_inzip - zi->add_position_when_writing_offset;
+local صحيح Write_Zip64_انتها_از_Central_Directory_Locator(zip64_داخلی* zi, ZPOS64_T zip64eocd_pos_inzip) {
+  صحيح err = ZIP_OK;
+  ZPOS64_T pos = zip64eocd_pos_inzip - zi->جمع_کن_position_when_writing_جابه_جایی;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDLOCHEADERMAGIC,4);
+  err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDLOCHEADERMAGIC,4);
 
   /*num disks*/
-    if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+    إذا (err==ZIP_OK) /* number of the disk with the start of the central directory */
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
   /*relative offset*/
-    if (err==ZIP_OK) /* Relative offset to the Zip64EndOfCentralDirectory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, pos,8);
+    إذا (err==ZIP_OK) /* Relative offset to the Zip64EndOfCentralDirectory */
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream, pos,8);
 
   /*total disks*/ /* Do not support spawning of disk so always say 1 here*/
-    if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)1,4);
+    إذا (err==ZIP_OK) /* number of the disk with the start of the central directory */
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)1,4);
 
-    return err;
+    أرجع err;
 }
 
-local int Write_Zip64EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centraldir, ZPOS64_T centraldir_pos_inzip) {
-  int err = ZIP_OK;
+local صحيح Write_Zip64_انتها_از_Central_Directory_رکورد(zip64_داخلی* zi, uLong اندازه_centraldir, ZPOS64_T centraldir_pos_inzip) {
+  صحيح err = ZIP_OK;
 
-  uLong Zip64DataSize = 44;
+  uLong Zip64_داده_اندازه = 44;
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDHEADERMAGIC,4);
+  err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)ZIP64ENDHEADERMAGIC,4);
 
-  if (err==ZIP_OK) /* size of this 'zip64 end of central directory' */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(ZPOS64_T)Zip64DataSize,8); /* why ZPOS64_T of this ? */
+  إذا (err==ZIP_OK) /* size of this 'zip64 end of central directory' */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(ZPOS64_T)Zip64_داده_اندازه,8); /* why ZPOS64_T of this ? */
 
-  if (err==ZIP_OK) /* version made by */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);
+  إذا (err==ZIP_OK) /* version made by */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)45,2);
 
-  if (err==ZIP_OK) /* version needed */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);
+  إذا (err==ZIP_OK) /* version needed */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)45,2);
 
-  if (err==ZIP_OK) /* number of this disk */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+  إذا (err==ZIP_OK) /* number of this disk */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
-  if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);
+  إذا (err==ZIP_OK) /* number of the disk with the start of the central directory */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0,4);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir on this disk */
-    err = zip64local_putValue(&zi->z_filefunc, zi->filestream, zi->number_entry, 8);
+  إذا (err==ZIP_OK) /* total number of entries in the central dir on this disk */
+    err = zip64local_put_مقدار(&zi->z_filefunc, zi->filestream, zi->عدد_مدخل, 8);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir */
-    err = zip64local_putValue(&zi->z_filefunc, zi->filestream, zi->number_entry, 8);
+  إذا (err==ZIP_OK) /* total number of entries in the central dir */
+    err = zip64local_put_مقدار(&zi->z_filefunc, zi->filestream, zi->عدد_مدخل, 8);
 
-  if (err==ZIP_OK) /* size of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(ZPOS64_T)size_centraldir,8);
+  إذا (err==ZIP_OK) /* size of the central directory */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(ZPOS64_T)اندازه_centraldir,8);
 
-  if (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
+  إذا (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
   {
-    ZPOS64_T pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (ZPOS64_T)pos,8);
+    ZPOS64_T pos = centraldir_pos_inzip - zi->جمع_کن_position_when_writing_جابه_جایی;
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream, (ZPOS64_T)pos,8);
   }
-  return err;
+  أرجع err;
 }
 
-local int Write_EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centraldir, ZPOS64_T centraldir_pos_inzip) {
-  int err = ZIP_OK;
+local صحيح Write_انتها_از_Central_Directory_رکورد(zip64_داخلی* zi, uLong اندازه_centraldir, ZPOS64_T centraldir_pos_inzip) {
+  صحيح err = ZIP_OK;
 
   /*signature*/
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)ENDHEADERMAGIC,4);
+  err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)ENDHEADERMAGIC,4);
 
-  if (err==ZIP_OK) /* number of this disk */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,2);
+  إذا (err==ZIP_OK) /* number of this disk */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0,2);
 
-  if (err==ZIP_OK) /* number of the disk with the start of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,2);
+  إذا (err==ZIP_OK) /* number of the disk with the start of the central directory */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0,2);
 
-  if (err==ZIP_OK) /* total number of entries in the central dir on this disk */
+  إذا (err==ZIP_OK) /* total number of entries in the central dir on this disk */
   {
     {
-      if(zi->number_entry >= 0xFFFF)
-        err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
-      else
-        err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->number_entry,2);
+      إذا(zi->عدد_مدخل >= 0xFFFF)
+        err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
+      وإلا
+        err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)zi->عدد_مدخل,2);
     }
   }
 
-  if (err==ZIP_OK) /* total number of entries in the central dir */
+  إذا (err==ZIP_OK) /* total number of entries in the central dir */
   {
-    if(zi->number_entry >= 0xFFFF)
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->number_entry,2);
+    إذا(zi->عدد_مدخل >= 0xFFFF)
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)0xffff,2); /* use value in ZIP64 record */
+    وإلا
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)zi->عدد_مدخل,2);
   }
 
-  if (err==ZIP_OK) /* size of the central directory */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_centraldir,4);
+  إذا (err==ZIP_OK) /* size of the central directory */
+    err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)اندازه_centraldir,4);
 
-  if (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
+  إذا (err==ZIP_OK) /* offset of start of central directory with respect to the starting disk number */
   {
-    ZPOS64_T pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    if(pos >= 0xffffffff)
+    ZPOS64_T pos = centraldir_pos_inzip - zi->جمع_کن_position_when_writing_جابه_جایی;
+    إذا(pos >= 0xffffffff)
     {
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (uLong)0xffffffff,4);
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream, (uLong)0xffffffff,4);
     }
-    else
-      err = zip64local_putValue(&zi->z_filefunc,zi->filestream, (uLong)(centraldir_pos_inzip - zi->add_position_when_writing_offset),4);
+    وإلا
+      err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream, (uLong)(centraldir_pos_inzip - zi->جمع_کن_position_when_writing_جابه_جایی),4);
   }
 
-   return err;
+   أرجع err;
 }
 
-local int Write_GlobalComment(zip64_internal* zi, const char* global_comment) {
-  int err = ZIP_OK;
-  uInt size_global_comment = 0;
+local صحيح Write_GlobalComment(zip64_داخلی* zi, ثابت حرف* global_comment) {
+  صحيح err = ZIP_OK;
+  uInt اندازه_global_comment = 0;
 
-  if(global_comment != NULL)
-    size_global_comment = (uInt)strlen(global_comment);
+  إذا(global_comment != عدم)
+    اندازه_global_comment = (uInt)طول_رشته(global_comment);
 
-  err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)size_global_comment,2);
+  err = zip64local_put_مقدار(&zi->z_filefunc,zi->filestream,(uLong)اندازه_global_comment,2);
 
-  if (err == ZIP_OK && size_global_comment > 0)
+  إذا (err == ZIP_OK && اندازه_global_comment > 0)
   {
-    if (ZWRITE64(zi->z_filefunc,zi->filestream, global_comment, size_global_comment) != size_global_comment)
+    إذا (ZWRITE64(zi->z_filefunc,zi->filestream, global_comment, اندازه_global_comment) != اندازه_global_comment)
       err = ZIP_ERRNO;
   }
-  return err;
+  أرجع err;
 }
 
-extern int ZEXPORT zipClose(zipFile file, const char* global_comment) {
-    zip64_internal* zi;
-    int err = 0;
-    uLong size_centraldir = 0;
+خارجي صحيح ZEXPORT zipClose(zipFile file, ثابت حرف* global_comment) {
+    zip64_داخلی* zi;
+    صحيح err = 0;
+    uLong اندازه_centraldir = 0;
     ZPOS64_T centraldir_pos_inzip;
     ZPOS64_T pos;
 
-    if (file == NULL)
-        return ZIP_PARAMERROR;
+    إذا (file == عدم)
+        أرجع ZIP_PARAMERROR;
 
-    zi = (zip64_internal*)file;
+    zi = (zip64_داخلی*)file;
 
-    if (zi->in_opened_file_inzip == 1)
+    إذا (zi->درون_opened_file_inzip == 1)
     {
-        err = zipCloseFileInZip (file);
+        err = zip_Close_File_درون_Zip (file);
     }
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    if (global_comment==NULL)
+#اگر_تعریف_نشده NO_ADDFILEINEXISTINGZIP
+    إذا (global_comment==عدم)
         global_comment = zi->globalcomment;
-#endif
+#پایان_اگر
 
     centraldir_pos_inzip = ZTELL64(zi->z_filefunc,zi->filestream);
 
-    if (err==ZIP_OK)
+    إذا (err==ZIP_OK)
     {
-        linkedlist_datablock_internal* ldi = zi->central_dir.first_block;
-        while (ldi!=NULL)
+        linkedlist_datablock_داخلی* ldi = zi->central_dir.اولی_بلوک;
+        طالما (ldi!=عدم)
         {
-            if ((err==ZIP_OK) && (ldi->filled_in_this_block>0))
+            إذا ((err==ZIP_OK) && (ldi->filled_درون_this_بلوک>0))
             {
-                if (ZWRITE64(zi->z_filefunc,zi->filestream, ldi->data, ldi->filled_in_this_block) != ldi->filled_in_this_block)
+                إذا (ZWRITE64(zi->z_filefunc,zi->filestream, ldi->داده, ldi->filled_درون_this_بلوک) != ldi->filled_درون_this_بلوک)
                     err = ZIP_ERRNO;
             }
 
-            size_centraldir += ldi->filled_in_this_block;
-            ldi = ldi->next_datablock;
+            اندازه_centraldir += ldi->filled_درون_this_بلوک;
+            ldi = ldi->بعدی_datablock;
         }
     }
     free_linkedlist(&(zi->central_dir));
 
-    set_end(&zi->set);          /* set was zeroed, so this is safe */
+    مجموعه_انتها(&zi->مجموعه);          /* set was zeroed, so this is safe */
 
-    pos = centraldir_pos_inzip - zi->add_position_when_writing_offset;
-    if(pos >= 0xffffffff || zi->number_entry >= 0xFFFF)
+    pos = centraldir_pos_inzip - zi->جمع_کن_position_when_writing_جابه_جایی;
+    إذا(pos >= 0xffffffff || zi->عدد_مدخل >= 0xFFFF)
     {
       ZPOS64_T Zip64EOCDpos = ZTELL64(zi->z_filefunc,zi->filestream);
-      Write_Zip64EndOfCentralDirectoryRecord(zi, size_centraldir, centraldir_pos_inzip);
+      Write_Zip64_انتها_از_Central_Directory_رکورد(zi, اندازه_centraldir, centraldir_pos_inzip);
 
-      Write_Zip64EndOfCentralDirectoryLocator(zi, Zip64EOCDpos);
+      Write_Zip64_انتها_از_Central_Directory_Locator(zi, Zip64EOCDpos);
     }
 
-    if (err==ZIP_OK)
-      err = Write_EndOfCentralDirectoryRecord(zi, size_centraldir, centraldir_pos_inzip);
+    إذا (err==ZIP_OK)
+      err = Write_انتها_از_Central_Directory_رکورد(zi, اندازه_centraldir, centraldir_pos_inzip);
 
-    if(err == ZIP_OK)
+    إذا(err == ZIP_OK)
       err = Write_GlobalComment(zi, global_comment);
 
-    if (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
-        if (err == ZIP_OK)
+    إذا (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
+        إذا (err == ZIP_OK)
             err = ZIP_ERRNO;
 
-#ifndef NO_ADDFILEINEXISTINGZIP
-    free(zi->globalcomment);
-#endif
-    free(zi);
+#اگر_تعریف_نشده NO_ADDFILEINEXISTINGZIP
+    حرر(zi->globalcomment);
+#پایان_اگر
+    حرر(zi);
 
-    return err;
+    أرجع err;
 }
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader) {
-  char* p = pData;
-  int size = 0;
-  char* pNewHeader;
-  char* pTmp;
-  short header;
-  short dataSize;
+خارجي صحيح ZEXPORT zip_Remove_Extra_Info_بلوک(حرف* p_داده, صحيح* داده_Len, کوتاه s_سرآیند) {
+  حرف* p = p_داده;
+  صحيح اندازه = 0;
+  حرف* p_New_سرآیند;
+  حرف* pTmp;
+  کوتاه سرآیند;
+  کوتاه داده_اندازه;
 
-  int retVal = ZIP_OK;
+  صحيح retVal = ZIP_OK;
 
-  if(pData == NULL || dataLen == NULL || *dataLen < 4)
-    return ZIP_PARAMERROR;
+  إذا(p_داده == عدم || داده_Len == عدم || *داده_Len < 4)
+    أرجع ZIP_PARAMERROR;
 
-  pNewHeader = (char*)ALLOC((unsigned)*dataLen);
-  pTmp = pNewHeader;
+  p_New_سرآیند = (حرف*)ALLOC((بیعلامت)*داده_Len);
+  pTmp = p_New_سرآیند;
 
-  while(p < (pData + *dataLen))
+  طالما(p < (p_داده + *داده_Len))
   {
-    header = *(short*)p;
-    dataSize = *(((short*)p)+1);
+    سرآیند = *(کوتاه*)p;
+    داده_اندازه = *(((کوتاه*)p)+1);
 
-    if( header == sHeader ) /* Header found. */
+    إذا( سرآیند == s_سرآیند ) /* Header found. */
     {
-      p += dataSize + 4; /* skip it. do not copy to temp buffer */
+      p += داده_اندازه + 4; /* skip it. do not copy to temp buffer */
     }
-    else
+    وإلا
     {
       /* Extra Info block should not be removed, So copy it to the temp buffer. */
-      memcpy(pTmp, p, dataSize + 4);
-      p += dataSize + 4;
-      size += dataSize + 4;
+      کپی_حافظه(pTmp, p, داده_اندازه + 4);
+      p += داده_اندازه + 4;
+      اندازه += داده_اندازه + 4;
     }
 
   }
 
-  if(size < *dataLen)
+  إذا(اندازه < *داده_Len)
   {
     /* clean old extra info block. */
-    memset(pData,0, *dataLen);
+    memset(p_داده,0, *داده_Len);
 
     /* copy the new extra info block over the old */
-    if(size > 0)
-      memcpy(pData, pNewHeader, size);
+    إذا(اندازه > 0)
+      کپی_حافظه(p_داده, p_New_سرآیند, اندازه);
 
     /* set the new extra info size */
-    *dataLen = size;
+    *داده_Len = اندازه;
 
     retVal = ZIP_OK;
   }
-  else
+  وإلا
     retVal = ZIP_ERRNO;
 
-  free(pNewHeader);
+  حرر(p_New_سرآیند);
 
-  return retVal;
+  أرجع retVal;
 }

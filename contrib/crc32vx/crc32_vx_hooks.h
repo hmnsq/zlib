@@ -1,9 +1,9 @@
-#ifndef CRC32_VX_HOOKS_H
-#define CRC32_VX_HOOKS_H
+#اگر_تعریف_نشده بررسی_چرخهای_32_VX_HOOKS_H
+#تعریف_کن بررسی_چرخهای_32_VX_HOOKS_H
 
 /**
  * CRC HOOKS
  */
-ZLIB_INTERNAL extern unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len);
+ZLIB_داخلی خارجي بیعلامت دراز (*بررسی_چرخهای_32_z_hook)(بیعلامت دراز بررسی_چرخهای, ثابت بیعلامت حرف FAR *buf, z_اندازه_t len);
 
-#endif /* CRC32_VX_HOOKS_H */
+#پایان_اگر /* CRC32_VX_HOOKS_H */

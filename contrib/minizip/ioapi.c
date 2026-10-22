@@ -10,66 +10,66 @@
 
 */
 
-#if defined(_WIN32) && (!(defined(_CRT_SECURE_NO_WARNINGS)))
-        #define _CRT_SECURE_NO_WARNINGS
-#endif
+#إذا defined(_WIN32) && (!(defined(_CRT_SECURE_NO_WARNINGS)))
+        #تعریف_کن _CRT_SECURE_NO_WARNINGS
+#پایان_اگر
 
-#if defined(__APPLE__) || defined(IOAPI_NO_64) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64) || (defined(__ANDROID_API__) && __ANDROID_API__ < 24)
+#إذا defined(__APPLE__) || defined(IOAPI_NO_64) || defined(__HAIKU__) || defined(MINIZIP_FOPEN_NO_64) || (defined(__ANDROID_API__) && __ANDROID_API__ < 24)
 /* In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions */
-#define FOPEN_FUNC(filename, mode) fopen(filename, mode)
-#define FTELLO_FUNC(stream) ftello(stream)
-#define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
-#else
-#define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
-#define FTELLO_FUNC(stream) ftello64(stream)
-#define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
-#endif
+#تعریف_کن FOPEN_FUNC(filename, نما) fopen(filename, نما)
+#تعریف_کن FTELLO_FUNC(جریان) ftello(جریان)
+#تعریف_کن FSEEKO_FUNC(جریان, جابه_جایی, origin) fseeko(جریان, جابه_جایی, origin)
+#وإلا
+#تعریف_کن FOPEN_FUNC(filename, نما) fopen64(filename, نما)
+#تعریف_کن FTELLO_FUNC(جریان) ftello64(جریان)
+#تعریف_کن FSEEKO_FUNC(جریان, جابه_جایی, origin) fseeko64(جریان, جابه_جایی, origin)
+#پایان_اگر
 
 
-#include "ioapi.h"
+#ضمن "ioapi.h"
 
-voidpf call_zopen64 (const zlib_filefunc64_32_def* pfilefunc, const void*filename, int mode) {
-    if (pfilefunc->zfile_func64.zopen64_file != NULL)
-        return (*(pfilefunc->zfile_func64.zopen64_file)) (pfilefunc->zfile_func64.opaque,filename,mode);
-    else
+voidpf call_zopen64 (ثابت zlib_filefunc64_32_def* pfilefunc, ثابت فراغ*filename, صحيح نما) {
+    إذا (pfilefunc->zfile_func64.zopen64_file != عدم)
+        أرجع (*(pfilefunc->zfile_func64.zopen64_file)) (pfilefunc->zfile_func64.opaque,filename,نما);
+    وإلا
     {
-        return (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque,(const char*)filename,mode);
+        أرجع (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque,(ثابت حرف*)filename,نما);
     }
 }
 
-long call_zseek64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, int origin) {
-    if (pfilefunc->zfile_func64.zseek64_file != NULL)
-        return (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,offset,origin);
-    else
+دراز call_zseek64 (ثابت zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T جابه_جایی, صحيح origin) {
+    إذا (pfilefunc->zfile_func64.zseek64_file != عدم)
+        أرجع (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,جابه_جایی,origin);
+    وإلا
     {
-        uLong offsetTruncated = (uLong)offset;
-        if (offsetTruncated != offset)
-            return -1;
-        else
-            return (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,filestream,offsetTruncated,origin);
+        uLong جابه_جایی_Truncated = (uLong)جابه_جایی;
+        إذا (جابه_جایی_Truncated != جابه_جایی)
+            أرجع -1;
+        وإلا
+            أرجع (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,filestream,جابه_جایی_Truncated,origin);
     }
 }
 
-ZPOS64_T call_ztell64 (const zlib_filefunc64_32_def* pfilefunc, voidpf filestream) {
-    if (pfilefunc->zfile_func64.zseek64_file != NULL)
-        return (*(pfilefunc->zfile_func64.ztell64_file)) (pfilefunc->zfile_func64.opaque,filestream);
-    else
+ZPOS64_T call_ztell64 (ثابت zlib_filefunc64_32_def* pfilefunc, voidpf filestream) {
+    إذا (pfilefunc->zfile_func64.zseek64_file != عدم)
+        أرجع (*(pfilefunc->zfile_func64.ztell64_file)) (pfilefunc->zfile_func64.opaque,filestream);
+    وإلا
     {
         uLong tell_uLong = (uLong)(*(pfilefunc->ztell32_file))(pfilefunc->zfile_func64.opaque,filestream);
-        if ((tell_uLong) == MAXU32)
-            return (ZPOS64_T)-1;
-        else
-            return tell_uLong;
+        إذا ((tell_uLong) == MAXU32)
+            أرجع (ZPOS64_T)-1;
+        وإلا
+            أرجع tell_uLong;
     }
 }
 
-void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32, const zlib_filefunc_def* p_filefunc32) {
-    p_filefunc64_32->zfile_func64.zopen64_file = NULL;
+فراغ fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32, ثابت zlib_filefunc_def* p_filefunc32) {
+    p_filefunc64_32->zfile_func64.zopen64_file = عدم;
     p_filefunc64_32->zopen32_file = p_filefunc32->zopen_file;
     p_filefunc64_32->zfile_func64.zread_file = p_filefunc32->zread_file;
     p_filefunc64_32->zfile_func64.zwrite_file = p_filefunc32->zwrite_file;
-    p_filefunc64_32->zfile_func64.ztell64_file = NULL;
-    p_filefunc64_32->zfile_func64.zseek64_file = NULL;
+    p_filefunc64_32->zfile_func64.ztell64_file = عدم;
+    p_filefunc64_32->zfile_func64.zseek64_file = عدم;
     p_filefunc64_32->zfile_func64.zclose_file = p_filefunc32->zclose_file;
     p_filefunc64_32->zfile_func64.zerror_file = p_filefunc32->zerror_file;
     p_filefunc64_32->zfile_func64.opaque = p_filefunc32->opaque;
@@ -79,136 +79,136 @@ void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filef
 
 
 
-static voidpf ZCALLBACK fopen_file_func(voidpf opaque, const char* filename, int mode) {
-    FILE* file = NULL;
-    const char* mode_fopen = NULL;
-    (void)opaque;
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
-        mode_fopen = "rb";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
-        mode_fopen = "r+b";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_CREATE)
-        mode_fopen = "wb";
+ساكن voidpf ZCALLBACK fopen_file_func(voidpf opaque, ثابت حرف* filename, صحيح نما) {
+    FILE* file = عدم;
+    ثابت حرف* نما_fopen = عدم;
+    (فراغ)opaque;
+    إذا ((نما & ZLIB_FILEFUNC_نما_READWRITEFILTER)==ZLIB_FILEFUNC_نما_READ)
+        نما_fopen = "rb";
+    وإلا
+    إذا (نما & ZLIB_FILEFUNC_نما_EXISTING)
+        نما_fopen = "r+b";
+    وإلا
+    إذا (نما & ZLIB_FILEFUNC_نما_CREATE)
+        نما_fopen = "wb";
 
-    if ((filename!=NULL) && (mode_fopen != NULL))
-        file = fopen(filename, mode_fopen);
-    return file;
+    إذا ((filename!=عدم) && (نما_fopen != عدم))
+        file = fopen(filename, نما_fopen);
+    أرجع file;
 }
 
-static voidpf ZCALLBACK fopen64_file_func(voidpf opaque, const void* filename, int mode) {
-    FILE* file = NULL;
-    const char* mode_fopen = NULL;
-    (void)opaque;
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
-        mode_fopen = "rb";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
-        mode_fopen = "r+b";
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_CREATE)
-        mode_fopen = "wb";
+ساكن voidpf ZCALLBACK fopen64_file_func(voidpf opaque, ثابت فراغ* filename, صحيح نما) {
+    FILE* file = عدم;
+    ثابت حرف* نما_fopen = عدم;
+    (فراغ)opaque;
+    إذا ((نما & ZLIB_FILEFUNC_نما_READWRITEFILTER)==ZLIB_FILEFUNC_نما_READ)
+        نما_fopen = "rb";
+    وإلا
+    إذا (نما & ZLIB_FILEFUNC_نما_EXISTING)
+        نما_fopen = "r+b";
+    وإلا
+    إذا (نما & ZLIB_FILEFUNC_نما_CREATE)
+        نما_fopen = "wb";
 
-    if ((filename!=NULL) && (mode_fopen != NULL))
-        file = FOPEN_FUNC((const char*)filename, mode_fopen);
-    return file;
+    إذا ((filename!=عدم) && (نما_fopen != عدم))
+        file = FOPEN_FUNC((ثابت حرف*)filename, نما_fopen);
+    أرجع file;
 }
 
 
-static uLong ZCALLBACK fread_file_func(voidpf opaque, voidpf stream, void* buf, uLong size) {
+ساكن uLong ZCALLBACK fread_file_func(voidpf opaque, voidpf جریان, فراغ* buf, uLong اندازه) {
     uLong ret;
-    (void)opaque;
-    ret = (uLong)fread(buf, 1, (size_t)size, (FILE *)stream);
-    return ret;
+    (فراغ)opaque;
+    ret = (uLong)fread(buf, 1, (size_t)اندازه, (FILE *)جریان);
+    أرجع ret;
 }
 
-static uLong ZCALLBACK fwrite_file_func(voidpf opaque, voidpf stream, const void* buf, uLong size) {
+ساكن uLong ZCALLBACK fwrite_file_func(voidpf opaque, voidpf جریان, ثابت فراغ* buf, uLong اندازه) {
     uLong ret;
-    (void)opaque;
-    ret = (uLong)fwrite(buf, 1, (size_t)size, (FILE *)stream);
-    return ret;
+    (فراغ)opaque;
+    ret = (uLong)fwrite(buf, 1, (size_t)اندازه, (FILE *)جریان);
+    أرجع ret;
 }
 
-static long ZCALLBACK ftell_file_func(voidpf opaque, voidpf stream) {
-    long ret;
-    (void)opaque;
-    ret = ftell((FILE *)stream);
-    return ret;
+ساكن دراز ZCALLBACK ftell_file_func(voidpf opaque, voidpf جریان) {
+    دراز ret;
+    (فراغ)opaque;
+    ret = ftell((FILE *)جریان);
+    أرجع ret;
 }
 
 
-static ZPOS64_T ZCALLBACK ftell64_file_func(voidpf opaque, voidpf stream) {
+ساكن ZPOS64_T ZCALLBACK ftell64_file_func(voidpf opaque, voidpf جریان) {
     ZPOS64_T ret;
-    (void)opaque;
-    ret = (ZPOS64_T)FTELLO_FUNC((FILE *)stream);
-    return ret;
+    (فراغ)opaque;
+    ret = (ZPOS64_T)FTELLO_FUNC((FILE *)جریان);
+    أرجع ret;
 }
 
-static long ZCALLBACK fseek_file_func(voidpf opaque, voidpf stream, uLong offset, int origin) {
-    int fseek_origin=0;
-    long ret;
-    (void)opaque;
-    switch (origin)
+ساكن دراز ZCALLBACK fseek_file_func(voidpf opaque, voidpf جریان, uLong جابه_جایی, صحيح origin) {
+    صحيح fseek_origin=0;
+    دراز ret;
+    (فراغ)opaque;
+    بدل (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
+    حالة ZLIB_FILEFUNC_SEEK_CUR :
         fseek_origin = SEEK_CUR;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
+        اكسر;
+    حالة ZLIB_FILEFUNC_SEEK_انتها :
         fseek_origin = SEEK_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
+        اكسر;
+    حالة ZLIB_FILEFUNC_SEEK_مجموعه :
         fseek_origin = SEEK_SET;
-        break;
-    default: return -1;
+        اكسر;
+    افتراضي: أرجع -1;
     }
     ret = 0;
-    if (fseek((FILE *)stream, (long)offset, fseek_origin) != 0)
+    إذا (fseek((FILE *)جریان, (دراز)جابه_جایی, fseek_origin) != 0)
         ret = -1;
-    return ret;
+    أرجع ret;
 }
 
-static long ZCALLBACK fseek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, int origin) {
-    int fseek_origin=0;
-    long ret;
-    (void)opaque;
-    switch (origin)
+ساكن دراز ZCALLBACK fseek64_file_func(voidpf opaque, voidpf جریان, ZPOS64_T جابه_جایی, صحيح origin) {
+    صحيح fseek_origin=0;
+    دراز ret;
+    (فراغ)opaque;
+    بدل (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
+    حالة ZLIB_FILEFUNC_SEEK_CUR :
         fseek_origin = SEEK_CUR;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
+        اكسر;
+    حالة ZLIB_FILEFUNC_SEEK_انتها :
         fseek_origin = SEEK_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
+        اكسر;
+    حالة ZLIB_FILEFUNC_SEEK_مجموعه :
         fseek_origin = SEEK_SET;
-        break;
-    default: return -1;
+        اكسر;
+    افتراضي: أرجع -1;
     }
     ret = 0;
 
-    if(FSEEKO_FUNC((FILE *)stream, (z_off64_t)offset, fseek_origin) != 0)
+    إذا(FSEEKO_FUNC((FILE *)جریان, (z_off64_t)جابه_جایی, fseek_origin) != 0)
                         ret = -1;
 
-    return ret;
+    أرجع ret;
 }
 
 
-static int ZCALLBACK fclose_file_func(voidpf opaque, voidpf stream) {
-    int ret;
-    (void)opaque;
-    ret = fclose((FILE *)stream);
-    return ret;
+ساكن صحيح ZCALLBACK fclose_file_func(voidpf opaque, voidpf جریان) {
+    صحيح ret;
+    (فراغ)opaque;
+    ret = fclose((FILE *)جریان);
+    أرجع ret;
 }
 
-static int ZCALLBACK ferror_file_func(voidpf opaque, voidpf stream) {
-    int ret;
-    (void)opaque;
-    ret = ferror((FILE *)stream);
-    return ret;
+ساكن صحيح ZCALLBACK ferror_file_func(voidpf opaque, voidpf جریان) {
+    صحيح ret;
+    (فراغ)opaque;
+    ret = ferror((FILE *)جریان);
+    أرجع ret;
 }
 
-void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
+فراغ fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen_file = fopen_file_func;
     pzlib_filefunc_def->zread_file = fread_file_func;
     pzlib_filefunc_def->zwrite_file = fwrite_file_func;
@@ -216,10 +216,10 @@ void fill_fopen_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek_file = fseek_file_func;
     pzlib_filefunc_def->zclose_file = fclose_file_func;
     pzlib_filefunc_def->zerror_file = ferror_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = عدم;
 }
 
-void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
+فراغ fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = fopen64_file_func;
     pzlib_filefunc_def->zread_file = fread_file_func;
     pzlib_filefunc_def->zwrite_file = fwrite_file_func;
@@ -227,5 +227,5 @@ void fill_fopen64_filefunc(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = fseek64_file_func;
     pzlib_filefunc_def->zclose_file = fclose_file_func;
     pzlib_filefunc_def->zerror_file = ferror_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = عدم;
 }

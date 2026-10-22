@@ -21,11 +21,11 @@
    of the bit buffer.  val is the actual byte to output in the case
    of a literal, the base length or distance, or the offset from
    the current table to the next table.  Each entry is four bytes. */
-typedef struct {
-    unsigned char op;           /* operation, extra bits, table bits */
-    unsigned char bits;         /* bits in this part of the code */
-    unsigned short val;         /* offset in table or code value */
-} code;
+تعريفنوع بنية {
+    بیعلامت حرف op;           /* operation, extra bits, table bits */
+    بیعلامت حرف بیتها;         /* bits in this part of the code */
+    بیعلامت کوتاه val;         /* offset in table or code value */
+} کد;
 
 /* op values as set by inflate_table():
     00000000 - literal
@@ -46,25 +46,25 @@ typedef struct {
    inflate_table() calls in inflate.c and infback.c.  If the root table size is
    changed, then these maximum sizes would be need to be recalculated and
    updated. */
-#ifndef PKZIP_BUG_WORKAROUND
+#اگر_تعریف_نشده PKZIP_BUG_WORKAROUND
 #  define ENOUGH_LENS 852
 #  define ENOUGH_DISTS 592
-#else
+#وإلا
 /* That workaround permits 288 literal/length codes and 32 distance codes. */
 #  define ENOUGH_LENS 854
 #  define ENOUGH_DISTS 594
-#endif
-#define ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
+#پایان_اگر
+#تعریف_کن ENOUGH (ENOUGH_LENS+ENOUGH_DISTS)
 
 /* Type of code to build for inflate_table() */
-typedef enum {
+تعريفنوع تعداد {
     CODES,
     LENS,
     DISTS
 } codetype;
 
-int ZLIB_INTERNAL inflate_table(codetype type, unsigned short FAR *lens,
-                                unsigned codes, code FAR * FAR *table,
-                                unsigned FAR *bits, unsigned short FAR *work);
-struct inflate_state;
-void ZLIB_INTERNAL inflate_fixed(struct inflate_state FAR *state);
+صحيح ZLIB_داخلی inflate_جدول(codetype type, بیعلامت کوتاه FAR *lens,
+                                بیعلامت codes, کد FAR * FAR *جدول_2,
+                                بیعلامت FAR *بیتها, بیعلامت کوتاه FAR *work);
+بنية inflate_state;
+فراغ ZLIB_داخلی inflate_fixed(بنية inflate_state FAR *state);

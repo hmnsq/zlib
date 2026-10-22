@@ -103,21 +103,21 @@
    the bit-pattern counting takes place.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <assert.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <assert.h>
 
-#define local static
+#تعریف_کن local ساكن
 
 // Special data types.
-typedef unsigned long long big_t;   // type for code counting
-#define PRIbig "llu"        // printf format for big_t
-typedef big_t code_t;       // type for bit pattern counting
-struct tab {                // type for been-here check
+تعريفنوع بیعلامت دراز دراز big_t;   // type for code counting
+#تعریف_کن PRIbig "llu"        // printf format for big_t
+تعريفنوع big_t کد_t;       // type for bit pattern counting
+بنية tab {                // type for been-here check
     size_t len;             // allocated length of bit vector in octets
-    char *vec;              // allocated bit vector
+    حرف *vec;              // allocated bit vector
 };
 
 /* The array for saving results, num[], is indexed with this triplet:
@@ -171,279 +171,279 @@ struct tab {                // type for been-here check
  */
 
 // Type for a variable-length, allocated string.
-typedef struct {
-    char *str;          // pointer to allocated string
-    size_t size;        // size of allocation
+تعريفنوع بنية {
+    حرف *str;          // pointer to allocated string
+    size_t اندازه;        // size of allocation
     size_t len;         // length of string, not including terminating zero
 } string_t;
 
 // Clear a string_t.
-local void string_clear(string_t *s) {
+local فراغ string_clear(string_t *s) {
     s->str[0] = 0;
     s->len = 0;
 }
 
 // Initialize a string_t.
-local void string_init(string_t *s) {
-    s->size = 16;
-    s->str = malloc(s->size);
-    assert(s->str != NULL && "out of memory");
+local فراغ string_init(string_t *s) {
+    s->اندازه = 16;
+    s->str = حافظه_بده(s->اندازه);
+    أكد(s->str != عدم && "out of memory");
     string_clear(s);
 }
 
 // Release the allocation of a string_t.
-local void string_free(string_t *s) {
-    free(s->str);
-    s->str = NULL;
-    s->size = 0;
+local فراغ string_free(string_t *s) {
+    حرر(s->str);
+    s->str = عدم;
+    s->اندازه = 0;
     s->len = 0;
 }
 
 // Save the results of printf with fmt and the subsequent argument list to s.
 // Each call appends to s. The allocated space for s is increased as needed.
-local void string_printf(string_t *s, char *fmt, ...) {
+local فراغ string_printf(string_t *s, حرف *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     size_t len = s->len;
-    int ret = vsnprintf(s->str + len, s->size - len, fmt, ap);
-    assert(ret >= 0 && "out of memory");
+    صحيح ret = vsnprintf(s->str + len, s->اندازه - len, fmt, ap);
+    أكد(ret >= 0 && "out of memory");
     s->len += ret;
-    if (s->size < s->len + 1) {
-        do {
-            s->size <<= 1;
-            assert(s->size != 0 && "overflow");
-        } while (s->size < s->len + 1);
-        s->str = realloc(s->str, s->size);
-        assert(s->str != NULL && "out of memory");
-        vsnprintf(s->str + len, s->size - len, fmt, ap);
+    إذا (s->اندازه < s->len + 1) {
+        افعل {
+            s->اندازه <<= 1;
+            أكد(s->اندازه != 0 && "overflow");
+        } طالما (s->اندازه < s->len + 1);
+        s->str = realloc(s->str, s->اندازه);
+        أكد(s->str != عدم && "out of memory");
+        vsnprintf(s->str + len, s->اندازه - len, fmt, ap);
     }
     va_end(ap);
 }
 
 // Globals to avoid propagating constants or constant pointers recursively.
-struct {
-    int max;            // maximum allowed bit length for the codes
-    int root;           // size of base code table in bits
-    int large;          // largest code table so far
-    size_t size;        // number of elements in num and done
+بنية {
+    صحيح max;            // maximum allowed bit length for the codes
+    صحيح ریشه;           // size of base code table in bits
+    صحيح large;          // largest code table so far
+    size_t اندازه;        // number of elements in num and done
     big_t tot;          // total number of codes with maximum tables size
-    string_t out;       // display of subcodes for maximum tables size
-    int *code;          // number of symbols assigned to each bit length
-    big_t *num;         // saved results array for code counting
-    struct tab *done;   // states already evaluated array
+    string_t بیرون;       // display of subcodes for maximum tables size
+    صحيح *کد;          // number of symbols assigned to each bit length
+    big_t *رقم;         // saved results array for code counting
+    بنية tab *انجامشده_2;   // states already evaluated array
 } g;
 
 // Index function for num[] and done[].
-local inline size_t map(int syms, int left, int len) {
-    return ((size_t)((syms - 1) >> 1) * ((syms - 2) >> 1) +
-            (left >> 1) - 1) * (g.max - 1) +
+local مضمن size_t map(صحيح syms, صحيح چپ, صحيح len) {
+    أرجع ((size_t)((syms - 1) >> 1) * ((syms - 2) >> 1) +
+            (چپ >> 1) - 1) * (g.max - 1) +
            len - 1;
 }
 
 // Free allocated space in globals.
-local void cleanup(void) {
-    if (g.done != NULL) {
-        for (size_t n = 0; n < g.size; n++)
-            if (g.done[n].len)
-                free(g.done[n].vec);
-        g.size = 0;
-        free(g.done);   g.done = NULL;
+local فراغ cleanup(فراغ) {
+    إذا (g.انجامشده_2 != عدم) {
+        لكل (size_t n = 0; n < g.اندازه; n++)
+            إذا (g.انجامشده_2[n].len)
+                حرر(g.انجامشده_2[n].vec);
+        g.اندازه = 0;
+        حرر(g.انجامشده_2);   g.انجامشده_2 = عدم;
     }
-    free(g.num);    g.num = NULL;
-    free(g.code);   g.code = NULL;
-    string_free(&g.out);
+    حرر(g.رقم);    g.رقم = عدم;
+    حرر(g.کد);   g.کد = عدم;
+    string_free(&g.بیرون);
 }
 
 // Return the number of possible prefix codes using bit patterns of lengths len
 // through max inclusive, coding syms symbols, with left bit patterns of length
 // len unused -- return -1 if there is an overflow in the counting. Keep a
 // record of previous results in num to prevent repeating the same calculation.
-local big_t count(int syms, int left, int len) {
+local big_t شمار(صحيح syms, صحيح چپ, صحيح len) {
     // see if only one possible code
-    if (syms == left)
-        return 1;
+    إذا (syms == چپ)
+        أرجع 1;
 
     // note and verify the expected state
-    assert(syms > left && left > 0 && len < g.max);
+    أكد(syms > چپ && چپ > 0 && len < g.max);
 
     // see if we've done this one already
-    size_t index = map(syms, left, len);
-    big_t got = g.num[index];
-    if (got)
-        return got;         // we have -- return the saved result
+    size_t شاخص = map(syms, چپ, len);
+    big_t got = g.رقم[شاخص];
+    إذا (got)
+        أرجع got;         // we have -- return the saved result
 
     // we need to use at least this many bit patterns so that the code won't be
     // incomplete at the next length (more bit patterns than symbols)
-    int least = (left << 1) - syms;
-    if (least < 0)
-        least = 0;
+    صحيح کمترین = (چپ << 1) - syms;
+    إذا (کمترین < 0)
+        کمترین = 0;
 
     // we can use at most this many bit patterns, lest there not be enough
     // available for the remaining symbols at the maximum length (if there were
     // no limit to the code length, this would become: most = left - 1)
-    int most = (((code_t)left << (g.max - len)) - syms) /
-               (((code_t)1 << (g.max - len)) - 1);
+    صحيح most = (((کد_t)چپ << (g.max - len)) - syms) /
+               (((کد_t)1 << (g.max - len)) - 1);
 
     // count all possible codes from this juncture and add them up
-    big_t sum = 0;
-    for (int use = least; use <= most; use++) {
-        got = count(syms - use, (left - use) << 1, len + 1);
-        sum += got;
-        if (got == (big_t)-1 || sum < got)      // overflow
-            return (big_t)-1;
+    big_t جمع = 0;
+    لكل (صحيح use = کمترین; use <= most; use++) {
+        got = شمار(syms - use, (چپ - use) << 1, len + 1);
+        جمع += got;
+        إذا (got == (big_t)-1 || جمع < got)      //سرریز
+            أرجع (big_t)-1;
     }
 
     // verify that all recursive calls are productive
-    assert(sum != 0);
+    أكد(جمع != 0);
 
     // save the result and return it
-    g.num[index] = sum;
-    return sum;
+    g.رقم[شاخص] = جمع;
+    أرجع جمع;
 }
 
 // Return true if we've been here before, set to true if not. Set a bit in a
 // bit vector to indicate visiting this state. Each (syms,len,left) state has a
 // variable size bit vector indexed by (mem,rem). The bit vector is lengthened
 // as needed to allow setting the (mem,rem) bit.
-local int been_here(int syms, int left, int len, int mem, int rem) {
+local صحيح been_اینجا(صحيح syms, صحيح چپ, صحيح len, صحيح mem, صحيح rem) {
     // point to vector for (syms,left,len), bit in vector for (mem,rem)
-    size_t index = map(syms, left, len);
-    mem -= 1 << g.root;             // mem always includes the root table
+    size_t شاخص = map(syms, چپ, len);
+    mem -= 1 << g.ریشه;             // mem always includes the root table
     mem >>= 1;                      // mem and rem are always even
     rem >>= 1;
-    size_t offset = (mem >> 3) + rem;
-    offset = ((offset * (offset + 1)) >> 1) + rem;
-    int bit = 1 << (mem & 7);
+    size_t جابه_جایی = (mem >> 3) + rem;
+    جابه_جایی = ((جابه_جایی * (جابه_جایی + 1)) >> 1) + rem;
+    صحيح بیت = 1 << (mem & 7);
 
     // see if we've been here
-    size_t length = g.done[index].len;
-    if (offset < length && (g.done[index].vec[offset] & bit) != 0)
-        return 1;       // done this!
+    size_t درازی = g.انجامشده_2[شاخص].len;
+    إذا (جابه_جایی < درازی && (g.انجامشده_2[شاخص].vec[جابه_جایی] & بیت) != 0)
+        أرجع 1;       // done this!
 
     // we haven't been here before -- set the bit to show we have now
 
     // see if we need to lengthen the vector in order to set the bit
-    if (length <= offset) {
+    إذا (درازی <= جابه_جایی) {
         // if we have one already, enlarge it, zero out the appended space
-        char *vector;
-        if (length) {
-            do {
-                length <<= 1;
-            } while (length <= offset);
-            vector = realloc(g.done[index].vec, length);
-            assert(vector != NULL && "out of memory");
-            memset(vector + g.done[index].len, 0, length - g.done[index].len);
+        حرف *وکتور;
+        إذا (درازی) {
+            افعل {
+                درازی <<= 1;
+            } طالما (درازی <= جابه_جایی);
+            وکتور = realloc(g.انجامشده_2[شاخص].vec, درازی);
+            أكد(وکتور != عدم && "out of memory");
+            memset(وکتور + g.انجامشده_2[شاخص].len, 0, درازی - g.انجامشده_2[شاخص].len);
         }
 
         // otherwise we need to make a new vector and zero it out
-        else {
-            length = 16;
-            while (length <= offset)
-                length <<= 1;
-            vector = calloc(length, 1);
-            assert(vector != NULL && "out of memory");
+        وإلا {
+            درازی = 16;
+            طالما (درازی <= جابه_جایی)
+                درازی <<= 1;
+            وکتور = حافظه_صفر_بده(درازی, 1);
+            أكد(وکتور != عدم && "out of memory");
         }
 
         // install the new vector
-        g.done[index].len = length;
-        g.done[index].vec = vector;
+        g.انجامشده_2[شاخص].len = درازی;
+        g.انجامشده_2[شاخص].vec = وکتور;
     }
 
     // set the bit
-    g.done[index].vec[offset] |= bit;
-    return 0;
+    g.انجامشده_2[شاخص].vec[جابه_جایی] |= بیت;
+    أرجع 0;
 }
 
 // Examine all possible codes from the given node (syms, len, left). Compute
 // the amount of memory required to build inflate's decoding tables, where the
 // number of code structures used so far is mem, and the number remaining in
 // the current sub-table is rem.
-local void examine(int syms, int left, int len, int mem, int rem) {
+local فراغ examine(صحيح syms, صحيح چپ, صحيح len, صحيح mem, صحيح rem) {
     // see if we have a complete code
-    if (syms == left) {
+    إذا (syms == چپ) {
         // set the last code entry
-        g.code[len] = left;
+        g.کد[len] = چپ;
 
         // complete computation of memory used by this code
-        while (rem < left) {
-            left -= rem;
-            rem = 1 << (len - g.root);
+        طالما (rem < چپ) {
+            چپ -= rem;
+            rem = 1 << (len - g.ریشه);
             mem += rem;
         }
-        assert(rem == left);
+        أكد(rem == چپ);
 
         // if this is at the maximum, show the sub-code
-        if (mem >= g.large) {
+        إذا (mem >= g.large) {
             // if this is a new maximum, update the maximum and clear out the
             // printed sub-codes from the previous maximum
-            if (mem > g.large) {
+            إذا (mem > g.large) {
                 g.large = mem;
-                string_clear(&g.out);
+                string_clear(&g.بیرون);
             }
 
             // compute the starting state for this sub-code
             syms = 0;
-            left = 1 << g.max;
-            for (int bits = g.max; bits > g.root; bits--) {
-                syms += g.code[bits];
-                left -= g.code[bits];
-                assert((left & 1) == 0);
-                left >>= 1;
+            چپ = 1 << g.max;
+            لكل (صحيح بیتها = g.max; بیتها > g.ریشه; بیتها--) {
+                syms += g.کد[بیتها];
+                چپ -= g.کد[بیتها];
+                أكد((چپ & 1) == 0);
+                چپ >>= 1;
             }
 
             // print the starting state and the resulting sub-code to g.out
-            string_printf(&g.out, "<%u, %u, %u>:",
-                          syms, g.root + 1, ((1 << g.root) - left) << 1);
-            for (int bits = g.root + 1; bits <= g.max; bits++)
-                if (g.code[bits])
-                    string_printf(&g.out, " %d[%d]", g.code[bits], bits);
-            string_printf(&g.out, "\n");
+            string_printf(&g.بیرون, "<%u, %u, %u>:",
+                          syms, g.ریشه + 1, ((1 << g.ریشه) - چپ) << 1);
+            لكل (صحيح بیتها = g.ریشه + 1; بیتها <= g.max; بیتها++)
+                إذا (g.کد[بیتها])
+                    string_printf(&g.بیرون, " %d[%d]", g.کد[بیتها], بیتها);
+            string_printf(&g.بیرون, "\n");
         }
 
         // remove entries as we drop back down in the recursion
-        g.code[len] = 0;
-        return;
+        g.کد[len] = 0;
+        أرجع;
     }
 
     // prune the tree if we can
-    if (been_here(syms, left, len, mem, rem))
-        return;
+    إذا (been_اینجا(syms, چپ, len, mem, rem))
+        أرجع;
 
     // we need to use at least this many bit patterns so that the code won't be
     // incomplete at the next length (more bit patterns than symbols)
-    int least = (left << 1) - syms;
-    if (least < 0)
-        least = 0;
+    صحيح کمترین = (چپ << 1) - syms;
+    إذا (کمترین < 0)
+        کمترین = 0;
 
     // we can use at most this many bit patterns, lest there not be enough
     // available for the remaining symbols at the maximum length (if there were
     // no limit to the code length, this would become: most = left - 1)
-    int most = (((code_t)left << (g.max - len)) - syms) /
-               (((code_t)1 << (g.max - len)) - 1);
+    صحيح most = (((کد_t)چپ << (g.max - len)) - syms) /
+               (((کد_t)1 << (g.max - len)) - 1);
 
     // occupy least table spaces, creating new sub-tables as needed
-    int use = least;
-    while (rem < use) {
+    صحيح use = کمترین;
+    طالما (rem < use) {
         use -= rem;
-        rem = 1 << (len - g.root);
+        rem = 1 << (len - g.ریشه);
         mem += rem;
     }
     rem -= use;
 
     // examine codes from here, updating table space as we go
-    for (use = least; use <= most; use++) {
-        g.code[len] = use;
-        examine(syms - use, (left - use) << 1, len + 1,
-                mem + (rem ? 1 << (len - g.root) : 0), rem << 1);
-        if (rem == 0) {
-            rem = 1 << (len - g.root);
+    لكل (use = کمترین; use <= most; use++) {
+        g.کد[len] = use;
+        examine(syms - use, (چپ - use) << 1, len + 1,
+                mem + (rem ? 1 << (len - g.ریشه) : 0), rem << 1);
+        إذا (rem == 0) {
+            rem = 1 << (len - g.ریشه);
             mem += rem;
         }
         rem--;
     }
 
     // remove entries as we drop back down in the recursion
-    g.code[len] = 0;
+    g.کد[len] = 0;
 }
 
 // Look at all sub-codes starting with root + 1 bits. Look at only the valid
@@ -451,33 +451,33 @@ local void examine(int syms, int left, int len, int mem, int rem) {
 // calculate the amount of memory required by inflate to build the decoding
 // tables. Find the maximum amount of memory required and show the codes that
 // require that maximum.
-local void enough(int syms) {
+local فراغ enough(صحيح syms) {
     // clear code
-    for (int n = 0; n <= g.max; n++)
-        g.code[n] = 0;
+    لكل (صحيح n = 0; n <= g.max; n++)
+        g.کد[n] = 0;
 
     // look at all (root + 1) bit and longer codes
-    string_clear(&g.out);           // empty saved results
-    g.large = 1 << g.root;          // base table
-    if (g.root < g.max)             // otherwise, there's only a base table
-        for (int n = 3; n <= syms; n++)
-            for (int left = 2; left < n; left += 2) {
+    string_clear(&g.بیرون);           // empty saved results
+    g.large = 1 << g.ریشه;          // base table
+    إذا (g.ریشه < g.max)             // otherwise, there's only a base table
+        لكل (صحيح n = 3; n <= syms; n++)
+            لكل (صحيح چپ = 2; چپ < n; چپ += 2) {
                 // look at all reachable (root + 1) bit nodes, and the
                 // resulting codes (complete at root + 2 or more)
-                size_t index = map(n, left, g.root + 1);
-                if (g.root + 1 < g.max && g.num[index]) // reachable node
-                    examine(n, left, g.root + 1, 1 << g.root, 0);
+                size_t شاخص = map(n, چپ, g.ریشه + 1);
+                إذا (g.ریشه + 1 < g.max && g.رقم[شاخص]) // reachable node
+                    examine(n, چپ, g.ریشه + 1, 1 << g.ریشه, 0);
 
                 // also look at root bit codes with completions at root + 1
                 // bits (not saved in num, since complete), just in case
-                if (g.num[index - 1] && n <= left << 1)
-                    examine((n - left) << 1, (n - left) << 1, g.root + 1,
-                            1 << g.root, 0);
+                إذا (g.رقم[شاخص - 1] && n <= چپ << 1)
+                    examine((n - چپ) << 1, (n - چپ) << 1, g.ریشه + 1,
+                            1 << g.ریشه, 0);
             }
 
-    // done
-    printf("maximum of %d table entries for root = %d\n", g.large, g.root);
-    fputs(g.out.str, stdout);
+    //انجامشده
+    چاپ_کن("maximum of %d table entries for root = %d\n", g.large, g.ریشه);
+    fputs(g.بیرون.str, stdout);
 }
 
 // Examine and show the total number of possible prefix codes for a given
@@ -495,103 +495,103 @@ local void enough(int syms) {
 //
 // For the deflate literal/length code, use "enough". For the deflate distance
 // code, use "enough 30 6".
-int main(int argc, char **argv) {
+صحيح اصلی(صحيح argc, حرف **argv) {
     // set up globals for cleanup()
-    g.code = NULL;
-    g.num = NULL;
-    g.done = NULL;
-    string_init(&g.out);
+    g.کد = عدم;
+    g.رقم = عدم;
+    g.انجامشده_2 = عدم;
+    string_init(&g.بیرون);
 
     // get arguments -- default to the deflate literal/length code
-    int syms = 286;
-    g.root = 9;
+    صحيح syms = 286;
+    g.ریشه = 9;
     g.max = 15;
-    if (argc > 1) {
+    إذا (argc > 1) {
         syms = atoi(argv[1]);
-        if (argc > 2) {
-            g.root = atoi(argv[2]);
-            if (argc > 3)
+        إذا (argc > 2) {
+            g.ریشه = atoi(argv[2]);
+            إذا (argc > 3)
                 g.max = atoi(argv[3]);
         }
     }
-    if (argc > 4 || syms < 2 || g.root < 1 || g.max < 1) {
+    إذا (argc > 4 || syms < 2 || g.ریشه < 1 || g.max < 1) {
         fputs("invalid arguments, need: [sym >= 2 [root >= 1 [max >= 1]]]\n",
               stderr);
-        return 1;
+        أرجع 1;
     }
 
     // if not restricting the code length, the longest is syms - 1
-    if (g.max > syms - 1)
+    إذا (g.max > syms - 1)
         g.max = syms - 1;
 
     // determine the number of bits in a code_t
-    int bits = 0;
-    for (code_t word = 1; word; word <<= 1)
-        bits++;
+    صحيح بیتها = 0;
+    لكل (کد_t کلمه = 1; کلمه; کلمه <<= 1)
+        بیتها++;
 
     // make sure that the calculation of most will not overflow
-    if (g.max > bits || (code_t)(syms - 2) >= ((code_t)-1 >> (g.max - 1))) {
+    إذا (g.max > بیتها || (کد_t)(syms - 2) >= ((کد_t)-1 >> (g.max - 1))) {
         fputs("abort: code length too long for internal types\n", stderr);
-        return 1;
+        أرجع 1;
     }
 
     // reject impossible code requests
-    if ((code_t)(syms - 1) > ((code_t)1 << g.max) - 1) {
+    إذا ((کد_t)(syms - 1) > ((کد_t)1 << g.max) - 1) {
         fprintf(stderr, "%d symbols cannot be coded in %d bits\n",
                 syms, g.max);
-        return 1;
+        أرجع 1;
     }
 
     // allocate code vector
-    g.code = calloc(g.max + 1, sizeof(int));
-    assert(g.code != NULL && "out of memory");
+    g.کد = حافظه_صفر_بده(g.max + 1, حجم(صحيح));
+    أكد(g.کد != عدم && "out of memory");
 
     // determine size of saved results array, checking for overflows,
     // allocate and clear the array (set all to zero with calloc())
-    if (syms == 2)              // iff max == 1
-        g.num = NULL;           // won't be saving any results
-    else {
-        g.size = syms >> 1;
-        int n = (syms - 1) >> 1;
-        assert(g.size <= (size_t)-1 / n && "overflow");
-        g.size *= n;
+    إذا (syms == 2)              // iff max == 1
+        g.رقم = عدم;           // won't be saving any results
+    وإلا {
+        g.اندازه = syms >> 1;
+        صحيح n = (syms - 1) >> 1;
+        أكد(g.اندازه <= (size_t)-1 / n && "overflow");
+        g.اندازه *= n;
         n = g.max - 1;
-        assert(g.size <= (size_t)-1 / n && "overflow");
-        g.size *= n;
-        g.num = calloc(g.size, sizeof(big_t));
-        assert(g.num != NULL && "out of memory");
+        أكد(g.اندازه <= (size_t)-1 / n && "overflow");
+        g.اندازه *= n;
+        g.رقم = حافظه_صفر_بده(g.اندازه, حجم(big_t));
+        أكد(g.رقم != عدم && "out of memory");
     }
 
     // count possible codes for all numbers of symbols, add up counts
-    big_t sum = 0;
-    for (int n = 2; n <= syms; n++) {
-        big_t got = count(n, 2, 1);
-        sum += got;
-        assert(got != (big_t)-1 && sum >= got && "overflow");
+    big_t جمع = 0;
+    لكل (صحيح n = 2; n <= syms; n++) {
+        big_t got = شمار(n, 2, 1);
+        جمع += got;
+        أكد(got != (big_t)-1 && جمع >= got && "overflow");
     }
-    printf("%"PRIbig" total codes for 2 to %d symbols", sum, syms);
-    if (g.max < syms - 1)
-        printf(" (%d-bit length limit)\n", g.max);
-    else
+    چاپ_کن("%"PRIbig" total codes for 2 to %d symbols", جمع, syms);
+    إذا (g.max < syms - 1)
+        چاپ_کن(" (%d-bit length limit)\n", g.max);
+    وإلا
         puts(" (no length limit)");
 
     // allocate and clear done array for been_here()
-    if (syms == 2)
-        g.done = NULL;
-    else {
-        g.done = calloc(g.size, sizeof(struct tab));
-        assert(g.done != NULL && "out of memory");
+    إذا (syms == 2)
+        g.انجامشده_2 = عدم;
+    وإلا {
+        g.انجامشده_2 = حافظه_صفر_بده(g.اندازه, حجم(بنية tab));
+        أكد(g.انجامشده_2 != عدم && "out of memory");
     }
 
     // find and show maximum inflate table usage
-    if (g.root > g.max)             // reduce root to max length
-        g.root = g.max;
-    if ((code_t)syms < ((code_t)1 << (g.root + 1)))
+    إذا (g.ریشه > g.max)             // reduce root to max length
+        g.ریشه = g.max;
+    إذا ((کد_t)syms < ((کد_t)1 << (g.ریشه + 1)))
         enough(syms);
-    else
+    وإلا
         fputs("cannot handle minimum code lengths > root", stderr);
 
-    // done
+    //انجامشده
     cleanup();
-    return 0;
+    أرجع 0;
 }

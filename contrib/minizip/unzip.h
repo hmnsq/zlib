@@ -39,121 +39,121 @@
 
 */
 
-#ifndef _unz64_H
-#define _unz64_H
+#اگر_تعریف_نشده _unz64_H
+#تعریف_کن _unz64_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#اگر_تعریف_شده __cplusplus
+خارجي "C" {
+#پایان_اگر
 
-#ifndef _ZLIB_H
-#include "zlib.h"
-#endif
+#اگر_تعریف_نشده _ZLIB_H
+#ضمن "zlib.h"
+#پایان_اگر
 
-#ifndef  _ZLIBIOAPI_H
-#include "ioapi.h"
-#endif
+#اگر_تعریف_نشده  _ZLIBIOAPI_H
+#ضمن "ioapi.h"
+#پایان_اگر
 
-#ifdef HAVE_BZIP2
-#include "bzlib.h"
-#endif
+#اگر_تعریف_شده HAVE_BZIP2
+#ضمن "bzlib.h"
+#پایان_اگر
 
-#define Z_BZIP2ED 12
+#تعریف_کن Z_BZIP2ED 12
 
-#if defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)
+#إذا defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
-typedef struct TagunzFile__ { int unused; } unzFile__;
-typedef unzFile__ *unzFile;
-#else
-typedef voidp unzFile;
-#endif
+تعريفنوع بنية TagunzFile__ { صحيح استفادهنشده; } unzFile__;
+تعريفنوع unzFile__ *unzFile;
+#وإلا
+تعريفنوع voidp unzFile;
+#پایان_اگر
 
-extern const char unz_copyright[];
+خارجي ثابت حرف unz_copyright[];
 
 
-#define UNZ_OK                          (0)
-#define UNZ_END_OF_LIST_OF_FILE         (-100)
-#define UNZ_ERRNO                       (Z_ERRNO)
-#define UNZ_EOF                         (0)
-#define UNZ_PARAMERROR                  (-102)
-#define UNZ_BADZIPFILE                  (-103)
-#define UNZ_INTERNALERROR               (-104)
-#define UNZ_CRCERROR                    (-105)
+#تعریف_کن UNZ_OK                          (0)
+#تعریف_کن UNZ_انتها_از_LIST_از_FILE         (-100)
+#تعریف_کن UNZ_ERRNO                       (Z_ERRNO)
+#تعریف_کن UNZ_EOF                         (0)
+#تعریف_کن UNZ_PARAMERROR                  (-102)
+#تعریف_کن UNZ_BADZIPFILE                  (-103)
+#تعریف_کن UNZ_INTERNALERROR               (-104)
+#تعریف_کن UNZ_CRCERROR                    (-105)
 
 /* tm_unz contain date/time info */
-typedef struct tm_unz_s
+تعريفنوع بنية tm_unz_s
 {
-    int tm_sec;             /* seconds after the minute - [0,59] */
-    int tm_min;             /* minutes after the hour - [0,59] */
-    int tm_hour;            /* hours since midnight - [0,23] */
-    int tm_mday;            /* day of the month - [1,31] */
-    int tm_mon;             /* months since January - [0,11] */
-    int tm_year;            /* years - [1980..2044] */
+    صحيح tm_sec;             /* seconds after the minute - [0,59] */
+    صحيح tm_min;             /* minutes after the hour - [0,59] */
+    صحيح tm_hour;            /* hours since midnight - [0,23] */
+    صحيح tm_mday;            /* day of the month - [1,31] */
+    صحيح tm_mon;             /* months since January - [0,11] */
+    صحيح tm_year;            /* years - [1980..2044] */
 } tm_unz;
 
 /* unz_global_info structure contain global data about the ZIPfile
    These data comes from the end of central dir */
-typedef struct unz_global_info64_s
+تعريفنوع بنية unz_global_info64_s
 {
-    ZPOS64_T number_entry;         /* total number of entries in
+    ZPOS64_T عدد_مدخل;         /* total number of entries in
                                      the central dir on this disk */
-    uLong size_comment;         /* size of the global comment of the zipfile */
+    uLong اندازه_comment;         /* size of the global comment of the zipfile */
 } unz_global_info64;
 
-typedef struct unz_global_info_s
+تعريفنوع بنية unz_global_info_s
 {
-    uLong number_entry;         /* total number of entries in
+    uLong عدد_مدخل;         /* total number of entries in
                                      the central dir on this disk */
-    uLong size_comment;         /* size of the global comment of the zipfile */
+    uLong اندازه_comment;         /* size of the global comment of the zipfile */
 } unz_global_info;
 
 /* unz_file_info contain information about a file in the zipfile */
-typedef struct unz_file_info64_s
+تعريفنوع بنية unz_file_info64_s
 {
-    uLong version;              /* version made by                 2 bytes */
-    uLong version_needed;       /* version needed to extract       2 bytes */
+    uLong نسخه;              /* version made by                 2 bytes */
+    uLong نسخه_needed;       /* version needed to extract       2 bytes */
     uLong flag;                 /* general purpose bit flag        2 bytes */
-    uLong compression_method;   /* compression method              2 bytes */
+    uLong compression_روش;   /* compression method              2 bytes */
     uLong dosDate;              /* last mod file date in Dos fmt   4 bytes */
-    uLong crc;                  /* crc-32                          4 bytes */
-    ZPOS64_T compressed_size;   /* compressed size                 8 bytes */
-    ZPOS64_T uncompressed_size; /* uncompressed size               8 bytes */
-    uLong size_filename;        /* filename length                 2 bytes */
-    uLong size_file_extra;      /* extra field length              2 bytes */
-    uLong size_file_comment;    /* file comment length             2 bytes */
+    uLong بررسی_چرخهای;                  /* crc-32                          4 bytes */
+    ZPOS64_T compressed_اندازه;   /* compressed size                 8 bytes */
+    ZPOS64_T uncompressed_اندازه; /* uncompressed size               8 bytes */
+    uLong اندازه_filename;        /* filename length                 2 bytes */
+    uLong اندازه_file_extra;      /* extra field length              2 bytes */
+    uLong اندازه_file_comment;    /* file comment length             2 bytes */
 
-    uLong disk_num_start;       /* disk number start               2 bytes */
-    uLong internal_fa;          /* internal file attributes        2 bytes */
+    uLong disk_رقم_شروع;       /* disk number start               2 bytes */
+    uLong داخلی_fa;          /* internal file attributes        2 bytes */
     uLong external_fa;          /* external file attributes        4 bytes */
 
     tm_unz tmu_date;
 } unz_file_info64;
 
-typedef struct unz_file_info_s
+تعريفنوع بنية unz_file_info_s
 {
-    uLong version;              /* version made by                 2 bytes */
-    uLong version_needed;       /* version needed to extract       2 bytes */
+    uLong نسخه;              /* version made by                 2 bytes */
+    uLong نسخه_needed;       /* version needed to extract       2 bytes */
     uLong flag;                 /* general purpose bit flag        2 bytes */
-    uLong compression_method;   /* compression method              2 bytes */
+    uLong compression_روش;   /* compression method              2 bytes */
     uLong dosDate;              /* last mod file date in Dos fmt   4 bytes */
-    uLong crc;                  /* crc-32                          4 bytes */
-    uLong compressed_size;      /* compressed size                 4 bytes */
-    uLong uncompressed_size;    /* uncompressed size               4 bytes */
-    uLong size_filename;        /* filename length                 2 bytes */
-    uLong size_file_extra;      /* extra field length              2 bytes */
-    uLong size_file_comment;    /* file comment length             2 bytes */
+    uLong بررسی_چرخهای;                  /* crc-32                          4 bytes */
+    uLong compressed_اندازه;      /* compressed size                 4 bytes */
+    uLong uncompressed_اندازه;    /* uncompressed size               4 bytes */
+    uLong اندازه_filename;        /* filename length                 2 bytes */
+    uLong اندازه_file_extra;      /* extra field length              2 bytes */
+    uLong اندازه_file_comment;    /* file comment length             2 bytes */
 
-    uLong disk_num_start;       /* disk number start               2 bytes */
-    uLong internal_fa;          /* internal file attributes        2 bytes */
+    uLong disk_رقم_شروع;       /* disk number start               2 bytes */
+    uLong داخلی_fa;          /* internal file attributes        2 bytes */
     uLong external_fa;          /* external file attributes        4 bytes */
 
     tm_unz tmu_date;
 } unz_file_info;
 
-extern int ZEXPORT unzStringFileNameCompare(const char* fileName1,
-                                            const char* fileName2,
-                                            int iCaseSensitivity);
+خارجي صحيح ZEXPORT unzStringFileNameCompare(ثابت حرف* fileName1,
+                                            ثابت حرف* fileName2,
+                                            صحيح i_Case_حساسیت);
 /*
    Compare two filenames (fileName1,fileName2).
    If iCaseSensitivity = 1, comparison is case sensitive (like strcmp)
@@ -164,8 +164,8 @@ extern int ZEXPORT unzStringFileNameCompare(const char* fileName1,
 */
 
 
-extern unzFile ZEXPORT unzOpen(const char *path);
-extern unzFile ZEXPORT unzOpen64(const void *path);
+خارجي unzFile ZEXPORT unzOpen(ثابت حرف *مسیر);
+خارجي unzFile ZEXPORT unzOpen64(ثابت فراغ *مسیر);
 /*
   Open a Zip file. path contain the full pathname (by example,
      on a Windows XP computer "c:\\zlib\\zlib113.zip" or on an Unix computer
@@ -182,31 +182,31 @@ extern unzFile ZEXPORT unzOpen64(const void *path);
 */
 
 
-extern unzFile ZEXPORT unzOpen2(const char *path,
+خارجي unzFile ZEXPORT unzOpen2(ثابت حرف *مسیر,
                                 zlib_filefunc_def* pzlib_filefunc_def);
 /*
    Open a Zip file, like unzOpen, but provide a set of file low level API
       for read/write the zip file (see ioapi.h)
 */
 
-extern unzFile ZEXPORT unzOpen2_64(const void *path,
+خارجي unzFile ZEXPORT unzOpen2_64(ثابت فراغ *مسیر,
                                    zlib_filefunc64_def* pzlib_filefunc_def);
 /*
    Open a Zip file, like unz64Open, but provide a set of file low level API
       for read/write the zip file (see ioapi.h)
 */
 
-extern int ZEXPORT unzClose(unzFile file);
+خارجي صحيح ZEXPORT unzClose(unzFile file);
 /*
   Close a ZipFile opened with unzOpen.
   If there is files inside the .Zip opened with unzOpenCurrentFile (see later),
     these files MUST be closed with unzCloseCurrentFile before call unzClose.
   return UNZ_OK if there is no problem. */
 
-extern int ZEXPORT unzGetGlobalInfo(unzFile file,
+خارجي صحيح ZEXPORT unzGetGlobalInfo(unzFile file,
                                     unz_global_info *pglobal_info);
 
-extern int ZEXPORT unzGetGlobalInfo64(unzFile file,
+خارجي صحيح ZEXPORT unzGetGlobalInfo64(unzFile file,
                                       unz_global_info64 *pglobal_info);
 /*
   Write info about the ZipFile in the *pglobal_info structure.
@@ -214,9 +214,9 @@ extern int ZEXPORT unzGetGlobalInfo64(unzFile file,
   return UNZ_OK if there is no problem. */
 
 
-extern int ZEXPORT unzGetGlobalComment(unzFile file,
-                                       char *szComment,
-                                       uLong uSizeBuf);
+خارجي صحيح ZEXPORT unzGetGlobalComment(unzFile file,
+                                       حرف *szComment,
+                                       uLong u_اندازه_Buf);
 /*
   Get the global comment string of the ZipFile, in the szComment buffer.
   uSizeBuf is the size of the szComment buffer.
@@ -227,22 +227,22 @@ extern int ZEXPORT unzGetGlobalComment(unzFile file,
 /***************************************************************************/
 /* Unzip package allow you browse the directory of the zipfile */
 
-extern int ZEXPORT unzGoToFirstFile(unzFile file);
+خارجي صحيح ZEXPORT unz_Go_مقصد_اولی_File(unzFile file);
 /*
   Set the current file of the zipfile to the first file.
   return UNZ_OK if there is no problem
 */
 
-extern int ZEXPORT unzGoToNextFile(unzFile file);
+خارجي صحيح ZEXPORT unz_Go_مقصد_بعدی_File(unzFile file);
 /*
   Set the current file of the zipfile to the next file.
   return UNZ_OK if there is no problem
   return UNZ_END_OF_LIST_OF_FILE if the actual file was the latest.
 */
 
-extern int ZEXPORT unzLocateFile(unzFile file,
-                                 const char *szFileName,
-                                 int iCaseSensitivity);
+خارجي صحيح ZEXPORT unzLocateFile(unzFile file,
+                                 ثابت حرف *szFileName,
+                                 صحيح i_Case_حساسیت);
 /*
   Try locate the file szFileName in the zipfile.
   For the iCaseSensitivity signification, see unzStringFileNameCompare
@@ -256,53 +256,53 @@ extern int ZEXPORT unzLocateFile(unzFile file,
 /* ****************************************** */
 /* Ryan supplied functions */
 /* unz_file_info contain information about a file in the zipfile */
-typedef struct unz_file_pos_s
+تعريفنوع بنية unz_file_pos_s
 {
-    uLong pos_in_zip_directory;   /* offset in zip file directory */
-    uLong num_of_file;            /* # of file */
+    uLong pos_درون_zip_directory;   /* offset in zip file directory */
+    uLong رقم_از_file;            /* # of file */
 } unz_file_pos;
 
-extern int ZEXPORT unzGetFilePos(
+خارجي صحيح ZEXPORT unzGetFilePos(
     unzFile file,
     unz_file_pos* file_pos);
 
-extern int ZEXPORT unzGoToFilePos(
+خارجي صحيح ZEXPORT unz_Go_مقصد_File_Pos(
     unzFile file,
     unz_file_pos* file_pos);
 
-typedef struct unz64_file_pos_s
+تعريفنوع بنية unz64_file_pos_s
 {
-    ZPOS64_T pos_in_zip_directory;   /* offset in zip file directory */
-    ZPOS64_T num_of_file;            /* # of file */
+    ZPOS64_T pos_درون_zip_directory;   /* offset in zip file directory */
+    ZPOS64_T رقم_از_file;            /* # of file */
 } unz64_file_pos;
 
-extern int ZEXPORT unzGetFilePos64(
+خارجي صحيح ZEXPORT unzGetFilePos64(
     unzFile file,
     unz64_file_pos* file_pos);
 
-extern int ZEXPORT unzGoToFilePos64(
+خارجي صحيح ZEXPORT unz_Go_مقصد_File_Pos64(
     unzFile file,
-    const unz64_file_pos* file_pos);
+    ثابت unz64_file_pos* file_pos);
 
 /* ****************************************** */
 
-extern int ZEXPORT unzGetCurrentFileInfo64(unzFile file,
+خارجي صحيح ZEXPORT unzGetCurrentFileInfo64(unzFile file,
                                            unz_file_info64 *pfile_info,
-                                           char *szFileName,
-                                           uLong fileNameBufferSize,
-                                           void *extraField,
-                                           uLong extraFieldBufferSize,
-                                           char *szComment,
-                                           uLong commentBufferSize);
+                                           حرف *szFileName,
+                                           uLong file_Name_میانگیر_اندازه,
+                                           فراغ *extra_فیلد,
+                                           uLong extra_فیلد_میانگیر_اندازه,
+                                           حرف *szComment,
+                                           uLong comment_میانگیر_اندازه);
 
-extern int ZEXPORT unzGetCurrentFileInfo(unzFile file,
+خارجي صحيح ZEXPORT unzGetCurrentFileInfo(unzFile file,
                                          unz_file_info *pfile_info,
-                                         char *szFileName,
-                                         uLong fileNameBufferSize,
-                                         void *extraField,
-                                         uLong extraFieldBufferSize,
-                                         char *szComment,
-                                         uLong commentBufferSize);
+                                         حرف *szFileName,
+                                         uLong file_Name_میانگیر_اندازه,
+                                         فراغ *extra_فیلد,
+                                         uLong extra_فیلد_میانگیر_اندازه,
+                                         حرف *szComment,
+                                         uLong comment_میانگیر_اندازه);
 /*
   Get Info about the current file
   if pfile_info!=NULL, the *pfile_info structure will contain some info about
@@ -323,7 +323,7 @@ extern int ZEXPORT unzGetCurrentFileInfo(unzFile file,
 
 /** Addition for GDAL : START */
 
-extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file);
+خارجي ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file);
 
 /** Addition for GDAL : END */
 
@@ -333,24 +333,24 @@ extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file);
    from it, and close it (you can close it before reading all the file)
    */
 
-extern int ZEXPORT unzOpenCurrentFile(unzFile file);
+خارجي صحيح ZEXPORT unzOpenCurrentFile(unzFile file);
 /*
   Open for reading data the current file in the zipfile.
   If there is no error, the return value is UNZ_OK.
 */
 
-extern int ZEXPORT unzOpenCurrentFilePassword(unzFile file,
-                                              const char* password);
+خارجي صحيح ZEXPORT unzOpenCurrentFilePassword(unzFile file,
+                                              ثابت حرف* password);
 /*
   Open for reading data the current file in the zipfile.
   password is a crypting password
   If there is no error, the return value is UNZ_OK.
 */
 
-extern int ZEXPORT unzOpenCurrentFile2(unzFile file,
-                                       int* method,
-                                       int* level,
-                                       int raw);
+خارجي صحيح ZEXPORT unzOpenCurrentFile2(unzFile file,
+                                       صحيح* روش,
+                                       صحيح* level,
+                                       صحيح raw);
 /*
   Same than unzOpenCurrentFile, but open for read raw the file (not uncompress)
     if raw==1
@@ -360,11 +360,11 @@ extern int ZEXPORT unzOpenCurrentFile2(unzFile file,
          but you CANNOT set method parameter as NULL
 */
 
-extern int ZEXPORT unzOpenCurrentFile3(unzFile file,
-                                       int* method,
-                                       int* level,
-                                       int raw,
-                                       const char* password);
+خارجي صحيح ZEXPORT unzOpenCurrentFile3(unzFile file,
+                                       صحيح* روش,
+                                       صحيح* level,
+                                       صحيح raw,
+                                       ثابت حرف* password);
 /*
   Same than unzOpenCurrentFile, but open for read raw the file (not uncompress)
     if raw==1
@@ -375,15 +375,15 @@ extern int ZEXPORT unzOpenCurrentFile3(unzFile file,
 */
 
 
-extern int ZEXPORT unzCloseCurrentFile(unzFile file);
+خارجي صحيح ZEXPORT unzCloseCurrentFile(unzFile file);
 /*
   Close the file in zip opened with unzOpenCurrentFile
   Return UNZ_CRCERROR if all the file was read but the CRC is not good
 */
 
-extern int ZEXPORT unzReadCurrentFile(unzFile file,
+خارجي صحيح ZEXPORT unzReadCurrentFile(unzFile file,
                                       voidp buf,
-                                      unsigned len);
+                                      بیعلامت len);
 /*
   Read bytes from the current file (opened by unzOpenCurrentFile)
   buf contain buffer where data must be copied
@@ -395,21 +395,21 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file,
     (UNZ_ERRNO for IO error, or zLib error for uncompress error)
 */
 
-extern z_off_t ZEXPORT unztell(unzFile file);
+خارجي z_off_t ZEXPORT unztell(unzFile file);
 
-extern ZPOS64_T ZEXPORT unztell64(unzFile file);
+خارجي ZPOS64_T ZEXPORT unztell64(unzFile file);
 /*
   Give the current position in uncompressed data
 */
 
-extern int ZEXPORT unzeof(unzFile file);
+خارجي صحيح ZEXPORT unzeof(unzFile file);
 /*
   return 1 if the end of file was reached, 0 elsewhere
 */
 
-extern int ZEXPORT unzGetLocalExtrafield(unzFile file,
+خارجي صحيح ZEXPORT unzGetLocalExtrafield(unzFile file,
                                          voidp buf,
-                                         unsigned len);
+                                         بیعلامت len);
 /*
   Read extra field from the current file (opened by unzOpenCurrentFile)
   This is the local-header version of the extra field (sometimes, there is
@@ -426,17 +426,17 @@ extern int ZEXPORT unzGetLocalExtrafield(unzFile file,
 /***************************************************************************/
 
 /* Get the current file offset */
-extern ZPOS64_T ZEXPORT unzGetOffset64 (unzFile file);
-extern uLong ZEXPORT unzGetOffset (unzFile file);
+خارجي ZPOS64_T ZEXPORT unzGetOffset64 (unzFile file);
+خارجي uLong ZEXPORT unz_Get_جابه_جایی (unzFile file);
 
 /* Set the current file offset */
-extern int ZEXPORT unzSetOffset64 (unzFile file, ZPOS64_T pos);
-extern int ZEXPORT unzSetOffset (unzFile file, uLong pos);
+خارجي صحيح ZEXPORT unz_مجموعه_Offset64 (unzFile file, ZPOS64_T pos);
+خارجي صحيح ZEXPORT unz_مجموعه_جابه_جایی (unzFile file, uLong pos);
 
 
 
-#ifdef __cplusplus
+#اگر_تعریف_شده __cplusplus
 }
-#endif
+#پایان_اگر
 
-#endif /* _unz64_H */
+#پایان_اگر /* _unz64_H */
