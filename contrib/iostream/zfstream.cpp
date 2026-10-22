@@ -10,98 +10,98 @@ gzfilebuf::gzfilebuf() :
 gzfilebuf::~gzfilebuf() {
 
   sync();
-  if ( own_file_descriptor )
+  ꦪꦼꦤ꧀ ( own_file_descriptor )
     close();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::open( const var_na *name,
+                            puur_naa_nka io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ꦪꦼꦤ꧀ ( is_open() )
+    ꦮꦭꦶ NULL;
 
-  char char_mode[10];
-  char *p = char_mode;
+  var_na char_mode[10];
+  var_na *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ꦪꦼꦤ꧀ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } ꦭꦶꦪ ꦪꦼꦤ꧀ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } ꦭꦶꦪ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ꦪꦼꦤ꧀ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ꦪꦼꦤ꧀ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  ꦪꦼꦤ꧀ ( (file = gzopen(name, char_mode)) == NULL )
+    ꦮꦭꦶ NULL;
 
   own_file_descriptor = 1;
 
-  return this;
+  ꦮꦭꦶ this;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( puur_naa_nka file_descriptor,
+                              puur_naa_nka io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ꦪꦼꦤ꧀ ( is_open() )
+    ꦮꦭꦶ NULL;
 
-  char char_mode[10];
-  char *p = char_mode;
+  var_na char_mode[10];
+  var_na *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ꦪꦼꦤ꧀ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } ꦭꦶꦪ ꦪꦼꦤ꧀ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } ꦭꦶꦪ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ꦪꦼꦤ꧀ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ꦪꦼꦤ꧀ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  ꦪꦼꦤ꧀ ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
+    ꦮꦭꦶ NULL;
 
   own_file_descriptor = 0;
 
-  return this;
+  ꦮꦭꦶ this;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  ꦪꦼꦤ꧀ ( is_open() ) {
 
     sync();
     gzclose( file );
@@ -109,145 +109,145 @@ gzfilebuf *gzfilebuf::close() {
 
   }
 
-  return this;
+  ꦮꦭꦶ this;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+puur_naa_nka gzfilebuf::setcompressionlevel( puur_naa_nka comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  ꦮꦭꦶ gzsetparams(file, comp_level, -2);
 
 }
 
+puur_naa_nka gzfilebuf::setcompressionstrategy( puur_naa_nka comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  ꦮꦭꦶ gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, puur_naa_nka which ) {
+
+  ꦮꦭꦶ streampos(EOF);
+
+}
+
+puur_naa_nka gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  ꦪꦼꦤ꧀ ( !is_open() || !(mode & ios::in) )
+    ꦮꦭꦶ EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  ꦪꦼꦤ꧀ ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    ꦪꦼꦤ꧀ ( (allocate()) == EOF )
+      ꦮꦭꦶ EOF;
     setp(0,0);
 
-  } else {
+  } ꦭꦶꦪ {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    ꦪꦼꦤ꧀ ( in_avail() )
+      ꦮꦭꦶ (unsigned var_na) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    ꦪꦼꦤ꧀ ( out_waiting() ) {
+      ꦪꦼꦤ꧀ ( flushbuf() == EOF )
+        ꦮꦭꦶ EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  puur_naa_nka result = fillbuf();
+  ꦪꦼꦤ꧀ ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    ꦮꦭꦶ EOF;
   }
 
-  return (unsigned char) *gptr();
+  ꦮꦭꦶ (unsigned var_na) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+puur_naa_nka gzfilebuf::overflow( puur_naa_nka c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  ꦪꦼꦤ꧀ ( !is_open() || !(mode & ios::out) )
+    ꦮꦭꦶ EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  ꦪꦼꦤ꧀ ( !base() ) {
+    ꦪꦼꦤ꧀ ( allocate() == EOF )
+      ꦮꦭꦶ EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } ꦭꦶꦪ {
+    ꦪꦼꦤ꧀ (in_avail()) {
+        ꦮꦭꦶ EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    ꦪꦼꦤ꧀ (out_waiting()) {
+      ꦪꦼꦤ꧀ (flushbuf() == EOF)
+        ꦮꦭꦶ EOF;
     }
   }
 
-  int bl = blen();
+  puur_naa_nka bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  ꦪꦼꦤ꧀ ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  ꦮꦭꦶ 0;
 
 }
 
-int gzfilebuf::sync() {
+puur_naa_nka gzfilebuf::sync() {
 
-  if ( !is_open() )
-    return EOF;
+  ꦪꦼꦤ꧀ ( !is_open() )
+    ꦮꦭꦶ EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  ꦪꦼꦤ꧀ ( out_waiting() )
+    ꦮꦭꦶ flushbuf();
 
-  return 0;
+  ꦮꦭꦶ 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+puur_naa_nka gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  puur_naa_nka n;
+  var_na *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  ꦪꦼꦤ꧀ ( gzwrite( file, q, n) < n )
+    ꦮꦭꦶ EOF;
 
   setp(0,0);
 
-  return 0;
+  ꦮꦭꦶ 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+puur_naa_nka gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  puur_naa_nka required;
+  var_na *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  puur_naa_nka t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  ꦪꦼꦤ꧀ ( t <= 0) ꦮꦭꦶ EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  ꦮꦭꦶ t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+void gzfilestream_common::attach( puur_naa_nka fd, puur_naa_nka io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  ꦪꦼꦤ꧀ ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  ꦭꦶꦪ
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+void gzfilestream_common::open( const var_na *name, puur_naa_nka io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  ꦪꦼꦤ꧀ ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  ꦭꦶꦪ
     clear();
 
 }
 
 void gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  ꦪꦼꦤ꧀ ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  ꦮꦭꦶ &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( const var_na *name, puur_naa_nka io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( puur_naa_nka fd, puur_naa_nka io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( const var_na *name, puur_naa_nka io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( puur_naa_nka fd, puur_naa_nka io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
