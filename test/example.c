@@ -5,488 +5,488 @@
 
 /* @(#) $Id$ */
 
-#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
+#ఒకవేళ defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #  define _CRT_SECURE_NO_WARNINGS
-#endif
+#అయితే_ముగింపు
 
-#include "zlib.h"
-#include <stdio.h>
+#అన్తర్భావ "zlib.h"
+#అన్తర్భావ <stdio.h>
 
-#ifdef STDC
+#నిర్వచితమైతే STDC
 #  include <string.h>
 #  include <stdlib.h>
-#endif
+#అయితే_ముగింపు
 
-#if defined(VMS)
+#ఒకవేళ defined(VMS)
 #  define TESTFILE "foo-gz"
-#elif defined(__riscos) && !defined(__TARGET_UNIXLIB__)
+#లేదావేళ defined(__riscos) && !defined(__TARGET_UNIXLIB__)
 #  define TESTFILE "foo/gz"
-#else
+#లేకపోతే
 #  define TESTFILE "foo.gz"
-#endif
+#అయితే_ముగింపు
 
-#define CHECK_ERR(err, msg) { \
-    if (err != Z_OK) { \
-        fprintf(stderr, "%s error: %d\n", msg, err); \
-        exit(1); \
+#నిర్వచించు CHECK_ERR(err, సందేశం) { \
+    ఒకవేళ (err != Z_OK) { \
+        fprintf(stderr, "%s error: %d\n", సందేశం, err); \
+        నిష్క్రమించు(1); \
     } \
 }
 
-static z_const char hello[] = "hello, hello!";
+స్థిర z_const అక్షరం hello[] = "hello, hello!";
 /* "hello world" would be more standard, but the repeated "hello"
  * stresses the compression code better, sorry...
  */
 
-static const char dictionary[] = "hello";
-static uLong dictId;    /* Adler32 value of the dictionary */
+స్థిర స్థిరరాశి అక్షరం dictionary[] = "hello";
+స్థిర uLong dictId;    /* Adler32 value of the dictionary */
 
-#ifdef Z_SOLO
+#నిర్వచితమైతే Z_SOLO
 
-static void *myalloc(void *q, unsigned n, unsigned m) {
-    (void)q;
-    return calloc(n, m);
+స్థిర శూన్య *myalloc(శూన్య *q, గుర్తులేని n, గుర్తులేని m) {
+    (శూన్య)q;
+    తిరిగి సున్నా_జ్ఞాపకం_ఇవ్వు(n, m);
 }
 
-static void myfree(void *q, void *p) {
-    (void)q;
-    free(p);
+స్థిర శూన్య myfree(శూన్య *q, శూన్య *p) {
+    (శూన్య)q;
+    విడుదల(p);
 }
 
-static alloc_func zalloc = myalloc;
-static free_func zfree = myfree;
+స్థిర alloc_func zalloc = myalloc;
+స్థిర free_func zfree = myfree;
 
-#else /* !Z_SOLO */
+#లేకపోతే /* !Z_SOLO */
 
-static alloc_func zalloc = (alloc_func)0;
-static free_func zfree = (free_func)0;
+స్థిర alloc_func zalloc = (alloc_func)0;
+స్థిర free_func zfree = (free_func)0;
 
 /* ===========================================================================
  * Test compress() and uncompress()
  */
-static void test_compress(Byte *compr, uLong comprLen, Byte *uncompr,
+స్థిర శూన్య test_compress(Byte *compr, uLong comprLen, Byte *uncompr,
                    uLong uncomprLen) {
-    int err;
-    uLong len = (uLong)strlen(hello)+1;
+    పూర్ణాంకం err;
+    uLong len = (uLong)అక్షరశ్రేణి_పొడవు(hello)+1;
 
-    err = compress(compr, &comprLen, (const Bytef*)hello, len);
+    err = compress(compr, &comprLen, (స్థిరరాశి Bytef*)hello, len);
     CHECK_ERR(err, "compress");
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((అక్షరం*)uncompr, "garbage");
 
     err = uncompress(uncompr, &uncomprLen, compr, comprLen);
     CHECK_ERR(err, "uncompress");
 
-    if (strcmp((char*)uncompr, hello)) {
+    ఒకవేళ (strcmp((అక్షరం*)uncompr, hello)) {
         fprintf(stderr, "bad uncompress\n");
-        exit(1);
-    } else {
-        printf("uncompress(): %s\n", (char *)uncompr);
+        నిష్క్రమించు(1);
+    } లేకపోతే {
+        రాయి("uncompress(): %s\n", (అక్షరం *)uncompr);
     }
 }
 
 /* ===========================================================================
  * Test read/write of .gz files
  */
-static void test_gzio(const char *fname, Byte *uncompr, uLong uncomprLen) {
-#ifdef NO_GZCOMPRESS
+స్థిర శూన్య test_gzio(స్థిరరాశి అక్షరం *fname, Byte *uncompr, uLong uncomprLen) {
+#నిర్వచితమైతే NO_GZCOMPRESS
     fprintf(stderr, "NO_GZCOMPRESS -- gz* functions cannot compress\n");
-#else
-    int err;
-    int len = (int)strlen(hello)+1;
+#లేకపోతే
+    పూర్ణాంకం err;
+    పూర్ణాంకం len = (పూర్ణాంకం)అక్షరశ్రేణి_పొడవు(hello)+1;
     gzFile file;
     z_off_t pos;
 
     file = gzopen(fname, "wb");
-    if (file == NULL) {
+    ఒకవేళ (file == ఖాళీ) {
         fprintf(stderr, "gzopen error\n");
-        exit(1);
+        నిష్క్రమించు(1);
     }
     gzputc(file, 'h');
-    if (gzputs(file, "ello") != 4) {
+    ఒకవేళ (gzputs(file, "ello") != 4) {
         fprintf(stderr, "gzputs err: %s\n", gzerror(file, &err));
-        exit(1);
+        నిష్క్రమించు(1);
     }
-    if (gzprintf(file, ", %s!", "hello") != 8) {
+    ఒకవేళ (gzprintf(file, ", %s!", "hello") != 8) {
         fprintf(stderr, "gzprintf err: %s\n", gzerror(file, &err));
-        exit(1);
+        నిష్క్రమించు(1);
     }
     gzseek(file, 1L, SEEK_CUR); /* add one zero byte */
     gzclose(file);
 
     file = gzopen(fname, "rb");
-    if (file == NULL) {
+    ఒకవేళ (file == ఖాళీ) {
         fprintf(stderr, "gzopen error\n");
-        exit(1);
+        నిష్క్రమించు(1);
     }
-    strcpy((char*)uncompr, "garbage");
+    strcpy((అక్షరం*)uncompr, "garbage");
 
-    if (gzread(file, uncompr, (unsigned)uncomprLen) != len) {
+    ఒకవేళ (gzread(file, uncompr, (గుర్తులేని)uncomprLen) != len) {
         fprintf(stderr, "gzread err: %s\n", gzerror(file, &err));
-        exit(1);
+        నిష్క్రమించు(1);
     }
-    if (strcmp((char*)uncompr, hello)) {
-        fprintf(stderr, "bad gzread: %s\n", (char*)uncompr);
-        exit(1);
-    } else {
-        printf("gzread(): %s\n", (char*)uncompr);
+    ఒకవేళ (strcmp((అక్షరం*)uncompr, hello)) {
+        fprintf(stderr, "bad gzread: %s\n", (అక్షరం*)uncompr);
+        నిష్క్రమించు(1);
+    } లేకపోతే {
+        రాయి("gzread(): %s\n", (అక్షరం*)uncompr);
     }
 
     pos = gzseek(file, -8L, SEEK_CUR);
-    if (pos != 6 || gztell(file) != pos) {
+    ఒకవేళ (pos != 6 || gztell(file) != pos) {
         fprintf(stderr, "gzseek error, pos=%ld, gztell=%ld\n",
-                (long)pos, (long)gztell(file));
-        exit(1);
+                (దీర్ఘ)pos, (దీర్ఘ)gztell(file));
+        నిష్క్రమించు(1);
     }
 
-    if (gzgetc(file) != ' ') {
+    ఒకవేళ (gzgetc(file) != ' ') {
         fprintf(stderr, "gzgetc error\n");
-        exit(1);
+        నిష్క్రమించు(1);
     }
 
-    if (gzungetc(' ', file) != ' ') {
+    ఒకవేళ (gzungetc(' ', file) != ' ') {
         fprintf(stderr, "gzungetc error\n");
-        exit(1);
+        నిష్క్రమించు(1);
     }
 
-    gzgets(file, (char*)uncompr, (int)uncomprLen);
-    if (strlen((char*)uncompr) != 7) { /* " hello!" */
+    gzgets(file, (అక్షరం*)uncompr, (పూర్ణాంకం)uncomprLen);
+    ఒకవేళ (అక్షరశ్రేణి_పొడవు((అక్షరం*)uncompr) != 7) { /* " hello!" */
         fprintf(stderr, "gzgets err after gzseek: %s\n", gzerror(file, &err));
-        exit(1);
+        నిష్క్రమించు(1);
     }
-    if (strcmp((char*)uncompr, hello + 6)) {
+    ఒకవేళ (strcmp((అక్షరం*)uncompr, hello + 6)) {
         fprintf(stderr, "bad gzgets after gzseek\n");
-        exit(1);
-    } else {
-        printf("gzgets() after gzseek: %s\n", (char*)uncompr);
+        నిష్క్రమించు(1);
+    } లేకపోతే {
+        రాయి("gzgets() after gzseek: %s\n", (అక్షరం*)uncompr);
     }
 
     gzclose(file);
-#endif
+#అయితే_ముగింపు
 }
 
-#endif /* Z_SOLO */
+#అయితే_ముగింపు /* Z_SOLO */
 
 /* ===========================================================================
  * Test deflate() with small buffers
  */
-static void test_deflate(Byte *compr, uLong comprLen) {
-    z_stream c_stream; /* compression stream */
-    int err;
-    uLong len = (uLong)strlen(hello)+1;
+స్థిర శూన్య test_deflate(Byte *compr, uLong comprLen) {
+    z_ప్రవాహం c_ప్రవాహం; /* compression stream */
+    పూర్ణాంకం err;
+    uLong len = (uLong)అక్షరశ్రేణి_పొడవు(hello)+1;
 
-    c_stream.zalloc = zalloc;
-    c_stream.zfree = zfree;
-    c_stream.opaque = (voidpf)0;
+    c_ప్రవాహం.zalloc = zalloc;
+    c_ప్రవాహం.zfree = zfree;
+    c_ప్రవాహం.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
+    err = deflateInit(&c_ప్రవాహం, Z_DEFAULT_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_in  = (z_const unsigned char *)hello;
-    c_stream.next_out = compr;
+    c_ప్రవాహం.తదుపరి_లోపల  = (z_const గుర్తులేని అక్షరం *)hello;
+    c_ప్రవాహం.తదుపరి_బహిర్గతం = compr;
 
-    while (c_stream.total_in != len && c_stream.total_out < comprLen) {
-        c_stream.avail_in = c_stream.avail_out = 1; /* force small buffers */
-        err = deflate(&c_stream, Z_NO_FLUSH);
+    అయితే (c_ప్రవాహం.మొత్తం_లోపల != len && c_ప్రవాహం.మొత్తం_బహిర్గతం < comprLen) {
+        c_ప్రవాహం.avail_లోపల = c_ప్రవాహం.avail_బహిర్గతం = 1; /* force small buffers */
+        err = deflate(&c_ప్రవాహం, Z_NO_FLUSH);
         CHECK_ERR(err, "deflate");
     }
     /* Finish the stream, still forcing small buffers: */
-    for (;;) {
-        c_stream.avail_out = 1;
-        err = deflate(&c_stream, Z_FINISH);
-        if (err == Z_STREAM_END) break;
+    కొరకు (;;) {
+        c_ప్రవాహం.avail_బహిర్గతం = 1;
+        err = deflate(&c_ప్రవాహం, Z_ముగింపు);
+        ఒకవేళ (err == Z_ప్రవాహం_చివర) ఆపు;
         CHECK_ERR(err, "deflate");
     }
 
-    err = deflateEnd(&c_stream);
+    err = deflate_చివర(&c_ప్రవాహం);
     CHECK_ERR(err, "deflateEnd");
 }
 
 /* ===========================================================================
  * Test inflate() with small buffers
  */
-static void test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+స్థిర శూన్య test_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                   uLong uncomprLen) {
-    int err;
-    z_stream d_stream; /* decompression stream */
+    పూర్ణాంకం err;
+    z_ప్రవాహం d_ప్రవాహం; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((అక్షరం*)uncompr, "garbage");
 
-    d_stream.zalloc = zalloc;
-    d_stream.zfree = zfree;
-    d_stream.opaque = (voidpf)0;
+    d_ప్రవాహం.zalloc = zalloc;
+    d_ప్రవాహం.zfree = zfree;
+    d_ప్రవాహం.opaque = (voidpf)0;
 
-    d_stream.next_in  = compr;
-    d_stream.avail_in = 0;
-    d_stream.next_out = uncompr;
+    d_ప్రవాహం.తదుపరి_లోపల  = compr;
+    d_ప్రవాహం.avail_లోపల = 0;
+    d_ప్రవాహం.తదుపరి_బహిర్గతం = uncompr;
 
-    err = inflateInit(&d_stream);
+    err = inflateInit(&d_ప్రవాహం);
     CHECK_ERR(err, "inflateInit");
 
-    while (d_stream.total_out < uncomprLen && d_stream.total_in < comprLen) {
-        d_stream.avail_in = d_stream.avail_out = 1; /* force small buffers */
-        err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
+    అయితే (d_ప్రవాహం.మొత్తం_బహిర్గతం < uncomprLen && d_ప్రవాహం.మొత్తం_లోపల < comprLen) {
+        d_ప్రవాహం.avail_లోపల = d_ప్రవాహం.avail_బహిర్గతం = 1; /* force small buffers */
+        err = inflate(&d_ప్రవాహం, Z_NO_FLUSH);
+        ఒకవేళ (err == Z_ప్రవాహం_చివర) ఆపు;
         CHECK_ERR(err, "inflate");
     }
 
-    err = inflateEnd(&d_stream);
+    err = inflate_చివర(&d_ప్రవాహం);
     CHECK_ERR(err, "inflateEnd");
 
-    if (strcmp((char*)uncompr, hello)) {
+    ఒకవేళ (strcmp((అక్షరం*)uncompr, hello)) {
         fprintf(stderr, "bad inflate\n");
-        exit(1);
-    } else {
-        printf("inflate(): %s\n", (char *)uncompr);
+        నిష్క్రమించు(1);
+    } లేకపోతే {
+        రాయి("inflate(): %s\n", (అక్షరం *)uncompr);
     }
 }
 
 /* ===========================================================================
  * Test deflate() with large buffers and dynamic change of compression level
  */
-static void test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
+స్థిర శూన్య test_large_deflate(Byte *compr, uLong comprLen, Byte *uncompr,
                         uLong uncomprLen) {
-    z_stream c_stream; /* compression stream */
-    int err;
+    z_ప్రవాహం c_ప్రవాహం; /* compression stream */
+    పూర్ణాంకం err;
 
-    c_stream.zalloc = zalloc;
-    c_stream.zfree = zfree;
-    c_stream.opaque = (voidpf)0;
+    c_ప్రవాహం.zalloc = zalloc;
+    c_ప్రవాహం.zfree = zfree;
+    c_ప్రవాహం.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_BEST_SPEED);
+    err = deflateInit(&c_ప్రవాహం, Z_ఉత్తమ_వేగం);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_out = compr;
-    c_stream.avail_out = (uInt)comprLen;
+    c_ప్రవాహం.తదుపరి_బహిర్గతం = compr;
+    c_ప్రవాహం.avail_బహిర్గతం = (uInt)comprLen;
 
     /* At this point, uncompr is still mostly zeroes, so it should compress
      * very well:
      */
-    c_stream.next_in = uncompr;
-    c_stream.avail_in = (uInt)uncomprLen;
-    err = deflate(&c_stream, Z_NO_FLUSH);
+    c_ప్రవాహం.తదుపరి_లోపల = uncompr;
+    c_ప్రవాహం.avail_లోపల = (uInt)uncomprLen;
+    err = deflate(&c_ప్రవాహం, Z_NO_FLUSH);
     CHECK_ERR(err, "deflate");
-    if (c_stream.avail_in != 0) {
+    ఒకవేళ (c_ప్రవాహం.avail_లోపల != 0) {
         fprintf(stderr, "deflate not greedy\n");
-        exit(1);
+        నిష్క్రమించు(1);
     }
 
     /* Feed in already compressed data and switch to no compression: */
-    deflateParams(&c_stream, Z_NO_COMPRESSION, Z_DEFAULT_STRATEGY);
-    c_stream.next_in = compr;
-    c_stream.avail_in = (uInt)uncomprLen/2;
-    err = deflate(&c_stream, Z_NO_FLUSH);
+    deflateParams(&c_ప్రవాహం, Z_NO_COMPRESSION, Z_DEFAULT_STRATEGY);
+    c_ప్రవాహం.తదుపరి_లోపల = compr;
+    c_ప్రవాహం.avail_లోపల = (uInt)uncomprLen/2;
+    err = deflate(&c_ప్రవాహం, Z_NO_FLUSH);
     CHECK_ERR(err, "deflate");
 
     /* Switch back to compressing mode: */
-    deflateParams(&c_stream, Z_BEST_COMPRESSION, Z_FILTERED);
-    c_stream.next_in = uncompr;
-    c_stream.avail_in = (uInt)uncomprLen;
-    err = deflate(&c_stream, Z_NO_FLUSH);
+    deflateParams(&c_ప్రవాహం, Z_ఉత్తమ_COMPRESSION, Z_FILTERED);
+    c_ప్రవాహం.తదుపరి_లోపల = uncompr;
+    c_ప్రవాహం.avail_లోపల = (uInt)uncomprLen;
+    err = deflate(&c_ప్రవాహం, Z_NO_FLUSH);
     CHECK_ERR(err, "deflate");
 
-    err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    err = deflate(&c_ప్రవాహం, Z_ముగింపు);
+    ఒకవేళ (err != Z_ప్రవాహం_చివర) {
         fprintf(stderr, "deflate should report Z_STREAM_END\n");
-        exit(1);
+        నిష్క్రమించు(1);
     }
-    err = deflateEnd(&c_stream);
+    err = deflate_చివర(&c_ప్రవాహం);
     CHECK_ERR(err, "deflateEnd");
 }
 
 /* ===========================================================================
  * Test inflate() with large buffers
  */
-static void test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+స్థిర శూన్య test_large_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                         uLong uncomprLen) {
-    int err;
-    z_stream d_stream; /* decompression stream */
+    పూర్ణాంకం err;
+    z_ప్రవాహం d_ప్రవాహం; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((అక్షరం*)uncompr, "garbage");
 
-    d_stream.zalloc = zalloc;
-    d_stream.zfree = zfree;
-    d_stream.opaque = (voidpf)0;
+    d_ప్రవాహం.zalloc = zalloc;
+    d_ప్రవాహం.zfree = zfree;
+    d_ప్రవాహం.opaque = (voidpf)0;
 
-    d_stream.next_in  = compr;
-    d_stream.avail_in = (uInt)comprLen;
+    d_ప్రవాహం.తదుపరి_లోపల  = compr;
+    d_ప్రవాహం.avail_లోపల = (uInt)comprLen;
 
-    err = inflateInit(&d_stream);
+    err = inflateInit(&d_ప్రవాహం);
     CHECK_ERR(err, "inflateInit");
 
-    for (;;) {
-        d_stream.next_out = uncompr;            /* discard the output */
-        d_stream.avail_out = (uInt)uncomprLen;
-        err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
+    కొరకు (;;) {
+        d_ప్రవాహం.తదుపరి_బహిర్గతం = uncompr;            /* discard the output */
+        d_ప్రవాహం.avail_బహిర్గతం = (uInt)uncomprLen;
+        err = inflate(&d_ప్రవాహం, Z_NO_FLUSH);
+        ఒకవేళ (err == Z_ప్రవాహం_చివర) ఆపు;
         CHECK_ERR(err, "large inflate");
     }
 
-    err = inflateEnd(&d_stream);
+    err = inflate_చివర(&d_ప్రవాహం);
     CHECK_ERR(err, "inflateEnd");
 
-    if (d_stream.total_out != 2*uncomprLen + uncomprLen/2) {
-        fprintf(stderr, "bad large inflate: %lu\n", d_stream.total_out);
-        exit(1);
-    } else {
-        printf("large_inflate(): OK\n");
+    ఒకవేళ (d_ప్రవాహం.మొత్తం_బహిర్గతం != 2*uncomprLen + uncomprLen/2) {
+        fprintf(stderr, "bad large inflate: %lu\n", d_ప్రవాహం.మొత్తం_బహిర్గతం);
+        నిష్క్రమించు(1);
+    } లేకపోతే {
+        రాయి("large_inflate(): OK\n");
     }
 }
 
 /* ===========================================================================
  * Test deflate() with full flush
  */
-static void test_flush(Byte *compr, uLong *comprLen) {
-    z_stream c_stream; /* compression stream */
-    int err;
-    uInt len = (uInt)strlen(hello)+1;
+స్థిర శూన్య test_flush(Byte *compr, uLong *comprLen) {
+    z_ప్రవాహం c_ప్రవాహం; /* compression stream */
+    పూర్ణాంకం err;
+    uInt len = (uInt)అక్షరశ్రేణి_పొడవు(hello)+1;
 
-    c_stream.zalloc = zalloc;
-    c_stream.zfree = zfree;
-    c_stream.opaque = (voidpf)0;
+    c_ప్రవాహం.zalloc = zalloc;
+    c_ప్రవాహం.zfree = zfree;
+    c_ప్రవాహం.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
+    err = deflateInit(&c_ప్రవాహం, Z_DEFAULT_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    c_stream.next_in  = (z_const unsigned char *)hello;
-    c_stream.next_out = compr;
-    c_stream.avail_in = 3;
-    c_stream.avail_out = (uInt)*comprLen;
-    err = deflate(&c_stream, Z_FULL_FLUSH);
+    c_ప్రవాహం.తదుపరి_లోపల  = (z_const గుర్తులేని అక్షరం *)hello;
+    c_ప్రవాహం.తదుపరి_బహిర్గతం = compr;
+    c_ప్రవాహం.avail_లోపల = 3;
+    c_ప్రవాహం.avail_బహిర్గతం = (uInt)*comprLen;
+    err = deflate(&c_ప్రవాహం, Z_నిండిన_FLUSH);
     CHECK_ERR(err, "deflate");
 
     compr[3]++; /* force an error in first compressed block */
-    c_stream.avail_in = len - 3;
+    c_ప్రవాహం.avail_లోపల = len - 3;
 
-    err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    err = deflate(&c_ప్రవాహం, Z_ముగింపు);
+    ఒకవేళ (err != Z_ప్రవాహం_చివర) {
         CHECK_ERR(err, "deflate");
     }
-    err = deflateEnd(&c_stream);
+    err = deflate_చివర(&c_ప్రవాహం);
     CHECK_ERR(err, "deflateEnd");
 
-    *comprLen = c_stream.total_out;
+    *comprLen = c_ప్రవాహం.మొత్తం_బహిర్గతం;
 }
 
 /* ===========================================================================
  * Test inflateSync()
  */
-static void test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
+స్థిర శూన్య test_sync(Byte *compr, uLong comprLen, Byte *uncompr,
                       uLong uncomprLen) {
-    int err;
-    z_stream d_stream; /* decompression stream */
+    పూర్ణాంకం err;
+    z_ప్రవాహం d_ప్రవాహం; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((అక్షరం*)uncompr, "garbage");
 
-    d_stream.zalloc = zalloc;
-    d_stream.zfree = zfree;
-    d_stream.opaque = (voidpf)0;
+    d_ప్రవాహం.zalloc = zalloc;
+    d_ప్రవాహం.zfree = zfree;
+    d_ప్రవాహం.opaque = (voidpf)0;
 
-    d_stream.next_in  = compr;
-    d_stream.avail_in = 2; /* just read the zlib header */
+    d_ప్రవాహం.తదుపరి_లోపల  = compr;
+    d_ప్రవాహం.avail_లోపల = 2; /* just read the zlib header */
 
-    err = inflateInit(&d_stream);
+    err = inflateInit(&d_ప్రవాహం);
     CHECK_ERR(err, "inflateInit");
 
-    d_stream.next_out = uncompr;
-    d_stream.avail_out = (uInt)uncomprLen;
+    d_ప్రవాహం.తదుపరి_బహిర్గతం = uncompr;
+    d_ప్రవాహం.avail_బహిర్గతం = (uInt)uncomprLen;
 
-    err = inflate(&d_stream, Z_NO_FLUSH);
+    err = inflate(&d_ప్రవాహం, Z_NO_FLUSH);
     CHECK_ERR(err, "inflate");
 
-    d_stream.avail_in = (uInt)comprLen-2;   /* read all compressed data */
-    err = inflateSync(&d_stream);           /* but skip the damaged part */
+    d_ప్రవాహం.avail_లోపల = (uInt)comprLen-2;   /* read all compressed data */
+    err = inflateSync(&d_ప్రవాహం);           /* but skip the damaged part */
     CHECK_ERR(err, "inflateSync");
 
-    err = inflate(&d_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    err = inflate(&d_ప్రవాహం, Z_ముగింపు);
+    ఒకవేళ (err != Z_ప్రవాహం_చివర) {
         fprintf(stderr, "inflate should report Z_STREAM_END\n");
-        exit(1);
+        నిష్క్రమించు(1);
     }
-    err = inflateEnd(&d_stream);
+    err = inflate_చివర(&d_ప్రవాహం);
     CHECK_ERR(err, "inflateEnd");
 
-    printf("after inflateSync(): hel%s\n", (char *)uncompr);
+    రాయి("after inflateSync(): hel%s\n", (అక్షరం *)uncompr);
 }
 
 /* ===========================================================================
  * Test deflate() with preset dictionary
  */
-static void test_dict_deflate(Byte *compr, uLong comprLen) {
-    z_stream c_stream; /* compression stream */
-    int err;
+స్థిర శూన్య test_dict_deflate(Byte *compr, uLong comprLen) {
+    z_ప్రవాహం c_ప్రవాహం; /* compression stream */
+    పూర్ణాంకం err;
 
-    c_stream.zalloc = zalloc;
-    c_stream.zfree = zfree;
-    c_stream.opaque = (voidpf)0;
+    c_ప్రవాహం.zalloc = zalloc;
+    c_ప్రవాహం.zfree = zfree;
+    c_ప్రవాహం.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_BEST_COMPRESSION);
+    err = deflateInit(&c_ప్రవాహం, Z_ఉత్తమ_COMPRESSION);
     CHECK_ERR(err, "deflateInit");
 
-    err = deflateSetDictionary(&c_stream,
-                (const Bytef*)dictionary, (int)sizeof(dictionary));
+    err = deflate_సమితి_Dictionary(&c_ప్రవాహం,
+                (స్థిరరాశి Bytef*)dictionary, (పూర్ణాంకం)పరిమాణం(dictionary));
     CHECK_ERR(err, "deflateSetDictionary");
 
-    dictId = c_stream.adler;
-    c_stream.next_out = compr;
-    c_stream.avail_out = (uInt)comprLen;
+    dictId = c_ప్రవాహం.adler;
+    c_ప్రవాహం.తదుపరి_బహిర్గతం = compr;
+    c_ప్రవాహం.avail_బహిర్గతం = (uInt)comprLen;
 
-    c_stream.next_in = (z_const unsigned char *)hello;
-    c_stream.avail_in = (uInt)strlen(hello)+1;
+    c_ప్రవాహం.తదుపరి_లోపల = (z_const గుర్తులేని అక్షరం *)hello;
+    c_ప్రవాహం.avail_లోపల = (uInt)అక్షరశ్రేణి_పొడవు(hello)+1;
 
-    err = deflate(&c_stream, Z_FINISH);
-    if (err != Z_STREAM_END) {
+    err = deflate(&c_ప్రవాహం, Z_ముగింపు);
+    ఒకవేళ (err != Z_ప్రవాహం_చివర) {
         fprintf(stderr, "deflate should report Z_STREAM_END\n");
-        exit(1);
+        నిష్క్రమించు(1);
     }
-    err = deflateEnd(&c_stream);
+    err = deflate_చివర(&c_ప్రవాహం);
     CHECK_ERR(err, "deflateEnd");
 }
 
 /* ===========================================================================
  * Test inflate() with a preset dictionary
  */
-static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
+స్థిర శూన్య test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
                        uLong uncomprLen) {
-    int err;
-    z_stream d_stream; /* decompression stream */
+    పూర్ణాంకం err;
+    z_ప్రవాహం d_ప్రవాహం; /* decompression stream */
 
-    strcpy((char*)uncompr, "garbage");
+    strcpy((అక్షరం*)uncompr, "garbage");
 
-    d_stream.zalloc = zalloc;
-    d_stream.zfree = zfree;
-    d_stream.opaque = (voidpf)0;
+    d_ప్రవాహం.zalloc = zalloc;
+    d_ప్రవాహం.zfree = zfree;
+    d_ప్రవాహం.opaque = (voidpf)0;
 
-    d_stream.next_in  = compr;
-    d_stream.avail_in = (uInt)comprLen;
+    d_ప్రవాహం.తదుపరి_లోపల  = compr;
+    d_ప్రవాహం.avail_లోపల = (uInt)comprLen;
 
-    err = inflateInit(&d_stream);
+    err = inflateInit(&d_ప్రవాహం);
     CHECK_ERR(err, "inflateInit");
 
-    d_stream.next_out = uncompr;
-    d_stream.avail_out = (uInt)uncomprLen;
+    d_ప్రవాహం.తదుపరి_బహిర్గతం = uncompr;
+    d_ప్రవాహం.avail_బహిర్గతం = (uInt)uncomprLen;
 
-    for (;;) {
-        err = inflate(&d_stream, Z_NO_FLUSH);
-        if (err == Z_STREAM_END) break;
-        if (err == Z_NEED_DICT) {
-            if (d_stream.adler != dictId) {
+    కొరకు (;;) {
+        err = inflate(&d_ప్రవాహం, Z_NO_FLUSH);
+        ఒకవేళ (err == Z_ప్రవాహం_చివర) ఆపు;
+        ఒకవేళ (err == Z_NEED_DICT) {
+            ఒకవేళ (d_ప్రవాహం.adler != dictId) {
                 fprintf(stderr, "unexpected dictionary");
-                exit(1);
+                నిష్క్రమించు(1);
             }
-            err = inflateSetDictionary(&d_stream, (const Bytef*)dictionary,
-                                       (int)sizeof(dictionary));
+            err = inflate_సమితి_Dictionary(&d_ప్రవాహం, (స్థిరరాశి Bytef*)dictionary,
+                                       (పూర్ణాంకం)పరిమాణం(dictionary));
         }
         CHECK_ERR(err, "inflate with dict");
     }
 
-    err = inflateEnd(&d_stream);
+    err = inflate_చివర(&d_ప్రవాహం);
     CHECK_ERR(err, "inflateEnd");
 
-    if (strcmp((char*)uncompr, hello)) {
+    ఒకవేళ (strcmp((అక్షరం*)uncompr, hello)) {
         fprintf(stderr, "bad inflate with dict\n");
-        exit(1);
-    } else {
-        printf("inflate with dictionary: %s\n", (char *)uncompr);
+        నిష్క్రమించు(1);
+    } లేకపోతే {
+        రాయి("inflate with dictionary: %s\n", (అక్షరం *)uncompr);
     }
 }
 
@@ -494,43 +494,43 @@ static void test_dict_inflate(Byte *compr, uLong comprLen, Byte *uncompr,
  * Usage:  example [output.gz  [input.gz]]
  */
 
-int main(int argc, char *argv[]) {
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం *argv[]) {
     Byte *compr, *uncompr;
     uLong uncomprLen = 20000;
     uLong comprLen = 3 * uncomprLen;
-    static const char* myVersion = ZLIB_VERSION;
+    స్థిర స్థిరరాశి అక్షరం* my_సంస్కరణ_2 = ZLIB_సంస్కరణ;
 
-    if (zlibVersion()[0] != myVersion[0]) {
+    ఒకవేళ (zlib_సంస్కరణ()[0] != my_సంస్కరణ_2[0]) {
         fprintf(stderr, "incompatible zlib version\n");
-        exit(1);
+        నిష్క్రమించు(1);
 
-    } else if (strcmp(zlibVersion(), ZLIB_VERSION) != 0) {
+    } లేకపోతే ఒకవేళ (strcmp(zlib_సంస్కరణ(), ZLIB_సంస్కరణ) != 0) {
         fprintf(stderr, "warning: different zlib version linked: %s\n",
-                zlibVersion());
+                zlib_సంస్కరణ());
     }
 
-    printf("zlib version %s = 0x%04x, compile flags = 0x%lx\n",
-            ZLIB_VERSION, (unsigned)ZLIB_VERNUM, zlibCompileFlags());
+    రాయి("zlib version %s = 0x%04x, compile flags = 0x%lx\n",
+            ZLIB_సంస్కరణ, (గుర్తులేని)ZLIB_VERNUM, zlibCompileFlags());
 
-    compr    = (Byte*)calloc((uInt)comprLen, 1);
-    uncompr  = (Byte*)calloc((uInt)uncomprLen, 1);
+    compr    = (Byte*)సున్నా_జ్ఞాపకం_ఇవ్వు((uInt)comprLen, 1);
+    uncompr  = (Byte*)సున్నా_జ్ఞాపకం_ఇవ్వు((uInt)uncomprLen, 1);
     /* compr and uncompr are cleared to avoid reading uninitialized
      * data and to ensure that uncompr compresses well.
      */
-    if (compr == Z_NULL || uncompr == Z_NULL) {
-        printf("out of memory\n");
-        exit(1);
+    ఒకవేళ (compr == Z_NULL || uncompr == Z_NULL) {
+        రాయి("out of memory\n");
+        నిష్క్రమించు(1);
     }
 
-#ifdef Z_SOLO
-    (void)argc;
-    (void)argv;
-#else
+#నిర్వచితమైతే Z_SOLO
+    (శూన్య)argc;
+    (శూన్య)argv;
+#లేకపోతే
     test_compress(compr, comprLen, uncompr, uncomprLen);
 
     test_gzio((argc > 1 ? argv[1] : TESTFILE),
               uncompr, uncomprLen);
-#endif
+#అయితే_ముగింపు
 
     test_deflate(compr, comprLen);
     test_inflate(compr, comprLen, uncompr, uncomprLen);
@@ -545,8 +545,8 @@ int main(int argc, char *argv[]) {
     test_dict_deflate(compr, comprLen);
     test_dict_inflate(compr, comprLen, uncompr, uncomprLen);
 
-    free(compr);
-    free(uncompr);
+    విడుదల(compr);
+    విడుదల(uncompr);
 
-    return 0;
+    తిరిగి 0;
 }

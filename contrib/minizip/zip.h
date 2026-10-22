@@ -36,86 +36,86 @@
 
  */
 
-#ifndef _zip12_H
-#define _zip12_H
+#నిర్వచితం_కాకపోతే _zip12_H
+#నిర్వచించు _zip12_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#నిర్వచితమైతే __cplusplus
+బాహ్య "C" {
+#అయితే_ముగింపు
 
 /* #define HAVE_BZIP2 */
 
-#ifndef _ZLIB_H
-#include "zlib.h"
-#endif
+#నిర్వచితం_కాకపోతే _ZLIB_H
+#అన్తర్భావ "zlib.h"
+#అయితే_ముగింపు
 
-#ifndef _ZLIBIOAPI_H
-#include "ioapi.h"
-#endif
+#నిర్వచితం_కాకపోతే _ZLIBIOAPI_H
+#అన్తర్భావ "ioapi.h"
+#అయితే_ముగింపు
 
-#ifdef HAVE_BZIP2
-#include "bzlib.h"
-#endif
+#నిర్వచితమైతే HAVE_BZIP2
+#అన్తర్భావ "bzlib.h"
+#అయితే_ముగింపు
 
-#define Z_BZIP2ED 12
+#నిర్వచించు Z_BZIP2ED 12
 
-#if defined(STRICTZIP) || defined(STRICTZIPUNZIP)
+#ఒకవేళ defined(STRICTZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
     from (void*) without cast */
-typedef struct TagzipFile__ { int unused; } zipFile__;
-typedef zipFile__ *zipFile;
-#else
-typedef voidp zipFile;
-#endif
+రకనిర్వచనం నిర్మాణం TagzipFile__ { పూర్ణాంకం వాడని; } zipFile__;
+రకనిర్వచనం zipFile__ *zipFile;
+#లేకపోతే
+రకనిర్వచనం voidp zipFile;
+#అయితే_ముగింపు
 
-extern const char zip_copyright[];
+బాహ్య స్థిరరాశి అక్షరం zip_copyright[];
 
-#define ZIP_OK                          (0)
-#define ZIP_EOF                         (0)
-#define ZIP_ERRNO                       (Z_ERRNO)
-#define ZIP_PARAMERROR                  (-102)
-#define ZIP_BADZIPFILE                  (-103)
-#define ZIP_INTERNALERROR               (-104)
+#నిర్వచించు ZIP_OK                          (0)
+#నిర్వచించు ZIP_EOF                         (0)
+#నిర్వచించు ZIP_ERRNO                       (Z_ERRNO)
+#నిర్వచించు ZIP_PARAMERROR                  (-102)
+#నిర్వచించు ZIP_BADZIPFILE                  (-103)
+#నిర్వచించు ZIP_INTERNALERROR               (-104)
 
-#ifndef DEF_MEM_LEVEL
-#  if MAX_MEM_LEVEL >= 8
+#నిర్వచితం_కాకపోతే DEF_MEM_LEVEL
+#  ఒకవేళ MAX_MEM_LEVEL >= 8
 #    define DEF_MEM_LEVEL 8
-#  else
+#  లేకపోతే
 #    define DEF_MEM_LEVEL  MAX_MEM_LEVEL
 #  endif
-#endif
+#అయితే_ముగింపు
 /* default memLevel */
 
 /* tm_zip contain date/time info */
-typedef struct tm_zip_s
+రకనిర్వచనం నిర్మాణం tm_zip_s
 {
-    int tm_sec;             /* seconds after the minute - [0,59] */
-    int tm_min;             /* minutes after the hour - [0,59] */
-    int tm_hour;            /* hours since midnight - [0,23] */
-    int tm_mday;            /* day of the month - [1,31] */
-    int tm_mon;             /* months since January - [0,11] */
-    int tm_year;            /* years - [1980..2044] */
+    పూర్ణాంకం tm_sec;             /* seconds after the minute - [0,59] */
+    పూర్ణాంకం tm_min;             /* minutes after the hour - [0,59] */
+    పూర్ణాంకం tm_hour;            /* hours since midnight - [0,23] */
+    పూర్ణాంకం tm_mday;            /* day of the month - [1,31] */
+    పూర్ణాంకం tm_mon;             /* months since January - [0,11] */
+    పూర్ణాంకం tm_year;            /* years - [1980..2044] */
 } tm_zip;
 
-typedef struct
+రకనిర్వచనం నిర్మాణం
 {
     tm_zip      tmz_date;       /* date in understandable format           */
     uLong       dosDate;       /* if dos_date == 0, tmu_date is used      */
 /*    uLong       flag;        */   /* general purpose bit flag        2 bytes */
 
-    uLong       internal_fa;    /* internal file attributes        2 bytes */
+    uLong       అంతర్గత_fa;    /* internal file attributes        2 bytes */
     uLong       external_fa;    /* external file attributes        4 bytes */
 } zip_fileinfo;
 
-typedef const char* zipcharpc;
+రకనిర్వచనం స్థిరరాశి అక్షరం* zipcharpc;
 
 
-#define APPEND_STATUS_CREATE        (0)
-#define APPEND_STATUS_CREATEAFTER   (1)
-#define APPEND_STATUS_ADDINZIP      (2)
+#నిర్వచించు APPEND_స్థితి_CREATE        (0)
+#నిర్వచించు APPEND_స్థితి_CREATEAFTER   (1)
+#నిర్వచించు APPEND_స్థితి_ADDINZIP      (2)
 
-extern zipFile ZEXPORT zipOpen(const char *pathname, int append);
-extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
+బాహ్య zipFile ZEXPORT zipOpen(స్థిరరాశి అక్షరం *pathname, పూర్ణాంకం append);
+బాహ్య zipFile ZEXPORT zipOpen64(స్థిరరాశి శూన్య *pathname, పూర్ణాంకం append);
 /*
   Create a zipfile.
      pathname contain on Windows XP a filename like "c:\\zlib\\zlib113.zip" or on
@@ -135,43 +135,43 @@ extern zipFile ZEXPORT zipOpen64(const void *pathname, int append);
    Of course, you can use RAW reading and writing to copy the file you did not want delete
  */
 
-extern zipFile ZEXPORT zipOpen2(const char *pathname,
-                                int append,
+బాహ్య zipFile ZEXPORT zipOpen2(స్థిరరాశి అక్షరం *pathname,
+                                పూర్ణాంకం append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen2_64(const void *pathname,
-                                   int append,
+బాహ్య zipFile ZEXPORT zipOpen2_64(స్థిరరాశి శూన్య *pathname,
+                                   పూర్ణాంకం append,
                                    zipcharpc* globalcomment,
                                    zlib_filefunc64_def* pzlib_filefunc_def);
 
-extern zipFile ZEXPORT zipOpen3(const void *pathname,
-                                int append,
+బాహ్య zipFile ZEXPORT zipOpen3(స్థిరరాశి శూన్య *pathname,
+                                పూర్ణాంకం append,
                                 zipcharpc* globalcomment,
                                 zlib_filefunc64_32_def* pzlib_filefunc64_32_def);
 
-extern int ZEXPORT zipOpenNewFileInZip(zipFile file,
-                                       const char* filename,
-                                       const zip_fileinfo* zipfi,
-                                       const void* extrafield_local,
-                                       uInt size_extrafield_local,
-                                       const void* extrafield_global,
-                                       uInt size_extrafield_global,
-                                       const char* comment,
-                                       int method,
-                                       int level);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Open_New_File_లోపల_Zip(zipFile file,
+                                       స్థిరరాశి అక్షరం* filename,
+                                       స్థిరరాశి zip_fileinfo* zipfi,
+                                       స్థిరరాశి శూన్య* extrafield_local,
+                                       uInt కొలత_extrafield_local,
+                                       స్థిరరాశి శూన్య* extrafield_global,
+                                       uInt కొలత_extrafield_global,
+                                       స్థిరరాశి అక్షరం* comment,
+                                       పూర్ణాంకం పద్ధతి,
+                                       పూర్ణాంకం level);
 
-extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
-                                         const char* filename,
-                                         const zip_fileinfo* zipfi,
-                                         const void* extrafield_local,
-                                         uInt size_extrafield_local,
-                                         const void* extrafield_global,
-                                         uInt size_extrafield_global,
-                                         const char* comment,
-                                         int method,
-                                         int level,
-                                         int zip64);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Open_New_File_లోపల_Zip64(zipFile file,
+                                         స్థిరరాశి అక్షరం* filename,
+                                         స్థిరరాశి zip_fileinfo* zipfi,
+                                         స్థిరరాశి శూన్య* extrafield_local,
+                                         uInt కొలత_extrafield_local,
+                                         స్థిరరాశి శూన్య* extrafield_global,
+                                         uInt కొలత_extrafield_global,
+                                         స్థిరరాశి అక్షరం* comment,
+                                         పూర్ణాంకం పద్ధతి,
+                                         పూర్ణాంకం level,
+                                         పూర్ణాంకం zip64);
 
 /*
   Open a file in the ZIP for writing.
@@ -190,69 +190,69 @@ extern int ZEXPORT zipOpenNewFileInZip64(zipFile file,
  */
 
 
-extern int ZEXPORT zipOpenNewFileInZip2(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
-                                        uInt size_extrafield_local,
-                                        const void* extrafield_global,
-                                        uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Open_New_File_లోపల_Zip2(zipFile file,
+                                        స్థిరరాశి అక్షరం* filename,
+                                        స్థిరరాశి zip_fileinfo* zipfi,
+                                        స్థిరరాశి శూన్య* extrafield_local,
+                                        uInt కొలత_extrafield_local,
+                                        స్థిరరాశి శూన్య* extrafield_global,
+                                        uInt కొలత_extrafield_global,
+                                        స్థిరరాశి అక్షరం* comment,
+                                        పూర్ణాంకం పద్ధతి,
+                                        పూర్ణాంకం level,
+                                        పూర్ణాంకం raw);
 
 
-extern int ZEXPORT zipOpenNewFileInZip2_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
-                                           uInt size_extrafield_local,
-                                           const void* extrafield_global,
-                                           uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int zip64);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Open_New_File_లోపల_Zip2_64(zipFile file,
+                                           స్థిరరాశి అక్షరం* filename,
+                                           స్థిరరాశి zip_fileinfo* zipfi,
+                                           స్థిరరాశి శూన్య* extrafield_local,
+                                           uInt కొలత_extrafield_local,
+                                           స్థిరరాశి శూన్య* extrafield_global,
+                                           uInt కొలత_extrafield_global,
+                                           స్థిరరాశి అక్షరం* comment,
+                                           పూర్ణాంకం పద్ధతి,
+                                           పూర్ణాంకం level,
+                                           పూర్ణాంకం raw,
+                                           పూర్ణాంకం zip64);
 /*
   Same than zipOpenNewFileInZip, except if raw=1, we write raw file
  */
 
-extern int ZEXPORT zipOpenNewFileInZip3(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
-                                        uInt size_extrafield_local,
-                                        const void* extrafield_global,
-                                        uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
-                                        uLong crcForCrypting);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Open_New_File_లోపల_Zip3(zipFile file,
+                                        స్థిరరాశి అక్షరం* filename,
+                                        స్థిరరాశి zip_fileinfo* zipfi,
+                                        స్థిరరాశి శూన్య* extrafield_local,
+                                        uInt కొలత_extrafield_local,
+                                        స్థిరరాశి శూన్య* extrafield_global,
+                                        uInt కొలత_extrafield_global,
+                                        స్థిరరాశి అక్షరం* comment,
+                                        పూర్ణాంకం పద్ధతి,
+                                        పూర్ణాంకం level,
+                                        పూర్ణాంకం raw,
+                                        పూర్ణాంకం కిటికీ_బిట్లు,
+                                        పూర్ణాంకం memLevel,
+                                        పూర్ణాంకం strategy,
+                                        స్థిరరాశి అక్షరం* password,
+                                        uLong చక్రీయ_తనిఖీ_For_Crypting);
 
-extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
-                                           uInt size_extrafield_local,
-                                           const void* extrafield_global,
-                                           uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
-                                           uLong crcForCrypting,
-                                           int zip64);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Open_New_File_లోపల_Zip3_64(zipFile file,
+                                           స్థిరరాశి అక్షరం* filename,
+                                           స్థిరరాశి zip_fileinfo* zipfi,
+                                           స్థిరరాశి శూన్య* extrafield_local,
+                                           uInt కొలత_extrafield_local,
+                                           స్థిరరాశి శూన్య* extrafield_global,
+                                           uInt కొలత_extrafield_global,
+                                           స్థిరరాశి అక్షరం* comment,
+                                           పూర్ణాంకం పద్ధతి,
+                                           పూర్ణాంకం level,
+                                           పూర్ణాంకం raw,
+                                           పూర్ణాంకం కిటికీ_బిట్లు,
+                                           పూర్ణాంకం memLevel,
+                                           పూర్ణాంకం strategy,
+                                           స్థిరరాశి అక్షరం* password,
+                                           uLong చక్రీయ_తనిఖీ_For_Crypting,
+                                           పూర్ణాంకం zip64);
 
 /*
   Same than zipOpenNewFileInZip2, except
@@ -261,45 +261,45 @@ extern int ZEXPORT zipOpenNewFileInZip3_64(zipFile file,
     crcForCrypting : crc of file to compress (needed for crypting)
  */
 
-extern int ZEXPORT zipOpenNewFileInZip4(zipFile file,
-                                        const char* filename,
-                                        const zip_fileinfo* zipfi,
-                                        const void* extrafield_local,
-                                        uInt size_extrafield_local,
-                                        const void* extrafield_global,
-                                        uInt size_extrafield_global,
-                                        const char* comment,
-                                        int method,
-                                        int level,
-                                        int raw,
-                                        int windowBits,
-                                        int memLevel,
-                                        int strategy,
-                                        const char* password,
-                                        uLong crcForCrypting,
-                                        uLong versionMadeBy,
-                                        uLong flagBase);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Open_New_File_లోపల_Zip4(zipFile file,
+                                        స్థిరరాశి అక్షరం* filename,
+                                        స్థిరరాశి zip_fileinfo* zipfi,
+                                        స్థిరరాశి శూన్య* extrafield_local,
+                                        uInt కొలత_extrafield_local,
+                                        స్థిరరాశి శూన్య* extrafield_global,
+                                        uInt కొలత_extrafield_global,
+                                        స్థిరరాశి అక్షరం* comment,
+                                        పూర్ణాంకం పద్ధతి,
+                                        పూర్ణాంకం level,
+                                        పూర్ణాంకం raw,
+                                        పూర్ణాంకం కిటికీ_బిట్లు,
+                                        పూర్ణాంకం memLevel,
+                                        పూర్ణాంకం strategy,
+                                        స్థిరరాశి అక్షరం* password,
+                                        uLong చక్రీయ_తనిఖీ_For_Crypting,
+                                        uLong సంస్కరణ_Made_By_2,
+                                        uLong flag_పునాది);
 
 
-extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
-                                           const char* filename,
-                                           const zip_fileinfo* zipfi,
-                                           const void* extrafield_local,
-                                           uInt size_extrafield_local,
-                                           const void* extrafield_global,
-                                           uInt size_extrafield_global,
-                                           const char* comment,
-                                           int method,
-                                           int level,
-                                           int raw,
-                                           int windowBits,
-                                           int memLevel,
-                                           int strategy,
-                                           const char* password,
-                                           uLong crcForCrypting,
-                                           uLong versionMadeBy,
-                                           uLong flagBase,
-                                           int zip64);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Open_New_File_లోపల_Zip4_64(zipFile file,
+                                           స్థిరరాశి అక్షరం* filename,
+                                           స్థిరరాశి zip_fileinfo* zipfi,
+                                           స్థిరరాశి శూన్య* extrafield_local,
+                                           uInt కొలత_extrafield_local,
+                                           స్థిరరాశి శూన్య* extrafield_global,
+                                           uInt కొలత_extrafield_global,
+                                           స్థిరరాశి అక్షరం* comment,
+                                           పూర్ణాంకం పద్ధతి,
+                                           పూర్ణాంకం level,
+                                           పూర్ణాంకం raw,
+                                           పూర్ణాంకం కిటికీ_బిట్లు,
+                                           పూర్ణాంకం memLevel,
+                                           పూర్ణాంకం strategy,
+                                           స్థిరరాశి అక్షరం* password,
+                                           uLong చక్రీయ_తనిఖీ_For_Crypting,
+                                           uLong సంస్కరణ_Made_By_2,
+                                           uLong flag_పునాది,
+                                           పూర్ణాంకం zip64);
 /*
   Same than zipOpenNewFileInZip4, except
     versionMadeBy : value for Version made by field
@@ -307,28 +307,28 @@ extern int ZEXPORT zipOpenNewFileInZip4_64(zipFile file,
  */
 
 
-extern int ZEXPORT zipWriteInFileInZip(zipFile file,
-                                       const void* buf,
-                                       unsigned len);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Write_లోపల_File_లోపల_Zip(zipFile file,
+                                       స్థిరరాశి శూన్య* buf,
+                                       గుర్తులేని len);
 /*
   Write data in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZip(zipFile file);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Close_File_లోపల_Zip(zipFile file);
 /*
   Close the current file in the zipfile
  */
 
-extern int ZEXPORT zipCloseFileInZipRaw(zipFile file,
-                                        uLong uncompressed_size,
-                                        uLong crc32);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Close_File_లోపల_Zip_Raw(zipFile file,
+                                        uLong uncompressed_కొలత,
+                                        uLong చక్రీయ_తనిఖీ_32_2);
 
-extern int ZEXPORT zipCloseFileInZipRaw64(zipFile file,
-                                          ZPOS64_T uncompressed_size,
-                                          uLong crc32);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Close_File_లోపల_Zip_Raw64(zipFile file,
+                                          ZPOS64_T uncompressed_కొలత,
+                                          uLong చక్రీయ_తనిఖీ_32_2);
 
-extern int ZEXPORT zipAlreadyThere(zipFile file,
-                                   char const* name);
+బాహ్య పూర్ణాంకం ZEXPORT zipAlreadyThere(zipFile file,
+                                   అక్షరం స్థిరరాశి* name);
 /*
   See if name is already in file's central directory.
  */
@@ -339,14 +339,14 @@ extern int ZEXPORT zipAlreadyThere(zipFile file,
   uncompressed_size and crc32 are value for the uncompressed size
  */
 
-extern int ZEXPORT zipClose(zipFile file,
-                            const char* global_comment);
+బాహ్య పూర్ణాంకం ZEXPORT zipClose(zipFile file,
+                            స్థిరరాశి అక్షరం* global_comment);
 /*
   Close the zipfile
  */
 
 
-extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHeader);
+బాహ్య పూర్ణాంకం ZEXPORT zip_Remove_Extra_Info_ఖండం(అక్షరం* p_దత్తాంశం, పూర్ణాంకం* దత్తాంశం_Len, పొట్టి s_శీర్షిక);
 /*
   zipRemoveExtraInfoBlock -  Added by Mathias Svensson
 
@@ -364,8 +364,8 @@ extern int ZEXPORT zipRemoveExtraInfoBlock(char* pData, int* dataLen, short sHea
         zipRemoveExtraInfoBlock(pLocalHeaderExtraFieldData, &nLocalHeaderExtraFieldDataLen, 0x0001);
  */
 
-#ifdef __cplusplus
+#నిర్వచితమైతే __cplusplus
 }
-#endif
+#అయితే_ముగింపు
 
-#endif /* _zip64_H */
+#అయితే_ముగింపు /* _zip64_H */

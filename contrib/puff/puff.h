@@ -25,11 +25,11 @@
 /*
  * See puff.c for purpose and usage.
  */
-#ifndef NIL
-#  define NIL ((unsigned char *)0)      /* for no output option */
-#endif
+#నిర్వచితం_కాకపోతే NIL
+#  define NIL ((గుర్తులేని అక్షరం *)0)      /* for no output option */
+#అయితే_ముగింపు
 
-int puff(unsigned char *dest,           /* pointer to destination pointer */
-         unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
-         unsigned long *sourcelen);     /* amount of input available */
+పూర్ణాంకం puff(గుర్తులేని అక్షరం *dest,           /* pointer to destination pointer */
+         గుర్తులేని దీర్ఘ *destlen,        /* amount of output space */
+         స్థిరరాశి గుర్తులేని అక్షరం *ఆధారం,   /* pointer to source data pointer */
+         గుర్తులేని దీర్ఘ *sourcelen);     /* amount of input available */

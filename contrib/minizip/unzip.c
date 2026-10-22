@@ -63,231 +63,231 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
 
-#ifdef ZLIB_DLL
+#నిర్వచితమైతే ZLIB_DLL
 #  undef ZLIB_DLL
-#endif
-#include "zlib.h"
-#include "unzip.h"
+#అయితే_ముగింపు
+#అన్తర్భావ "zlib.h"
+#అన్తర్భావ "unzip.h"
 
-#ifdef STDC
+#నిర్వచితమైతే STDC
 #  include <stddef.h>
-#endif
-#ifdef NO_ERRNO_H
-    extern int errno;
-#else
+#అయితే_ముగింపు
+#నిర్వచితమైతే NO_ERRNO_H
+    బాహ్య పూర్ణాంకం errno;
+#లేకపోతే
 #   include <errno.h>
-#endif
+#అయితే_ముగింపు
 
 
-#ifndef local
-#  define local static
-#endif
+#నిర్వచితం_కాకపోతే local
+#  define local స్థిర
+#అయితే_ముగింపు
 /* compile with -Dlocal if your debugger can't find static symbols */
 
 
-#ifndef CASESENSITIVITYDEFAULT_NO
-#  if (!defined(__unix__) && !defined(__unix) || defined(__CYGWIN__))  && !defined(CASESENSITIVITYDEFAULT_YES)
+#నిర్వచితం_కాకపోతే CASESENSITIVITYDEFAULT_NO
+#  ఒకవేళ (!defined(__unix__) && !defined(__unix) || defined(__CYGWIN__))  && !defined(CASESENSITIVITYDEFAULT_YES)
 #    define CASESENSITIVITYDEFAULT_NO
 #  endif
-#endif
+#అయితే_ముగింపు
 
 
-#ifndef UNZ_BUFSIZE
-#define UNZ_BUFSIZE (16384)
-#endif
+#నిర్వచితం_కాకపోతే UNZ_BUFSIZE
+#నిర్వచించు UNZ_BUFSIZE (16384)
+#అయితే_ముగింపు
 
-#ifndef UNZ_MAXFILENAMEINZIP
-#define UNZ_MAXFILENAMEINZIP (256)
-#endif
+#నిర్వచితం_కాకపోతే UNZ_MAXFILENAMEINZIP
+#నిర్వచించు UNZ_MAXFILENAMEINZIP (256)
+#అయితే_ముగింపు
 
-#ifndef ALLOC
-# define ALLOC(size) (malloc(size))
-#endif
+#నిర్వచితం_కాకపోతే ALLOC
+# define ALLOC(కొలత) (జ్ఞాపకం_ఇవ్వు(కొలత))
+#అయితే_ముగింపు
 
-#define SIZECENTRALDIRITEM (0x2e)
-#define SIZEZIPLOCALHEADER (0x1e)
+#నిర్వచించు SIZECENTRALDIRITEM (0x2e)
+#నిర్వచించు SIZEZIPLOCALHEADER (0x1e)
 
 
-const char unz_copyright[] =
+స్థిరరాశి అక్షరం unz_copyright[] =
    " unzip 1.01 Copyright 1998-2004 Gilles Vollant - https://www.winimage.com/zLibDll/minizip.html";
 
 /* unz_file_info64_internal contain internal info about a file in zipfile*/
-typedef struct unz_file_info64_internal_s
+రకనిర్వచనం నిర్మాణం unz_file_info64_అంతర్గత_s
 {
-    ZPOS64_T offset_curfile;/* relative offset of local header 8 bytes */
-} unz_file_info64_internal;
+    ZPOS64_T స్థానభ్రంశం_curfile;/* relative offset of local header 8 bytes */
+} unz_file_info64_అంతర్గత;
 
 
 /* file_in_zip_read_info_s contain internal information about a file in zipfile,
     when reading and decompress it */
-typedef struct
+రకనిర్వచనం నిర్మాణం
 {
-    char  *read_buffer;         /* internal buffer for compressed data */
-    z_stream stream;            /* zLib stream structure for inflate */
+    అక్షరం  *read_బఫరు;         /* internal buffer for compressed data */
+    z_ప్రవాహం ప్రవాహం;            /* zLib stream structure for inflate */
 
-#ifdef HAVE_BZIP2
-    bz_stream bstream;          /* bzLib stream structure for bziped */
-#endif
+#నిర్వచితమైతే HAVE_BZIP2
+    bz_ప్రవాహం bstream;          /* bzLib stream structure for bziped */
+#అయితే_ముగింపు
 
-    ZPOS64_T pos_in_zipfile;       /* position in byte on the zipfile, for fseek*/
-    uLong stream_initialised;   /* flag set if stream structure is initialised*/
+    ZPOS64_T pos_లోపల_zipfile;       /* position in byte on the zipfile, for fseek*/
+    uLong ప్రవాహం_initialised;   /* flag set if stream structure is initialised*/
 
-    ZPOS64_T offset_local_extrafield;/* offset of the local extra field */
-    uInt  size_local_extrafield;/* size of the local extra field */
+    ZPOS64_T స్థానభ్రంశం_local_extrafield;/* offset of the local extra field */
+    uInt  కొలత_local_extrafield;/* size of the local extra field */
     ZPOS64_T pos_local_extrafield;   /* position in the local extra field in read*/
-    ZPOS64_T total_out_64;
+    ZPOS64_T మొత్తం_బహిర్గతం_64;
 
-    uLong crc32;                /* crc32 of all data uncompressed */
-    uLong crc32_wait;           /* crc32 we must obtain after decompress all */
+    uLong చక్రీయ_తనిఖీ_32_2;                /* crc32 of all data uncompressed */
+    uLong చక్రీయ_తనిఖీ_32_wait;           /* crc32 we must obtain after decompress all */
     ZPOS64_T rest_read_compressed; /* number of byte to be decompressed */
     ZPOS64_T rest_read_uncompressed;/*number of byte to be obtained after decomp*/
     zlib_filefunc64_32_def z_filefunc;
     voidpf filestream;        /* io structure of the zipfile */
-    uLong compression_method;   /* compression method (0==store) */
+    uLong compression_పద్ధతి;   /* compression method (0==store) */
     ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
-    int   raw;
-} file_in_zip64_read_info_s;
+    పూర్ణాంకం   raw;
+} file_లోపల_zip64_read_info_s;
 
 
 /* unz64_s contain internal information about the zipfile
 */
-typedef struct
+రకనిర్వచనం నిర్మాణం
 {
     zlib_filefunc64_32_def z_filefunc;
-    int is64bitOpenFunction;
+    పూర్ణాంకం is64bitOpenFunction;
     voidpf filestream;        /* io structure of the zipfile */
     unz_global_info64 gi;       /* public global information */
     ZPOS64_T byte_before_the_zipfile;/* byte before the zipfile, (>0 for sfx)*/
-    ZPOS64_T num_file;             /* number of the current file in the zipfile*/
-    ZPOS64_T pos_in_central_dir;   /* pos of the current file in the central dir*/
+    ZPOS64_T అంకె_file;             /* number of the current file in the zipfile*/
+    ZPOS64_T pos_లోపల_central_dir;   /* pos of the current file in the central dir*/
     ZPOS64_T current_file_ok;      /* flag about the usability of the current file*/
     ZPOS64_T central_pos;          /* position of the beginning of the central dir*/
 
-    ZPOS64_T size_central_dir;     /* size of the central directory  */
-    ZPOS64_T offset_central_dir;   /* offset of start of central directory with
+    ZPOS64_T కొలత_central_dir;     /* size of the central directory  */
+    ZPOS64_T స్థానభ్రంశం_central_dir;   /* offset of start of central directory with
                                    respect to the starting disk number */
 
     unz_file_info64 cur_file_info; /* public info about the current file in zip*/
-    unz_file_info64_internal cur_file_info_internal; /* private info about it*/
-    file_in_zip64_read_info_s* pfile_in_zip_read; /* structure about the current
+    unz_file_info64_అంతర్గత cur_file_info_అంతర్గత; /* private info about it*/
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read; /* structure about the current
                                         file if we are decompressing it */
-    int encrypted;
+    పూర్ణాంకం encrypted;
 
-    int isZip64;
+    పూర్ణాంకం isZip64;
 
 #    ifndef NOUNCRYPT
-    unsigned long keys[3];     /* keys defining the pseudo-random sequence */
-    const z_crc_t* pcrc_32_tab;
+    గుర్తులేని దీర్ఘ కీలకాలు[3];     /* keys defining the pseudo-random sequence */
+    స్థిరరాశి z_చక్రీయ_తనిఖీ_t* pcrc_32_tab;
 #    endif
 } unz64_s;
 
 
-#ifndef NOUNCRYPT
-#include "crypt.h"
-#endif
+#నిర్వచితం_కాకపోతే NOUNCRYPT
+#అన్తర్భావ "crypt.h"
+#అయితే_ముగింపు
 
 
 /* ===========================================================================
    Reads a long in LSB order from the given gz_stream. Sets
 */
 
-local int unz64local_getShort(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local పూర్ణాంకం unz64local_getShort(స్థిరరాశి zlib_filefunc64_32_def* pzlib_filefunc_def,
                               voidpf filestream,
                               uLong *pX) {
-    unsigned char c[2];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,2);
-    if (err==2)
+    గుర్తులేని అక్షరం c[2];
+    పూర్ణాంకం err = (పూర్ణాంకం)ZREAD64(*pzlib_filefunc_def,filestream,c,2);
+    ఒకవేళ (err==2)
     {
         *pX = c[0] | ((uLong)c[1] << 8);
-        return UNZ_OK;
+        తిరిగి UNZ_OK;
     }
-    else
+    లేకపోతే
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        ఒకవేళ (ZERROR64(*pzlib_filefunc_def,filestream))
+            తిరిగి UNZ_ERRNO;
+        లేకపోతే
+            తిరిగి UNZ_EOF;
     }
 }
 
-local int unz64local_getLong(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local పూర్ణాంకం unz64local_getLong(స్థిరరాశి zlib_filefunc64_32_def* pzlib_filefunc_def,
                              voidpf filestream,
                              uLong *pX) {
-    unsigned char c[4];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,4);
-    if (err==4)
+    గుర్తులేని అక్షరం c[4];
+    పూర్ణాంకం err = (పూర్ణాంకం)ZREAD64(*pzlib_filefunc_def,filestream,c,4);
+    ఒకవేళ (err==4)
     {
         *pX = c[0] | ((uLong)c[1] << 8) | ((uLong)c[2] << 16) | ((uLong)c[3] << 24);
-        return UNZ_OK;
+        తిరిగి UNZ_OK;
     }
-    else
+    లేకపోతే
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        ఒకవేళ (ZERROR64(*pzlib_filefunc_def,filestream))
+            తిరిగి UNZ_ERRNO;
+        లేకపోతే
+            తిరిగి UNZ_EOF;
     }
 }
 
 
-local int unz64local_getLong64(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local పూర్ణాంకం unz64local_getLong64(స్థిరరాశి zlib_filefunc64_32_def* pzlib_filefunc_def,
                                voidpf filestream,
                                ZPOS64_T *pX) {
-    unsigned char c[8];
-    int err = (int)ZREAD64(*pzlib_filefunc_def,filestream,c,8);
-    if (err==8)
+    గుర్తులేని అక్షరం c[8];
+    పూర్ణాంకం err = (పూర్ణాంకం)ZREAD64(*pzlib_filefunc_def,filestream,c,8);
+    ఒకవేళ (err==8)
     {
         *pX = c[0] | ((ZPOS64_T)c[1] << 8) | ((ZPOS64_T)c[2] << 16) | ((ZPOS64_T)c[3] << 24)
             | ((ZPOS64_T)c[4] << 32) | ((ZPOS64_T)c[5] << 40) | ((ZPOS64_T)c[6] << 48) | ((ZPOS64_T)c[7] << 56);
-        return UNZ_OK;
+        తిరిగి UNZ_OK;
     }
-    else
+    లేకపోతే
     {
         *pX = 0;
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
+        ఒకవేళ (ZERROR64(*pzlib_filefunc_def,filestream))
+            తిరిగి UNZ_ERRNO;
+        లేకపోతే
+            తిరిగి UNZ_EOF;
     }
 }
 
 /* My own strcmpi / strcasecmp */
-local int strcmpcasenosensitive_internal(const char* fileName1, const char* fileName2) {
-    for (;;)
+local పూర్ణాంకం strcmpcasenosensitive_అంతర్గత(స్థిరరాశి అక్షరం* fileName1, స్థిరరాశి అక్షరం* fileName2) {
+    కొరకు (;;)
     {
-        char c1=*(fileName1++);
-        char c2=*(fileName2++);
-        if ((c1>='a') && (c1<='z'))
+        అక్షరం c1=*(fileName1++);
+        అక్షరం c2=*(fileName2++);
+        ఒకవేళ ((c1>='a') && (c1<='z'))
             c1 -= 0x20;
-        if ((c2>='a') && (c2<='z'))
+        ఒకవేళ ((c2>='a') && (c2<='z'))
             c2 -= 0x20;
-        if (c1=='\0')
-            return ((c2=='\0') ? 0 : -1);
-        if (c2=='\0')
-            return 1;
-        if (c1<c2)
-            return -1;
-        if (c1>c2)
-            return 1;
+        ఒకవేళ (c1=='\0')
+            తిరిగి ((c2=='\0') ? 0 : -1);
+        ఒకవేళ (c2=='\0')
+            తిరిగి 1;
+        ఒకవేళ (c1<c2)
+            తిరిగి -1;
+        ఒకవేళ (c1>c2)
+            తిరిగి 1;
     }
 }
 
 
-#ifdef  CASESENSITIVITYDEFAULT_NO
-#define CASESENSITIVITYDEFAULTVALUE 2
-#else
-#define CASESENSITIVITYDEFAULTVALUE 1
-#endif
+#నిర్వచితమైతే  CASESENSITIVITYDEFAULT_NO
+#నిర్వచించు CASESENSITIVITYDEFAULTVALUE 2
+#లేకపోతే
+#నిర్వచించు CASESENSITIVITYDEFAULTVALUE 1
+#అయితే_ముగింపు
 
-#ifndef STRCMPCASENOSENTIVEFUNCTION
-#define STRCMPCASENOSENTIVEFUNCTION strcmpcasenosensitive_internal
-#endif
+#నిర్వచితం_కాకపోతే STRCMPCASENOSENTIVEFUNCTION
+#నిర్వచించు STRCMPCASENOSENTIVEFUNCTION strcmpcasenosensitive_అంతర్గత
+#అయితే_ముగింపు
 
 /*
    Compare two filenames (fileName1,fileName2).
@@ -298,83 +298,83 @@ local int strcmpcasenosensitive_internal(const char* fileName1, const char* file
         (like 1 on Unix, 2 on Windows)
 
 */
-extern int ZEXPORT unzStringFileNameCompare (const char*  fileName1,
-                                             const char*  fileName2,
-                                             int iCaseSensitivity) {
-    if (iCaseSensitivity==0)
-        iCaseSensitivity=CASESENSITIVITYDEFAULTVALUE;
+బాహ్య పూర్ణాంకం ZEXPORT unzStringFileNameCompare (స్థిరరాశి అక్షరం*  fileName1,
+                                             స్థిరరాశి అక్షరం*  fileName2,
+                                             పూర్ణాంకం i_Case_సున్నితత్వం) {
+    ఒకవేళ (i_Case_సున్నితత్వం==0)
+        i_Case_సున్నితత్వం=CASESENSITIVITYDEFAULTVALUE;
 
-    if (iCaseSensitivity==1)
-        return strcmp(fileName1,fileName2);
+    ఒకవేళ (i_Case_సున్నితత్వం==1)
+        తిరిగి strcmp(fileName1,fileName2);
 
-    return STRCMPCASENOSENTIVEFUNCTION(fileName1,fileName2);
+    తిరిగి STRCMPCASENOSENTIVEFUNCTION(fileName1,fileName2);
 }
 
-#ifndef BUFREADCOMMENT
-#define BUFREADCOMMENT (0x400)
-#endif
+#నిర్వచితం_కాకపోతే BUFREADCOMMENT
+#నిర్వచించు BUFREADCOMMENT (0x400)
+#అయితే_ముగింపు
 
-#ifndef CENTRALDIRINVALID
-#define CENTRALDIRINVALID ((ZPOS64_T)(-1))
-#endif
+#నిర్వచితం_కాకపోతే CENTRALDIRINVALID
+#నిర్వచించు CENTRALDIRINVALID ((ZPOS64_T)(-1))
+#అయితే_ముగింపు
 
 /*
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
-    unsigned char* buf;
-    ZPOS64_T uSizeFile;
-    ZPOS64_T uBackRead;
-    ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-    ZPOS64_T uPosFound=CENTRALDIRINVALID;
+local ZPOS64_T unz64local_శోధన_Central_Dir(స్థిరరాశి zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream) {
+    గుర్తులేని అక్షరం* buf;
+    ZPOS64_T u_కొలత_File;
+    ZPOS64_T u_వెనుక_Read;
+    ZPOS64_T u_Max_వెనుక=0xffff; /* maximum size of global comment */
+    ZPOS64_T u_Pos_దొరికింది=CENTRALDIRINVALID;
 
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_చివర) != 0)
+        తిరిగి CENTRALDIRINVALID;
 
 
-    uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+    u_కొలత_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-    if (uMaxBack>uSizeFile)
-        uMaxBack = uSizeFile;
+    ఒకవేళ (u_Max_వెనుక>u_కొలత_File)
+        u_Max_వెనుక = u_కొలత_File;
 
-    buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-    if (buf==NULL)
-        return CENTRALDIRINVALID;
+    buf = (గుర్తులేని అక్షరం*)ALLOC(BUFREADCOMMENT+4);
+    ఒకవేళ (buf==ఖాళీ)
+        తిరిగి CENTRALDIRINVALID;
 
-    uBackRead = 4;
-    while (uBackRead<uMaxBack)
+    u_వెనుక_Read = 4;
+    అయితే (u_వెనుక_Read<u_Max_వెనుక)
     {
-        uLong uReadSize;
+        uLong u_Read_కొలత;
         ZPOS64_T uReadPos ;
-        int i;
-        if (uBackRead+BUFREADCOMMENT>uMaxBack)
-            uBackRead = uMaxBack;
-        else
-            uBackRead+=BUFREADCOMMENT;
-        uReadPos = uSizeFile-uBackRead ;
+        పూర్ణాంకం i;
+        ఒకవేళ (u_వెనుక_Read+BUFREADCOMMENT>u_Max_వెనుక)
+            u_వెనుక_Read = u_Max_వెనుక;
+        లేకపోతే
+            u_వెనుక_Read+=BUFREADCOMMENT;
+        uReadPos = u_కొలత_File-u_వెనుక_Read ;
 
-        uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-                     (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-        if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-            break;
+        u_Read_కొలత = ((BUFREADCOMMENT+4) < (u_కొలత_File-uReadPos)) ?
+                     (BUFREADCOMMENT+4) : (uLong)(u_కొలత_File-uReadPos);
+        ఒకవేళ (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_సమితి)!=0)
+            ఆపు;
 
-        if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-            break;
+        ఒకవేళ (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_కొలత)!=u_Read_కొలత)
+            ఆపు;
 
-        for (i=(int)uReadSize-3; (i--)>0;)
-            if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+        కొరకు (i=(పూర్ణాంకం)u_Read_కొలత-3; (i--)>0;)
+            ఒకవేళ (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
                 ((*(buf+i+2))==0x05) && ((*(buf+i+3))==0x06))
             {
-                uPosFound = uReadPos+(unsigned)i;
-                break;
+                u_Pos_దొరికింది = uReadPos+(గుర్తులేని)i;
+                ఆపు;
             }
 
-        if (uPosFound!=CENTRALDIRINVALID)
-            break;
+        ఒకవేళ (u_Pos_దొరికింది!=CENTRALDIRINVALID)
+            ఆపు;
     }
-    free(buf);
-    return uPosFound;
+    విడుదల(buf);
+    తిరిగి u_Pos_దొరికింది;
 }
 
 
@@ -382,100 +382,100 @@ local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_f
   Locate the Central directory 64 of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib_filefunc_def,
+local ZPOS64_T unz64local_శోధన_Central_Dir64(స్థిరరాశి zlib_filefunc64_32_def* pzlib_filefunc_def,
                                              voidpf filestream) {
-    unsigned char* buf;
-    ZPOS64_T uSizeFile;
-    ZPOS64_T uBackRead;
-    ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
-    ZPOS64_T uPosFound=CENTRALDIRINVALID;
+    గుర్తులేని అక్షరం* buf;
+    ZPOS64_T u_కొలత_File;
+    ZPOS64_T u_వెనుక_Read;
+    ZPOS64_T u_Max_వెనుక=0xffff; /* maximum size of global comment */
+    ZPOS64_T u_Pos_దొరికింది=CENTRALDIRINVALID;
     uLong uL;
-                ZPOS64_T relativeOffset;
+                ZPOS64_T relative_స్థానభ్రంశం;
 
-    if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_చివర) != 0)
+        తిరిగి CENTRALDIRINVALID;
 
 
-    uSizeFile = ZTELL64(*pzlib_filefunc_def,filestream);
+    u_కొలత_File = ZTELL64(*pzlib_filefunc_def,filestream);
 
-    if (uMaxBack>uSizeFile)
-        uMaxBack = uSizeFile;
+    ఒకవేళ (u_Max_వెనుక>u_కొలత_File)
+        u_Max_వెనుక = u_కొలత_File;
 
-    buf = (unsigned char*)ALLOC(BUFREADCOMMENT+4);
-    if (buf==NULL)
-        return CENTRALDIRINVALID;
+    buf = (గుర్తులేని అక్షరం*)ALLOC(BUFREADCOMMENT+4);
+    ఒకవేళ (buf==ఖాళీ)
+        తిరిగి CENTRALDIRINVALID;
 
-    uBackRead = 4;
-    while (uBackRead<uMaxBack)
+    u_వెనుక_Read = 4;
+    అయితే (u_వెనుక_Read<u_Max_వెనుక)
     {
-        uLong uReadSize;
+        uLong u_Read_కొలత;
         ZPOS64_T uReadPos;
-        int i;
-        if (uBackRead+BUFREADCOMMENT>uMaxBack)
-            uBackRead = uMaxBack;
-        else
-            uBackRead+=BUFREADCOMMENT;
-        uReadPos = uSizeFile-uBackRead ;
+        పూర్ణాంకం i;
+        ఒకవేళ (u_వెనుక_Read+BUFREADCOMMENT>u_Max_వెనుక)
+            u_వెనుక_Read = u_Max_వెనుక;
+        లేకపోతే
+            u_వెనుక_Read+=BUFREADCOMMENT;
+        uReadPos = u_కొలత_File-u_వెనుక_Read ;
 
-        uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
-                     (BUFREADCOMMENT+4) : (uLong)(uSizeFile-uReadPos);
-        if (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_SET)!=0)
-            break;
+        u_Read_కొలత = ((BUFREADCOMMENT+4) < (u_కొలత_File-uReadPos)) ?
+                     (BUFREADCOMMENT+4) : (uLong)(u_కొలత_File-uReadPos);
+        ఒకవేళ (ZSEEK64(*pzlib_filefunc_def,filestream,uReadPos,ZLIB_FILEFUNC_SEEK_సమితి)!=0)
+            ఆపు;
 
-        if (ZREAD64(*pzlib_filefunc_def,filestream,buf,uReadSize)!=uReadSize)
-            break;
+        ఒకవేళ (ZREAD64(*pzlib_filefunc_def,filestream,buf,u_Read_కొలత)!=u_Read_కొలత)
+            ఆపు;
 
-        for (i=(int)uReadSize-3; (i--)>0;)
-            if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+        కొరకు (i=(పూర్ణాంకం)u_Read_కొలత-3; (i--)>0;)
+            ఒకవేళ (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
                 ((*(buf+i+2))==0x06) && ((*(buf+i+3))==0x07))
             {
-                uPosFound = uReadPos+(unsigned)i;
-                break;
+                u_Pos_దొరికింది = uReadPos+(గుర్తులేని)i;
+                ఆపు;
             }
 
-        if (uPosFound!=CENTRALDIRINVALID)
-            break;
+        ఒకవేళ (u_Pos_దొరికింది!=CENTRALDIRINVALID)
+            ఆపు;
     }
-    free(buf);
-    if (uPosFound == CENTRALDIRINVALID)
-        return CENTRALDIRINVALID;
+    విడుదల(buf);
+    ఒకవేళ (u_Pos_దొరికింది == CENTRALDIRINVALID)
+        తిరిగి CENTRALDIRINVALID;
 
     /* Zip64 end of central directory locator */
-    if (ZSEEK64(*pzlib_filefunc_def,filestream, uPosFound,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (ZSEEK64(*pzlib_filefunc_def,filestream, u_Pos_దొరికింది,ZLIB_FILEFUNC_SEEK_సమితి)!=0)
+        తిరిగి CENTRALDIRINVALID;
 
     /* the signature, already checked */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        తిరిగి CENTRALDIRINVALID;
 
     /* number of the disk with the start of the zip64 end of central directory */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
-    if (uL != 0)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        తిరిగి CENTRALDIRINVALID;
+    ఒకవేళ (uL != 0)
+        తిరిగి CENTRALDIRINVALID;
 
     /* relative offset of the zip64 end of central directory record */
-    if (unz64local_getLong64(pzlib_filefunc_def,filestream,&relativeOffset)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (unz64local_getLong64(pzlib_filefunc_def,filestream,&relative_స్థానభ్రంశం)!=UNZ_OK)
+        తిరిగి CENTRALDIRINVALID;
 
     /* total number of disks */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
-    if (uL != 1)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        తిరిగి CENTRALDIRINVALID;
+    ఒకవేళ (uL != 1)
+        తిరిగి CENTRALDIRINVALID;
 
     /* Goto end of central directory record */
-    if (ZSEEK64(*pzlib_filefunc_def,filestream, relativeOffset,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (ZSEEK64(*pzlib_filefunc_def,filestream, relative_స్థానభ్రంశం,ZLIB_FILEFUNC_SEEK_సమితి)!=0)
+        తిరిగి CENTRALDIRINVALID;
 
      /* the signature */
-    if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+        తిరిగి CENTRALDIRINVALID;
 
-    if (uL != 0x06064b50)
-        return CENTRALDIRINVALID;
+    ఒకవేళ (uL != 0x06064b50)
+        తిరిగి CENTRALDIRINVALID;
 
-    return relativeOffset;
+    తిరిగి relative_స్థానభ్రంశం;
 }
 
 /*
@@ -487,219 +487,219 @@ local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
      Else, the return value is a unzFile Handle, usable with other function
        of this unzip package.
 */
-local unzFile unzOpenInternal(const void *path,
+local unzFile unz_Open_అంతర్గత(స్థిరరాశి శూన్య *మార్గం,
                               zlib_filefunc64_32_def* pzlib_filefunc64_32_def,
-                              int is64bitOpenFunction) {
+                              పూర్ణాంకం is64bitOpenFunction) {
     unz64_s us;
     unz64_s *s;
     ZPOS64_T central_pos;
     uLong   uL;
 
-    uLong number_disk;          /* number of the current disk, used for
+    uLong సంఖ్య_disk;          /* number of the current disk, used for
                                    spanning ZIP, unsupported, always 0*/
-    uLong number_disk_with_CD;  /* number the disk with central dir, used
+    uLong సంఖ్య_disk_with_CD;  /* number the disk with central dir, used
                                    for spanning ZIP, unsupported, always 0*/
-    ZPOS64_T number_entry_CD;      /* total number of entries in
+    ZPOS64_T సంఖ్య_నమోదు_CD;      /* total number of entries in
                                    the central dir
                                    (same than number_entry on nospan) */
 
-    int err=UNZ_OK;
+    పూర్ణాంకం err=UNZ_OK;
 
-    if (unz_copyright[0]!=' ')
-        return NULL;
+    ఒకవేళ (unz_copyright[0]!=' ')
+        తిరిగి ఖాళీ;
 
-    us.z_filefunc.zseek32_file = NULL;
-    us.z_filefunc.ztell32_file = NULL;
-    if (pzlib_filefunc64_32_def==NULL)
+    us.z_filefunc.zseek32_file = ఖాళీ;
+    us.z_filefunc.ztell32_file = ఖాళీ;
+    ఒకవేళ (pzlib_filefunc64_32_def==ఖాళీ)
         fill_fopen64_filefunc(&us.z_filefunc.zfile_func64);
-    else
+    లేకపోతే
         us.z_filefunc = *pzlib_filefunc64_32_def;
     us.is64bitOpenFunction = is64bitOpenFunction;
 
 
 
     us.filestream = ZOPEN64(us.z_filefunc,
-                                                 path,
-                                                 ZLIB_FILEFUNC_MODE_READ |
-                                                 ZLIB_FILEFUNC_MODE_EXISTING);
-    if (us.filestream==NULL)
-        return NULL;
+                                                 మార్గం,
+                                                 ZLIB_FILEFUNC_బహుళకం_READ |
+                                                 ZLIB_FILEFUNC_బహుళకం_EXISTING);
+    ఒకవేళ (us.filestream==ఖాళీ)
+        తిరిగి ఖాళీ;
 
-    central_pos = unz64local_SearchCentralDir64(&us.z_filefunc,us.filestream);
-    if (central_pos!=CENTRALDIRINVALID)
+    central_pos = unz64local_శోధన_Central_Dir64(&us.z_filefunc,us.filestream);
+    ఒకవేళ (central_pos!=CENTRALDIRINVALID)
     {
         uLong uS;
         ZPOS64_T uL64;
 
         us.isZip64 = 1;
 
-        if (ZSEEK64(us.z_filefunc, us.filestream,
-                                      central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        ఒకవేళ (ZSEEK64(us.z_filefunc, us.filestream,
+                                      central_pos,ZLIB_FILEFUNC_SEEK_సమితి)!=0)
         err=UNZ_ERRNO;
 
         /* the signature, already checked */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* size of zip64 end of central directory record */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&uL64)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong64(&us.z_filefunc, us.filestream,&uL64)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* version made by */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
+        ఒకవేళ (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* version needed to extract */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
+        ఒకవేళ (unz64local_getShort(&us.z_filefunc, us.filestream,&uS)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of this disk */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&number_disk)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong(&us.z_filefunc, us.filestream,&సంఖ్య_disk)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of the disk with the start of the central directory */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&number_disk_with_CD)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong(&us.z_filefunc, us.filestream,&సంఖ్య_disk_with_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central directory on this disk */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.gi.number_entry)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.gi.సంఖ్య_నమోదు)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central directory */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&number_entry_CD)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong64(&us.z_filefunc, us.filestream,&సంఖ్య_నమోదు_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
-        if ((number_entry_CD!=us.gi.number_entry) ||
-            (number_disk_with_CD!=0) ||
-            (number_disk!=0))
+        ఒకవేళ ((సంఖ్య_నమోదు_CD!=us.gi.సంఖ్య_నమోదు) ||
+            (సంఖ్య_disk_with_CD!=0) ||
+            (సంఖ్య_disk!=0))
             err=UNZ_BADZIPFILE;
 
         /* size of the central directory */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.size_central_dir)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.కొలత_central_dir)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* offset of start of central directory with respect to the
           starting disk number */
-        if (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.offset_central_dir)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong64(&us.z_filefunc, us.filestream,&us.స్థానభ్రంశం_central_dir)!=UNZ_OK)
             err=UNZ_ERRNO;
 
-        us.gi.size_comment = 0;
+        us.gi.కొలత_comment = 0;
     }
-    else
+    లేకపోతే
     {
-        central_pos = unz64local_SearchCentralDir(&us.z_filefunc,us.filestream);
-        if (central_pos==CENTRALDIRINVALID)
+        central_pos = unz64local_శోధన_Central_Dir(&us.z_filefunc,us.filestream);
+        ఒకవేళ (central_pos==CENTRALDIRINVALID)
             err=UNZ_ERRNO;
 
         us.isZip64 = 0;
 
-        if (ZSEEK64(us.z_filefunc, us.filestream,
-                                        central_pos,ZLIB_FILEFUNC_SEEK_SET)!=0)
+        ఒకవేళ (ZSEEK64(us.z_filefunc, us.filestream,
+                                        central_pos,ZLIB_FILEFUNC_SEEK_సమితి)!=0)
             err=UNZ_ERRNO;
 
         /* the signature, already checked */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of this disk */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&number_disk)!=UNZ_OK)
+        ఒకవేళ (unz64local_getShort(&us.z_filefunc, us.filestream,&సంఖ్య_disk)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* number of the disk with the start of the central directory */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&number_disk_with_CD)!=UNZ_OK)
+        ఒకవేళ (unz64local_getShort(&us.z_filefunc, us.filestream,&సంఖ్య_disk_with_CD)!=UNZ_OK)
             err=UNZ_ERRNO;
 
         /* total number of entries in the central dir on this disk */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ఒకవేళ (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.gi.number_entry = uL;
+        us.gi.సంఖ్య_నమోదు = uL;
 
         /* total number of entries in the central dir */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ఒకవేళ (unz64local_getShort(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        number_entry_CD = uL;
+        సంఖ్య_నమోదు_CD = uL;
 
-        if ((number_entry_CD!=us.gi.number_entry) ||
-            (number_disk_with_CD!=0) ||
-            (number_disk!=0))
+        ఒకవేళ ((సంఖ్య_నమోదు_CD!=us.gi.సంఖ్య_నమోదు) ||
+            (సంఖ్య_disk_with_CD!=0) ||
+            (సంఖ్య_disk!=0))
             err=UNZ_BADZIPFILE;
 
         /* size of the central directory */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.size_central_dir = uL;
+        us.కొలత_central_dir = uL;
 
         /* offset of start of central directory with respect to the
             starting disk number */
-        if (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
+        ఒకవేళ (unz64local_getLong(&us.z_filefunc, us.filestream,&uL)!=UNZ_OK)
             err=UNZ_ERRNO;
-        us.offset_central_dir = uL;
+        us.స్థానభ్రంశం_central_dir = uL;
 
         /* zipfile comment length */
-        if (unz64local_getShort(&us.z_filefunc, us.filestream,&us.gi.size_comment)!=UNZ_OK)
+        ఒకవేళ (unz64local_getShort(&us.z_filefunc, us.filestream,&us.gi.కొలత_comment)!=UNZ_OK)
             err=UNZ_ERRNO;
     }
 
-    if ((central_pos<us.offset_central_dir+us.size_central_dir) &&
+    ఒకవేళ ((central_pos<us.స్థానభ్రంశం_central_dir+us.కొలత_central_dir) &&
         (err==UNZ_OK))
         err=UNZ_BADZIPFILE;
 
-    if (err!=UNZ_OK)
+    ఒకవేళ (err!=UNZ_OK)
     {
         ZCLOSE64(us.z_filefunc, us.filestream);
-        return NULL;
+        తిరిగి ఖాళీ;
     }
 
     us.byte_before_the_zipfile = central_pos -
-                            (us.offset_central_dir+us.size_central_dir);
+                            (us.స్థానభ్రంశం_central_dir+us.కొలత_central_dir);
     us.central_pos = central_pos;
-    us.pfile_in_zip_read = NULL;
+    us.pfile_లోపల_zip_read = ఖాళీ;
     us.encrypted = 0;
 
 
-    s=(unz64_s*)ALLOC(sizeof(unz64_s));
-    if( s != NULL)
+    s=(unz64_s*)ALLOC(పరిమాణం(unz64_s));
+    ఒకవేళ( s != ఖాళీ)
     {
         *s=us;
-        unzGoToFirstFile((unzFile)s);
+        unz_Go_గమ్యం_మొదటి_File((unzFile)s);
     }
-    return (unzFile)s;
+    తిరిగి (unzFile)s;
 }
 
 
-extern unzFile ZEXPORT unzOpen2(const char *path,
+బాహ్య unzFile ZEXPORT unzOpen2(స్థిరరాశి అక్షరం *మార్గం,
                                 zlib_filefunc_def* pzlib_filefunc32_def) {
-    if (pzlib_filefunc32_def != NULL)
+    ఒకవేళ (pzlib_filefunc32_def != ఖాళీ)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
-        return unzOpenInternal(path, &zlib_filefunc64_32_def_fill, 0);
+        తిరిగి unz_Open_అంతర్గత(మార్గం, &zlib_filefunc64_32_def_fill, 0);
     }
-    else
-        return unzOpenInternal(path, NULL, 0);
+    లేకపోతే
+        తిరిగి unz_Open_అంతర్గత(మార్గం, ఖాళీ, 0);
 }
 
-extern unzFile ZEXPORT unzOpen2_64(const void *path,
+బాహ్య unzFile ZEXPORT unzOpen2_64(స్థిరరాశి శూన్య *మార్గం,
                                    zlib_filefunc64_def* pzlib_filefunc_def) {
-    if (pzlib_filefunc_def != NULL)
+    ఒకవేళ (pzlib_filefunc_def != ఖాళీ)
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
-        zlib_filefunc64_32_def_fill.zopen32_file = NULL;
-        zlib_filefunc64_32_def_fill.ztell32_file = NULL;
-        zlib_filefunc64_32_def_fill.zseek32_file = NULL;
-        return unzOpenInternal(path, &zlib_filefunc64_32_def_fill, 1);
+        zlib_filefunc64_32_def_fill.zopen32_file = ఖాళీ;
+        zlib_filefunc64_32_def_fill.ztell32_file = ఖాళీ;
+        zlib_filefunc64_32_def_fill.zseek32_file = ఖాళీ;
+        తిరిగి unz_Open_అంతర్గత(మార్గం, &zlib_filefunc64_32_def_fill, 1);
     }
-    else
-        return unzOpenInternal(path, NULL, 1);
+    లేకపోతే
+        తిరిగి unz_Open_అంతర్గత(మార్గం, ఖాళీ, 1);
 }
 
-extern unzFile ZEXPORT unzOpen(const char *path) {
-    return unzOpenInternal(path, NULL, 0);
+బాహ్య unzFile ZEXPORT unzOpen(స్థిరరాశి అక్షరం *మార్గం) {
+    తిరిగి unz_Open_అంతర్గత(మార్గం, ఖాళీ, 0);
 }
 
-extern unzFile ZEXPORT unzOpen64(const void *path) {
-    return unzOpenInternal(path, NULL, 1);
+బాహ్య unzFile ZEXPORT unzOpen64(స్థిరరాశి శూన్య *మార్గం) {
+    తిరిగి unz_Open_అంతర్గత(మార్గం, ఖాళీ, 1);
 }
 
 /*
@@ -707,18 +707,18 @@ extern unzFile ZEXPORT unzOpen64(const void *path) {
   If there is files inside the .Zip opened with unzOpenCurrentFile (see later),
     these files MUST be closed with unzCloseCurrentFile before call unzClose.
   return UNZ_OK if there is no problem. */
-extern int ZEXPORT unzClose(unzFile file) {
+బాహ్య పూర్ణాంకం ZEXPORT unzClose(unzFile file) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    if (s->pfile_in_zip_read!=NULL)
+    ఒకవేళ (s->pfile_లోపల_zip_read!=ఖాళీ)
         unzCloseCurrentFile(file);
 
     ZCLOSE64(s->z_filefunc, s->filestream);
-    free(s);
-    return UNZ_OK;
+    విడుదల(s);
+    తిరిగి UNZ_OK;
 }
 
 
@@ -726,276 +726,276 @@ extern int ZEXPORT unzClose(unzFile file) {
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed
   return UNZ_OK if there is no problem. */
-extern int ZEXPORT unzGetGlobalInfo64(unzFile file, unz_global_info64* pglobal_info) {
+బాహ్య పూర్ణాంకం ZEXPORT unzGetGlobalInfo64(unzFile file, unz_global_info64* pglobal_info) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
     *pglobal_info=s->gi;
-    return UNZ_OK;
+    తిరిగి UNZ_OK;
 }
 
-extern int ZEXPORT unzGetGlobalInfo(unzFile file, unz_global_info* pglobal_info32) {
+బాహ్య పూర్ణాంకం ZEXPORT unzGetGlobalInfo(unzFile file, unz_global_info* pglobal_info32) {
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
     /* to do : check if number_entry is not truncated */
-    pglobal_info32->number_entry = (uLong)s->gi.number_entry;
-    pglobal_info32->size_comment = s->gi.size_comment;
-    return UNZ_OK;
+    pglobal_info32->సంఖ్య_నమోదు = (uLong)s->gi.సంఖ్య_నమోదు;
+    pglobal_info32->కొలత_comment = s->gi.కొలత_comment;
+    తిరిగి UNZ_OK;
 }
 /*
    Translate date/time from Dos format to tm_unz (readable more easily)
 */
-local void unz64local_DosDateToTmuDate(ZPOS64_T ulDosDate, tm_unz* ptm) {
+local శూన్య unz64local_Dos_Date_గమ్యం_Tmu_Date(ZPOS64_T ulDosDate, tm_unz* ptm) {
     ZPOS64_T uDate;
     uDate = (ZPOS64_T)(ulDosDate>>16);
-    ptm->tm_mday = (int)(uDate&0x1f) ;
-    ptm->tm_mon =  (int)((((uDate)&0x1E0)/0x20)-1) ;
-    ptm->tm_year = (int)(((uDate&0x0FE00)/0x0200)+1980) ;
+    ptm->tm_mday = (పూర్ణాంకం)(uDate&0x1f) ;
+    ptm->tm_mon =  (పూర్ణాంకం)((((uDate)&0x1E0)/0x20)-1) ;
+    ptm->tm_year = (పూర్ణాంకం)(((uDate&0x0FE00)/0x0200)+1980) ;
 
-    ptm->tm_hour = (int) ((ulDosDate &0xF800)/0x800);
-    ptm->tm_min =  (int) ((ulDosDate&0x7E0)/0x20) ;
-    ptm->tm_sec =  (int) (2*(ulDosDate&0x1f)) ;
+    ptm->tm_hour = (పూర్ణాంకం) ((ulDosDate &0xF800)/0x800);
+    ptm->tm_min =  (పూర్ణాంకం) ((ulDosDate&0x7E0)/0x20) ;
+    ptm->tm_sec =  (పూర్ణాంకం) (2*(ulDosDate&0x1f)) ;
 }
 
 /*
   Get Info about the current file in the zipfile, with internal only info
 */
-local int unz64local_GetCurrentFileInfoInternal(unzFile file,
+local పూర్ణాంకం unz64local_Get_Current_File_Info_అంతర్గత(unzFile file,
                                                 unz_file_info64 *pfile_info,
-                                                unz_file_info64_internal
-                                                *pfile_info_internal,
-                                                char *szFileName,
-                                                uLong fileNameBufferSize,
-                                                void *extraField,
-                                                uLong extraFieldBufferSize,
-                                                char *szComment,
-                                                uLong commentBufferSize) {
+                                                unz_file_info64_అంతర్గత
+                                                *pfile_info_అంతర్గత,
+                                                అక్షరం *szFileName,
+                                                uLong file_Name_బఫరు_కొలత,
+                                                శూన్య *extra_క్షేత్రం,
+                                                uLong extra_క్షేత్రం_బఫరు_కొలత,
+                                                అక్షరం *szComment,
+                                                uLong comment_బఫరు_కొలత) {
     unz64_s* s;
     unz_file_info64 file_info;
-    unz_file_info64_internal file_info_internal;
-    int err=UNZ_OK;
+    unz_file_info64_అంతర్గత file_info_అంతర్గత;
+    పూర్ణాంకం err=UNZ_OK;
     uLong uMagic;
-    long lSeek=0;
+    దీర్ఘ lSeek=0;
     uLong uL;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (ZSEEK64(s->z_filefunc, s->filestream,
-              s->pos_in_central_dir+s->byte_before_the_zipfile,
-              ZLIB_FILEFUNC_SEEK_SET)!=0)
+    ఒకవేళ (ZSEEK64(s->z_filefunc, s->filestream,
+              s->pos_లోపల_central_dir+s->byte_before_the_zipfile,
+              ZLIB_FILEFUNC_SEEK_సమితి)!=0)
         err=UNZ_ERRNO;
 
 
     /* we check the magic */
-    if (err==UNZ_OK)
+    ఒకవేళ (err==UNZ_OK)
     {
-        if (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
+        ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
             err=UNZ_ERRNO;
-        else if (uMagic!=0x02014b50)
+        లేకపోతే ఒకవేళ (uMagic!=0x02014b50)
             err=UNZ_BADZIPFILE;
     }
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.version) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.సంస్కరణ) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.version_needed) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.సంస్కరణ_needed) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.flag) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.flag) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.compression_method) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.compression_పద్ధతి) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.dosDate) != UNZ_OK)
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.dosDate) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    unz64local_DosDateToTmuDate(file_info.dosDate,&file_info.tmu_date);
+    unz64local_Dos_Date_గమ్యం_Tmu_Date(file_info.dosDate,&file_info.tmu_date);
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.crc) != UNZ_OK)
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.చక్రీయ_తనిఖీ) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info.compressed_size = uL;
+    file_info.compressed_కొలత = uL;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info.uncompressed_size = uL;
+    file_info.uncompressed_కొలత = uL;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_filename) != UNZ_OK)
-        err=UNZ_ERRNO;
-
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_file_extra) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.కొలత_filename) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.size_file_comment) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.కొలత_file_extra) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.disk_num_start) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.కొలత_file_comment) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.internal_fa) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.disk_అంకె_ప్రారంభం) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.external_fa) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&file_info.అంతర్గత_fa) != UNZ_OK)
+        err=UNZ_ERRNO;
+
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.external_fa) != UNZ_OK)
         err=UNZ_ERRNO;
 
                 /* relative offset of local header */
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&uL) != UNZ_OK)
         err=UNZ_ERRNO;
-    file_info_internal.offset_curfile = uL;
+    file_info_అంతర్గత.స్థానభ్రంశం_curfile = uL;
 
-    lSeek+=file_info.size_filename;
-    if ((err==UNZ_OK) && (szFileName!=NULL))
+    lSeek+=file_info.కొలత_filename;
+    ఒకవేళ ((err==UNZ_OK) && (szFileName!=ఖాళీ))
     {
-        uLong uSizeRead ;
-        if (file_info.size_filename<fileNameBufferSize)
+        uLong u_కొలత_Read ;
+        ఒకవేళ (file_info.కొలత_filename<file_Name_బఫరు_కొలత)
         {
-            *(szFileName+file_info.size_filename)='\0';
-            uSizeRead = file_info.size_filename;
+            *(szFileName+file_info.కొలత_filename)='\0';
+            u_కొలత_Read = file_info.కొలత_filename;
         }
-        else
-            uSizeRead = fileNameBufferSize;
+        లేకపోతే
+            u_కొలత_Read = file_Name_బఫరు_కొలత;
 
-        if ((file_info.size_filename>0) && (fileNameBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,szFileName,uSizeRead)!=uSizeRead)
+        ఒకవేళ ((file_info.కొలత_filename>0) && (file_Name_బఫరు_కొలత>0))
+            ఒకవేళ (ZREAD64(s->z_filefunc, s->filestream,szFileName,u_కొలత_Read)!=u_కొలత_Read)
                 err=UNZ_ERRNO;
-        lSeek -= uSizeRead;
+        lSeek -= u_కొలత_Read;
     }
 
     /* Read extrafield */
-    if ((err==UNZ_OK) && (extraField!=NULL))
+    ఒకవేళ ((err==UNZ_OK) && (extra_క్షేత్రం!=ఖాళీ))
     {
-        ZPOS64_T uSizeRead ;
-        if (file_info.size_file_extra<extraFieldBufferSize)
-            uSizeRead = file_info.size_file_extra;
-        else
-            uSizeRead = extraFieldBufferSize;
+        ZPOS64_T u_కొలత_Read ;
+        ఒకవేళ (file_info.కొలత_file_extra<extra_క్షేత్రం_బఫరు_కొలత)
+            u_కొలత_Read = file_info.కొలత_file_extra;
+        లేకపోతే
+            u_కొలత_Read = extra_క్షేత్రం_బఫరు_కొలత;
 
-        if (lSeek!=0)
+        ఒకవేళ (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            ఒకవేళ (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            లేకపోతే
                 err=UNZ_ERRNO;
         }
 
-        if ((file_info.size_file_extra>0) && (extraFieldBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,extraField,(uLong)uSizeRead)!=uSizeRead)
+        ఒకవేళ ((file_info.కొలత_file_extra>0) && (extra_క్షేత్రం_బఫరు_కొలత>0))
+            ఒకవేళ (ZREAD64(s->z_filefunc, s->filestream,extra_క్షేత్రం,(uLong)u_కొలత_Read)!=u_కొలత_Read)
                 err=UNZ_ERRNO;
 
-        lSeek += file_info.size_file_extra - (uLong)uSizeRead;
+        lSeek += file_info.కొలత_file_extra - (uLong)u_కొలత_Read;
     }
-    else
-        lSeek += file_info.size_file_extra;
+    లేకపోతే
+        lSeek += file_info.కొలత_file_extra;
 
 
-    if ((err==UNZ_OK) && (file_info.size_file_extra != 0))
+    ఒకవేళ ((err==UNZ_OK) && (file_info.కొలత_file_extra != 0))
     {
                                 uLong acc = 0;
 
         /* since lSeek now points to after the extra field we need to move back */
-        lSeek -= file_info.size_file_extra;
+        lSeek -= file_info.కొలత_file_extra;
 
-        if (lSeek!=0)
+        ఒకవేళ (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            ఒకవేళ (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            లేకపోతే
                 err=UNZ_ERRNO;
         }
 
-        while(acc < file_info.size_file_extra)
+        అయితే(acc < file_info.కొలత_file_extra)
         {
-            uLong headerId;
-                                                uLong dataSize;
+            uLong శీర్షిక_Id;
+                                                uLong దత్తాంశం_కొలత;
 
-            if (unz64local_getShort(&s->z_filefunc, s->filestream,&headerId) != UNZ_OK)
+            ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&శీర్షిక_Id) != UNZ_OK)
                 err=UNZ_ERRNO;
 
-            if (unz64local_getShort(&s->z_filefunc, s->filestream,&dataSize) != UNZ_OK)
+            ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&దత్తాంశం_కొలత) != UNZ_OK)
                 err=UNZ_ERRNO;
 
             /* ZIP64 extra fields */
-            if (headerId == 0x0001)
+            ఒకవేళ (శీర్షిక_Id == 0x0001)
             {
-                if(file_info.uncompressed_size == MAXU32)
+                ఒకవేళ(file_info.uncompressed_కొలత == MAXU32)
                 {
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.uncompressed_size) != UNZ_OK)
+                    ఒకవేళ (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.uncompressed_కొలత) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info.compressed_size == MAXU32)
+                ఒకవేళ(file_info.compressed_కొలత == MAXU32)
                 {
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.compressed_size) != UNZ_OK)
+                    ఒకవేళ (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.compressed_కొలత) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info_internal.offset_curfile == MAXU32)
+                ఒకవేళ(file_info_అంతర్గత.స్థానభ్రంశం_curfile == MAXU32)
                 {
                     /* Relative Header offset */
-                    if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info_internal.offset_curfile) != UNZ_OK)
+                    ఒకవేళ (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info_అంతర్గత.స్థానభ్రంశం_curfile) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info.disk_num_start == 0xffff)
+                ఒకవేళ(file_info.disk_అంకె_ప్రారంభం == 0xffff)
                 {
                     /* Disk Start Number */
-                    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.disk_num_start) != UNZ_OK)
+                    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.disk_అంకె_ప్రారంభం) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
             }
-            else
+            లేకపోతే
             {
-                if (ZSEEK64(s->z_filefunc, s->filestream,dataSize,ZLIB_FILEFUNC_SEEK_CUR)!=0)
+                ఒకవేళ (ZSEEK64(s->z_filefunc, s->filestream,దత్తాంశం_కొలత,ZLIB_FILEFUNC_SEEK_CUR)!=0)
                     err=UNZ_ERRNO;
             }
 
-            acc += 2 + 2 + dataSize;
+            acc += 2 + 2 + దత్తాంశం_కొలత;
         }
     }
 
-    if ((err==UNZ_OK) && (szComment!=NULL))
+    ఒకవేళ ((err==UNZ_OK) && (szComment!=ఖాళీ))
     {
-        uLong uSizeRead ;
-        if (file_info.size_file_comment<commentBufferSize)
+        uLong u_కొలత_Read ;
+        ఒకవేళ (file_info.కొలత_file_comment<comment_బఫరు_కొలత)
         {
-            *(szComment+file_info.size_file_comment)='\0';
-            uSizeRead = file_info.size_file_comment;
+            *(szComment+file_info.కొలత_file_comment)='\0';
+            u_కొలత_Read = file_info.కొలత_file_comment;
         }
-        else
-            uSizeRead = commentBufferSize;
+        లేకపోతే
+            u_కొలత_Read = comment_బఫరు_కొలత;
 
-        if (lSeek!=0)
+        ఒకవేళ (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            ఒకవేళ (ZSEEK64(s->z_filefunc, s->filestream,(ZPOS64_T)lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
                 lSeek=0;
-            else
+            లేకపోతే
                 err=UNZ_ERRNO;
         }
 
-        if ((file_info.size_file_comment>0) && (commentBufferSize>0))
-            if (ZREAD64(s->z_filefunc, s->filestream,szComment,uSizeRead)!=uSizeRead)
+        ఒకవేళ ((file_info.కొలత_file_comment>0) && (comment_బఫరు_కొలత>0))
+            ఒకవేళ (ZREAD64(s->z_filefunc, s->filestream,szComment,u_కొలత_Read)!=u_కొలత_Read)
                 err=UNZ_ERRNO;
-        lSeek+=file_info.size_file_comment - uSizeRead;
+        lSeek+=file_info.కొలత_file_comment - u_కొలత_Read;
     }
-    else
-        lSeek+=file_info.size_file_comment;
+    లేకపోతే
+        lSeek+=file_info.కొలత_file_comment;
 
 
-    if ((err==UNZ_OK) && (pfile_info!=NULL))
+    ఒకవేళ ((err==UNZ_OK) && (pfile_info!=ఖాళీ))
         *pfile_info=file_info;
 
-    if ((err==UNZ_OK) && (pfile_info_internal!=NULL))
-        *pfile_info_internal=file_info_internal;
+    ఒకవేళ ((err==UNZ_OK) && (pfile_info_అంతర్గత!=ఖాళీ))
+        *pfile_info_అంతర్గత=file_info_అంతర్గత;
 
-    return err;
+    తిరిగి err;
 }
 
 
@@ -1005,71 +1005,71 @@ local int unz64local_GetCurrentFileInfoInternal(unzFile file,
   No preparation of the structure is needed
   return UNZ_OK if there is no problem.
 */
-extern int ZEXPORT unzGetCurrentFileInfo64(unzFile file,
+బాహ్య పూర్ణాంకం ZEXPORT unzGetCurrentFileInfo64(unzFile file,
                                            unz_file_info64 * pfile_info,
-                                           char * szFileName, uLong fileNameBufferSize,
-                                           void *extraField, uLong extraFieldBufferSize,
-                                           char* szComment,  uLong commentBufferSize) {
-    return unz64local_GetCurrentFileInfoInternal(file,pfile_info,NULL,
-                                                 szFileName,fileNameBufferSize,
-                                                 extraField,extraFieldBufferSize,
-                                                 szComment,commentBufferSize);
+                                           అక్షరం * szFileName, uLong file_Name_బఫరు_కొలత,
+                                           శూన్య *extra_క్షేత్రం, uLong extra_క్షేత్రం_బఫరు_కొలత,
+                                           అక్షరం* szComment,  uLong comment_బఫరు_కొలత) {
+    తిరిగి unz64local_Get_Current_File_Info_అంతర్గత(file,pfile_info,ఖాళీ,
+                                                 szFileName,file_Name_బఫరు_కొలత,
+                                                 extra_క్షేత్రం,extra_క్షేత్రం_బఫరు_కొలత,
+                                                 szComment,comment_బఫరు_కొలత);
 }
 
-extern int ZEXPORT unzGetCurrentFileInfo(unzFile file,
+బాహ్య పూర్ణాంకం ZEXPORT unzGetCurrentFileInfo(unzFile file,
                                          unz_file_info * pfile_info,
-                                         char * szFileName, uLong fileNameBufferSize,
-                                         void *extraField, uLong extraFieldBufferSize,
-                                         char* szComment,  uLong commentBufferSize) {
-    int err;
+                                         అక్షరం * szFileName, uLong file_Name_బఫరు_కొలత,
+                                         శూన్య *extra_క్షేత్రం, uLong extra_క్షేత్రం_బఫరు_కొలత,
+                                         అక్షరం* szComment,  uLong comment_బఫరు_కొలత) {
+    పూర్ణాంకం err;
     unz_file_info64 file_info64;
-    err = unz64local_GetCurrentFileInfoInternal(file,&file_info64,NULL,
-                                                szFileName,fileNameBufferSize,
-                                                extraField,extraFieldBufferSize,
-                                                szComment,commentBufferSize);
-    if ((err==UNZ_OK) && (pfile_info != NULL))
+    err = unz64local_Get_Current_File_Info_అంతర్గత(file,&file_info64,ఖాళీ,
+                                                szFileName,file_Name_బఫరు_కొలత,
+                                                extra_క్షేత్రం,extra_క్షేత్రం_బఫరు_కొలత,
+                                                szComment,comment_బఫరు_కొలత);
+    ఒకవేళ ((err==UNZ_OK) && (pfile_info != ఖాళీ))
     {
-        pfile_info->version = file_info64.version;
-        pfile_info->version_needed = file_info64.version_needed;
+        pfile_info->సంస్కరణ = file_info64.సంస్కరణ;
+        pfile_info->సంస్కరణ_needed = file_info64.సంస్కరణ_needed;
         pfile_info->flag = file_info64.flag;
-        pfile_info->compression_method = file_info64.compression_method;
+        pfile_info->compression_పద్ధతి = file_info64.compression_పద్ధతి;
         pfile_info->dosDate = file_info64.dosDate;
-        pfile_info->crc = file_info64.crc;
+        pfile_info->చక్రీయ_తనిఖీ = file_info64.చక్రీయ_తనిఖీ;
 
-        pfile_info->size_filename = file_info64.size_filename;
-        pfile_info->size_file_extra = file_info64.size_file_extra;
-        pfile_info->size_file_comment = file_info64.size_file_comment;
+        pfile_info->కొలత_filename = file_info64.కొలత_filename;
+        pfile_info->కొలత_file_extra = file_info64.కొలత_file_extra;
+        pfile_info->కొలత_file_comment = file_info64.కొలత_file_comment;
 
-        pfile_info->disk_num_start = file_info64.disk_num_start;
-        pfile_info->internal_fa = file_info64.internal_fa;
+        pfile_info->disk_అంకె_ప్రారంభం = file_info64.disk_అంకె_ప్రారంభం;
+        pfile_info->అంతర్గత_fa = file_info64.అంతర్గత_fa;
         pfile_info->external_fa = file_info64.external_fa;
 
         pfile_info->tmu_date = file_info64.tmu_date;
 
 
-        pfile_info->compressed_size = (uLong)file_info64.compressed_size;
-        pfile_info->uncompressed_size = (uLong)file_info64.uncompressed_size;
+        pfile_info->compressed_కొలత = (uLong)file_info64.compressed_కొలత;
+        pfile_info->uncompressed_కొలత = (uLong)file_info64.uncompressed_కొలత;
 
     }
-    return err;
+    తిరిగి err;
 }
 /*
   Set the current file of the zipfile to the first file.
   return UNZ_OK if there is no problem
 */
-extern int ZEXPORT unzGoToFirstFile(unzFile file) {
-    int err=UNZ_OK;
+బాహ్య పూర్ణాంకం ZEXPORT unz_Go_గమ్యం_మొదటి_File(unzFile file) {
+    పూర్ణాంకం err=UNZ_OK;
     unz64_s* s;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    s->pos_in_central_dir=s->offset_central_dir;
-    s->num_file=0;
-    err=unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                             &s->cur_file_info_internal,
-                                             NULL,0,NULL,0,NULL,0);
+    s->pos_లోపల_central_dir=s->స్థానభ్రంశం_central_dir;
+    s->అంకె_file=0;
+    err=unz64local_Get_Current_File_Info_అంతర్గత(file,&s->cur_file_info,
+                                             &s->cur_file_info_అంతర్గత,
+                                             ఖాళీ,0,ఖాళీ,0,ఖాళీ,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    తిరిగి err;
 }
 
 /*
@@ -1077,27 +1077,27 @@ extern int ZEXPORT unzGoToFirstFile(unzFile file) {
   return UNZ_OK if there is no problem
   return UNZ_END_OF_LIST_OF_FILE if the actual file was the latest.
 */
-extern int ZEXPORT unzGoToNextFile(unzFile file) {
+బాహ్య పూర్ణాంకం ZEXPORT unz_Go_గమ్యం_తదుపరి_File(unzFile file) {
     unz64_s* s;
-    int err;
+    పూర్ణాంకం err;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
-    if (s->gi.number_entry != 0xffff)    /* 2^16 files overflow hack */
-      if (s->num_file+1==s->gi.number_entry)
-        return UNZ_END_OF_LIST_OF_FILE;
+    ఒకవేళ (!s->current_file_ok)
+        తిరిగి UNZ_చివర_యొక్క_LIST_యొక్క_FILE;
+    ఒకవేళ (s->gi.సంఖ్య_నమోదు != 0xffff)    /* 2^16 files overflow hack */
+      ఒకవేళ (s->అంకె_file+1==s->gi.సంఖ్య_నమోదు)
+        తిరిగి UNZ_చివర_యొక్క_LIST_యొక్క_FILE;
 
-    s->pos_in_central_dir += SIZECENTRALDIRITEM + s->cur_file_info.size_filename +
-            s->cur_file_info.size_file_extra + s->cur_file_info.size_file_comment ;
-    s->num_file++;
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                               &s->cur_file_info_internal,
-                                               NULL,0,NULL,0,NULL,0);
+    s->pos_లోపల_central_dir += SIZECENTRALDIRITEM + s->cur_file_info.కొలత_filename +
+            s->cur_file_info.కొలత_file_extra + s->cur_file_info.కొలత_file_comment ;
+    s->అంకె_file++;
+    err = unz64local_Get_Current_File_Info_అంతర్గత(file,&s->cur_file_info,
+                                               &s->cur_file_info_అంతర్గత,
+                                               ఖాళీ,0,ఖాళీ,0,ఖాళీ,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    తిరిగి err;
 }
 
 
@@ -1109,60 +1109,60 @@ extern int ZEXPORT unzGoToNextFile(unzFile file) {
   UNZ_OK if the file is found. It becomes the current file.
   UNZ_END_OF_LIST_OF_FILE if the file is not found
 */
-extern int ZEXPORT unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
+బాహ్య పూర్ణాంకం ZEXPORT unzLocateFile(unzFile file, స్థిరరాశి అక్షరం *szFileName, పూర్ణాంకం i_Case_సున్నితత్వం) {
     unz64_s* s;
-    int err;
+    పూర్ణాంకం err;
 
     /* We remember the 'current' position in the file so that we can jump
      * back there if we fail.
      */
     unz_file_info64 cur_file_infoSaved;
-    unz_file_info64_internal cur_file_info_internalSaved;
-    ZPOS64_T num_fileSaved;
-    ZPOS64_T pos_in_central_dirSaved;
+    unz_file_info64_అంతర్గత cur_file_info_అంతర్గత_Saved;
+    ZPOS64_T అంకె_file_Saved;
+    ZPOS64_T pos_లోపల_central_dir_Saved;
 
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
 
-    if (strlen(szFileName)>=UNZ_MAXFILENAMEINZIP)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (అక్షరశ్రేణి_పొడవు(szFileName)>=UNZ_MAXFILENAMEINZIP)
+        తిరిగి UNZ_PARAMERROR;
 
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
+    ఒకవేళ (!s->current_file_ok)
+        తిరిగి UNZ_చివర_యొక్క_LIST_యొక్క_FILE;
 
     /* Save the current state */
-    num_fileSaved = s->num_file;
-    pos_in_central_dirSaved = s->pos_in_central_dir;
+    అంకె_file_Saved = s->అంకె_file;
+    pos_లోపల_central_dir_Saved = s->pos_లోపల_central_dir;
     cur_file_infoSaved = s->cur_file_info;
-    cur_file_info_internalSaved = s->cur_file_info_internal;
+    cur_file_info_అంతర్గత_Saved = s->cur_file_info_అంతర్గత;
 
-    err = unzGoToFirstFile(file);
+    err = unz_Go_గమ్యం_మొదటి_File(file);
 
-    while (err == UNZ_OK)
+    అయితే (err == UNZ_OK)
     {
-        char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
-        err = unzGetCurrentFileInfo64(file,NULL,
-                                    szCurrentFileName,sizeof(szCurrentFileName)-1,
-                                    NULL,0,NULL,0);
-        if (err == UNZ_OK)
+        అక్షరం szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
+        err = unzGetCurrentFileInfo64(file,ఖాళీ,
+                                    szCurrentFileName,పరిమాణం(szCurrentFileName)-1,
+                                    ఖాళీ,0,ఖాళీ,0);
+        ఒకవేళ (err == UNZ_OK)
         {
-            if (unzStringFileNameCompare(szCurrentFileName,
-                                            szFileName,iCaseSensitivity)==0)
-                return UNZ_OK;
-            err = unzGoToNextFile(file);
+            ఒకవేళ (unzStringFileNameCompare(szCurrentFileName,
+                                            szFileName,i_Case_సున్నితత్వం)==0)
+                తిరిగి UNZ_OK;
+            err = unz_Go_గమ్యం_తదుపరి_File(file);
         }
     }
 
     /* We failed, so restore the state of the 'current file' to where we
      * were.
      */
-    s->num_file = num_fileSaved ;
-    s->pos_in_central_dir = pos_in_central_dirSaved ;
+    s->అంకె_file = అంకె_file_Saved ;
+    s->pos_లోపల_central_dir = pos_లోపల_central_dir_Saved ;
     s->cur_file_info = cur_file_infoSaved;
-    s->cur_file_info_internal = cur_file_info_internalSaved;
-    return err;
+    s->cur_file_info_అంతర్గత = cur_file_info_అంతర్గత_Saved;
+    తిరిగి err;
 }
 
 
@@ -1183,61 +1183,61 @@ typedef struct unz_file_pos_s
 } unz_file_pos;
 */
 
-extern int ZEXPORT unzGetFilePos64(unzFile file, unz64_file_pos* file_pos) {
+బాహ్య పూర్ణాంకం ZEXPORT unzGetFilePos64(unzFile file, unz64_file_pos* file_pos) {
     unz64_s* s;
 
-    if (file==NULL || file_pos==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ || file_pos==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
+    ఒకవేళ (!s->current_file_ok)
+        తిరిగి UNZ_చివర_యొక్క_LIST_యొక్క_FILE;
 
-    file_pos->pos_in_zip_directory  = s->pos_in_central_dir;
-    file_pos->num_of_file           = s->num_file;
+    file_pos->pos_లోపల_zip_directory  = s->pos_లోపల_central_dir;
+    file_pos->అంకె_యొక్క_file           = s->అంకె_file;
 
-    return UNZ_OK;
+    తిరిగి UNZ_OK;
 }
 
-extern int ZEXPORT unzGetFilePos(unzFile file, unz_file_pos* file_pos) {
+బాహ్య పూర్ణాంకం ZEXPORT unzGetFilePos(unzFile file, unz_file_pos* file_pos) {
     unz64_file_pos file_pos64;
-    int err = unzGetFilePos64(file,&file_pos64);
-    if (err==UNZ_OK)
+    పూర్ణాంకం err = unzGetFilePos64(file,&file_pos64);
+    ఒకవేళ (err==UNZ_OK)
     {
-        file_pos->pos_in_zip_directory = (uLong)file_pos64.pos_in_zip_directory;
-        file_pos->num_of_file = (uLong)file_pos64.num_of_file;
+        file_pos->pos_లోపల_zip_directory = (uLong)file_pos64.pos_లోపల_zip_directory;
+        file_pos->అంకె_యొక్క_file = (uLong)file_pos64.అంకె_యొక్క_file;
     }
-    return err;
+    తిరిగి err;
 }
 
-extern int ZEXPORT unzGoToFilePos64(unzFile file, const unz64_file_pos* file_pos) {
+బాహ్య పూర్ణాంకం ZEXPORT unz_Go_గమ్యం_File_Pos64(unzFile file, స్థిరరాశి unz64_file_pos* file_pos) {
     unz64_s* s;
-    int err;
+    పూర్ణాంకం err;
 
-    if (file==NULL || file_pos==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ || file_pos==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
     /* jump to the right spot */
-    s->pos_in_central_dir = file_pos->pos_in_zip_directory;
-    s->num_file           = file_pos->num_of_file;
+    s->pos_లోపల_central_dir = file_pos->pos_లోపల_zip_directory;
+    s->అంకె_file           = file_pos->అంకె_యొక్క_file;
 
     /* set the current file */
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                               &s->cur_file_info_internal,
-                                               NULL,0,NULL,0,NULL,0);
+    err = unz64local_Get_Current_File_Info_అంతర్గత(file,&s->cur_file_info,
+                                               &s->cur_file_info_అంతర్గత,
+                                               ఖాళీ,0,ఖాళీ,0,ఖాళీ,0);
     /* return results */
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    తిరిగి err;
 }
 
-extern int ZEXPORT unzGoToFilePos(unzFile file, unz_file_pos* file_pos) {
+బాహ్య పూర్ణాంకం ZEXPORT unz_Go_గమ్యం_File_Pos(unzFile file, unz_file_pos* file_pos) {
     unz64_file_pos file_pos64;
-    if (file_pos == NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file_pos == ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
 
-    file_pos64.pos_in_zip_directory = file_pos->pos_in_zip_directory;
-    file_pos64.num_of_file = file_pos->num_of_file;
-    return unzGoToFilePos64(file,&file_pos64);
+    file_pos64.pos_లోపల_zip_directory = file_pos->pos_లోపల_zip_directory;
+    file_pos64.అంకె_యొక్క_file = file_pos->అంకె_యొక్క_file;
+    తిరిగి unz_Go_గమ్యం_File_Pos64(file,&file_pos64);
 }
 
 /*
@@ -1251,212 +1251,212 @@ extern int ZEXPORT unzGoToFilePos(unzFile file, unz_file_pos* file_pos) {
   store in *piSizeVar the size of extra info in local header
         (filename and size of extra field data)
 */
-local int unz64local_CheckCurrentFileCoherencyHeader(unz64_s* s, uInt* piSizeVar,
+local పూర్ణాంకం unz64local_Check_Current_File_Coherency_శీర్షిక(unz64_s* s, uInt* pi_కొలత_Var,
                                                      ZPOS64_T * poffset_local_extrafield,
                                                      uInt  * psize_local_extrafield) {
-    uLong uMagic,uData,uFlags;
-    uLong size_filename;
-    uLong size_extra_field;
-    int err=UNZ_OK;
+    uLong uMagic,u_దత్తాంశం,uFlags;
+    uLong కొలత_filename;
+    uLong కొలత_extra_క్షేత్రం;
+    పూర్ణాంకం err=UNZ_OK;
 
-    *piSizeVar = 0;
+    *pi_కొలత_Var = 0;
     *poffset_local_extrafield = 0;
     *psize_local_extrafield = 0;
 
-    if (ZSEEK64(s->z_filefunc, s->filestream,s->cur_file_info_internal.offset_curfile +
-                                s->byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    ఒకవేళ (ZSEEK64(s->z_filefunc, s->filestream,s->cur_file_info_అంతర్గత.స్థానభ్రంశం_curfile +
+                                s->byte_before_the_zipfile,ZLIB_FILEFUNC_SEEK_సమితి)!=0)
+        తిరిగి UNZ_ERRNO;
 
 
-    if (err==UNZ_OK)
+    ఒకవేళ (err==UNZ_OK)
     {
-        if (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
+        ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
             err=UNZ_ERRNO;
-        else if (uMagic!=0x04034b50)
+        లేకపోతే ఒకవేళ (uMagic!=0x04034b50)
             err=UNZ_BADZIPFILE;
     }
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uData) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&u_దత్తాంశం) != UNZ_OK)
         err=UNZ_ERRNO;
 /*
     else if ((err==UNZ_OK) && (uData!=s->cur_file_info.wVersion))
         err=UNZ_BADZIPFILE;
 */
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uFlags) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&uFlags) != UNZ_OK)
         err=UNZ_ERRNO;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&uData) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&u_దత్తాంశం) != UNZ_OK)
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (uData!=s->cur_file_info.compression_method))
+    లేకపోతే ఒకవేళ ((err==UNZ_OK) && (u_దత్తాంశం!=s->cur_file_info.compression_పద్ధతి))
         err=UNZ_BADZIPFILE;
 
-    if ((err==UNZ_OK) && (s->cur_file_info.compression_method!=0) &&
+    ఒకవేళ ((err==UNZ_OK) && (s->cur_file_info.compression_పద్ధతి!=0) &&
 /* #ifdef HAVE_BZIP2 */
-                         (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
+                         (s->cur_file_info.compression_పద్ధతి!=Z_BZIP2ED) &&
 /* #endif */
-                         (s->cur_file_info.compression_method!=Z_DEFLATED))
+                         (s->cur_file_info.compression_పద్ధతి!=Z_DEFLATED))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* date/time */
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&u_దత్తాంశం) != UNZ_OK) /* date/time */
         err=UNZ_ERRNO;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* crc */
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&u_దత్తాంశం) != UNZ_OK) /*చక్రీయ_తనిఖీ*/
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (uData!=s->cur_file_info.crc) && ((uFlags & 8)==0))
+    లేకపోతే ఒకవేళ ((err==UNZ_OK) && (u_దత్తాంశం!=s->cur_file_info.చక్రీయ_తనిఖీ) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* size compr */
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&u_దత్తాంశం) != UNZ_OK) /* size compr */
         err=UNZ_ERRNO;
-    else if (uData != 0xFFFFFFFF && (err==UNZ_OK) && (uData!=s->cur_file_info.compressed_size) && ((uFlags & 8)==0))
+    లేకపోతే ఒకవేళ (u_దత్తాంశం != 0xFFFFFFFF && (err==UNZ_OK) && (u_దత్తాంశం!=s->cur_file_info.compressed_కొలత) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* size uncompr */
+    ఒకవేళ (unz64local_getLong(&s->z_filefunc, s->filestream,&u_దత్తాంశం) != UNZ_OK) /* size uncompr */
         err=UNZ_ERRNO;
-    else if (uData != 0xFFFFFFFF && (err==UNZ_OK) && (uData!=s->cur_file_info.uncompressed_size) && ((uFlags & 8)==0))
+    లేకపోతే ఒకవేళ (u_దత్తాంశం != 0xFFFFFFFF && (err==UNZ_OK) && (u_దత్తాంశం!=s->cur_file_info.uncompressed_కొలత) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&size_filename) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&కొలత_filename) != UNZ_OK)
         err=UNZ_ERRNO;
-    else if ((err==UNZ_OK) && (size_filename!=s->cur_file_info.size_filename))
+    లేకపోతే ఒకవేళ ((err==UNZ_OK) && (కొలత_filename!=s->cur_file_info.కొలత_filename))
         err=UNZ_BADZIPFILE;
 
-    *piSizeVar += (uInt)size_filename;
+    *pi_కొలత_Var += (uInt)కొలత_filename;
 
-    if (unz64local_getShort(&s->z_filefunc, s->filestream,&size_extra_field) != UNZ_OK)
+    ఒకవేళ (unz64local_getShort(&s->z_filefunc, s->filestream,&కొలత_extra_క్షేత్రం) != UNZ_OK)
         err=UNZ_ERRNO;
-    *poffset_local_extrafield= s->cur_file_info_internal.offset_curfile +
-                                    SIZEZIPLOCALHEADER + size_filename;
-    *psize_local_extrafield = (uInt)size_extra_field;
+    *poffset_local_extrafield= s->cur_file_info_అంతర్గత.స్థానభ్రంశం_curfile +
+                                    SIZEZIPLOCALHEADER + కొలత_filename;
+    *psize_local_extrafield = (uInt)కొలత_extra_క్షేత్రం;
 
-    *piSizeVar += (uInt)size_extra_field;
+    *pi_కొలత_Var += (uInt)కొలత_extra_క్షేత్రం;
 
-    return err;
+    తిరిగి err;
 }
 
 /*
   Open for reading data the current file in the zipfile.
   If there is no error and the file is opened, the return value is UNZ_OK.
 */
-extern int ZEXPORT unzOpenCurrentFile3(unzFile file, int* method,
-                                       int* level, int raw, const char* password) {
-    int err=UNZ_OK;
-    uInt iSizeVar;
+బాహ్య పూర్ణాంకం ZEXPORT unzOpenCurrentFile3(unzFile file, పూర్ణాంకం* పద్ధతి,
+                                       పూర్ణాంకం* level, పూర్ణాంకం raw, స్థిరరాశి అక్షరం* password) {
+    పూర్ణాంకం err=UNZ_OK;
+    uInt i_కొలత_Var;
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    ZPOS64_T offset_local_extrafield;  /* offset of the local extra field */
-    uInt  size_local_extrafield;    /* size of the local extra field */
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read_info;
+    ZPOS64_T స్థానభ్రంశం_local_extrafield;  /* offset of the local extra field */
+    uInt  కొలత_local_extrafield;    /* size of the local extra field */
 #    ifndef NOUNCRYPT
-    char source[12];
-#    else
-    if (password != NULL)
-        return UNZ_PARAMERROR;
+    అక్షరం ఆధారం[12];
+#    లేకపోతే
+    ఒకవేళ (password != ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
 #    endif
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (!s->current_file_ok)
+        తిరిగి UNZ_PARAMERROR;
 
-    if (s->pfile_in_zip_read != NULL)
+    ఒకవేళ (s->pfile_లోపల_zip_read != ఖాళీ)
         unzCloseCurrentFile(file);
 
-    if (unz64local_CheckCurrentFileCoherencyHeader(s,&iSizeVar, &offset_local_extrafield,&size_local_extrafield)!=UNZ_OK)
-        return UNZ_BADZIPFILE;
+    ఒకవేళ (unz64local_Check_Current_File_Coherency_శీర్షిక(s,&i_కొలత_Var, &స్థానభ్రంశం_local_extrafield,&కొలత_local_extrafield)!=UNZ_OK)
+        తిరిగి UNZ_BADZIPFILE;
 
-    pfile_in_zip_read_info = (file_in_zip64_read_info_s*)ALLOC(sizeof(file_in_zip64_read_info_s));
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_INTERNALERROR;
+    pfile_లోపల_zip_read_info = (file_లోపల_zip64_read_info_s*)ALLOC(పరిమాణం(file_లోపల_zip64_read_info_s));
+    ఒకవేళ (pfile_లోపల_zip_read_info==ఖాళీ)
+        తిరిగి UNZ_INTERNALERROR;
 
-    pfile_in_zip_read_info->read_buffer=(char*)ALLOC(UNZ_BUFSIZE);
-    pfile_in_zip_read_info->offset_local_extrafield = offset_local_extrafield;
-    pfile_in_zip_read_info->size_local_extrafield = size_local_extrafield;
-    pfile_in_zip_read_info->pos_local_extrafield=0;
-    pfile_in_zip_read_info->raw=raw;
+    pfile_లోపల_zip_read_info->read_బఫరు=(అక్షరం*)ALLOC(UNZ_BUFSIZE);
+    pfile_లోపల_zip_read_info->స్థానభ్రంశం_local_extrafield = స్థానభ్రంశం_local_extrafield;
+    pfile_లోపల_zip_read_info->కొలత_local_extrafield = కొలత_local_extrafield;
+    pfile_లోపల_zip_read_info->pos_local_extrafield=0;
+    pfile_లోపల_zip_read_info->raw=raw;
 
-    if (pfile_in_zip_read_info->read_buffer==NULL)
+    ఒకవేళ (pfile_లోపల_zip_read_info->read_బఫరు==ఖాళీ)
     {
-        free(pfile_in_zip_read_info);
-        return UNZ_INTERNALERROR;
+        విడుదల(pfile_లోపల_zip_read_info);
+        తిరిగి UNZ_INTERNALERROR;
     }
 
-    pfile_in_zip_read_info->stream_initialised=0;
+    pfile_లోపల_zip_read_info->ప్రవాహం_initialised=0;
 
-    if (method!=NULL)
-        *method = (int)s->cur_file_info.compression_method;
+    ఒకవేళ (పద్ధతి!=ఖాళీ)
+        *పద్ధతి = (పూర్ణాంకం)s->cur_file_info.compression_పద్ధతి;
 
-    if (level!=NULL)
+    ఒకవేళ (level!=ఖాళీ)
     {
         *level = 6;
-        switch (s->cur_file_info.flag & 0x06)
+        ఎంపిక (s->cur_file_info.flag & 0x06)
         {
-          case 6 : *level = 1; break;
-          case 4 : *level = 2; break;
-          case 2 : *level = 9; break;
+          స్థితి 6 : *level = 1; ఆపు;
+          స్థితి 4 : *level = 2; ఆపు;
+          స్థితి 2 : *level = 9; ఆపు;
         }
     }
 
-    if ((s->cur_file_info.compression_method!=0) &&
+    ఒకవేళ ((s->cur_file_info.compression_పద్ధతి!=0) &&
 /* #ifdef HAVE_BZIP2 */
-        (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
+        (s->cur_file_info.compression_పద్ధతి!=Z_BZIP2ED) &&
 /* #endif */
-        (s->cur_file_info.compression_method!=Z_DEFLATED))
+        (s->cur_file_info.compression_పద్ధతి!=Z_DEFLATED))
 
         err=UNZ_BADZIPFILE;
 
-    pfile_in_zip_read_info->crc32_wait=s->cur_file_info.crc;
-    pfile_in_zip_read_info->crc32=0;
-    pfile_in_zip_read_info->total_out_64=0;
-    pfile_in_zip_read_info->compression_method = s->cur_file_info.compression_method;
-    pfile_in_zip_read_info->filestream=s->filestream;
-    pfile_in_zip_read_info->z_filefunc=s->z_filefunc;
-    pfile_in_zip_read_info->byte_before_the_zipfile=s->byte_before_the_zipfile;
+    pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_wait=s->cur_file_info.చక్రీయ_తనిఖీ;
+    pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_2=0;
+    pfile_లోపల_zip_read_info->మొత్తం_బహిర్గతం_64=0;
+    pfile_లోపల_zip_read_info->compression_పద్ధతి = s->cur_file_info.compression_పద్ధతి;
+    pfile_లోపల_zip_read_info->filestream=s->filestream;
+    pfile_లోపల_zip_read_info->z_filefunc=s->z_filefunc;
+    pfile_లోపల_zip_read_info->byte_before_the_zipfile=s->byte_before_the_zipfile;
 
-    pfile_in_zip_read_info->stream.total_out = 0;
+    pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_బహిర్గతం = 0;
 
-    if ((s->cur_file_info.compression_method==Z_BZIP2ED) && (!raw))
+    ఒకవేళ ((s->cur_file_info.compression_పద్ధతి==Z_BZIP2ED) && (!raw))
     {
-#ifdef HAVE_BZIP2
-      pfile_in_zip_read_info->bstream.bzalloc = (void *(*) (void *, int, int))0;
-      pfile_in_zip_read_info->bstream.bzfree = (free_func)0;
-      pfile_in_zip_read_info->bstream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->bstream.state = (voidpf)0;
+#నిర్వచితమైతే HAVE_BZIP2
+      pfile_లోపల_zip_read_info->bstream.bzalloc = (శూన్య *(*) (శూన్య *, పూర్ణాంకం, పూర్ణాంకం))0;
+      pfile_లోపల_zip_read_info->bstream.bzfree = (free_func)0;
+      pfile_లోపల_zip_read_info->bstream.opaque = (voidpf)0;
+      pfile_లోపల_zip_read_info->bstream.state = (voidpf)0;
 
-      pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
-      pfile_in_zip_read_info->stream.zfree = (free_func)0;
-      pfile_in_zip_read_info->stream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->stream.next_in = (voidpf)0;
-      pfile_in_zip_read_info->stream.avail_in = 0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.zalloc = (alloc_func)0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.zfree = (free_func)0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.opaque = (voidpf)0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_లోపల = (voidpf)0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల = 0;
 
-      err=BZ2_bzDecompressInit(&pfile_in_zip_read_info->bstream, 0, 0);
-      if (err == Z_OK)
-        pfile_in_zip_read_info->stream_initialised=Z_BZIP2ED;
-      else
+      err=BZ2_bzDecompressInit(&pfile_లోపల_zip_read_info->bstream, 0, 0);
+      ఒకవేళ (err == Z_OK)
+        pfile_లోపల_zip_read_info->ప్రవాహం_initialised=Z_BZIP2ED;
+      లేకపోతే
       {
-        free(pfile_in_zip_read_info->read_buffer);
-        free(pfile_in_zip_read_info);
-        return err;
+        విడుదల(pfile_లోపల_zip_read_info->read_బఫరు);
+        విడుదల(pfile_లోపల_zip_read_info);
+        తిరిగి err;
       }
-#else
-      pfile_in_zip_read_info->raw=1;
-#endif
+#లేకపోతే
+      pfile_లోపల_zip_read_info->raw=1;
+#అయితే_ముగింపు
     }
-    else if ((s->cur_file_info.compression_method==Z_DEFLATED) && (!raw))
+    లేకపోతే ఒకవేళ ((s->cur_file_info.compression_పద్ధతి==Z_DEFLATED) && (!raw))
     {
-      pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
-      pfile_in_zip_read_info->stream.zfree = (free_func)0;
-      pfile_in_zip_read_info->stream.opaque = (voidpf)0;
-      pfile_in_zip_read_info->stream.next_in = 0;
-      pfile_in_zip_read_info->stream.avail_in = 0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.zalloc = (alloc_func)0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.zfree = (free_func)0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.opaque = (voidpf)0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_లోపల = 0;
+      pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల = 0;
 
-      err=inflateInit2(&pfile_in_zip_read_info->stream, -MAX_WBITS);
-      if (err == Z_OK)
-        pfile_in_zip_read_info->stream_initialised=Z_DEFLATED;
-      else
+      err=inflateInit2(&pfile_లోపల_zip_read_info->ప్రవాహం, -MAX_WBITS);
+      ఒకవేళ (err == Z_OK)
+        pfile_లోపల_zip_read_info->ప్రవాహం_initialised=Z_DEFLATED;
+      లేకపోతే
       {
-        free(pfile_in_zip_read_info->read_buffer);
-        free(pfile_in_zip_read_info);
-        return err;
+        విడుదల(pfile_లోపల_zip_read_info->read_బఫరు);
+        విడుదల(pfile_లోపల_zip_read_info);
+        తిరిగి err;
       }
         /* windowBits is passed < 0 to tell that there is no zlib header.
          * Note that in this case inflate *requires* an extra "dummy" byte
@@ -1466,72 +1466,72 @@ extern int ZEXPORT unzOpenCurrentFile3(unzFile file, int* method,
          * size of both compressed and uncompressed data
          */
     }
-    pfile_in_zip_read_info->rest_read_compressed =
-            s->cur_file_info.compressed_size ;
-    pfile_in_zip_read_info->rest_read_uncompressed =
-            s->cur_file_info.uncompressed_size ;
+    pfile_లోపల_zip_read_info->rest_read_compressed =
+            s->cur_file_info.compressed_కొలత ;
+    pfile_లోపల_zip_read_info->rest_read_uncompressed =
+            s->cur_file_info.uncompressed_కొలత ;
 
 
-    pfile_in_zip_read_info->pos_in_zipfile =
-            s->cur_file_info_internal.offset_curfile + SIZEZIPLOCALHEADER +
-              iSizeVar;
+    pfile_లోపల_zip_read_info->pos_లోపల_zipfile =
+            s->cur_file_info_అంతర్గత.స్థానభ్రంశం_curfile + SIZEZIPLOCALHEADER +
+              i_కొలత_Var;
 
-    pfile_in_zip_read_info->stream.avail_in = (uInt)0;
+    pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల = (uInt)0;
 
-    s->pfile_in_zip_read = pfile_in_zip_read_info;
+    s->pfile_లోపల_zip_read = pfile_లోపల_zip_read_info;
                 s->encrypted = 0;
 
 #    ifndef NOUNCRYPT
-    if (password != NULL)
+    ఒకవేళ (password != ఖాళీ)
     {
-        int i;
-        s->pcrc_32_tab = get_crc_table();
-        init_keys(password,s->keys,s->pcrc_32_tab);
-        if (ZSEEK64(s->z_filefunc, s->filestream,
-                  s->pfile_in_zip_read->pos_in_zipfile +
-                     s->pfile_in_zip_read->byte_before_the_zipfile,
+        పూర్ణాంకం i;
+        s->pcrc_32_tab = get_చక్రీయ_తనిఖీ_పట్టిక();
+        init_కీలకాలు(password,s->కీలకాలు,s->pcrc_32_tab);
+        ఒకవేళ (ZSEEK64(s->z_filefunc, s->filestream,
+                  s->pfile_లోపల_zip_read->pos_లోపల_zipfile +
+                     s->pfile_లోపల_zip_read->byte_before_the_zipfile,
                   SEEK_SET)!=0)
-            return UNZ_INTERNALERROR;
-        if(ZREAD64(s->z_filefunc, s->filestream,source, 12)<12)
-            return UNZ_INTERNALERROR;
+            తిరిగి UNZ_INTERNALERROR;
+        ఒకవేళ(ZREAD64(s->z_filefunc, s->filestream,ఆధారం, 12)<12)
+            తిరిగి UNZ_INTERNALERROR;
 
-        for (i = 0; i<12; i++)
-            zdecode(s->keys,s->pcrc_32_tab,source[i]);
+        కొరకు (i = 0; i<12; i++)
+            zdecode(s->కీలకాలు,s->pcrc_32_tab,ఆధారం[i]);
 
-        s->pfile_in_zip_read->pos_in_zipfile+=12;
+        s->pfile_లోపల_zip_read->pos_లోపల_zipfile+=12;
         s->encrypted=1;
     }
 #    endif
 
 
-    return UNZ_OK;
+    తిరిగి UNZ_OK;
 }
 
-extern int ZEXPORT unzOpenCurrentFile(unzFile file) {
-    return unzOpenCurrentFile3(file, NULL, NULL, 0, NULL);
+బాహ్య పూర్ణాంకం ZEXPORT unzOpenCurrentFile(unzFile file) {
+    తిరిగి unzOpenCurrentFile3(file, ఖాళీ, ఖాళీ, 0, ఖాళీ);
 }
 
-extern int ZEXPORT unzOpenCurrentFilePassword(unzFile file, const char* password) {
-    return unzOpenCurrentFile3(file, NULL, NULL, 0, password);
+బాహ్య పూర్ణాంకం ZEXPORT unzOpenCurrentFilePassword(unzFile file, స్థిరరాశి అక్షరం* password) {
+    తిరిగి unzOpenCurrentFile3(file, ఖాళీ, ఖాళీ, 0, password);
 }
 
-extern int ZEXPORT unzOpenCurrentFile2(unzFile file, int* method, int* level, int raw) {
-    return unzOpenCurrentFile3(file, method, level, raw, NULL);
+బాహ్య పూర్ణాంకం ZEXPORT unzOpenCurrentFile2(unzFile file, పూర్ణాంకం* పద్ధతి, పూర్ణాంకం* level, పూర్ణాంకం raw) {
+    తిరిగి unzOpenCurrentFile3(file, పద్ధతి, level, raw, ఖాళీ);
 }
 
 /** Addition for GDAL : START */
 
-extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
+బాహ్య ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read_info;
     s=(unz64_s*)file;
-    if (file==NULL)
-        return 0; /* UNZ_PARAMERROR; */
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
-    if (pfile_in_zip_read_info==NULL)
-        return 0; /* UNZ_PARAMERROR; */
-    return pfile_in_zip_read_info->pos_in_zipfile +
-                         pfile_in_zip_read_info->byte_before_the_zipfile;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి 0; /* UNZ_PARAMERROR; */
+    pfile_లోపల_zip_read_info=s->pfile_లోపల_zip_read;
+    ఒకవేళ (pfile_లోపల_zip_read_info==ఖాళీ)
+        తిరిగి 0; /* UNZ_PARAMERROR; */
+    తిరిగి pfile_లోపల_zip_read_info->pos_లోపల_zipfile +
+                         pfile_లోపల_zip_read_info->byte_before_the_zipfile;
 }
 
 /** Addition for GDAL : END */
@@ -1546,168 +1546,168 @@ extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64(unzFile file) {
   return <0 with error code if there is an error
     (UNZ_ERRNO for IO error, or zLib error for uncompress error)
 */
-extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
-    int err=UNZ_OK;
+బాహ్య పూర్ణాంకం ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, గుర్తులేని len) {
+    పూర్ణాంకం err=UNZ_OK;
     uInt iRead = 0;
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read_info;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_లోపల_zip_read_info=s->pfile_లోపల_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (pfile_లోపల_zip_read_info==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
 
 
-    if (pfile_in_zip_read_info->read_buffer == NULL)
-        return UNZ_END_OF_LIST_OF_FILE;
-    if (len==0)
-        return 0;
+    ఒకవేళ (pfile_లోపల_zip_read_info->read_బఫరు == ఖాళీ)
+        తిరిగి UNZ_చివర_యొక్క_LIST_యొక్క_FILE;
+    ఒకవేళ (len==0)
+        తిరిగి 0;
 
-    pfile_in_zip_read_info->stream.next_out = (Bytef*)buf;
+    pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_బహిర్గతం = (Bytef*)buf;
 
-    pfile_in_zip_read_info->stream.avail_out = (uInt)len;
+    pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం = (uInt)len;
 
-    if ((len>pfile_in_zip_read_info->rest_read_uncompressed) &&
-        (!(pfile_in_zip_read_info->raw)))
-        pfile_in_zip_read_info->stream.avail_out =
-            (uInt)pfile_in_zip_read_info->rest_read_uncompressed;
+    ఒకవేళ ((len>pfile_లోపల_zip_read_info->rest_read_uncompressed) &&
+        (!(pfile_లోపల_zip_read_info->raw)))
+        pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం =
+            (uInt)pfile_లోపల_zip_read_info->rest_read_uncompressed;
 
-    if ((len>pfile_in_zip_read_info->rest_read_compressed+
-           pfile_in_zip_read_info->stream.avail_in) &&
-         (pfile_in_zip_read_info->raw))
-        pfile_in_zip_read_info->stream.avail_out =
-            (uInt)pfile_in_zip_read_info->rest_read_compressed+
-            pfile_in_zip_read_info->stream.avail_in;
+    ఒకవేళ ((len>pfile_లోపల_zip_read_info->rest_read_compressed+
+           pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల) &&
+         (pfile_లోపల_zip_read_info->raw))
+        pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం =
+            (uInt)pfile_లోపల_zip_read_info->rest_read_compressed+
+            pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల;
 
-    while (pfile_in_zip_read_info->stream.avail_out>0)
+    అయితే (pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం>0)
     {
-        if ((pfile_in_zip_read_info->stream.avail_in==0) &&
-            (pfile_in_zip_read_info->rest_read_compressed>0))
+        ఒకవేళ ((pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల==0) &&
+            (pfile_లోపల_zip_read_info->rest_read_compressed>0))
         {
             uInt uReadThis = UNZ_BUFSIZE;
-            if (pfile_in_zip_read_info->rest_read_compressed<uReadThis)
-                uReadThis = (uInt)pfile_in_zip_read_info->rest_read_compressed;
-            if (uReadThis == 0)
-                return UNZ_EOF;
-            if (ZSEEK64(pfile_in_zip_read_info->z_filefunc,
-                      pfile_in_zip_read_info->filestream,
-                      pfile_in_zip_read_info->pos_in_zipfile +
-                         pfile_in_zip_read_info->byte_before_the_zipfile,
-                         ZLIB_FILEFUNC_SEEK_SET)!=0)
-                return UNZ_ERRNO;
-            if (ZREAD64(pfile_in_zip_read_info->z_filefunc,
-                      pfile_in_zip_read_info->filestream,
-                      pfile_in_zip_read_info->read_buffer,
+            ఒకవేళ (pfile_లోపల_zip_read_info->rest_read_compressed<uReadThis)
+                uReadThis = (uInt)pfile_లోపల_zip_read_info->rest_read_compressed;
+            ఒకవేళ (uReadThis == 0)
+                తిరిగి UNZ_EOF;
+            ఒకవేళ (ZSEEK64(pfile_లోపల_zip_read_info->z_filefunc,
+                      pfile_లోపల_zip_read_info->filestream,
+                      pfile_లోపల_zip_read_info->pos_లోపల_zipfile +
+                         pfile_లోపల_zip_read_info->byte_before_the_zipfile,
+                         ZLIB_FILEFUNC_SEEK_సమితి)!=0)
+                తిరిగి UNZ_ERRNO;
+            ఒకవేళ (ZREAD64(pfile_లోపల_zip_read_info->z_filefunc,
+                      pfile_లోపల_zip_read_info->filestream,
+                      pfile_లోపల_zip_read_info->read_బఫరు,
                       uReadThis)!=uReadThis)
-                return UNZ_ERRNO;
+                తిరిగి UNZ_ERRNO;
 
 
 #            ifndef NOUNCRYPT
-            if(s->encrypted)
+            ఒకవేళ(s->encrypted)
             {
                 uInt i;
-                for(i=0;i<uReadThis;i++)
-                  pfile_in_zip_read_info->read_buffer[i] =
-                      (char)zdecode(s->keys,s->pcrc_32_tab,
-                              pfile_in_zip_read_info->read_buffer[i]);
+                కొరకు(i=0;i<uReadThis;i++)
+                  pfile_లోపల_zip_read_info->read_బఫరు[i] =
+                      (అక్షరం)zdecode(s->కీలకాలు,s->pcrc_32_tab,
+                              pfile_లోపల_zip_read_info->read_బఫరు[i]);
             }
 #            endif
 
 
-            pfile_in_zip_read_info->pos_in_zipfile += uReadThis;
+            pfile_లోపల_zip_read_info->pos_లోపల_zipfile += uReadThis;
 
-            pfile_in_zip_read_info->rest_read_compressed-=uReadThis;
+            pfile_లోపల_zip_read_info->rest_read_compressed-=uReadThis;
 
-            pfile_in_zip_read_info->stream.next_in =
-                (Bytef*)pfile_in_zip_read_info->read_buffer;
-            pfile_in_zip_read_info->stream.avail_in = (uInt)uReadThis;
+            pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_లోపల =
+                (Bytef*)pfile_లోపల_zip_read_info->read_బఫరు;
+            pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల = (uInt)uReadThis;
         }
 
-        if ((pfile_in_zip_read_info->compression_method==0) || (pfile_in_zip_read_info->raw))
+        ఒకవేళ ((pfile_లోపల_zip_read_info->compression_పద్ధతి==0) || (pfile_లోపల_zip_read_info->raw))
         {
             uInt uDoCopy,i ;
 
-            if ((pfile_in_zip_read_info->stream.avail_in == 0) &&
-                (pfile_in_zip_read_info->rest_read_compressed == 0))
-                return (iRead==0) ? UNZ_EOF : (int)iRead;
+            ఒకవేళ ((pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల == 0) &&
+                (pfile_లోపల_zip_read_info->rest_read_compressed == 0))
+                తిరిగి (iRead==0) ? UNZ_EOF : (పూర్ణాంకం)iRead;
 
-            if (pfile_in_zip_read_info->stream.avail_out <
-                            pfile_in_zip_read_info->stream.avail_in)
-                uDoCopy = pfile_in_zip_read_info->stream.avail_out ;
-            else
-                uDoCopy = pfile_in_zip_read_info->stream.avail_in ;
+            ఒకవేళ (pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం <
+                            pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల)
+                uDoCopy = pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం ;
+            లేకపోతే
+                uDoCopy = pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల ;
 
-            for (i=0;i<uDoCopy;i++)
-                *(pfile_in_zip_read_info->stream.next_out+i) =
-                        *(pfile_in_zip_read_info->stream.next_in+i);
+            కొరకు (i=0;i<uDoCopy;i++)
+                *(pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_బహిర్గతం+i) =
+                        *(pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_లోపల+i);
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uDoCopy;
+            pfile_లోపల_zip_read_info->మొత్తం_బహిర్గతం_64 = pfile_లోపల_zip_read_info->మొత్తం_బహిర్గతం_64 + uDoCopy;
 
-            pfile_in_zip_read_info->crc32 = crc32(pfile_in_zip_read_info->crc32,
-                                pfile_in_zip_read_info->stream.next_out,
+            pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_2 = చక్రీయ_తనిఖీ_32_2(pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_2,
+                                pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_బహిర్గతం,
                                 uDoCopy);
-            pfile_in_zip_read_info->rest_read_uncompressed-=uDoCopy;
-            pfile_in_zip_read_info->stream.avail_in -= uDoCopy;
-            pfile_in_zip_read_info->stream.avail_out -= uDoCopy;
-            pfile_in_zip_read_info->stream.next_out += uDoCopy;
-            pfile_in_zip_read_info->stream.next_in += uDoCopy;
-            pfile_in_zip_read_info->stream.total_out += uDoCopy;
+            pfile_లోపల_zip_read_info->rest_read_uncompressed-=uDoCopy;
+            pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల -= uDoCopy;
+            pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం -= uDoCopy;
+            pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_బహిర్గతం += uDoCopy;
+            pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_లోపల += uDoCopy;
+            pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_బహిర్గతం += uDoCopy;
             iRead += uDoCopy;
         }
-        else if (pfile_in_zip_read_info->compression_method==Z_BZIP2ED)
+        లేకపోతే ఒకవేళ (pfile_లోపల_zip_read_info->compression_పద్ధతి==Z_BZIP2ED)
         {
-#ifdef HAVE_BZIP2
-            uLong uTotalOutBefore,uTotalOutAfter;
-            const Bytef *bufBefore;
-            uLong uOutThis;
+#నిర్వచితమైతే HAVE_BZIP2
+            uLong u_మొత్తం_బహిర్గతం_Before,u_మొత్తం_బహిర్గతం_After;
+            స్థిరరాశి Bytef *bufBefore;
+            uLong u_బహిర్గతం_This;
 
-            pfile_in_zip_read_info->bstream.next_in        = (char*)pfile_in_zip_read_info->stream.next_in;
-            pfile_in_zip_read_info->bstream.avail_in       = pfile_in_zip_read_info->stream.avail_in;
-            pfile_in_zip_read_info->bstream.total_in_lo32  = pfile_in_zip_read_info->stream.total_in;
-            pfile_in_zip_read_info->bstream.total_in_hi32  = 0;
-            pfile_in_zip_read_info->bstream.next_out       = (char*)pfile_in_zip_read_info->stream.next_out;
-            pfile_in_zip_read_info->bstream.avail_out      = pfile_in_zip_read_info->stream.avail_out;
-            pfile_in_zip_read_info->bstream.total_out_lo32 = pfile_in_zip_read_info->stream.total_out;
-            pfile_in_zip_read_info->bstream.total_out_hi32 = 0;
+            pfile_లోపల_zip_read_info->bstream.తదుపరి_లోపల        = (అక్షరం*)pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_లోపల;
+            pfile_లోపల_zip_read_info->bstream.avail_లోపల       = pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల;
+            pfile_లోపల_zip_read_info->bstream.మొత్తం_లోపల_lo32  = pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_లోపల;
+            pfile_లోపల_zip_read_info->bstream.మొత్తం_లోపల_hi32  = 0;
+            pfile_లోపల_zip_read_info->bstream.తదుపరి_బహిర్గతం       = (అక్షరం*)pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_బహిర్గతం;
+            pfile_లోపల_zip_read_info->bstream.avail_బహిర్గతం      = pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం;
+            pfile_లోపల_zip_read_info->bstream.మొత్తం_బహిర్గతం_lo32 = pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_బహిర్గతం;
+            pfile_లోపల_zip_read_info->bstream.మొత్తం_బహిర్గతం_hi32 = 0;
 
-            uTotalOutBefore = pfile_in_zip_read_info->bstream.total_out_lo32;
-            bufBefore = (const Bytef *)pfile_in_zip_read_info->bstream.next_out;
+            u_మొత్తం_బహిర్గతం_Before = pfile_లోపల_zip_read_info->bstream.మొత్తం_బహిర్గతం_lo32;
+            bufBefore = (స్థిరరాశి Bytef *)pfile_లోపల_zip_read_info->bstream.తదుపరి_బహిర్గతం;
 
-            err=BZ2_bzDecompress(&pfile_in_zip_read_info->bstream);
+            err=BZ2_bzDecompress(&pfile_లోపల_zip_read_info->bstream);
 
-            uTotalOutAfter = pfile_in_zip_read_info->bstream.total_out_lo32;
-            uOutThis = uTotalOutAfter-uTotalOutBefore;
+            u_మొత్తం_బహిర్గతం_After = pfile_లోపల_zip_read_info->bstream.మొత్తం_బహిర్గతం_lo32;
+            u_బహిర్గతం_This = u_మొత్తం_బహిర్గతం_After-u_మొత్తం_బహిర్గతం_Before;
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uOutThis;
+            pfile_లోపల_zip_read_info->మొత్తం_బహిర్గతం_64 = pfile_లోపల_zip_read_info->మొత్తం_బహిర్గతం_64 + u_బహిర్గతం_This;
 
-            pfile_in_zip_read_info->crc32 = crc32(pfile_in_zip_read_info->crc32,bufBefore, (uInt)(uOutThis));
-            pfile_in_zip_read_info->rest_read_uncompressed -= uOutThis;
-            iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
+            pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_2 = చక్రీయ_తనిఖీ_32_2(pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_2,bufBefore, (uInt)(u_బహిర్గతం_This));
+            pfile_లోపల_zip_read_info->rest_read_uncompressed -= u_బహిర్గతం_This;
+            iRead += (uInt)(u_మొత్తం_బహిర్గతం_After - u_మొత్తం_బహిర్గతం_Before);
 
-            pfile_in_zip_read_info->stream.next_in   = (Bytef*)pfile_in_zip_read_info->bstream.next_in;
-            pfile_in_zip_read_info->stream.avail_in  = pfile_in_zip_read_info->bstream.avail_in;
-            pfile_in_zip_read_info->stream.total_in  = pfile_in_zip_read_info->bstream.total_in_lo32;
-            pfile_in_zip_read_info->stream.next_out  = (Bytef*)pfile_in_zip_read_info->bstream.next_out;
-            pfile_in_zip_read_info->stream.avail_out = pfile_in_zip_read_info->bstream.avail_out;
-            pfile_in_zip_read_info->stream.total_out = pfile_in_zip_read_info->bstream.total_out_lo32;
+            pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_లోపల   = (Bytef*)pfile_లోపల_zip_read_info->bstream.తదుపరి_లోపల;
+            pfile_లోపల_zip_read_info->ప్రవాహం.avail_లోపల  = pfile_లోపల_zip_read_info->bstream.avail_లోపల;
+            pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_లోపల  = pfile_లోపల_zip_read_info->bstream.మొత్తం_లోపల_lo32;
+            pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_బహిర్గతం  = (Bytef*)pfile_లోపల_zip_read_info->bstream.తదుపరి_బహిర్గతం;
+            pfile_లోపల_zip_read_info->ప్రవాహం.avail_బహిర్గతం = pfile_లోపల_zip_read_info->bstream.avail_బహిర్గతం;
+            pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_బహిర్గతం = pfile_లోపల_zip_read_info->bstream.మొత్తం_బహిర్గతం_lo32;
 
-            if (err==BZ_STREAM_END)
-              return (iRead==0) ? UNZ_EOF : iRead;
-            if (err!=BZ_OK)
-              break;
-#endif
+            ఒకవేళ (err==BZ_ప్రవాహం_చివర)
+              తిరిగి (iRead==0) ? UNZ_EOF : iRead;
+            ఒకవేళ (err!=BZ_OK)
+              ఆపు;
+#అయితే_ముగింపు
         } /* end Z_BZIP2ED */
-        else
+        లేకపోతే
         {
-            ZPOS64_T uTotalOutBefore,uTotalOutAfter;
-            const Bytef *bufBefore;
-            ZPOS64_T uOutThis;
-            int flush=Z_SYNC_FLUSH;
+            ZPOS64_T u_మొత్తం_బహిర్గతం_Before,u_మొత్తం_బహిర్గతం_After;
+            స్థిరరాశి Bytef *bufBefore;
+            ZPOS64_T u_బహిర్గతం_This;
+            పూర్ణాంకం flush=Z_SYNC_FLUSH;
 
-            uTotalOutBefore = pfile_in_zip_read_info->stream.total_out;
-            bufBefore = pfile_in_zip_read_info->stream.next_out;
+            u_మొత్తం_బహిర్గతం_Before = pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_బహిర్గతం;
+            bufBefore = pfile_లోపల_zip_read_info->ప్రవాహం.తదుపరి_బహిర్గతం;
 
             /*
             if ((pfile_in_zip_read_info->rest_read_uncompressed ==
@@ -1715,92 +1715,92 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
                 (pfile_in_zip_read_info->rest_read_compressed == 0))
                 flush = Z_FINISH;
             */
-            err=inflate(&pfile_in_zip_read_info->stream,flush);
+            err=inflate(&pfile_లోపల_zip_read_info->ప్రవాహం,flush);
 
-            if ((err>=0) && (pfile_in_zip_read_info->stream.msg!=NULL))
-              err = Z_DATA_ERROR;
+            ఒకవేళ ((err>=0) && (pfile_లోపల_zip_read_info->ప్రవాహం.సందేశం!=ఖాళీ))
+              err = Z_దత్తాంశం_ERROR;
 
-            uTotalOutAfter = pfile_in_zip_read_info->stream.total_out;
+            u_మొత్తం_బహిర్గతం_After = pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_బహిర్గతం;
             /* Detect overflow, because z_stream.total_out is uLong (32 bits) */
-            if (uTotalOutAfter<uTotalOutBefore)
-                uTotalOutAfter += 1LL << 32; /* Add maximum value of uLong + 1 */
-            uOutThis = uTotalOutAfter-uTotalOutBefore;
+            ఒకవేళ (u_మొత్తం_బహిర్గతం_After<u_మొత్తం_బహిర్గతం_Before)
+                u_మొత్తం_బహిర్గతం_After += 1LL << 32; /* Add maximum value of uLong + 1 */
+            u_బహిర్గతం_This = u_మొత్తం_బహిర్గతం_After-u_మొత్తం_బహిర్గతం_Before;
 
-            pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uOutThis;
+            pfile_లోపల_zip_read_info->మొత్తం_బహిర్గతం_64 = pfile_లోపల_zip_read_info->మొత్తం_బహిర్గతం_64 + u_బహిర్గతం_This;
 
-            pfile_in_zip_read_info->crc32 =
-                crc32(pfile_in_zip_read_info->crc32,bufBefore,
-                        (uInt)(uOutThis));
+            pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_2 =
+                చక్రీయ_తనిఖీ_32_2(pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_2,bufBefore,
+                        (uInt)(u_బహిర్గతం_This));
 
-            pfile_in_zip_read_info->rest_read_uncompressed -=
-                uOutThis;
+            pfile_లోపల_zip_read_info->rest_read_uncompressed -=
+                u_బహిర్గతం_This;
 
-            iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
+            iRead += (uInt)(u_మొత్తం_బహిర్గతం_After - u_మొత్తం_బహిర్గతం_Before);
 
-            if (err==Z_STREAM_END)
-                return (iRead==0) ? UNZ_EOF : (int)iRead;
-            if (err!=Z_OK)
-                break;
+            ఒకవేళ (err==Z_ప్రవాహం_చివర)
+                తిరిగి (iRead==0) ? UNZ_EOF : (పూర్ణాంకం)iRead;
+            ఒకవేళ (err!=Z_OK)
+                ఆపు;
         }
     }
 
-    if (err==Z_OK)
-        return (int)iRead;
-    return err;
+    ఒకవేళ (err==Z_OK)
+        తిరిగి (పూర్ణాంకం)iRead;
+    తిరిగి err;
 }
 
 
 /*
   Give the current position in uncompressed data
 */
-extern z_off_t ZEXPORT unztell(unzFile file) {
+బాహ్య z_off_t ZEXPORT unztell(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read_info;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_లోపల_zip_read_info=s->pfile_లోపల_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (pfile_లోపల_zip_read_info==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
 
-    return (z_off_t)pfile_in_zip_read_info->stream.total_out;
+    తిరిగి (z_off_t)pfile_లోపల_zip_read_info->ప్రవాహం.మొత్తం_బహిర్గతం;
 }
 
-extern ZPOS64_T ZEXPORT unztell64(unzFile file) {
+బాహ్య ZPOS64_T ZEXPORT unztell64(unzFile file) {
 
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return (ZPOS64_T)-1;
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read_info;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి (ZPOS64_T)-1;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_లోపల_zip_read_info=s->pfile_లోపల_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return (ZPOS64_T)-1;
+    ఒకవేళ (pfile_లోపల_zip_read_info==ఖాళీ)
+        తిరిగి (ZPOS64_T)-1;
 
-    return pfile_in_zip_read_info->total_out_64;
+    తిరిగి pfile_లోపల_zip_read_info->మొత్తం_బహిర్గతం_64;
 }
 
 
 /*
   return 1 if the end of file was reached, 0 elsewhere
 */
-extern int ZEXPORT unzeof(unzFile file) {
+బాహ్య పూర్ణాంకం ZEXPORT unzeof(unzFile file) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read_info;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_లోపల_zip_read_info=s->pfile_లోపల_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (pfile_లోపల_zip_read_info==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
 
-    if (pfile_in_zip_read_info->rest_read_uncompressed == 0)
-        return 1;
-    else
-        return 0;
+    ఒకవేళ (pfile_లోపల_zip_read_info->rest_read_uncompressed == 0)
+        తిరిగి 1;
+    లేకపోతే
+        తిరిగి 0;
 }
 
 
@@ -1817,91 +1817,91 @@ more info in the local-header version than in the central-header)
   the return value is the number of bytes copied in buf, or (if <0)
     the error code
 */
-extern int ZEXPORT unzGetLocalExtrafield(unzFile file, voidp buf, unsigned len) {
+బాహ్య పూర్ణాంకం ZEXPORT unzGetLocalExtrafield(unzFile file, voidp buf, గుర్తులేని len) {
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read_info;
     uInt read_now;
-    ZPOS64_T size_to_read;
+    ZPOS64_T కొలత_గమ్యం_read;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_లోపల_zip_read_info=s->pfile_లోపల_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (pfile_లోపల_zip_read_info==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
 
-    size_to_read = (pfile_in_zip_read_info->size_local_extrafield -
-                pfile_in_zip_read_info->pos_local_extrafield);
+    కొలత_గమ్యం_read = (pfile_లోపల_zip_read_info->కొలత_local_extrafield -
+                pfile_లోపల_zip_read_info->pos_local_extrafield);
 
-    if (buf==NULL)
-        return (int)size_to_read;
+    ఒకవేళ (buf==ఖాళీ)
+        తిరిగి (పూర్ణాంకం)కొలత_గమ్యం_read;
 
-    if (len>size_to_read)
-        read_now = (uInt)size_to_read;
-    else
+    ఒకవేళ (len>కొలత_గమ్యం_read)
+        read_now = (uInt)కొలత_గమ్యం_read;
+    లేకపోతే
         read_now = (uInt)len ;
 
-    if (read_now==0)
-        return 0;
+    ఒకవేళ (read_now==0)
+        తిరిగి 0;
 
-    if (ZSEEK64(pfile_in_zip_read_info->z_filefunc,
-              pfile_in_zip_read_info->filestream,
-              pfile_in_zip_read_info->offset_local_extrafield +
-              pfile_in_zip_read_info->pos_local_extrafield,
-              ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    ఒకవేళ (ZSEEK64(pfile_లోపల_zip_read_info->z_filefunc,
+              pfile_లోపల_zip_read_info->filestream,
+              pfile_లోపల_zip_read_info->స్థానభ్రంశం_local_extrafield +
+              pfile_లోపల_zip_read_info->pos_local_extrafield,
+              ZLIB_FILEFUNC_SEEK_సమితి)!=0)
+        తిరిగి UNZ_ERRNO;
 
-    if (ZREAD64(pfile_in_zip_read_info->z_filefunc,
-              pfile_in_zip_read_info->filestream,
+    ఒకవేళ (ZREAD64(pfile_లోపల_zip_read_info->z_filefunc,
+              pfile_లోపల_zip_read_info->filestream,
               buf,read_now)!=read_now)
-        return UNZ_ERRNO;
+        తిరిగి UNZ_ERRNO;
 
-    return (int)read_now;
+    తిరిగి (పూర్ణాంకం)read_now;
 }
 
 /*
   Close the file in zip opened with unzOpenCurrentFile
   Return UNZ_CRCERROR if all the file was read but the CRC is not good
 */
-extern int ZEXPORT unzCloseCurrentFile(unzFile file) {
-    int err=UNZ_OK;
+బాహ్య పూర్ణాంకం ZEXPORT unzCloseCurrentFile(unzFile file) {
+    పూర్ణాంకం err=UNZ_OK;
 
     unz64_s* s;
-    file_in_zip64_read_info_s* pfile_in_zip_read_info;
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    file_లోపల_zip64_read_info_s* pfile_లోపల_zip_read_info;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+    pfile_లోపల_zip_read_info=s->pfile_లోపల_zip_read;
 
-    if (pfile_in_zip_read_info==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (pfile_లోపల_zip_read_info==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
 
 
-    if ((pfile_in_zip_read_info->rest_read_uncompressed == 0) &&
-        (!pfile_in_zip_read_info->raw))
+    ఒకవేళ ((pfile_లోపల_zip_read_info->rest_read_uncompressed == 0) &&
+        (!pfile_లోపల_zip_read_info->raw))
     {
-        if (pfile_in_zip_read_info->crc32 != pfile_in_zip_read_info->crc32_wait)
+        ఒకవేళ (pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_2 != pfile_లోపల_zip_read_info->చక్రీయ_తనిఖీ_32_wait)
             err=UNZ_CRCERROR;
     }
 
 
-    free(pfile_in_zip_read_info->read_buffer);
-    pfile_in_zip_read_info->read_buffer = NULL;
-    if (pfile_in_zip_read_info->stream_initialised == Z_DEFLATED)
-        inflateEnd(&pfile_in_zip_read_info->stream);
-#ifdef HAVE_BZIP2
-    else if (pfile_in_zip_read_info->stream_initialised == Z_BZIP2ED)
-        BZ2_bzDecompressEnd(&pfile_in_zip_read_info->bstream);
-#endif
+    విడుదల(pfile_లోపల_zip_read_info->read_బఫరు);
+    pfile_లోపల_zip_read_info->read_బఫరు = ఖాళీ;
+    ఒకవేళ (pfile_లోపల_zip_read_info->ప్రవాహం_initialised == Z_DEFLATED)
+        inflate_చివర(&pfile_లోపల_zip_read_info->ప్రవాహం);
+#నిర్వచితమైతే HAVE_BZIP2
+    లేకపోతే ఒకవేళ (pfile_లోపల_zip_read_info->ప్రవాహం_initialised == Z_BZIP2ED)
+        BZ2_bz_Decompress_చివర(&pfile_లోపల_zip_read_info->bstream);
+#అయితే_ముగింపు
 
 
-    pfile_in_zip_read_info->stream_initialised = 0;
-    free(pfile_in_zip_read_info);
+    pfile_లోపల_zip_read_info->ప్రవాహం_initialised = 0;
+    విడుదల(pfile_లోపల_zip_read_info);
 
-    s->pfile_in_zip_read=NULL;
+    s->pfile_లోపల_zip_read=ఖాళీ;
 
-    return err;
+    తిరిగి err;
 }
 
 
@@ -1910,73 +1910,73 @@ extern int ZEXPORT unzCloseCurrentFile(unzFile file) {
   uSizeBuf is the size of the szComment buffer.
   return the number of byte copied or an error code <0
 */
-extern int ZEXPORT unzGetGlobalComment(unzFile file, char * szComment, uLong uSizeBuf) {
+బాహ్య పూర్ణాంకం ZEXPORT unzGetGlobalComment(unzFile file, అక్షరం * szComment, uLong u_కొలత_Buf) {
     unz64_s* s;
     uLong uReadThis ;
-    if (file==NULL)
-        return (int)UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి (పూర్ణాంకం)UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    uReadThis = uSizeBuf;
-    if (uReadThis>s->gi.size_comment)
-        uReadThis = s->gi.size_comment;
+    uReadThis = u_కొలత_Buf;
+    ఒకవేళ (uReadThis>s->gi.కొలత_comment)
+        uReadThis = s->gi.కొలత_comment;
 
-    if (ZSEEK64(s->z_filefunc,s->filestream,s->central_pos+22,ZLIB_FILEFUNC_SEEK_SET)!=0)
-        return UNZ_ERRNO;
+    ఒకవేళ (ZSEEK64(s->z_filefunc,s->filestream,s->central_pos+22,ZLIB_FILEFUNC_SEEK_సమితి)!=0)
+        తిరిగి UNZ_ERRNO;
 
-    if (uReadThis>0)
+    ఒకవేళ (uReadThis>0)
     {
       *szComment='\0';
-      if (ZREAD64(s->z_filefunc,s->filestream,szComment,uReadThis)!=uReadThis)
-        return UNZ_ERRNO;
+      ఒకవేళ (ZREAD64(s->z_filefunc,s->filestream,szComment,uReadThis)!=uReadThis)
+        తిరిగి UNZ_ERRNO;
     }
 
-    if ((szComment != NULL) && (uSizeBuf > s->gi.size_comment))
-        *(szComment+s->gi.size_comment)='\0';
-    return (int)uReadThis;
+    ఒకవేళ ((szComment != ఖాళీ) && (u_కొలత_Buf > s->gi.కొలత_comment))
+        *(szComment+s->gi.కొలత_comment)='\0';
+    తిరిగి (పూర్ణాంకం)uReadThis;
 }
 
 /* Additions by RX '2004 */
-extern ZPOS64_T ZEXPORT unzGetOffset64(unzFile file) {
+బాహ్య ZPOS64_T ZEXPORT unzGetOffset64(unzFile file) {
     unz64_s* s;
 
-    if (file==NULL)
-          return 0; /* UNZ_PARAMERROR; */
+    ఒకవేళ (file==ఖాళీ)
+          తిరిగి 0; /* UNZ_PARAMERROR; */
     s=(unz64_s*)file;
-    if (!s->current_file_ok)
-      return 0;
-    if (s->gi.number_entry != 0 && s->gi.number_entry != 0xffff)
-      if (s->num_file==s->gi.number_entry)
-         return 0;
-    return s->pos_in_central_dir;
+    ఒకవేళ (!s->current_file_ok)
+      తిరిగి 0;
+    ఒకవేళ (s->gi.సంఖ్య_నమోదు != 0 && s->gi.సంఖ్య_నమోదు != 0xffff)
+      ఒకవేళ (s->అంకె_file==s->gi.సంఖ్య_నమోదు)
+         తిరిగి 0;
+    తిరిగి s->pos_లోపల_central_dir;
 }
 
-extern uLong ZEXPORT unzGetOffset(unzFile file) {
+బాహ్య uLong ZEXPORT unz_Get_స్థానభ్రంశం(unzFile file) {
     ZPOS64_T offset64;
 
-    if (file==NULL)
-          return 0; /* UNZ_PARAMERROR; */
+    ఒకవేళ (file==ఖాళీ)
+          తిరిగి 0; /* UNZ_PARAMERROR; */
     offset64 = unzGetOffset64(file);
-    return (uLong)offset64;
+    తిరిగి (uLong)offset64;
 }
 
-extern int ZEXPORT unzSetOffset64(unzFile file, ZPOS64_T pos) {
+బాహ్య పూర్ణాంకం ZEXPORT unz_సమితి_Offset64(unzFile file, ZPOS64_T pos) {
     unz64_s* s;
-    int err;
+    పూర్ణాంకం err;
 
-    if (file==NULL)
-        return UNZ_PARAMERROR;
+    ఒకవేళ (file==ఖాళీ)
+        తిరిగి UNZ_PARAMERROR;
     s=(unz64_s*)file;
 
-    s->pos_in_central_dir = pos;
-    s->num_file = s->gi.number_entry;      /* hack */
-    err = unz64local_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                              &s->cur_file_info_internal,
-                                              NULL,0,NULL,0,NULL,0);
+    s->pos_లోపల_central_dir = pos;
+    s->అంకె_file = s->gi.సంఖ్య_నమోదు;      /* hack */
+    err = unz64local_Get_Current_File_Info_అంతర్గత(file,&s->cur_file_info,
+                                              &s->cur_file_info_అంతర్గత,
+                                              ఖాళీ,0,ఖాళీ,0,ఖాళీ,0);
     s->current_file_ok = (err == UNZ_OK);
-    return err;
+    తిరిగి err;
 }
 
-extern int ZEXPORT unzSetOffset (unzFile file, uLong pos) {
-    return unzSetOffset64(file,pos);
+బాహ్య పూర్ణాంకం ZEXPORT unz_సమితి_స్థానభ్రంశం (unzFile file, uLong pos) {
+    తిరిగి unz_సమితి_Offset64(file,pos);
 }

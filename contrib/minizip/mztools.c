@@ -4,156 +4,156 @@
   License: Same as ZLIB (www.gzip.org)
 */
 
-/* Code */
-#ifndef _CRT_SECURE_NO_WARNINGS
+/*సంకేతం*/
+#నిర్వచితం_కాకపోతే _CRT_SECURE_NO_WARNINGS
 #  define _CRT_SECURE_NO_WARNINGS
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "zlib.h"
-#include "unzip.h"
+#అయితే_ముగింపు
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ "zlib.h"
+#అన్తర్భావ "unzip.h"
 
-#define READ_8(adr)  ((unsigned char)*(adr))
-#define READ_16(adr) ( READ_8(adr) | (READ_8(adr+1) << 8) )
-#define READ_32(adr) ( READ_16(adr) | (READ_16((adr)+2) << 16) )
+#నిర్వచించు READ_8(adr)  ((గుర్తులేని అక్షరం)*(adr))
+#నిర్వచించు READ_16(adr) ( READ_8(adr) | (READ_8(adr+1) << 8) )
+#నిర్వచించు READ_32(adr) ( READ_16(adr) | (READ_16((adr)+2) << 16) )
 
-#define WRITE_8(buff, n) do { \
-  *((unsigned char*)(buff)) = (unsigned char) ((n) & 0xff); \
-} while(0)
-#define WRITE_16(buff, n) do { \
-  WRITE_8((unsigned char*)(buff), n); \
-  WRITE_8(((unsigned char*)(buff)) + 1, (n) >> 8); \
-} while(0)
-#define WRITE_32(buff, n) do { \
-  WRITE_16((unsigned char*)(buff), (n) & 0xffff); \
-  WRITE_16((unsigned char*)(buff) + 2, (n) >> 16); \
-} while(0)
+#నిర్వచించు WRITE_8(buff, n) చేయి { \
+  *((గుర్తులేని అక్షరం*)(buff)) = (గుర్తులేని అక్షరం) ((n) & 0xff); \
+} అయితే(0)
+#నిర్వచించు WRITE_16(buff, n) చేయి { \
+  WRITE_8((గుర్తులేని అక్షరం*)(buff), n); \
+  WRITE_8(((గుర్తులేని అక్షరం*)(buff)) + 1, (n) >> 8); \
+} అయితే(0)
+#నిర్వచించు WRITE_32(buff, n) చేయి { \
+  WRITE_16((గుర్తులేని అక్షరం*)(buff), (n) & 0xffff); \
+  WRITE_16((గుర్తులేని అక్షరం*)(buff) + 2, (n) >> 16); \
+} అయితే(0)
 
-extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* fileOutTmp, uLong* nRecovered, uLong* bytesRecovered) {
-  int err = Z_OK;
+బాహ్య పూర్ణాంకం ZEXPORT unzRepair(స్థిరరాశి అక్షరం* file, స్థిరరాశి అక్షరం* file_బహిర్గతం, స్థిరరాశి అక్షరం* file_బహిర్గతం_Tmp, uLong* nRecovered, uLong* బైట్లు_Recovered) {
+  పూర్ణాంకం err = Z_OK;
   FILE* fpZip = fopen(file, "rb");
-  FILE* fpOut = fopen(fileOut, "wb");
-  FILE* fpOutCD = fopen(fileOutTmp, "wb");
-  if (fpZip != NULL && fpOut != NULL && fpOutCD != NULL ) {
-    int entries = 0;
-    uLong totalBytes = 0;
-    char header[30];
-    char filename[1024];
-    char extra[1024];
-    int offset = 0;
-    int offsetCD = 0;
-    while ( fread(header, 1, 30, fpZip) == 30 ) {
-      int currentOffset = offset;
+  FILE* fp_బహిర్గతం = fopen(file_బహిర్గతం, "wb");
+  FILE* fp_బహిర్గతం_CD = fopen(file_బహిర్గతం_Tmp, "wb");
+  ఒకవేళ (fpZip != ఖాళీ && fp_బహిర్గతం != ఖాళీ && fp_బహిర్గతం_CD != ఖాళీ ) {
+    పూర్ణాంకం entries = 0;
+    uLong మొత్తం_బైట్లు = 0;
+    అక్షరం శీర్షిక[30];
+    అక్షరం filename[1024];
+    అక్షరం extra[1024];
+    పూర్ణాంకం స్థానభ్రంశం = 0;
+    పూర్ణాంకం స్థానభ్రంశం_CD = 0;
+    అయితే ( fread(శీర్షిక, 1, 30, fpZip) == 30 ) {
+      పూర్ణాంకం current_స్థానభ్రంశం = స్థానభ్రంశం;
 
       /* File entry */
-      if (READ_32(header) == 0x04034b50) {
-        unsigned int version = READ_16(header + 4);
-        unsigned int gpflag = READ_16(header + 6);
-        unsigned int method = READ_16(header + 8);
-        unsigned int filetime = READ_16(header + 10);
-        unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+      ఒకవేళ (READ_32(శీర్షిక) == 0x04034b50) {
+        గుర్తులేని పూర్ణాంకం సంస్కరణ = READ_16(శీర్షిక + 4);
+        గుర్తులేని పూర్ణాంకం gpflag = READ_16(శీర్షిక + 6);
+        గుర్తులేని పూర్ణాంకం పద్ధతి = READ_16(శీర్షిక + 8);
+        గుర్తులేని పూర్ణాంకం filetime = READ_16(శీర్షిక + 10);
+        గుర్తులేని పూర్ణాంకం filedate = READ_16(శీర్షిక + 12);
+        గుర్తులేని పూర్ణాంకం చక్రీయ_తనిఖీ = READ_32(శీర్షిక + 14); /*చక్రీయ_తనిఖీ*/
+        గుర్తులేని పూర్ణాంకం cpsize = READ_32(శీర్షిక + 18); /* compressed size */
+        గుర్తులేని పూర్ణాంకం uncpsize = READ_32(శీర్షిక + 22); /* uncompressed sz */
+        గుర్తులేని పూర్ణాంకం fnsize = READ_16(శీర్షిక + 26); /* file name length */
+        గుర్తులేని పూర్ణాంకం extsize = READ_16(శీర్షిక + 28); /* extra field length */
         filename[0] = extra[0] = '\0';
 
-        /* Header */
-        if (fwrite(header, 1, 30, fpOut) == 30) {
-          offset += 30;
-        } else {
+        /*శీర్షిక*/
+        ఒకవేళ (fwrite(శీర్షిక, 1, 30, fp_బహిర్గతం) == 30) {
+          స్థానభ్రంశం += 30;
+        } లేకపోతే {
           err = Z_ERRNO;
-          break;
+          ఆపు;
         }
 
         /* Filename */
-        if (fnsize > 0) {
-          if (fnsize < sizeof(filename)) {
-            if (fread(filename, 1, fnsize, fpZip) == fnsize) {
-                if (fwrite(filename, 1, fnsize, fpOut) == fnsize) {
-                offset += fnsize;
-              } else {
+        ఒకవేళ (fnsize > 0) {
+          ఒకవేళ (fnsize < పరిమాణం(filename)) {
+            ఒకవేళ (fread(filename, 1, fnsize, fpZip) == fnsize) {
+                ఒకవేళ (fwrite(filename, 1, fnsize, fp_బహిర్గతం) == fnsize) {
+                స్థానభ్రంశం += fnsize;
+              } లేకపోతే {
                 err = Z_ERRNO;
-                break;
+                ఆపు;
               }
-            } else {
+            } లేకపోతే {
               err = Z_ERRNO;
-              break;
+              ఆపు;
             }
-          } else {
+          } లేకపోతే {
             err = Z_ERRNO;
-            break;
+            ఆపు;
           }
-        } else {
-          err = Z_STREAM_ERROR;
-          break;
+        } లేకపోతే {
+          err = Z_ప్రవాహం_ERROR;
+          ఆపు;
         }
 
         /* Extra field */
-        if (extsize > 0) {
-          if (extsize < sizeof(extra)) {
-            if (fread(extra, 1, extsize, fpZip) == extsize) {
-              if (fwrite(extra, 1, extsize, fpOut) == extsize) {
-                offset += extsize;
-                } else {
+        ఒకవేళ (extsize > 0) {
+          ఒకవేళ (extsize < పరిమాణం(extra)) {
+            ఒకవేళ (fread(extra, 1, extsize, fpZip) == extsize) {
+              ఒకవేళ (fwrite(extra, 1, extsize, fp_బహిర్గతం) == extsize) {
+                స్థానభ్రంశం += extsize;
+                } లేకపోతే {
                 err = Z_ERRNO;
-                break;
+                ఆపు;
               }
-            } else {
+            } లేకపోతే {
               err = Z_ERRNO;
-              break;
+              ఆపు;
             }
-          } else {
+          } లేకపోతే {
             err = Z_ERRNO;
-            break;
+            ఆపు;
           }
         }
 
-        /* Data */
+        /*దత్తాంశం*/
         {
-          int dataSize = cpsize;
-          if (dataSize == 0) {
-            dataSize = uncpsize;
+          పూర్ణాంకం దత్తాంశం_కొలత = cpsize;
+          ఒకవేళ (దత్తాంశం_కొలత == 0) {
+            దత్తాంశం_కొలత = uncpsize;
           }
-          if (dataSize > 0) {
-            char* data = malloc(dataSize);
-            if (data != NULL) {
-              if ((int)fread(data, 1, dataSize, fpZip) == dataSize) {
-                if ((int)fwrite(data, 1, dataSize, fpOut) == dataSize) {
-                  offset += dataSize;
-                  totalBytes += dataSize;
-                } else {
+          ఒకవేళ (దత్తాంశం_కొలత > 0) {
+            అక్షరం* దత్తాంశం = జ్ఞాపకం_ఇవ్వు(దత్తాంశం_కొలత);
+            ఒకవేళ (దత్తాంశం != ఖాళీ) {
+              ఒకవేళ ((పూర్ణాంకం)fread(దత్తాంశం, 1, దత్తాంశం_కొలత, fpZip) == దత్తాంశం_కొలత) {
+                ఒకవేళ ((పూర్ణాంకం)fwrite(దత్తాంశం, 1, దత్తాంశం_కొలత, fp_బహిర్గతం) == దత్తాంశం_కొలత) {
+                  స్థానభ్రంశం += దత్తాంశం_కొలత;
+                  మొత్తం_బైట్లు += దత్తాంశం_కొలత;
+                } లేకపోతే {
                   err = Z_ERRNO;
                 }
-              } else {
+              } లేకపోతే {
                 err = Z_ERRNO;
               }
-              free(data);
-              if (err != Z_OK) {
-                break;
+              విడుదల(దత్తాంశం);
+              ఒకవేళ (err != Z_OK) {
+                ఆపు;
               }
-            } else {
+            } లేకపోతే {
               err = Z_MEM_ERROR;
-              break;
+              ఆపు;
             }
           }
         }
 
         /* Central directory entry */
         {
-          char central[46];
-          char* comment = "";
-          int comsize = (int) strlen(comment);
+          అక్షరం central[46];
+          అక్షరం* comment = "";
+          పూర్ణాంకం comsize = (పూర్ణాంకం) అక్షరశ్రేణి_పొడవు(comment);
           WRITE_32(central, 0x02014b50);
-          WRITE_16(central + 4, version);
-          WRITE_16(central + 6, version);
+          WRITE_16(central + 4, సంస్కరణ);
+          WRITE_16(central + 6, సంస్కరణ);
           WRITE_16(central + 8, gpflag);
-          WRITE_16(central + 10, method);
+          WRITE_16(central + 10, పద్ధతి);
           WRITE_16(central + 12, filetime);
           WRITE_16(central + 14, filedate);
-          WRITE_32(central + 16, crc);
+          WRITE_32(central + 16, చక్రీయ_తనిఖీ);
           WRITE_32(central + 20, cpsize);
           WRITE_32(central + 24, uncpsize);
           WRITE_16(central + 28, fnsize);
@@ -162,133 +162,133 @@ extern int ZEXPORT unzRepair(const char* file, const char* fileOut, const char* 
           WRITE_16(central + 34, 0);    /* disk # */
           WRITE_16(central + 36, 0);    /* int attrb */
           WRITE_32(central + 38, 0);    /* ext attrb */
-          WRITE_32(central + 42, currentOffset);
-          /* Header */
-          if (fwrite(central, 1, 46, fpOutCD) == 46) {
-            offsetCD += 46;
+          WRITE_32(central + 42, current_స్థానభ్రంశం);
+          /*శీర్షిక*/
+          ఒకవేళ (fwrite(central, 1, 46, fp_బహిర్గతం_CD) == 46) {
+            స్థానభ్రంశం_CD += 46;
 
             /* Filename */
-            if (fnsize > 0) {
-              if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
-                offsetCD += fnsize;
-              } else {
+            ఒకవేళ (fnsize > 0) {
+              ఒకవేళ (fwrite(filename, 1, fnsize, fp_బహిర్గతం_CD) == fnsize) {
+                స్థానభ్రంశం_CD += fnsize;
+              } లేకపోతే {
                 err = Z_ERRNO;
-                break;
+                ఆపు;
               }
-            } else {
-              err = Z_STREAM_ERROR;
-              break;
+            } లేకపోతే {
+              err = Z_ప్రవాహం_ERROR;
+              ఆపు;
             }
 
             /* Extra field */
-            if (extsize > 0) {
-              if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
-                offsetCD += extsize;
-              } else {
+            ఒకవేళ (extsize > 0) {
+              ఒకవేళ (fwrite(extra, 1, extsize, fp_బహిర్గతం_CD) == extsize) {
+                స్థానభ్రంశం_CD += extsize;
+              } లేకపోతే {
                 err = Z_ERRNO;
-                break;
+                ఆపు;
               }
             }
 
             /* Comment field */
-            if (comsize > 0) {
-              if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
-                offsetCD += comsize;
-              } else {
+            ఒకవేళ (comsize > 0) {
+              ఒకవేళ ((పూర్ణాంకం)fwrite(comment, 1, comsize, fp_బహిర్గతం_CD) == comsize) {
+                స్థానభ్రంశం_CD += comsize;
+              } లేకపోతే {
                 err = Z_ERRNO;
-                break;
+                ఆపు;
               }
             }
 
 
-          } else {
+          } లేకపోతే {
             err = Z_ERRNO;
-            break;
+            ఆపు;
           }
         }
 
         /* Success */
         entries++;
 
-      } else {
-        break;
+      } లేకపోతే {
+        ఆపు;
       }
     }
 
     /* Final central directory  */
     {
-      int entriesZip = entries;
-      char end[22];
-      char* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
-      int comsize = (int) strlen(comment);
-      if (entriesZip > 0xffff) {
+      పూర్ణాంకం entriesZip = entries;
+      అక్షరం చివర[22];
+      అక్షరం* comment = ""; /* "ZIP File recovered by zlib/minizip/mztools"; */
+      పూర్ణాంకం comsize = (పూర్ణాంకం) అక్షరశ్రేణి_పొడవు(comment);
+      ఒకవేళ (entriesZip > 0xffff) {
         entriesZip = 0xffff;
       }
-      WRITE_32(end, 0x06054b50);
-      WRITE_16(end + 4, 0);         /* disk # */
-      WRITE_16(end + 6, 0);         /* disk # */
-      WRITE_16(end + 8, entriesZip);        /* hack */
-      WRITE_16(end + 10, entriesZip);       /* hack */
-      WRITE_32(end + 12, offsetCD);         /* size of CD */
-      WRITE_32(end + 16, offset);           /* offset to CD */
-      WRITE_16(end + 20, comsize);          /* comment */
+      WRITE_32(చివర, 0x06054b50);
+      WRITE_16(చివర + 4, 0);         /* disk # */
+      WRITE_16(చివర + 6, 0);         /* disk # */
+      WRITE_16(చివర + 8, entriesZip);        /* hack */
+      WRITE_16(చివర + 10, entriesZip);       /* hack */
+      WRITE_32(చివర + 12, స్థానభ్రంశం_CD);         /* size of CD */
+      WRITE_32(చివర + 16, స్థానభ్రంశం);           /* offset to CD */
+      WRITE_16(చివర + 20, comsize);          /* comment */
 
-      /* Header */
-      if (fwrite(end, 1, 22, fpOutCD) == 22) {
+      /*శీర్షిక*/
+      ఒకవేళ (fwrite(చివర, 1, 22, fp_బహిర్గతం_CD) == 22) {
 
         /* Comment field */
-        if (comsize > 0) {
-          if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
+        ఒకవేళ (comsize > 0) {
+          ఒకవేళ ((పూర్ణాంకం)fwrite(comment, 1, comsize, fp_బహిర్గతం_CD) != comsize) {
             err = Z_ERRNO;
           }
         }
 
-      } else {
+      } లేకపోతే {
         err = Z_ERRNO;
       }
     }
 
     /* Final merge (file + central directory) */
-    fclose(fpOutCD);
-    if (err == Z_OK) {
-      fpOutCD = fopen(fileOutTmp, "rb");
-      if (fpOutCD != NULL) {
-        int nRead;
-        char buffer[8192];
-        while ( (nRead = (int)fread(buffer, 1, sizeof(buffer), fpOutCD)) > 0) {
-          if ((int)fwrite(buffer, 1, nRead, fpOut) != nRead) {
+    fclose(fp_బహిర్గతం_CD);
+    ఒకవేళ (err == Z_OK) {
+      fp_బహిర్గతం_CD = fopen(file_బహిర్గతం_Tmp, "rb");
+      ఒకవేళ (fp_బహిర్గతం_CD != ఖాళీ) {
+        పూర్ణాంకం nRead;
+        అక్షరం బఫరు[8192];
+        అయితే ( (nRead = (పూర్ణాంకం)fread(బఫరు, 1, పరిమాణం(బఫరు), fp_బహిర్గతం_CD)) > 0) {
+          ఒకవేళ ((పూర్ణాంకం)fwrite(బఫరు, 1, nRead, fp_బహిర్గతం) != nRead) {
             err = Z_ERRNO;
-            break;
+            ఆపు;
           }
         }
-        fclose(fpOutCD);
+        fclose(fp_బహిర్గతం_CD);
       }
     }
 
     /* Close */
     fclose(fpZip);
-    fclose(fpOut);
+    fclose(fp_బహిర్గతం);
 
     /* Wipe temporary file */
-    (void)remove(fileOutTmp);
+    (శూన్య)remove(file_బహిర్గతం_Tmp);
 
     /* Number of recovered entries */
-    if (err == Z_OK) {
-      if (nRecovered != NULL) {
+    ఒకవేళ (err == Z_OK) {
+      ఒకవేళ (nRecovered != ఖాళీ) {
         *nRecovered = entries;
       }
-      if (bytesRecovered != NULL) {
-        *bytesRecovered = totalBytes;
+      ఒకవేళ (బైట్లు_Recovered != ఖాళీ) {
+        *బైట్లు_Recovered = మొత్తం_బైట్లు;
       }
     }
-  } else {
-    if (fpOutCD != NULL)
-      fclose(fpOutCD);
-    if (fpZip != NULL)
+  } లేకపోతే {
+    ఒకవేళ (fp_బహిర్గతం_CD != ఖాళీ)
+      fclose(fp_బహిర్గతం_CD);
+    ఒకవేళ (fpZip != ఖాళీ)
       fclose(fpZip);
-    if (fpOut != NULL)
-      fclose(fpOut);
-    err = Z_STREAM_ERROR;
+    ఒకవేళ (fp_బహిర్గతం != ఖాళీ)
+      fclose(fp_బహిర్గతం);
+    err = Z_ప్రవాహం_ERROR;
   }
-  return err;
+  తిరిగి err;
 }

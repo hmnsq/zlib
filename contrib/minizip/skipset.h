@@ -55,16 +55,16 @@
   - set_rand() returns 32 random bits (seeded by set_start())
  */
 
-#ifndef SKIPSET_H
-#define SKIPSET_H
+#నిర్వచితం_కాకపోతే SKIPSET_H
+#నిర్వచించు SKIPSET_H
 
-#include <stdlib.h>     /* realloc(), free(), NULL, size_t */
-#include <stddef.h>     /* ptrdiff_t */
-#include <setjmp.h>     /* jmp_buf, longjmp() */
-#include <errno.h>      /* ENOMEM */
-#include <time.h>       /* time(), clock() */
-#include <assert.h>     /* assert.h */
-#include "ints.h"       /* i16_t, ui32_t, ui64_t */
+#అన్తర్భావ <stdlib.h>     /* realloc(), free(), NULL, size_t */
+#అన్తర్భావ <stddef.h>     /* ptrdiff_t */
+#అన్తర్భావ <setjmp.h>     /* jmp_buf, longjmp() */
+#అన్తర్భావ <errno.h>      /* ENOMEM */
+#అన్తర్భావ <time.h>       /* time(), clock() */
+#అన్తర్భావ <assert.h>     /* assert.h */
+#అన్తర్భావ "ints.h"       /* i16_t, ui32_t, ui64_t */
 
 /*
   Structures and functions below noted as "--private--" should not be used by
@@ -81,152 +81,152 @@
   Licensed under Apache License 2.0 (NO WARRANTY, etc. see website)
   --private-- Random number generator state.
  */
-typedef struct {
+రకనిర్వచనం నిర్మాణం {
     ui64_t state;       /* 64-bit generator state */
     ui64_t inc;         /* 63-bit sequence id */
-} set_rand_t;
+} సమితి_rand_t;
 /* --private-- Initialize the state *gen using seed and seq. seed seeds the
    advancing 64-bit state. seq is a sequence selection constant. */
-static void set_seed(set_rand_t *gen, ui64_t seed, ui64_t seq) {
+స్థిర శూన్య సమితి_విత్తనం(సమితి_rand_t *gen, ui64_t విత్తనం, ui64_t seq) {
     gen->inc = (seq << 1) | 1;
-    gen->state = (seed + gen->inc) * 6364136223846793005ULL + gen->inc;
+    gen->state = (విత్తనం + gen->inc) * 6364136223846793005ULL + gen->inc;
 }
 /* Start a unique random number sequence using bits from noise sources. */
-static void set_uniq(set_rand_t *gen, const void *ptr) {
-    set_seed(gen, ((ui64_t)(ptrdiff_t)ptr << 32) ^
-                  ((ui64_t)time(NULL) << 12) ^ clock(), 0);
+స్థిర శూన్య సమితి_uniq(సమితి_rand_t *gen, స్థిరరాశి శూన్య *ptr) {
+    సమితి_విత్తనం(gen, ((ui64_t)(ptrdiff_t)ptr << 32) ^
+                  ((ui64_t)time(ఖాళీ) << 12) ^ clock(), 0);
 }
 /* Return 32 random bits, advancing the state *gen. */
-static ui32_t set_rand(set_rand_t *gen) {
+స్థిర ui32_t సమితి_rand(సమితి_rand_t *gen) {
     ui32_t mix;
-    int rot;
+    పూర్ణాంకం rot;
     ui64_t state = gen->state;
     gen->state = state * 6364136223846793005ULL + gen->inc;
     mix = (ui32_t)(((state >> 18) ^ state) >> 27);
     rot = state >> 59;
-    return (mix >> rot) | (mix << ((-rot) & 31));
+    తిరిగి (mix >> rot) | (mix << ((-rot) & 31));
 }
 /* End of PCG32 code. */
 
 /* --private-- Linked-list node. */
-typedef struct set_node_s set_node_t;
-struct set_node_s {
-    set_key_t key;          /* the key (not used for head or path) */
-    i16_t size;             /* number of allocated pointers in right[] */
+రకనిర్వచనం నిర్మాణం సమితి_కణుపు_s సమితి_కణుపు_t;
+నిర్మాణం సమితి_కణుపు_s {
+    సమితి_కీలకం_t కీలకం;          /* the key (not used for head or path) */
+    i16_t కొలత;             /* number of allocated pointers in right[] */
     i16_t fill;             /* number of pointers in right[] filled in */
-    set_node_t **right;     /* pointer for each level, each to the right */
+    సమితి_కణుపు_t **కుడి_2;     /* pointer for each level, each to the right */
 };
 
 /* A set. The application sets env, may use gen with set_rand(), and may read
    allocs and memory. The remaining variables are --private-- . */
-typedef struct set_s {
-    set_node_t *head;       /* skiplist head -- no key, just links */
-    set_node_t *path;       /* right[] is path to key from set_found() */
-    set_node_t *node;       /* node under construction, in case of longjmp() */
-    i16_t depth;            /* maximum depth of the skiplist */
+రకనిర్వచనం నిర్మాణం సమితి_s {
+    సమితి_కణుపు_t *తల;       /* skiplist head -- no key, just links */
+    సమితి_కణుపు_t *మార్గం;       /* right[] is path to key from set_found() */
+    సమితి_కణుపు_t *కణుపు;       /* node under construction, in case of longjmp() */
+    i16_t లోతు;            /* maximum depth of the skiplist */
     ui64_t ran;             /* a precious trove of random bits */
-    set_rand_t gen;         /* random number generator state */
+    సమితి_rand_t gen;         /* random number generator state */
     jmp_buf env;            /* setjmp() environment for allocation errors */
-#ifdef SET_TRACK
+#నిర్వచితమైతే సమితి_TRACK
     size_t allocs;          /* number of allocations */
-    size_t memory;          /* total size of allocated memory (>= requests) */
-#endif
-} set_t;
+    size_t జ్ఞాపకం;          /* total size of allocated memory (>= requests) */
+#అయితే_ముగింపు
+} సమితి_t;
 
 /* Memory allocation and deallocation. set_alloc(set, ptr, size) returns a
    pointer to an allocation of size bytes if ptr is NULL, or the previous
    allocation ptr resized to size bytes. set_alloc() will never return NULL.
    set_free(set, ptr) frees an allocation created by set_alloc(). These may be
    used by the application. e.g. if allocation tracking is desired. */
-#ifdef SET_TRACK
+#నిర్వచితమైతే సమితి_TRACK
 /* Track the number of allocations and the total backing memory size. */
-#  if defined(_WIN32)
+#  ఒకవేళ defined(_WIN32)
 #    include <malloc.h>
-#    define SET_ALLOC_SIZE(ptr) _msize(ptr)
+#    define సమితి_ALLOC_కొలత(ptr) _msize(ptr)
 #  elif defined(__MACH__)
 #    include <malloc/malloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_size(ptr)
+#    define సమితి_ALLOC_కొలత(ptr) malloc_కొలత(ptr)
 #  elif defined(__linux__)
 #    include <malloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
+#    define సమితి_ALLOC_కొలత(ptr) malloc_usable_కొలత(ptr)
 #  elif defined(__FreeBSD__)
 #    include <malloc_np.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
+#    define సమితి_ALLOC_కొలత(ptr) malloc_usable_కొలత(ptr)
 #  elif defined(__NetBSD__)
 #    include <jemalloc/jemalloc.h>
-#    define SET_ALLOC_SIZE(ptr) malloc_usable_size(ptr)
-#  else     /* e.g. OpenBSD */
-#    define SET_ALLOC_SIZE(ptr) 0
+#    define సమితి_ALLOC_కొలత(ptr) malloc_usable_కొలత(ptr)
+#  లేకపోతే     /* e.g. OpenBSD */
+#    define సమితి_ALLOC_కొలత(ptr) 0
 #  endif
 /* With tracking. */
-static void *set_alloc(set_t *set, void *ptr, size_t size) {
-    size_t had = ptr == NULL ? 0 : SET_ALLOC_SIZE(ptr);
-    void *mem = realloc(ptr, size);
-    if (mem == NULL)
-        longjmp(set->env, ENOMEM);
-    set->allocs += ptr == NULL;
-    set->memory += SET_ALLOC_SIZE(mem) - had;
-    return mem;
+స్థిర శూన్య *సమితి_alloc(సమితి_t *సమితి, శూన్య *ptr, size_t కొలత) {
+    size_t had = ptr == ఖాళీ ? 0 : సమితి_ALLOC_కొలత(ptr);
+    శూన్య *mem = realloc(ptr, కొలత);
+    ఒకవేళ (mem == ఖాళీ)
+        longjmp(సమితి->env, ENOMEM);
+    సమితి->allocs += ptr == ఖాళీ;
+    సమితి->జ్ఞాపకం += సమితి_ALLOC_కొలత(mem) - had;
+    తిరిగి mem;
 }
-static void set_free(set_t *set, void *ptr) {
-    if (ptr != NULL) {
-        set->allocs--;
-        set->memory -= SET_ALLOC_SIZE(ptr);
-        free(ptr);
+స్థిర శూన్య సమితి_free(సమితి_t *సమితి, శూన్య *ptr) {
+    ఒకవేళ (ptr != ఖాళీ) {
+        సమితి->allocs--;
+        సమితి->జ్ఞాపకం -= సమితి_ALLOC_కొలత(ptr);
+        విడుదల(ptr);
     }
 }
-#else
+#లేకపోతే
 /* Without tracking. */
-static void *set_alloc(set_t *set, void *ptr, size_t size) {
-    void *mem = realloc(ptr, size);
-    if (mem == NULL)
-        longjmp(set->env, ENOMEM);
-    return mem;
+స్థిర శూన్య *సమితి_alloc(సమితి_t *సమితి, శూన్య *ptr, size_t కొలత) {
+    శూన్య *mem = realloc(ptr, కొలత);
+    ఒకవేళ (mem == ఖాళీ)
+        longjmp(సమితి->env, ENOMEM);
+    తిరిగి mem;
 }
-static void set_free(set_t *set, void *ptr) {
-    (void)set;
-    free(ptr);
+స్థిర శూన్య సమితి_free(సమితి_t *సమితి, శూన్య *ptr) {
+    (శూన్య)సమితి;
+    విడుదల(ptr);
 }
-#endif
+#అయితే_ముగింపు
 
 /* --private-- Grow node's array right[] as needed to be able to hold at least
    want links. If fill is true, assure that the first want links are filled in,
    setting them to set->head if not previously filled in. Otherwise it is
    assumed that the first want links are about to be filled in. */
-static void set_grow(set_t *set, set_node_t *node, int want, int fill) {
-    int i;
-    if (node->size < want) {
-        int more = node->size ? node->size : 1;
-        while (more < want)
-            more <<= 1;
-        node->right = set_alloc(set, node->right,
-                                (size_t)more * sizeof(set_node_t *));
-        node->size = (i16_t)more;
+స్థిర శూన్య సమితి_grow(సమితి_t *సమితి, సమితి_కణుపు_t *కణుపు, పూర్ణాంకం want, పూర్ణాంకం fill) {
+    పూర్ణాంకం i;
+    ఒకవేళ (కణుపు->కొలత < want) {
+        పూర్ణాంకం మరిన్ని = కణుపు->కొలత ? కణుపు->కొలత : 1;
+        అయితే (మరిన్ని < want)
+            మరిన్ని <<= 1;
+        కణుపు->కుడి_2 = సమితి_alloc(సమితి, కణుపు->కుడి_2,
+                                (size_t)మరిన్ని * పరిమాణం(సమితి_కణుపు_t *));
+        కణుపు->కొలత = (i16_t)మరిన్ని;
     }
-    if (fill)
-        for (i = node->fill; i < want; i++)
-            node->right[i] = set->head;
-    node->fill = (i16_t)want;
+    ఒకవేళ (fill)
+        కొరకు (i = కణుపు->fill; i < want; i++)
+            కణుపు->కుడి_2[i] = సమితి->తల;
+    కణుపు->fill = (i16_t)want;
 }
 
 /* --private-- Return a new node. key is left uninitialized. */
-static set_node_t *set_node(set_t *set) {
-    set_node_t *node = set_alloc(set, NULL, sizeof(set_node_t));
-    node->size = 0;
-    node->fill = 0;
-    node->right = NULL;
-    return node;
+స్థిర సమితి_కణుపు_t *సమితి_కణుపు(సమితి_t *సమితి) {
+    సమితి_కణుపు_t *కణుపు = సమితి_alloc(సమితి, ఖాళీ, పరిమాణం(సమితి_కణుపు_t));
+    కణుపు->కొలత = 0;
+    కణుపు->fill = 0;
+    కణుపు->కుడి_2 = ఖాళీ;
+    తిరిగి కణుపు;
 }
 
 /* --private-- Free the list linked from head, along with the keys. */
-static void set_sweep(set_t *set) {
-    set_node_t *step = set->head->right[0];
-    while (step != set->head) {
-        set_node_t *next = step->right[0];      /* save link to next node */
-        set_drop(set, step->key);
-        set_free(set, step->right);
-        set_free(set, step);
-        step = next;
+స్థిర శూన్య సమితి_sweep(సమితి_t *సమితి) {
+    సమితి_కణుపు_t *అడుగు = సమితి->తల->కుడి_2[0];
+    అయితే (అడుగు != సమితి->తల) {
+        సమితి_కణుపు_t *తదుపరి = అడుగు->కుడి_2[0];      /* save link to next node */
+        సమితి_drop(సమితి, అడుగు->కీలకం);
+        సమితి_free(సమితి, అడుగు->కుడి_2);
+        సమితి_free(సమితి, అడుగు);
+        అడుగు = తదుపరి;
     }
 }
 
@@ -236,146 +236,146 @@ static void set_sweep(set_t *set) {
    errno.h.) The set can still be used if this happens, assuming that it didn't
    happen during set_start(). Whether set_start() completed or not, set_end()
    can be used to free the set's memory after a longjmp(). */
-SKIPSET_EXPORT void set_start(set_t *set) {
-#ifdef SET_TRACK
-    set->allocs = 0;
-    set->memory = 0;
-#endif
-    set->head = set->path = set->node = NULL;   /* in case set_node() fails */
-    set->path = set_node(set);
-    set->head = set_node(set);
-    set_grow(set, set->head, 1, 1); /* one link back to head for empty set */
-    *(unsigned char *)&set->head->key = 137;    /* set id */
-    set->depth = 0;
-    set_uniq(&set->gen, set);
-    set->ran = 1;
+SKIPSET_EXPORT శూన్య సమితి_ప్రారంభం(సమితి_t *సమితి) {
+#నిర్వచితమైతే సమితి_TRACK
+    సమితి->allocs = 0;
+    సమితి->జ్ఞాపకం = 0;
+#అయితే_ముగింపు
+    సమితి->తల = సమితి->మార్గం = సమితి->కణుపు = ఖాళీ;   /* in case set_node() fails */
+    సమితి->మార్గం = సమితి_కణుపు(సమితి);
+    సమితి->తల = సమితి_కణుపు(సమితి);
+    సమితి_grow(సమితి, సమితి->తల, 1, 1); /* one link back to head for empty set */
+    *(గుర్తులేని అక్షరం *)&సమితి->తల->కీలకం = 137;    /* set id */
+    సమితి->లోతు = 0;
+    సమితి_uniq(&సమితి->gen, సమితి);
+    సమితి->ran = 1;
 }
 
 /* Return true if *set appears to be in a usable state. If *set has been zeroed
    out, then set_ok(set) will be false and set_end(set) will be safe. */
-SKIPSET_EXPORT int set_ok(set_t *set) {
-    return set->head != NULL &&
-           set->head->right != NULL &&
-           *(unsigned char *)&set->head->key == 137;
+SKIPSET_EXPORT పూర్ణాంకం సమితి_ok(సమితి_t *సమితి) {
+    తిరిగి సమితి->తల != ఖాళీ &&
+           సమితి->తల->కుడి_2 != ఖాళీ &&
+           *(గుర్తులేని అక్షరం *)&సమితి->తల->కీలకం == 137;
 }
 
-#if 0       /* not used in minizip */
+#ఒకవేళ 0       /* not used in minizip */
 /* Empty the set. This frees the memory used for the previous set contents.
    After set_clear(), *set is ready for use, as if after a set_start(). */
-SKIPSET_EXPORT void set_clear(set_t *set) {
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT శూన్య సమితి_clear(సమితి_t *సమితి) {
+    ప్రతిజ్ఞా(సమితి_ok(సమితి) && "improper use");
 
     /* Free all the keys and their nodes. */
-    set_sweep(set);
+    సమితి_sweep(సమితి);
 
     /* Leave the head and path allocations as is. Clear their contents, with
        head pointing to itself and setting depth to zero, for an empty set. */
-    set->head->right[0] = set->head;
-    set->head->fill = 1;
-    set->path->fill = 0;
-    set->depth = 0;
+    సమితి->తల->కుడి_2[0] = సమితి->తల;
+    సమితి->తల->fill = 1;
+    సమితి->మార్గం->fill = 0;
+    సమితి->లోతు = 0;
 }
-#endif
+#అయితే_ముగింపు
 
 /* Done using the set -- free all allocations. The only operation on *set
    permitted after this is set_start(). Though another set_end() would do no
    harm. This can be done at any time after a set_start(), or after a longjmp()
    on any allocation failure, including during a set_start(). */
-SKIPSET_EXPORT void set_end(set_t *set) {
-    if (set->head != NULL) {
+SKIPSET_EXPORT శూన్య సమితి_చివర(సమితి_t *సమితి) {
+    ఒకవేళ (సమితి->తల != ఖాళీ) {
         /* Empty the set and free the head node. */
-        if (set->head->right != NULL) {
-            set_sweep(set);
-            set_free(set, set->head->right);
+        ఒకవేళ (సమితి->తల->కుడి_2 != ఖాళీ) {
+            సమితి_sweep(సమితి);
+            సమితి_free(సమితి, సమితి->తల->కుడి_2);
         }
-        set_free(set, set->head);
-        set->head = NULL;
+        సమితి_free(సమితి, సమితి->తల);
+        సమితి->తల = ఖాళీ;
     }
-    if (set->path != NULL) {
+    ఒకవేళ (సమితి->మార్గం != ఖాళీ) {
         /* Free the path work area. */
-        set_free(set, set->path->right);
-        set_free(set, set->path);
-        set->path = NULL;
+        సమితి_free(సమితి, సమితి->మార్గం->కుడి_2);
+        సమితి_free(సమితి, సమితి->మార్గం);
+        సమితి->మార్గం = ఖాళీ;
     }
-    if (set->node != NULL) {
+    ఒకవేళ (సమితి->కణుపు != ఖాళీ) {
         /* Free the node that was under construction when longjmp() hit. */
-        set_drop(set, set->node->key);
-        set_free(set, set->node->right);
-        set_free(set, set->node);
-        set->node = NULL;
+        సమితి_drop(సమితి, సమితి->కణుపు->కీలకం);
+        సమితి_free(సమితి, సమితి->కణుపు->కుడి_2);
+        సమితి_free(సమితి, సమితి->కణుపు);
+        సమితి->కణుపు = ఖాళీ;
     }
 }
 
 /* Look for key. Return 1 if found or 0 if not. This also puts the path to get
    there in set->path, for use by set_insert(). */
-SKIPSET_EXPORT int set_found(set_t *set, set_key_t key) {
-    set_node_t *head, *here;
-    int i;
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT పూర్ణాంకం సమితి_దొరికింది(సమితి_t *సమితి, సమితి_కీలకం_t కీలకం) {
+    సమితి_కణుపు_t *తల, *ఇక్కడ;
+    పూర్ణాంకం i;
+    ప్రతిజ్ఞా(సమితి_ok(సమితి) && "improper use");
 
     /* Start at depth. Work down and right as determined by key comparisons. */
-    head = set->head;
-    here = head;
-    i = set->depth;
-    set_grow(set, set->path, i + 1, 0);
-    do {
-        while (here->right[i] != head &&
-               set_cmp(here->right[i]->key, key) < 0)
-            here = here->right[i];
-        set->path->right[i] = here;
-    } while (i--);
+    తల = సమితి->తల;
+    ఇక్కడ = తల;
+    i = సమితి->లోతు;
+    సమితి_grow(సమితి, సమితి->మార్గం, i + 1, 0);
+    చేయి {
+        అయితే (ఇక్కడ->కుడి_2[i] != తల &&
+               సమితి_cmp(ఇక్కడ->కుడి_2[i]->కీలకం, కీలకం) < 0)
+            ఇక్కడ = ఇక్కడ->కుడి_2[i];
+        సమితి->మార్గం->కుడి_2[i] = ఇక్కడ;
+    } అయితే (i--);
 
     /* See if the key matches. */
-    here = here->right[0];
-    return here != head && set_cmp(here->key, key) == 0;
+    ఇక్కడ = ఇక్కడ->కుడి_2[0];
+    తిరిగి ఇక్కడ != తల && సమితి_cmp(ఇక్కడ->కీలకం, కీలకం) == 0;
 }
 
 /* Insert the key key. Return 0 on success, or 1 if it's already in the set. */
-SKIPSET_EXPORT int set_insert(set_t *set, set_key_t key) {
-    int level = 0;
-    int bit;
-    int i;
-    assert(set_ok(set) && "improper use");
+SKIPSET_EXPORT పూర్ణాంకం సమితి_చొప్పించు(సమితి_t *సమితి, సమితి_కీలకం_t కీలకం) {
+    పూర్ణాంకం level = 0;
+    పూర్ణాంకం బిట్టు;
+    పూర్ణాంకం i;
+    ప్రతిజ్ఞా(సమితి_ok(సమితి) && "improper use");
 
-    if (set_found(set, key))
+    ఒకవేళ (సమితి_దొరికింది(సమితి, కీలకం))
         /* That key is already in the set. */
-        return 1;
+        తిరిగి 1;
 
     /* Randomly generate a new level-- level 0 with probability 1/2, 1 with
        probability 1/4, 2 with probability 1/8, etc. */
-    for (;;) {
-        if (set->ran == 1)
+    కొరకు (;;) {
+        ఒకవేళ (సమితి->ran == 1)
             /* Ran out. Get another 32 random bits. */
-            set->ran = set_rand(&set->gen) | (1ULL << 32);
-        bit = set->ran & 1;
-        set->ran >>= 1;
-        if (bit)
-            break;
-        assert(level < 32767 &&
+            సమితి->ran = సమితి_rand(&సమితి->gen) | (1ULL << 32);
+        బిట్టు = సమితి->ran & 1;
+        సమితి->ran >>= 1;
+        ఒకవేళ (బిట్టు)
+            ఆపు;
+        ప్రతిజ్ఞా(level < 32767 &&
                "Overhead, without any fuss, the stars were going out.");
         level++;
     }
-    if (level > set->depth) {
+    ఒకవేళ (level > సమితి->లోతు) {
         /* The maximum depth is now deeper. Update the structures. */
-        set_grow(set, set->path, level + 1, 1);
-        set_grow(set, set->head, level + 1, 1);
-        set->depth = (i16_t)level;
+        సమితి_grow(సమితి, సమితి->మార్గం, level + 1, 1);
+        సమితి_grow(సమితి, సమితి->తల, level + 1, 1);
+        సమితి->లోతు = (i16_t)level;
     }
 
     /* Make a new node for the provided key, and insert it in the lists up to
        and including level. */
-    set->node = set_node(set);
-    set->node->key = key;
-    set_grow(set, set->node, level + 1, 0);
-    for (i = 0; i <= level; i++) {
-        set->node->right[i] = set->path->right[i]->right[i];
-        set->path->right[i]->right[i] = set->node;
+    సమితి->కణుపు = సమితి_కణుపు(సమితి);
+    సమితి->కణుపు->కీలకం = కీలకం;
+    సమితి_grow(సమితి, సమితి->కణుపు, level + 1, 0);
+    కొరకు (i = 0; i <= level; i++) {
+        సమితి->కణుపు->కుడి_2[i] = సమితి->మార్గం->కుడి_2[i]->కుడి_2[i];
+        సమితి->మార్గం->కుడి_2[i]->కుడి_2[i] = సమితి->కణుపు;
     }
-    set->node = NULL;
-    return 0;
+    సమితి->కణుపు = ఖాళీ;
+    తిరిగి 0;
 }
 
-#else
-#error ** another skiplist set already created here
+#లేకపోతే
+#దోషం ** another skiplist సమితి already created ఇక్కడ
 /* Would need to implement a prefix in order to support multiple sets. */
-#endif
+#అయితే_ముగింపు

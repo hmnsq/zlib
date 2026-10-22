@@ -1,26 +1,26 @@
-#include "stdio.h"
-#include "stdlib.h"
+#అన్తర్భావ "stdio.h"
+#అన్తర్భావ "stdlib.h"
 
 /**
  * Reads hexadecimal values from stdin and writes binary bytes to stdout.
  * Accepts hex values separated by spaces, newlines, commas, etc.
  * Handles both uppercase and lowercase hex digits.
  */
-int main(void) {
-    char hexStr[3]; // Two hex digits + null terminator
-    int ch;
+పూర్ణాంకం ప్రధాన(శూన్య) {
+    అక్షరం hexStr[3]; // Two hex digits + null terminator
+    పూర్ణాంకం ch;
 
     // Read characters until EOF
-    while((ch = getchar()) != EOF) {
-        hexStr[0] = (char)ch;
-        hexStr[1] = (char)getchar();
+    అయితే((ch = getchar()) != EOF) {
+        hexStr[0] = (అక్షరం)ch;
+        hexStr[1] = (అక్షరం)getchar();
         hexStr[2] = '\0'; // Null-terminate string
-        char *endptr;
-        unsigned char byte = (unsigned char)strtol(hexStr, &endptr, 16);
+        అక్షరం *endptr;
+        గుర్తులేని అక్షరం byte = (గుర్తులేని అక్షరం)strtol(hexStr, &endptr, 16);
         fwrite(&byte, 1, 1, stdout);
-        if((ch = getchar()) == EOF) // Read seaparating space
-          break;
+        ఒకవేళ((ch = getchar()) == EOF) // Read seaparating space
+          ఆపు;
     }
 
-    return 0;
+    తిరిగి 0;
 }

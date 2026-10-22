@@ -16,22 +16,22 @@
  * zlib.h must be included before this header file.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#నిర్వచితమైతే __cplusplus
+బాహ్య "C" {
+#అయితే_ముగింపు
 
-ZEXTERN int ZEXPORT inflateBack9(z_stream FAR *strm,
-                                 in_func in, void FAR *in_desc,
-                                 out_func out, void FAR *out_desc);
-ZEXTERN int ZEXPORT inflateBack9End(z_stream FAR *strm);
-ZEXTERN int ZEXPORT inflateBack9Init_(z_stream FAR *strm,
-                                      unsigned char FAR *window,
-                                      const char *version,
-                                      int stream_size);
-#define inflateBack9Init(strm, window) \
-        inflateBack9Init_((strm), (window), \
-        ZLIB_VERSION, sizeof(z_stream))
+ZEXTERN పూర్ణాంకం ZEXPORT inflateBack9(z_ప్రవాహం FAR *strm,
+                                 లోపల_func లోపల, శూన్య FAR *లోపల_desc,
+                                 బహిర్గతం_func బహిర్గతం, శూన్య FAR *బహిర్గతం_desc);
+ZEXTERN పూర్ణాంకం ZEXPORT inflate_Back9_చివర(z_ప్రవాహం FAR *strm);
+ZEXTERN పూర్ణాంకం ZEXPORT inflateBack9Init_(z_ప్రవాహం FAR *strm,
+                                      గుర్తులేని అక్షరం FAR *కిటికీ,
+                                      స్థిరరాశి అక్షరం *సంస్కరణ,
+                                      పూర్ణాంకం ప్రవాహం_కొలత);
+#నిర్వచించు inflateBack9Init(strm, కిటికీ) \
+        inflateBack9Init_((strm), (కిటికీ), \
+        ZLIB_సంస్కరణ, పరిమాణం(z_ప్రవాహం))
 
-#ifdef __cplusplus
+#నిర్వచితమైతే __cplusplus
 }
-#endif
+#అయితే_ముగింపు

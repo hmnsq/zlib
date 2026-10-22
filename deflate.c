@@ -49,9 +49,9 @@
 
 /* @(#) $Id$ */
 
-#include "deflate.h"
+#అన్తర్భావ "deflate.h"
 
-const char deflate_copyright[] =
+స్థిరరాశి అక్షరం deflate_copyright[] =
    " deflate 1.3.2.1 Copyright 1995-2026 Jean-loup Gailly and Mark Adler ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
@@ -60,34 +60,34 @@ const char deflate_copyright[] =
   copyright string in the executable of your product.
  */
 
-typedef enum {
-    need_more,      /* block not completed, need more input or more output */
-    block_done,     /* block flush performed */
-    finish_started, /* finish started, need only more output at next deflate */
-    finish_done     /* finish done, accept no more input or output */
-} block_state;
+రకనిర్వచనం గణన {
+    need_మరిన్ని,      /* block not completed, need more input or more output */
+    ఖండం_పూర్తి,     /* block flush performed */
+    ముగింపు_started, /* finish started, need only more output at next deflate */
+    ముగింపు_పూర్తి     /* finish done, accept no more input or output */
+} ఖండం_state;
 
-typedef block_state (*compress_func)(deflate_state *s, int flush);
+రకనిర్వచనం ఖండం_state (*compress_func)(deflate_state *s, పూర్ణాంకం flush);
 /* Compression function. Returns the block state after the call. */
 
-local block_state deflate_stored(deflate_state *s, int flush);
-local block_state deflate_fast(deflate_state *s, int flush);
-#ifndef FASTEST
-local block_state deflate_slow(deflate_state *s, int flush);
-#endif
-local block_state deflate_rle(deflate_state *s, int flush);
-local block_state deflate_huff(deflate_state *s, int flush);
+local ఖండం_state deflate_stored(deflate_state *s, పూర్ణాంకం flush);
+local ఖండం_state deflate_fast(deflate_state *s, పూర్ణాంకం flush);
+#నిర్వచితం_కాకపోతే FASTEST
+local ఖండం_state deflate_slow(deflate_state *s, పూర్ణాంకం flush);
+#అయితే_ముగింపు
+local ఖండం_state deflate_rle(deflate_state *s, పూర్ణాంకం flush);
+local ఖండం_state deflate_huff(deflate_state *s, పూర్ణాంకం flush);
 
 /* ===========================================================================
  * Local data
  */
 
-#define NIL 0
+#నిర్వచించు NIL 0
 /* Tail of hash chains */
 
-#ifndef TOO_FAR
+#నిర్వచితం_కాకపోతే TOO_FAR
 #  define TOO_FAR 4096
-#endif
+#అయితే_ముగింపు
 /* Matches of length 3 are discarded if their distance exceeds TOO_FAR */
 
 /* Values for max_lazy_match, good_match and max_chain_length, depending on
@@ -95,21 +95,21 @@ local block_state deflate_huff(deflate_state *s, int flush);
  * exclude worst case performance for pathological files. Better values may be
  * found for specific files.
  */
-typedef struct config_s {
-   ush good_length; /* reduce lazy search above this match length */
+రకనిర్వచనం నిర్మాణం config_s {
+   ush good_నిడివి; /* reduce lazy search above this match length */
    ush max_lazy;    /* do not perform lazy search above this match length */
-   ush nice_length; /* quit search above this match length */
+   ush nice_నిడివి; /* quit search above this match length */
    ush max_chain;
    compress_func func;
 } config;
 
-#ifdef FASTEST
-local const config configuration_table[2] = {
+#నిర్వచితమైతే FASTEST
+local స్థిరరాశి config configuration_పట్టిక[2] = {
 /*      good lazy nice chain */
 /* 0 */ {0,    0,  0,    0, deflate_stored},  /* store only */
 /* 1 */ {4,    4,  8,    4, deflate_fast}}; /* max speed, no lazy matches */
-#else
-local const config configuration_table[10] = {
+#లేకపోతే
+local స్థిరరాశి config configuration_పట్టిక[10] = {
 /*      good lazy nice chain */
 /* 0 */ {0,    0,  0,    0, deflate_stored},  /* store only */
 /* 1 */ {4,    4,  8,    4, deflate_fast}, /* max speed, no lazy matches */
@@ -122,7 +122,7 @@ local const config configuration_table[10] = {
 /* 7 */ {8,   32, 128, 256, deflate_slow},
 /* 8 */ {32, 128, 258, 1024, deflate_slow},
 /* 9 */ {32, 258, 258, 4096, deflate_slow}}; /* max compression */
-#endif
+#అయితే_ముగింపు
 
 /* Note: the deflate() code requires max_lazy >= MIN_MATCH and max_chain >= 4
  * For deflate_fast() (levels <= 3) good is ignored and lazy has a different
@@ -130,7 +130,7 @@ local const config configuration_table[10] = {
  */
 
 /* rank Z_BLOCK between Z_NO_FLUSH and Z_PARTIAL_FLUSH */
-#define RANK(f) (((f) * 2) - ((f) > 4 ? 9 : 0))
+#నిర్వచించు RANK(f) (((f) * 2) - ((f) > 4 ? 9 : 0))
 
 /* ===========================================================================
  * Update a hash value with the given input byte
@@ -138,7 +138,7 @@ local const config configuration_table[10] = {
  *    characters, so that a running hash key can be computed from the previous
  *    key instead of complete recalculation each time.
  */
-#define UPDATE_HASH(s,h,c) (h = (((h) << s->hash_shift) ^ (c)) & s->hash_mask)
+#నిర్వచించు UPDATE_HASH(s,h,c) (h = (((h) << s->hash_జరుపు) ^ (c)) & s->hash_ముసుగు)
 
 
 /* ===========================================================================
@@ -151,61 +151,61 @@ local const config configuration_table[10] = {
  *    characters and the first MIN_MATCH bytes of str are valid (except for
  *    the last MIN_MATCH-1 bytes of the input file).
  */
-#ifdef FASTEST
-#define INSERT_STRING(s, str, match_head) \
-   (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
-    match_head = s->head[s->ins_h], \
-    s->head[s->ins_h] = (Pos)(str))
-#else
-#define INSERT_STRING(s, str, match_head) \
-   (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
-    match_head = s->prev[(str) & s->w_mask] = s->head[s->ins_h], \
-    s->head[s->ins_h] = (Pos)(str))
-#endif
+#నిర్వచితమైతే FASTEST
+#నిర్వచించు చొప్పించు_STRING(s, str, సరిపోలిక_తల) \
+   (UPDATE_HASH(s, s->ins_h, s->కిటికీ[(str) + (MIN_సరిపోలిక-1)]), \
+    సరిపోలిక_తల = s->తల[s->ins_h], \
+    s->తల[s->ins_h] = (Pos)(str))
+#లేకపోతే
+#నిర్వచించు చొప్పించు_STRING(s, str, సరిపోలిక_తల) \
+   (UPDATE_HASH(s, s->ins_h, s->కిటికీ[(str) + (MIN_సరిపోలిక-1)]), \
+    సరిపోలిక_తల = s->prev[(str) & s->w_ముసుగు] = s->తల[s->ins_h], \
+    s->తల[s->ins_h] = (Pos)(str))
+#అయితే_ముగింపు
 
 /* ===========================================================================
  * Initialize the hash table (avoiding 64K overflow for 16 bit systems).
  * prev[] will be initialized on the fly.
  */
-#define CLEAR_HASH(s) \
-    do { \
-        s->head[s->hash_size - 1] = NIL; \
-        zmemzero(s->head, (unsigned)(s->hash_size - 1)*sizeof(*s->head)); \
+#నిర్వచించు CLEAR_HASH(s) \
+    చేయి { \
+        s->తల[s->hash_కొలత - 1] = NIL; \
+        zmemzero(s->తల, (గుర్తులేని)(s->hash_కొలత - 1)*పరిమాణం(*s->తల)); \
         s->slid = 0; \
-    } while (0)
+    } అయితే (0)
 
 /* ===========================================================================
  * Slide the hash table when sliding the window down (could be avoided with 32
  * bit values at the expense of memory usage). We slide even when level == 0 to
  * keep the hash table consistent if we switch back to level > 0 later.
  */
-#if defined(__has_feature)
-#  if __has_feature(memory_sanitizer)
+#ఒకవేళ defined(__has_feature)
+#  ఒకవేళ __has_feature(జ్ఞాపకం_sanitizer)
      __attribute__((no_sanitize("memory")))
 #  endif
-#endif
-local void slide_hash(deflate_state *s) {
-    unsigned n, m;
+#అయితే_ముగింపు
+local శూన్య slide_hash(deflate_state *s) {
+    గుర్తులేని n, m;
     Posf *p;
-    uInt wsize = s->w_size;
+    uInt wsize = s->w_కొలత;
 
-    n = s->hash_size;
-    p = &s->head[n];
-    do {
+    n = s->hash_కొలత;
+    p = &s->తల[n];
+    చేయి {
         m = *--p;
         *p = (Pos)(m >= wsize ? m - wsize : NIL);
-    } while (--n);
-#ifndef FASTEST
+    } అయితే (--n);
+#నిర్వచితం_కాకపోతే FASTEST
     n = wsize;
     p = &s->prev[n];
-    do {
+    చేయి {
         m = *--p;
         *p = (Pos)(m >= wsize ? m - wsize : NIL);
         /* If n is not on any hash chain, prev[n] is garbage but
          * its value will never be used.
          */
-    } while (--n);
-#endif
+    } అయితే (--n);
+#అయితే_ముగింపు
     s->slid = 1;
 }
 
@@ -216,27 +216,27 @@ local void slide_hash(deflate_state *s) {
  * allocating a large strm->next_in buffer and copying from it.
  * (See also flush_pending()).
  */
-local unsigned read_buf(z_streamp strm, Bytef *buf, unsigned size) {
-    unsigned len = strm->avail_in;
+local గుర్తులేని read_buf(z_streamp strm, Bytef *buf, గుర్తులేని కొలత) {
+    గుర్తులేని len = strm->avail_లోపల;
 
-    if (len > size) len = size;
-    if (len == 0) return 0;
+    ఒకవేళ (len > కొలత) len = కొలత;
+    ఒకవేళ (len == 0) తిరిగి 0;
 
-    strm->avail_in  -= len;
+    strm->avail_లోపల  -= len;
 
-    zmemcpy(buf, strm->next_in, len);
-    if (strm->state->wrap == 1) {
+    zmemcpy(buf, strm->తదుపరి_లోపల, len);
+    ఒకవేళ (strm->state->wrap == 1) {
         strm->adler = adler32(strm->adler, buf, len);
     }
-#ifdef GZIP
-    else if (strm->state->wrap == 2) {
-        strm->adler = crc32(strm->adler, buf, len);
+#నిర్వచితమైతే GZIP
+    లేకపోతే ఒకవేళ (strm->state->wrap == 2) {
+        strm->adler = చక్రీయ_తనిఖీ_32_2(strm->adler, buf, len);
     }
-#endif
-    strm->next_in  += len;
-    strm->total_in += len;
+#అయితే_ముగింపు
+    strm->తదుపరి_లోపల  += len;
+    strm->మొత్తం_లోపల += len;
 
-    return len;
+    తిరిగి len;
 }
 
 /* ===========================================================================
@@ -249,51 +249,51 @@ local unsigned read_buf(z_streamp strm, Bytef *buf, unsigned size) {
  *    performed for at least two bytes (required for the zip translate_eol
  *    option -- not supported here).
  */
-local void fill_window(deflate_state *s) {
-    unsigned n;
-    unsigned more;    /* Amount of free space at the end of the window. */
-    uInt wsize = s->w_size;
+local శూన్య fill_కిటికీ(deflate_state *s) {
+    గుర్తులేని n;
+    గుర్తులేని మరిన్ని;    /* Amount of free space at the end of the window. */
+    uInt wsize = s->w_కొలత;
 
     Assert(s->lookahead < MIN_LOOKAHEAD, "already enough lookahead");
 
-    do {
-        more = (unsigned)(s->window_size -(ulg)s->lookahead -(ulg)s->strstart);
+    చేయి {
+        మరిన్ని = (గుర్తులేని)(s->కిటికీ_కొలత -(ulg)s->lookahead -(ulg)s->strstart);
 
         /* Deal with !@#$% 64K limit: */
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4127)
-#endif
-        if (sizeof(int) <= 2) {
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-            if (more == 0 && s->strstart == 0 && s->lookahead == 0) {
-                more = wsize;
+#నిర్వచితమైతే _MSC_VER
+#సూచన warning(నెట్టు)
+#సూచన warning(disable: 4127)
+#అయితే_ముగింపు
+        ఒకవేళ (పరిమాణం(పూర్ణాంకం) <= 2) {
+#నిర్వచితమైతే _MSC_VER
+#సూచన warning(తీయి)
+#అయితే_ముగింపు
+            ఒకవేళ (మరిన్ని == 0 && s->strstart == 0 && s->lookahead == 0) {
+                మరిన్ని = wsize;
 
-            } else if (more == (unsigned)(-1)) {
+            } లేకపోతే ఒకవేళ (మరిన్ని == (గుర్తులేని)(-1)) {
                 /* Very unlikely, but possible on 16 bit machine if
                  * strstart == 0 && lookahead == 1 (input done a byte at time)
                  */
-                more--;
+                మరిన్ని--;
             }
         }
 
         /* If the window is almost full and there is insufficient lookahead,
          * move the upper half to the lower one to make room in the upper half.
          */
-        if (s->strstart >= wsize + MAX_DIST(s)) {
+        ఒకవేళ (s->strstart >= wsize + MAX_DIST(s)) {
 
-            zmemcpy(s->window, s->window + wsize, (unsigned)wsize - more);
-            s->match_start -= wsize;
+            zmemcpy(s->కిటికీ, s->కిటికీ + wsize, (గుర్తులేని)wsize - మరిన్ని);
+            s->సరిపోలిక_ప్రారంభం -= wsize;
             s->strstart    -= wsize; /* we now have strstart >= MAX_DIST */
-            s->block_start -= (long) wsize;
-            if (s->insert > s->strstart)
-                s->insert = s->strstart;
+            s->ఖండం_ప్రారంభం -= (దీర్ఘ) wsize;
+            ఒకవేళ (s->చొప్పించు > s->strstart)
+                s->చొప్పించు = s->strstart;
             slide_hash(s);
-            more += wsize;
+            మరిన్ని += wsize;
         }
-        if (s->strm->avail_in == 0) break;
+        ఒకవేళ (s->strm->avail_లోపల == 0) ఆపు;
 
         /* If there was no sliding:
          *    strstart <= WSIZE+MAX_DIST-1 && lookahead <= MIN_LOOKAHEAD - 1 &&
@@ -306,36 +306,36 @@ local void fill_window(deflate_state *s) {
          * Otherwise, window_size == 2*WSIZE so more >= 2.
          * If there was sliding, more >= WSIZE. So in all cases, more >= 2.
          */
-        Assert(more >= 2, "more < 2");
+        Assert(మరిన్ని >= 2, "more < 2");
 
-        n = read_buf(s->strm, s->window + s->strstart + s->lookahead, more);
+        n = read_buf(s->strm, s->కిటికీ + s->strstart + s->lookahead, మరిన్ని);
         s->lookahead += n;
 
         /* Initialize the hash value now that we have some input: */
-        if (s->lookahead + s->insert >= MIN_MATCH) {
-            uInt str = s->strstart - s->insert;
-            s->ins_h = s->window[str];
-            UPDATE_HASH(s, s->ins_h, s->window[str + 1]);
-#if MIN_MATCH != 3
-            Call UPDATE_HASH() MIN_MATCH-3 more times
-#endif
-            while (s->insert) {
-                UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
-#ifndef FASTEST
-                s->prev[str & s->w_mask] = s->head[s->ins_h];
-#endif
-                s->head[s->ins_h] = (Pos)str;
+        ఒకవేళ (s->lookahead + s->చొప్పించు >= MIN_సరిపోలిక) {
+            uInt str = s->strstart - s->చొప్పించు;
+            s->ins_h = s->కిటికీ[str];
+            UPDATE_HASH(s, s->ins_h, s->కిటికీ[str + 1]);
+#ఒకవేళ MIN_సరిపోలిక != 3
+            Call UPDATE_HASH() MIN_సరిపోలిక-3 మరిన్ని times
+#అయితే_ముగింపు
+            అయితే (s->చొప్పించు) {
+                UPDATE_HASH(s, s->ins_h, s->కిటికీ[str + MIN_సరిపోలిక-1]);
+#నిర్వచితం_కాకపోతే FASTEST
+                s->prev[str & s->w_ముసుగు] = s->తల[s->ins_h];
+#అయితే_ముగింపు
+                s->తల[s->ins_h] = (Pos)str;
                 str++;
-                s->insert--;
-                if (s->lookahead + s->insert < MIN_MATCH)
-                    break;
+                s->చొప్పించు--;
+                ఒకవేళ (s->lookahead + s->చొప్పించు < MIN_సరిపోలిక)
+                    ఆపు;
             }
         }
         /* If the whole input has less than MIN_MATCH bytes, ins_h is garbage,
          * but this is not important since only literal bytes will be emitted.
          */
 
-    } while (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_in != 0);
+    } అయితే (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_లోపల != 0);
 
     /* If the WIN_INIT bytes after the end of the current data have never been
      * written, then zero those bytes in order to avoid memory check reports of
@@ -344,121 +344,121 @@ local void fill_window(deflate_state *s) {
      * time through here.  WIN_INIT is set to MAX_MATCH since the longest match
      * routines allow scanning to strstart + MAX_MATCH, ignoring lookahead.
      */
-    if (s->high_water < s->window_size) {
+    ఒకవేళ (s->ఎగువ_water < s->కిటికీ_కొలత) {
         ulg curr = s->strstart + (ulg)(s->lookahead);
         ulg init;
 
-        if (s->high_water < curr) {
+        ఒకవేళ (s->ఎగువ_water < curr) {
             /* Previous high water mark below current data -- zero WIN_INIT
              * bytes or up to end of window, whichever is less.
              */
-            init = s->window_size - curr;
-            if (init > WIN_INIT)
+            init = s->కిటికీ_కొలత - curr;
+            ఒకవేళ (init > WIN_INIT)
                 init = WIN_INIT;
-            zmemzero(s->window + curr, (unsigned)init);
-            s->high_water = curr + init;
+            zmemzero(s->కిటికీ + curr, (గుర్తులేని)init);
+            s->ఎగువ_water = curr + init;
         }
-        else if (s->high_water < (ulg)curr + WIN_INIT) {
+        లేకపోతే ఒకవేళ (s->ఎగువ_water < (ulg)curr + WIN_INIT) {
             /* High water mark at or above current data, but below current data
              * plus WIN_INIT -- zero out to current data plus WIN_INIT, or up
              * to end of window, whichever is less.
              */
-            init = (ulg)curr + WIN_INIT - s->high_water;
-            if (init > s->window_size - s->high_water)
-                init = s->window_size - s->high_water;
-            zmemzero(s->window + s->high_water, (unsigned)init);
-            s->high_water += init;
+            init = (ulg)curr + WIN_INIT - s->ఎగువ_water;
+            ఒకవేళ (init > s->కిటికీ_కొలత - s->ఎగువ_water)
+                init = s->కిటికీ_కొలత - s->ఎగువ_water;
+            zmemzero(s->కిటికీ + s->ఎగువ_water, (గుర్తులేని)init);
+            s->ఎగువ_water += init;
         }
     }
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->కిటికీ_కొలత - MIN_LOOKAHEAD,
            "not enough room for search");
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateInit_(z_streamp strm, int level, const char *version,
-                         int stream_size) {
-    return deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
-                         Z_DEFAULT_STRATEGY, version, stream_size);
+పూర్ణాంకం ZEXPORT deflateInit_(z_streamp strm, పూర్ణాంకం level, స్థిరరాశి అక్షరం *సంస్కరణ,
+                         పూర్ణాంకం ప్రవాహం_కొలత) {
+    తిరిగి deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
+                         Z_DEFAULT_STRATEGY, సంస్కరణ, ప్రవాహం_కొలత);
     /* To do: ignore strm->next_in if we use it as window */
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
-                          int windowBits, int memLevel, int strategy,
-                          const char *version, int stream_size) {
+పూర్ణాంకం ZEXPORT deflateInit2_(z_streamp strm, పూర్ణాంకం level, పూర్ణాంకం పద్ధతి,
+                          పూర్ణాంకం కిటికీ_బిట్లు, పూర్ణాంకం memLevel, పూర్ణాంకం strategy,
+                          స్థిరరాశి అక్షరం *సంస్కరణ, పూర్ణాంకం ప్రవాహం_కొలత) {
     deflate_state *s;
-    int wrap = 1;
-    static const char my_version[] = ZLIB_VERSION;
+    పూర్ణాంకం wrap = 1;
+    స్థిర స్థిరరాశి అక్షరం my_సంస్కరణ[] = ZLIB_సంస్కరణ;
 
-    if (version == Z_NULL || version[0] != my_version[0] ||
-        stream_size != sizeof(z_stream)) {
-        return Z_VERSION_ERROR;
+    ఒకవేళ (సంస్కరణ == Z_NULL || సంస్కరణ[0] != my_సంస్కరణ[0] ||
+        ప్రవాహం_కొలత != పరిమాణం(z_ప్రవాహం)) {
+        తిరిగి Z_సంస్కరణ_ERROR;
     }
-    if (strm == Z_NULL) return Z_STREAM_ERROR;
+    ఒకవేళ (strm == Z_NULL) తిరిగి Z_ప్రవాహం_ERROR;
 
-    strm->msg = Z_NULL;
-    if (strm->zalloc == (alloc_func)0) {
-#ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+    strm->సందేశం = Z_NULL;
+    ఒకవేళ (strm->zalloc == (alloc_func)0) {
+#నిర్వచితమైతే Z_SOLO
+        తిరిగి Z_ప్రవాహం_ERROR;
+#లేకపోతే
         strm->zalloc = zcalloc;
         strm->opaque = (voidpf)0;
-#endif
+#అయితే_ముగింపు
     }
-    if (strm->zfree == (free_func)0)
-#ifdef Z_SOLO
-        return Z_STREAM_ERROR;
-#else
+    ఒకవేళ (strm->zfree == (free_func)0)
+#నిర్వచితమైతే Z_SOLO
+        తిరిగి Z_ప్రవాహం_ERROR;
+#లేకపోతే
         strm->zfree = zcfree;
-#endif
+#అయితే_ముగింపు
 
-#ifdef FASTEST
-    if (level != 0) level = 1;
-#else
-    if (level == Z_DEFAULT_COMPRESSION) level = 6;
-#endif
+#నిర్వచితమైతే FASTEST
+    ఒకవేళ (level != 0) level = 1;
+#లేకపోతే
+    ఒకవేళ (level == Z_DEFAULT_COMPRESSION) level = 6;
+#అయితే_ముగింపు
 
-    if (windowBits < 0) { /* suppress zlib wrapper */
+    ఒకవేళ (కిటికీ_బిట్లు < 0) { /* suppress zlib wrapper */
         wrap = 0;
-        if (windowBits < -15)
-            return Z_STREAM_ERROR;
-        windowBits = -windowBits;
+        ఒకవేళ (కిటికీ_బిట్లు < -15)
+            తిరిగి Z_ప్రవాహం_ERROR;
+        కిటికీ_బిట్లు = -కిటికీ_బిట్లు;
     }
-#ifdef GZIP
-    else if (windowBits > 15) {
+#నిర్వచితమైతే GZIP
+    లేకపోతే ఒకవేళ (కిటికీ_బిట్లు > 15) {
         wrap = 2;       /* write gzip wrapper instead */
-        windowBits -= 16;
+        కిటికీ_బిట్లు -= 16;
     }
-#endif
-    if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != Z_DEFLATED ||
-        windowBits < 8 || windowBits > 15 || level < 0 || level > 9 ||
-        strategy < 0 || strategy > Z_FIXED || (windowBits == 8 && wrap != 1)) {
-        return Z_STREAM_ERROR;
+#అయితే_ముగింపు
+    ఒకవేళ (memLevel < 1 || memLevel > MAX_MEM_LEVEL || పద్ధతి != Z_DEFLATED ||
+        కిటికీ_బిట్లు < 8 || కిటికీ_బిట్లు > 15 || level < 0 || level > 9 ||
+        strategy < 0 || strategy > Z_FIXED || (కిటికీ_బిట్లు == 8 && wrap != 1)) {
+        తిరిగి Z_ప్రవాహం_ERROR;
     }
-    if (windowBits == 8) windowBits = 9;  /* until 256-byte window bug fixed */
-    s = (deflate_state *) ZALLOC(strm, 1, sizeof(deflate_state));
-    if (s == Z_NULL) return Z_MEM_ERROR;
-    zmemzero(s, sizeof(deflate_state));
-    strm->state = (struct internal_state FAR *)s;
+    ఒకవేళ (కిటికీ_బిట్లు == 8) కిటికీ_బిట్లు = 9;  /* until 256-byte window bug fixed */
+    s = (deflate_state *) ZALLOC(strm, 1, పరిమాణం(deflate_state));
+    ఒకవేళ (s == Z_NULL) తిరిగి Z_MEM_ERROR;
+    zmemzero(s, పరిమాణం(deflate_state));
+    strm->state = (నిర్మాణం అంతర్గత_state FAR *)s;
     s->strm = strm;
-    s->status = INIT_STATE;     /* to pass state test in deflateReset() */
+    s->స్థితి_2 = INIT_STATE;     /* to pass state test in deflateReset() */
 
     s->wrap = wrap;
-    s->w_bits = (uInt)windowBits;
-    s->w_size = 1 << s->w_bits;
-    s->w_mask = s->w_size - 1;
+    s->w_బిట్లు = (uInt)కిటికీ_బిట్లు;
+    s->w_కొలత = 1 << s->w_బిట్లు;
+    s->w_ముసుగు = s->w_కొలత - 1;
 
-    s->hash_bits = (uInt)memLevel + 7;
-    s->hash_size = 1 << s->hash_bits;
-    s->hash_mask = s->hash_size - 1;
-    s->hash_shift =  ((s->hash_bits + MIN_MATCH-1) / MIN_MATCH);
+    s->hash_బిట్లు = (uInt)memLevel + 7;
+    s->hash_కొలత = 1 << s->hash_బిట్లు;
+    s->hash_ముసుగు = s->hash_కొలత - 1;
+    s->hash_జరుపు =  ((s->hash_బిట్లు + MIN_సరిపోలిక-1) / MIN_సరిపోలిక);
 
-    s->window = (Bytef *) ZALLOC(strm, s->w_size, 2*sizeof(Byte));
-    s->prev   = (Posf *)  ZALLOC(strm, s->w_size, sizeof(Pos));
-    s->head   = (Posf *)  ZALLOC(strm, s->hash_size, sizeof(Pos));
+    s->కిటికీ = (Bytef *) ZALLOC(strm, s->w_కొలత, 2*పరిమాణం(Byte));
+    s->prev   = (Posf *)  ZALLOC(strm, s->w_కొలత, పరిమాణం(Pos));
+    s->తల   = (Posf *)  ZALLOC(strm, s->hash_కొలత, పరిమాణం(Pos));
 
-    s->high_water = 0;      /* nothing written to s->window yet */
+    s->ఎగువ_water = 0;      /* nothing written to s->window yet */
 
     s->lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */
 
@@ -502,23 +502,23 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
      */
 
     s->pending_buf = (uchf *) ZALLOC(strm, s->lit_bufsize, LIT_BUFS);
-    s->pending_buf_size = (ulg)s->lit_bufsize * 4;
+    s->pending_buf_కొలత = (ulg)s->lit_bufsize * 4;
 
-    if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
+    ఒకవేళ (s->కిటికీ == Z_NULL || s->prev == Z_NULL || s->తల == Z_NULL ||
         s->pending_buf == Z_NULL) {
-        s->status = FINISH_STATE;
-        strm->msg = ERR_MSG(Z_MEM_ERROR);
-        deflateEnd (strm);
-        return Z_MEM_ERROR;
+        s->స్థితి_2 = ముగింపు_STATE;
+        strm->సందేశం = ERR_సందేశం(Z_MEM_ERROR);
+        deflate_చివర (strm);
+        తిరిగి Z_MEM_ERROR;
     }
-#ifdef LIT_MEM
+#నిర్వచితమైతే LIT_MEM
     s->d_buf = (ushf *)(s->pending_buf + (s->lit_bufsize << 1));
     s->l_buf = s->pending_buf + (s->lit_bufsize << 2);
-    s->sym_end = s->lit_bufsize - 1;
-#else
+    s->sym_చివర = s->lit_bufsize - 1;
+#లేకపోతే
     s->sym_buf = s->pending_buf + s->lit_bufsize;
-    s->sym_end = (s->lit_bufsize - 1) * 3;
-#endif
+    s->sym_చివర = (s->lit_bufsize - 1) * 3;
+#అయితే_ముగింపు
     /* We avoid equality with lit_bufsize*3 because of wraparound at 64K
      * on 16 bit machines and because stored blocks are restricted to
      * 64K-1 bytes.
@@ -526,308 +526,308 @@ int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
 
     s->level = level;
     s->strategy = strategy;
-    s->method = (Byte)method;
+    s->పద్ధతి = (Byte)పద్ధతి;
 
-    return deflateReset(strm);
+    తిరిగి deflateReset(strm);
 }
 
 /* =========================================================================
  * Check for a valid deflate stream state. Return 0 if ok, 1 if not.
  */
-local int deflateStateCheck(z_streamp strm) {
+local పూర్ణాంకం deflateStateCheck(z_streamp strm) {
     deflate_state *s;
-    if (strm == Z_NULL ||
+    ఒకవేళ (strm == Z_NULL ||
         strm->zalloc == (alloc_func)0 || strm->zfree == (free_func)0)
-        return 1;
+        తిరిగి 1;
     s = strm->state;
-    if (s == Z_NULL || s->strm != strm || (s->status != INIT_STATE &&
-#ifdef GZIP
-                                           s->status != GZIP_STATE &&
-#endif
-                                           s->status != EXTRA_STATE &&
-                                           s->status != NAME_STATE &&
-                                           s->status != COMMENT_STATE &&
-                                           s->status != HCRC_STATE &&
-                                           s->status != BUSY_STATE &&
-                                           s->status != FINISH_STATE))
-        return 1;
-    return 0;
+    ఒకవేళ (s == Z_NULL || s->strm != strm || (s->స్థితి_2 != INIT_STATE &&
+#నిర్వచితమైతే GZIP
+                                           s->స్థితి_2 != GZIP_STATE &&
+#అయితే_ముగింపు
+                                           s->స్థితి_2 != EXTRA_STATE &&
+                                           s->స్థితి_2 != NAME_STATE &&
+                                           s->స్థితి_2 != COMMENT_STATE &&
+                                           s->స్థితి_2 != HCRC_STATE &&
+                                           s->స్థితి_2 != BUSY_STATE &&
+                                           s->స్థితి_2 != ముగింపు_STATE))
+        తిరిగి 1;
+    తిరిగి 0;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateSetDictionary(z_streamp strm, const Bytef *dictionary,
-                                 uInt  dictLength) {
+పూర్ణాంకం ZEXPORT deflate_సమితి_Dictionary(z_streamp strm, స్థిరరాశి Bytef *dictionary,
+                                 uInt  dict_నిడివి) {
     deflate_state *s;
     uInt str, n;
-    int wrap;
-    unsigned avail;
-    z_const unsigned char *next;
+    పూర్ణాంకం wrap;
+    గుర్తులేని avail;
+    z_const గుర్తులేని అక్షరం *తదుపరి;
 
-    if (deflateStateCheck(strm) || dictionary == Z_NULL)
-        return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(strm) || dictionary == Z_NULL)
+        తిరిగి Z_ప్రవాహం_ERROR;
     s = strm->state;
     wrap = s->wrap;
-    if (wrap == 2 || (wrap == 1 && s->status != INIT_STATE) || s->lookahead)
-        return Z_STREAM_ERROR;
+    ఒకవేళ (wrap == 2 || (wrap == 1 && s->స్థితి_2 != INIT_STATE) || s->lookahead)
+        తిరిగి Z_ప్రవాహం_ERROR;
 
     /* when using zlib wrappers, compute Adler-32 for provided dictionary */
-    if (wrap == 1)
-        strm->adler = adler32(strm->adler, dictionary, dictLength);
+    ఒకవేళ (wrap == 1)
+        strm->adler = adler32(strm->adler, dictionary, dict_నిడివి);
     s->wrap = 0;                    /* avoid computing Adler-32 in read_buf */
 
     /* if dictionary would fill window, just replace the history */
-    if (dictLength >= s->w_size) {
-        if (wrap == 0) {            /* already empty otherwise */
+    ఒకవేళ (dict_నిడివి >= s->w_కొలత) {
+        ఒకవేళ (wrap == 0) {            /* already empty otherwise */
             CLEAR_HASH(s);
             s->strstart = 0;
-            s->block_start = 0L;
-            s->insert = 0;
+            s->ఖండం_ప్రారంభం = 0L;
+            s->చొప్పించు = 0;
         }
-        dictionary += dictLength - s->w_size;  /* use the tail */
-        dictLength = s->w_size;
+        dictionary += dict_నిడివి - s->w_కొలత;  /* use the tail */
+        dict_నిడివి = s->w_కొలత;
     }
 
     /* insert dictionary into window and hash */
-    avail = strm->avail_in;
-    next = strm->next_in;
-    strm->avail_in = dictLength;
-    strm->next_in = (z_const Bytef *)dictionary;
-    fill_window(s);
-    while (s->lookahead >= MIN_MATCH) {
+    avail = strm->avail_లోపల;
+    తదుపరి = strm->తదుపరి_లోపల;
+    strm->avail_లోపల = dict_నిడివి;
+    strm->తదుపరి_లోపల = (z_const Bytef *)dictionary;
+    fill_కిటికీ(s);
+    అయితే (s->lookahead >= MIN_సరిపోలిక) {
         str = s->strstart;
-        n = s->lookahead - (MIN_MATCH-1);
-        do {
-            UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
-#ifndef FASTEST
-            s->prev[str & s->w_mask] = s->head[s->ins_h];
-#endif
-            s->head[s->ins_h] = (Pos)str;
+        n = s->lookahead - (MIN_సరిపోలిక-1);
+        చేయి {
+            UPDATE_HASH(s, s->ins_h, s->కిటికీ[str + MIN_సరిపోలిక-1]);
+#నిర్వచితం_కాకపోతే FASTEST
+            s->prev[str & s->w_ముసుగు] = s->తల[s->ins_h];
+#అయితే_ముగింపు
+            s->తల[s->ins_h] = (Pos)str;
             str++;
-        } while (--n);
+        } అయితే (--n);
         s->strstart = str;
-        s->lookahead = MIN_MATCH-1;
-        fill_window(s);
+        s->lookahead = MIN_సరిపోలిక-1;
+        fill_కిటికీ(s);
     }
     s->strstart += s->lookahead;
-    s->block_start = (long)s->strstart;
-    s->insert = s->lookahead;
+    s->ఖండం_ప్రారంభం = (దీర్ఘ)s->strstart;
+    s->చొప్పించు = s->lookahead;
     s->lookahead = 0;
-    s->match_length = s->prev_length = MIN_MATCH-1;
-    s->match_available = 0;
-    strm->next_in = next;
-    strm->avail_in = avail;
+    s->సరిపోలిక_నిడివి = s->prev_నిడివి = MIN_సరిపోలిక-1;
+    s->సరిపోలిక_అందుబాటు = 0;
+    strm->తదుపరి_లోపల = తదుపరి;
+    strm->avail_లోపల = avail;
     s->wrap = wrap;
-    return Z_OK;
+    తిరిగి Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateGetDictionary(z_streamp strm, Bytef *dictionary,
-                                 uInt *dictLength) {
+పూర్ణాంకం ZEXPORT deflateGetDictionary(z_streamp strm, Bytef *dictionary,
+                                 uInt *dict_నిడివి) {
     deflate_state *s;
     uInt len;
 
-    if (deflateStateCheck(strm))
-        return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(strm))
+        తిరిగి Z_ప్రవాహం_ERROR;
     s = strm->state;
     len = s->strstart + s->lookahead;
-    if (len > s->w_size)
-        len = s->w_size;
-    if (dictionary != Z_NULL && len)
-        zmemcpy(dictionary, s->window + s->strstart + s->lookahead - len, len);
-    if (dictLength != Z_NULL)
-        *dictLength = len;
-    return Z_OK;
+    ఒకవేళ (len > s->w_కొలత)
+        len = s->w_కొలత;
+    ఒకవేళ (dictionary != Z_NULL && len)
+        zmemcpy(dictionary, s->కిటికీ + s->strstart + s->lookahead - len, len);
+    ఒకవేళ (dict_నిడివి != Z_NULL)
+        *dict_నిడివి = len;
+    తిరిగి Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateResetKeep(z_streamp strm) {
+పూర్ణాంకం ZEXPORT deflateResetKeep(z_streamp strm) {
     deflate_state *s;
 
-    if (deflateStateCheck(strm)) {
-        return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(strm)) {
+        తిరిగి Z_ప్రవాహం_ERROR;
     }
 
-    strm->total_in = strm->total_out = 0;
-    strm->msg = Z_NULL; /* use zfree if we ever allocate msg dynamically */
-    strm->data_type = Z_UNKNOWN;
+    strm->మొత్తం_లోపల = strm->మొత్తం_బహిర్గతం = 0;
+    strm->సందేశం = Z_NULL; /* use zfree if we ever allocate msg dynamically */
+    strm->దత్తాంశం_type = Z_UNKNOWN;
 
     s = (deflate_state *)strm->state;
     s->pending = 0;
-    s->pending_out = s->pending_buf;
+    s->pending_బహిర్గతం = s->pending_buf;
 
-    if (s->wrap < 0) {
+    ఒకవేళ (s->wrap < 0) {
         s->wrap = -s->wrap; /* was made negative by deflate(..., Z_FINISH); */
     }
-    s->status =
-#ifdef GZIP
+    s->స్థితి_2 =
+#నిర్వచితమైతే GZIP
         s->wrap == 2 ? GZIP_STATE :
-#endif
+#అయితే_ముగింపు
         INIT_STATE;
     strm->adler =
-#ifdef GZIP
-        s->wrap == 2 ? crc32(0L, Z_NULL, 0) :
-#endif
+#నిర్వచితమైతే GZIP
+        s->wrap == 2 ? చక్రీయ_తనిఖీ_32_2(0L, Z_NULL, 0) :
+#అయితే_ముగింపు
         adler32(0L, Z_NULL, 0);
-    s->last_flush = -2;
+    s->చివరి_flush = -2;
 
     s->gzhead = Z_NULL;
 
     _tr_init(s);
 
-    return Z_OK;
+    తిరిగి Z_OK;
 }
 
 /* ===========================================================================
  * Initialize the "longest match" routines for a new zlib stream
  */
-local void lm_init(deflate_state *s) {
-    s->window_size = (ulg)2L*s->w_size;
+local శూన్య lm_init(deflate_state *s) {
+    s->కిటికీ_కొలత = (ulg)2L*s->w_కొలత;
 
     CLEAR_HASH(s);
 
     /* Set the default configuration parameters:
      */
-    s->max_lazy_match   = configuration_table[s->level].max_lazy;
-    s->good_match       = configuration_table[s->level].good_length;
-    s->nice_match       = configuration_table[s->level].nice_length;
-    s->max_chain_length = configuration_table[s->level].max_chain;
+    s->max_lazy_సరిపోలిక   = configuration_పట్టిక[s->level].max_lazy;
+    s->good_సరిపోలిక       = configuration_పట్టిక[s->level].good_నిడివి;
+    s->nice_సరిపోలిక       = configuration_పట్టిక[s->level].nice_నిడివి;
+    s->max_chain_నిడివి = configuration_పట్టిక[s->level].max_chain;
 
     s->strstart = 0;
-    s->block_start = 0L;
+    s->ఖండం_ప్రారంభం = 0L;
     s->lookahead = 0;
-    s->insert = 0;
-    s->match_length = s->prev_length = MIN_MATCH-1;
-    s->match_available = 0;
+    s->చొప్పించు = 0;
+    s->సరిపోలిక_నిడివి = s->prev_నిడివి = MIN_సరిపోలిక-1;
+    s->సరిపోలిక_అందుబాటు = 0;
     s->ins_h = 0;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateReset(z_streamp strm) {
-    int ret;
+పూర్ణాంకం ZEXPORT deflateReset(z_streamp strm) {
+    పూర్ణాంకం ret;
 
     ret = deflateResetKeep(strm);
-    if (ret == Z_OK)
+    ఒకవేళ (ret == Z_OK)
         lm_init(strm->state);
-    return ret;
+    తిరిగి ret;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateSetHeader(z_streamp strm, gz_headerp head) {
-    if (deflateStateCheck(strm) || strm->state->wrap != 2)
-        return Z_STREAM_ERROR;
-    strm->state->gzhead = head;
-    return Z_OK;
+పూర్ణాంకం ZEXPORT deflate_సమితి_శీర్షిక(z_streamp strm, gz_headerp తల) {
+    ఒకవేళ (deflateStateCheck(strm) || strm->state->wrap != 2)
+        తిరిగి Z_ప్రవాహం_ERROR;
+    strm->state->gzhead = తల;
+    తిరిగి Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflatePending(z_streamp strm, unsigned *pending, int *bits) {
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
-    if (bits != Z_NULL)
-        *bits = strm->state->bi_valid;
-    if (pending != Z_NULL) {
-        *pending = (unsigned)strm->state->pending;
-        if (*pending != strm->state->pending) {
-            *pending = (unsigned)-1;
-            return Z_BUF_ERROR;
+పూర్ణాంకం ZEXPORT deflatePending(z_streamp strm, గుర్తులేని *pending, పూర్ణాంకం *బిట్లు) {
+    ఒకవేళ (deflateStateCheck(strm)) తిరిగి Z_ప్రవాహం_ERROR;
+    ఒకవేళ (బిట్లు != Z_NULL)
+        *బిట్లు = strm->state->bi_valid;
+    ఒకవేళ (pending != Z_NULL) {
+        *pending = (గుర్తులేని)strm->state->pending;
+        ఒకవేళ (*pending != strm->state->pending) {
+            *pending = (గుర్తులేని)-1;
+            తిరిగి Z_BUF_ERROR;
         }
     }
-    return Z_OK;
+    తిరిగి Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateUsed(z_streamp strm, int *bits) {
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
-    if (bits != Z_NULL)
-        *bits = strm->state->bi_used;
-    return Z_OK;
+పూర్ణాంకం ZEXPORT deflate_వాడిన(z_streamp strm, పూర్ణాంకం *బిట్లు) {
+    ఒకవేళ (deflateStateCheck(strm)) తిరిగి Z_ప్రవాహం_ERROR;
+    ఒకవేళ (బిట్లు != Z_NULL)
+        *బిట్లు = strm->state->bi_వాడిన;
+    తిరిగి Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflatePrime(z_streamp strm, int bits, int value) {
+పూర్ణాంకం ZEXPORT deflate_ప్రధానసంఖ్య(z_streamp strm, పూర్ణాంకం బిట్లు, పూర్ణాంకం విలువ) {
     deflate_state *s;
-    int put;
+    పూర్ణాంకం put;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(strm)) తిరిగి Z_ప్రవాహం_ERROR;
     s = strm->state;
-#ifdef LIT_MEM
-    if (bits < 0 || bits > 16 ||
-        (uchf *)s->d_buf < s->pending_out + ((Buf_size + 7) >> 3))
-        return Z_BUF_ERROR;
-#else
-    if (bits < 0 || bits > 16 ||
-        s->sym_buf < s->pending_out + ((Buf_size + 7) >> 3))
-        return Z_BUF_ERROR;
-#endif
-    do {
-        put = Buf_size - s->bi_valid;
-        if (put > bits)
-            put = bits;
-        s->bi_buf |= (ush)((value & ((1 << put) - 1)) << s->bi_valid);
+#నిర్వచితమైతే LIT_MEM
+    ఒకవేళ (బిట్లు < 0 || బిట్లు > 16 ||
+        (uchf *)s->d_buf < s->pending_బహిర్గతం + ((Buf_కొలత + 7) >> 3))
+        తిరిగి Z_BUF_ERROR;
+#లేకపోతే
+    ఒకవేళ (బిట్లు < 0 || బిట్లు > 16 ||
+        s->sym_buf < s->pending_బహిర్గతం + ((Buf_కొలత + 7) >> 3))
+        తిరిగి Z_BUF_ERROR;
+#అయితే_ముగింపు
+    చేయి {
+        put = Buf_కొలత - s->bi_valid;
+        ఒకవేళ (put > బిట్లు)
+            put = బిట్లు;
+        s->bi_buf |= (ush)((విలువ & ((1 << put) - 1)) << s->bi_valid);
         s->bi_valid += put;
-        _tr_flush_bits(s);
-        value >>= put;
-        bits -= put;
-    } while (bits);
-    return Z_OK;
+        tr_flush_బిట్లు(s);
+        విలువ >>= put;
+        బిట్లు -= put;
+    } అయితే (బిట్లు);
+    తిరిగి Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateParams(z_streamp strm, int level, int strategy) {
+పూర్ణాంకం ZEXPORT deflateParams(z_streamp strm, పూర్ణాంకం level, పూర్ణాంకం strategy) {
     deflate_state *s;
     compress_func func;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(strm)) తిరిగి Z_ప్రవాహం_ERROR;
     s = strm->state;
 
-#ifdef FASTEST
-    if (level != 0) level = 1;
-#else
-    if (level == Z_DEFAULT_COMPRESSION) level = 6;
-#endif
-    if (level < 0 || level > 9 || strategy < 0 || strategy > Z_FIXED) {
-        return Z_STREAM_ERROR;
+#నిర్వచితమైతే FASTEST
+    ఒకవేళ (level != 0) level = 1;
+#లేకపోతే
+    ఒకవేళ (level == Z_DEFAULT_COMPRESSION) level = 6;
+#అయితే_ముగింపు
+    ఒకవేళ (level < 0 || level > 9 || strategy < 0 || strategy > Z_FIXED) {
+        తిరిగి Z_ప్రవాహం_ERROR;
     }
-    func = configuration_table[s->level].func;
+    func = configuration_పట్టిక[s->level].func;
 
-    if ((strategy != s->strategy || func != configuration_table[level].func) &&
-        s->last_flush != -2) {
+    ఒకవేళ ((strategy != s->strategy || func != configuration_పట్టిక[level].func) &&
+        s->చివరి_flush != -2) {
         /* Flush the last buffer: */
-        int err = deflate(strm, Z_BLOCK);
-        if (err == Z_STREAM_ERROR)
-            return err;
-        if (strm->avail_in || (s->strstart - s->block_start) + s->lookahead)
-            return Z_BUF_ERROR;
+        పూర్ణాంకం err = deflate(strm, Z_ఖండం);
+        ఒకవేళ (err == Z_ప్రవాహం_ERROR)
+            తిరిగి err;
+        ఒకవేళ (strm->avail_లోపల || (s->strstart - s->ఖండం_ప్రారంభం) + s->lookahead)
+            తిరిగి Z_BUF_ERROR;
     }
-    if (s->level != level) {
-        if (s->level == 0 && s->matches != 0) {
-            if (s->matches == 1)
+    ఒకవేళ (s->level != level) {
+        ఒకవేళ (s->level == 0 && s->matches != 0) {
+            ఒకవేళ (s->matches == 1)
                 slide_hash(s);
-            else
+            లేకపోతే
                 CLEAR_HASH(s);
             s->matches = 0;
         }
         s->level = level;
-        s->max_lazy_match   = configuration_table[level].max_lazy;
-        s->good_match       = configuration_table[level].good_length;
-        s->nice_match       = configuration_table[level].nice_length;
-        s->max_chain_length = configuration_table[level].max_chain;
+        s->max_lazy_సరిపోలిక   = configuration_పట్టిక[level].max_lazy;
+        s->good_సరిపోలిక       = configuration_పట్టిక[level].good_నిడివి;
+        s->nice_సరిపోలిక       = configuration_పట్టిక[level].nice_నిడివి;
+        s->max_chain_నిడివి = configuration_పట్టిక[level].max_chain;
     }
     s->strategy = strategy;
-    return Z_OK;
+    తిరిగి Z_OK;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateTune(z_streamp strm, int good_length, int max_lazy,
-                        int nice_length, int max_chain) {
+పూర్ణాంకం ZEXPORT deflateTune(z_streamp strm, పూర్ణాంకం good_నిడివి, పూర్ణాంకం max_lazy,
+                        పూర్ణాంకం nice_నిడివి, పూర్ణాంకం max_chain) {
     deflate_state *s;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(strm)) తిరిగి Z_ప్రవాహం_ERROR;
     s = strm->state;
-    s->good_match = (uInt)good_length;
-    s->max_lazy_match = (uInt)max_lazy;
-    s->nice_match = nice_length;
-    s->max_chain_length = (uInt)max_chain;
-    return Z_OK;
+    s->good_సరిపోలిక = (uInt)good_నిడివి;
+    s->max_lazy_సరిపోలిక = (uInt)max_lazy;
+    s->nice_సరిపోలిక = nice_నిడివి;
+    s->max_chain_నిడివి = (uInt)max_chain;
+    తిరిగి Z_OK;
 }
 
 /* =========================================================================
@@ -854,82 +854,82 @@ int ZEXPORT deflateTune(z_streamp strm, int good_length, int max_lazy,
  *
  * Shifts are used to approximate divisions, for speed.
  */
-z_size_t ZEXPORT deflateBound_z(z_streamp strm, z_size_t sourceLen) {
+z_కొలత_t ZEXPORT deflateBound_z(z_streamp strm, z_కొలత_t ఆధారం_Len) {
     deflate_state *s;
-    z_size_t fixedlen, storelen, wraplen, bound;
+    z_కొలత_t fixedlen, storelen, wraplen, bound;
 
     /* upper bound for fixed blocks with 9-bit literals and length 255
        (memLevel == 2, which is the lowest that may not use stored blocks) --
        ~13% overhead plus a small constant */
-    fixedlen = sourceLen + (sourceLen >> 3) + (sourceLen >> 8) +
-               (sourceLen >> 9) + 4;
-    if (fixedlen < sourceLen)
-        fixedlen = (z_size_t)-1;
+    fixedlen = ఆధారం_Len + (ఆధారం_Len >> 3) + (ఆధారం_Len >> 8) +
+               (ఆధారం_Len >> 9) + 4;
+    ఒకవేళ (fixedlen < ఆధారం_Len)
+        fixedlen = (z_కొలత_t)-1;
 
     /* upper bound for stored blocks with length 127 (memLevel == 1) --
        ~4% overhead plus a small constant */
-    storelen = sourceLen + (sourceLen >> 5) + (sourceLen >> 7) +
-               (sourceLen >> 11) + 7;
-    if (storelen < sourceLen)
-        storelen = (z_size_t)-1;
+    storelen = ఆధారం_Len + (ఆధారం_Len >> 5) + (ఆధారం_Len >> 7) +
+               (ఆధారం_Len >> 11) + 7;
+    ఒకవేళ (storelen < ఆధారం_Len)
+        storelen = (z_కొలత_t)-1;
 
     /* if can't get parameters, return larger bound plus a wrapper */
-    if (deflateStateCheck(strm)) {
+    ఒకవేళ (deflateStateCheck(strm)) {
         bound = fixedlen > storelen ? fixedlen : storelen;
-        return bound + 18 < bound ? (z_size_t)-1 : bound + 18;
+        తిరిగి bound + 18 < bound ? (z_కొలత_t)-1 : bound + 18;
     }
 
     /* compute wrapper length */
     s = strm->state;
-    switch (s->wrap < 0 ? -s->wrap : s->wrap) {
-    case 0:                                 /* raw deflate */
+    ఎంపిక (s->wrap < 0 ? -s->wrap : s->wrap) {
+    స్థితి 0:                                 /* raw deflate */
         wraplen = 0;
-        break;
-    case 1:                                 /* zlib wrapper */
+        ఆపు;
+    స్థితి 1:                                 /* zlib wrapper */
         wraplen = 6 + (s->strstart ? 4 : 0);
-        break;
-#ifdef GZIP
-    case 2:                                 /* gzip wrapper */
+        ఆపు;
+#నిర్వచితమైతే GZIP
+    స్థితి 2:                                 /* gzip wrapper */
         wraplen = 18;
-        if (s->gzhead != Z_NULL) {          /* user-supplied gzip header */
+        ఒకవేళ (s->gzhead != Z_NULL) {          /* user-supplied gzip header */
             Bytef *str;
-            if (s->gzhead->extra != Z_NULL)
+            ఒకవేళ (s->gzhead->extra != Z_NULL)
                 wraplen += 2 + s->gzhead->extra_len;
             str = s->gzhead->name;
-            if (str != Z_NULL)
-                do {
+            ఒకవేళ (str != Z_NULL)
+                చేయి {
                     wraplen++;
-                } while (*str++);
+                } అయితే (*str++);
             str = s->gzhead->comment;
-            if (str != Z_NULL)
-                do {
+            ఒకవేళ (str != Z_NULL)
+                చేయి {
                     wraplen++;
-                } while (*str++);
-            if (s->gzhead->hcrc)
+                } అయితే (*str++);
+            ఒకవేళ (s->gzhead->hcrc)
                 wraplen += 2;
         }
-        break;
-#endif
-    default:                                /* for compiler happiness */
+        ఆపు;
+#అయితే_ముగింపు
+    అప్రమేయ:                                /* for compiler happiness */
         wraplen = 18;
     }
 
     /* if not default parameters, return one of the conservative bounds */
-    if (s->w_bits != 15 || s->hash_bits != 8 + 7) {
-        bound = s->w_bits <= s->hash_bits && s->level ? fixedlen :
+    ఒకవేళ (s->w_బిట్లు != 15 || s->hash_బిట్లు != 8 + 7) {
+        bound = s->w_బిట్లు <= s->hash_బిట్లు && s->level ? fixedlen :
                                                         storelen;
-        return bound + wraplen < bound ? (z_size_t)-1 : bound + wraplen;
+        తిరిగి bound + wraplen < bound ? (z_కొలత_t)-1 : bound + wraplen;
     }
 
     /* default settings: return tight bound for that case -- ~0.03% overhead
        plus a small constant */
-    bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
-            (sourceLen >> 25) + 13 - 6 + wraplen;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+    bound = ఆధారం_Len + (ఆధారం_Len >> 12) + (ఆధారం_Len >> 14) +
+            (ఆధారం_Len >> 25) + 13 - 6 + wraplen;
+    తిరిగి bound < ఆధారం_Len ? (z_కొలత_t)-1 : bound;
 }
-uLong ZEXPORT deflateBound(z_streamp strm, uLong sourceLen) {
-    z_size_t bound = deflateBound_z(strm, sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+uLong ZEXPORT deflateBound(z_streamp strm, uLong ఆధారం_Len) {
+    z_కొలత_t bound = deflateBound_z(strm, ఆధారం_Len);
+    తిరిగి (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }
 
 /* =========================================================================
@@ -937,7 +937,7 @@ uLong ZEXPORT deflateBound(z_streamp strm, uLong sourceLen) {
  * IN assertion: the stream state is correct and there is enough room in
  * pending_buf.
  */
-local void putShortMSB(deflate_state *s, uInt b) {
+local శూన్య putShortMSB(deflate_state *s, uInt b) {
     put_byte(s, (Byte)(b >> 8));
     put_byte(s, (Byte)(b & 0xff));
 }
@@ -948,129 +948,129 @@ local void putShortMSB(deflate_state *s, uInt b) {
  * applications may wish to modify it to avoid allocating a large
  * strm->next_out buffer and copying into it. (See also read_buf()).
  */
-local void flush_pending(z_streamp strm) {
-    unsigned len;
+local శూన్య flush_pending(z_streamp strm) {
+    గుర్తులేని len;
     deflate_state *s = strm->state;
 
-    _tr_flush_bits(s);
-    len = s->pending > strm->avail_out ? strm->avail_out :
-                                         (unsigned)s->pending;
-    if (len == 0) return;
+    tr_flush_బిట్లు(s);
+    len = s->pending > strm->avail_బహిర్గతం ? strm->avail_బహిర్గతం :
+                                         (గుర్తులేని)s->pending;
+    ఒకవేళ (len == 0) తిరిగి;
 
-    zmemcpy(strm->next_out, s->pending_out, len);
-    strm->next_out  += len;
-    s->pending_out  += len;
-    strm->total_out += len;
-    strm->avail_out -= len;
+    zmemcpy(strm->తదుపరి_బహిర్గతం, s->pending_బహిర్గతం, len);
+    strm->తదుపరి_బహిర్గతం  += len;
+    s->pending_బహిర్గతం  += len;
+    strm->మొత్తం_బహిర్గతం += len;
+    strm->avail_బహిర్గతం -= len;
     s->pending      -= len;
-    if (s->pending == 0) {
-        s->pending_out = s->pending_buf;
+    ఒకవేళ (s->pending == 0) {
+        s->pending_బహిర్గతం = s->pending_buf;
     }
 }
 
 /* ===========================================================================
  * Update the header CRC with the bytes s->pending_buf[beg..s->pending - 1].
  */
-#define HCRC_UPDATE(beg) \
-    do { \
-        if (s->gzhead->hcrc && s->pending > (beg)) \
-            strm->adler = crc32_z(strm->adler, s->pending_buf + (beg), \
+#నిర్వచించు HCRC_UPDATE(beg) \
+    చేయి { \
+        ఒకవేళ (s->gzhead->hcrc && s->pending > (beg)) \
+            strm->adler = చక్రీయ_తనిఖీ_32_z(strm->adler, s->pending_buf + (beg), \
                                   s->pending - (beg)); \
-    } while (0)
+    } అయితే (0)
 
 /* ========================================================================= */
-int ZEXPORT deflate(z_streamp strm, int flush) {
-    int old_flush; /* value of flush param for previous deflate call */
+పూర్ణాంకం ZEXPORT deflate(z_streamp strm, పూర్ణాంకం flush) {
+    పూర్ణాంకం old_flush; /* value of flush param for previous deflate call */
     deflate_state *s;
 
-    if (deflateStateCheck(strm) || flush > Z_BLOCK || flush < 0) {
-        return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(strm) || flush > Z_ఖండం || flush < 0) {
+        తిరిగి Z_ప్రవాహం_ERROR;
     }
     s = strm->state;
 
-    if (strm->next_out == Z_NULL ||
-        (strm->avail_in != 0 && strm->next_in == Z_NULL) ||
-        (s->status == FINISH_STATE && flush != Z_FINISH)) {
-        ERR_RETURN(strm, Z_STREAM_ERROR);
+    ఒకవేళ (strm->తదుపరి_బహిర్గతం == Z_NULL ||
+        (strm->avail_లోపల != 0 && strm->తదుపరి_లోపల == Z_NULL) ||
+        (s->స్థితి_2 == ముగింపు_STATE && flush != Z_ముగింపు)) {
+        ERR_RETURN(strm, Z_ప్రవాహం_ERROR);
     }
-    if (strm->avail_out == 0) ERR_RETURN(strm, Z_BUF_ERROR);
+    ఒకవేళ (strm->avail_బహిర్గతం == 0) ERR_RETURN(strm, Z_BUF_ERROR);
 
-    old_flush = s->last_flush;
-    s->last_flush = flush;
+    old_flush = s->చివరి_flush;
+    s->చివరి_flush = flush;
 
     /* Flush as much pending output as possible */
-    if (s->pending != 0) {
+    ఒకవేళ (s->pending != 0) {
         flush_pending(strm);
-        if (strm->avail_out == 0) {
+        ఒకవేళ (strm->avail_బహిర్గతం == 0) {
             /* Since avail_out is 0, deflate will be called again with
              * more output space, but possibly with both pending and
              * avail_in equal to zero. There won't be anything to do,
              * but this is not an error situation so make sure we
              * return OK instead of BUF_ERROR at next call of deflate:
              */
-            s->last_flush = -1;
-            return Z_OK;
+            s->చివరి_flush = -1;
+            తిరిగి Z_OK;
         }
 
     /* Make sure there is something to do and avoid duplicate consecutive
      * flushes. For repeated and useless calls with Z_FINISH, we keep
      * returning Z_STREAM_END instead of Z_BUF_ERROR.
      */
-    } else if (strm->avail_in == 0 && RANK(flush) <= RANK(old_flush) &&
-               flush != Z_FINISH) {
+    } లేకపోతే ఒకవేళ (strm->avail_లోపల == 0 && RANK(flush) <= RANK(old_flush) &&
+               flush != Z_ముగింపు) {
         ERR_RETURN(strm, Z_BUF_ERROR);
     }
 
     /* User must not provide more input after the first FINISH: */
-    if (s->status == FINISH_STATE && strm->avail_in != 0) {
+    ఒకవేళ (s->స్థితి_2 == ముగింపు_STATE && strm->avail_లోపల != 0) {
         ERR_RETURN(strm, Z_BUF_ERROR);
     }
 
     /* Write the header */
-    if (s->status == INIT_STATE && s->wrap == 0)
-        s->status = BUSY_STATE;
-    if (s->status == INIT_STATE) {
+    ఒకవేళ (s->స్థితి_2 == INIT_STATE && s->wrap == 0)
+        s->స్థితి_2 = BUSY_STATE;
+    ఒకవేళ (s->స్థితి_2 == INIT_STATE) {
         /* zlib header */
-        uInt header = (Z_DEFLATED + ((s->w_bits - 8) << 4)) << 8;
+        uInt శీర్షిక = (Z_DEFLATED + ((s->w_బిట్లు - 8) << 4)) << 8;
         uInt level_flags;
 
-        if (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
+        ఒకవేళ (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
             level_flags = 0;
-        else if (s->level < 6)
+        లేకపోతే ఒకవేళ (s->level < 6)
             level_flags = 1;
-        else if (s->level == 6)
+        లేకపోతే ఒకవేళ (s->level == 6)
             level_flags = 2;
-        else
+        లేకపోతే
             level_flags = 3;
-        header |= (level_flags << 6);
-        if (s->strstart != 0) header |= PRESET_DICT;
-        header += 31 - (header % 31);
+        శీర్షిక |= (level_flags << 6);
+        ఒకవేళ (s->strstart != 0) శీర్షిక |= PRESET_DICT;
+        శీర్షిక += 31 - (శీర్షిక % 31);
 
-        putShortMSB(s, header);
+        putShortMSB(s, శీర్షిక);
 
         /* Save the adler32 of the preset dictionary: */
-        if (s->strstart != 0) {
+        ఒకవేళ (s->strstart != 0) {
             putShortMSB(s, (uInt)(strm->adler >> 16));
             putShortMSB(s, (uInt)(strm->adler & 0xffff));
         }
         strm->adler = adler32(0L, Z_NULL, 0);
-        s->status = BUSY_STATE;
+        s->స్థితి_2 = BUSY_STATE;
 
         /* Compression must start with an empty pending buffer */
         flush_pending(strm);
-        if (s->pending != 0) {
-            s->last_flush = -1;
-            return Z_OK;
+        ఒకవేళ (s->pending != 0) {
+            s->చివరి_flush = -1;
+            తిరిగి Z_OK;
         }
     }
-#ifdef GZIP
-    if (s->status == GZIP_STATE) {
+#నిర్వచితమైతే GZIP
+    ఒకవేళ (s->స్థితి_2 == GZIP_STATE) {
         /* gzip header */
-        strm->adler = crc32(0L, Z_NULL, 0);
+        strm->adler = చక్రీయ_తనిఖీ_32_2(0L, Z_NULL, 0);
         put_byte(s, 31);
         put_byte(s, 139);
         put_byte(s, 8);
-        if (s->gzhead == Z_NULL) {
+        ఒకవేళ (s->gzhead == Z_NULL) {
             put_byte(s, 0);
             put_byte(s, 0);
             put_byte(s, 0);
@@ -1079,18 +1079,18 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
             put_byte(s, s->level == 9 ? 2 :
                      (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2 ?
                       4 : 0));
-            put_byte(s, OS_CODE);
-            s->status = BUSY_STATE;
+            put_byte(s, OS_సంకేతం);
+            s->స్థితి_2 = BUSY_STATE;
 
             /* Compression must start with an empty pending buffer */
             flush_pending(strm);
-            if (s->pending != 0) {
-                s->last_flush = -1;
-                return Z_OK;
+            ఒకవేళ (s->pending != 0) {
+                s->చివరి_flush = -1;
+                తిరిగి Z_OK;
             }
         }
-        else {
-            put_byte(s, (s->gzhead->text ? 1 : 0) +
+        లేకపోతే {
+            put_byte(s, (s->gzhead->పాఠ్యం ? 1 : 0) +
                      (s->gzhead->hcrc ? 2 : 0) +
                      (s->gzhead->extra == Z_NULL ? 0 : 4) +
                      (s->gzhead->name == Z_NULL ? 0 : 8) +
@@ -1104,130 +1104,130 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
                      (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2 ?
                       4 : 0));
             put_byte(s, s->gzhead->os & 0xff);
-            if (s->gzhead->extra != Z_NULL) {
+            ఒకవేళ (s->gzhead->extra != Z_NULL) {
                 put_byte(s, s->gzhead->extra_len & 0xff);
                 put_byte(s, (s->gzhead->extra_len >> 8) & 0xff);
             }
-            if (s->gzhead->hcrc)
-                strm->adler = crc32_z(strm->adler, s->pending_buf,
+            ఒకవేళ (s->gzhead->hcrc)
+                strm->adler = చక్రీయ_తనిఖీ_32_z(strm->adler, s->pending_buf,
                                       s->pending);
             s->gzindex = 0;
-            s->status = EXTRA_STATE;
+            s->స్థితి_2 = EXTRA_STATE;
         }
     }
-    if (s->status == EXTRA_STATE) {
-        if (s->gzhead->extra != Z_NULL) {
+    ఒకవేళ (s->స్థితి_2 == EXTRA_STATE) {
+        ఒకవేళ (s->gzhead->extra != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            ulg left = (s->gzhead->extra_len & 0xffff) - s->gzindex;
-            while (s->pending + left > s->pending_buf_size) {
-                ulg copy = s->pending_buf_size - s->pending;
+            ulg ఎడమ = (s->gzhead->extra_len & 0xffff) - s->gzindex;
+            అయితే (s->pending + ఎడమ > s->pending_buf_కొలత) {
+                ulg copy = s->pending_buf_కొలత - s->pending;
                 zmemcpy(s->pending_buf + s->pending,
                         s->gzhead->extra + s->gzindex, copy);
-                s->pending = s->pending_buf_size;
+                s->pending = s->pending_buf_కొలత;
                 HCRC_UPDATE(beg);
                 s->gzindex += copy;
                 flush_pending(strm);
-                if (s->pending != 0) {
-                    s->last_flush = -1;
-                    return Z_OK;
+                ఒకవేళ (s->pending != 0) {
+                    s->చివరి_flush = -1;
+                    తిరిగి Z_OK;
                 }
                 beg = 0;
-                left -= copy;
+                ఎడమ -= copy;
             }
             zmemcpy(s->pending_buf + s->pending,
-                    s->gzhead->extra + s->gzindex, left);
-            s->pending += left;
+                    s->gzhead->extra + s->gzindex, ఎడమ);
+            s->pending += ఎడమ;
             HCRC_UPDATE(beg);
             s->gzindex = 0;
         }
-        s->status = NAME_STATE;
+        s->స్థితి_2 = NAME_STATE;
     }
-    if (s->status == NAME_STATE) {
-        if (s->gzhead->name != Z_NULL) {
+    ఒకవేళ (s->స్థితి_2 == NAME_STATE) {
+        ఒకవేళ (s->gzhead->name != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            int val;
-            do {
-                if (s->pending == s->pending_buf_size) {
+            పూర్ణాంకం val;
+            చేయి {
+                ఒకవేళ (s->pending == s->pending_buf_కొలత) {
                     HCRC_UPDATE(beg);
                     flush_pending(strm);
-                    if (s->pending != 0) {
-                        s->last_flush = -1;
-                        return Z_OK;
+                    ఒకవేళ (s->pending != 0) {
+                        s->చివరి_flush = -1;
+                        తిరిగి Z_OK;
                     }
                     beg = 0;
                 }
                 val = s->gzhead->name[s->gzindex++];
                 put_byte(s, val);
-            } while (val != 0);
+            } అయితే (val != 0);
             HCRC_UPDATE(beg);
             s->gzindex = 0;
         }
-        s->status = COMMENT_STATE;
+        s->స్థితి_2 = COMMENT_STATE;
     }
-    if (s->status == COMMENT_STATE) {
-        if (s->gzhead->comment != Z_NULL) {
+    ఒకవేళ (s->స్థితి_2 == COMMENT_STATE) {
+        ఒకవేళ (s->gzhead->comment != Z_NULL) {
             ulg beg = s->pending;   /* start of bytes to update crc */
-            int val;
-            do {
-                if (s->pending == s->pending_buf_size) {
+            పూర్ణాంకం val;
+            చేయి {
+                ఒకవేళ (s->pending == s->pending_buf_కొలత) {
                     HCRC_UPDATE(beg);
                     flush_pending(strm);
-                    if (s->pending != 0) {
-                        s->last_flush = -1;
-                        return Z_OK;
+                    ఒకవేళ (s->pending != 0) {
+                        s->చివరి_flush = -1;
+                        తిరిగి Z_OK;
                     }
                     beg = 0;
                 }
                 val = s->gzhead->comment[s->gzindex++];
                 put_byte(s, val);
-            } while (val != 0);
+            } అయితే (val != 0);
             HCRC_UPDATE(beg);
         }
-        s->status = HCRC_STATE;
+        s->స్థితి_2 = HCRC_STATE;
     }
-    if (s->status == HCRC_STATE) {
-        if (s->gzhead->hcrc) {
-            if (s->pending + 2 > s->pending_buf_size) {
+    ఒకవేళ (s->స్థితి_2 == HCRC_STATE) {
+        ఒకవేళ (s->gzhead->hcrc) {
+            ఒకవేళ (s->pending + 2 > s->pending_buf_కొలత) {
                 flush_pending(strm);
-                if (s->pending != 0) {
-                    s->last_flush = -1;
-                    return Z_OK;
+                ఒకవేళ (s->pending != 0) {
+                    s->చివరి_flush = -1;
+                    తిరిగి Z_OK;
                 }
             }
             put_byte(s, (Byte)(strm->adler & 0xff));
             put_byte(s, (Byte)((strm->adler >> 8) & 0xff));
-            strm->adler = crc32(0L, Z_NULL, 0);
+            strm->adler = చక్రీయ_తనిఖీ_32_2(0L, Z_NULL, 0);
         }
-        s->status = BUSY_STATE;
+        s->స్థితి_2 = BUSY_STATE;
 
         /* Compression must start with an empty pending buffer */
         flush_pending(strm);
-        if (s->pending != 0) {
-            s->last_flush = -1;
-            return Z_OK;
+        ఒకవేళ (s->pending != 0) {
+            s->చివరి_flush = -1;
+            తిరిగి Z_OK;
         }
     }
-#endif
+#అయితే_ముగింపు
 
     /* Start a new block or continue the current one.
      */
-    if (strm->avail_in != 0 || s->lookahead != 0 ||
-        (flush != Z_NO_FLUSH && s->status != FINISH_STATE)) {
-        block_state bstate;
+    ఒకవేళ (strm->avail_లోపల != 0 || s->lookahead != 0 ||
+        (flush != Z_NO_FLUSH && s->స్థితి_2 != ముగింపు_STATE)) {
+        ఖండం_state bstate;
 
         bstate = s->level == 0 ? deflate_stored(s, flush) :
                  s->strategy == Z_HUFFMAN_ONLY ? deflate_huff(s, flush) :
                  s->strategy == Z_RLE ? deflate_rle(s, flush) :
-                 (*(configuration_table[s->level].func))(s, flush);
+                 (*(configuration_పట్టిక[s->level].func))(s, flush);
 
-        if (bstate == finish_started || bstate == finish_done) {
-            s->status = FINISH_STATE;
+        ఒకవేళ (bstate == ముగింపు_started || bstate == ముగింపు_పూర్తి) {
+            s->స్థితి_2 = ముగింపు_STATE;
         }
-        if (bstate == need_more || bstate == finish_started) {
-            if (strm->avail_out == 0) {
-                s->last_flush = -1; /* avoid BUF_ERROR next call, see above */
+        ఒకవేళ (bstate == need_మరిన్ని || bstate == ముగింపు_started) {
+            ఒకవేళ (strm->avail_బహిర్గతం == 0) {
+                s->చివరి_flush = -1; /* avoid BUF_ERROR next call, see above */
             }
-            return Z_OK;
+            తిరిగి Z_OK;
             /* If flush != Z_NO_FLUSH && avail_out == 0, the next call
              * of deflate should use the same flush parameter to make sure
              * that the flush is complete. So we don't have to output an
@@ -1236,48 +1236,48 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
              * one empty block.
              */
         }
-        if (bstate == block_done) {
-            if (flush == Z_PARTIAL_FLUSH) {
+        ఒకవేళ (bstate == ఖండం_పూర్తి) {
+            ఒకవేళ (flush == Z_PARTIAL_FLUSH) {
                 _tr_align(s);
-            } else if (flush != Z_BLOCK) { /* FULL_FLUSH or SYNC_FLUSH */
-                _tr_stored_block(s, (char*)0, 0L, 0);
+            } లేకపోతే ఒకవేళ (flush != Z_ఖండం) { /* FULL_FLUSH or SYNC_FLUSH */
+                tr_stored_ఖండం(s, (అక్షరం*)0, 0L, 0);
                 /* For a full flush, this empty block will be recognized
                  * as a special marker by inflate_sync().
                  */
-                if (flush == Z_FULL_FLUSH) {
+                ఒకవేళ (flush == Z_నిండిన_FLUSH) {
                     CLEAR_HASH(s);             /* forget history */
-                    if (s->lookahead == 0) {
+                    ఒకవేళ (s->lookahead == 0) {
                         s->strstart = 0;
-                        s->block_start = 0L;
-                        s->insert = 0;
+                        s->ఖండం_ప్రారంభం = 0L;
+                        s->చొప్పించు = 0;
                     }
                 }
             }
             flush_pending(strm);
-            if (strm->avail_out == 0) {
-              s->last_flush = -1; /* avoid BUF_ERROR at next call, see above */
-              return Z_OK;
+            ఒకవేళ (strm->avail_బహిర్గతం == 0) {
+              s->చివరి_flush = -1; /* avoid BUF_ERROR at next call, see above */
+              తిరిగి Z_OK;
             }
         }
     }
 
-    if (flush != Z_FINISH) return Z_OK;
-    if (s->wrap <= 0) return Z_STREAM_END;
+    ఒకవేళ (flush != Z_ముగింపు) తిరిగి Z_OK;
+    ఒకవేళ (s->wrap <= 0) తిరిగి Z_ప్రవాహం_చివర;
 
     /* Write the trailer */
-#ifdef GZIP
-    if (s->wrap == 2) {
+#నిర్వచితమైతే GZIP
+    ఒకవేళ (s->wrap == 2) {
         put_byte(s, (Byte)(strm->adler & 0xff));
         put_byte(s, (Byte)((strm->adler >> 8) & 0xff));
         put_byte(s, (Byte)((strm->adler >> 16) & 0xff));
         put_byte(s, (Byte)((strm->adler >> 24) & 0xff));
-        put_byte(s, (Byte)(strm->total_in & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 8) & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 16) & 0xff));
-        put_byte(s, (Byte)((strm->total_in >> 24) & 0xff));
+        put_byte(s, (Byte)(strm->మొత్తం_లోపల & 0xff));
+        put_byte(s, (Byte)((strm->మొత్తం_లోపల >> 8) & 0xff));
+        put_byte(s, (Byte)((strm->మొత్తం_లోపల >> 16) & 0xff));
+        put_byte(s, (Byte)((strm->మొత్తం_లోపల >> 24) & 0xff));
     }
-    else
-#endif
+    లేకపోతే
+#అయితే_ముగింపు
     {
         putShortMSB(s, (uInt)(strm->adler >> 16));
         putShortMSB(s, (uInt)(strm->adler & 0xffff));
@@ -1286,28 +1286,28 @@ int ZEXPORT deflate(z_streamp strm, int flush) {
     /* If avail_out is zero, the application will call deflate again
      * to flush the rest.
      */
-    if (s->wrap > 0) s->wrap = -s->wrap; /* write the trailer only once! */
-    return s->pending != 0 ? Z_OK : Z_STREAM_END;
+    ఒకవేళ (s->wrap > 0) s->wrap = -s->wrap; /* write the trailer only once! */
+    తిరిగి s->pending != 0 ? Z_OK : Z_ప్రవాహం_చివర;
 }
 
 /* ========================================================================= */
-int ZEXPORT deflateEnd(z_streamp strm) {
-    int status;
+పూర్ణాంకం ZEXPORT deflate_చివర(z_streamp strm) {
+    పూర్ణాంకం స్థితి_2;
 
-    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(strm)) తిరిగి Z_ప్రవాహం_ERROR;
 
-    status = strm->state->status;
+    స్థితి_2 = strm->state->స్థితి_2;
 
     /* Deallocate in reverse order of allocations: */
     TRY_FREE(strm, strm->state->pending_buf);
-    TRY_FREE(strm, strm->state->head);
+    TRY_FREE(strm, strm->state->తల);
     TRY_FREE(strm, strm->state->prev);
-    TRY_FREE(strm, strm->state->window);
+    TRY_FREE(strm, strm->state->కిటికీ);
 
     ZFREE(strm, strm->state);
     strm->state = Z_NULL;
 
-    return status == BUSY_STATE ? Z_DATA_ERROR : Z_OK;
+    తిరిగి స్థితి_2 == BUSY_STATE ? Z_దత్తాంశం_ERROR : Z_OK;
 }
 
 /* =========================================================================
@@ -1315,69 +1315,69 @@ int ZEXPORT deflateEnd(z_streamp strm) {
  * To simplify the source, this is not supported for 16-bit MSDOS (which
  * doesn't have enough memory anyway to duplicate compression states).
  */
-int ZEXPORT deflateCopy(z_streamp dest, z_streamp source) {
-#ifdef MAXSEG_64K
-    (void)dest;
-    (void)source;
-    return Z_STREAM_ERROR;
-#else
+పూర్ణాంకం ZEXPORT deflateCopy(z_streamp dest, z_streamp ఆధారం) {
+#నిర్వచితమైతే MAXSEG_64K
+    (శూన్య)dest;
+    (శూన్య)ఆధారం;
+    తిరిగి Z_ప్రవాహం_ERROR;
+#లేకపోతే
     deflate_state *ds;
     deflate_state *ss;
 
 
-    if (deflateStateCheck(source) || dest == Z_NULL) {
-        return Z_STREAM_ERROR;
+    ఒకవేళ (deflateStateCheck(ఆధారం) || dest == Z_NULL) {
+        తిరిగి Z_ప్రవాహం_ERROR;
     }
 
-    ss = source->state;
+    ss = ఆధారం->state;
 
-    zmemcpy(dest, source, sizeof(z_stream));
+    zmemcpy(dest, ఆధారం, పరిమాణం(z_ప్రవాహం));
 
-    ds = (deflate_state *) ZALLOC(dest, 1, sizeof(deflate_state));
-    if (ds == Z_NULL) return Z_MEM_ERROR;
-    zmemzero(ds, sizeof(deflate_state));
-    dest->state = (struct internal_state FAR *) ds;
-    zmemcpy(ds, ss, sizeof(deflate_state));
+    ds = (deflate_state *) ZALLOC(dest, 1, పరిమాణం(deflate_state));
+    ఒకవేళ (ds == Z_NULL) తిరిగి Z_MEM_ERROR;
+    zmemzero(ds, పరిమాణం(deflate_state));
+    dest->state = (నిర్మాణం అంతర్గత_state FAR *) ds;
+    zmemcpy(ds, ss, పరిమాణం(deflate_state));
     ds->strm = dest;
 
-    ds->window = (Bytef *) ZALLOC(dest, ds->w_size, 2*sizeof(Byte));
-    ds->prev   = (Posf *)  ZALLOC(dest, ds->w_size, sizeof(Pos));
-    ds->head   = (Posf *)  ZALLOC(dest, ds->hash_size, sizeof(Pos));
+    ds->కిటికీ = (Bytef *) ZALLOC(dest, ds->w_కొలత, 2*పరిమాణం(Byte));
+    ds->prev   = (Posf *)  ZALLOC(dest, ds->w_కొలత, పరిమాణం(Pos));
+    ds->తల   = (Posf *)  ZALLOC(dest, ds->hash_కొలత, పరిమాణం(Pos));
     ds->pending_buf = (uchf *) ZALLOC(dest, ds->lit_bufsize, LIT_BUFS);
 
-    if (ds->window == Z_NULL || ds->prev == Z_NULL || ds->head == Z_NULL ||
+    ఒకవేళ (ds->కిటికీ == Z_NULL || ds->prev == Z_NULL || ds->తల == Z_NULL ||
         ds->pending_buf == Z_NULL) {
-        deflateEnd (dest);
-        return Z_MEM_ERROR;
+        deflate_చివర (dest);
+        తిరిగి Z_MEM_ERROR;
     }
     /* following zmemcpy's do not work for 16-bit MSDOS */
-    zmemcpy(ds->window, ss->window, ss->high_water);
+    zmemcpy(ds->కిటికీ, ss->కిటికీ, ss->ఎగువ_water);
     zmemcpy(ds->prev, ss->prev,
-            (ss->slid || ss->strstart - ss->insert > ds->w_size ? ds->w_size :
-                ss->strstart - ss->insert) * sizeof(Pos));
-    zmemcpy(ds->head, ss->head, ds->hash_size * sizeof(Pos));
+            (ss->slid || ss->strstart - ss->చొప్పించు > ds->w_కొలత ? ds->w_కొలత :
+                ss->strstart - ss->చొప్పించు) * పరిమాణం(Pos));
+    zmemcpy(ds->తల, ss->తల, ds->hash_కొలత * పరిమాణం(Pos));
 
-    ds->pending_out = ds->pending_buf + (ss->pending_out - ss->pending_buf);
-    zmemcpy(ds->pending_out, ss->pending_out, ss->pending);
-#ifdef LIT_MEM
+    ds->pending_బహిర్గతం = ds->pending_buf + (ss->pending_బహిర్గతం - ss->pending_buf);
+    zmemcpy(ds->pending_బహిర్గతం, ss->pending_బహిర్గతం, ss->pending);
+#నిర్వచితమైతే LIT_MEM
     ds->d_buf = (ushf *)(ds->pending_buf + (ds->lit_bufsize << 1));
     ds->l_buf = ds->pending_buf + (ds->lit_bufsize << 2);
-    zmemcpy(ds->d_buf, ss->d_buf, ss->sym_next * sizeof(ush));
-    zmemcpy(ds->l_buf, ss->l_buf, ss->sym_next);
-#else
+    zmemcpy(ds->d_buf, ss->d_buf, ss->sym_తదుపరి * పరిమాణం(ush));
+    zmemcpy(ds->l_buf, ss->l_buf, ss->sym_తదుపరి);
+#లేకపోతే
     ds->sym_buf = ds->pending_buf + ds->lit_bufsize;
-    zmemcpy(ds->sym_buf, ss->sym_buf, ss->sym_next);
-#endif
+    zmemcpy(ds->sym_buf, ss->sym_buf, ss->sym_తదుపరి);
+#అయితే_ముగింపు
 
-    ds->l_desc.dyn_tree = ds->dyn_ltree;
-    ds->d_desc.dyn_tree = ds->dyn_dtree;
-    ds->bl_desc.dyn_tree = ds->bl_tree;
+    ds->l_desc.dyn_వృక్షం = ds->dyn_ltree;
+    ds->d_desc.dyn_వృక్షం = ds->dyn_dtree;
+    ds->bl_desc.dyn_వృక్షం = ds->bl_వృక్షం;
 
-    return Z_OK;
-#endif /* MAXSEG_64K */
+    తిరిగి Z_OK;
+#అయితే_ముగింపు /* MAXSEG_64K */
 }
 
-#ifndef FASTEST
+#నిర్వచితం_కాకపోతే FASTEST
 /* ===========================================================================
  * Set match_start to the longest match starting at the given string and
  * return its length. Matches shorter or equal to prev_length are discarded,
@@ -1387,54 +1387,54 @@ int ZEXPORT deflateCopy(z_streamp dest, z_streamp source) {
  *   string (strstart) and its distance is <= MAX_DIST, and prev_length >= 1
  * OUT assertion: the match length is not greater than s->lookahead.
  */
-local uInt longest_match(deflate_state *s, IPos cur_match) {
-    unsigned chain_length = s->max_chain_length;/* max hash chain length */
-    Bytef *scan = s->window + s->strstart;      /* current string */
-    Bytef *match;                               /* matched string */
-    int len;                                    /* length of current match */
-    int best_len = (int)s->prev_length;         /* best match length so far */
-    int nice_match = s->nice_match;             /* stop if match long enough */
-    IPos limit = s->strstart > (IPos)MAX_DIST(s) ?
+local uInt longest_సరిపోలిక(deflate_state *s, IPos cur_సరిపోలిక) {
+    గుర్తులేని chain_నిడివి = s->max_chain_నిడివి;/* max hash chain length */
+    Bytef *పరిశీలన = s->కిటికీ + s->strstart;      /* current string */
+    Bytef *సరిపోలిక;                               /* matched string */
+    పూర్ణాంకం len;                                    /* length of current match */
+    పూర్ణాంకం ఉత్తమ_len = (పూర్ణాంకం)s->prev_నిడివి;         /* best match length so far */
+    పూర్ణాంకం nice_సరిపోలిక = s->nice_సరిపోలిక;             /* stop if match long enough */
+    IPos హద్దు = s->strstart > (IPos)MAX_DIST(s) ?
         s->strstart - (IPos)MAX_DIST(s) : NIL;
     /* Stop when cur_match becomes <= limit. To simplify the code,
      * we prevent matches with the string of window index 0.
      */
     Posf *prev = s->prev;
-    uInt wmask = s->w_mask;
+    uInt wmask = s->w_ముసుగు;
 
-#ifdef UNALIGNED_OK
+#నిర్వచితమైతే UNALIGNED_OK
     /* Compare two bytes at a time. Note: this is not always beneficial.
      * Try with and without -DUNALIGNED_OK to check.
      */
-    Bytef *strend = s->window + s->strstart + MAX_MATCH - 1;
-    ush scan_start = *(ushf*)scan;
-    ush scan_end   = *(ushf*)(scan + best_len - 1);
-#else
-    Bytef *strend = s->window + s->strstart + MAX_MATCH;
-    Byte scan_end1  = scan[best_len - 1];
-    Byte scan_end   = scan[best_len];
-#endif
+    Bytef *strend = s->కిటికీ + s->strstart + MAX_సరిపోలిక - 1;
+    ush పరిశీలన_ప్రారంభం = *(ushf*)పరిశీలన;
+    ush పరిశీలన_చివర   = *(ushf*)(పరిశీలన + ఉత్తమ_len - 1);
+#లేకపోతే
+    Bytef *strend = s->కిటికీ + s->strstart + MAX_సరిపోలిక;
+    Byte పరిశీలన_end1  = పరిశీలన[ఉత్తమ_len - 1];
+    Byte పరిశీలన_చివర   = పరిశీలన[ఉత్తమ_len];
+#అయితే_ముగింపు
 
     /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
      * It is easy to get rid of this optimization if necessary.
      */
-    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+    Assert(s->hash_బిట్లు >= 8 && MAX_సరిపోలిక == 258, "Code too clever");
 
     /* Do not waste too much time if we already have a good match: */
-    if (s->prev_length >= s->good_match) {
-        chain_length >>= 2;
+    ఒకవేళ (s->prev_నిడివి >= s->good_సరిపోలిక) {
+        chain_నిడివి >>= 2;
     }
     /* Do not look for matches beyond the end of the input. This is necessary
      * to make deflate deterministic.
      */
-    if ((uInt)nice_match > s->lookahead) nice_match = (int)s->lookahead;
+    ఒకవేళ ((uInt)nice_సరిపోలిక > s->lookahead) nice_సరిపోలిక = (పూర్ణాంకం)s->lookahead;
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->కిటికీ_కొలత - MIN_LOOKAHEAD,
            "need lookahead");
 
-    do {
-        Assert(cur_match < s->strstart, "no future");
-        match = s->window + cur_match;
+    చేయి {
+        Assert(cur_సరిపోలిక < s->strstart, "no future");
+        సరిపోలిక = s->కిటికీ + cur_సరిపోలిక;
 
         /* Skip to next match if the match length cannot increase
          * or if the match length is less than 2.  Note that the checks below
@@ -1444,12 +1444,12 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * However the length of the match is limited to the lookahead, so
          * the output of deflate is not affected by the uninitialized values.
          */
-#if (defined(UNALIGNED_OK) && MAX_MATCH == 258)
+#ఒకవేళ (defined(UNALIGNED_OK) && MAX_సరిపోలిక == 258)
         /* This code assumes sizeof(unsigned short) == 2. Do not use
          * UNALIGNED_OK if your compiler uses a different size.
          */
-        if (*(ushf*)(match + best_len - 1) != scan_end ||
-            *(ushf*)match != scan_start) continue;
+        ఒకవేళ (*(ushf*)(సరిపోలిక + ఉత్తమ_len - 1) != పరిశీలన_చివర ||
+            *(ushf*)సరిపోలిక != పరిశీలన_ప్రారంభం) కొనసాగు;
 
         /* It is not necessary to compare scan[2] and match[2] since they are
          * always equal when the other bytes match, given that the hash keys
@@ -1460,30 +1460,30 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * necessary to put more guard bytes at the end of the window, or
          * to check more often for insufficient lookahead.
          */
-        Assert(scan[2] == match[2], "scan[2]?");
-        scan++, match++;
-        do {
-        } while (*(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 *(ushf*)(scan += 2) == *(ushf*)(match += 2) &&
-                 scan < strend);
+        Assert(పరిశీలన[2] == సరిపోలిక[2], "scan[2]?");
+        పరిశీలన++, సరిపోలిక++;
+        చేయి {
+        } అయితే (*(ushf*)(పరిశీలన += 2) == *(ushf*)(సరిపోలిక += 2) &&
+                 *(ushf*)(పరిశీలన += 2) == *(ushf*)(సరిపోలిక += 2) &&
+                 *(ushf*)(పరిశీలన += 2) == *(ushf*)(సరిపోలిక += 2) &&
+                 *(ushf*)(పరిశీలన += 2) == *(ushf*)(సరిపోలిక += 2) &&
+                 పరిశీలన < strend);
         /* The funny "do {}" generates better code on most compilers */
 
         /* Here, scan <= window + strstart + 257 */
-        Assert(scan <= s->window + (unsigned)(s->window_size - 1),
+        Assert(పరిశీలన <= s->కిటికీ + (గుర్తులేని)(s->కిటికీ_కొలత - 1),
                "wild scan");
-        if (*scan == *match) scan++;
+        ఒకవేళ (*పరిశీలన == *సరిపోలిక) పరిశీలన++;
 
-        len = (MAX_MATCH - 1) - (int)(strend - scan);
-        scan = strend - (MAX_MATCH-1);
+        len = (MAX_సరిపోలిక - 1) - (పూర్ణాంకం)(strend - పరిశీలన);
+        పరిశీలన = strend - (MAX_సరిపోలిక-1);
 
-#else /* UNALIGNED_OK */
+#లేకపోతే /* UNALIGNED_OK */
 
-        if (match[best_len]     != scan_end  ||
-            match[best_len - 1] != scan_end1 ||
-            *match              != *scan     ||
-            *++match            != scan[1])      continue;
+        ఒకవేళ (సరిపోలిక[ఉత్తమ_len]     != పరిశీలన_చివర  ||
+            సరిపోలిక[ఉత్తమ_len - 1] != పరిశీలన_end1 ||
+            *సరిపోలిక              != *పరిశీలన     ||
+            *++సరిపోలిక            != పరిశీలన[1])      కొనసాగు;
 
         /* The check at best_len - 1 can be removed because it will be made
          * again later. (This heuristic is not always a win.)
@@ -1491,71 +1491,71 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
          * are always equal when the other bytes match, given that
          * the hash keys are equal and that HASH_BITS >= 8.
          */
-        scan += 2, match++;
-        Assert(*scan == *match, "match[2]?");
+        పరిశీలన += 2, సరిపోలిక++;
+        Assert(*పరిశీలన == *సరిపోలిక, "match[2]?");
 
         /* We check for insufficient lookahead only every 8th comparison;
          * the 256th check will be made at strstart + 258.
          */
-        do {
-        } while (*++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 *++scan == *++match && *++scan == *++match &&
-                 scan < strend);
+        చేయి {
+        } అయితే (*++పరిశీలన == *++సరిపోలిక && *++పరిశీలన == *++సరిపోలిక &&
+                 *++పరిశీలన == *++సరిపోలిక && *++పరిశీలన == *++సరిపోలిక &&
+                 *++పరిశీలన == *++సరిపోలిక && *++పరిశీలన == *++సరిపోలిక &&
+                 *++పరిశీలన == *++సరిపోలిక && *++పరిశీలన == *++సరిపోలిక &&
+                 పరిశీలన < strend);
 
-        Assert(scan <= s->window + (unsigned)(s->window_size - 1),
+        Assert(పరిశీలన <= s->కిటికీ + (గుర్తులేని)(s->కిటికీ_కొలత - 1),
                "wild scan");
 
-        len = MAX_MATCH - (int)(strend - scan);
-        scan = strend - MAX_MATCH;
+        len = MAX_సరిపోలిక - (పూర్ణాంకం)(strend - పరిశీలన);
+        పరిశీలన = strend - MAX_సరిపోలిక;
 
-#endif /* UNALIGNED_OK */
+#అయితే_ముగింపు /* UNALIGNED_OK */
 
-        if (len > best_len) {
-            s->match_start = cur_match;
-            best_len = len;
-            if (len >= nice_match) break;
-#ifdef UNALIGNED_OK
-            scan_end = *(ushf*)(scan + best_len - 1);
-#else
-            scan_end1  = scan[best_len - 1];
-            scan_end   = scan[best_len];
-#endif
+        ఒకవేళ (len > ఉత్తమ_len) {
+            s->సరిపోలిక_ప్రారంభం = cur_సరిపోలిక;
+            ఉత్తమ_len = len;
+            ఒకవేళ (len >= nice_సరిపోలిక) ఆపు;
+#నిర్వచితమైతే UNALIGNED_OK
+            పరిశీలన_చివర = *(ushf*)(పరిశీలన + ఉత్తమ_len - 1);
+#లేకపోతే
+            పరిశీలన_end1  = పరిశీలన[ఉత్తమ_len - 1];
+            పరిశీలన_చివర   = పరిశీలన[ఉత్తమ_len];
+#అయితే_ముగింపు
         }
-    } while ((cur_match = prev[cur_match & wmask]) > limit
-             && --chain_length != 0);
+    } అయితే ((cur_సరిపోలిక = prev[cur_సరిపోలిక & wmask]) > హద్దు
+             && --chain_నిడివి != 0);
 
-    if ((uInt)best_len <= s->lookahead) return (uInt)best_len;
-    return s->lookahead;
+    ఒకవేళ ((uInt)ఉత్తమ_len <= s->lookahead) తిరిగి (uInt)ఉత్తమ_len;
+    తిరిగి s->lookahead;
 }
 
-#else /* FASTEST */
+#లేకపోతే /* FASTEST */
 
 /* ---------------------------------------------------------------------------
  * Optimized version for FASTEST only
  */
-local uInt longest_match(deflate_state *s, IPos cur_match) {
-    Bytef *scan = s->window + s->strstart;      /* current string */
-    Bytef *match;                               /* matched string */
-    int len;                                    /* length of current match */
-    Bytef *strend = s->window + s->strstart + MAX_MATCH;
+local uInt longest_సరిపోలిక(deflate_state *s, IPos cur_సరిపోలిక) {
+    Bytef *పరిశీలన = s->కిటికీ + s->strstart;      /* current string */
+    Bytef *సరిపోలిక;                               /* matched string */
+    పూర్ణాంకం len;                                    /* length of current match */
+    Bytef *strend = s->కిటికీ + s->strstart + MAX_సరిపోలిక;
 
     /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
      * It is easy to get rid of this optimization if necessary.
      */
-    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+    Assert(s->hash_బిట్లు >= 8 && MAX_సరిపోలిక == 258, "Code too clever");
 
-    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+    Assert((ulg)s->strstart <= s->కిటికీ_కొలత - MIN_LOOKAHEAD,
            "need lookahead");
 
-    Assert(cur_match < s->strstart, "no future");
+    Assert(cur_సరిపోలిక < s->strstart, "no future");
 
-    match = s->window + cur_match;
+    సరిపోలిక = s->కిటికీ + cur_సరిపోలిక;
 
     /* Return failure if the match length is less than 2:
      */
-    if (match[0] != scan[0] || match[1] != scan[1]) return MIN_MATCH-1;
+    ఒకవేళ (సరిపోలిక[0] != పరిశీలన[0] || సరిపోలిక[1] != పరిశీలన[1]) తిరిగి MIN_సరిపోలిక-1;
 
     /* The check at best_len - 1 can be removed because it will be made
      * again later. (This heuristic is not always a win.)
@@ -1563,93 +1563,93 @@ local uInt longest_match(deflate_state *s, IPos cur_match) {
      * are always equal when the other bytes match, given that
      * the hash keys are equal and that HASH_BITS >= 8.
      */
-    scan += 2, match += 2;
-    Assert(*scan == *match, "match[2]?");
+    పరిశీలన += 2, సరిపోలిక += 2;
+    Assert(*పరిశీలన == *సరిపోలిక, "match[2]?");
 
     /* We check for insufficient lookahead only every 8th comparison;
      * the 256th check will be made at strstart + 258.
      */
-    do {
-    } while (*++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             *++scan == *++match && *++scan == *++match &&
-             scan < strend);
+    చేయి {
+    } అయితే (*++పరిశీలన == *++సరిపోలిక && *++పరిశీలన == *++సరిపోలిక &&
+             *++పరిశీలన == *++సరిపోలిక && *++పరిశీలన == *++సరిపోలిక &&
+             *++పరిశీలన == *++సరిపోలిక && *++పరిశీలన == *++సరిపోలిక &&
+             *++పరిశీలన == *++సరిపోలిక && *++పరిశీలన == *++సరిపోలిక &&
+             పరిశీలన < strend);
 
-    Assert(scan <= s->window + (unsigned)(s->window_size - 1), "wild scan");
+    Assert(పరిశీలన <= s->కిటికీ + (గుర్తులేని)(s->కిటికీ_కొలత - 1), "wild scan");
 
-    len = MAX_MATCH - (int)(strend - scan);
+    len = MAX_సరిపోలిక - (పూర్ణాంకం)(strend - పరిశీలన);
 
-    if (len < MIN_MATCH) return MIN_MATCH - 1;
+    ఒకవేళ (len < MIN_సరిపోలిక) తిరిగి MIN_సరిపోలిక - 1;
 
-    s->match_start = cur_match;
-    return (uInt)len <= s->lookahead ? (uInt)len : s->lookahead;
+    s->సరిపోలిక_ప్రారంభం = cur_సరిపోలిక;
+    తిరిగి (uInt)len <= s->lookahead ? (uInt)len : s->lookahead;
 }
 
-#endif /* FASTEST */
+#అయితే_ముగింపు /* FASTEST */
 
-#ifdef ZLIB_DEBUG
+#నిర్వచితమైతే ZLIB_DEBUG
 
-#define EQUAL 0
+#నిర్వచించు EQUAL 0
 /* result of memcmp for equal strings */
 
 /* ===========================================================================
  * Check that the match at match_start is indeed a match.
  */
-local void check_match(deflate_state *s, IPos start, IPos match, int length) {
+local శూన్య check_సరిపోలిక(deflate_state *s, IPos ప్రారంభం, IPos సరిపోలిక, పూర్ణాంకం నిడివి) {
     /* check that the match is indeed a match */
-    Bytef *back = s->window + (int)match, *here = s->window + start;
-    IPos len = (IPos)length;
-    if (match == (IPos)-1) {
+    Bytef *వెనుక = s->కిటికీ + (పూర్ణాంకం)సరిపోలిక, *ఇక్కడ = s->కిటికీ + ప్రారంభం;
+    IPos len = (IPos)నిడివి;
+    ఒకవేళ (సరిపోలిక == (IPos)-1) {
         /* match starts one byte before the current window -- just compare the
            subsequent length-1 bytes */
-        back++;
-        here++;
+        వెనుక++;
+        ఇక్కడ++;
         len--;
     }
-    if (zmemcmp(back, here, len) != EQUAL) {
+    ఒకవేళ (zmemcmp(వెనుక, ఇక్కడ, len) != EQUAL) {
         fprintf(stderr, " start %u, match %d, length %d\n",
-                start, (int)match, length);
-        do {
-            fprintf(stderr, "(%02x %02x)", *back++, *here++);
-        } while (--len != 0);
+                ప్రారంభం, (పూర్ణాంకం)సరిపోలిక, నిడివి);
+        చేయి {
+            fprintf(stderr, "(%02x %02x)", *వెనుక++, *ఇక్కడ++);
+        } అయితే (--len != 0);
         z_error("invalid match");
     }
-    if (z_verbose > 1) {
-        fprintf(stderr,"\\[%d,%d]", start - match, length);
-        do { putc(s->window[start++], stderr); } while (--length != 0);
+    ఒకవేళ (z_verbose > 1) {
+        fprintf(stderr,"\\[%d,%d]", ప్రారంభం - సరిపోలిక, నిడివి);
+        చేయి { putc(s->కిటికీ[ప్రారంభం++], stderr); } అయితే (--నిడివి != 0);
     }
 }
-#else
-#  define check_match(s, start, match, length)
-#endif /* ZLIB_DEBUG */
+#లేకపోతే
+#  define check_సరిపోలిక(s, ప్రారంభం, సరిపోలిక, నిడివి)
+#అయితే_ముగింపు /* ZLIB_DEBUG */
 
 /* ===========================================================================
  * Flush the current block, with given end-of-file flag.
  * IN assertion: strstart is set to the end of the current match.
  */
-#define FLUSH_BLOCK_ONLY(s, last) { \
-   _tr_flush_block(s, (s->block_start >= 0L ? \
-                   (charf *)&s->window[(unsigned)s->block_start] : \
+#నిర్వచించు FLUSH_ఖండం_ONLY(s, చివరి) { \
+   tr_flush_ఖండం(s, (s->ఖండం_ప్రారంభం >= 0L ? \
+                   (charf *)&s->కిటికీ[(గుర్తులేని)s->ఖండం_ప్రారంభం] : \
                    (charf *)Z_NULL), \
-                (ulg)((long)s->strstart - s->block_start), \
-                (last)); \
-   s->block_start = s->strstart; \
+                (ulg)((దీర్ఘ)s->strstart - s->ఖండం_ప్రారంభం), \
+                (చివరి)); \
+   s->ఖండం_ప్రారంభం = s->strstart; \
    flush_pending(s->strm); \
    Tracev((stderr,"[FLUSH]")); \
 }
 
 /* Same but force premature exit if necessary. */
-#define FLUSH_BLOCK(s, last) { \
-   FLUSH_BLOCK_ONLY(s, last); \
-   if (s->strm->avail_out == 0) return (last) ? finish_started : need_more; \
+#నిర్వచించు FLUSH_ఖండం(s, చివరి) { \
+   FLUSH_ఖండం_ONLY(s, చివరి); \
+   ఒకవేళ (s->strm->avail_బహిర్గతం == 0) తిరిగి (చివరి) ? ముగింపు_started : need_మరిన్ని; \
 }
 
 /* Maximum stored block length in deflate format (not including header). */
-#define MAX_STORED 65535
+#నిర్వచించు MAX_STORED 65535
 
 /* Minimum of a and b. */
-#define MIN(a, b) ((a) > (b) ? (b) : (a))
+#నిర్వచించు MIN(a, b) ((a) > (b) ? (b) : (a))
 
 /* ===========================================================================
  * Copy without compression as much as possible from the input stream, return
@@ -1666,35 +1666,35 @@ local void check_match(deflate_state *s, IPos start, IPos match, int length) {
  * copied. It is most efficient with large input and output buffers, which
  * maximizes the opportunities to have a single copy from next_in to next_out.
  */
-local block_state deflate_stored(deflate_state *s, int flush) {
+local ఖండం_state deflate_stored(deflate_state *s, పూర్ణాంకం flush) {
     /* Smallest worthy block size when not flushing or finishing. By default
      * this is 32K. This can be as small as 507 bytes for memLevel == 1. For
      * large input and output buffers, the stored block size will be larger.
      */
-    unsigned min_block = (unsigned)(MIN(s->pending_buf_size - 5, s->w_size));
+    గుర్తులేని min_ఖండం = (గుర్తులేని)(MIN(s->pending_buf_కొలత - 5, s->w_కొలత));
 
     /* Copy as many min_block or larger stored blocks directly to next_out as
      * possible. If flushing, copy the remaining available input to next_out as
      * stored blocks, if there is enough space.
      */
-    int last = 0;
-    unsigned len, left, have;
-    unsigned used = s->strm->avail_in;
-    do {
+    పూర్ణాంకం చివరి = 0;
+    గుర్తులేని len, ఎడమ, have;
+    గుర్తులేని వాడిన = s->strm->avail_లోపల;
+    చేయి {
         /* Set len to the maximum size block that we can copy directly with the
          * available input data and output space. Set left to how much of that
          * would be copied from what's left in the window.
          */
         len = MAX_STORED;       /* maximum deflate stored block length */
-        have = ((unsigned)s->bi_valid + 42) >> 3;   /* bytes in header */
-        if (s->strm->avail_out < have)          /* need room for header */
-            break;
+        have = ((గుర్తులేని)s->bi_valid + 42) >> 3;   /* bytes in header */
+        ఒకవేళ (s->strm->avail_బహిర్గతం < have)          /* need room for header */
+            ఆపు;
             /* maximum stored block length that will fit in avail_out: */
-        have = s->strm->avail_out - have;
-        left = (unsigned)(s->strstart - s->block_start);    /* window bytes */
-        if (len > (ulg)left + s->strm->avail_in)
-            len = left + s->strm->avail_in;     /* limit len to the input */
-        if (len > have)
+        have = s->strm->avail_బహిర్గతం - have;
+        ఎడమ = (గుర్తులేని)(s->strstart - s->ఖండం_ప్రారంభం);    /* window bytes */
+        ఒకవేళ (len > (ulg)ఎడమ + s->strm->avail_లోపల)
+            len = ఎడమ + s->strm->avail_లోపల;     /* limit len to the input */
+        ఒకవేళ (len > have)
             len = have;                         /* limit len to the output */
 
         /* If the stored block would be less than min_block in length, or if
@@ -1702,16 +1702,16 @@ local block_state deflate_stored(deflate_state *s, int flush) {
          * copying to the window and the pending buffer instead. Also don't
          * write an empty block when flushing -- deflate() does that.
          */
-        if (len < min_block && ((len == 0 && flush != Z_FINISH) ||
+        ఒకవేళ (len < min_ఖండం && ((len == 0 && flush != Z_ముగింపు) ||
                                 flush == Z_NO_FLUSH ||
-                                len != left + s->strm->avail_in))
-            break;
+                                len != ఎడమ + s->strm->avail_లోపల))
+            ఆపు;
 
         /* Make a dummy stored block in pending to get the header bytes,
          * including any pending bits. This also updates the debugging counts.
          */
-        last = flush == Z_FINISH && len == left + s->strm->avail_in ? 1 : 0;
-        _tr_stored_block(s, (char *)0, 0L, last);
+        చివరి = flush == Z_ముగింపు && len == ఎడమ + s->strm->avail_లోపల ? 1 : 0;
+        tr_stored_ఖండం(s, (అక్షరం *)0, 0L, చివరి);
 
         /* Replace the lengths in the dummy stored block with len. */
         s->pending_buf[s->pending - 4] = (Bytef)len;
@@ -1722,34 +1722,34 @@ local block_state deflate_stored(deflate_state *s, int flush) {
         /* Write the stored block header bytes. */
         flush_pending(s->strm);
 
-#ifdef ZLIB_DEBUG
+#నిర్వచితమైతే ZLIB_DEBUG
         /* Update debugging counts for the data about to be copied. */
         s->compressed_len += len << 3;
-        s->bits_sent += len << 3;
-#endif
+        s->బిట్లు_పంపిన += len << 3;
+#అయితే_ముగింపు
 
         /* Copy uncompressed bytes from the window to next_out. */
-        if (left) {
-            if (left > len)
-                left = len;
-            zmemcpy(s->strm->next_out, s->window + s->block_start, left);
-            s->strm->next_out += left;
-            s->strm->avail_out -= left;
-            s->strm->total_out += left;
-            s->block_start += left;
-            len -= left;
+        ఒకవేళ (ఎడమ) {
+            ఒకవేళ (ఎడమ > len)
+                ఎడమ = len;
+            zmemcpy(s->strm->తదుపరి_బహిర్గతం, s->కిటికీ + s->ఖండం_ప్రారంభం, ఎడమ);
+            s->strm->తదుపరి_బహిర్గతం += ఎడమ;
+            s->strm->avail_బహిర్గతం -= ఎడమ;
+            s->strm->మొత్తం_బహిర్గతం += ఎడమ;
+            s->ఖండం_ప్రారంభం += ఎడమ;
+            len -= ఎడమ;
         }
 
         /* Copy uncompressed bytes directly from next_in to next_out, updating
          * the check value.
          */
-        if (len) {
-            read_buf(s->strm, s->strm->next_out, len);
-            s->strm->next_out += len;
-            s->strm->avail_out -= len;
-            s->strm->total_out += len;
+        ఒకవేళ (len) {
+            read_buf(s->strm, s->strm->తదుపరి_బహిర్గతం, len);
+            s->strm->తదుపరి_బహిర్గతం += len;
+            s->strm->avail_బహిర్గతం -= len;
+            s->strm->మొత్తం_బహిర్గతం += len;
         }
-    } while (last == 0);
+    } అయితే (చివరి == 0);
 
     /* Update the sliding window with the last s->w_size bytes of the copied
      * data, or append all of the copied data to the existing window if less
@@ -1757,95 +1757,95 @@ local block_state deflate_stored(deflate_state *s, int flush) {
      * insert in the hash tables, in the event that deflateParams() switches to
      * a non-zero compression level.
      */
-    used -= s->strm->avail_in;      /* number of input bytes directly copied */
-    if (used) {
+    వాడిన -= s->strm->avail_లోపల;      /* number of input bytes directly copied */
+    ఒకవేళ (వాడిన) {
         /* If any input was used, then no unused input remains in the window,
          * therefore s->block_start == s->strstart.
          */
-        if (used >= s->w_size) {    /* supplant the previous history */
+        ఒకవేళ (వాడిన >= s->w_కొలత) {    /* supplant the previous history */
             s->matches = 2;         /* clear hash */
-            zmemcpy(s->window, s->strm->next_in - s->w_size, s->w_size);
-            s->strstart = s->w_size;
-            s->insert = s->strstart;
+            zmemcpy(s->కిటికీ, s->strm->తదుపరి_లోపల - s->w_కొలత, s->w_కొలత);
+            s->strstart = s->w_కొలత;
+            s->చొప్పించు = s->strstart;
         }
-        else {
-            if (s->window_size - s->strstart <= used) {
+        లేకపోతే {
+            ఒకవేళ (s->కిటికీ_కొలత - s->strstart <= వాడిన) {
                 /* Slide the window down. */
-                s->strstart -= s->w_size;
-                zmemcpy(s->window, s->window + s->w_size, s->strstart);
-                if (s->matches < 2)
+                s->strstart -= s->w_కొలత;
+                zmemcpy(s->కిటికీ, s->కిటికీ + s->w_కొలత, s->strstart);
+                ఒకవేళ (s->matches < 2)
                     s->matches++;   /* add a pending slide_hash() */
-                if (s->insert > s->strstart)
-                    s->insert = s->strstart;
+                ఒకవేళ (s->చొప్పించు > s->strstart)
+                    s->చొప్పించు = s->strstart;
             }
-            zmemcpy(s->window + s->strstart, s->strm->next_in - used, used);
-            s->strstart += used;
-            s->insert += MIN(used, s->w_size - s->insert);
+            zmemcpy(s->కిటికీ + s->strstart, s->strm->తదుపరి_లోపల - వాడిన, వాడిన);
+            s->strstart += వాడిన;
+            s->చొప్పించు += MIN(వాడిన, s->w_కొలత - s->చొప్పించు);
         }
-        s->block_start = s->strstart;
+        s->ఖండం_ప్రారంభం = s->strstart;
     }
-    if (s->high_water < s->strstart)
-        s->high_water = s->strstart;
+    ఒకవేళ (s->ఎగువ_water < s->strstart)
+        s->ఎగువ_water = s->strstart;
 
     /* If the last block was written to next_out, then done. */
-    if (last) {
-        s->bi_used = 8;
-        return finish_done;
+    ఒకవేళ (చివరి) {
+        s->bi_వాడిన = 8;
+        తిరిగి ముగింపు_పూర్తి;
     }
 
     /* If flushing and all input has been consumed, then done. */
-    if (flush != Z_NO_FLUSH && flush != Z_FINISH &&
-        s->strm->avail_in == 0 && (long)s->strstart == s->block_start)
-        return block_done;
+    ఒకవేళ (flush != Z_NO_FLUSH && flush != Z_ముగింపు &&
+        s->strm->avail_లోపల == 0 && (దీర్ఘ)s->strstart == s->ఖండం_ప్రారంభం)
+        తిరిగి ఖండం_పూర్తి;
 
     /* Fill the window with any remaining input. */
-    have = (unsigned)(s->window_size - s->strstart);
-    if (s->strm->avail_in > have && s->block_start >= (long)s->w_size) {
+    have = (గుర్తులేని)(s->కిటికీ_కొలత - s->strstart);
+    ఒకవేళ (s->strm->avail_లోపల > have && s->ఖండం_ప్రారంభం >= (దీర్ఘ)s->w_కొలత) {
         /* Slide the window down. */
-        s->block_start -= s->w_size;
-        s->strstart -= s->w_size;
-        zmemcpy(s->window, s->window + s->w_size, s->strstart);
-        if (s->matches < 2)
+        s->ఖండం_ప్రారంభం -= s->w_కొలత;
+        s->strstart -= s->w_కొలత;
+        zmemcpy(s->కిటికీ, s->కిటికీ + s->w_కొలత, s->strstart);
+        ఒకవేళ (s->matches < 2)
             s->matches++;           /* add a pending slide_hash() */
-        have += s->w_size;          /* more space now */
-        if (s->insert > s->strstart)
-            s->insert = s->strstart;
+        have += s->w_కొలత;          /* more space now */
+        ఒకవేళ (s->చొప్పించు > s->strstart)
+            s->చొప్పించు = s->strstart;
     }
-    if (have > s->strm->avail_in)
-        have = s->strm->avail_in;
-    if (have) {
-        read_buf(s->strm, s->window + s->strstart, have);
+    ఒకవేళ (have > s->strm->avail_లోపల)
+        have = s->strm->avail_లోపల;
+    ఒకవేళ (have) {
+        read_buf(s->strm, s->కిటికీ + s->strstart, have);
         s->strstart += have;
-        s->insert += MIN(have, s->w_size - s->insert);
+        s->చొప్పించు += MIN(have, s->w_కొలత - s->చొప్పించు);
     }
-    if (s->high_water < s->strstart)
-        s->high_water = s->strstart;
+    ఒకవేళ (s->ఎగువ_water < s->strstart)
+        s->ఎగువ_water = s->strstart;
 
     /* There was not enough avail_out to write a complete worthy or flushed
      * stored block to next_out. Write a stored block to pending instead, if we
      * have enough input for a worthy block, or if flushing and there is enough
      * room for the remaining input as a stored block in the pending buffer.
      */
-    have = ((unsigned)s->bi_valid + 42) >> 3;   /* bytes in header */
+    have = ((గుర్తులేని)s->bi_valid + 42) >> 3;   /* bytes in header */
         /* maximum stored block length that will fit in pending: */
-    have = (unsigned)MIN(s->pending_buf_size - have, MAX_STORED);
-    min_block = MIN(have, s->w_size);
-    left = (unsigned)(s->strstart - s->block_start);
-    if (left >= min_block ||
-        ((left || flush == Z_FINISH) && flush != Z_NO_FLUSH &&
-         s->strm->avail_in == 0 && left <= have)) {
-        len = MIN(left, have);
-        last = flush == Z_FINISH && s->strm->avail_in == 0 &&
-               len == left ? 1 : 0;
-        _tr_stored_block(s, (charf *)s->window + s->block_start, len, last);
-        s->block_start += len;
+    have = (గుర్తులేని)MIN(s->pending_buf_కొలత - have, MAX_STORED);
+    min_ఖండం = MIN(have, s->w_కొలత);
+    ఎడమ = (గుర్తులేని)(s->strstart - s->ఖండం_ప్రారంభం);
+    ఒకవేళ (ఎడమ >= min_ఖండం ||
+        ((ఎడమ || flush == Z_ముగింపు) && flush != Z_NO_FLUSH &&
+         s->strm->avail_లోపల == 0 && ఎడమ <= have)) {
+        len = MIN(ఎడమ, have);
+        చివరి = flush == Z_ముగింపు && s->strm->avail_లోపల == 0 &&
+               len == ఎడమ ? 1 : 0;
+        tr_stored_ఖండం(s, (charf *)s->కిటికీ + s->ఖండం_ప్రారంభం, len, చివరి);
+        s->ఖండం_ప్రారంభం += len;
         flush_pending(s->strm);
     }
 
     /* We've done all we can with the available input and output. */
-    if (last)
-        s->bi_used = 8;
-    return last ? finish_started : need_more;
+    ఒకవేళ (చివరి)
+        s->bi_వాడిన = 8;
+    తిరిగి చివరి ? ముగింపు_started : need_మరిన్ని;
 }
 
 /* ===========================================================================
@@ -1855,332 +1855,332 @@ local block_state deflate_stored(deflate_state *s, int flush) {
  * new strings in the dictionary only for unmatched strings or for short
  * matches. It is used only for the fast compression options.
  */
-local block_state deflate_fast(deflate_state *s, int flush) {
-    IPos hash_head;       /* head of the hash chain */
-    int bflush;           /* set if current block must be flushed */
+local ఖండం_state deflate_fast(deflate_state *s, పూర్ణాంకం flush) {
+    IPos hash_తల;       /* head of the hash chain */
+    పూర్ణాంకం bflush;           /* set if current block must be flushed */
 
-    for (;;) {
+    కొరకు (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the next match, plus MIN_MATCH bytes to insert the
          * string following the next match.
          */
-        if (s->lookahead < MIN_LOOKAHEAD) {
-            fill_window(s);
-            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
-                return need_more;
+        ఒకవేళ (s->lookahead < MIN_LOOKAHEAD) {
+            fill_కిటికీ(s);
+            ఒకవేళ (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                తిరిగి need_మరిన్ని;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            ఒకవేళ (s->lookahead == 0) ఆపు; /* flush the current block */
         }
 
         /* Insert the string window[strstart .. strstart + 2] in the
          * dictionary, and set hash_head to the head of the hash chain:
          */
-        hash_head = NIL;
-        if (s->lookahead >= MIN_MATCH) {
-            INSERT_STRING(s, s->strstart, hash_head);
+        hash_తల = NIL;
+        ఒకవేళ (s->lookahead >= MIN_సరిపోలిక) {
+            చొప్పించు_STRING(s, s->strstart, hash_తల);
         }
 
         /* Find the longest match, discarding those <= prev_length.
          * At this point we have always match_length < MIN_MATCH
          */
-        if (hash_head != NIL && s->strstart - hash_head <= MAX_DIST(s)) {
+        ఒకవేళ (hash_తల != NIL && s->strstart - hash_తల <= MAX_DIST(s)) {
             /* To simplify the code, we prevent matches with the string
              * of window index 0 (in particular we have to avoid a match
              * of the string with itself at the start of the input file).
              */
-            s->match_length = longest_match (s, hash_head);
+            s->సరిపోలిక_నిడివి = longest_సరిపోలిక (s, hash_తల);
             /* longest_match() sets match_start */
         }
-        if (s->match_length >= MIN_MATCH) {
-            check_match(s, s->strstart, s->match_start, (int)s->match_length);
+        ఒకవేళ (s->సరిపోలిక_నిడివి >= MIN_సరిపోలిక) {
+            check_సరిపోలిక(s, s->strstart, s->సరిపోలిక_ప్రారంభం, (పూర్ణాంకం)s->సరిపోలిక_నిడివి);
 
-            _tr_tally_dist(s, s->strstart - s->match_start,
-                           s->match_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, s->strstart - s->సరిపోలిక_ప్రారంభం,
+                           s->సరిపోలిక_నిడివి - MIN_సరిపోలిక, bflush);
 
-            s->lookahead -= s->match_length;
+            s->lookahead -= s->సరిపోలిక_నిడివి;
 
             /* Insert new strings in the hash table only if the match length
              * is not too large. This saves time but degrades compression.
              */
-#ifndef FASTEST
-            if (s->match_length <= s->max_insert_length &&
-                s->lookahead >= MIN_MATCH) {
-                s->match_length--; /* string at strstart already in table */
-                do {
+#నిర్వచితం_కాకపోతే FASTEST
+            ఒకవేళ (s->సరిపోలిక_నిడివి <= s->max_చొప్పించు_నిడివి &&
+                s->lookahead >= MIN_సరిపోలిక) {
+                s->సరిపోలిక_నిడివి--; /* string at strstart already in table */
+                చేయి {
                     s->strstart++;
-                    INSERT_STRING(s, s->strstart, hash_head);
+                    చొప్పించు_STRING(s, s->strstart, hash_తల);
                     /* strstart never exceeds WSIZE-MAX_MATCH, so there are
                      * always MIN_MATCH bytes ahead.
                      */
-                } while (--s->match_length != 0);
+                } అయితే (--s->సరిపోలిక_నిడివి != 0);
                 s->strstart++;
-            } else
-#endif
+            } లేకపోతే
+#అయితే_ముగింపు
             {
-                s->strstart += s->match_length;
-                s->match_length = 0;
-                s->ins_h = s->window[s->strstart];
-                UPDATE_HASH(s, s->ins_h, s->window[s->strstart + 1]);
-#if MIN_MATCH != 3
-                Call UPDATE_HASH() MIN_MATCH-3 more times
-#endif
+                s->strstart += s->సరిపోలిక_నిడివి;
+                s->సరిపోలిక_నిడివి = 0;
+                s->ins_h = s->కిటికీ[s->strstart];
+                UPDATE_HASH(s, s->ins_h, s->కిటికీ[s->strstart + 1]);
+#ఒకవేళ MIN_సరిపోలిక != 3
+                Call UPDATE_HASH() MIN_సరిపోలిక-3 మరిన్ని times
+#అయితే_ముగింపు
                 /* If lookahead < MIN_MATCH, ins_h is garbage, but it does not
                  * matter since it will be recomputed at next deflate call.
                  */
             }
-        } else {
+        } లేకపోతే {
             /* No match, output a literal byte */
-            Tracevv((stderr,"%c", s->window[s->strstart]));
-            _tr_tally_lit(s, s->window[s->strstart], bflush);
+            Tracevv((stderr,"%c", s->కిటికీ[s->strstart]));
+            _tr_tally_lit(s, s->కిటికీ[s->strstart], bflush);
             s->lookahead--;
             s->strstart++;
         }
-        if (bflush) FLUSH_BLOCK(s, 0);
+        ఒకవేళ (bflush) FLUSH_ఖండం(s, 0);
     }
-    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->చొప్పించు = s->strstart < MIN_సరిపోలిక-1 ? s->strstart : MIN_సరిపోలిక-1;
+    ఒకవేళ (flush == Z_ముగింపు) {
+        FLUSH_ఖండం(s, 1);
+        తిరిగి ముగింపు_పూర్తి;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    ఒకవేళ (s->sym_తదుపరి)
+        FLUSH_ఖండం(s, 0);
+    తిరిగి ఖండం_పూర్తి;
 }
 
-#ifndef FASTEST
+#నిర్వచితం_కాకపోతే FASTEST
 /* ===========================================================================
  * Same as above, but achieves better compression. We use a lazy
  * evaluation for matches: a match is finally adopted only if there is
  * no better match at the next window position.
  */
-local block_state deflate_slow(deflate_state *s, int flush) {
-    IPos hash_head;          /* head of hash chain */
-    int bflush;              /* set if current block must be flushed */
+local ఖండం_state deflate_slow(deflate_state *s, పూర్ణాంకం flush) {
+    IPos hash_తల;          /* head of hash chain */
+    పూర్ణాంకం bflush;              /* set if current block must be flushed */
 
     /* Process the input block. */
-    for (;;) {
+    కొరకు (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the next match, plus MIN_MATCH bytes to insert the
          * string following the next match.
          */
-        if (s->lookahead < MIN_LOOKAHEAD) {
-            fill_window(s);
-            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
-                return need_more;
+        ఒకవేళ (s->lookahead < MIN_LOOKAHEAD) {
+            fill_కిటికీ(s);
+            ఒకవేళ (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                తిరిగి need_మరిన్ని;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            ఒకవేళ (s->lookahead == 0) ఆపు; /* flush the current block */
         }
 
         /* Insert the string window[strstart .. strstart + 2] in the
          * dictionary, and set hash_head to the head of the hash chain:
          */
-        hash_head = NIL;
-        if (s->lookahead >= MIN_MATCH) {
-            INSERT_STRING(s, s->strstart, hash_head);
+        hash_తల = NIL;
+        ఒకవేళ (s->lookahead >= MIN_సరిపోలిక) {
+            చొప్పించు_STRING(s, s->strstart, hash_తల);
         }
 
         /* Find the longest match, discarding those <= prev_length.
          */
-        s->prev_length = s->match_length, s->prev_match = s->match_start;
-        s->match_length = MIN_MATCH-1;
+        s->prev_నిడివి = s->సరిపోలిక_నిడివి, s->prev_సరిపోలిక = s->సరిపోలిక_ప్రారంభం;
+        s->సరిపోలిక_నిడివి = MIN_సరిపోలిక-1;
 
-        if (hash_head != NIL && s->prev_length < s->max_lazy_match &&
-            s->strstart - hash_head <= MAX_DIST(s)) {
+        ఒకవేళ (hash_తల != NIL && s->prev_నిడివి < s->max_lazy_సరిపోలిక &&
+            s->strstart - hash_తల <= MAX_DIST(s)) {
             /* To simplify the code, we prevent matches with the string
              * of window index 0 (in particular we have to avoid a match
              * of the string with itself at the start of the input file).
              */
-            s->match_length = longest_match (s, hash_head);
+            s->సరిపోలిక_నిడివి = longest_సరిపోలిక (s, hash_తల);
             /* longest_match() sets match_start */
 
-            if (s->match_length <= 5 && (s->strategy == Z_FILTERED
-#if TOO_FAR <= 32767
-                || (s->match_length == MIN_MATCH &&
-                    s->strstart - s->match_start > TOO_FAR)
-#endif
+            ఒకవేళ (s->సరిపోలిక_నిడివి <= 5 && (s->strategy == Z_FILTERED
+#ఒకవేళ TOO_FAR <= 32767
+                || (s->సరిపోలిక_నిడివి == MIN_సరిపోలిక &&
+                    s->strstart - s->సరిపోలిక_ప్రారంభం > TOO_FAR)
+#అయితే_ముగింపు
                 )) {
 
                 /* If prev_match is also MIN_MATCH, match_start is garbage
                  * but we will ignore the current match anyway.
                  */
-                s->match_length = MIN_MATCH-1;
+                s->సరిపోలిక_నిడివి = MIN_సరిపోలిక-1;
             }
         }
         /* If there was a match at the previous step and the current
          * match is not better, output the previous match:
          */
-        if (s->prev_length >= MIN_MATCH && s->match_length <= s->prev_length) {
-            uInt max_insert = s->strstart + s->lookahead - MIN_MATCH;
+        ఒకవేళ (s->prev_నిడివి >= MIN_సరిపోలిక && s->సరిపోలిక_నిడివి <= s->prev_నిడివి) {
+            uInt max_చొప్పించు = s->strstart + s->lookahead - MIN_సరిపోలిక;
             /* Do not insert strings in hash table beyond this. */
 
-            check_match(s, s->strstart - 1, s->prev_match, (int)s->prev_length);
+            check_సరిపోలిక(s, s->strstart - 1, s->prev_సరిపోలిక, (పూర్ణాంకం)s->prev_నిడివి);
 
-            _tr_tally_dist(s, s->strstart - 1 - s->prev_match,
-                           s->prev_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, s->strstart - 1 - s->prev_సరిపోలిక,
+                           s->prev_నిడివి - MIN_సరిపోలిక, bflush);
 
             /* Insert in hash table all strings up to the end of the match.
              * strstart - 1 and strstart are already inserted. If there is not
              * enough lookahead, the last two strings are not inserted in
              * the hash table.
              */
-            s->lookahead -= s->prev_length - 1;
-            s->prev_length -= 2;
-            do {
-                if (++s->strstart <= max_insert) {
-                    INSERT_STRING(s, s->strstart, hash_head);
+            s->lookahead -= s->prev_నిడివి - 1;
+            s->prev_నిడివి -= 2;
+            చేయి {
+                ఒకవేళ (++s->strstart <= max_చొప్పించు) {
+                    చొప్పించు_STRING(s, s->strstart, hash_తల);
                 }
-            } while (--s->prev_length != 0);
-            s->match_available = 0;
-            s->match_length = MIN_MATCH-1;
+            } అయితే (--s->prev_నిడివి != 0);
+            s->సరిపోలిక_అందుబాటు = 0;
+            s->సరిపోలిక_నిడివి = MIN_సరిపోలిక-1;
             s->strstart++;
 
-            if (bflush) FLUSH_BLOCK(s, 0);
+            ఒకవేళ (bflush) FLUSH_ఖండం(s, 0);
 
-        } else if (s->match_available) {
+        } లేకపోతే ఒకవేళ (s->సరిపోలిక_అందుబాటు) {
             /* If there was no match at the previous position, output a
              * single literal. If there was a match but the current match
              * is longer, truncate the previous match to a single literal.
              */
-            Tracevv((stderr,"%c", s->window[s->strstart - 1]));
-            _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
-            if (bflush) {
-                FLUSH_BLOCK_ONLY(s, 0);
+            Tracevv((stderr,"%c", s->కిటికీ[s->strstart - 1]));
+            _tr_tally_lit(s, s->కిటికీ[s->strstart - 1], bflush);
+            ఒకవేళ (bflush) {
+                FLUSH_ఖండం_ONLY(s, 0);
             }
             s->strstart++;
             s->lookahead--;
-            if (s->strm->avail_out == 0) return need_more;
-        } else {
+            ఒకవేళ (s->strm->avail_బహిర్గతం == 0) తిరిగి need_మరిన్ని;
+        } లేకపోతే {
             /* There is no previous match to compare with, wait for
              * the next step to decide.
              */
-            s->match_available = 1;
+            s->సరిపోలిక_అందుబాటు = 1;
             s->strstart++;
             s->lookahead--;
         }
     }
     Assert (flush != Z_NO_FLUSH, "no flush?");
-    if (s->match_available) {
-        Tracevv((stderr,"%c", s->window[s->strstart - 1]));
-        _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
-        s->match_available = 0;
+    ఒకవేళ (s->సరిపోలిక_అందుబాటు) {
+        Tracevv((stderr,"%c", s->కిటికీ[s->strstart - 1]));
+        _tr_tally_lit(s, s->కిటికీ[s->strstart - 1], bflush);
+        s->సరిపోలిక_అందుబాటు = 0;
     }
-    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->చొప్పించు = s->strstart < MIN_సరిపోలిక-1 ? s->strstart : MIN_సరిపోలిక-1;
+    ఒకవేళ (flush == Z_ముగింపు) {
+        FLUSH_ఖండం(s, 1);
+        తిరిగి ముగింపు_పూర్తి;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    ఒకవేళ (s->sym_తదుపరి)
+        FLUSH_ఖండం(s, 0);
+    తిరిగి ఖండం_పూర్తి;
 }
-#endif /* FASTEST */
+#అయితే_ముగింపు /* FASTEST */
 
 /* ===========================================================================
  * For Z_RLE, simply look for runs of bytes, generate matches only of distance
  * one.  Do not maintain a hash table.  (It will be regenerated if this run of
  * deflate switches away from Z_RLE.)
  */
-local block_state deflate_rle(deflate_state *s, int flush) {
-    int bflush;             /* set if current block must be flushed */
+local ఖండం_state deflate_rle(deflate_state *s, పూర్ణాంకం flush) {
+    పూర్ణాంకం bflush;             /* set if current block must be flushed */
     uInt prev;              /* byte at distance one to match */
-    Bytef *scan, *strend;   /* scan goes up to strend for length of run */
+    Bytef *పరిశీలన, *strend;   /* scan goes up to strend for length of run */
 
-    for (;;) {
+    కొరకు (;;) {
         /* Make sure that we always have enough lookahead, except
          * at the end of the input file. We need MAX_MATCH bytes
          * for the longest run, plus one for the unrolled loop.
          */
-        if (s->lookahead <= MAX_MATCH) {
-            fill_window(s);
-            if (s->lookahead <= MAX_MATCH && flush == Z_NO_FLUSH) {
-                return need_more;
+        ఒకవేళ (s->lookahead <= MAX_సరిపోలిక) {
+            fill_కిటికీ(s);
+            ఒకవేళ (s->lookahead <= MAX_సరిపోలిక && flush == Z_NO_FLUSH) {
+                తిరిగి need_మరిన్ని;
             }
-            if (s->lookahead == 0) break; /* flush the current block */
+            ఒకవేళ (s->lookahead == 0) ఆపు; /* flush the current block */
         }
 
         /* See how many times the previous byte repeats */
-        s->match_length = 0;
-        if (s->lookahead >= MIN_MATCH && s->strstart > 0) {
-            scan = s->window + s->strstart - 1;
-            prev = *scan;
-            if (prev == *++scan && prev == *++scan && prev == *++scan) {
-                strend = s->window + s->strstart + MAX_MATCH;
-                do {
-                } while (prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         prev == *++scan && prev == *++scan &&
-                         scan < strend);
-                s->match_length = MAX_MATCH - (uInt)(strend - scan);
-                if (s->match_length > s->lookahead)
-                    s->match_length = s->lookahead;
+        s->సరిపోలిక_నిడివి = 0;
+        ఒకవేళ (s->lookahead >= MIN_సరిపోలిక && s->strstart > 0) {
+            పరిశీలన = s->కిటికీ + s->strstart - 1;
+            prev = *పరిశీలన;
+            ఒకవేళ (prev == *++పరిశీలన && prev == *++పరిశీలన && prev == *++పరిశీలన) {
+                strend = s->కిటికీ + s->strstart + MAX_సరిపోలిక;
+                చేయి {
+                } అయితే (prev == *++పరిశీలన && prev == *++పరిశీలన &&
+                         prev == *++పరిశీలన && prev == *++పరిశీలన &&
+                         prev == *++పరిశీలన && prev == *++పరిశీలన &&
+                         prev == *++పరిశీలన && prev == *++పరిశీలన &&
+                         పరిశీలన < strend);
+                s->సరిపోలిక_నిడివి = MAX_సరిపోలిక - (uInt)(strend - పరిశీలన);
+                ఒకవేళ (s->సరిపోలిక_నిడివి > s->lookahead)
+                    s->సరిపోలిక_నిడివి = s->lookahead;
             }
-            Assert(scan <= s->window + (uInt)(s->window_size - 1),
+            Assert(పరిశీలన <= s->కిటికీ + (uInt)(s->కిటికీ_కొలత - 1),
                    "wild scan");
         }
 
         /* Emit match if have run of MIN_MATCH or longer, else emit literal */
-        if (s->match_length >= MIN_MATCH) {
-            check_match(s, s->strstart, s->strstart - 1, (int)s->match_length);
+        ఒకవేళ (s->సరిపోలిక_నిడివి >= MIN_సరిపోలిక) {
+            check_సరిపోలిక(s, s->strstart, s->strstart - 1, (పూర్ణాంకం)s->సరిపోలిక_నిడివి);
 
-            _tr_tally_dist(s, 1, s->match_length - MIN_MATCH, bflush);
+            _tr_tally_dist(s, 1, s->సరిపోలిక_నిడివి - MIN_సరిపోలిక, bflush);
 
-            s->lookahead -= s->match_length;
-            s->strstart += s->match_length;
-            s->match_length = 0;
-        } else {
+            s->lookahead -= s->సరిపోలిక_నిడివి;
+            s->strstart += s->సరిపోలిక_నిడివి;
+            s->సరిపోలిక_నిడివి = 0;
+        } లేకపోతే {
             /* No match, output a literal byte */
-            Tracevv((stderr,"%c", s->window[s->strstart]));
-            _tr_tally_lit(s, s->window[s->strstart], bflush);
+            Tracevv((stderr,"%c", s->కిటికీ[s->strstart]));
+            _tr_tally_lit(s, s->కిటికీ[s->strstart], bflush);
             s->lookahead--;
             s->strstart++;
         }
-        if (bflush) FLUSH_BLOCK(s, 0);
+        ఒకవేళ (bflush) FLUSH_ఖండం(s, 0);
     }
-    s->insert = 0;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->చొప్పించు = 0;
+    ఒకవేళ (flush == Z_ముగింపు) {
+        FLUSH_ఖండం(s, 1);
+        తిరిగి ముగింపు_పూర్తి;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    ఒకవేళ (s->sym_తదుపరి)
+        FLUSH_ఖండం(s, 0);
+    తిరిగి ఖండం_పూర్తి;
 }
 
 /* ===========================================================================
  * For Z_HUFFMAN_ONLY, do not look for matches.  Do not maintain a hash table.
  * (It will be regenerated if this run of deflate switches away from Huffman.)
  */
-local block_state deflate_huff(deflate_state *s, int flush) {
-    int bflush;             /* set if current block must be flushed */
+local ఖండం_state deflate_huff(deflate_state *s, పూర్ణాంకం flush) {
+    పూర్ణాంకం bflush;             /* set if current block must be flushed */
 
-    for (;;) {
+    కొరకు (;;) {
         /* Make sure that we have a literal to write. */
-        if (s->lookahead == 0) {
-            fill_window(s);
-            if (s->lookahead == 0) {
-                if (flush == Z_NO_FLUSH)
-                    return need_more;
-                break;      /* flush the current block */
+        ఒకవేళ (s->lookahead == 0) {
+            fill_కిటికీ(s);
+            ఒకవేళ (s->lookahead == 0) {
+                ఒకవేళ (flush == Z_NO_FLUSH)
+                    తిరిగి need_మరిన్ని;
+                ఆపు;      /* flush the current block */
             }
         }
 
         /* Output a literal byte */
-        s->match_length = 0;
-        Tracevv((stderr,"%c", s->window[s->strstart]));
-        _tr_tally_lit(s, s->window[s->strstart], bflush);
+        s->సరిపోలిక_నిడివి = 0;
+        Tracevv((stderr,"%c", s->కిటికీ[s->strstart]));
+        _tr_tally_lit(s, s->కిటికీ[s->strstart], bflush);
         s->lookahead--;
         s->strstart++;
-        if (bflush) FLUSH_BLOCK(s, 0);
+        ఒకవేళ (bflush) FLUSH_ఖండం(s, 0);
     }
-    s->insert = 0;
-    if (flush == Z_FINISH) {
-        FLUSH_BLOCK(s, 1);
-        return finish_done;
+    s->చొప్పించు = 0;
+    ఒకవేళ (flush == Z_ముగింపు) {
+        FLUSH_ఖండం(s, 1);
+        తిరిగి ముగింపు_పూర్తి;
     }
-    if (s->sym_next)
-        FLUSH_BLOCK(s, 0);
-    return block_done;
+    ఒకవేళ (s->sym_తదుపరి)
+        FLUSH_ఖండం(s, 0);
+    తిరిగి ఖండం_పూర్తి;
 }

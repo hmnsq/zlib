@@ -10,397 +10,397 @@
 
 */
 
-#include <stdlib.h>
+#అన్తర్భావ <stdlib.h>
 
-#include "zlib.h"
-#include "ioapi.h"
-#include "iowin32.h"
+#అన్తర్భావ "zlib.h"
+#అన్తర్భావ "ioapi.h"
+#అన్తర్భావ "iowin32.h"
 
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE (0xFFFFFFFF)
-#endif
+#నిర్వచితం_కాకపోతే INVALID_HANDLE_విలువ
+#నిర్వచించు INVALID_HANDLE_విలువ (0xFFFFFFFF)
+#అయితే_ముగింపు
 
-#ifndef INVALID_SET_FILE_POINTER
-#define INVALID_SET_FILE_POINTER ((DWORD)-1)
-#endif
+#నిర్వచితం_కాకపోతే INVALID_సమితి_FILE_సూచిక
+#నిర్వచించు INVALID_సమితి_FILE_సూచిక ((DWORD)-1)
+#అయితే_ముగింపు
 
 
 /* see Include/shared/winapifamily.h in the Windows Kit */
-#if defined(WINAPI_FAMILY_PARTITION) && (!(defined(IOWIN32_USING_WINRT_API)))
+#ఒకవేళ defined(WINAPI_FAMILY_విభజన) && (!(defined(IOWIN32_USING_WINRT_API)))
 
-#if !defined(WINAPI_FAMILY_ONE_PARTITION)
-#define WINAPI_FAMILY_ONE_PARTITION(PartitionSet, Partition) ((WINAPI_FAMILY & PartitionSet) == Partition)
-#endif
+#ఒకవేళ !defined(WINAPI_FAMILY_ONE_విభజన)
+#నిర్వచించు WINAPI_FAMILY_ONE_విభజన(విభజన_సమితి, విభజన) ((WINAPI_FAMILY & విభజన_సమితి) == విభజన)
+#అయితే_ముగింపు
 
-#if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
-#define IOWIN32_USING_WINRT_API 1
-#endif
-#endif
+#ఒకవేళ WINAPI_FAMILY_ONE_విభజన(WINAPI_FAMILY, WINAPI_విభజన_APP)
+#నిర్వచించు IOWIN32_USING_WINRT_API 1
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-typedef struct
+రకనిర్వచనం నిర్మాణం
 {
     HANDLE hf;
-    int error;
+    పూర్ణాంకం error;
 } WIN32FILE_IOWIN;
 
 
-static void win32_translate_open_mode(int mode,
+స్థిర శూన్య win32_translate_open_బహుళకం(పూర్ణాంకం బహుళకం,
                                       DWORD* lpdwDesiredAccess,
                                       DWORD* lpdwCreationDisposition,
-                                      DWORD* lpdwShareMode,
-                                      DWORD* lpdwFlagsAndAttributes) {
-    *lpdwDesiredAccess = *lpdwShareMode = *lpdwFlagsAndAttributes = *lpdwCreationDisposition = 0;
+                                      DWORD* lpdw_Share_బహుళకం,
+                                      DWORD* lpdw_Flags_And_లక్షణాలు) {
+    *lpdwDesiredAccess = *lpdw_Share_బహుళకం = *lpdw_Flags_And_లక్షణాలు = *lpdwCreationDisposition = 0;
 
-    if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+    ఒకవేళ ((బహుళకం & ZLIB_FILEFUNC_బహుళకం_READWRITEFILTER)==ZLIB_FILEFUNC_బహుళకం_READ)
     {
         *lpdwDesiredAccess = GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
-        *lpdwShareMode = FILE_SHARE_READ;
+        *lpdw_Share_బహుళకం = FILE_SHARE_READ;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+    లేకపోతే ఒకవేళ (బహుళకం & ZLIB_FILEFUNC_బహుళకం_EXISTING)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = OPEN_EXISTING;
     }
-    else if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+    లేకపోతే ఒకవేళ (బహుళకం & ZLIB_FILEFUNC_బహుళకం_CREATE)
     {
         *lpdwDesiredAccess = GENERIC_WRITE | GENERIC_READ;
         *lpdwCreationDisposition = CREATE_ALWAYS;
     }
 }
 
-static voidpf win32_build_iowin(HANDLE hFile) {
-    voidpf ret=NULL;
+స్థిర voidpf win32_build_iowin(HANDLE hFile) {
+    voidpf ret=ఖాళీ;
 
-    if ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE))
+    ఒకవేళ ((hFile != ఖాళీ) && (hFile != INVALID_HANDLE_విలువ))
     {
         WIN32FILE_IOWIN w32fiow;
         w32fiow.hf = hFile;
         w32fiow.error = 0;
-        ret = malloc(sizeof(WIN32FILE_IOWIN));
+        ret = జ్ఞాపకం_ఇవ్వు(పరిమాణం(WIN32FILE_IOWIN));
 
-        if (ret==NULL)
+        ఒకవేళ (ret==ఖాళీ)
             CloseHandle(hFile);
-        else
+        లేకపోతే
             *((WIN32FILE_IOWIN*)ret) = w32fiow;
     }
-    return ret;
+    తిరిగి ret;
 }
 
-voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_func(voidpf opaque, స్థిరరాశి శూన్య* filename, పూర్ణాంకం బహుళకం) {
+    (శూన్య)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_బహుళకం,dw_Flags_And_లక్షణాలు ;
+    HANDLE hFile = ఖాళీ;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_బహుళకం(బహుళకం,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_బహుళకం,&dw_Flags_And_లక్షణాలు);
 
-#ifdef IOWIN32_USING_WINRT_API
-#ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#నిర్వచితమైతే IOWIN32_USING_WINRT_API
+#నిర్వచితమైతే UNICODE
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dw_Share_బహుళకం, dwCreationDisposition, ఖాళీ);
+#లేకపోతే
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_గమ్యం_Wide_Char(CP_ACP,0,(స్థిరరాశి అక్షరం*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_బహుళకం, dwCreationDisposition, ఖాళీ);
     }
-#endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#అయితే_ముగింపు
+#లేకపోతే
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
+        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dw_Share_బహుళకం, ఖాళీ, dwCreationDisposition, dw_Flags_And_లక్షణాలు, ఖాళీ);
+#అయితే_ముగింపు
 
-    return win32_build_iowin(hFile);
+    తిరిగి win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_funcA(voidpf opaque, స్థిరరాశి శూన్య* filename, పూర్ణాంకం బహుళకం) {
+    (శూన్య)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_బహుళకం,dw_Flags_And_లక్షణాలు ;
+    HANDLE hFile = ఖాళీ;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_బహుళకం(బహుళకం,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_బహుళకం,&dw_Flags_And_లక్షణాలు);
 
-#ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#నిర్వచితమైతే IOWIN32_USING_WINRT_API
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_గమ్యం_Wide_Char(CP_ACP,0,(స్థిరరాశి అక్షరం*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_బహుళకం, dwCreationDisposition, ఖాళీ);
     }
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#లేకపోతే
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
+        hFile = CreateFileA((LPCSTR)filename, dwDesiredAccess, dw_Share_బహుళకం, ఖాళీ, dwCreationDisposition, dw_Flags_And_లక్షణాలు, ఖాళీ);
+#అయితే_ముగింపు
 
-    return win32_build_iowin(hFile);
+    తిరిగి win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, const void* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open64_file_funcW(voidpf opaque, స్థిరరాశి శూన్య* filename, పూర్ణాంకం బహుళకం) {
+    (శూన్య)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_బహుళకం,dw_Flags_And_లక్షణాలు ;
+    HANDLE hFile = ఖాళీ;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_బహుళకం(బహుళకం,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_బహుళకం,&dw_Flags_And_లక్షణాలు);
 
-#ifdef IOWIN32_USING_WINRT_API
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition,NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#నిర్వచితమైతే IOWIN32_USING_WINRT_API
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCWSTR)filename, dwDesiredAccess, dw_Share_బహుళకం, dwCreationDisposition,ఖాళీ);
+#లేకపోతే
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
+        hFile = CreateFileW((LPCWSTR)filename, dwDesiredAccess, dw_Share_బహుళకం, ఖాళీ, dwCreationDisposition, dw_Flags_And_లక్షణాలు, ఖాళీ);
+#అయితే_ముగింపు
 
-    return win32_build_iowin(hFile);
+    తిరిగి win32_build_iowin(hFile);
 }
 
 
-voidpf ZCALLBACK win32_open_file_func(voidpf opaque, const char* filename, int mode) {
-    (void)opaque;
-    DWORD dwDesiredAccess,dwCreationDisposition,dwShareMode,dwFlagsAndAttributes ;
-    HANDLE hFile = NULL;
+voidpf ZCALLBACK win32_open_file_func(voidpf opaque, స్థిరరాశి అక్షరం* filename, పూర్ణాంకం బహుళకం) {
+    (శూన్య)opaque;
+    DWORD dwDesiredAccess,dwCreationDisposition,dw_Share_బహుళకం,dw_Flags_And_లక్షణాలు ;
+    HANDLE hFile = ఖాళీ;
 
-    win32_translate_open_mode(mode,&dwDesiredAccess,&dwCreationDisposition,&dwShareMode,&dwFlagsAndAttributes);
+    win32_translate_open_బహుళకం(బహుళకం,&dwDesiredAccess,&dwCreationDisposition,&dw_Share_బహుళకం,&dw_Flags_And_లక్షణాలు);
 
-#ifdef IOWIN32_USING_WINRT_API
-#ifdef UNICODE
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
+#నిర్వచితమైతే IOWIN32_USING_WINRT_API
+#నిర్వచితమైతే UNICODE
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
+        hFile = CreateFile2((LPCTSTR)filename, dwDesiredAccess, dw_Share_బహుళకం, dwCreationDisposition, ఖాళీ);
+#లేకపోతే
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
     {
         WCHAR filenameW[FILENAME_MAX + 0x200 + 1];
-        MultiByteToWideChar(CP_ACP,0,(const char*)filename,-1,filenameW,FILENAME_MAX + 0x200);
-        hFile = CreateFile2(filenameW, dwDesiredAccess, dwShareMode, dwCreationDisposition, NULL);
+        Multi_Byte_గమ్యం_Wide_Char(CP_ACP,0,(స్థిరరాశి అక్షరం*)filename,-1,filenameW,FILENAME_MAX + 0x200);
+        hFile = CreateFile2(filenameW, dwDesiredAccess, dw_Share_బహుళకం, dwCreationDisposition, ఖాళీ);
     }
-#endif
-#else
-    if ((filename!=NULL) && (dwDesiredAccess != 0))
-        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
-#endif
+#అయితే_ముగింపు
+#లేకపోతే
+    ఒకవేళ ((filename!=ఖాళీ) && (dwDesiredAccess != 0))
+        hFile = CreateFile((LPCTSTR)filename, dwDesiredAccess, dw_Share_బహుళకం, ఖాళీ, dwCreationDisposition, dw_Flags_And_లక్షణాలు, ఖాళీ);
+#అయితే_ముగింపు
 
-    return win32_build_iowin(hFile);
+    తిరిగి win32_build_iowin(hFile);
 }
 
 
-uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf stream, void* buf,uLong size) {
-    (void)opaque;
+uLong ZCALLBACK win32_read_file_func(voidpf opaque, voidpf ప్రవాహం, శూన్య* buf,uLong కొలత) {
+    (శూన్య)opaque;
     uLong ret=0;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
+    HANDLE hFile = ఖాళీ;
+    ఒకవేళ (ప్రవాహం!=ఖాళీ)
+        hFile = ((WIN32FILE_IOWIN*)ప్రవాహం) -> hf;
 
-    if (hFile != NULL)
+    ఒకవేళ (hFile != ఖాళీ)
     {
-        if (!ReadFile(hFile, buf, size, &ret, NULL))
+        ఒకవేళ (!ReadFile(hFile, buf, కొలత, &ret, ఖాళీ))
         {
-            DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            DWORD dwErr = Get_చివరి_Error();
+            ఒకవేళ (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)ప్రవాహం) -> error=(పూర్ణాంకం)dwErr;
         }
     }
 
-    return ret;
+    తిరిగి ret;
 }
 
 
-uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf stream, const void* buf, uLong size) {
-    (void)opaque;
+uLong ZCALLBACK win32_write_file_func(voidpf opaque, voidpf ప్రవాహం, స్థిరరాశి శూన్య* buf, uLong కొలత) {
+    (శూన్య)opaque;
     uLong ret=0;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
+    HANDLE hFile = ఖాళీ;
+    ఒకవేళ (ప్రవాహం!=ఖాళీ)
+        hFile = ((WIN32FILE_IOWIN*)ప్రవాహం) -> hf;
 
-    if (hFile != NULL)
+    ఒకవేళ (hFile != ఖాళీ)
     {
-        if (!WriteFile(hFile, buf, size, &ret, NULL))
+        ఒకవేళ (!WriteFile(hFile, buf, కొలత, &ret, ఖాళీ))
         {
-            DWORD dwErr = GetLastError();
-            if (dwErr == ERROR_HANDLE_EOF)
+            DWORD dwErr = Get_చివరి_Error();
+            ఒకవేళ (dwErr == ERROR_HANDLE_EOF)
                 dwErr = 0;
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            ((WIN32FILE_IOWIN*)ప్రవాహం) -> error=(పూర్ణాంకం)dwErr;
         }
     }
 
-    return ret;
+    తిరిగి ret;
 }
 
-static BOOL MySetFilePointerEx(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dwMoveMethod) {
-#ifdef IOWIN32_USING_WINRT_API
-    return SetFilePointerEx(hFile, pos, newPos, dwMoveMethod);
-#else
-    LONG lHigh = pos.HighPart;
-    DWORD dwNewPos = SetFilePointer(hFile, pos.LowPart, &lHigh, dwMoveMethod);
+స్థిర BOOL My_సమితి_File_సూచిక_Ex(HANDLE hFile, LARGE_INTEGER pos, LARGE_INTEGER *newPos, DWORD dw_Move_పద్ధతి) {
+#నిర్వచితమైతే IOWIN32_USING_WINRT_API
+    తిరిగి సమితి_File_సూచిక_Ex(hFile, pos, newPos, dw_Move_పద్ధతి);
+#లేకపోతే
+    LONG l_ఎగువ = pos.ఎగువ_Part;
+    DWORD dwNewPos = సమితి_File_సూచిక(hFile, pos.దిగువ_Part, &l_ఎగువ, dw_Move_పద్ధతి);
     BOOL fOk = TRUE;
-    if (dwNewPos == 0xFFFFFFFF)
-        if (GetLastError() != NO_ERROR)
+    ఒకవేళ (dwNewPos == 0xFFFFFFFF)
+        ఒకవేళ (Get_చివరి_Error() != NO_ERROR)
             fOk = FALSE;
-    if ((newPos != NULL) && (fOk))
+    ఒకవేళ ((newPos != ఖాళీ) && (fOk))
     {
-        newPos->LowPart = dwNewPos;
-        newPos->HighPart = lHigh;
+        newPos->దిగువ_Part = dwNewPos;
+        newPos->ఎగువ_Part = l_ఎగువ;
     }
-    return fOk;
-#endif
+    తిరిగి fOk;
+#అయితే_ముగింపు
 }
 
-long ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    long ret=-1;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    if (hFile != NULL)
+దీర్ఘ ZCALLBACK win32_tell_file_func(voidpf opaque, voidpf ప్రవాహం) {
+    (శూన్య)opaque;
+    దీర్ఘ ret=-1;
+    HANDLE hFile = ఖాళీ;
+    ఒకవేళ (ప్రవాహం!=ఖాళీ)
+        hFile = ((WIN32FILE_IOWIN*)ప్రవాహం) -> hf;
+    ఒకవేళ (hFile != ఖాళీ)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        ఒకవేళ (!My_సమితి_File_సూచిక_Ex(hFile, pos, &pos, FILE_CURRENT))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_చివరి_Error();
+            ((WIN32FILE_IOWIN*)ప్రవాహం) -> error=(పూర్ణాంకం)dwErr;
             ret = -1;
         }
-        else
-            ret=(long)pos.LowPart;
+        లేకపోతే
+            ret=(దీర్ఘ)pos.దిగువ_Part;
     }
-    return ret;
+    తిరిగి ret;
 }
 
-ZPOS64_T ZCALLBACK win32_tell64_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
+ZPOS64_T ZCALLBACK win32_tell64_file_func(voidpf opaque, voidpf ప్రవాహం) {
+    (శూన్య)opaque;
     ZPOS64_T ret= (ZPOS64_T)-1;
-    HANDLE hFile = NULL;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream)->hf;
+    HANDLE hFile = ఖాళీ;
+    ఒకవేళ (ప్రవాహం!=ఖాళీ)
+        hFile = ((WIN32FILE_IOWIN*)ప్రవాహం)->hf;
 
-    if (hFile)
+    ఒకవేళ (hFile)
     {
         LARGE_INTEGER pos;
         pos.QuadPart = 0;
 
-        if (!MySetFilePointerEx(hFile, pos, &pos, FILE_CURRENT))
+        ఒకవేళ (!My_సమితి_File_సూచిక_Ex(hFile, pos, &pos, FILE_CURRENT))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_చివరి_Error();
+            ((WIN32FILE_IOWIN*)ప్రవాహం) -> error=(పూర్ణాంకం)dwErr;
             ret = (ZPOS64_T)-1;
         }
-        else
+        లేకపోతే
             ret=pos.QuadPart;
     }
-    return ret;
+    తిరిగి ret;
 }
 
 
-long ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf stream, uLong offset, int origin) {
-    (void)opaque;
-    DWORD dwMoveMethod=0xFFFFFFFF;
-    HANDLE hFile = NULL;
+దీర్ఘ ZCALLBACK win32_seek_file_func(voidpf opaque, voidpf ప్రవాహం, uLong స్థానభ్రంశం, పూర్ణాంకం origin) {
+    (శూన్య)opaque;
+    DWORD dw_Move_పద్ధతి=0xFFFFFFFF;
+    HANDLE hFile = ఖాళీ;
 
-    long ret=-1;
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-    switch (origin)
+    దీర్ఘ ret=-1;
+    ఒకవేళ (ప్రవాహం!=ఖాళీ)
+        hFile = ((WIN32FILE_IOWIN*)ప్రవాహం) -> hf;
+    ఎంపిక (origin)
     {
-    case ZLIB_FILEFUNC_SEEK_CUR :
-        dwMoveMethod = FILE_CURRENT;
-        break;
-    case ZLIB_FILEFUNC_SEEK_END :
-        dwMoveMethod = FILE_END;
-        break;
-    case ZLIB_FILEFUNC_SEEK_SET :
-        dwMoveMethod = FILE_BEGIN;
-        break;
-    default: return -1;
+    స్థితి ZLIB_FILEFUNC_SEEK_CUR :
+        dw_Move_పద్ధతి = FILE_CURRENT;
+        ఆపు;
+    స్థితి ZLIB_FILEFUNC_SEEK_చివర :
+        dw_Move_పద్ధతి = FILE_చివర;
+        ఆపు;
+    స్థితి ZLIB_FILEFUNC_SEEK_సమితి :
+        dw_Move_పద్ధతి = FILE_BEGIN;
+        ఆపు;
+    అప్రమేయ: తిరిగి -1;
     }
 
-    if (hFile != NULL)
+    ఒకవేళ (hFile != ఖాళీ)
     {
         LARGE_INTEGER pos;
-        pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        pos.QuadPart = స్థానభ్రంశం;
+        ఒకవేళ (!My_సమితి_File_సూచిక_Ex(hFile, pos, ఖాళీ, dw_Move_పద్ధతి))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_చివరి_Error();
+            ((WIN32FILE_IOWIN*)ప్రవాహం) -> error=(పూర్ణాంకం)dwErr;
             ret = -1;
         }
-        else
+        లేకపోతే
             ret=0;
     }
-    return ret;
+    తిరిగి ret;
 }
 
-long ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf stream, ZPOS64_T offset, int origin) {
-    (void)opaque;
-    DWORD dwMoveMethod=0xFFFFFFFF;
-    HANDLE hFile = NULL;
-    long ret=-1;
+దీర్ఘ ZCALLBACK win32_seek64_file_func(voidpf opaque, voidpf ప్రవాహం, ZPOS64_T స్థానభ్రంశం, పూర్ణాంకం origin) {
+    (శూన్య)opaque;
+    DWORD dw_Move_పద్ధతి=0xFFFFFFFF;
+    HANDLE hFile = ఖాళీ;
+    దీర్ఘ ret=-1;
 
-    if (stream!=NULL)
-        hFile = ((WIN32FILE_IOWIN*)stream)->hf;
+    ఒకవేళ (ప్రవాహం!=ఖాళీ)
+        hFile = ((WIN32FILE_IOWIN*)ప్రవాహం)->hf;
 
-    switch (origin)
+    ఎంపిక (origin)
     {
-        case ZLIB_FILEFUNC_SEEK_CUR :
-            dwMoveMethod = FILE_CURRENT;
-            break;
-        case ZLIB_FILEFUNC_SEEK_END :
-            dwMoveMethod = FILE_END;
-            break;
-        case ZLIB_FILEFUNC_SEEK_SET :
-            dwMoveMethod = FILE_BEGIN;
-            break;
-        default: return -1;
+        స్థితి ZLIB_FILEFUNC_SEEK_CUR :
+            dw_Move_పద్ధతి = FILE_CURRENT;
+            ఆపు;
+        స్థితి ZLIB_FILEFUNC_SEEK_చివర :
+            dw_Move_పద్ధతి = FILE_చివర;
+            ఆపు;
+        స్థితి ZLIB_FILEFUNC_SEEK_సమితి :
+            dw_Move_పద్ధతి = FILE_BEGIN;
+            ఆపు;
+        అప్రమేయ: తిరిగి -1;
     }
 
-    if (hFile)
+    ఒకవేళ (hFile)
     {
         LARGE_INTEGER pos;
-        pos.QuadPart = offset;
-        if (!MySetFilePointerEx(hFile, pos, NULL, dwMoveMethod))
+        pos.QuadPart = స్థానభ్రంశం;
+        ఒకవేళ (!My_సమితి_File_సూచిక_Ex(hFile, pos, ఖాళీ, dw_Move_పద్ధతి))
         {
-            DWORD dwErr = GetLastError();
-            ((WIN32FILE_IOWIN*)stream) -> error=(int)dwErr;
+            DWORD dwErr = Get_చివరి_Error();
+            ((WIN32FILE_IOWIN*)ప్రవాహం) -> error=(పూర్ణాంకం)dwErr;
             ret = -1;
         }
-        else
+        లేకపోతే
             ret=0;
     }
-    return ret;
+    తిరిగి ret;
 }
 
-int ZCALLBACK win32_close_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    int ret=-1;
+పూర్ణాంకం ZCALLBACK win32_close_file_func(voidpf opaque, voidpf ప్రవాహం) {
+    (శూన్య)opaque;
+    పూర్ణాంకం ret=-1;
 
-    if (stream!=NULL)
+    ఒకవేళ (ప్రవాహం!=ఖాళీ)
     {
         HANDLE hFile;
-        hFile = ((WIN32FILE_IOWIN*)stream) -> hf;
-        if (hFile != NULL)
+        hFile = ((WIN32FILE_IOWIN*)ప్రవాహం) -> hf;
+        ఒకవేళ (hFile != ఖాళీ)
         {
             CloseHandle(hFile);
             ret=0;
         }
-        free(stream);
+        విడుదల(ప్రవాహం);
     }
-    return ret;
+    తిరిగి ret;
 }
 
-int ZCALLBACK win32_error_file_func(voidpf opaque, voidpf stream) {
-    (void)opaque;
-    int ret=-1;
-    if (stream!=NULL)
+పూర్ణాంకం ZCALLBACK win32_error_file_func(voidpf opaque, voidpf ప్రవాహం) {
+    (శూన్య)opaque;
+    పూర్ణాంకం ret=-1;
+    ఒకవేళ (ప్రవాహం!=ఖాళీ)
     {
-        ret = ((WIN32FILE_IOWIN*)stream) -> error;
+        ret = ((WIN32FILE_IOWIN*)ప్రవాహం) -> error;
     }
-    return ret;
+    తిరిగి ret;
 }
 
-void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
+శూన్య fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen_file = win32_open_file_func;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -408,10 +408,10 @@ void fill_win32_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek_file = win32_seek_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ఖాళీ;
 }
 
-void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
+శూన్య fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_func;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -419,11 +419,11 @@ void fill_win32_filefunc64(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ఖాళీ;
 }
 
 
-void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
+శూన్య fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_funcA;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -431,11 +431,11 @@ void fill_win32_filefunc64A(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ఖాళీ;
 }
 
 
-void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
+శూన్య fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen64_file = win32_open64_file_funcW;
     pzlib_filefunc_def->zread_file = win32_read_file_func;
     pzlib_filefunc_def->zwrite_file = win32_write_file_func;
@@ -443,5 +443,5 @@ void fill_win32_filefunc64W(zlib_filefunc64_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zseek64_file = win32_seek64_file_func;
     pzlib_filefunc_def->zclose_file = win32_close_file_func;
     pzlib_filefunc_def->zerror_file = win32_error_file_func;
-    pzlib_filefunc_def->opaque = NULL;
+    pzlib_filefunc_def->opaque = ఖాళీ;
 }

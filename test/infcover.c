@@ -5,19 +5,19 @@
 
 /* to use, do: ./configure --cover && make cover */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include "zlib.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ "zlib.h"
 
 /* get definition of internal structure so we can mess with it (see pull()),
    and so we can call inflate_trees() (see cover5()) */
-#define ZLIB_INTERNAL
-#include "inftrees.h"
-#include "inflate.h"
+#నిర్వచించు ZLIB_అంతర్గత
+#అన్తర్భావ "inftrees.h"
+#అన్తర్భావ "inflate.h"
 
-#define local static
+#నిర్వచించు local స్థిర
 
 /* -- memory tracking routines -- */
 
@@ -53,86 +53,86 @@
  */
 
 /* these items are strung together in a linked list, one for each allocation */
-struct mem_item {
-    void *ptr;                  /* pointer to allocated memory */
-    size_t size;                /* requested size of allocation */
-    struct mem_item *next;      /* pointer to next item in list, or NULL */
+నిర్మాణం mem_అంశం {
+    శూన్య *ptr;                  /* pointer to allocated memory */
+    size_t కొలత;                /* requested size of allocation */
+    నిర్మాణం mem_అంశం *తదుపరి;      /* pointer to next item in list, or NULL */
 };
 
 /* this structure is at the root of the linked list, and tracks statistics */
-struct mem_zone {
-    struct mem_item *first;     /* pointer to first item in list, or NULL */
-    size_t total, highwater;    /* total allocations, and largest total */
-    size_t limit;               /* memory allocation limit, or 0 if no limit */
-    int notlifo, rogue;         /* counts of non-LIFO frees and rogue frees */
+నిర్మాణం mem_zone {
+    నిర్మాణం mem_అంశం *మొదటి;     /* pointer to first item in list, or NULL */
+    size_t మొత్తం, highwater;    /* total allocations, and largest total */
+    size_t హద్దు;               /* memory allocation limit, or 0 if no limit */
+    పూర్ణాంకం notlifo, rogue;         /* counts of non-LIFO frees and rogue frees */
 };
 
 /* memory allocation routine to pass to zlib */
-local void *mem_alloc(void *mem, unsigned count, unsigned size)
+local శూన్య *mem_alloc(శూన్య *mem, గుర్తులేని లెక్క, గుర్తులేని కొలత)
 {
-    void *ptr;
-    struct mem_item *item;
-    struct mem_zone *zone = mem;
-    size_t len = count * (size_t)size;
+    శూన్య *ptr;
+    నిర్మాణం mem_అంశం *అంశం;
+    నిర్మాణం mem_zone *zone = mem;
+    size_t len = లెక్క * (size_t)కొలత;
 
     /* induced allocation failure */
-    if (zone == NULL || (zone->limit && zone->total + len > zone->limit))
-        return NULL;
+    ఒకవేళ (zone == ఖాళీ || (zone->హద్దు && zone->మొత్తం + len > zone->హద్దు))
+        తిరిగి ఖాళీ;
 
     /* perform allocation using the standard library, fill memory with a
        non-zero value to make sure that the code isn't depending on zeros */
-    ptr = malloc(len);
-    if (ptr == NULL)
-        return NULL;
+    ptr = జ్ఞాపకం_ఇవ్వు(len);
+    ఒకవేళ (ptr == ఖాళీ)
+        తిరిగి ఖాళీ;
     memset(ptr, 0xa5, len);
 
     /* create a new item for the list */
-    item = malloc(sizeof(struct mem_item));
-    if (item == NULL) {
-        free(ptr);
-        return NULL;
+    అంశం = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం mem_అంశం));
+    ఒకవేళ (అంశం == ఖాళీ) {
+        విడుదల(ptr);
+        తిరిగి ఖాళీ;
     }
-    item->ptr = ptr;
-    item->size = len;
+    అంశం->ptr = ptr;
+    అంశం->కొలత = len;
 
     /* insert item at the beginning of the list */
-    item->next = zone->first;
-    zone->first = item;
+    అంశం->తదుపరి = zone->మొదటి;
+    zone->మొదటి = అంశం;
 
     /* update the statistics */
-    zone->total += item->size;
-    if (zone->total > zone->highwater)
-        zone->highwater = zone->total;
+    zone->మొత్తం += అంశం->కొలత;
+    ఒకవేళ (zone->మొత్తం > zone->highwater)
+        zone->highwater = zone->మొత్తం;
 
     /* return the allocated memory */
-    return ptr;
+    తిరిగి ptr;
 }
 
 /* memory free routine to pass to zlib */
-local void mem_free(void *mem, void *ptr)
+local శూన్య mem_free(శూన్య *mem, శూన్య *ptr)
 {
-    struct mem_item *item, *next;
-    struct mem_zone *zone = mem;
+    నిర్మాణం mem_అంశం *అంశం, *తదుపరి;
+    నిర్మాణం mem_zone *zone = mem;
 
     /* if no zone, just do a free */
-    if (zone == NULL) {
-        free(ptr);
-        return;
+    ఒకవేళ (zone == ఖాళీ) {
+        విడుదల(ptr);
+        తిరిగి;
     }
 
     /* point next to the item that matches ptr, or NULL if not found -- remove
        the item from the linked list if found */
-    next = zone->first;
-    if (next) {
-        if (next->ptr == ptr)
-            zone->first = next->next;   /* first one is it, remove from list */
-        else {
-            do {                        /* search the linked list */
-                item = next;
-                next = item->next;
-            } while (next != NULL && next->ptr != ptr);
-            if (next) {                 /* if found, remove from linked list */
-                item->next = next->next;
+    తదుపరి = zone->మొదటి;
+    ఒకవేళ (తదుపరి) {
+        ఒకవేళ (తదుపరి->ptr == ptr)
+            zone->మొదటి = తదుపరి->తదుపరి;   /* first one is it, remove from list */
+        లేకపోతే {
+            చేయి {                        /* search the linked list */
+                అంశం = తదుపరి;
+                తదుపరి = అంశం->తదుపరి;
+            } అయితే (తదుపరి != ఖాళీ && తదుపరి->ptr != ptr);
+            ఒకవేళ (తదుపరి) {                 /* if found, remove from linked list */
+                అంశం->తదుపరి = తదుపరి->తదుపరి;
                 zone->notlifo++;        /* not a LIFO free */
             }
 
@@ -140,31 +140,31 @@ local void mem_free(void *mem, void *ptr)
     }
 
     /* if found, update the statistics and free the item */
-    if (next) {
-        zone->total -= next->size;
-        free(next);
+    ఒకవేళ (తదుపరి) {
+        zone->మొత్తం -= తదుపరి->కొలత;
+        విడుదల(తదుపరి);
     }
 
     /* if not found, update the rogue count */
-    else
+    లేకపోతే
         zone->rogue++;
 
     /* in any case, do the requested free with the standard library function */
-    free(ptr);
+    విడుదల(ptr);
 }
 
 /* set up a controlled memory allocation space for monitoring, set the stream
    parameters to the controlled routines, with opaque pointing to the space */
-local void mem_setup(z_stream *strm)
+local శూన్య mem_అమరిక(z_ప్రవాహం *strm)
 {
-    struct mem_zone *zone;
+    నిర్మాణం mem_zone *zone;
 
-    zone = malloc(sizeof(struct mem_zone));
-    assert(zone != NULL);
-    zone->first = NULL;
-    zone->total = 0;
+    zone = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం mem_zone));
+    ప్రతిజ్ఞా(zone != ఖాళీ);
+    zone->మొదటి = ఖాళీ;
+    zone->మొత్తం = 0;
     zone->highwater = 0;
-    zone->limit = 0;
+    zone->హద్దు = 0;
     zone->notlifo = 0;
     zone->rogue = 0;
     strm->opaque = zone;
@@ -173,61 +173,61 @@ local void mem_setup(z_stream *strm)
 }
 
 /* set a limit on the total memory allocation, or 0 to remove the limit */
-local void mem_limit(z_stream *strm, size_t limit)
+local శూన్య mem_హద్దు(z_ప్రవాహం *strm, size_t హద్దు)
 {
-    struct mem_zone *zone = strm->opaque;
+    నిర్మాణం mem_zone *zone = strm->opaque;
 
-    zone->limit = limit;
+    zone->హద్దు = హద్దు;
 }
 
 /* show the current total requested allocations in bytes */
-local void mem_used(z_stream *strm, char *prefix)
+local శూన్య mem_వాడిన(z_ప్రవాహం *strm, అక్షరం *ఉపసర్గ)
 {
-    struct mem_zone *zone = strm->opaque;
+    నిర్మాణం mem_zone *zone = strm->opaque;
 
-    fprintf(stderr, "%s: %zu allocated\n", prefix, zone->total);
+    fprintf(stderr, "%s: %zu allocated\n", ఉపసర్గ, zone->మొత్తం);
 }
 
 /* show the high water allocation in bytes */
-local void mem_high(z_stream *strm, char *prefix)
+local శూన్య mem_ఎగువ(z_ప్రవాహం *strm, అక్షరం *ఉపసర్గ)
 {
-    struct mem_zone *zone = strm->opaque;
+    నిర్మాణం mem_zone *zone = strm->opaque;
 
-    fprintf(stderr, "%s: %zu high water mark\n", prefix, zone->highwater);
+    fprintf(stderr, "%s: %zu high water mark\n", ఉపసర్గ, zone->highwater);
 }
 
 /* release the memory allocation zone -- if there are any surprises, notify */
-local void mem_done(z_stream *strm, char *prefix)
+local శూన్య mem_పూర్తి(z_ప్రవాహం *strm, అక్షరం *ఉపసర్గ)
 {
-    int count = 0;
-    struct mem_item *item, *next;
-    struct mem_zone *zone = strm->opaque;
+    పూర్ణాంకం లెక్క = 0;
+    నిర్మాణం mem_అంశం *అంశం, *తదుపరి;
+    నిర్మాణం mem_zone *zone = strm->opaque;
 
     /* show high water mark */
-    mem_high(strm, prefix);
+    mem_ఎగువ(strm, ఉపసర్గ);
 
     /* free leftover allocations and item structures, if any */
-    item = zone->first;
-    while (item != NULL) {
-        free(item->ptr);
-        next = item->next;
-        free(item);
-        item = next;
-        count++;
+    అంశం = zone->మొదటి;
+    అయితే (అంశం != ఖాళీ) {
+        విడుదల(అంశం->ptr);
+        తదుపరి = అంశం->తదుపరి;
+        విడుదల(అంశం);
+        అంశం = తదుపరి;
+        లెక్క++;
     }
 
     /* issue alerts about anything unexpected */
-    if (count || zone->total)
+    ఒకవేళ (లెక్క || zone->మొత్తం)
         fprintf(stderr, "** %s: %zu bytes in %d blocks not freed\n",
-                prefix, zone->total, count);
-    if (zone->notlifo)
-        fprintf(stderr, "** %s: %d frees not LIFO\n", prefix, zone->notlifo);
-    if (zone->rogue)
+                ఉపసర్గ, zone->మొత్తం, లెక్క);
+    ఒకవేళ (zone->notlifo)
+        fprintf(stderr, "** %s: %d frees not LIFO\n", ఉపసర్గ, zone->notlifo);
+    ఒకవేళ (zone->rogue)
         fprintf(stderr, "** %s: %d frees not recognized\n",
-                prefix, zone->rogue);
+                ఉపసర్గ, zone->rogue);
 
     /* free the zone and delete from the stream */
-    free(zone);
+    విడుదల(zone);
     strm->opaque = Z_NULL;
     strm->zalloc = Z_NULL;
     strm->zfree = Z_NULL;
@@ -242,34 +242,34 @@ local void mem_done(z_stream *strm, char *prefix)
    by a delimiter, where that single digit writes a byte.  The returned data is
    allocated and must eventually be freed.  NULL is returned if out of memory.
    If the length is not needed, then len can be NULL. */
-local unsigned char *h2b(const char *hex, unsigned *len)
+local గుర్తులేని అక్షరం *h2b(స్థిరరాశి అక్షరం *hex, గుర్తులేని *len)
 {
-    unsigned char *in, *re;
-    unsigned next, val;
+    గుర్తులేని అక్షరం *లోపల, *re;
+    గుర్తులేని తదుపరి, val;
 
-    in = malloc((strlen(hex) + 1) >> 1);
-    if (in == NULL)
-        return NULL;
-    next = 0;
+    లోపల = జ్ఞాపకం_ఇవ్వు((అక్షరశ్రేణి_పొడవు(hex) + 1) >> 1);
+    ఒకవేళ (లోపల == ఖాళీ)
+        తిరిగి ఖాళీ;
+    తదుపరి = 0;
     val = 1;
-    do {
-        if (*hex >= '0' && *hex <= '9')
+    చేయి {
+        ఒకవేళ (*hex >= '0' && *hex <= '9')
             val = (val << 4) + *hex - '0';
-        else if (*hex >= 'A' && *hex <= 'F')
+        లేకపోతే ఒకవేళ (*hex >= 'A' && *hex <= 'F')
             val = (val << 4) + *hex - 'A' + 10;
-        else if (*hex >= 'a' && *hex <= 'f')
+        లేకపోతే ఒకవేళ (*hex >= 'a' && *hex <= 'f')
             val = (val << 4) + *hex - 'a' + 10;
-        else if (val != 1 && val < 32)  /* one digit followed by delimiter */
+        లేకపోతే ఒకవేళ (val != 1 && val < 32)  /* one digit followed by delimiter */
             val += 240;                 /* make it look like two digits */
-        if (val > 255) {                /* have two digits */
-            in[next++] = val & 0xff;    /* save the decoded byte */
+        ఒకవేళ (val > 255) {                /* have two digits */
+            లోపల[తదుపరి++] = val & 0xff;    /* save the decoded byte */
             val = 1;                    /* start over */
         }
-    } while (*hex++);       /* go through the loop with the terminating null */
-    if (len != NULL)
-        *len = next;
-    re = realloc(in, next);
-    return re == NULL ? in : re;
+    } అయితే (*hex++);       /* go through the loop with the terminating null */
+    ఒకవేళ (len != ఖాళీ)
+        *len = తదుపరి;
+    re = realloc(లోపల, తదుపరి);
+    తిరిగి re == ఖాళీ ? లోపల : re;
 }
 
 /* generic inflate() run, where hex is the hexadecimal input data, what is the
@@ -281,305 +281,305 @@ local unsigned char *h2b(const char *hex, unsigned *len)
    header information is collected with inflateGetHeader().  If a zlib stream
    is looking for a dictionary, then an empty dictionary is provided.
    inflate() is run until all of the input data is consumed. */
-local void inf(char *hex, char *what, unsigned step, int win, unsigned len,
-               int err)
+local శూన్య inf(అక్షరం *hex, అక్షరం *what, గుర్తులేని అడుగు, పూర్ణాంకం win, గుర్తులేని len,
+               పూర్ణాంకం err)
 {
-    int ret;
-    unsigned have;
-    unsigned char *in, *out;
-    z_stream strm, copy;
-    gz_header head;
+    పూర్ణాంకం ret;
+    గుర్తులేని have;
+    గుర్తులేని అక్షరం *లోపల, *బహిర్గతం;
+    z_ప్రవాహం strm, copy;
+    gz_శీర్షిక తల;
 
-    mem_setup(&strm);
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
+    mem_అమరిక(&strm);
+    strm.avail_లోపల = 0;
+    strm.తదుపరి_లోపల = Z_NULL;
     ret = inflateInit2(&strm, win);
-    if (ret != Z_OK) {
-        mem_done(&strm, what);
-        return;
+    ఒకవేళ (ret != Z_OK) {
+        mem_పూర్తి(&strm, what);
+        తిరిగి;
     }
-    out = malloc(len);                          assert(out != NULL);
-    if (win == 47) {
-        head.extra = out;
-        head.extra_max = len;
-        head.name = out;
-        head.name_max = len;
-        head.comment = out;
-        head.comm_max = len;
-        ret = inflateGetHeader(&strm, &head);   assert(ret == Z_OK);
+    బహిర్గతం = జ్ఞాపకం_ఇవ్వు(len);                          ప్రతిజ్ఞా(బహిర్గతం != ఖాళీ);
+    ఒకవేళ (win == 47) {
+        తల.extra = బహిర్గతం;
+        తల.extra_max = len;
+        తల.name = బహిర్గతం;
+        తల.name_max = len;
+        తల.comment = బహిర్గతం;
+        తల.comm_max = len;
+        ret = inflate_Get_శీర్షిక(&strm, &తల);   ప్రతిజ్ఞా(ret == Z_OK);
     }
-    in = h2b(hex, &have);                       assert(in != NULL);
-    if (step == 0 || step > have)
-        step = have;
-    strm.avail_in = step;
-    have -= step;
-    strm.next_in = in;
-    do {
-        strm.avail_out = len;
-        strm.next_out = out;
-        ret = inflate(&strm, Z_NO_FLUSH);       assert(err == 9 || ret == err);
-        if (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_NEED_DICT)
-            break;
-        if (ret == Z_NEED_DICT) {
-            ret = inflateSetDictionary(&strm, in, 1);
-                                                assert(ret == Z_DATA_ERROR);
-            mem_limit(&strm, 1);
-            ret = inflateSetDictionary(&strm, out, 0);
-                                                assert(ret == Z_MEM_ERROR);
-            mem_limit(&strm, 0);
-            ((struct inflate_state *)strm.state)->mode = DICT;
-            ret = inflateSetDictionary(&strm, out, 0);
-                                                assert(ret == Z_OK);
-            ret = inflate(&strm, Z_NO_FLUSH);   assert(ret == Z_BUF_ERROR);
+    లోపల = h2b(hex, &have);                       ప్రతిజ్ఞా(లోపల != ఖాళీ);
+    ఒకవేళ (అడుగు == 0 || అడుగు > have)
+        అడుగు = have;
+    strm.avail_లోపల = అడుగు;
+    have -= అడుగు;
+    strm.తదుపరి_లోపల = లోపల;
+    చేయి {
+        strm.avail_బహిర్గతం = len;
+        strm.తదుపరి_బహిర్గతం = బహిర్గతం;
+        ret = inflate(&strm, Z_NO_FLUSH);       ప్రతిజ్ఞా(err == 9 || ret == err);
+        ఒకవేళ (ret != Z_OK && ret != Z_BUF_ERROR && ret != Z_NEED_DICT)
+            ఆపు;
+        ఒకవేళ (ret == Z_NEED_DICT) {
+            ret = inflate_సమితి_Dictionary(&strm, లోపల, 1);
+                                                ప్రతిజ్ఞా(ret == Z_దత్తాంశం_ERROR);
+            mem_హద్దు(&strm, 1);
+            ret = inflate_సమితి_Dictionary(&strm, బహిర్గతం, 0);
+                                                ప్రతిజ్ఞా(ret == Z_MEM_ERROR);
+            mem_హద్దు(&strm, 0);
+            ((నిర్మాణం inflate_state *)strm.state)->బహుళకం = DICT;
+            ret = inflate_సమితి_Dictionary(&strm, బహిర్గతం, 0);
+                                                ప్రతిజ్ఞా(ret == Z_OK);
+            ret = inflate(&strm, Z_NO_FLUSH);   ప్రతిజ్ఞా(ret == Z_BUF_ERROR);
         }
-        ret = inflateCopy(&copy, &strm);        assert(ret == Z_OK);
-        ret = inflateEnd(&copy);                assert(ret == Z_OK);
+        ret = inflateCopy(&copy, &strm);        ప్రతిజ్ఞా(ret == Z_OK);
+        ret = inflate_చివర(&copy);                ప్రతిజ్ఞా(ret == Z_OK);
         err = 9;                        /* don't care next time around */
-        have += strm.avail_in;
-        strm.avail_in = step > have ? have : step;
-        have -= strm.avail_in;
-    } while (strm.avail_in);
-    free(in);
-    free(out);
-    ret = inflateReset2(&strm, -8);             assert(ret == Z_OK);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
-    mem_done(&strm, what);
+        have += strm.avail_లోపల;
+        strm.avail_లోపల = అడుగు > have ? have : అడుగు;
+        have -= strm.avail_లోపల;
+    } అయితే (strm.avail_లోపల);
+    విడుదల(లోపల);
+    విడుదల(బహిర్గతం);
+    ret = inflateReset2(&strm, -8);             ప్రతిజ్ఞా(ret == Z_OK);
+    ret = inflate_చివర(&strm);                    ప్రతిజ్ఞా(ret == Z_OK);
+    mem_పూర్తి(&strm, what);
 }
 
 /* cover all of the lines in inflate.c up to inflate() */
-local void cover_support(void)
+local శూన్య cover_support(శూన్య)
 {
-    int ret;
-    z_stream strm;
+    పూర్ణాంకం ret;
+    z_ప్రవాహం strm;
 
-    mem_setup(&strm);
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
-    ret = inflateInit(&strm);                   assert(ret == Z_OK);
-    mem_used(&strm, "inflate init");
-    ret = inflatePrime(&strm, 5, 31);           assert(ret == Z_OK);
-    ret = inflatePrime(&strm, -1, 0);           assert(ret == Z_OK);
-    ret = inflateSetDictionary(&strm, Z_NULL, 0);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
-    mem_done(&strm, "prime");
+    mem_అమరిక(&strm);
+    strm.avail_లోపల = 0;
+    strm.తదుపరి_లోపల = Z_NULL;
+    ret = inflateInit(&strm);                   ప్రతిజ్ఞా(ret == Z_OK);
+    mem_వాడిన(&strm, "inflate init");
+    ret = inflate_ప్రధానసంఖ్య(&strm, 5, 31);           ప్రతిజ్ఞా(ret == Z_OK);
+    ret = inflate_ప్రధానసంఖ్య(&strm, -1, 0);           ప్రతిజ్ఞా(ret == Z_OK);
+    ret = inflate_సమితి_Dictionary(&strm, Z_NULL, 0);
+                                                ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
+    ret = inflate_చివర(&strm);                    ప్రతిజ్ఞా(ret == Z_OK);
+    mem_పూర్తి(&strm, "prime");
 
     inf("63 0", "force window allocation", 0, -15, 1, Z_OK);
     inf("63 18 5", "force window replacement", 0, -8, 259, Z_OK);
     inf("63 18 68 30 d0 0 0", "force split window update", 4, -8, 259, Z_OK);
-    inf("3 0", "use fixed blocks", 0, -15, 1, Z_STREAM_END);
-    inf("", "bad window size", 0, 1, 0, Z_STREAM_ERROR);
+    inf("3 0", "use fixed blocks", 0, -15, 1, Z_ప్రవాహం_చివర);
+    inf("", "bad window size", 0, 1, 0, Z_ప్రవాహం_ERROR);
 
-    mem_setup(&strm);
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
-    ret = inflateInit_(&strm, "!", (int)sizeof(z_stream));
-                                                assert(ret == Z_VERSION_ERROR);
-    mem_done(&strm, "wrong version");
+    mem_అమరిక(&strm);
+    strm.avail_లోపల = 0;
+    strm.తదుపరి_లోపల = Z_NULL;
+    ret = inflateInit_(&strm, "!", (పూర్ణాంకం)పరిమాణం(z_ప్రవాహం));
+                                                ప్రతిజ్ఞా(ret == Z_సంస్కరణ_ERROR);
+    mem_పూర్తి(&strm, "wrong version");
 
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
-    ret = inflateInit(&strm);                   assert(ret == Z_OK);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
+    strm.avail_లోపల = 0;
+    strm.తదుపరి_లోపల = Z_NULL;
+    ret = inflateInit(&strm);                   ప్రతిజ్ఞా(ret == Z_OK);
+    ret = inflate_చివర(&strm);                    ప్రతిజ్ఞా(ret == Z_OK);
     fputs("inflate built-in memory routines\n", stderr);
 }
 
 /* cover all inflate() header and trailer cases and code after inflate() */
-local void cover_wrap(void)
+local శూన్య cover_wrap(శూన్య)
 {
-    int ret;
-    z_stream strm, copy;
-    unsigned char dict[257];
+    పూర్ణాంకం ret;
+    z_ప్రవాహం strm, copy;
+    గుర్తులేని అక్షరం dict[257];
 
-    ret = inflate(Z_NULL, 0);                   assert(ret == Z_STREAM_ERROR);
-    ret = inflateEnd(Z_NULL);                   assert(ret == Z_STREAM_ERROR);
-    ret = inflateCopy(Z_NULL, Z_NULL);          assert(ret == Z_STREAM_ERROR);
+    ret = inflate(Z_NULL, 0);                   ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
+    ret = inflate_చివర(Z_NULL);                   ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
+    ret = inflateCopy(Z_NULL, Z_NULL);          ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
     fputs("inflate bad parameters\n", stderr);
 
-    inf("1f 8b 0 0", "bad gzip method", 0, 31, 0, Z_DATA_ERROR);
-    inf("1f 8b 8 80", "bad gzip flags", 0, 31, 0, Z_DATA_ERROR);
-    inf("77 85", "bad zlib method", 0, 15, 0, Z_DATA_ERROR);
+    inf("1f 8b 0 0", "bad gzip method", 0, 31, 0, Z_దత్తాంశం_ERROR);
+    inf("1f 8b 8 80", "bad gzip flags", 0, 31, 0, Z_దత్తాంశం_ERROR);
+    inf("77 85", "bad zlib method", 0, 15, 0, Z_దత్తాంశం_ERROR);
     inf("8 99", "set window size from header", 0, 0, 0, Z_OK);
-    inf("78 9c", "bad zlib window size", 0, 8, 0, Z_DATA_ERROR);
-    inf("78 9c 63 0 0 0 1 0 1", "check adler32", 0, 15, 1, Z_STREAM_END);
+    inf("78 9c", "bad zlib window size", 0, 8, 0, Z_దత్తాంశం_ERROR);
+    inf("78 9c 63 0 0 0 1 0 1", "check adler32", 0, 15, 1, Z_ప్రవాహం_చివర);
     inf("1f 8b 8 1e 0 0 0 0 0 0 1 0 0 0 0 0 0", "bad header crc", 0, 47, 1,
-        Z_DATA_ERROR);
+        Z_దత్తాంశం_ERROR);
     inf("1f 8b 8 2 0 0 0 0 0 0 1d 26 3 0 0 0 0 0 0 0 0 0", "check gzip length",
-        0, 47, 0, Z_STREAM_END);
-    inf("78 90", "bad zlib header check", 0, 47, 0, Z_DATA_ERROR);
+        0, 47, 0, Z_ప్రవాహం_చివర);
+    inf("78 90", "bad zlib header check", 0, 47, 0, Z_దత్తాంశం_ERROR);
     inf("8 b8 0 0 0 1", "need dictionary", 0, 8, 0, Z_NEED_DICT);
     inf("78 9c 63 0", "compute adler32", 0, 15, 1, Z_OK);
 
-    mem_setup(&strm);
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
+    mem_అమరిక(&strm);
+    strm.avail_లోపల = 0;
+    strm.తదుపరి_లోపల = Z_NULL;
     ret = inflateInit2(&strm, -8);
-    strm.avail_in = 2;
-    strm.next_in = (void *)"\x63";
-    strm.avail_out = 1;
-    strm.next_out = (void *)&ret;
-    mem_limit(&strm, 1);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_MEM_ERROR);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_MEM_ERROR);
-    mem_limit(&strm, 0);
+    strm.avail_లోపల = 2;
+    strm.తదుపరి_లోపల = (శూన్య *)"\x63";
+    strm.avail_బహిర్గతం = 1;
+    strm.తదుపరి_బహిర్గతం = (శూన్య *)&ret;
+    mem_హద్దు(&strm, 1);
+    ret = inflate(&strm, Z_NO_FLUSH);           ప్రతిజ్ఞా(ret == Z_MEM_ERROR);
+    ret = inflate(&strm, Z_NO_FLUSH);           ప్రతిజ్ఞా(ret == Z_MEM_ERROR);
+    mem_హద్దు(&strm, 0);
     memset(dict, 0, 257);
-    ret = inflateSetDictionary(&strm, dict, 257);
-                                                assert(ret == Z_OK);
-    mem_limit(&strm, (sizeof(struct inflate_state) << 1) + 256);
-    ret = inflatePrime(&strm, 16, 0);           assert(ret == Z_OK);
-    strm.avail_in = 2;
-    strm.next_in = (void *)"\x80";
-    ret = inflateSync(&strm);                   assert(ret == Z_DATA_ERROR);
-    ret = inflate(&strm, Z_NO_FLUSH);           assert(ret == Z_STREAM_ERROR);
-    strm.avail_in = 4;
-    strm.next_in = (void *)"\0\0\xff\xff";
-    ret = inflateSync(&strm);                   assert(ret == Z_OK);
-    (void)inflateSyncPoint(&strm);
-    ret = inflateCopy(&copy, &strm);            assert(ret == Z_MEM_ERROR);
-    mem_limit(&strm, 0);
-    ret = inflateUndermine(&strm, 1);           assert(ret == Z_DATA_ERROR);
-    (void)inflateMark(&strm);
-    ret = inflateEnd(&strm);                    assert(ret == Z_OK);
-    mem_done(&strm, "miscellaneous, force memory errors");
+    ret = inflate_సమితి_Dictionary(&strm, dict, 257);
+                                                ప్రతిజ్ఞా(ret == Z_OK);
+    mem_హద్దు(&strm, (పరిమాణం(నిర్మాణం inflate_state) << 1) + 256);
+    ret = inflate_ప్రధానసంఖ్య(&strm, 16, 0);           ప్రతిజ్ఞా(ret == Z_OK);
+    strm.avail_లోపల = 2;
+    strm.తదుపరి_లోపల = (శూన్య *)"\x80";
+    ret = inflateSync(&strm);                   ప్రతిజ్ఞా(ret == Z_దత్తాంశం_ERROR);
+    ret = inflate(&strm, Z_NO_FLUSH);           ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
+    strm.avail_లోపల = 4;
+    strm.తదుపరి_లోపల = (శూన్య *)"\0\0\xff\xff";
+    ret = inflateSync(&strm);                   ప్రతిజ్ఞా(ret == Z_OK);
+    (శూన్య)inflate_Sync_బిందువు(&strm);
+    ret = inflateCopy(&copy, &strm);            ప్రతిజ్ఞా(ret == Z_MEM_ERROR);
+    mem_హద్దు(&strm, 0);
+    ret = inflateUndermine(&strm, 1);           ప్రతిజ్ఞా(ret == Z_దత్తాంశం_ERROR);
+    (శూన్య)inflateMark(&strm);
+    ret = inflate_చివర(&strm);                    ప్రతిజ్ఞా(ret == Z_OK);
+    mem_పూర్తి(&strm, "miscellaneous, force memory errors");
 }
 
 /* input and output functions for inflateBack() */
-local unsigned pull(void *desc, unsigned char z_const **buf)
+local గుర్తులేని pull(శూన్య *desc, గుర్తులేని అక్షరం z_const **buf)
 {
-    static unsigned int next = 0;
-    static unsigned char dat[] = {0x63, 0, 2, 0};
-    struct inflate_state *state;
+    స్థిర గుర్తులేని పూర్ణాంకం తదుపరి = 0;
+    స్థిర గుర్తులేని అక్షరం dat[] = {0x63, 0, 2, 0};
+    నిర్మాణం inflate_state *state;
 
-    if (desc == Z_NULL) {
-        next = 0;
-        return 0;   /* no input (already provided at next_in) */
+    ఒకవేళ (desc == Z_NULL) {
+        తదుపరి = 0;
+        తిరిగి 0;   /* no input (already provided at next_in) */
     }
-    state = (void *)((z_stream *)desc)->state;
-    if (state != Z_NULL)
-        state->mode = SYNC;     /* force an otherwise impossible situation */
-    return next < sizeof(dat) ? (*buf = dat + next++, 1) : 0;
+    state = (శూన్య *)((z_ప్రవాహం *)desc)->state;
+    ఒకవేళ (state != Z_NULL)
+        state->బహుళకం = SYNC;     /* force an otherwise impossible situation */
+    తిరిగి తదుపరి < పరిమాణం(dat) ? (*buf = dat + తదుపరి++, 1) : 0;
 }
 
-local int push(void *desc, unsigned char *buf, unsigned len)
+local పూర్ణాంకం నెట్టు(శూన్య *desc, గుర్తులేని అక్షరం *buf, గుర్తులేని len)
 {
-    (void)buf;
-    (void)len;
-    return desc != Z_NULL;      /* force error if desc not null */
+    (శూన్య)buf;
+    (శూన్య)len;
+    తిరిగి desc != Z_NULL;      /* force error if desc not null */
 }
 
 /* cover inflateBack() up to common deflate data cases and after those */
-local void cover_back(void)
+local శూన్య cover_వెనుక(శూన్య)
 {
-    int ret;
-    z_stream strm;
-    unsigned char win[32768];
+    పూర్ణాంకం ret;
+    z_ప్రవాహం strm;
+    గుర్తులేని అక్షరం win[32768];
 
-    ret = inflateBackInit_(Z_NULL, 0, win, 0, 0);
-                                                assert(ret == Z_VERSION_ERROR);
-    ret = inflateBackInit(Z_NULL, 0, win);      assert(ret == Z_STREAM_ERROR);
-    ret = inflateBack(Z_NULL, Z_NULL, Z_NULL, Z_NULL, Z_NULL);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateBackEnd(Z_NULL);               assert(ret == Z_STREAM_ERROR);
+    ret = inflate_వెనుక_Init_2(Z_NULL, 0, win, 0, 0);
+                                                ప్రతిజ్ఞా(ret == Z_సంస్కరణ_ERROR);
+    ret = inflate_వెనుక_Init(Z_NULL, 0, win);      ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
+    ret = inflate_వెనుక(Z_NULL, Z_NULL, Z_NULL, Z_NULL, Z_NULL);
+                                                ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
+    ret = inflate_వెనుక_చివర(Z_NULL);               ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
     fputs("inflateBack bad parameters\n", stderr);
 
-    mem_setup(&strm);
-    ret = inflateBackInit(&strm, 15, win);      assert(ret == Z_OK);
-    strm.avail_in = 2;
-    strm.next_in = (void *)"\x03";
-    ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
-                                                assert(ret == Z_STREAM_END);
+    mem_అమరిక(&strm);
+    ret = inflate_వెనుక_Init(&strm, 15, win);      ప్రతిజ్ఞా(ret == Z_OK);
+    strm.avail_లోపల = 2;
+    strm.తదుపరి_లోపల = (శూన్య *)"\x03";
+    ret = inflate_వెనుక(&strm, pull, Z_NULL, నెట్టు, Z_NULL);
+                                                ప్రతిజ్ఞా(ret == Z_ప్రవాహం_చివర);
         /* force output error */
-    strm.avail_in = 3;
-    strm.next_in = (void *)"\x63\x00";
-    ret = inflateBack(&strm, pull, Z_NULL, push, &strm);
-                                                assert(ret == Z_BUF_ERROR);
+    strm.avail_లోపల = 3;
+    strm.తదుపరి_లోపల = (శూన్య *)"\x63\x00";
+    ret = inflate_వెనుక(&strm, pull, Z_NULL, నెట్టు, &strm);
+                                                ప్రతిజ్ఞా(ret == Z_BUF_ERROR);
         /* force mode error by mucking with state */
-    ret = inflateBack(&strm, pull, &strm, push, Z_NULL);
-                                                assert(ret == Z_STREAM_ERROR);
-    ret = inflateBackEnd(&strm);                assert(ret == Z_OK);
-    mem_done(&strm, "inflateBack bad state");
+    ret = inflate_వెనుక(&strm, pull, &strm, నెట్టు, Z_NULL);
+                                                ప్రతిజ్ఞా(ret == Z_ప్రవాహం_ERROR);
+    ret = inflate_వెనుక_చివర(&strm);                ప్రతిజ్ఞా(ret == Z_OK);
+    mem_పూర్తి(&strm, "inflateBack bad state");
 
-    ret = inflateBackInit(&strm, 15, win);      assert(ret == Z_OK);
-    ret = inflateBackEnd(&strm);                assert(ret == Z_OK);
+    ret = inflate_వెనుక_Init(&strm, 15, win);      ప్రతిజ్ఞా(ret == Z_OK);
+    ret = inflate_వెనుక_చివర(&strm);                ప్రతిజ్ఞా(ret == Z_OK);
     fputs("inflateBack built-in memory routines\n", stderr);
 }
 
 /* do a raw inflate of data in hexadecimal with both inflate and inflateBack */
-local int try(char *hex, char *id, int err)
+local పూర్ణాంకం try(అక్షరం *hex, అక్షరం *id, పూర్ణాంకం err)
 {
-    int ret;
-    unsigned len, size;
-    unsigned char *in, *out, *win;
-    char *prefix;
-    z_stream strm;
+    పూర్ణాంకం ret;
+    గుర్తులేని len, కొలత;
+    గుర్తులేని అక్షరం *లోపల, *బహిర్గతం, *win;
+    అక్షరం *ఉపసర్గ;
+    z_ప్రవాహం strm;
 
     /* convert to hex */
-    in = h2b(hex, &len);
-    assert(in != NULL);
+    లోపల = h2b(hex, &len);
+    ప్రతిజ్ఞా(లోపల != ఖాళీ);
 
     /* allocate work areas */
-    size = len << 3;
-    out = malloc(size);
-    assert(out != NULL);
-    win = malloc(32768);
-    assert(win != NULL);
-    prefix = malloc(strlen(id) + 6);
-    assert(prefix != NULL);
+    కొలత = len << 3;
+    బహిర్గతం = జ్ఞాపకం_ఇవ్వు(కొలత);
+    ప్రతిజ్ఞా(బహిర్గతం != ఖాళీ);
+    win = జ్ఞాపకం_ఇవ్వు(32768);
+    ప్రతిజ్ఞా(win != ఖాళీ);
+    ఉపసర్గ = జ్ఞాపకం_ఇవ్వు(అక్షరశ్రేణి_పొడవు(id) + 6);
+    ప్రతిజ్ఞా(ఉపసర్గ != ఖాళీ);
 
     /* first with inflate */
-    strcpy(prefix, id);
-    strcat(prefix, "-late");
-    mem_setup(&strm);
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
+    strcpy(ఉపసర్గ, id);
+    strcat(ఉపసర్గ, "-late");
+    mem_అమరిక(&strm);
+    strm.avail_లోపల = 0;
+    strm.తదుపరి_లోపల = Z_NULL;
     ret = inflateInit2(&strm, err < 0 ? 47 : -15);
-    assert(ret == Z_OK);
-    strm.avail_in = len;
-    strm.next_in = in;
-    do {
-        strm.avail_out = size;
-        strm.next_out = out;
+    ప్రతిజ్ఞా(ret == Z_OK);
+    strm.avail_లోపల = len;
+    strm.తదుపరి_లోపల = లోపల;
+    చేయి {
+        strm.avail_బహిర్గతం = కొలత;
+        strm.తదుపరి_బహిర్గతం = బహిర్గతం;
         ret = inflate(&strm, Z_TREES);
-        assert(ret != Z_STREAM_ERROR && ret != Z_MEM_ERROR);
-        if (ret == Z_DATA_ERROR || ret == Z_NEED_DICT)
-            break;
-    } while (strm.avail_in || strm.avail_out == 0);
-    if (err) {
-        assert(ret == Z_DATA_ERROR);
-        assert(strcmp(id, strm.msg) == 0);
+        ప్రతిజ్ఞా(ret != Z_ప్రవాహం_ERROR && ret != Z_MEM_ERROR);
+        ఒకవేళ (ret == Z_దత్తాంశం_ERROR || ret == Z_NEED_DICT)
+            ఆపు;
+    } అయితే (strm.avail_లోపల || strm.avail_బహిర్గతం == 0);
+    ఒకవేళ (err) {
+        ప్రతిజ్ఞా(ret == Z_దత్తాంశం_ERROR);
+        ప్రతిజ్ఞా(strcmp(id, strm.సందేశం) == 0);
     }
-    inflateEnd(&strm);
-    mem_done(&strm, prefix);
+    inflate_చివర(&strm);
+    mem_పూర్తి(&strm, ఉపసర్గ);
 
     /* then with inflateBack */
-    if (err >= 0) {
-        strcpy(prefix, id);
-        strcat(prefix, "-back");
-        mem_setup(&strm);
-        ret = inflateBackInit(&strm, 15, win);
-        assert(ret == Z_OK);
-        strm.avail_in = len;
-        strm.next_in = in;
-        ret = inflateBack(&strm, pull, Z_NULL, push, Z_NULL);
-        assert(ret != Z_STREAM_ERROR);
-        if (err) {
-            assert(ret == Z_DATA_ERROR);
-            assert(strcmp(id, strm.msg) == 0);
+    ఒకవేళ (err >= 0) {
+        strcpy(ఉపసర్గ, id);
+        strcat(ఉపసర్గ, "-back");
+        mem_అమరిక(&strm);
+        ret = inflate_వెనుక_Init(&strm, 15, win);
+        ప్రతిజ్ఞా(ret == Z_OK);
+        strm.avail_లోపల = len;
+        strm.తదుపరి_లోపల = లోపల;
+        ret = inflate_వెనుక(&strm, pull, Z_NULL, నెట్టు, Z_NULL);
+        ప్రతిజ్ఞా(ret != Z_ప్రవాహం_ERROR);
+        ఒకవేళ (err) {
+            ప్రతిజ్ఞా(ret == Z_దత్తాంశం_ERROR);
+            ప్రతిజ్ఞా(strcmp(id, strm.సందేశం) == 0);
         }
-        inflateBackEnd(&strm);
-        mem_done(&strm, prefix);
+        inflate_వెనుక_చివర(&strm);
+        mem_పూర్తి(&strm, ఉపసర్గ);
     }
 
     /* clean up */
-    free(prefix);
-    free(win);
-    free(out);
-    free(in);
-    return ret;
+    విడుదల(ఉపసర్గ);
+    విడుదల(win);
+    విడుదల(బహిర్గతం);
+    విడుదల(లోపల);
+    తిరిగి ret;
 }
 
 /* cover deflate data cases in both inflate() and inflateBack() */
-local void cover_inflate(void)
+local శూన్య cover_inflate(శూన్య)
 {
     try("0 0 0 0 0", "invalid stored block lengths", 1);
     try("3 0", "fixed", 0);
@@ -610,63 +610,63 @@ local void cover_inflate(void)
     try("ed c0 81 0 0 0 0 80 a0 fd a9 17 a9 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6", "window end", 0);
     inf("2 8 20 80 0 3 0", "inflate_fast TYPE return", 0, -15, 258,
-        Z_STREAM_END);
+        Z_ప్రవాహం_చివర);
     inf("63 18 5 40 c 0", "window wrap", 3, -8, 300, Z_OK);
 }
 
 /* cover remaining lines in inftrees.c */
-local void cover_trees(void)
+local శూన్య cover_trees(శూన్య)
 {
-    int ret;
-    unsigned bits;
-    unsigned short lens[16], work[16];
-    code *next, table[ENOUGH_DISTS];
+    పూర్ణాంకం ret;
+    గుర్తులేని బిట్లు;
+    గుర్తులేని పొట్టి lens[16], work[16];
+    సంకేతం_2 *తదుపరి, పట్టిక_2[ENOUGH_DISTS];
 
     /* we need to call inflate_table() directly in order to manifest not-
        enough errors, since zlib insures that enough is always enough */
-    for (bits = 0; bits < 15; bits++)
-        lens[bits] = (unsigned short)(bits + 1);
+    కొరకు (బిట్లు = 0; బిట్లు < 15; బిట్లు++)
+        lens[బిట్లు] = (గుర్తులేని పొట్టి)(బిట్లు + 1);
     lens[15] = 15;
-    next = table;
-    bits = 15;
-    ret = inflate_table(DISTS, lens, 16, &next, &bits, work);
-                                                assert(ret == 1);
-    next = table;
-    bits = 1;
-    ret = inflate_table(DISTS, lens, 16, &next, &bits, work);
-                                                assert(ret == 1);
+    తదుపరి = పట్టిక_2;
+    బిట్లు = 15;
+    ret = inflate_పట్టిక(DISTS, lens, 16, &తదుపరి, &బిట్లు, work);
+                                                ప్రతిజ్ఞా(ret == 1);
+    తదుపరి = పట్టిక_2;
+    బిట్లు = 1;
+    ret = inflate_పట్టిక(DISTS, lens, 16, &తదుపరి, &బిట్లు, work);
+                                                ప్రతిజ్ఞా(ret == 1);
     fputs("inflate_table not enough errors\n", stderr);
 }
 
 /* cover remaining inffast.c decoding and window copying */
-local void cover_fast(void)
+local శూన్య cover_fast(శూన్య)
 {
     inf("e5 e0 81 ad 6d cb b2 2c c9 01 1e 59 63 ae 7d ee fb 4d fd b5 35 41 68"
-        " ff 7f 0f 0 0 0", "fast length extra bits", 0, -8, 258, Z_DATA_ERROR);
+        " ff 7f 0f 0 0 0", "fast length extra bits", 0, -8, 258, Z_దత్తాంశం_ERROR);
     inf("25 fd 81 b5 6d 59 b6 6a 49 ea af 35 6 34 eb 8c b9 f6 b9 1e ef 67 49"
         " 50 fe ff ff 3f 0 0", "fast distance extra bits", 0, -8, 258,
-        Z_DATA_ERROR);
+        Z_దత్తాంశం_ERROR);
     inf("3 7e 0 0 0 0 0", "fast invalid distance code", 0, -8, 258,
-        Z_DATA_ERROR);
+        Z_దత్తాంశం_ERROR);
     inf("1b 7 0 0 0 0 0", "fast invalid literal/length code", 0, -8, 258,
-        Z_DATA_ERROR);
+        Z_దత్తాంశం_ERROR);
     inf("d c7 1 ae eb 38 c 4 41 a0 87 72 de df fb 1f b8 36 b1 38 5d ff ff 0",
-        "fast 2nd level codes and too far back", 0, -8, 258, Z_DATA_ERROR);
+        "fast 2nd level codes and too far back", 0, -8, 258, Z_దత్తాంశం_ERROR);
     inf("63 18 5 8c 10 8 0 0 0 0", "very common case", 0, -8, 259, Z_OK);
     inf("63 60 60 18 c9 0 8 18 18 18 26 c0 28 0 29 0 0 0",
         "contiguous and wrap around window", 6, -8, 259, Z_OK);
     inf("63 0 3 0 0 0 0 0", "copy direct from output", 0, -8, 259,
-        Z_STREAM_END);
+        Z_ప్రవాహం_చివర);
 }
 
-int main(void)
+పూర్ణాంకం ప్రధాన(శూన్య)
 {
-    fprintf(stderr, "%s\n", zlibVersion());
+    fprintf(stderr, "%s\n", zlib_సంస్కరణ());
     cover_support();
     cover_wrap();
-    cover_back();
+    cover_వెనుక();
     cover_inflate();
     cover_trees();
     cover_fast();
-    return 0;
+    తిరిగి 0;
 }

@@ -61,24 +61,24 @@
 // use of pointers in the state. The approach here allows for storage of the
 // index in a file.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "zlib.h"
-#include "zran.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ "zlib.h"
+#అన్తర్భావ "zran.h"
 
-#define WINSIZE 32768U      // sliding window size
-#define CHUNK 16384         // file input buffer size
+#నిర్వచించు WINSIZE 32768U      // sliding window size
+#నిర్వచించు CHUNK 16384         // file input buffer size
 
 // See comments in zran.h.
-void deflate_index_free(struct deflate_index *index) {
-    if (index != NULL) {
-        while (index->have)
-            free(index->list[--index->have].window);
-        free(index->list);
-        index->list = NULL;
-        inflateEnd(&index->strm);
-        free(index);
+శూన్య deflate_సూచీ_free(నిర్మాణం deflate_సూచీ *సూచీ) {
+    ఒకవేళ (సూచీ != ఖాళీ) {
+        అయితే (సూచీ->have)
+            విడుదల(సూచీ->list[--సూచీ->have].కిటికీ);
+        విడుదల(సూచీ->list);
+        సూచీ->list = ఖాళీ;
+        inflate_చివర(&సూచీ->strm);
+        విడుదల(సూచీ);
     }
 }
 
@@ -86,166 +86,166 @@ void deflate_index_free(struct deflate_index *index) {
 // is temporarily the allocated number of access points, until it is time for
 // deflate_index_build() to return. Then index->mode is set to the mode of
 // inflation.
-static struct deflate_index *add_point(struct deflate_index *index, off_t in,
-                                       off_t out, off_t beg,
-                                       unsigned char *window) {
-    if (index->have == index->mode) {
+స్థిర నిర్మాణం deflate_సూచీ *కూడు_బిందువు(నిర్మాణం deflate_సూచీ *సూచీ, off_t లోపల,
+                                       off_t బహిర్గతం, off_t beg,
+                                       గుర్తులేని అక్షరం *కిటికీ) {
+    ఒకవేళ (సూచీ->have == సూచీ->బహుళకం) {
         // The list is full. Make it bigger.
-        index->mode = index->mode ? index->mode << 1 : 8;
-        point_t *next = realloc(index->list, sizeof(point_t) * index->mode);
-        if (next == NULL)
-            return NULL;
-        index->list = next;
+        సూచీ->బహుళకం = సూచీ->బహుళకం ? సూచీ->బహుళకం << 1 : 8;
+        బిందువు_t *తదుపరి = realloc(సూచీ->list, పరిమాణం(బిందువు_t) * సూచీ->బహుళకం);
+        ఒకవేళ (తదుపరి == ఖాళీ)
+            తిరిగి ఖాళీ;
+        సూచీ->list = తదుపరి;
     }
 
     // Fill in the access point and increment how many we have.
-    point_t *next = (point_t *)(index->list) + index->have++;
-    if (index->have < 0)
+    బిందువు_t *తదుపరి = (బిందువు_t *)(సూచీ->list) + సూచీ->have++;
+    ఒకవేళ (సూచీ->have < 0)
         // Overflowed the int!
-        return NULL;
-    next->out = out;
-    next->in = in;
-    next->bits = index->strm.data_type & 7;
-    next->dict = out - beg > WINSIZE ? WINSIZE : (unsigned)(out - beg);
-    next->window = malloc(next->dict);
-    if (next->window == NULL)
-        return NULL;
-    unsigned recent = WINSIZE - index->strm.avail_out;
-    unsigned copy = recent > next->dict ? next->dict : recent;
-    memcpy(next->window + next->dict - copy, window + recent - copy, copy);
-    copy = next->dict - copy;
-    memcpy(next->window, window + WINSIZE - copy, copy);
+        తిరిగి ఖాళీ;
+    తదుపరి->బహిర్గతం = బహిర్గతం;
+    తదుపరి->లోపల = లోపల;
+    తదుపరి->బిట్లు = సూచీ->strm.దత్తాంశం_type & 7;
+    తదుపరి->dict = బహిర్గతం - beg > WINSIZE ? WINSIZE : (గుర్తులేని)(బహిర్గతం - beg);
+    తదుపరి->కిటికీ = జ్ఞాపకం_ఇవ్వు(తదుపరి->dict);
+    ఒకవేళ (తదుపరి->కిటికీ == ఖాళీ)
+        తిరిగి ఖాళీ;
+    గుర్తులేని recent = WINSIZE - సూచీ->strm.avail_బహిర్గతం;
+    గుర్తులేని copy = recent > తదుపరి->dict ? తదుపరి->dict : recent;
+    జ్ఞాపకం_నకలు(తదుపరి->కిటికీ + తదుపరి->dict - copy, కిటికీ + recent - copy, copy);
+    copy = తదుపరి->dict - copy;
+    జ్ఞాపకం_నకలు(తదుపరి->కిటికీ, కిటికీ + WINSIZE - copy, copy);
 
     // Return the index, which may have been newly allocated or destroyed.
-    return index;
+    తిరిగి సూచీ;
 }
 
 // Decompression modes. These are the inflateInit2() windowBits parameter.
-#define RAW -15
-#define ZLIB 15
-#define GZIP 31
+#నిర్వచించు RAW -15
+#నిర్వచించు ZLIB 15
+#నిర్వచించు GZIP 31
 
 // See comments in zran.h.
-int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
+పూర్ణాంకం deflate_సూచీ_build(FILE *లోపల, off_t పరిధి, నిర్మాణం deflate_సూచీ **built) {
     // If this returns with an error, any attempt to use the index will cleanly
     // return an error.
-    *built = NULL;
+    *built = ఖాళీ;
 
     // Create and initialize the index list.
-    struct deflate_index *index = malloc(sizeof(struct deflate_index));
-    if (index == NULL)
-        return Z_MEM_ERROR;
-    index->have = 0;
-    index->mode = 0;            // entries in index->list allocation
-    index->list = NULL;
-    index->strm.state = Z_NULL; // so inflateEnd() can work
+    నిర్మాణం deflate_సూచీ *సూచీ = జ్ఞాపకం_ఇవ్వు(పరిమాణం(నిర్మాణం deflate_సూచీ));
+    ఒకవేళ (సూచీ == ఖాళీ)
+        తిరిగి Z_MEM_ERROR;
+    సూచీ->have = 0;
+    సూచీ->బహుళకం = 0;            // entries in index->list allocation
+    సూచీ->list = ఖాళీ;
+    సూచీ->strm.state = Z_NULL; // so inflateEnd() can work
 
     // Set up the inflation state.
-    index->strm.avail_in = 0;
-    index->strm.avail_out = 0;
-    unsigned char buf[CHUNK];   // input buffer
-    unsigned char win[WINSIZE] = {0};   // output sliding window
+    సూచీ->strm.avail_లోపల = 0;
+    సూచీ->strm.avail_బహిర్గతం = 0;
+    గుర్తులేని అక్షరం buf[CHUNK];   // input buffer
+    గుర్తులేని అక్షరం win[WINSIZE] = {0};   // output sliding window
     off_t totin = 0;            // total bytes read from input
     off_t totout = 0;           // total bytes uncompressed
     off_t beg = 0;              // starting offset of last history reset
-    int mode = 0;               // mode: RAW, ZLIB, or GZIP (0 => not set yet)
+    పూర్ణాంకం బహుళకం = 0;               // mode: RAW, ZLIB, or GZIP (0 => not set yet)
 
     // Decompress from in, generating access points along the way.
-    int ret;                    // the return value from zlib, or Z_ERRNO
-    off_t last;                 // last access point uncompressed offset
-    do {
+    పూర్ణాంకం ret;                    // the return value from zlib, or Z_ERRNO
+    off_t చివరి;                 // last access point uncompressed offset
+    చేయి {
         // Assure available input, at least until reaching EOF.
-        if (index->strm.avail_in == 0) {
-            index->strm.avail_in = fread(buf, 1, sizeof(buf), in);
-            totin += index->strm.avail_in;
-            index->strm.next_in = buf;
-            if (index->strm.avail_in < sizeof(buf) && ferror(in)) {
+        ఒకవేళ (సూచీ->strm.avail_లోపల == 0) {
+            సూచీ->strm.avail_లోపల = fread(buf, 1, పరిమాణం(buf), లోపల);
+            totin += సూచీ->strm.avail_లోపల;
+            సూచీ->strm.తదుపరి_లోపల = buf;
+            ఒకవేళ (సూచీ->strm.avail_లోపల < పరిమాణం(buf) && ferror(లోపల)) {
                 ret = Z_ERRNO;
-                break;
+                ఆపు;
             }
 
-            if (mode == 0) {
+            ఒకవేళ (బహుళకం == 0) {
                 // At the start of the input -- determine the type. Assume raw
                 // if it is neither zlib nor gzip. This could in theory result
                 // in a false positive for zlib, but in practice the fill bits
                 // after a stored block are always zeros, so a raw stream won't
                 // start with an 8 in the low nybble.
-                mode = index->strm.avail_in == 0 ? RAW :    // will fail
-                       (index->strm.next_in[0] & 0xf) == 8 ? ZLIB :
-                       index->strm.next_in[0] == 0x1f ? GZIP :
+                బహుళకం = సూచీ->strm.avail_లోపల == 0 ? RAW :    // will fail
+                       (సూచీ->strm.తదుపరి_లోపల[0] & 0xf) == 8 ? ZLIB :
+                       సూచీ->strm.తదుపరి_లోపల[0] == 0x1f ? GZIP :
                        /* else */ RAW;
-                index->strm.zalloc = Z_NULL;
-                index->strm.zfree = Z_NULL;
-                index->strm.opaque = Z_NULL;
-                ret = inflateInit2(&index->strm, mode);
-                if (ret != Z_OK)
-                    break;
+                సూచీ->strm.zalloc = Z_NULL;
+                సూచీ->strm.zfree = Z_NULL;
+                సూచీ->strm.opaque = Z_NULL;
+                ret = inflateInit2(&సూచీ->strm, బహుళకం);
+                ఒకవేళ (ret != Z_OK)
+                    ఆపు;
             }
         }
 
         // Assure available output. This rotates the output through, for use as
         // a sliding window on the uncompressed data.
-        if (index->strm.avail_out == 0) {
-            index->strm.avail_out = sizeof(win);
-            index->strm.next_out = win;
+        ఒకవేళ (సూచీ->strm.avail_బహిర్గతం == 0) {
+            సూచీ->strm.avail_బహిర్గతం = పరిమాణం(win);
+            సూచీ->strm.తదుపరి_బహిర్గతం = win;
         }
 
-        if (mode == RAW && index->have == 0)
+        ఒకవేళ (బహుళకం == RAW && సూచీ->have == 0)
             // We skip the inflate() call at the start of raw deflate data in
             // order generate an access point there. Set data_type to imitate
             // the end of a header.
-            index->strm.data_type = 0x80;
-        else {
+            సూచీ->strm.దత్తాంశం_type = 0x80;
+        లేకపోతే {
             // Inflate and update the number of uncompressed bytes.
-            unsigned before = index->strm.avail_out;
-            ret = inflate(&index->strm, Z_BLOCK);
-            totout += before - index->strm.avail_out;
+            గుర్తులేని before = సూచీ->strm.avail_బహిర్గతం;
+            ret = inflate(&సూచీ->strm, Z_ఖండం);
+            totout += before - సూచీ->strm.avail_బహిర్గతం;
         }
 
-        if ((index->strm.data_type & 0xc0) == 0x80 &&
-            (index->have == 0 || totout - last >= span)) {
+        ఒకవేళ ((సూచీ->strm.దత్తాంశం_type & 0xc0) == 0x80 &&
+            (సూచీ->have == 0 || totout - చివరి >= పరిధి)) {
             // We are at the end of a header or a non-last deflate block, so we
             // can add an access point here. Furthermore, we are either at the
             // very start for the first access point, or there has been span or
             // more uncompressed bytes since the last access point, so we want
             // to add an access point here.
-            index = add_point(index, totin - index->strm.avail_in, totout, beg,
+            సూచీ = కూడు_బిందువు(సూచీ, totin - సూచీ->strm.avail_లోపల, totout, beg,
                               win);
-            if (index == NULL) {
+            ఒకవేళ (సూచీ == ఖాళీ) {
                 ret = Z_MEM_ERROR;
-                break;
+                ఆపు;
             }
-            last = totout;
+            చివరి = totout;
         }
 
-        if (ret == Z_STREAM_END && mode == GZIP &&
-            (index->strm.avail_in || ungetc(getc(in), in) != EOF)) {
+        ఒకవేళ (ret == Z_ప్రవాహం_చివర && బహుళకం == GZIP &&
+            (సూచీ->strm.avail_లోపల || ungetc(getc(లోపల), లోపల) != EOF)) {
             // There is more input after the end of a gzip member. Reset the
             // inflate state to read another gzip member. On success, this will
             // set ret to Z_OK to continue decompressing.
-            ret = inflateReset2(&index->strm, GZIP);
+            ret = inflateReset2(&సూచీ->strm, GZIP);
             beg = totout;           // reset history
         }
 
         // Keep going until Z_STREAM_END or error. If the compressed data ends
         // prematurely without a file read error, Z_BUF_ERROR is returned.
-    } while (ret == Z_OK);
+    } అయితే (ret == Z_OK);
 
-    if (ret != Z_STREAM_END) {
+    ఒకవేళ (ret != Z_ప్రవాహం_చివర) {
         // An error was encountered. Discard the index and return a negative
         // error code.
-        deflate_index_free(index);
-        return ret == Z_NEED_DICT ? Z_DATA_ERROR : ret;
+        deflate_సూచీ_free(సూచీ);
+        తిరిగి ret == Z_NEED_DICT ? Z_దత్తాంశం_ERROR : ret;
     }
 
     // Return the index.
-    index->mode = mode;
-    index->length = totout;
-    *built = index;
-    return index->have;
+    సూచీ->బహుళకం = బహుళకం;
+    సూచీ->నిడివి = totout;
+    *built = సూచీ;
+    తిరిగి సూచీ->have;
 }
 
-#ifdef NOPRIME
+#నిర్వచితమైతే NOPRIME
 // Support zlib versions before 1.2.3 (July 2005), or incomplete zlib clones
 // that do not have inflatePrime().
 
@@ -256,21 +256,21 @@ int deflate_index_build(FILE *in, off_t span, struct deflate_index **built) {
 // This assumes that any bits above the *have bits in the last byte are zeros.
 // That assumption is preserved on return, as any bits above *have + bits in
 // the last byte written will be set to zeros.
-static inline void append_bits(unsigned value, int bits,
-                               unsigned char *in, int *have) {
-    in += *have >> 3;           // where the first bits from value will go
-    int k = *have & 7;          // the number of bits already there
-    *have += bits;
-    if (k)
-        *in |= value << k;      // write value above the low k bits
-    else
-        *in = value;
+స్థిర అంతఃవరుస శూన్య append_బిట్లు(గుర్తులేని విలువ, పూర్ణాంకం బిట్లు,
+                               గుర్తులేని అక్షరం *లోపల, పూర్ణాంకం *have) {
+    లోపల += *have >> 3;           // where the first bits from value will go
+    పూర్ణాంకం k = *have & 7;          // the number of bits already there
+    *have += బిట్లు;
+    ఒకవేళ (k)
+        *లోపల |= విలువ << k;      // write value above the low k bits
+    లేకపోతే
+        *లోపల = విలువ;
     k = 8 - k;                  // the number of bits just appended
-    while (bits > k) {
-        value >>= k;            // drop the bits appended
-        bits -= k;
+    అయితే (బిట్లు > k) {
+        విలువ >>= k;            // drop the bits appended
+        బిట్లు -= k;
         k = 8;                  // now at a byte boundary
-        *++in = value;
+        *++లోపల = విలువ;
     }
 }
 
@@ -280,39 +280,39 @@ static inline void append_bits(unsigned value, int bits,
 // a negative value of bits is not supported. bits must be in 0..16. If the
 // arguments are invalid, Z_STREAM_ERROR is returned. Otherwise the return
 // value from inflate() is returned.
-static int inflatePreface(z_stream *strm, int bits, int value) {
+స్థిర పూర్ణాంకం inflatePreface(z_ప్రవాహం *strm, పూర్ణాంకం బిట్లు, పూర్ణాంకం విలువ) {
     // Check input.
-    if (strm == Z_NULL || bits < 0 || bits > 16)
-        return Z_STREAM_ERROR;
-    if (bits == 0)
-        return Z_OK;
-    value &= (2 << (bits - 1)) - 1;
+    ఒకవేళ (strm == Z_NULL || బిట్లు < 0 || బిట్లు > 16)
+        తిరిగి Z_ప్రవాహం_ERROR;
+    ఒకవేళ (బిట్లు == 0)
+        తిరిగి Z_OK;
+    విలువ &= (2 << (బిట్లు - 1)) - 1;
 
     // An empty dynamic block with an odd number of bits (95). The high bit of
     // the last byte is unused.
-    static const unsigned char dyn[] = {
+    స్థిర స్థిరరాశి గుర్తులేని అక్షరం dyn[] = {
         4, 0xe0, 0x81, 8, 0, 0, 0, 0, 0x20, 0xa8, 0xab, 0x1f
     };
-    const int dynlen = 95;          // number of bits in the block
+    స్థిరరాశి పూర్ణాంకం dynlen = 95;          // number of bits in the block
 
     // Build an input buffer for inflate that is a multiple of eight bits in
     // length, and that ends with the low bits bits of value.
-    unsigned char in[(dynlen + 3 * 10 + 16 + 7) / 8];
-    int have = 0;
-    if (bits & 1) {
+    గుర్తులేని అక్షరం లోపల[(dynlen + 3 * 10 + 16 + 7) / 8];
+    పూర్ణాంకం have = 0;
+    ఒకవేళ (బిట్లు & 1) {
         // Insert an empty dynamic block to get to an odd number of bits, so
         // when bits bits from value are appended, we are at an even number of
         // bits.
-        memcpy(in, dyn, sizeof(dyn));
+        జ్ఞాపకం_నకలు(లోపల, dyn, పరిమాణం(dyn));
         have = dynlen;
     }
-    while ((have + bits) & 7)
+    అయితే ((have + బిట్లు) & 7)
         // Insert empty fixed blocks until appending bits bits would put us on
         // a byte boundary. This will insert at most three fixed blocks.
-        append_bits(2, 10, in, &have);
+        append_బిట్లు(2, 10, లోపల, &have);
 
     // Append the bits bits from value, which takes us to a byte boundary.
-    append_bits(value, bits, in, &have);
+    append_బిట్లు(విలువ, బిట్లు, లోపల, &have);
 
     // Deliver the input to inflate(). There is no output space provided, but
     // inflate() can't get stuck waiting on output not ingesting all of the
@@ -322,225 +322,225 @@ static int inflatePreface(z_stream *strm, int bits, int value) {
     // output byte from a fixed block. The last two bytes of the buffer have to
     // be ingested in order to get ten bits, which is the most that value can
     // occupy.
-    strm->avail_in = have >> 3;
-    strm->next_in = in;
-    strm->avail_out = 0;
-    strm->next_out = in;                // not used, but can't be NULL
-    return inflate(strm, Z_NO_FLUSH);
+    strm->avail_లోపల = have >> 3;
+    strm->తదుపరి_లోపల = లోపల;
+    strm->avail_బహిర్గతం = 0;
+    strm->తదుపరి_బహిర్గతం = లోపల;                // not used, but can't be NULL
+    తిరిగి inflate(strm, Z_NO_FLUSH);
 }
 
-#else
-#  define INFLATEPRIME inflatePrime
-#endif
+#లేకపోతే
+#  define INFLATEPRIME inflate_ప్రధానసంఖ్య
+#అయితే_ముగింపు
 
 // See comments in zran.h.
-ptrdiff_t deflate_index_extract(FILE *in, struct deflate_index *index,
-                                off_t offset, unsigned char *buf, size_t len) {
+ptrdiff_t deflate_సూచీ_వెలికితీయి(FILE *లోపల, నిర్మాణం deflate_సూచీ *సూచీ,
+                                off_t స్థానభ్రంశం, గుర్తులేని అక్షరం *buf, size_t len) {
     // Do a quick sanity check on the index.
-    if (index == NULL || index->have < 1 || index->list[0].out != 0 ||
-        index->strm.state == Z_NULL)
-        return Z_STREAM_ERROR;
+    ఒకవేళ (సూచీ == ఖాళీ || సూచీ->have < 1 || సూచీ->list[0].బహిర్గతం != 0 ||
+        సూచీ->strm.state == Z_NULL)
+        తిరిగి Z_ప్రవాహం_ERROR;
 
     // If nothing to extract, return zero bytes extracted.
-    if (len == 0 || offset < 0 || offset >= index->length)
-        return 0;
+    ఒకవేళ (len == 0 || స్థానభ్రంశం < 0 || స్థానభ్రంశం >= సూచీ->నిడివి)
+        తిరిగి 0;
 
     // Find the access point closest to but not after offset.
-    int lo = -1, hi = index->have;
-    point_t *point = index->list;
-    while (hi - lo > 1) {
-        int mid = (lo + hi) >> 1;
-        if (offset < point[mid].out)
+    పూర్ణాంకం lo = -1, hi = సూచీ->have;
+    బిందువు_t *బిందువు = సూచీ->list;
+    అయితే (hi - lo > 1) {
+        పూర్ణాంకం mid = (lo + hi) >> 1;
+        ఒకవేళ (స్థానభ్రంశం < బిందువు[mid].బహిర్గతం)
             hi = mid;
-        else
+        లేకపోతే
             lo = mid;
     }
-    point += lo;
+    బిందువు += lo;
 
     // Initialize the input file and prime the inflate engine to start there.
-    int ret = fseeko(in, point->in - (point->bits ? 1 : 0), SEEK_SET);
-    if (ret == -1)
-        return Z_ERRNO;
-    int ch = 0;
-    if (point->bits && (ch = getc(in)) == EOF)
-        return ferror(in) ? Z_ERRNO : Z_BUF_ERROR;
-    index->strm.avail_in = 0;
-    ret = inflateReset2(&index->strm, RAW);
-    if (ret != Z_OK)
-        return ret;
-    if (point->bits)
-        INFLATEPRIME(&index->strm, point->bits, ch >> (8 - point->bits));
-    inflateSetDictionary(&index->strm, point->window, point->dict);
+    పూర్ణాంకం ret = fseeko(లోపల, బిందువు->లోపల - (బిందువు->బిట్లు ? 1 : 0), SEEK_SET);
+    ఒకవేళ (ret == -1)
+        తిరిగి Z_ERRNO;
+    పూర్ణాంకం ch = 0;
+    ఒకవేళ (బిందువు->బిట్లు && (ch = getc(లోపల)) == EOF)
+        తిరిగి ferror(లోపల) ? Z_ERRNO : Z_BUF_ERROR;
+    సూచీ->strm.avail_లోపల = 0;
+    ret = inflateReset2(&సూచీ->strm, RAW);
+    ఒకవేళ (ret != Z_OK)
+        తిరిగి ret;
+    ఒకవేళ (బిందువు->బిట్లు)
+        INFLATEPRIME(&సూచీ->strm, బిందువు->బిట్లు, ch >> (8 - బిందువు->బిట్లు));
+    inflate_సమితి_Dictionary(&సూచీ->strm, బిందువు->కిటికీ, బిందువు->dict);
 
     // Skip uncompressed bytes until offset reached, then satisfy request.
-    unsigned char input[CHUNK];
-    unsigned char discard[WINSIZE];
-    offset -= point->out;       // number of bytes to skip to get to offset
-    size_t left = len;          // number of bytes left to read after offset
-    do {
-        if (offset) {
+    గుర్తులేని అక్షరం ఆదానం[CHUNK];
+    గుర్తులేని అక్షరం discard[WINSIZE];
+    స్థానభ్రంశం -= బిందువు->బహిర్గతం;       // number of bytes to skip to get to offset
+    size_t ఎడమ = len;          // number of bytes left to read after offset
+    చేయి {
+        ఒకవేళ (స్థానభ్రంశం) {
             // Discard up to offset uncompressed bytes.
-            index->strm.avail_out = offset < WINSIZE ? (unsigned)offset :
+            సూచీ->strm.avail_బహిర్గతం = స్థానభ్రంశం < WINSIZE ? (గుర్తులేని)స్థానభ్రంశం :
                                                        WINSIZE;
-            index->strm.next_out = discard;
+            సూచీ->strm.తదుపరి_బహిర్గతం = discard;
         }
-        else {
+        లేకపోతే {
             // Uncompress up to left bytes into buf.
-            index->strm.avail_out = left < (unsigned)-1 ? (unsigned)left :
-                                                          (unsigned)-1;
-            index->strm.next_out = buf + len - left;
+            సూచీ->strm.avail_బహిర్గతం = ఎడమ < (గుర్తులేని)-1 ? (గుర్తులేని)ఎడమ :
+                                                          (గుర్తులేని)-1;
+            సూచీ->strm.తదుపరి_బహిర్గతం = buf + len - ఎడమ;
         }
 
         // Uncompress, setting got to the number of bytes uncompressed.
-        if (index->strm.avail_in == 0) {
+        ఒకవేళ (సూచీ->strm.avail_లోపల == 0) {
             // Assure available input.
-            index->strm.avail_in = fread(input, 1, CHUNK, in);
-            if (index->strm.avail_in < CHUNK && ferror(in)) {
+            సూచీ->strm.avail_లోపల = fread(ఆదానం, 1, CHUNK, లోపల);
+            ఒకవేళ (సూచీ->strm.avail_లోపల < CHUNK && ferror(లోపల)) {
                 ret = Z_ERRNO;
-                break;
+                ఆపు;
             }
-            index->strm.next_in = input;
+            సూచీ->strm.తదుపరి_లోపల = ఆదానం;
         }
-        unsigned got = index->strm.avail_out;
-        ret = inflate(&index->strm, Z_NO_FLUSH);
-        got -= index->strm.avail_out;
+        గుర్తులేని got = సూచీ->strm.avail_బహిర్గతం;
+        ret = inflate(&సూచీ->strm, Z_NO_FLUSH);
+        got -= సూచీ->strm.avail_బహిర్గతం;
 
         // Update the appropriate count.
-        if (offset)
-            offset -= got;
-        else {
-            left -= got;
-            if (left == 0)
+        ఒకవేళ (స్థానభ్రంశం)
+            స్థానభ్రంశం -= got;
+        లేకపోతే {
+            ఎడమ -= got;
+            ఒకవేళ (ఎడమ == 0)
                 // Request satisfied.
-                break;
+                ఆపు;
         }
 
         // If we're at the end of a gzip member and there's more to read,
         // continue to the next gzip member.
-        if (ret == Z_STREAM_END && index->mode == GZIP) {
+        ఒకవేళ (ret == Z_ప్రవాహం_చివర && సూచీ->బహుళకం == GZIP) {
             // Discard the gzip trailer.
-            unsigned drop = 8;              // length of gzip trailer
-            if (index->strm.avail_in >= drop) {
-                index->strm.avail_in -= drop;
-                index->strm.next_in += drop;
+            గుర్తులేని drop = 8;              // length of gzip trailer
+            ఒకవేళ (సూచీ->strm.avail_లోపల >= drop) {
+                సూచీ->strm.avail_లోపల -= drop;
+                సూచీ->strm.తదుపరి_లోపల += drop;
             }
-            else {
+            లేకపోతే {
                 // Read and discard the remainder of the gzip trailer.
-                drop -= index->strm.avail_in;
-                index->strm.avail_in = 0;
-                do {
-                    if (getc(in) == EOF)
+                drop -= సూచీ->strm.avail_లోపల;
+                సూచీ->strm.avail_లోపల = 0;
+                చేయి {
+                    ఒకవేళ (getc(లోపల) == EOF)
                         // The input does not have a complete trailer.
-                        return ferror(in) ? Z_ERRNO : Z_BUF_ERROR;
-                } while (--drop);
+                        తిరిగి ferror(లోపల) ? Z_ERRNO : Z_BUF_ERROR;
+                } అయితే (--drop);
             }
 
-            if (index->strm.avail_in || ungetc(getc(in), in) != EOF) {
+            ఒకవేళ (సూచీ->strm.avail_లోపల || ungetc(getc(లోపల), లోపల) != EOF) {
                 // There's more after the gzip trailer. Use inflate to skip the
                 // gzip header and resume the raw inflate there.
-                inflateReset2(&index->strm, GZIP);
-                do {
-                    if (index->strm.avail_in == 0) {
-                        index->strm.avail_in = fread(input, 1, CHUNK, in);
-                        if (index->strm.avail_in < CHUNK && ferror(in)) {
+                inflateReset2(&సూచీ->strm, GZIP);
+                చేయి {
+                    ఒకవేళ (సూచీ->strm.avail_లోపల == 0) {
+                        సూచీ->strm.avail_లోపల = fread(ఆదానం, 1, CHUNK, లోపల);
+                        ఒకవేళ (సూచీ->strm.avail_లోపల < CHUNK && ferror(లోపల)) {
                             ret = Z_ERRNO;
-                            break;
+                            ఆపు;
                         }
-                        index->strm.next_in = input;
+                        సూచీ->strm.తదుపరి_లోపల = ఆదానం;
                     }
-                    index->strm.avail_out = WINSIZE;
-                    index->strm.next_out = discard;
-                    ret = inflate(&index->strm, Z_BLOCK);  // stop after header
-                } while (ret == Z_OK && (index->strm.data_type & 0x80) == 0);
-                if (ret != Z_OK)
-                    break;
-                inflateReset2(&index->strm, RAW);
+                    సూచీ->strm.avail_బహిర్గతం = WINSIZE;
+                    సూచీ->strm.తదుపరి_బహిర్గతం = discard;
+                    ret = inflate(&సూచీ->strm, Z_ఖండం);  // stop after header
+                } అయితే (ret == Z_OK && (సూచీ->strm.దత్తాంశం_type & 0x80) == 0);
+                ఒకవేళ (ret != Z_OK)
+                    ఆపు;
+                inflateReset2(&సూచీ->strm, RAW);
             }
         }
 
         // Continue until we have the requested data, the deflate data has
         // ended, or an error is encountered.
-    } while (ret == Z_OK);
+    } అయితే (ret == Z_OK);
 
     // Return the number of uncompressed bytes read into buf, or the error.
-    return ret == Z_OK || ret == Z_STREAM_END ? len - left : ret;
+    తిరిగి ret == Z_OK || ret == Z_ప్రవాహం_చివర ? len - ఎడమ : ret;
 }
 
-#ifdef TEST
+#నిర్వచితమైతే TEST
 
-#define SPAN 1048576L       // desired distance between access points
-#define LEN 16384           // number of bytes to extract
+#నిర్వచించు పరిధి_2 1048576L       // desired distance between access points
+#నిర్వచించు LEN 16384           // number of bytes to extract
 
 // Demonstrate the use of deflate_index_build() and deflate_index_extract() by
 // processing the file provided on the command line, and extracting LEN bytes
 // from 2/3rds of the way through the uncompressed output, writing that to
 // stdout. An offset can be provided as the second argument, in which case the
 // data is extracted from there instead.
-int main(int argc, char **argv) {
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv) {
     // Open the input file.
-    if (argc < 2 || argc > 3) {
+    ఒకవేళ (argc < 2 || argc > 3) {
         fprintf(stderr, "usage: zran file.raw [offset]\n");
-        return 1;
+        తిరిగి 1;
     }
-    FILE *in = fopen(argv[1], "rb");
-    if (in == NULL) {
+    FILE *లోపల = fopen(argv[1], "rb");
+    ఒకవేళ (లోపల == ఖాళీ) {
         fprintf(stderr, "zran: could not open %s for reading\n", argv[1]);
-        return 1;
+        తిరిగి 1;
     }
 
     // Get optional offset.
-    off_t offset = -1;
-    if (argc == 3) {
-        char *end;
-        offset = strtoll(argv[2], &end, 10);
-        if (*end || offset < 0) {
+    off_t స్థానభ్రంశం = -1;
+    ఒకవేళ (argc == 3) {
+        అక్షరం *చివర;
+        స్థానభ్రంశం = strtoll(argv[2], &చివర, 10);
+        ఒకవేళ (*చివర || స్థానభ్రంశం < 0) {
             fprintf(stderr, "zran: %s is not a valid offset\n", argv[2]);
-            return 1;
+            తిరిగి 1;
         }
     }
 
     // Build index.
-    struct deflate_index *index = NULL;
-    int len = deflate_index_build(in, SPAN, &index);
-    if (len < 0) {
-        fclose(in);
-        switch (len) {
-        case Z_MEM_ERROR:
+    నిర్మాణం deflate_సూచీ *సూచీ = ఖాళీ;
+    పూర్ణాంకం len = deflate_సూచీ_build(లోపల, పరిధి_2, &సూచీ);
+    ఒకవేళ (len < 0) {
+        fclose(లోపల);
+        ఎంపిక (len) {
+        స్థితి Z_MEM_ERROR:
             fprintf(stderr, "zran: out of memory\n");
-            break;
-        case Z_BUF_ERROR:
+            ఆపు;
+        స్థితి Z_BUF_ERROR:
             fprintf(stderr, "zran: %s ended prematurely\n", argv[1]);
-            break;
-        case Z_DATA_ERROR:
+            ఆపు;
+        స్థితి Z_దత్తాంశం_ERROR:
             fprintf(stderr, "zran: compressed data error in %s\n", argv[1]);
-            break;
-        case Z_ERRNO:
+            ఆపు;
+        స్థితి Z_ERRNO:
             fprintf(stderr, "zran: read error on %s\n", argv[1]);
-            break;
-        default:
+            ఆపు;
+        అప్రమేయ:
             fprintf(stderr, "zran: error %d while building index\n", len);
         }
-        return 1;
+        తిరిగి 1;
     }
     fprintf(stderr, "zran: built index with %d access points\n", len);
 
     // Use index by reading some bytes from an arbitrary offset.
-    unsigned char buf[LEN];
-    if (offset == -1)
-        offset = ((index->length + 1) << 1) / 3;
-    ptrdiff_t got = deflate_index_extract(in, index, offset, buf, LEN);
-    if (got < 0)
+    గుర్తులేని అక్షరం buf[LEN];
+    ఒకవేళ (స్థానభ్రంశం == -1)
+        స్థానభ్రంశం = ((సూచీ->నిడివి + 1) << 1) / 3;
+    ptrdiff_t got = deflate_సూచీ_వెలికితీయి(లోపల, సూచీ, స్థానభ్రంశం, buf, LEN);
+    ఒకవేళ (got < 0)
         fprintf(stderr, "zran: extraction failed: %s error\n",
                 got == Z_MEM_ERROR ? "out of memory" : "input corrupted");
-    else {
+    లేకపోతే {
         fwrite(buf, 1, got, stdout);
-        fprintf(stderr, "zran: extracted %ld bytes at %lld\n", got, offset);
+        fprintf(stderr, "zran: extracted %ld bytes at %lld\n", got, స్థానభ్రంశం);
     }
 
     // Clean up and exit.
-    deflate_index_free(index);
-    fclose(in);
-    return 0;
+    deflate_సూచీ_free(సూచీ);
+    fclose(లోపల);
+    తిరిగి 0;
 }
 
-#endif
+#అయితే_ముగింపు

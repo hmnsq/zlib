@@ -3,12 +3,12 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#include "zutil.h"
-#include "infback9.h"
-#include "inftree9.h"
-#include "inflate9.h"
+#అన్తర్భావ "zutil.h"
+#అన్తర్భావ "infback9.h"
+#అన్తర్భావ "inftree9.h"
+#అన్తర్భావ "inflate9.h"
 
-#define WSIZE 65536UL
+#నిర్వచించు WSIZE 65536UL
 
 /*
    strm provides memory allocation functions in zalloc and zfree, or
@@ -16,60 +16,60 @@
 
    window is a user-supplied window and output buffer that is 64K bytes.
  */
-int ZEXPORT inflateBack9Init_(z_stream FAR *strm, unsigned char FAR *window,
-                              const char *version, int stream_size) {
-    struct inflate_state FAR *state;
+పూర్ణాంకం ZEXPORT inflateBack9Init_(z_ప్రవాహం FAR *strm, గుర్తులేని అక్షరం FAR *కిటికీ,
+                              స్థిరరాశి అక్షరం *సంస్కరణ, పూర్ణాంకం ప్రవాహం_కొలత) {
+    నిర్మాణం inflate_state FAR *state;
 
-    if (version == Z_NULL || version[0] != ZLIB_VERSION[0] ||
-        stream_size != (int)(sizeof(z_stream)))
-        return Z_VERSION_ERROR;
-    if (strm == Z_NULL || window == Z_NULL)
-        return Z_STREAM_ERROR;
-    strm->msg = Z_NULL;                 /* in case we return an error */
-    if (strm->zalloc == (alloc_func)0) {
+    ఒకవేళ (సంస్కరణ == Z_NULL || సంస్కరణ[0] != ZLIB_సంస్కరణ[0] ||
+        ప్రవాహం_కొలత != (పూర్ణాంకం)(పరిమాణం(z_ప్రవాహం)))
+        తిరిగి Z_సంస్కరణ_ERROR;
+    ఒకవేళ (strm == Z_NULL || కిటికీ == Z_NULL)
+        తిరిగి Z_ప్రవాహం_ERROR;
+    strm->సందేశం = Z_NULL;                 /* in case we return an error */
+    ఒకవేళ (strm->zalloc == (alloc_func)0) {
         strm->zalloc = zcalloc;
         strm->opaque = (voidpf)0;
     }
-    if (strm->zfree == (free_func)0) strm->zfree = zcfree;
-    state = (struct inflate_state FAR *)ZALLOC(strm, 1,
-                                               sizeof(struct inflate_state));
-    if (state == Z_NULL) return Z_MEM_ERROR;
+    ఒకవేళ (strm->zfree == (free_func)0) strm->zfree = zcfree;
+    state = (నిర్మాణం inflate_state FAR *)ZALLOC(strm, 1,
+                                               పరిమాణం(నిర్మాణం inflate_state));
+    ఒకవేళ (state == Z_NULL) తిరిగి Z_MEM_ERROR;
     Tracev((stderr, "inflate: allocated\n"));
     strm->state = (voidpf)state;
-    state->window = window;
-    return Z_OK;
+    state->కిటికీ = కిటికీ;
+    తిరిగి Z_OK;
 }
 
 /*
    Build and output length and distance decoding tables for fixed code
    decoding.
  */
-#ifdef MAKEFIXED
-#include <stdio.h>
+#నిర్వచితమైతే MAKEFIXED
+#అన్తర్భావ <stdio.h>
 
-void makefixed9(void) {
-    unsigned sym, bits, low, size;
-    code *next, *lenfix, *distfix;
-    struct inflate_state state;
-    code fixed[544];
+శూన్య makefixed9(శూన్య) {
+    గుర్తులేని sym, బిట్లు, దిగువ, కొలత;
+    సంకేతం_2 *తదుపరి, *lenfix, *distfix;
+    నిర్మాణం inflate_state state;
+    సంకేతం_2 fixed[544];
 
     /* literal/length table */
     sym = 0;
-    while (sym < 144) state.lens[sym++] = 8;
-    while (sym < 256) state.lens[sym++] = 9;
-    while (sym < 280) state.lens[sym++] = 7;
-    while (sym < 288) state.lens[sym++] = 8;
-    next = fixed;
-    lenfix = next;
-    bits = 9;
-    inflate_table9(LENS, state.lens, 288, &(next), &(bits), state.work);
+    అయితే (sym < 144) state.lens[sym++] = 8;
+    అయితే (sym < 256) state.lens[sym++] = 9;
+    అయితే (sym < 280) state.lens[sym++] = 7;
+    అయితే (sym < 288) state.lens[sym++] = 8;
+    తదుపరి = fixed;
+    lenfix = తదుపరి;
+    బిట్లు = 9;
+    inflate_table9(LENS, state.lens, 288, &(తదుపరి), &(బిట్లు), state.work);
 
     /* distance table */
     sym = 0;
-    while (sym < 32) state.lens[sym++] = 5;
-    distfix = next;
-    bits = 5;
-    inflate_table9(DISTS, state.lens, 32, &(next), &(bits), state.work);
+    అయితే (sym < 32) state.lens[sym++] = 5;
+    distfix = తదుపరి;
+    బిట్లు = 5;
+    inflate_table9(DISTS, state.lens, 32, &(తదుపరి), &(బిట్లు), state.work);
 
     /* write tables */
     puts("    /* inffix9.h -- table for decoding deflate64 fixed codes");
@@ -81,106 +81,106 @@ void makefixed9(void) {
     puts("       subject to change. Applications should only use zlib.h.");
     puts("     */");
     puts("");
-    size = 1U << 9;
-    printf("    static const code lenfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 6) == 0) printf("\n        ");
-        printf("{%u,%u,%d}", lenfix[low].op, lenfix[low].bits,
-               lenfix[low].val);
-        if (++low == size) break;
-        putchar(',');
+    కొలత = 1U << 9;
+    రాయి("    static const code lenfix[%u] = {", కొలత);
+    దిగువ = 0;
+    కొరకు (;;) {
+        ఒకవేళ ((దిగువ % 6) == 0) రాయి("\n        ");
+        రాయి("{%u,%u,%d}", lenfix[దిగువ].op, lenfix[దిగువ].బిట్లు,
+               lenfix[దిగువ].val);
+        ఒకవేళ (++దిగువ == కొలత) ఆపు;
+        అక్షరం_రాయి(',');
     }
     puts("\n    };");
-    size = 1U << 5;
-    printf("\n    static const code distfix[%u] = {", size);
-    low = 0;
-    for (;;) {
-        if ((low % 5) == 0) printf("\n        ");
-        printf("{%u,%u,%d}", distfix[low].op, distfix[low].bits,
-               distfix[low].val);
-        if (++low == size) break;
-        putchar(',');
+    కొలత = 1U << 5;
+    రాయి("\n    static const code distfix[%u] = {", కొలత);
+    దిగువ = 0;
+    కొరకు (;;) {
+        ఒకవేళ ((దిగువ % 5) == 0) రాయి("\n        ");
+        రాయి("{%u,%u,%d}", distfix[దిగువ].op, distfix[దిగువ].బిట్లు,
+               distfix[దిగువ].val);
+        ఒకవేళ (++దిగువ == కొలత) ఆపు;
+        అక్షరం_రాయి(',');
     }
     puts("\n    };");
 }
-#endif /* MAKEFIXED */
+#అయితే_ముగింపు /* MAKEFIXED */
 
 /* Macros for inflateBack(): */
 
 /* Clear the input bit accumulator */
-#define INITBITS() \
-    do { \
+#నిర్వచించు INITBITS() \
+    చేయి { \
         hold = 0; \
-        bits = 0; \
-    } while (0)
+        బిట్లు = 0; \
+    } అయితే (0)
 
 /* Assure that some input is available.  If input is requested, but denied,
    then return a Z_BUF_ERROR from inflateBack(). */
-#define PULL() \
-    do { \
-        if (have == 0) { \
-            have = in(in_desc, &next); \
-            if (have == 0) { \
-                next = Z_NULL; \
+#నిర్వచించు PULL() \
+    చేయి { \
+        ఒకవేళ (have == 0) { \
+            have = లోపల(లోపల_desc, &తదుపరి); \
+            ఒకవేళ (have == 0) { \
+                తదుపరి = Z_NULL; \
                 ret = Z_BUF_ERROR; \
-                goto inf_leave; \
+                వెళ్ళు inf_leave; \
             } \
         } \
-    } while (0)
+    } అయితే (0)
 
 /* Get a byte of input into the bit accumulator, or return from inflateBack()
    with an error if there is no input available. */
-#define PULLBYTE() \
-    do { \
+#నిర్వచించు PULLBYTE() \
+    చేయి { \
         PULL(); \
         have--; \
-        hold += (unsigned long)(*next++) << bits; \
-        bits += 8; \
-    } while (0)
+        hold += (గుర్తులేని దీర్ఘ)(*తదుపరి++) << బిట్లు; \
+        బిట్లు += 8; \
+    } అయితే (0)
 
 /* Assure that there are at least n bits in the bit accumulator.  If there is
    not enough available input to do that, then return from inflateBack() with
    an error. */
-#define NEEDBITS(n) \
-    do { \
-        while (bits < (unsigned)(n)) \
+#నిర్వచించు NEEDBITS(n) \
+    చేయి { \
+        అయితే (బిట్లు < (గుర్తులేని)(n)) \
             PULLBYTE(); \
-    } while (0)
+    } అయితే (0)
 
 /* Return the low n bits of the bit accumulator (n <= 16) */
-#define BITS(n) \
-    ((unsigned)hold & ((1U << (n)) - 1))
+#నిర్వచించు బిట్లు_2(n) \
+    ((గుర్తులేని)hold & ((1U << (n)) - 1))
 
 /* Remove n bits from the bit accumulator */
-#define DROPBITS(n) \
-    do { \
+#నిర్వచించు DROPBITS(n) \
+    చేయి { \
         hold >>= (n); \
-        bits -= (unsigned)(n); \
-    } while (0)
+        బిట్లు -= (గుర్తులేని)(n); \
+    } అయితే (0)
 
 /* Remove zero to seven bits as needed to go to a byte boundary */
-#define BYTEBITS() \
-    do { \
-        hold >>= bits & 7; \
-        bits -= bits & 7; \
-    } while (0)
+#నిర్వచించు BYTEBITS() \
+    చేయి { \
+        hold >>= బిట్లు & 7; \
+        బిట్లు -= బిట్లు & 7; \
+    } అయితే (0)
 
 /* Assure that some output space is available, by writing out the window
    if it's full.  If the write fails, return from inflateBack() with a
    Z_BUF_ERROR. */
-#define ROOM() \
-    do { \
-        if (left == 0) { \
-            put = window; \
-            left = WSIZE; \
+#నిర్వచించు స్థలం() \
+    చేయి { \
+        ఒకవేళ (ఎడమ == 0) { \
+            put = కిటికీ; \
+            ఎడమ = WSIZE; \
             wrap = 1; \
-            if (out(out_desc, put, (unsigned)left)) { \
+            ఒకవేళ (బహిర్గతం(బహిర్గతం_desc, put, (గుర్తులేని)ఎడమ)) { \
                 ret = Z_BUF_ERROR; \
-                goto inf_leave; \
+                వెళ్ళు inf_leave; \
             } \
         } \
-    } while (0)
+    } అయితే (0)
 
 /*
    strm provides the memory allocation functions and window buffer on input,
@@ -209,395 +209,395 @@ void makefixed9(void) {
    inflateBack() can also return Z_STREAM_ERROR if the input parameters
    are not correct, i.e. strm is Z_NULL or the state was not initialized.
  */
-int ZEXPORT inflateBack9(z_stream FAR *strm, in_func in, void FAR *in_desc,
-                         out_func out, void FAR *out_desc) {
-    struct inflate_state FAR *state;
-    z_const unsigned char FAR *next;    /* next input */
-    unsigned char FAR *put;     /* next output */
-    unsigned have;              /* available input */
-    unsigned long left;         /* available output */
-    inflate_mode mode;          /* current inflate mode */
-    int lastblock;              /* true if processing last block */
-    int wrap;                   /* true if the window has wrapped */
-    unsigned char FAR *window;  /* allocated sliding window, if needed */
-    unsigned long hold;         /* bit buffer */
-    unsigned bits;              /* bits in bit buffer */
-    unsigned extra;             /* extra bits needed */
-    unsigned long length;       /* literal or length of data to copy */
-    unsigned long offset;       /* distance back to copy string from */
-    unsigned long copy;         /* number of stored or match bytes to copy */
-    unsigned char FAR *from;    /* where to copy match bytes from */
-    code const FAR *lencode;    /* starting table for length/literal codes */
-    code const FAR *distcode;   /* starting table for distance codes */
-    unsigned lenbits;           /* index bits for lencode */
-    unsigned distbits;          /* index bits for distcode */
-    code here;                  /* current decoding table entry */
-    code last;                  /* parent table entry */
-    unsigned len;               /* length to copy for repeats, bits to drop */
-    int ret;                    /* return code */
-    static const unsigned short order[19] = /* permutation of code lengths */
+పూర్ణాంకం ZEXPORT inflateBack9(z_ప్రవాహం FAR *strm, లోపల_func లోపల, శూన్య FAR *లోపల_desc,
+                         బహిర్గతం_func బహిర్గతం, శూన్య FAR *బహిర్గతం_desc) {
+    నిర్మాణం inflate_state FAR *state;
+    z_const గుర్తులేని అక్షరం FAR *తదుపరి;    /* next input */
+    గుర్తులేని అక్షరం FAR *put;     /* next output */
+    గుర్తులేని have;              /* available input */
+    గుర్తులేని దీర్ఘ ఎడమ;         /* available output */
+    inflate_బహుళకం బహుళకం;          /* current inflate mode */
+    పూర్ణాంకం lastblock;              /* true if processing last block */
+    పూర్ణాంకం wrap;                   /* true if the window has wrapped */
+    గుర్తులేని అక్షరం FAR *కిటికీ;  /* allocated sliding window, if needed */
+    గుర్తులేని దీర్ఘ hold;         /* bit buffer */
+    గుర్తులేని బిట్లు;              /* bits in bit buffer */
+    గుర్తులేని extra;             /* extra bits needed */
+    గుర్తులేని దీర్ఘ నిడివి;       /* literal or length of data to copy */
+    గుర్తులేని దీర్ఘ స్థానభ్రంశం;       /* distance back to copy string from */
+    గుర్తులేని దీర్ఘ copy;         /* number of stored or match bytes to copy */
+    గుర్తులేని అక్షరం FAR *from;    /* where to copy match bytes from */
+    సంకేతం_2 స్థిరరాశి FAR *lencode;    /* starting table for length/literal codes */
+    సంకేతం_2 స్థిరరాశి FAR *distcode;   /* starting table for distance codes */
+    గుర్తులేని lenbits;           /* index bits for lencode */
+    గుర్తులేని distbits;          /* index bits for distcode */
+    సంకేతం_2 ఇక్కడ;                  /* current decoding table entry */
+    సంకేతం_2 చివరి;                  /* parent table entry */
+    గుర్తులేని len;               /* length to copy for repeats, bits to drop */
+    పూర్ణాంకం ret;                    /* return code */
+    స్థిర స్థిరరాశి గుర్తులేని పొట్టి క్రమం[19] = /* permutation of code lengths */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
-#include "inffix9.h"
+#అన్తర్భావ "inffix9.h"
 
     /* Check that the strm exists and that the state was initialized */
-    if (strm == Z_NULL || strm->state == Z_NULL)
-        return Z_STREAM_ERROR;
-    state = (struct inflate_state FAR *)strm->state;
+    ఒకవేళ (strm == Z_NULL || strm->state == Z_NULL)
+        తిరిగి Z_ప్రవాహం_ERROR;
+    state = (నిర్మాణం inflate_state FAR *)strm->state;
 
     /* Reset the state */
-    strm->msg = Z_NULL;
-    mode = TYPE;
+    strm->సందేశం = Z_NULL;
+    బహుళకం = TYPE;
     lastblock = 0;
     wrap = 0;
-    window = state->window;
-    next = strm->next_in;
-    have = next != Z_NULL ? strm->avail_in : 0;
+    కిటికీ = state->కిటికీ;
+    తదుపరి = strm->తదుపరి_లోపల;
+    have = తదుపరి != Z_NULL ? strm->avail_లోపల : 0;
     hold = 0;
-    bits = 0;
-    put = window;
-    left = WSIZE;
+    బిట్లు = 0;
+    put = కిటికీ;
+    ఎడమ = WSIZE;
     lencode = Z_NULL;
     distcode = Z_NULL;
 
     /* Inflate until end of block marked as last */
-    for (;;)
-        switch (mode) {
-        case TYPE:
+    కొరకు (;;)
+        ఎంపిక (బహుళకం) {
+        స్థితి TYPE:
             /* determine and dispatch block type */
-            if (lastblock) {
+            ఒకవేళ (lastblock) {
                 BYTEBITS();
-                mode = DONE;
-                break;
+                బహుళకం = పూర్తి;
+                ఆపు;
             }
             NEEDBITS(3);
-            lastblock = BITS(1);
+            lastblock = బిట్లు_2(1);
             DROPBITS(1);
-            switch (BITS(2)) {
-            case 0:                             /* stored block */
+            ఎంపిక (బిట్లు_2(2)) {
+            స్థితి 0:                             /* stored block */
                 Tracev((stderr, "inflate:     stored block%s\n",
                         lastblock ? " (last)" : ""));
-                mode = STORED;
-                break;
-            case 1:                             /* fixed block */
+                బహుళకం = STORED;
+                ఆపు;
+            స్థితి 1:                             /* fixed block */
                 lencode = lenfix;
                 lenbits = 9;
                 distcode = distfix;
                 distbits = 5;
                 Tracev((stderr, "inflate:     fixed codes block%s\n",
                         lastblock ? " (last)" : ""));
-                mode = LEN;                     /* decode codes */
-                break;
-            case 2:                             /* dynamic block */
+                బహుళకం = LEN;                     /* decode codes */
+                ఆపు;
+            స్థితి 2:                             /* dynamic block */
                 Tracev((stderr, "inflate:     dynamic codes block%s\n",
                         lastblock ? " (last)" : ""));
-                mode = TABLE;
-                break;
-            case 3:
-                strm->msg = (z_const char *)"invalid block type";
-                mode = BAD;
+                బహుళకం = పట్టిక;
+                ఆపు;
+            స్థితి 3:
+                strm->సందేశం = (z_const అక్షరం *)"invalid block type";
+                బహుళకం = BAD;
             }
             DROPBITS(2);
-            break;
+            ఆపు;
 
-        case STORED:
+        స్థితి STORED:
             /* get and verify stored block length */
             BYTEBITS();                         /* go to byte boundary */
             NEEDBITS(32);
-            if ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
-                strm->msg = (z_const char *)"invalid stored block lengths";
-                mode = BAD;
-                break;
+            ఒకవేళ ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
+                strm->సందేశం = (z_const అక్షరం *)"invalid stored block lengths";
+                బహుళకం = BAD;
+                ఆపు;
             }
-            length = (unsigned)hold & 0xffff;
+            నిడివి = (గుర్తులేని)hold & 0xffff;
             Tracev((stderr, "inflate:       stored length %lu\n",
-                    length));
+                    నిడివి));
             INITBITS();
 
             /* copy stored block from input to output */
-            while (length != 0) {
-                copy = length;
+            అయితే (నిడివి != 0) {
+                copy = నిడివి;
                 PULL();
-                ROOM();
-                if (copy > have) copy = have;
-                if (copy > left) copy = left;
-                zmemcpy(put, next, copy);
+                స్థలం();
+                ఒకవేళ (copy > have) copy = have;
+                ఒకవేళ (copy > ఎడమ) copy = ఎడమ;
+                zmemcpy(put, తదుపరి, copy);
                 have -= copy;
-                next += copy;
-                left -= copy;
+                తదుపరి += copy;
+                ఎడమ -= copy;
                 put += copy;
-                length -= copy;
+                నిడివి -= copy;
             }
             Tracev((stderr, "inflate:       stored end\n"));
-            mode = TYPE;
-            break;
+            బహుళకం = TYPE;
+            ఆపు;
 
-        case TABLE:
+        స్థితి పట్టిక:
             /* get dynamic table entries descriptor */
             NEEDBITS(14);
-            state->nlen = BITS(5) + 257;
+            state->nlen = బిట్లు_2(5) + 257;
             DROPBITS(5);
-            state->ndist = BITS(5) + 1;
+            state->ndist = బిట్లు_2(5) + 1;
             DROPBITS(5);
-            state->ncode = BITS(4) + 4;
+            state->ncode = బిట్లు_2(4) + 4;
             DROPBITS(4);
-            if (state->nlen > 286) {
-                strm->msg = (z_const char *)"too many length symbols";
-                mode = BAD;
-                break;
+            ఒకవేళ (state->nlen > 286) {
+                strm->సందేశం = (z_const అక్షరం *)"too many length symbols";
+                బహుళకం = BAD;
+                ఆపు;
             }
             Tracev((stderr, "inflate:       table sizes ok\n"));
 
             /* get code length code lengths (not a typo) */
             state->have = 0;
-            while (state->have < state->ncode) {
+            అయితే (state->have < state->ncode) {
                 NEEDBITS(3);
-                state->lens[order[state->have++]] = (unsigned short)BITS(3);
+                state->lens[క్రమం[state->have++]] = (గుర్తులేని పొట్టి)బిట్లు_2(3);
                 DROPBITS(3);
             }
-            while (state->have < 19)
-                state->lens[order[state->have++]] = 0;
-            state->next = state->codes;
-            lencode = (code const FAR *)(state->next);
+            అయితే (state->have < 19)
+                state->lens[క్రమం[state->have++]] = 0;
+            state->తదుపరి = state->codes;
+            lencode = (సంకేతం_2 స్థిరరాశి FAR *)(state->తదుపరి);
             lenbits = 7;
-            ret = inflate_table9(CODES, state->lens, 19, &(state->next),
+            ret = inflate_table9(CODES, state->lens, 19, &(state->తదుపరి),
                                 &(lenbits), state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid code lengths set";
-                mode = BAD;
-                break;
+            ఒకవేళ (ret) {
+                strm->సందేశం = (z_const అక్షరం *)"invalid code lengths set";
+                బహుళకం = BAD;
+                ఆపు;
             }
             Tracev((stderr, "inflate:       code lengths ok\n"));
 
             /* get length and distance code code lengths */
             state->have = 0;
-            while (state->have < state->nlen + state->ndist) {
-                for (;;) {
-                    here = lencode[BITS(lenbits)];
-                    if ((unsigned)(here.bits) <= bits) break;
+            అయితే (state->have < state->nlen + state->ndist) {
+                కొరకు (;;) {
+                    ఇక్కడ = lencode[బిట్లు_2(lenbits)];
+                    ఒకవేళ ((గుర్తులేని)(ఇక్కడ.బిట్లు) <= బిట్లు) ఆపు;
                     PULLBYTE();
                 }
-                if (here.val < 16) {
-                    NEEDBITS(here.bits);
-                    DROPBITS(here.bits);
-                    state->lens[state->have++] = here.val;
+                ఒకవేళ (ఇక్కడ.val < 16) {
+                    NEEDBITS(ఇక్కడ.బిట్లు);
+                    DROPBITS(ఇక్కడ.బిట్లు);
+                    state->lens[state->have++] = ఇక్కడ.val;
                 }
-                else {
-                    if (here.val == 16) {
-                        NEEDBITS(here.bits + 2);
-                        DROPBITS(here.bits);
-                        if (state->have == 0) {
-                            strm->msg = (z_const char *)"invalid bit length repeat";
-                            mode = BAD;
-                            break;
+                లేకపోతే {
+                    ఒకవేళ (ఇక్కడ.val == 16) {
+                        NEEDBITS(ఇక్కడ.బిట్లు + 2);
+                        DROPBITS(ఇక్కడ.బిట్లు);
+                        ఒకవేళ (state->have == 0) {
+                            strm->సందేశం = (z_const అక్షరం *)"invalid bit length repeat";
+                            బహుళకం = BAD;
+                            ఆపు;
                         }
-                        len = (unsigned)(state->lens[state->have - 1]);
-                        copy = 3 + BITS(2);
+                        len = (గుర్తులేని)(state->lens[state->have - 1]);
+                        copy = 3 + బిట్లు_2(2);
                         DROPBITS(2);
                     }
-                    else if (here.val == 17) {
-                        NEEDBITS(here.bits + 3);
-                        DROPBITS(here.bits);
+                    లేకపోతే ఒకవేళ (ఇక్కడ.val == 17) {
+                        NEEDBITS(ఇక్కడ.బిట్లు + 3);
+                        DROPBITS(ఇక్కడ.బిట్లు);
                         len = 0;
-                        copy = 3 + BITS(3);
+                        copy = 3 + బిట్లు_2(3);
                         DROPBITS(3);
                     }
-                    else {
-                        NEEDBITS(here.bits + 7);
-                        DROPBITS(here.bits);
+                    లేకపోతే {
+                        NEEDBITS(ఇక్కడ.బిట్లు + 7);
+                        DROPBITS(ఇక్కడ.బిట్లు);
                         len = 0;
-                        copy = 11 + BITS(7);
+                        copy = 11 + బిట్లు_2(7);
                         DROPBITS(7);
                     }
-                    if (state->have + copy > state->nlen + state->ndist) {
-                        strm->msg = (z_const char *)"invalid bit length repeat";
-                        mode = BAD;
-                        break;
+                    ఒకవేళ (state->have + copy > state->nlen + state->ndist) {
+                        strm->సందేశం = (z_const అక్షరం *)"invalid bit length repeat";
+                        బహుళకం = BAD;
+                        ఆపు;
                     }
-                    while (copy--)
-                        state->lens[state->have++] = (unsigned short)len;
+                    అయితే (copy--)
+                        state->lens[state->have++] = (గుర్తులేని పొట్టి)len;
                 }
             }
 
             /* handle error breaks in while */
-            if (mode == BAD) break;
+            ఒకవేళ (బహుళకం == BAD) ఆపు;
 
             /* check for end-of-block code (better have one) */
-            if (state->lens[256] == 0) {
-                strm->msg = (z_const char *)"invalid code -- missing end-of-block";
-                mode = BAD;
-                break;
+            ఒకవేళ (state->lens[256] == 0) {
+                strm->సందేశం = (z_const అక్షరం *)"invalid code -- missing end-of-block";
+                బహుళకం = BAD;
+                ఆపు;
             }
 
             /* build code tables -- note: do not change the lenbits or distbits
                values here (9 and 6) without reading the comments in inftree9.h
                concerning the ENOUGH constants, which depend on those values */
-            state->next = state->codes;
-            lencode = (code const FAR *)(state->next);
+            state->తదుపరి = state->codes;
+            lencode = (సంకేతం_2 స్థిరరాశి FAR *)(state->తదుపరి);
             lenbits = 9;
             ret = inflate_table9(LENS, state->lens, state->nlen,
-                            &(state->next), &(lenbits), state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid literal/lengths set";
-                mode = BAD;
-                break;
+                            &(state->తదుపరి), &(lenbits), state->work);
+            ఒకవేళ (ret) {
+                strm->సందేశం = (z_const అక్షరం *)"invalid literal/lengths set";
+                బహుళకం = BAD;
+                ఆపు;
             }
-            distcode = (code const FAR *)(state->next);
+            distcode = (సంకేతం_2 స్థిరరాశి FAR *)(state->తదుపరి);
             distbits = 6;
             ret = inflate_table9(DISTS, state->lens + state->nlen,
-                            state->ndist, &(state->next), &(distbits),
+                            state->ndist, &(state->తదుపరి), &(distbits),
                             state->work);
-            if (ret) {
-                strm->msg = (z_const char *)"invalid distances set";
-                mode = BAD;
-                break;
+            ఒకవేళ (ret) {
+                strm->సందేశం = (z_const అక్షరం *)"invalid distances set";
+                బహుళకం = BAD;
+                ఆపు;
             }
             Tracev((stderr, "inflate:       codes ok\n"));
-            mode = LEN;
+            బహుళకం = LEN;
 
-        case LEN:
+        స్థితి LEN:
             /* get a literal, length, or end-of-block code */
-            for (;;) {
-                here = lencode[BITS(lenbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+            కొరకు (;;) {
+                ఇక్కడ = lencode[బిట్లు_2(lenbits)];
+                ఒకవేళ ((గుర్తులేని)(ఇక్కడ.బిట్లు) <= బిట్లు) ఆపు;
                 PULLBYTE();
             }
-            if (here.op && (here.op & 0xf0) == 0) {
-                last = here;
-                for (;;) {
-                    here = lencode[last.val +
-                            (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+            ఒకవేళ (ఇక్కడ.op && (ఇక్కడ.op & 0xf0) == 0) {
+                చివరి = ఇక్కడ;
+                కొరకు (;;) {
+                    ఇక్కడ = lencode[చివరి.val +
+                            (బిట్లు_2(చివరి.బిట్లు + చివరి.op) >> చివరి.బిట్లు)];
+                    ఒకవేళ ((గుర్తులేని)(చివరి.బిట్లు + ఇక్కడ.బిట్లు) <= బిట్లు) ఆపు;
                     PULLBYTE();
                 }
-                DROPBITS(last.bits);
+                DROPBITS(చివరి.బిట్లు);
             }
-            DROPBITS(here.bits);
-            length = (unsigned)here.val;
+            DROPBITS(ఇక్కడ.బిట్లు);
+            నిడివి = (గుర్తులేని)ఇక్కడ.val;
 
             /* process literal */
-            if (here.op == 0) {
-                Tracevv((stderr, here.val >= 0x20 && here.val < 0x7f ?
+            ఒకవేళ (ఇక్కడ.op == 0) {
+                Tracevv((stderr, ఇక్కడ.val >= 0x20 && ఇక్కడ.val < 0x7f ?
                         "inflate:         literal '%c'\n" :
-                        "inflate:         literal 0x%02x\n", here.val));
-                ROOM();
-                *put++ = (unsigned char)(length);
-                left--;
-                mode = LEN;
-                break;
+                        "inflate:         literal 0x%02x\n", ఇక్కడ.val));
+                స్థలం();
+                *put++ = (గుర్తులేని అక్షరం)(నిడివి);
+                ఎడమ--;
+                బహుళకం = LEN;
+                ఆపు;
             }
 
             /* process end of block */
-            if (here.op & 32) {
+            ఒకవేళ (ఇక్కడ.op & 32) {
                 Tracevv((stderr, "inflate:         end of block\n"));
-                mode = TYPE;
-                break;
+                బహుళకం = TYPE;
+                ఆపు;
             }
 
             /* invalid code */
-            if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid literal/length code";
-                mode = BAD;
-                break;
+            ఒకవేళ (ఇక్కడ.op & 64) {
+                strm->సందేశం = (z_const అక్షరం *)"invalid literal/length code";
+                బహుళకం = BAD;
+                ఆపు;
             }
 
             /* length code -- get extra bits, if any */
-            extra = (unsigned)(here.op) & 31;
-            if (extra != 0) {
+            extra = (గుర్తులేని)(ఇక్కడ.op) & 31;
+            ఒకవేళ (extra != 0) {
                 NEEDBITS(extra);
-                length += BITS(extra);
+                నిడివి += బిట్లు_2(extra);
                 DROPBITS(extra);
             }
-            Tracevv((stderr, "inflate:         length %lu\n", length));
+            Tracevv((stderr, "inflate:         length %lu\n", నిడివి));
 
             /* get distance code */
-            for (;;) {
-                here = distcode[BITS(distbits)];
-                if ((unsigned)(here.bits) <= bits) break;
+            కొరకు (;;) {
+                ఇక్కడ = distcode[బిట్లు_2(distbits)];
+                ఒకవేళ ((గుర్తులేని)(ఇక్కడ.బిట్లు) <= బిట్లు) ఆపు;
                 PULLBYTE();
             }
-            if ((here.op & 0xf0) == 0) {
-                last = here;
-                for (;;) {
-                    here = distcode[last.val +
-                            (BITS(last.bits + last.op) >> last.bits)];
-                    if ((unsigned)(last.bits + here.bits) <= bits) break;
+            ఒకవేళ ((ఇక్కడ.op & 0xf0) == 0) {
+                చివరి = ఇక్కడ;
+                కొరకు (;;) {
+                    ఇక్కడ = distcode[చివరి.val +
+                            (బిట్లు_2(చివరి.బిట్లు + చివరి.op) >> చివరి.బిట్లు)];
+                    ఒకవేళ ((గుర్తులేని)(చివరి.బిట్లు + ఇక్కడ.బిట్లు) <= బిట్లు) ఆపు;
                     PULLBYTE();
                 }
-                DROPBITS(last.bits);
+                DROPBITS(చివరి.బిట్లు);
             }
-            DROPBITS(here.bits);
-            if (here.op & 64) {
-                strm->msg = (z_const char *)"invalid distance code";
-                mode = BAD;
-                break;
+            DROPBITS(ఇక్కడ.బిట్లు);
+            ఒకవేళ (ఇక్కడ.op & 64) {
+                strm->సందేశం = (z_const అక్షరం *)"invalid distance code";
+                బహుళకం = BAD;
+                ఆపు;
             }
-            offset = (unsigned)here.val;
+            స్థానభ్రంశం = (గుర్తులేని)ఇక్కడ.val;
 
             /* get distance extra bits, if any */
-            extra = (unsigned)(here.op) & 15;
-            if (extra != 0) {
+            extra = (గుర్తులేని)(ఇక్కడ.op) & 15;
+            ఒకవేళ (extra != 0) {
                 NEEDBITS(extra);
-                offset += BITS(extra);
+                స్థానభ్రంశం += బిట్లు_2(extra);
                 DROPBITS(extra);
             }
-            if (offset > WSIZE - (wrap ? 0: left)) {
-                strm->msg = (z_const char *)"invalid distance too far back";
-                mode = BAD;
-                break;
+            ఒకవేళ (స్థానభ్రంశం > WSIZE - (wrap ? 0: ఎడమ)) {
+                strm->సందేశం = (z_const అక్షరం *)"invalid distance too far back";
+                బహుళకం = BAD;
+                ఆపు;
             }
-            Tracevv((stderr, "inflate:         distance %lu\n", offset));
+            Tracevv((stderr, "inflate:         distance %lu\n", స్థానభ్రంశం));
 
             /* copy match from window to output */
-            do {
-                ROOM();
-                copy = WSIZE - offset;
-                if (copy < left) {
+            చేయి {
+                స్థలం();
+                copy = WSIZE - స్థానభ్రంశం;
+                ఒకవేళ (copy < ఎడమ) {
                     from = put + copy;
-                    copy = left - copy;
+                    copy = ఎడమ - copy;
                 }
-                else {
-                    from = put - offset;
-                    copy = left;
+                లేకపోతే {
+                    from = put - స్థానభ్రంశం;
+                    copy = ఎడమ;
                 }
-                if (copy > length) copy = length;
-                length -= copy;
-                left -= copy;
-                do {
+                ఒకవేళ (copy > నిడివి) copy = నిడివి;
+                నిడివి -= copy;
+                ఎడమ -= copy;
+                చేయి {
                     *put++ = *from++;
-                } while (--copy);
-            } while (length != 0);
-            break;
+                } అయితే (--copy);
+            } అయితే (నిడివి != 0);
+            ఆపు;
 
-        case DONE:
+        స్థితి పూర్తి:
             /* inflate stream terminated properly -- write leftover output */
-            ret = Z_STREAM_END;
-            if (left < WSIZE) {
-                if (out(out_desc, window, (unsigned)(WSIZE - left)))
+            ret = Z_ప్రవాహం_చివర;
+            ఒకవేళ (ఎడమ < WSIZE) {
+                ఒకవేళ (బహిర్గతం(బహిర్గతం_desc, కిటికీ, (గుర్తులేని)(WSIZE - ఎడమ)))
                     ret = Z_BUF_ERROR;
             }
-            goto inf_leave;
+            వెళ్ళు inf_leave;
 
-        case BAD:
-            ret = Z_DATA_ERROR;
-            goto inf_leave;
+        స్థితి BAD:
+            ret = Z_దత్తాంశం_ERROR;
+            వెళ్ళు inf_leave;
 
-        default:                /* can't happen, but makes compilers happy */
-            ret = Z_STREAM_ERROR;
-            goto inf_leave;
+        అప్రమేయ:                /* can't happen, but makes compilers happy */
+            ret = Z_ప్రవాహం_ERROR;
+            వెళ్ళు inf_leave;
         }
 
     /* Return unused input */
   inf_leave:
-    strm->next_in = next;
-    strm->avail_in = have;
-    return ret;
+    strm->తదుపరి_లోపల = తదుపరి;
+    strm->avail_లోపల = have;
+    తిరిగి ret;
 }
 
-int ZEXPORT inflateBack9End(z_stream FAR *strm) {
-    if (strm == Z_NULL || strm->state == Z_NULL || strm->zfree == (free_func)0)
-        return Z_STREAM_ERROR;
+పూర్ణాంకం ZEXPORT inflate_Back9_చివర(z_ప్రవాహం FAR *strm) {
+    ఒకవేళ (strm == Z_NULL || strm->state == Z_NULL || strm->zfree == (free_func)0)
+        తిరిగి Z_ప్రవాహం_ERROR;
     ZFREE(strm, strm->state);
     strm->state = Z_NULL;
     Tracev((stderr, "inflate: end\n"));
-    return Z_OK;
+    తిరిగి Z_OK;
 }

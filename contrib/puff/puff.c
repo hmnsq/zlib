@@ -79,34 +79,34 @@
  * 2.3  21 Jan 2013     - Check for invalid code length codes in dynamic blocks
  */
 
-#include <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
-#include "puff.h"               /* prototype for puff() */
+#అన్తర్భావ <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
+#అన్తర్భావ "puff.h"               /* prototype for puff() */
 
-#define local static            /* for local function definitions */
+#నిర్వచించు local స్థిర            /* for local function definitions */
 
 /*
  * Maximums for allocations and loops.  It is not useful to change these --
  * they are fixed by the deflate format.
  */
-#define MAXBITS 15              /* maximum bits in a code */
-#define MAXLCODES 286           /* maximum number of literal/length codes */
-#define MAXDCODES 30            /* maximum number of distance codes */
-#define MAXCODES (MAXLCODES+MAXDCODES)  /* maximum codes lengths to read */
-#define FIXLCODES 288           /* number of fixed literal/length codes */
+#నిర్వచించు MAXBITS 15              /* maximum bits in a code */
+#నిర్వచించు MAXLCODES 286           /* maximum number of literal/length codes */
+#నిర్వచించు MAXDCODES 30            /* maximum number of distance codes */
+#నిర్వచించు MAXCODES (MAXLCODES+MAXDCODES)  /* maximum codes lengths to read */
+#నిర్వచించు FIXLCODES 288           /* number of fixed literal/length codes */
 
 /* input and output state */
-struct state {
+నిర్మాణం state {
     /* output state */
-    unsigned char *out;         /* output buffer */
-    unsigned long outlen;       /* available space at out */
-    unsigned long outcnt;       /* bytes written to out so far */
+    గుర్తులేని అక్షరం *బహిర్గతం;         /* output buffer */
+    గుర్తులేని దీర్ఘ outlen;       /* available space at out */
+    గుర్తులేని దీర్ఘ outcnt;       /* bytes written to out so far */
 
     /* input state */
-    const unsigned char *in;    /* input buffer */
-    unsigned long inlen;        /* available input at in */
-    unsigned long incnt;        /* bytes read so far */
-    int bitbuf;                 /* bit buffer */
-    int bitcnt;                 /* number of bits in bit buffer */
+    స్థిరరాశి గుర్తులేని అక్షరం *లోపల;    /* input buffer */
+    గుర్తులేని దీర్ఘ inlen;        /* available input at in */
+    గుర్తులేని దీర్ఘ incnt;        /* bytes read so far */
+    పూర్ణాంకం bitbuf;                 /* bit buffer */
+    పూర్ణాంకం bitcnt;                 /* number of bits in bit buffer */
 
     /* input limit error return state for bits() and decode() */
     jmp_buf env;
@@ -123,25 +123,25 @@ struct state {
  *   buffer, using shift right, and new bytes are appended to the top of the
  *   bit buffer, using shift left.
  */
-local int bits(struct state *s, int need)
+local పూర్ణాంకం బిట్లు(నిర్మాణం state *s, పూర్ణాంకం need)
 {
-    long val;           /* bit accumulator (can use up to 20 bits) */
+    దీర్ఘ val;           /* bit accumulator (can use up to 20 bits) */
 
     /* load at least need bits into val */
     val = s->bitbuf;
-    while (s->bitcnt < need) {
-        if (s->incnt == s->inlen)
+    అయితే (s->bitcnt < need) {
+        ఒకవేళ (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
-        val |= (long)(s->in[s->incnt++]) << s->bitcnt;  /* load eight bits */
+        val |= (దీర్ఘ)(s->లోపల[s->incnt++]) << s->bitcnt;  /* load eight bits */
         s->bitcnt += 8;
     }
 
     /* drop need bits and update buffer, always zero to seven bits left */
-    s->bitbuf = (int)(val >> need);
+    s->bitbuf = (పూర్ణాంకం)(val >> need);
     s->bitcnt -= need;
 
     /* return need bits, zeroing the bits above that */
-    return (int)(val & ((1L << need) - 1));
+    తిరిగి (పూర్ణాంకం)(val & ((1L << need) - 1));
 }
 
 /*
@@ -161,39 +161,39 @@ local int bits(struct state *s, int need)
  * - A stored block can have zero length.  This is sometimes used to byte-align
  *   subsets of the compressed data for random access or partial recovery.
  */
-local int stored(struct state *s)
+local పూర్ణాంకం stored(నిర్మాణం state *s)
 {
-    unsigned len;       /* length of stored block */
+    గుర్తులేని len;       /* length of stored block */
 
     /* discard leftover bits from current byte (assumes s->bitcnt < 8) */
     s->bitbuf = 0;
     s->bitcnt = 0;
 
     /* get length and check against its one's complement */
-    if (s->incnt + 4 > s->inlen)
-        return 2;                               /* not enough input */
-    len = s->in[s->incnt++];
-    len |= s->in[s->incnt++] << 8;
-    if (s->in[s->incnt++] != (~len & 0xff) ||
-        s->in[s->incnt++] != ((~len >> 8) & 0xff))
-        return -2;                              /* didn't match complement! */
+    ఒకవేళ (s->incnt + 4 > s->inlen)
+        తిరిగి 2;                               /* not enough input */
+    len = s->లోపల[s->incnt++];
+    len |= s->లోపల[s->incnt++] << 8;
+    ఒకవేళ (s->లోపల[s->incnt++] != (~len & 0xff) ||
+        s->లోపల[s->incnt++] != ((~len >> 8) & 0xff))
+        తిరిగి -2;                              /* didn't match complement! */
 
     /* copy len bytes from in to out */
-    if (s->incnt + len > s->inlen)
-        return 2;                               /* not enough input */
-    if (s->out != NIL) {
-        if (s->outcnt + len > s->outlen)
-            return 1;                           /* not enough output space */
-        while (len--)
-            s->out[s->outcnt++] = s->in[s->incnt++];
+    ఒకవేళ (s->incnt + len > s->inlen)
+        తిరిగి 2;                               /* not enough input */
+    ఒకవేళ (s->బహిర్గతం != NIL) {
+        ఒకవేళ (s->outcnt + len > s->outlen)
+            తిరిగి 1;                           /* not enough output space */
+        అయితే (len--)
+            s->బహిర్గతం[s->outcnt++] = s->లోపల[s->incnt++];
     }
-    else {                                      /* just scanning */
+    లేకపోతే {                                      /* just scanning */
         s->outcnt += len;
         s->incnt += len;
     }
 
     /* done with a valid stored block */
-    return 0;
+    తిరిగి 0;
 }
 
 /*
@@ -203,9 +203,9 @@ local int stored(struct state *s)
  * entries is the sum of the counts in count[].  The decoding process can be
  * seen in the function decode() below.
  */
-struct huffman {
-    short *count;       /* number of symbols of each length */
-    short *symbol;      /* canonically ordered symbols */
+నిర్మాణం huffman {
+    పొట్టి *లెక్క;       /* number of symbols of each length */
+    పొట్టి *చిహ్నం;      /* canonically ordered symbols */
 };
 
 /*
@@ -231,27 +231,27 @@ struct huffman {
  * - Incomplete codes are handled by this decoder, since they are permitted
  *   in the deflate format.  See the format notes for fixed() and dynamic().
  */
-#ifdef SLOW
-local int decode(struct state *s, const struct huffman *h)
+#నిర్వచితమైతే SLOW
+local పూర్ణాంకం decode(నిర్మాణం state *s, స్థిరరాశి నిర్మాణం huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
+    పూర్ణాంకం len;            /* current number of bits in code */
+    పూర్ణాంకం సంకేతం_2;           /* len bits being decoded */
+    పూర్ణాంకం మొదటి;          /* first code of length len */
+    పూర్ణాంకం లెక్క;          /* number of codes of length len */
+    పూర్ణాంకం సూచీ;          /* index of first code of length len in symbol table */
 
-    code = first = index = 0;
-    for (len = 1; len <= MAXBITS; len++) {
-        code |= bits(s, 1);             /* get next bit */
-        count = h->count[len];
-        if (code - count < first)       /* if length len, return symbol */
-            return h->symbol[index + (code - first)];
-        index += count;                 /* else update for next length */
-        first += count;
-        first <<= 1;
-        code <<= 1;
+    సంకేతం_2 = మొదటి = సూచీ = 0;
+    కొరకు (len = 1; len <= MAXBITS; len++) {
+        సంకేతం_2 |= బిట్లు(s, 1);             /* get next bit */
+        లెక్క = h->లెక్క[len];
+        ఒకవేళ (సంకేతం_2 - లెక్క < మొదటి)       /* if length len, return symbol */
+            తిరిగి h->చిహ్నం[సూచీ + (సంకేతం_2 - మొదటి)];
+        సూచీ += లెక్క;                 /* else update for next length */
+        మొదటి += లెక్క;
+        మొదటి <<= 1;
+        సంకేతం_2 <<= 1;
     }
-    return -10;                         /* ran out of codes */
+    తిరిగి -10;                         /* ran out of codes */
 }
 
 /*
@@ -259,51 +259,51 @@ local int decode(struct state *s, const struct huffman *h)
  * as readable, but it makes puff() twice as fast.  And it only makes the code
  * a few percent larger.
  */
-#else /* !SLOW */
-local int decode(struct state *s, const struct huffman *h)
+#లేకపోతే /* !SLOW */
+local పూర్ణాంకం decode(నిర్మాణం state *s, స్థిరరాశి నిర్మాణం huffman *h)
 {
-    int len;            /* current number of bits in code */
-    int code;           /* len bits being decoded */
-    int first;          /* first code of length len */
-    int count;          /* number of codes of length len */
-    int index;          /* index of first code of length len in symbol table */
-    int bitbuf;         /* bits from stream */
-    int left;           /* bits left in next or left to process */
-    short *next;        /* next number of codes */
+    పూర్ణాంకం len;            /* current number of bits in code */
+    పూర్ణాంకం సంకేతం_2;           /* len bits being decoded */
+    పూర్ణాంకం మొదటి;          /* first code of length len */
+    పూర్ణాంకం లెక్క;          /* number of codes of length len */
+    పూర్ణాంకం సూచీ;          /* index of first code of length len in symbol table */
+    పూర్ణాంకం bitbuf;         /* bits from stream */
+    పూర్ణాంకం ఎడమ;           /* bits left in next or left to process */
+    పొట్టి *తదుపరి;        /* next number of codes */
 
     bitbuf = s->bitbuf;
-    left = s->bitcnt;
-    code = first = index = 0;
+    ఎడమ = s->bitcnt;
+    సంకేతం_2 = మొదటి = సూచీ = 0;
     len = 1;
-    next = h->count + 1;
-    while (1) {
-        while (left--) {
-            code |= bitbuf & 1;
+    తదుపరి = h->లెక్క + 1;
+    అయితే (1) {
+        అయితే (ఎడమ--) {
+            సంకేతం_2 |= bitbuf & 1;
             bitbuf >>= 1;
-            count = *next++;
-            if (code - count < first) { /* if length len, return symbol */
+            లెక్క = *తదుపరి++;
+            ఒకవేళ (సంకేతం_2 - లెక్క < మొదటి) { /* if length len, return symbol */
                 s->bitbuf = bitbuf;
                 s->bitcnt = (s->bitcnt - len) & 7;
-                return h->symbol[index + (code - first)];
+                తిరిగి h->చిహ్నం[సూచీ + (సంకేతం_2 - మొదటి)];
             }
-            index += count;             /* else update for next length */
-            first += count;
-            first <<= 1;
-            code <<= 1;
+            సూచీ += లెక్క;             /* else update for next length */
+            మొదటి += లెక్క;
+            మొదటి <<= 1;
+            సంకేతం_2 <<= 1;
             len++;
         }
-        left = (MAXBITS+1) - len;
-        if (left == 0)
-            break;
-        if (s->incnt == s->inlen)
+        ఎడమ = (MAXBITS+1) - len;
+        ఒకవేళ (ఎడమ == 0)
+            ఆపు;
+        ఒకవేళ (s->incnt == s->inlen)
             longjmp(s->env, 1);         /* out of input */
-        bitbuf = s->in[s->incnt++];
-        if (left > 8)
-            left = 8;
+        bitbuf = s->లోపల[s->incnt++];
+        ఒకవేళ (ఎడమ > 8)
+            ఎడమ = 8;
     }
-    return -10;                         /* ran out of codes */
+    తిరిగి -10;                         /* ran out of codes */
 }
-#endif /* SLOW */
+#అయితే_ముగింపు /* SLOW */
 
 /*
  * Given the list of code lengths length[0..n-1] representing a canonical
@@ -337,45 +337,45 @@ local int decode(struct state *s, const struct huffman *h)
  * - Within a given code length, the symbols are kept in ascending order for
  *   the code bits definition.
  */
-local int construct(struct huffman *h, const short *length, int n)
+local పూర్ణాంకం construct(నిర్మాణం huffman *h, స్థిరరాశి పొట్టి *నిడివి, పూర్ణాంకం n)
 {
-    int symbol;         /* current symbol when stepping through length[] */
-    int len;            /* current length when stepping through h->count[] */
-    int left;           /* number of possible codes left of current length */
-    short offs[MAXBITS+1];      /* offsets in symbol table for each length */
+    పూర్ణాంకం చిహ్నం;         /* current symbol when stepping through length[] */
+    పూర్ణాంకం len;            /* current length when stepping through h->count[] */
+    పూర్ణాంకం ఎడమ;           /* number of possible codes left of current length */
+    పొట్టి offs[MAXBITS+1];      /* offsets in symbol table for each length */
 
     /* count number of codes of each length */
-    for (len = 0; len <= MAXBITS; len++)
-        h->count[len] = 0;
-    for (symbol = 0; symbol < n; symbol++)
-        (h->count[length[symbol]])++;   /* assumes lengths are within bounds */
-    if (h->count[0] == n)               /* no codes! */
-        return 0;                       /* complete, but decode() will fail */
+    కొరకు (len = 0; len <= MAXBITS; len++)
+        h->లెక్క[len] = 0;
+    కొరకు (చిహ్నం = 0; చిహ్నం < n; చిహ్నం++)
+        (h->లెక్క[నిడివి[చిహ్నం]])++;   /* assumes lengths are within bounds */
+    ఒకవేళ (h->లెక్క[0] == n)               /* no codes! */
+        తిరిగి 0;                       /* complete, but decode() will fail */
 
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1;                           /* one possible code of zero length */
-    for (len = 1; len <= MAXBITS; len++) {
-        left <<= 1;                     /* one more bit, double codes left */
-        left -= h->count[len];          /* deduct count from possible codes */
-        if (left < 0)
-            return left;                /* over-subscribed--return negative */
+    ఎడమ = 1;                           /* one possible code of zero length */
+    కొరకు (len = 1; len <= MAXBITS; len++) {
+        ఎడమ <<= 1;                     /* one more bit, double codes left */
+        ఎడమ -= h->లెక్క[len];          /* deduct count from possible codes */
+        ఒకవేళ (ఎడమ < 0)
+            తిరిగి ఎడమ;                /* over-subscribed--return negative */
     }                                   /* left > 0 means incomplete */
 
     /* generate offsets into symbol table for each length for sorting */
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; len++)
-        offs[len + 1] = offs[len] + h->count[len];
+    కొరకు (len = 1; len < MAXBITS; len++)
+        offs[len + 1] = offs[len] + h->లెక్క[len];
 
     /*
      * put symbols in table sorted by length, by symbol order within each
      * length
      */
-    for (symbol = 0; symbol < n; symbol++)
-        if (length[symbol] != 0)
-            h->symbol[offs[length[symbol]]++] = symbol;
+    కొరకు (చిహ్నం = 0; చిహ్నం < n; చిహ్నం++)
+        ఒకవేళ (నిడివి[చిహ్నం] != 0)
+            h->చిహ్నం[offs[నిడివి[చిహ్నం]]++] = చిహ్నం;
 
     /* return zero for complete set, positive for incomplete set */
-    return left;
+    తిరిగి ఎడమ;
 }
 
 /*
@@ -433,80 +433,80 @@ local int construct(struct huffman *h, const short *length, int n)
  *   since though their behavior -is- defined for overlapping arrays, it is
  *   defined to do the wrong thing in this case.
  */
-local int codes(struct state *s,
-                const struct huffman *lencode,
-                const struct huffman *distcode)
+local పూర్ణాంకం codes(నిర్మాణం state *s,
+                స్థిరరాశి నిర్మాణం huffman *lencode,
+                స్థిరరాశి నిర్మాణం huffman *distcode)
 {
-    int symbol;         /* decoded symbol */
-    int len;            /* length for copy */
-    unsigned dist;      /* distance for copy */
-    static const short lens[29] = { /* Size base for length codes 257..285 */
+    పూర్ణాంకం చిహ్నం;         /* decoded symbol */
+    పూర్ణాంకం len;            /* length for copy */
+    గుర్తులేని dist;      /* distance for copy */
+    స్థిర స్థిరరాశి పొట్టి lens[29] = { /* Size base for length codes 257..285 */
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
         35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258};
-    static const short lext[29] = { /* Extra bits for length codes 257..285 */
+    స్థిర స్థిరరాశి పొట్టి lext[29] = { /* Extra bits for length codes 257..285 */
         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
         3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0};
-    static const short dists[30] = { /* Offset base for distance codes 0..29 */
+    స్థిర స్థిరరాశి పొట్టి dists[30] = { /* Offset base for distance codes 0..29 */
         1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
         257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
         8193, 12289, 16385, 24577};
-    static const short dext[30] = { /* Extra bits for distance codes 0..29 */
+    స్థిర స్థిరరాశి పొట్టి dext[30] = { /* Extra bits for distance codes 0..29 */
         0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
         7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
         12, 12, 13, 13};
 
     /* decode literals and length/distance pairs */
-    do {
-        symbol = decode(s, lencode);
-        if (symbol < 0)
-            return symbol;              /* invalid symbol */
-        if (symbol < 256) {             /* literal: symbol is the byte */
+    చేయి {
+        చిహ్నం = decode(s, lencode);
+        ఒకవేళ (చిహ్నం < 0)
+            తిరిగి చిహ్నం;              /* invalid symbol */
+        ఒకవేళ (చిహ్నం < 256) {             /* literal: symbol is the byte */
             /* write out the literal */
-            if (s->out != NIL) {
-                if (s->outcnt == s->outlen)
-                    return 1;
-                s->out[s->outcnt] = symbol;
+            ఒకవేళ (s->బహిర్గతం != NIL) {
+                ఒకవేళ (s->outcnt == s->outlen)
+                    తిరిగి 1;
+                s->బహిర్గతం[s->outcnt] = చిహ్నం;
             }
             s->outcnt++;
         }
-        else if (symbol > 256) {        /* length */
+        లేకపోతే ఒకవేళ (చిహ్నం > 256) {        /*నిడివి*/
             /* get and compute length */
-            symbol -= 257;
-            if (symbol >= 29)
-                return -10;             /* invalid fixed code */
-            len = lens[symbol] + bits(s, lext[symbol]);
+            చిహ్నం -= 257;
+            ఒకవేళ (చిహ్నం >= 29)
+                తిరిగి -10;             /* invalid fixed code */
+            len = lens[చిహ్నం] + బిట్లు(s, lext[చిహ్నం]);
 
             /* get and check distance */
-            symbol = decode(s, distcode);
-            if (symbol < 0)
-                return symbol;          /* invalid symbol */
-            dist = dists[symbol] + bits(s, dext[symbol]);
-#ifndef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
-            if (dist > s->outcnt)
-                return -11;     /* distance too far back */
-#endif
+            చిహ్నం = decode(s, distcode);
+            ఒకవేళ (చిహ్నం < 0)
+                తిరిగి చిహ్నం;          /* invalid symbol */
+            dist = dists[చిహ్నం] + బిట్లు(s, dext[చిహ్నం]);
+#నిర్వచితం_కాకపోతే INFLATE_ALLOW_INVALID_దూరం_TOOFAR_ARRR
+            ఒకవేళ (dist > s->outcnt)
+                తిరిగి -11;     /* distance too far back */
+#అయితే_ముగింపు
 
             /* copy length bytes from distance bytes back */
-            if (s->out != NIL) {
-                if (s->outcnt + len > s->outlen)
-                    return 1;
-                while (len--) {
-                    s->out[s->outcnt] =
-#ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
+            ఒకవేళ (s->బహిర్గతం != NIL) {
+                ఒకవేళ (s->outcnt + len > s->outlen)
+                    తిరిగి 1;
+                అయితే (len--) {
+                    s->బహిర్గతం[s->outcnt] =
+#నిర్వచితమైతే INFLATE_ALLOW_INVALID_దూరం_TOOFAR_ARRR
                         dist > s->outcnt ?
                             0 :
-#endif
-                            s->out[s->outcnt - dist];
+#అయితే_ముగింపు
+                            s->బహిర్గతం[s->outcnt - dist];
                     s->outcnt++;
                 }
             }
-            else
+            లేకపోతే
                 s->outcnt += len;
         }
-    } while (symbol != 256);            /* end of block symbol */
+    } అయితే (చిహ్నం != 256);            /* end of block symbol */
 
     /* done with a valid fixed or dynamic block */
-    return 0;
+    తిరిగి 0;
 }
 
 /*
@@ -533,38 +533,38 @@ local int codes(struct state *s,
  *   length, this can be implemented as an incomplete code.  Then the invalid
  *   codes are detected while decoding.
  */
-local int fixed(struct state *s)
+local పూర్ణాంకం fixed(నిర్మాణం state *s)
 {
-    static int virgin = 1;
-    static short lencnt[MAXBITS+1], lensym[FIXLCODES];
-    static short distcnt[MAXBITS+1], distsym[MAXDCODES];
-    static struct huffman lencode, distcode;
+    స్థిర పూర్ణాంకం virgin = 1;
+    స్థిర పొట్టి lencnt[MAXBITS+1], lensym[FIXLCODES];
+    స్థిర పొట్టి distcnt[MAXBITS+1], distsym[MAXDCODES];
+    స్థిర నిర్మాణం huffman lencode, distcode;
 
     /* build fixed huffman tables if first call (may not be thread safe) */
-    if (virgin) {
-        int symbol;
-        short lengths[FIXLCODES];
+    ఒకవేళ (virgin) {
+        పూర్ణాంకం చిహ్నం;
+        పొట్టి lengths[FIXLCODES];
 
         /* construct lencode and distcode */
-        lencode.count = lencnt;
-        lencode.symbol = lensym;
-        distcode.count = distcnt;
-        distcode.symbol = distsym;
+        lencode.లెక్క = lencnt;
+        lencode.చిహ్నం = lensym;
+        distcode.లెక్క = distcnt;
+        distcode.చిహ్నం = distsym;
 
         /* literal/length table */
-        for (symbol = 0; symbol < 144; symbol++)
-            lengths[symbol] = 8;
-        for (; symbol < 256; symbol++)
-            lengths[symbol] = 9;
-        for (; symbol < 280; symbol++)
-            lengths[symbol] = 7;
-        for (; symbol < FIXLCODES; symbol++)
-            lengths[symbol] = 8;
+        కొరకు (చిహ్నం = 0; చిహ్నం < 144; చిహ్నం++)
+            lengths[చిహ్నం] = 8;
+        కొరకు (; చిహ్నం < 256; చిహ్నం++)
+            lengths[చిహ్నం] = 9;
+        కొరకు (; చిహ్నం < 280; చిహ్నం++)
+            lengths[చిహ్నం] = 7;
+        కొరకు (; చిహ్నం < FIXLCODES; చిహ్నం++)
+            lengths[చిహ్నం] = 8;
         construct(&lencode, lengths, FIXLCODES);
 
         /* distance table */
-        for (symbol = 0; symbol < MAXDCODES; symbol++)
-            lengths[symbol] = 5;
+        కొరకు (చిహ్నం = 0; చిహ్నం < MAXDCODES; చిహ్నం++)
+            lengths[చిహ్నం] = 5;
         construct(&distcode, lengths, MAXDCODES);
 
         /* do this just once */
@@ -572,7 +572,7 @@ local int fixed(struct state *s)
     }
 
     /* decode data until end-of-block code */
-    return codes(s, &lencode, &distcode);
+    తిరిగి codes(s, &lencode, &distcode);
 }
 
 /*
@@ -662,88 +662,88 @@ local int fixed(struct state *s)
  * - For reference, a "typical" size for the code description in a dynamic
  *   block is around 80 bytes.
  */
-local int dynamic(struct state *s)
+local పూర్ణాంకం dynamic(నిర్మాణం state *s)
 {
-    int nlen, ndist, ncode;             /* number of lengths in descriptor */
-    int index;                          /* index of lengths[] */
-    int err;                            /* construct() return value */
-    short lengths[MAXCODES];            /* descriptor code lengths */
-    short lencnt[MAXBITS+1], lensym[MAXLCODES];         /* lencode memory */
-    short distcnt[MAXBITS+1], distsym[MAXDCODES];       /* distcode memory */
-    struct huffman lencode, distcode;   /* length and distance codes */
-    static const short order[19] =      /* permutation of code length codes */
+    పూర్ణాంకం nlen, ndist, ncode;             /* number of lengths in descriptor */
+    పూర్ణాంకం సూచీ;                          /* index of lengths[] */
+    పూర్ణాంకం err;                            /* construct() return value */
+    పొట్టి lengths[MAXCODES];            /* descriptor code lengths */
+    పొట్టి lencnt[MAXBITS+1], lensym[MAXLCODES];         /* lencode memory */
+    పొట్టి distcnt[MAXBITS+1], distsym[MAXDCODES];       /* distcode memory */
+    నిర్మాణం huffman lencode, distcode;   /* length and distance codes */
+    స్థిర స్థిరరాశి పొట్టి క్రమం[19] =      /* permutation of code length codes */
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
     /* construct lencode and distcode */
-    lencode.count = lencnt;
-    lencode.symbol = lensym;
-    distcode.count = distcnt;
-    distcode.symbol = distsym;
+    lencode.లెక్క = lencnt;
+    lencode.చిహ్నం = lensym;
+    distcode.లెక్క = distcnt;
+    distcode.చిహ్నం = distsym;
 
     /* get number of lengths in each table, check lengths */
-    nlen = bits(s, 5) + 257;
-    ndist = bits(s, 5) + 1;
-    ncode = bits(s, 4) + 4;
-    if (nlen > MAXLCODES || ndist > MAXDCODES)
-        return -3;                      /* bad counts */
+    nlen = బిట్లు(s, 5) + 257;
+    ndist = బిట్లు(s, 5) + 1;
+    ncode = బిట్లు(s, 4) + 4;
+    ఒకవేళ (nlen > MAXLCODES || ndist > MAXDCODES)
+        తిరిగి -3;                      /* bad counts */
 
     /* read code length code lengths (really), missing lengths are zero */
-    for (index = 0; index < ncode; index++)
-        lengths[order[index]] = bits(s, 3);
-    for (; index < 19; index++)
-        lengths[order[index]] = 0;
+    కొరకు (సూచీ = 0; సూచీ < ncode; సూచీ++)
+        lengths[క్రమం[సూచీ]] = బిట్లు(s, 3);
+    కొరకు (; సూచీ < 19; సూచీ++)
+        lengths[క్రమం[సూచీ]] = 0;
 
     /* build huffman table for code lengths codes (use lencode temporarily) */
     err = construct(&lencode, lengths, 19);
-    if (err != 0)               /* require complete code set here */
-        return -4;
+    ఒకవేళ (err != 0)               /* require complete code set here */
+        తిరిగి -4;
 
     /* read length/literal and distance code length tables */
-    index = 0;
-    while (index < nlen + ndist) {
-        int symbol;             /* decoded value */
-        int len;                /* last length to repeat */
+    సూచీ = 0;
+    అయితే (సూచీ < nlen + ndist) {
+        పూర్ణాంకం చిహ్నం;             /* decoded value */
+        పూర్ణాంకం len;                /* last length to repeat */
 
-        symbol = decode(s, &lencode);
-        if (symbol < 0)
-            return symbol;          /* invalid symbol */
-        if (symbol < 16)                /* length in 0..15 */
-            lengths[index++] = symbol;
-        else {                          /* repeat instruction */
+        చిహ్నం = decode(s, &lencode);
+        ఒకవేళ (చిహ్నం < 0)
+            తిరిగి చిహ్నం;          /* invalid symbol */
+        ఒకవేళ (చిహ్నం < 16)                /* length in 0..15 */
+            lengths[సూచీ++] = చిహ్నం;
+        లేకపోతే {                          /* repeat instruction */
             len = 0;                    /* assume repeating zeros */
-            if (symbol == 16) {         /* repeat last length 3..6 times */
-                if (index == 0)
-                    return -5;          /* no last length! */
-                len = lengths[index - 1];       /* last length */
-                symbol = 3 + bits(s, 2);
+            ఒకవేళ (చిహ్నం == 16) {         /* repeat last length 3..6 times */
+                ఒకవేళ (సూచీ == 0)
+                    తిరిగి -5;          /* no last length! */
+                len = lengths[సూచీ - 1];       /* last length */
+                చిహ్నం = 3 + బిట్లు(s, 2);
             }
-            else if (symbol == 17)      /* repeat zero 3..10 times */
-                symbol = 3 + bits(s, 3);
-            else                        /* == 18, repeat zero 11..138 times */
-                symbol = 11 + bits(s, 7);
-            if (index + symbol > nlen + ndist)
-                return -6;              /* too many lengths! */
-            while (symbol--)            /* repeat last or zero symbol times */
-                lengths[index++] = len;
+            లేకపోతే ఒకవేళ (చిహ్నం == 17)      /* repeat zero 3..10 times */
+                చిహ్నం = 3 + బిట్లు(s, 3);
+            లేకపోతే                        /* == 18, repeat zero 11..138 times */
+                చిహ్నం = 11 + బిట్లు(s, 7);
+            ఒకవేళ (సూచీ + చిహ్నం > nlen + ndist)
+                తిరిగి -6;              /* too many lengths! */
+            అయితే (చిహ్నం--)            /* repeat last or zero symbol times */
+                lengths[సూచీ++] = len;
         }
     }
 
     /* check for end-of-block code -- there better be one! */
-    if (lengths[256] == 0)
-        return -9;
+    ఒకవేళ (lengths[256] == 0)
+        తిరిగి -9;
 
     /* build huffman table for literal/length codes */
     err = construct(&lencode, lengths, nlen);
-    if (err && (err < 0 || nlen != lencode.count[0] + lencode.count[1]))
-        return -7;      /* incomplete code ok only for single length 1 code */
+    ఒకవేళ (err && (err < 0 || nlen != lencode.లెక్క[0] + lencode.లెక్క[1]))
+        తిరిగి -7;      /* incomplete code ok only for single length 1 code */
 
     /* build huffman table for distance codes */
     err = construct(&distcode, lengths + nlen, ndist);
-    if (err && (err < 0 || ndist != distcode.count[0] + distcode.count[1]))
-        return -8;      /* incomplete code ok only for single length 1 code */
+    ఒకవేళ (err && (err < 0 || ndist != distcode.లెక్క[0] + distcode.లెక్క[1]))
+        తిరిగి -8;      /* incomplete code ok only for single length 1 code */
 
     /* decode data until end-of-block code */
-    return codes(s, &lencode, &distcode);
+    తిరిగి codes(s, &lencode, &distcode);
 }
 
 /*
@@ -790,35 +790,35 @@ local int dynamic(struct state *s)
  *   block (if it was a fixed or dynamic block) are undefined and have no
  *   expected values to check.
  */
-int puff(unsigned char *dest,           /* pointer to destination pointer */
-         unsigned long *destlen,        /* amount of output space */
-         const unsigned char *source,   /* pointer to source data pointer */
-         unsigned long *sourcelen)      /* amount of input available */
+పూర్ణాంకం puff(గుర్తులేని అక్షరం *dest,           /* pointer to destination pointer */
+         గుర్తులేని దీర్ఘ *destlen,        /* amount of output space */
+         స్థిరరాశి గుర్తులేని అక్షరం *ఆధారం,   /* pointer to source data pointer */
+         గుర్తులేని దీర్ఘ *sourcelen)      /* amount of input available */
 {
-    struct state s;             /* input/output state */
-    int last, type;             /* block information */
-    int err;                    /* return value */
+    నిర్మాణం state s;             /* input/output state */
+    పూర్ణాంకం చివరి, type;             /* block information */
+    పూర్ణాంకం err;                    /* return value */
 
     /* initialize output state */
-    s.out = dest;
+    s.బహిర్గతం = dest;
     s.outlen = *destlen;                /* ignored if dest is NIL */
     s.outcnt = 0;
 
     /* initialize input state */
-    s.in = source;
+    s.లోపల = ఆధారం;
     s.inlen = *sourcelen;
     s.incnt = 0;
     s.bitbuf = 0;
     s.bitcnt = 0;
 
     /* return if bits() or decode() tries to read past available input */
-    if (setjmp(s.env) != 0)             /* if came back here via longjmp() */
+    ఒకవేళ (setjmp(s.env) != 0)             /* if came back here via longjmp() */
         err = 2;                        /* then skip do-loop, return error */
-    else {
+    లేకపోతే {
         /* process blocks until last block or error */
-        do {
-            last = bits(&s, 1);         /* one if last block */
-            type = bits(&s, 2);         /* block type 0..3 */
+        చేయి {
+            చివరి = బిట్లు(&s, 1);         /* one if last block */
+            type = బిట్లు(&s, 2);         /* block type 0..3 */
             err = type == 0 ?
                     stored(&s) :
                     (type == 1 ?
@@ -826,15 +826,15 @@ int puff(unsigned char *dest,           /* pointer to destination pointer */
                         (type == 2 ?
                             dynamic(&s) :
                             -1));       /* type == 3, invalid */
-            if (err != 0)
-                break;                  /* return with error */
-        } while (!last);
+            ఒకవేళ (err != 0)
+                ఆపు;                  /* return with error */
+        } అయితే (!చివరి);
     }
 
     /* update the lengths and return */
-    if (err <= 0) {
+    ఒకవేళ (err <= 0) {
         *destlen = s.outcnt;
         *sourcelen = s.incnt;
     }
-    return err;
+    తిరిగి err;
 }

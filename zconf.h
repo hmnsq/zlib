@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#ifndef ZCONF_H
-#define ZCONF_H
+#నిర్వచితం_కాకపోతే ZCONF_H
+#నిర్వచించు ZCONF_H
 
 /*
  * If you *really* need a unique prefix for all types and library functions,
@@ -14,17 +14,17 @@
  * Even better than compiling with -DZ_PREFIX would be to use configure to set
  * this permanently in zconf.h using "./configure --zprefix".
  */
-#ifdef Z_PREFIX     /* may be set to #if 1 by ./configure */
-#  define Z_PREFIX_SET
+#నిర్వచితమైతే Z_ఉపసర్గ     /* may be set to #if 1 by ./configure */
+#  define Z_ఉపసర్గ_సమితి
 
 /* all linked symbols and init macros */
-#  define _dist_code            z__dist_code
-#  define _length_code          z__length_code
+#  define dist_సంకేతం            z_dist_సంకేతం
+#  define నిడివి_సంకేతం          z_నిడివి_సంకేతం
 #  define _tr_align             z__tr_align
-#  define _tr_flush_bits        z__tr_flush_bits
-#  define _tr_flush_block       z__tr_flush_block
+#  define tr_flush_బిట్లు        z_tr_flush_బిట్లు
+#  define tr_flush_ఖండం       z_tr_flush_ఖండం
 #  define _tr_init              z__tr_init
-#  define _tr_stored_block      z__tr_stored_block
+#  define tr_stored_ఖండం      z_tr_stored_ఖండం
 #  define _tr_tally             z__tr_tally
 #  define adler32               z_adler32
 #  define adler32_combine       z_adler32_combine
@@ -38,18 +38,18 @@
 #    define compressBound         z_compressBound
 #    define compressBound_z       z_compressBound_z
 #  endif
-#  define crc32                 z_crc32
-#  define crc32_combine         z_crc32_combine
-#  define crc32_combine64       z_crc32_combine64
-#  define crc32_combine_gen     z_crc32_combine_gen
-#  define crc32_combine_gen64   z_crc32_combine_gen64
-#  define crc32_combine_op      z_crc32_combine_op
-#  define crc32_z               z_crc32_z
+#  define చక్రీయ_తనిఖీ_32_2                 z_చక్రీయ_తనిఖీ_32
+#  define చక్రీయ_తనిఖీ_32_combine         z_చక్రీయ_తనిఖీ_32_combine
+#  define చక్రీయ_తనిఖీ_32_combine64       z_చక్రీయ_తనిఖీ_32_combine64
+#  define చక్రీయ_తనిఖీ_32_combine_gen     z_చక్రీయ_తనిఖీ_32_combine_gen
+#  define చక్రీయ_తనిఖీ_32_combine_gen64   z_చక్రీయ_తనిఖీ_32_combine_gen64
+#  define చక్రీయ_తనిఖీ_32_combine_op      z_చక్రీయ_తనిఖీ_32_combine_op
+#  define చక్రీయ_తనిఖీ_32_z               z_చక్రీయ_తనిఖీ_32_z
 #  define deflate               z_deflate
 #  define deflateBound          z_deflateBound
 #  define deflateBound_z        z_deflateBound_z
 #  define deflateCopy           z_deflateCopy
-#  define deflateEnd            z_deflateEnd
+#  define deflate_చివర            z_deflate_చివర
 #  define deflateGetDictionary  z_deflateGetDictionary
 #  define deflateInit           z_deflateInit
 #  define deflateInit2          z_deflateInit2
@@ -57,15 +57,15 @@
 #  define deflateInit_          z_deflateInit_
 #  define deflateParams         z_deflateParams
 #  define deflatePending        z_deflatePending
-#  define deflatePrime          z_deflatePrime
+#  define deflate_ప్రధానసంఖ్య          z_deflate_ప్రధానసంఖ్య
 #  define deflateReset          z_deflateReset
 #  define deflateResetKeep      z_deflateResetKeep
-#  define deflateSetDictionary  z_deflateSetDictionary
-#  define deflateSetHeader      z_deflateSetHeader
+#  define deflate_సమితి_Dictionary  z_deflate_సమితి_Dictionary
+#  define deflate_సమితి_శీర్షిక      z_deflate_సమితి_శీర్షిక
 #  define deflateTune           z_deflateTune
-#  define deflateUsed           z_deflateUsed
+#  define deflate_వాడిన           z_deflate_వాడిన
 #  define deflate_copyright     z_deflate_copyright
-#  define get_crc_table         z_get_crc_table
+#  define get_చక్రీయ_తనిఖీ_పట్టిక         z_get_చక్రీయ_తనిఖీ_పట్టిక
 #  ifndef Z_SOLO
 #    define gz_error              z_gz_error
 #    define gz_intmax             z_gz_intmax
@@ -107,32 +107,32 @@
 #    define gzwrite               z_gzwrite
 #  endif
 #  define inflate               z_inflate
-#  define inflateBack           z_inflateBack
-#  define inflateBackEnd        z_inflateBackEnd
-#  define inflateBackInit       z_inflateBackInit
-#  define inflateBackInit_      z_inflateBackInit_
-#  define inflateCodesUsed      z_inflateCodesUsed
+#  define inflate_వెనుక           z_inflate_వెనుక
+#  define inflate_వెనుక_చివర        z_inflate_వెనుక_చివర
+#  define inflate_వెనుక_Init       z_inflate_వెనుక_Init
+#  define inflate_వెనుక_Init_2      z_inflate_వెనుక_Init_2
+#  define inflate_Codes_వాడిన      z_inflate_Codes_వాడిన
 #  define inflateCopy           z_inflateCopy
-#  define inflateEnd            z_inflateEnd
+#  define inflate_చివర            z_inflate_చివర
 #  define inflateGetDictionary  z_inflateGetDictionary
-#  define inflateGetHeader      z_inflateGetHeader
+#  define inflate_Get_శీర్షిక      z_inflate_Get_శీర్షిక
 #  define inflateInit           z_inflateInit
 #  define inflateInit2          z_inflateInit2
 #  define inflateInit2_         z_inflateInit2_
 #  define inflateInit_          z_inflateInit_
 #  define inflateMark           z_inflateMark
-#  define inflatePrime          z_inflatePrime
+#  define inflate_ప్రధానసంఖ్య          z_inflate_ప్రధానసంఖ్య
 #  define inflateReset          z_inflateReset
 #  define inflateReset2         z_inflateReset2
 #  define inflateResetKeep      z_inflateResetKeep
-#  define inflateSetDictionary  z_inflateSetDictionary
+#  define inflate_సమితి_Dictionary  z_inflate_సమితి_Dictionary
 #  define inflateSync           z_inflateSync
-#  define inflateSyncPoint      z_inflateSyncPoint
+#  define inflate_Sync_బిందువు      z_inflate_Sync_బిందువు
 #  define inflateUndermine      z_inflateUndermine
 #  define inflateValidate       z_inflateValidate
 #  define inflate_copyright     z_inflate_copyright
 #  define inflate_fast          z_inflate_fast
-#  define inflate_table         z_inflate_table
+#  define inflate_పట్టిక         z_inflate_పట్టిక
 #  define inflate_fixed         z_inflate_fixed
 #  ifndef Z_SOLO
 #    define uncompress            z_uncompress
@@ -146,7 +146,7 @@
 #    define zcfree                z_zcfree
 #  endif
 #  define zlibCompileFlags      z_zlibCompileFlags
-#  define zlibVersion           z_zlibVersion
+#  define zlib_సంస్కరణ           z_zlib_సంస్కరణ
 
 /* all zlib typedefs in zlib.h and zconf.h */
 #  define Byte                  z_Byte
@@ -157,11 +157,11 @@
 #  ifndef Z_SOLO
 #    define gzFile                z_gzFile
 #  endif
-#  define gz_header             z_gz_header
+#  define gz_శీర్షిక             z_gz_శీర్షిక
 #  define gz_headerp            z_gz_headerp
-#  define in_func               z_in_func
+#  define లోపల_func               z_లోపల_func
 #  define intf                  z_intf
-#  define out_func              z_out_func
+#  define బహిర్గతం_func              z_బహిర్గతం_func
 #  define uInt                  z_uInt
 #  define uIntf                 z_uIntf
 #  define uLong                 z_uLong
@@ -171,121 +171,121 @@
 #  define voidpf                z_voidpf
 
 /* all zlib structs in zlib.h and zconf.h */
-#  define gz_header_s           z_gz_header_s
-#  define internal_state        z_internal_state
+#  define gz_శీర్షిక_s           z_gz_శీర్షిక_s
+#  define అంతర్గత_state        z_అంతర్గత_state
 
-#endif
+#అయితే_ముగింపు
 
-#if defined(__MSDOS__) && !defined(MSDOS)
+#ఒకవేళ defined(__MSDOS__) && !defined(MSDOS)
 #  define MSDOS
-#endif
-#if (defined(OS_2) || defined(__OS2__)) && !defined(OS2)
+#అయితే_ముగింపు
+#ఒకవేళ (defined(OS_2) || defined(__OS2__)) && !defined(OS2)
 #  define OS2
-#endif
-#if defined(_WINDOWS) && !defined(WINDOWS)
+#అయితే_ముగింపు
+#ఒకవేళ defined(_WINDOWS) && !defined(WINDOWS)
 #  define WINDOWS
-#endif
-#if defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
+#అయితే_ముగింపు
+#ఒకవేళ defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
 #  ifndef WIN32
 #    define WIN32
 #  endif
-#endif
-#if (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
-#  if !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
-#    ifndef SYS16BIT
-#      define SYS16BIT
+#అయితే_ముగింపు
+#ఒకవేళ (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
+#  ఒకవేళ !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
+#    ifndef SYS16_బిట్టు
+#      define SYS16_బిట్టు
 #    endif
 #  endif
-#endif
+#అయితే_ముగింపు
 
 /*
  * Compile with -DMAXSEG_64K if the alloc function cannot allocate more
  * than 64k bytes at a time (needed on systems with 16-bit int).
  */
-#ifdef SYS16BIT
+#నిర్వచితమైతే SYS16_బిట్టు
 #  define MAXSEG_64K
-#endif
-#ifdef MSDOS
+#అయితే_ముగింపు
+#నిర్వచితమైతే MSDOS
 #  define UNALIGNED_OK
-#endif
+#అయితే_ముగింపు
 
-#ifdef __STDC_VERSION__
+#నిర్వచితమైతే __STDC_VERSION__
 #  ifndef STDC
 #    define STDC
 #  endif
-#  if __STDC_VERSION__ >= 199901L
+#  ఒకవేళ __STDC_VERSION__ >= 199901L
 #    ifndef STDC99
 #      define STDC99
 #    endif
 #  endif
-#endif
-#if !defined(STDC) && (defined(__STDC__) || defined(__cplusplus))
+#అయితే_ముగింపు
+#ఒకవేళ !defined(STDC) && (defined(__STDC__) || defined(__cplusplus))
 #  define STDC
-#endif
-#if !defined(STDC) && (defined(__GNUC__) || defined(__BORLANDC__))
+#అయితే_ముగింపు
+#ఒకవేళ !defined(STDC) && (defined(__GNUC__) || defined(__BORLANDC__))
 #  define STDC
-#endif
-#if !defined(STDC) && (defined(MSDOS) || defined(WINDOWS) || defined(WIN32))
+#అయితే_ముగింపు
+#ఒకవేళ !defined(STDC) && (defined(MSDOS) || defined(WINDOWS) || defined(WIN32))
 #  define STDC
-#endif
-#if !defined(STDC) && (defined(OS2) || defined(__HOS_AIX__))
+#అయితే_ముగింపు
+#ఒకవేళ !defined(STDC) && (defined(OS2) || defined(__HOS_AIX__))
 #  define STDC
-#endif
+#అయితే_ముగింపు
 
-#if defined(__OS400__) && !defined(STDC)    /* iSeries (formerly AS/400). */
+#ఒకవేళ defined(__OS400__) && !defined(STDC)    /* iSeries (formerly AS/400). */
 #  define STDC
-#endif
+#అయితే_ముగింపు
 
-#ifndef STDC
-#  ifndef const /* cannot use !defined(STDC) && !defined(const) on Mac */
-#    define const       /* note: need a more gentle solution here */
+#నిర్వచితం_కాకపోతే STDC
+#  ifndef స్థిరరాశి /* cannot use !defined(STDC) && !defined(const) on Mac */
+#    define స్థిరరాశి       /* note: need a more gentle solution here */
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#ifndef z_const
+#నిర్వచితం_కాకపోతే z_const
 #  ifdef ZLIB_CONST
-#    define z_const const
-#  else
+#    define z_const స్థిరరాశి
+#  లేకపోతే
 #    define z_const
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#ifdef Z_SOLO
+#నిర్వచితమైతే Z_SOLO
 #  ifdef _WIN64
-     typedef unsigned long long z_size_t;
-#  else
-     typedef unsigned long z_size_t;
+     రకనిర్వచనం గుర్తులేని దీర్ఘ దీర్ఘ z_కొలత_t;
+#  లేకపోతే
+     రకనిర్వచనం గుర్తులేని దీర్ఘ z_కొలత_t;
 #  endif
-#else
-#  define z_longlong long long
-#  if defined(NO_SIZE_T)
-     typedef unsigned NO_SIZE_T z_size_t;
+#లేకపోతే
+#  define z_longlong దీర్ఘ దీర్ఘ
+#  ఒకవేళ defined(NO_కొలత_T)
+     రకనిర్వచనం గుర్తులేని NO_కొలత_T z_కొలత_t;
 #  elif defined(STDC)
 #    include <stddef.h>
-     typedef size_t z_size_t;
-#  else
-     typedef unsigned long z_size_t;
+     రకనిర్వచనం size_t z_కొలత_t;
+#  లేకపోతే
+     రకనిర్వచనం గుర్తులేని దీర్ఘ z_కొలత_t;
 #  endif
 #  undef z_longlong
-#endif
+#అయితే_ముగింపు
 
 /* Maximum value for memLevel in deflateInit2 */
-#ifndef MAX_MEM_LEVEL
+#నిర్వచితం_కాకపోతే MAX_MEM_LEVEL
 #  ifdef MAXSEG_64K
 #    define MAX_MEM_LEVEL 8
-#  else
+#  లేకపోతే
 #    define MAX_MEM_LEVEL 9
 #  endif
-#endif
+#అయితే_ముగింపు
 
 /* Maximum value for windowBits in deflateInit2 and inflateInit2.
  * WARNING: reducing MAX_WBITS makes minigzip unable to extract .gz files
  * created by gzip. (Files created by minigzip can still be extracted by
  * gzip.)
  */
-#ifndef MAX_WBITS
+#నిర్వచితం_కాకపోతే MAX_WBITS
 #  define MAX_WBITS   15 /* 32K LZ77 window */
-#endif
+#అయితే_ముగింపు
 
 /* The memory requirements for deflate are (in bytes):
             (1 << (windowBits+2)) +  (1 << (memLevel+9))
@@ -302,13 +302,13 @@
 
                         /* Type declarations */
 
-#ifndef OF /* function prototypes */
+#నిర్వచితం_కాకపోతే యొక్క /* function prototypes */
 #  ifdef STDC
-#    define OF(args)  args
-#  else
-#    define OF(args)  ()
+#    define యొక్క(వాదనలు)  వాదనలు
+#  లేకపోతే
+#    define యొక్క(వాదనలు)  ()
 #  endif
-#endif
+#అయితే_ముగింపు
 
 /* The following definitions for FAR are needed only for MSDOS mixed
  * model programming (small or medium model with some far allocations).
@@ -316,37 +316,37 @@
  * to define NO_MEMCPY in zutil.h.  If you don't need the mixed model,
  * just define FAR to be empty.
  */
-#ifdef SYS16BIT
-#  if defined(M_I86SM) || defined(M_I86MM)
+#నిర్వచితమైతే SYS16_బిట్టు
+#  ఒకవేళ defined(M_I86SM) || defined(M_I86MM)
      /* MSC small or medium model */
 #    define SMALL_MEDIUM
 #    ifdef _MSC_VER
 #      define FAR _far
-#    else
+#    లేకపోతే
 #      define FAR far
 #    endif
 #  endif
-#  if (defined(__SMALL__) || defined(__MEDIUM__))
+#  ఒకవేళ (defined(__SMALL__) || defined(__MEDIUM__))
      /* Turbo C small or medium model */
 #    define SMALL_MEDIUM
 #    ifdef __BORLANDC__
 #      define FAR _far
-#    else
+#    లేకపోతే
 #      define FAR far
 #    endif
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#if defined(WINDOWS) || defined(WIN32)
+#ఒకవేళ defined(WINDOWS) || defined(WIN32)
    /* If building or using zlib as a DLL, define ZLIB_DLL.
     * This is not mandatory, but it offers a little performance increase.
     */
 #  ifdef ZLIB_DLL
-#    if defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
-#      ifdef ZLIB_INTERNAL
-#        define ZEXTERN extern __declspec(dllexport)
-#      else
-#        define ZEXTERN extern __declspec(dllimport)
+#    ఒకవేళ defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
+#      ifdef ZLIB_అంతర్గత
+#        define ZEXTERN బాహ్య __declspec(dllexport)
+#      లేకపోతే
+#        define ZEXTERN బాహ్య __declspec(dllimport)
 #      endif
 #    endif
 #  endif  /* ZLIB_DLL */
@@ -358,8 +358,8 @@
 #    ifdef FAR
 #      undef FAR
 #    endif
-#    ifndef WIN32_LEAN_AND_MEAN
-#      define WIN32_LEAN_AND_MEAN
+#    ifndef WIN32_LEAN_AND_సగటు
+#      define WIN32_LEAN_AND_సగటు
 #    endif
 #    include <windows.h>
      /* No need for _export, use ZLIB.DEF instead. */
@@ -367,107 +367,107 @@
 #    define ZEXPORT WINAPI
 #    ifdef WIN32
 #      define ZEXPORTVA WINAPIV
-#    else
+#    లేకపోతే
 #      define ZEXPORTVA FAR CDECL
 #    endif
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#if defined (__BEOS__)
+#ఒకవేళ defined (__BEOS__)
 #  ifdef ZLIB_DLL
-#    ifdef ZLIB_INTERNAL
+#    ifdef ZLIB_అంతర్గత
 #      define ZEXPORT   __declspec(dllexport)
 #      define ZEXPORTVA __declspec(dllexport)
-#    else
+#    లేకపోతే
 #      define ZEXPORT   __declspec(dllimport)
 #      define ZEXPORTVA __declspec(dllimport)
 #    endif
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#ifndef ZEXTERN
-#  define ZEXTERN extern
-#endif
-#ifndef ZEXPORT
+#నిర్వచితం_కాకపోతే ZEXTERN
+#  define ZEXTERN బాహ్య
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే ZEXPORT
 #  define ZEXPORT
-#endif
-#ifndef ZEXPORTVA
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే ZEXPORTVA
 #  define ZEXPORTVA
-#endif
+#అయితే_ముగింపు
 
-#ifndef FAR
+#నిర్వచితం_కాకపోతే FAR
 #  define FAR
-#endif
+#అయితే_ముగింపు
 
-#if !defined(__MACTYPES__)
-typedef unsigned char  Byte;  /* 8 bits */
-#endif
-typedef unsigned int   uInt;  /* 16 bits or more */
-typedef unsigned long  uLong; /* 32 bits or more */
+#ఒకవేళ !defined(__MACTYPES__)
+రకనిర్వచనం గుర్తులేని అక్షరం  Byte;  /* 8 bits */
+#అయితే_ముగింపు
+రకనిర్వచనం గుర్తులేని పూర్ణాంకం   uInt;  /* 16 bits or more */
+రకనిర్వచనం గుర్తులేని దీర్ఘ  uLong; /* 32 bits or more */
 
-#ifdef SMALL_MEDIUM
+#నిర్వచితమైతే SMALL_MEDIUM
    /* Borland C/C++ and some old MSC versions ignore FAR inside typedef */
 #  define Bytef Byte FAR
-#else
-   typedef Byte  FAR Bytef;
-#endif
-typedef char  FAR charf;
-typedef int   FAR intf;
-typedef uInt  FAR uIntf;
-typedef uLong FAR uLongf;
+#లేకపోతే
+   రకనిర్వచనం Byte  FAR Bytef;
+#అయితే_ముగింపు
+రకనిర్వచనం అక్షరం  FAR charf;
+రకనిర్వచనం పూర్ణాంకం   FAR intf;
+రకనిర్వచనం uInt  FAR uIntf;
+రకనిర్వచనం uLong FAR uLongf;
 
-#ifdef STDC
-   typedef void const *voidpc;
-   typedef void FAR   *voidpf;
-   typedef void       *voidp;
-#else
-   typedef Byte const *voidpc;
-   typedef Byte FAR   *voidpf;
-   typedef Byte       *voidp;
-#endif
+#నిర్వచితమైతే STDC
+   రకనిర్వచనం శూన్య స్థిరరాశి *voidpc;
+   రకనిర్వచనం శూన్య FAR   *voidpf;
+   రకనిర్వచనం శూన్య       *voidp;
+#లేకపోతే
+   రకనిర్వచనం Byte స్థిరరాశి *voidpc;
+   రకనిర్వచనం Byte FAR   *voidpf;
+   రకనిర్వచనం Byte       *voidp;
+#అయితే_ముగింపు
 
-#if !defined(Z_U4) && !defined(Z_SOLO) && defined(STDC)
+#ఒకవేళ !defined(Z_U4) && !defined(Z_SOLO) && defined(STDC)
 #  include <limits.h>
-#  if (UINT_MAX == 0xffffffffUL)
-#    define Z_U4 unsigned
+#  ఒకవేళ (UINT_MAX == 0xffffffffUL)
+#    define Z_U4 గుర్తులేని
 #  elif (ULONG_MAX == 0xffffffffUL)
-#    define Z_U4 unsigned long
+#    define Z_U4 గుర్తులేని దీర్ఘ
 #  elif (USHRT_MAX == 0xffffffffUL)
-#    define Z_U4 unsigned short
+#    define Z_U4 గుర్తులేని పొట్టి
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#ifdef Z_U4
-   typedef Z_U4 z_crc_t;
-#else
-   typedef unsigned long z_crc_t;
-#endif
+#నిర్వచితమైతే Z_U4
+   రకనిర్వచనం Z_U4 z_చక్రీయ_తనిఖీ_t;
+#లేకపోతే
+   రకనిర్వచనం గుర్తులేని దీర్ఘ z_చక్రీయ_తనిఖీ_t;
+#అయితే_ముగింపు
 
-#if HAVE_UNISTD_H-0     /* may be set to #if 1 by ./configure */
+#ఒకవేళ HAVE_UNISTD_H-0     /* may be set to #if 1 by ./configure */
 #  define Z_HAVE_UNISTD_H
-#endif
+#అయితే_ముగింపు
 
-#if HAVE_STDARG_H-0     /* may be set to #if 1 by ./configure */
+#ఒకవేళ HAVE_STDARG_H-0     /* may be set to #if 1 by ./configure */
 #  define Z_HAVE_STDARG_H
-#endif
+#అయితే_ముగింపు
 
-#ifdef STDC
+#నిర్వచితమైతే STDC
 #  ifndef Z_SOLO
 #    include <sys/types.h>      /* for off_t */
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+#ఒకవేళ defined(STDC) || defined(Z_HAVE_STDARG_H)
 #  ifndef Z_SOLO
 #    include <stdarg.h>         /* for va_list */
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#ifdef _WIN32
+#నిర్వచితమైతే _WIN32
 #  ifndef Z_SOLO
 #    include <stddef.h>         /* for wchar_t */
 #  endif
-#endif
+#అయితే_ముగింపు
 
 /* a little trick to accommodate both "#define _LARGEFILE64_SOURCE" and
  * "#define _LARGEFILE64_SOURCE 1" as requesting 64-bit operations, (even
@@ -475,18 +475,18 @@ typedef uLong FAR uLongf;
  * both "#undef _LARGEFILE64_SOURCE" and "#define _LARGEFILE64_SOURCE 0" as
  * equivalently requesting no 64-bit operations
  */
-#if defined(_LARGEFILE64_SOURCE) && -_LARGEFILE64_SOURCE - -1 == 1
-#  undef _LARGEFILE64_SOURCE
-#endif
+#ఒకవేళ defined(LARGEFILE64_ఆధారం) && -LARGEFILE64_ఆధారం - -1 == 1
+#  undef LARGEFILE64_ఆధారం
+#అయితే_ముగింపు
 
-#ifndef Z_HAVE_UNISTD_H
-#  if defined(__WATCOMC__) || defined(__GO32__) || \
-      (defined(_LARGEFILE64_SOURCE) && !defined(_WIN32))
+#నిర్వచితం_కాకపోతే Z_HAVE_UNISTD_H
+#  ఒకవేళ defined(__WATCOMC__) || defined(__GO32__) || \
+      (defined(LARGEFILE64_ఆధారం) && !defined(_WIN32))
 #    define Z_HAVE_UNISTD_H
 #  endif
-#endif
-#ifndef Z_SOLO
-#  if defined(Z_HAVE_UNISTD_H)
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే Z_SOLO
+#  ఒకవేళ defined(Z_HAVE_UNISTD_H)
 #    include <unistd.h>         /* for SEEK_*, off_t, and _LFS64_LARGEFILE */
 #    ifdef VMS
 #      include <unixio.h>       /* for off_t */
@@ -495,57 +495,57 @@ typedef uLong FAR uLongf;
 #      define z_off_t off_t
 #    endif
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#if defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
+#ఒకవేళ defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
 #  define Z_LFS64
-#endif
+#అయితే_ముగింపు
 
-#if defined(_LARGEFILE64_SOURCE) && defined(Z_LFS64)
+#ఒకవేళ defined(LARGEFILE64_ఆధారం) && defined(Z_LFS64)
 #  define Z_LARGE64
-#endif
+#అయితే_ముగింపు
 
-#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64 && defined(Z_LFS64)
+#ఒకవేళ defined(FILE_స్థానభ్రంశం_బిట్లు) && FILE_స్థానభ్రంశం_బిట్లు-0 == 64 && defined(Z_LFS64)
 #  define Z_WANT64
-#endif
+#అయితే_ముగింపు
 
-#if !defined(SEEK_SET) && !defined(Z_SOLO)
+#ఒకవేళ !defined(SEEK_SET) && !defined(Z_SOLO)
 #  define SEEK_SET        0       /* Seek from beginning of file.  */
 #  define SEEK_CUR        1       /* Seek from current position.  */
 #  define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
-#endif
+#అయితే_ముగింపు
 
-#ifndef z_off_t
-#  define z_off_t long long
-#endif
+#నిర్వచితం_కాకపోతే z_off_t
+#  define z_off_t దీర్ఘ దీర్ఘ
+#అయితే_ముగింపు
 
-#if !defined(_WIN32) && defined(Z_LARGE64)
+#ఒకవేళ !defined(_WIN32) && defined(Z_LARGE64)
 #  define z_off64_t off64_t
-#elif defined(__MINGW32__)
-#  define z_off64_t long long
-#elif defined(_WIN32) && !defined(__GNUC__)
+#లేదావేళ defined(__MINGW32__)
+#  define z_off64_t దీర్ఘ దీర్ఘ
+#లేదావేళ defined(_WIN32) && !defined(__GNUC__)
 #  define z_off64_t __int64
-#elif defined(__GO32__)
-#  define z_off64_t offset_t
-#else
+#లేదావేళ defined(__GO32__)
+#  define z_off64_t స్థానభ్రంశం_t
+#లేకపోతే
 #  define z_off64_t z_off_t
-#endif
+#అయితే_ముగింపు
 
 /* MVS linker does not support external names larger than 8 bytes */
-#if defined(__MVS__)
-  #pragma map(deflateInit_,"DEIN")
-  #pragma map(deflateInit2_,"DEIN2")
-  #pragma map(deflateEnd,"DEEND")
-  #pragma map(deflateBound,"DEBND")
-  #pragma map(inflateInit_,"ININ")
-  #pragma map(inflateInit2_,"ININ2")
-  #pragma map(inflateEnd,"INEND")
-  #pragma map(inflateSync,"INSY")
-  #pragma map(inflateSetDictionary,"INSEDI")
-  #pragma map(compressBound,"CMBND")
-  #pragma map(inflate_table,"INTABL")
-  #pragma map(inflate_fast,"INFA")
-  #pragma map(inflate_copyright,"INCOPY")
-#endif
+#ఒకవేళ defined(__MVS__)
+  #సూచన map(deflateInit_,"DEIN")
+  #సూచన map(deflateInit2_,"DEIN2")
+  #సూచన map(deflate_చివర,"DEEND")
+  #సూచన map(deflateBound,"DEBND")
+  #సూచన map(inflateInit_,"ININ")
+  #సూచన map(inflateInit2_,"ININ2")
+  #సూచన map(inflate_చివర,"INEND")
+  #సూచన map(inflateSync,"INSY")
+  #సూచన map(inflate_సమితి_Dictionary,"INSEDI")
+  #సూచన map(compressBound,"CMBND")
+  #సూచన map(inflate_పట్టిక,"INTABL")
+  #సూచన map(inflate_fast,"INFA")
+  #సూచన map(inflate_copyright,"INCOPY")
+#అయితే_ముగింపు
 
-#endif /* ZCONF_H */
+#అయితే_ముగింపు /* ZCONF_H */

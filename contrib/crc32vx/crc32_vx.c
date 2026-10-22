@@ -11,31 +11,31 @@
  * <brueckner@linux.vnet.ibm.com> for use in the Linux kernel and has been
  * relicensed under the zlib license.
  */
-#define Z_ONCE
-#include "../../zutil.h"
-#include "crc32_vx_hooks.h"
+#నిర్వచించు Z_ONCE
+#అన్తర్భావ "../../zutil.h"
+#అన్తర్భావ "crc32_vx_hooks.h"
 
-#include <stdint.h>
-#include <stdio.h>
-#include <vecintrin.h>
-#include <sys/auxv.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <vecintrin.h>
+#అన్తర్భావ <sys/auxv.h>
 
-#ifdef __clang__
-#  if ((__clang_major__ == 18) || (__clang_major__ == 19 && (__clang_minor__ < 1 || (__clang_minor__ == 1 && __clang_patchlevel__ < 2))))
-# error crc32_vx optimizations are broken due to compiler bug in Clang versions: 18.0.0 <= clang_version < 19.1.2. \
-        Either disable the zlib crc32_vx optimization, or switch to another compiler/compiler version.
+#నిర్వచితమైతే __clang__
+#  ఒకవేళ ((__clang_major__ == 18) || (__clang_major__ == 19 && (__clang_minor__ < 1 || (__clang_minor__ == 1 && __clang_patchlevel__ < 2))))
+# error చక్రీయ_తనిఖీ_32_vx optimizations are broken due గమ్యం compiler bug లోపల Clang versions: 18.0.0 <= clang_సంస్కరణ < 19.1.2. \
+        Either disable the zlib చక్రీయ_తనిఖీ_32_vx optimization, or ఎంపిక గమ్యం another compiler/compiler సంస్కరణ.
 #  endif
-#endif
+#అయితే_ముగింపు
 
-#define VX_MIN_LEN 64
-#define VX_ALIGNMENT 16L
-#define VX_ALIGN_MASK (VX_ALIGNMENT - 1)
+#నిర్వచించు VX_MIN_LEN 64
+#నిర్వచించు VX_ALIGNMENT 16L
+#నిర్వచించు VX_ALIGN_ముసుగు (VX_ALIGNMENT - 1)
 
-typedef unsigned char uv16qi __attribute__((vector_size(16)));
-typedef unsigned int uv4si __attribute__((vector_size(16)));
-typedef unsigned long long uv2di __attribute__((vector_size(16)));
+రకనిర్వచనం గుర్తులేని అక్షరం uv16qi __attribute__((సదిశ_కొలత(16)));
+రకనిర్వచనం గుర్తులేని పూర్ణాంకం uv4si __attribute__((సదిశ_కొలత(16)));
+రకనిర్వచనం గుర్తులేని దీర్ఘ దీర్ఘ uv2di __attribute__((సదిశ_కొలత(16)));
 
-local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t len) {
+local uint32_t చక్రీయ_తనిఖీ_32_le_vgfm_16(uint32_t చక్రీయ_తనిఖీ, స్థిరరాశి గుర్తులేని అక్షరం *buf, size_t len) {
     /*
      * The CRC-32 constant block contains reduction constants to fold and
      * process particular chunks of the input data stream in parallel.
@@ -61,12 +61,12 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      *      P(x)  = 0x04C11DB7
      *      P'(x) = 0xEDB88320
      */
-    const uv16qi perm_le2be = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};  /* BE->LE mask */
-    const uv2di r2r1 = {0x1C6E41596, 0x154442BD4};                                     /* R2, R1 */
-    const uv2di r4r3 = {0x0CCAA009E, 0x1751997D0};                                     /* R4, R3 */
-    const uv2di r5 = {0, 0x163CD6124};                                                 /* R5 */
-    const uv2di ru_poly = {0, 0x1F7011641};                                            /* u' */
-    const uv2di crc_poly = {0, 0x1DB710641};                                           /* P'(x) << 1 */
+    స్థిరరాశి uv16qi perm_le2be = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};  /* BE->LE mask */
+    స్థిరరాశి uv2di r2r1 = {0x1C6E41596, 0x154442BD4};                                     /* R2, R1 */
+    స్థిరరాశి uv2di r4r3 = {0x0CCAA009E, 0x1751997D0};                                     /* R4, R3 */
+    స్థిరరాశి uv2di r5 = {0, 0x163CD6124};                                                 /* R5 */
+    స్థిరరాశి uv2di ru_poly = {0, 0x1F7011641};                                            /* u' */
+    స్థిరరాశి uv2di చక్రీయ_తనిఖీ_poly = {0, 0x1DB710641};                                           /* P'(x) << 1 */
 
     /*
      * Load the initial CRC value.
@@ -76,7 +76,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * of the loaded input data.
      */
     uv2di v0 = {0, 0};
-    v0 = (uv2di)vec_insert(crc, (uv4si)v0, 3);
+    v0 = (uv2di)vec_చొప్పించు(చక్రీయ_తనిఖీ, (uv4si)v0, 3);
 
     /* Load a 64-byte data chunk and XOR with CRC */
     uv2di v1 = vec_perm(((uv2di *)buf)[0], ((uv2di *)buf)[0], perm_le2be);
@@ -88,7 +88,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     buf += 64;
     len -= 64;
 
-    while (len >= 64) {
+    అయితే (len >= 64) {
         /* Load the next 64-byte data chunk */
         uv16qi part1 = vec_perm(((uv16qi *)buf)[0], ((uv16qi *)buf)[0], perm_le2be);
         uv16qi part2 = vec_perm(((uv16qi *)buf)[1], ((uv16qi *)buf)[1], perm_le2be);
@@ -120,7 +120,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
     v1 = (uv2di)vec_gfmsum_accum_128(r4r3, v1, (uv16qi)v3);
     v1 = (uv2di)vec_gfmsum_accum_128(r4r3, v1, (uv16qi)v4);
 
-    while (len >= 16) {
+    అయితే (len >= 16) {
         /* Load next data chunk */
         v2 = vec_perm(*(uv2di *)buf, *(uv2di *)buf, perm_le2be);
 
@@ -138,7 +138,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * Shift by 4 bytes: 0x20
      */
     uv16qi v9 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    v9 = vec_insert((unsigned char)0x40, v9, 7);
+    v9 = vec_చొప్పించు((గుర్తులేని అక్షరం)0x40, v9, 7);
 
     /*
      * Prepare V0 for the next GF(2) multiplication: shift V0 by 8 bytes
@@ -169,7 +169,7 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * rightmost doubleword and the leftmost doubleword is zero to ignore
      * the leftmost product of V1.
      */
-    v9 = vec_insert((unsigned char)0x20, v9, 7);
+    v9 = vec_చొప్పించు((గుర్తులేని అక్షరం)0x20, v9, 7);
     v2 = vec_srb(v1, (uv2di)v9);
     v1 = vec_unpackl((uv4si)v1);  /* Split rightmost doubleword */
     v1 = (uv2di)vec_gfmsum_accum_128(r5, v1, (uv16qi)v2);
@@ -203,52 +203,52 @@ local uint32_t crc32_le_vgfm_16(uint32_t crc, const unsigned char *buf, size_t l
      * The final result is stored in word element 2 of V2.
      */
     v2 = vec_unpackl((uv4si)v2);
-    v2 = (uv2di)vec_gfmsum_accum_128(crc_poly, v2, (uv16qi)v1);
+    v2 = (uv2di)vec_gfmsum_accum_128(చక్రీయ_తనిఖీ_poly, v2, (uv16qi)v1);
 
-    return ((uv4si)v2)[2];
+    తిరిగి ((uv4si)v2)[2];
 }
 
 
-local unsigned long s390_crc32_vx(unsigned long crc, const unsigned char FAR *buf, z_size_t len)
+local గుర్తులేని దీర్ఘ s390_చక్రీయ_తనిఖీ_32_vx(గుర్తులేని దీర్ఘ చక్రీయ_తనిఖీ, స్థిరరాశి గుర్తులేని అక్షరం FAR *buf, z_కొలత_t len)
 {
-    uintptr_t prealign, aligned, remaining;
+    uintptr_t prealign, aligned, మిగిలిన;
 
-    if (buf == Z_NULL) return 0UL;
+    ఒకవేళ (buf == Z_NULL) తిరిగి 0UL;
 
-    if (len < VX_MIN_LEN + VX_ALIGN_MASK)
-        return crc32_z(crc, buf, len);
+    ఒకవేళ (len < VX_MIN_LEN + VX_ALIGN_ముసుగు)
+        తిరిగి చక్రీయ_తనిఖీ_32_z(చక్రీయ_తనిఖీ, buf, len);
 
-    if ((uintptr_t)buf & VX_ALIGN_MASK) {
-        prealign = VX_ALIGNMENT - ((uintptr_t)buf & VX_ALIGN_MASK);
+    ఒకవేళ ((uintptr_t)buf & VX_ALIGN_ముసుగు) {
+        prealign = VX_ALIGNMENT - ((uintptr_t)buf & VX_ALIGN_ముసుగు);
         len -= prealign;
-        crc = crc32_z(crc, buf, prealign);
+        చక్రీయ_తనిఖీ = చక్రీయ_తనిఖీ_32_z(చక్రీయ_తనిఖీ, buf, prealign);
         buf += prealign;
     }
-    aligned = len & ~VX_ALIGN_MASK;
-    remaining = len & VX_ALIGN_MASK;
+    aligned = len & ~VX_ALIGN_ముసుగు;
+    మిగిలిన = len & VX_ALIGN_ముసుగు;
 
-    crc = crc32_le_vgfm_16(crc ^ 0xffffffff, buf, (size_t)aligned) ^ 0xffffffff;
+    చక్రీయ_తనిఖీ = చక్రీయ_తనిఖీ_32_le_vgfm_16(చక్రీయ_తనిఖీ ^ 0xffffffff, buf, (size_t)aligned) ^ 0xffffffff;
 
-    if (remaining)
-        crc = crc32_z(crc, buf + aligned, remaining);
+    ఒకవేళ (మిగిలిన)
+        చక్రీయ_తనిఖీ = చక్రీయ_తనిఖీ_32_z(చక్రీయ_తనిఖీ, buf + aligned, మిగిలిన);
 
-    return crc;
+    తిరిగి చక్రీయ_తనిఖీ;
 }
 
-local z_once_t s390_crc32_made = Z_ONCE_INIT;
-local void s390_crc32_setup() {
-    unsigned long hwcap = getauxval(AT_HWCAP);
+local z_once_t s390_చక్రీయ_తనిఖీ_32_made = Z_ONCE_INIT;
+local శూన్య s390_చక్రీయ_తనిఖీ_32_అమరిక() {
+    గుర్తులేని దీర్ఘ hwcap = getauxval(AT_HWCAP);
 
-    if (hwcap & HWCAP_S390_VX)
-        crc32_z_hook = s390_crc32_vx;
-    else
-        crc32_z_hook = crc32_z;
+    ఒకవేళ (hwcap & HWCAP_S390_VX)
+        చక్రీయ_తనిఖీ_32_z_hook = s390_చక్రీయ_తనిఖీ_32_vx;
+    లేకపోతే
+        చక్రీయ_తనిఖీ_32_z_hook = చక్రీయ_తనిఖీ_32_z;
 }
 
-local unsigned long s390_crc32_init(unsigned long crc, const unsigned char FAR *buf, z_size_t len)
+local గుర్తులేని దీర్ఘ s390_చక్రీయ_తనిఖీ_32_init(గుర్తులేని దీర్ఘ చక్రీయ_తనిఖీ, స్థిరరాశి గుర్తులేని అక్షరం FAR *buf, z_కొలత_t len)
 {
-    z_once(&s390_crc32_made,s390_crc32_setup);
-    return crc32_z_hook(crc, buf, len);
+    z_once(&s390_చక్రీయ_తనిఖీ_32_made,s390_చక్రీయ_తనిఖీ_32_అమరిక);
+    తిరిగి చక్రీయ_తనిఖీ_32_z_hook(చక్రీయ_తనిఖీ, buf, len);
 }
 
-ZLIB_INTERNAL unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len) = s390_crc32_init;
+ZLIB_అంతర్గత గుర్తులేని దీర్ఘ (*చక్రీయ_తనిఖీ_32_z_hook)(గుర్తులేని దీర్ఘ చక్రీయ_తనిఖీ, స్థిరరాశి గుర్తులేని అక్షరం FAR *buf, z_కొలత_t len) = s390_చక్రీయ_తనిఖీ_32_init;

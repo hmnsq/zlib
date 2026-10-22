@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#define ZLIB_INTERNAL
-#include "zlib.h"
+#నిర్వచించు ZLIB_అంతర్గత
+#అన్తర్భావ "zlib.h"
 
 /* ===========================================================================
      Decompresses the source buffer into the destination buffer.  *sourceLen is
@@ -26,76 +26,76 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT uncompress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                          z_size_t *sourceLen) {
-    z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t len, left;
+పూర్ణాంకం ZEXPORT uncompress2_z(Bytef *dest, z_కొలత_t *destLen, స్థిరరాశి Bytef *ఆధారం,
+                          z_కొలత_t *ఆధారం_Len) {
+    z_ప్రవాహం ప్రవాహం;
+    పూర్ణాంకం err;
+    స్థిరరాశి uInt max = (uInt)-1;
+    z_కొలత_t len, ఎడమ;
 
-    if (sourceLen == NULL || (*sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    ఒకవేళ (ఆధారం_Len == ఖాళీ || (*ఆధారం_Len > 0 && ఆధారం == ఖాళీ) ||
+        destLen == ఖాళీ || (*destLen > 0 && dest == ఖాళీ))
+        తిరిగి Z_ప్రవాహం_ERROR;
 
-    len = *sourceLen;
-    left = *destLen;
-    if (left == 0 && dest == Z_NULL)
-        dest = (Bytef *)&stream.reserved;       /* next_out cannot be NULL */
+    len = *ఆధారం_Len;
+    ఎడమ = *destLen;
+    ఒకవేళ (ఎడమ == 0 && dest == Z_NULL)
+        dest = (Bytef *)&ప్రవాహం.reserved;       /* next_out cannot be NULL */
 
-    stream.next_in = (z_const Bytef *)source;
-    stream.avail_in = 0;
-    stream.zalloc = (alloc_func)0;
-    stream.zfree = (free_func)0;
-    stream.opaque = (voidpf)0;
+    ప్రవాహం.తదుపరి_లోపల = (z_const Bytef *)ఆధారం;
+    ప్రవాహం.avail_లోపల = 0;
+    ప్రవాహం.zalloc = (alloc_func)0;
+    ప్రవాహం.zfree = (free_func)0;
+    ప్రవాహం.opaque = (voidpf)0;
 
-    err = inflateInit(&stream);
-    if (err != Z_OK) return err;
+    err = inflateInit(&ప్రవాహం);
+    ఒకవేళ (err != Z_OK) తిరిగి err;
 
-    stream.next_out = dest;
-    stream.avail_out = 0;
+    ప్రవాహం.తదుపరి_బహిర్గతం = dest;
+    ప్రవాహం.avail_బహిర్గతం = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    చేయి {
+        ఒకవేళ (ప్రవాహం.avail_బహిర్గతం == 0) {
+            ప్రవాహం.avail_బహిర్గతం = ఎడమ > (z_కొలత_t)max ? max : (uInt)ఎడమ;
+            ఎడమ -= ప్రవాహం.avail_బహిర్గతం;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = len > (z_size_t)max ? max : (uInt)len;
-            len -= stream.avail_in;
+        ఒకవేళ (ప్రవాహం.avail_లోపల == 0) {
+            ప్రవాహం.avail_లోపల = len > (z_కొలత_t)max ? max : (uInt)len;
+            len -= ప్రవాహం.avail_లోపల;
         }
-        err = inflate(&stream, Z_NO_FLUSH);
-    } while (err == Z_OK);
+        err = inflate(&ప్రవాహం, Z_NO_FLUSH);
+    } అయితే (err == Z_OK);
 
     /* Set len and left to the unused input data and unused output space. Set
        *sourceLen to the amount of input consumed. Set *destLen to the amount
        of data produced. */
-    len += stream.avail_in;
-    left += stream.avail_out;
-    *sourceLen -= len;
-    *destLen -= left;
+    len += ప్రవాహం.avail_లోపల;
+    ఎడమ += ప్రవాహం.avail_బహిర్గతం;
+    *ఆధారం_Len -= len;
+    *destLen -= ఎడమ;
 
-    inflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK :
-           err == Z_NEED_DICT ? Z_DATA_ERROR  :
-           err == Z_BUF_ERROR && len == 0 ? Z_DATA_ERROR :
+    inflate_చివర(&ప్రవాహం);
+    తిరిగి err == Z_ప్రవాహం_చివర ? Z_OK :
+           err == Z_NEED_DICT ? Z_దత్తాంశం_ERROR  :
+           err == Z_BUF_ERROR && len == 0 ? Z_దత్తాంశం_ERROR :
            err;
 }
-int ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                        uLong *sourceLen) {
-    int ret;
-    z_size_t got = *destLen, used = *sourceLen;
-    ret = uncompress2_z(dest, &got, source, &used);
-    *sourceLen = (uLong)used;
+పూర్ణాంకం ZEXPORT uncompress2(Bytef *dest, uLongf *destLen, స్థిరరాశి Bytef *ఆధారం,
+                        uLong *ఆధారం_Len) {
+    పూర్ణాంకం ret;
+    z_కొలత_t got = *destLen, వాడిన = *ఆధారం_Len;
+    ret = uncompress2_z(dest, &got, ఆధారం, &వాడిన);
+    *ఆధారం_Len = (uLong)వాడిన;
     *destLen = (uLong)got;
-    return ret;
+    తిరిగి ret;
 }
-int ZEXPORT uncompress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                         z_size_t sourceLen) {
-    z_size_t used = sourceLen;
-    return uncompress2_z(dest, destLen, source, &used);
+పూర్ణాంకం ZEXPORT uncompress_z(Bytef *dest, z_కొలత_t *destLen, స్థిరరాశి Bytef *ఆధారం,
+                         z_కొలత_t ఆధారం_Len) {
+    z_కొలత_t వాడిన = ఆధారం_Len;
+    తిరిగి uncompress2_z(dest, destLen, ఆధారం, &వాడిన);
 }
-int ZEXPORT uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                       uLong sourceLen) {
-    uLong used = sourceLen;
-    return uncompress2(dest, destLen, source, &used);
+పూర్ణాంకం ZEXPORT uncompress(Bytef *dest, uLongf *destLen, స్థిరరాశి Bytef *ఆధారం,
+                       uLong ఆధారం_Len) {
+    uLong వాడిన = ఆధారం_Len;
+    తిరిగి uncompress2(dest, destLen, ఆధారం, &వాడిన);
 }

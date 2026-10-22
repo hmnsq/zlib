@@ -1,25 +1,25 @@
-#include "zstream.h"
-#include <math.h>
-#include <stdlib.h>
-#include <iomanip.h>
+#అన్తర్భావ "zstream.h"
+#అన్తర్భావ <math.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <iomanip.h>
 
-void main() {
-    char h[256] = "Hello";
-    char* g = "Goodbye";
+శూన్య ప్రధాన() {
+    అక్షరం h[256] = "Hello";
+    అక్షరం* g = "Goodbye";
     ozstream out("temp.gz");
     out < "This works well" < h < g;
     out.close();
 
     izstream in("temp.gz"); // read it back
-    char *x = read_string(in), *y = new char[256], z[256];
+    అక్షరం *x = read_string(in), *y = కొత్త అక్షరం[256], z[256];
     in > y > z;
     in.close();
-    cout << x << endl << y << endl << z << endl;
+    బయటకు << x << పంక్తి_ముగింపు << y << పంక్తి_ముగింపు << z << పంక్తి_ముగింపు;
 
     out.open("temp.gz"); // try ascii output; zcat temp.gz to see the results
-    out << setw(50) << setfill('#') << setprecision(20) << x << endl << y << endl << z << endl;
-    out << z << endl << y << endl << x << endl;
-    out << 1.1234567890123456789 << endl;
+    out << setw(50) << setfill('#') << setprecision(20) << x << పంక్తి_ముగింపు << y << పంక్తి_ముగింపు << z << పంక్తి_ముగింపు;
+    out << z << పంక్తి_ముగింపు << y << పంక్తి_ముగింపు << x << పంక్తి_ముగింపు;
+    out << 1.1234567890123456789 << పంక్తి_ముగింపు;
 
-    delete[] x; delete[] y;
+    తొలగించు[] x; తొలగించు[] y;
 }

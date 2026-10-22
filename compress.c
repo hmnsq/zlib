@@ -5,8 +5,8 @@
 
 /* @(#) $Id$ */
 
-#define ZLIB_INTERNAL
-#include "zlib.h"
+#నిర్వచించు ZLIB_అంతర్గత
+#అన్తర్భావ "zlib.h"
 
 /* ===========================================================================
      Compresses the source buffer into the destination buffer. The level
@@ -21,79 +21,79 @@
 
      The _z versions of the functions take size_t length arguments.
 */
-int ZEXPORT compress2_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                        z_size_t sourceLen, int level) {
-    z_stream stream;
-    int err;
-    const uInt max = (uInt)-1;
-    z_size_t left;
+పూర్ణాంకం ZEXPORT compress2_z(Bytef *dest, z_కొలత_t *destLen, స్థిరరాశి Bytef *ఆధారం,
+                        z_కొలత_t ఆధారం_Len, పూర్ణాంకం level) {
+    z_ప్రవాహం ప్రవాహం;
+    పూర్ణాంకం err;
+    స్థిరరాశి uInt max = (uInt)-1;
+    z_కొలత_t ఎడమ;
 
-    if ((sourceLen > 0 && source == NULL) ||
-        destLen == NULL || (*destLen > 0 && dest == NULL))
-        return Z_STREAM_ERROR;
+    ఒకవేళ ((ఆధారం_Len > 0 && ఆధారం == ఖాళీ) ||
+        destLen == ఖాళీ || (*destLen > 0 && dest == ఖాళీ))
+        తిరిగి Z_ప్రవాహం_ERROR;
 
-    left = *destLen;
+    ఎడమ = *destLen;
     *destLen = 0;
 
-    stream.zalloc = (alloc_func)0;
-    stream.zfree = (free_func)0;
-    stream.opaque = (voidpf)0;
+    ప్రవాహం.zalloc = (alloc_func)0;
+    ప్రవాహం.zfree = (free_func)0;
+    ప్రవాహం.opaque = (voidpf)0;
 
-    err = deflateInit(&stream, level);
-    if (err != Z_OK) return err;
+    err = deflateInit(&ప్రవాహం, level);
+    ఒకవేళ (err != Z_OK) తిరిగి err;
 
-    stream.next_out = dest;
-    stream.avail_out = 0;
-    stream.next_in = (z_const Bytef *)source;
-    stream.avail_in = 0;
+    ప్రవాహం.తదుపరి_బహిర్గతం = dest;
+    ప్రవాహం.avail_బహిర్గతం = 0;
+    ప్రవాహం.తదుపరి_లోపల = (z_const Bytef *)ఆధారం;
+    ప్రవాహం.avail_లోపల = 0;
 
-    do {
-        if (stream.avail_out == 0) {
-            stream.avail_out = left > (z_size_t)max ? max : (uInt)left;
-            left -= stream.avail_out;
+    చేయి {
+        ఒకవేళ (ప్రవాహం.avail_బహిర్గతం == 0) {
+            ప్రవాహం.avail_బహిర్గతం = ఎడమ > (z_కొలత_t)max ? max : (uInt)ఎడమ;
+            ఎడమ -= ప్రవాహం.avail_బహిర్గతం;
         }
-        if (stream.avail_in == 0) {
-            stream.avail_in = sourceLen > (z_size_t)max ? max :
-                                                          (uInt)sourceLen;
-            sourceLen -= stream.avail_in;
+        ఒకవేళ (ప్రవాహం.avail_లోపల == 0) {
+            ప్రవాహం.avail_లోపల = ఆధారం_Len > (z_కొలత_t)max ? max :
+                                                          (uInt)ఆధారం_Len;
+            ఆధారం_Len -= ప్రవాహం.avail_లోపల;
         }
-        err = deflate(&stream, sourceLen ? Z_NO_FLUSH : Z_FINISH);
-    } while (err == Z_OK);
+        err = deflate(&ప్రవాహం, ఆధారం_Len ? Z_NO_FLUSH : Z_ముగింపు);
+    } అయితే (err == Z_OK);
 
-    *destLen = (z_size_t)(stream.next_out - dest);
-    deflateEnd(&stream);
-    return err == Z_STREAM_END ? Z_OK : err;
+    *destLen = (z_కొలత_t)(ప్రవాహం.తదుపరి_బహిర్గతం - dest);
+    deflate_చివర(&ప్రవాహం);
+    తిరిగి err == Z_ప్రవాహం_చివర ? Z_OK : err;
 }
-int ZEXPORT compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen, int level) {
-    int ret;
-    z_size_t got = *destLen;
-    ret = compress2_z(dest, &got, source, sourceLen, level);
+పూర్ణాంకం ZEXPORT compress2(Bytef *dest, uLongf *destLen, స్థిరరాశి Bytef *ఆధారం,
+                      uLong ఆధారం_Len, పూర్ణాంకం level) {
+    పూర్ణాంకం ret;
+    z_కొలత_t got = *destLen;
+    ret = compress2_z(dest, &got, ఆధారం, ఆధారం_Len, level);
     *destLen = (uLong)got;
-    return ret;
+    తిరిగి ret;
 }
 /* ===========================================================================
  */
-int ZEXPORT compress_z(Bytef *dest, z_size_t *destLen, const Bytef *source,
-                       z_size_t sourceLen) {
-    return compress2_z(dest, destLen, source, sourceLen,
+పూర్ణాంకం ZEXPORT compress_z(Bytef *dest, z_కొలత_t *destLen, స్థిరరాశి Bytef *ఆధారం,
+                       z_కొలత_t ఆధారం_Len) {
+    తిరిగి compress2_z(dest, destLen, ఆధారం, ఆధారం_Len,
                        Z_DEFAULT_COMPRESSION);
 }
-int ZEXPORT compress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen) {
-    return compress2(dest, destLen, source, sourceLen, Z_DEFAULT_COMPRESSION);
+పూర్ణాంకం ZEXPORT compress(Bytef *dest, uLongf *destLen, స్థిరరాశి Bytef *ఆధారం,
+                     uLong ఆధారం_Len) {
+    తిరిగి compress2(dest, destLen, ఆధారం, ఆధారం_Len, Z_DEFAULT_COMPRESSION);
 }
 
 /* ===========================================================================
      If the default memLevel or windowBits for deflateInit() is changed, then
    this function needs to be updated.
  */
-z_size_t ZEXPORT compressBound_z(z_size_t sourceLen) {
-    z_size_t bound = sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
-                     (sourceLen >> 25) + 13;
-    return bound < sourceLen ? (z_size_t)-1 : bound;
+z_కొలత_t ZEXPORT compressBound_z(z_కొలత_t ఆధారం_Len) {
+    z_కొలత_t bound = ఆధారం_Len + (ఆధారం_Len >> 12) + (ఆధారం_Len >> 14) +
+                     (ఆధారం_Len >> 25) + 13;
+    తిరిగి bound < ఆధారం_Len ? (z_కొలత_t)-1 : bound;
 }
-uLong ZEXPORT compressBound(uLong sourceLen) {
-    z_size_t bound = compressBound_z(sourceLen);
-    return (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
+uLong ZEXPORT compressBound(uLong ఆధారం_Len) {
+    z_కొలత_t bound = compressBound_z(ఆధారం_Len);
+    తిరిగి (uLong)bound != bound ? (uLong)-1 : (uLong)bound;
 }

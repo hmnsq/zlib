@@ -217,9 +217,9 @@ printf("#define dsNiceMatch     %u\n",(int)(((char*)&(s->nice_match))-((char*)s)
         mov eax, WMask
         mov ebx, max_chain_length
         cmp edi, esi
-        jl  LastMatchGood
+        jl  చివరి_సరిపోలిక_Good
         shr ebx, 2
-LastMatchGood:
+చివరి_సరిపోలిక_Good:
 
 //;;; chainlen is decremented once beforehand so that the function can
 //;;; use the sign flag instead of the zero flag for the exit test.
@@ -390,7 +390,7 @@ LookupLoop:
         js  LeaveNow
 		AFTER_JMP
 
-LoopEntry:
+Loop_నమోదు:
 
         cmp bx,word ptr [rsi + r8 - 1]
 		BEFORE_JMP
@@ -453,7 +453,7 @@ LoopCmps:
 
 		BEFORE_JMP
         jnz  LoopCmps
-        jmp  LenMaximum
+        jmp  Len_గరిష్ఠ
 		AFTER_JMP
 		
 LeaveLoopCmps16: add rdx,8
@@ -461,7 +461,7 @@ LeaveLoopCmps8: add rdx,8
 LeaveLoopCmps:
 
         test    eax, 0x0000FFFF
-        jnz LenLower
+        jnz Len_క్రింది
 
         test eax,0xffffffff
 
@@ -471,14 +471,14 @@ LeaveLoopCmps:
         shr rax,32
         or ax,ax
 		BEFORE_JMP
-        jnz LenLower
+        jnz Len_క్రింది
 		AFTER_JMP
 
 LenLower32:
         shr eax,16
         add rdx,2
 		
-LenLower:		
+Len_క్రింది:		
         sub al, 1
         adc rdx, 0
 //;;; Calculate the length of the match. If it is longer than MAX_MATCH,
@@ -488,7 +488,7 @@ LenLower:
         sub rax, r9
         cmp eax, MAX_MATCH
 		BEFORE_JMP
-        jge LenMaximum
+        jge Len_గరిష్ఠ
 		AFTER_JMP
 /*
 ;;; If the length of the match is not longer than the best match we
@@ -496,7 +496,7 @@ LenLower:
 ;///////////////////////////////////
 */
         cmp eax, r11d
-        jg  LongerMatch
+        jg  Longer_సరిపోలిక
 
         lea rsi,[r10+r11]
 
@@ -511,7 +511,7 @@ LenLower:
 ;;;         if (len >= nice_match) break;
 ;;;         scan_end = *(ushf*)(scan+best_len-1);
 */
-LongerMatch:
+Longer_సరిపోలిక:
         mov r11d, eax
         mov match_start, r8d
         cmp eax, [nicematch]
@@ -530,7 +530,7 @@ LongerMatch:
 
 //;;; Accept the current string, with the maximum possible length.
 
-LenMaximum:
+Len_గరిష్ఠ:
         mov r11d,MAX_MATCH
         mov match_start, r8d
 

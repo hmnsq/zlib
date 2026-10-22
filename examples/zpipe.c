@@ -13,20 +13,20 @@
    1.5  11 Feb 2026  Use underscores for Windows POSIX names
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include "zlib.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <assert.h>
+#అన్తర్భావ "zlib.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#ఒకవేళ defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) _setmode(_fileno(file), _O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define సమితి_ద్విమాన_బహుళకం(file) _setmode(_fileno(file), O_ద్విమాన_2)
+#లేకపోతే
+#  define సమితి_ద్విమాన_బహుళకం(file)
+#అయితే_ముగింపు
 
-#define CHUNK 16384
+#నిర్వచించు CHUNK 16384
 
 /* Compress from file source to file dest until EOF on source.
    def() returns Z_OK on success, Z_MEM_ERROR if memory could not be
@@ -34,54 +34,54 @@
    level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
    version of the library linked do not match, or Z_ERRNO if there is
    an error reading or writing the files. */
-int def(FILE *source, FILE *dest, int level)
+పూర్ణాంకం def(FILE *ఆధారం, FILE *dest, పూర్ణాంకం level)
 {
-    int ret, flush;
-    unsigned have;
-    z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    పూర్ణాంకం ret, flush;
+    గుర్తులేని have;
+    z_ప్రవాహం strm;
+    గుర్తులేని అక్షరం లోపల[CHUNK];
+    గుర్తులేని అక్షరం బహిర్గతం[CHUNK];
 
     /* allocate deflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
     ret = deflateInit(&strm, level);
-    if (ret != Z_OK)
-        return ret;
+    ఒకవేళ (ret != Z_OK)
+        తిరిగి ret;
 
     /* compress until end of file */
-    do {
-        strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
-            (void)deflateEnd(&strm);
-            return Z_ERRNO;
+    చేయి {
+        strm.avail_లోపల = fread(లోపల, 1, CHUNK, ఆధారం);
+        ఒకవేళ (ferror(ఆధారం)) {
+            (శూన్య)deflate_చివర(&strm);
+            తిరిగి Z_ERRNO;
         }
-        flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
-        strm.next_in = in;
+        flush = feof(ఆధారం) ? Z_ముగింపు : Z_NO_FLUSH;
+        strm.తదుపరి_లోపల = లోపల;
 
         /* run deflate() on input until output buffer not full, finish
            compression if all of source has been read in */
-        do {
-            strm.avail_out = CHUNK;
-            strm.next_out = out;
+        చేయి {
+            strm.avail_బహిర్గతం = CHUNK;
+            strm.తదుపరి_బహిర్గతం = బహిర్గతం;
             ret = deflate(&strm, flush);    /* no bad return value */
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)deflateEnd(&strm);
-                return Z_ERRNO;
+            ప్రతిజ్ఞా(ret != Z_ప్రవాహం_ERROR);  /* state not clobbered */
+            have = CHUNK - strm.avail_బహిర్గతం;
+            ఒకవేళ (fwrite(బహిర్గతం, 1, have, dest) != have || ferror(dest)) {
+                (శూన్య)deflate_చివర(&strm);
+                తిరిగి Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
-        assert(strm.avail_in == 0);     /* all input will be used */
+        } అయితే (strm.avail_బహిర్గతం == 0);
+        ప్రతిజ్ఞా(strm.avail_లోపల == 0);     /* all input will be used */
 
         /* done when last data in file processed */
-    } while (flush != Z_FINISH);
-    assert(ret == Z_STREAM_END);        /* stream will be complete */
+    } అయితే (flush != Z_ముగింపు);
+    ప్రతిజ్ఞా(ret == Z_ప్రవాహం_చివర);        /* stream will be complete */
 
     /* clean up and return */
-    (void)deflateEnd(&strm);
-    return Z_OK;
+    (శూన్య)deflate_చివర(&strm);
+    తిరిగి Z_OK;
 }
 
 /* Decompress from file source to file dest until stream ends or EOF.
@@ -90,117 +90,117 @@ int def(FILE *source, FILE *dest, int level)
    invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
    the version of the library linked do not match, or Z_ERRNO if there
    is an error reading or writing the files. */
-int inf(FILE *source, FILE *dest)
+పూర్ణాంకం inf(FILE *ఆధారం, FILE *dest)
 {
-    int ret;
-    unsigned have;
-    z_stream strm;
-    unsigned char in[CHUNK];
-    unsigned char out[CHUNK];
+    పూర్ణాంకం ret;
+    గుర్తులేని have;
+    z_ప్రవాహం strm;
+    గుర్తులేని అక్షరం లోపల[CHUNK];
+    గుర్తులేని అక్షరం బహిర్గతం[CHUNK];
 
     /* allocate inflate state */
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
-    strm.avail_in = 0;
-    strm.next_in = Z_NULL;
+    strm.avail_లోపల = 0;
+    strm.తదుపరి_లోపల = Z_NULL;
     ret = inflateInit(&strm);
-    if (ret != Z_OK)
-        return ret;
+    ఒకవేళ (ret != Z_OK)
+        తిరిగి ret;
 
     /* decompress until deflate stream ends or end of file */
-    do {
-        strm.avail_in = fread(in, 1, CHUNK, source);
-        if (ferror(source)) {
-            (void)inflateEnd(&strm);
-            return Z_ERRNO;
+    చేయి {
+        strm.avail_లోపల = fread(లోపల, 1, CHUNK, ఆధారం);
+        ఒకవేళ (ferror(ఆధారం)) {
+            (శూన్య)inflate_చివర(&strm);
+            తిరిగి Z_ERRNO;
         }
-        if (strm.avail_in == 0)
-            break;
-        strm.next_in = in;
+        ఒకవేళ (strm.avail_లోపల == 0)
+            ఆపు;
+        strm.తదుపరి_లోపల = లోపల;
 
         /* run inflate() on input until output buffer not full */
-        do {
-            strm.avail_out = CHUNK;
-            strm.next_out = out;
+        చేయి {
+            strm.avail_బహిర్గతం = CHUNK;
+            strm.తదుపరి_బహిర్గతం = బహిర్గతం;
             ret = inflate(&strm, Z_NO_FLUSH);
-            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
-            switch (ret) {
-            case Z_NEED_DICT:
-                ret = Z_DATA_ERROR;     /* and fall through */
-            case Z_DATA_ERROR:
-            case Z_MEM_ERROR:
-                (void)inflateEnd(&strm);
-                return ret;
+            ప్రతిజ్ఞా(ret != Z_ప్రవాహం_ERROR);  /* state not clobbered */
+            ఎంపిక (ret) {
+            స్థితి Z_NEED_DICT:
+                ret = Z_దత్తాంశం_ERROR;     /* and fall through */
+            స్థితి Z_దత్తాంశం_ERROR:
+            స్థితి Z_MEM_ERROR:
+                (శూన్య)inflate_చివర(&strm);
+                తిరిగి ret;
             }
-            have = CHUNK - strm.avail_out;
-            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)inflateEnd(&strm);
-                return Z_ERRNO;
+            have = CHUNK - strm.avail_బహిర్గతం;
+            ఒకవేళ (fwrite(బహిర్గతం, 1, have, dest) != have || ferror(dest)) {
+                (శూన్య)inflate_చివర(&strm);
+                తిరిగి Z_ERRNO;
             }
-        } while (strm.avail_out == 0);
+        } అయితే (strm.avail_బహిర్గతం == 0);
 
         /* done when inflate() says it's done */
-    } while (ret != Z_STREAM_END);
+    } అయితే (ret != Z_ప్రవాహం_చివర);
 
     /* clean up and return */
-    (void)inflateEnd(&strm);
-    return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+    (శూన్య)inflate_చివర(&strm);
+    తిరిగి ret == Z_ప్రవాహం_చివర ? Z_OK : Z_దత్తాంశం_ERROR;
 }
 
 /* report a zlib or i/o error */
-void zerr(int ret)
+శూన్య zerr(పూర్ణాంకం ret)
 {
     fputs("zpipe: ", stderr);
-    switch (ret) {
-    case Z_ERRNO:
-        if (ferror(stdin))
+    ఎంపిక (ret) {
+    స్థితి Z_ERRNO:
+        ఒకవేళ (ferror(stdin))
             fputs("error reading stdin\n", stderr);
-        if (ferror(stdout))
+        ఒకవేళ (ferror(stdout))
             fputs("error writing stdout\n", stderr);
-        break;
-    case Z_STREAM_ERROR:
+        ఆపు;
+    స్థితి Z_ప్రవాహం_ERROR:
         fputs("invalid compression level\n", stderr);
-        break;
-    case Z_DATA_ERROR:
+        ఆపు;
+    స్థితి Z_దత్తాంశం_ERROR:
         fputs("invalid or incomplete deflate data\n", stderr);
-        break;
-    case Z_MEM_ERROR:
+        ఆపు;
+    స్థితి Z_MEM_ERROR:
         fputs("out of memory\n", stderr);
-        break;
-    case Z_VERSION_ERROR:
+        ఆపు;
+    స్థితి Z_సంస్కరణ_ERROR:
         fputs("zlib version mismatch!\n", stderr);
     }
 }
 
 /* compress or decompress from stdin to stdout */
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-    int ret;
+    పూర్ణాంకం ret;
 
     /* avoid end-of-line conversions */
-    SET_BINARY_MODE(stdin);
-    SET_BINARY_MODE(stdout);
+    సమితి_ద్విమాన_బహుళకం(stdin);
+    సమితి_ద్విమాన_బహుళకం(stdout);
 
     /* do compression if no arguments */
-    if (argc == 1) {
+    ఒకవేళ (argc == 1) {
         ret = def(stdin, stdout, Z_DEFAULT_COMPRESSION);
-        if (ret != Z_OK)
+        ఒకవేళ (ret != Z_OK)
             zerr(ret);
-        return ret;
+        తిరిగి ret;
     }
 
     /* do decompression if -d specified */
-    else if (argc == 2 && strcmp(argv[1], "-d") == 0) {
+    లేకపోతే ఒకవేళ (argc == 2 && strcmp(argv[1], "-d") == 0) {
         ret = inf(stdin, stdout);
-        if (ret != Z_OK)
+        ఒకవేళ (ret != Z_OK)
             zerr(ret);
-        return ret;
+        తిరిగి ret;
     }
 
     /* otherwise, report usage */
-    else {
+    లేకపోతే {
         fputs("zpipe usage: zpipe [-d] < source > dest\n", stderr);
-        return 1;
+        తిరిగి 1;
     }
 }

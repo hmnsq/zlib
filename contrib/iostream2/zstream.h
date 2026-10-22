@@ -15,44 +15,44 @@
  *
  */
 
-#ifndef ZSTREAM__H
-#define ZSTREAM__H
+#నిర్వచితం_కాకపోతే ZSTREAM__H
+#నిర్వచించు ZSTREAM__H
 
 /*
  * zstream.h - C++ interface to the 'zlib' general purpose compression library
  * $Id: zstream.h 1.1 1997-06-25 12:00:56+02 tyge Exp tyge $
  */
 
-#include <strstream.h>
-#include <string.h>
-#include <stdio.h>
-#include "zlib.h"
+#అన్తర్భావ <strstream.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ "zlib.h"
 
-#if defined(_WIN32)
+#ఒకవేళ defined(_WIN32)
 #   include <fcntl.h>
 #   include <io.h>
-#   define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#   define SET_BINARY_MODE(file)
-#endif
+#   define సమితి_ద్విమాన_బహుళకం(file) setmode(fileno(file), O_ద్విమాన)
+#లేకపోతే
+#   define సమితి_ద్విమాన_బహుళకం(file)
+#అయితే_ముగింపు
 
 class zstringlen {
-public:
+బహిరంగ:
     zstringlen(class izstream&);
-    zstringlen(class ozstream&, const char*);
-    size_t value() const { return val.word; }
-private:
-    struct Val { unsigned char byte; size_t word; } val;
+    zstringlen(class ozstream&, స్థిరరాశి అక్షరం*);
+    size_t విలువ() స్థిరరాశి { తిరిగి val.మాట; }
+అంతరంగ:
+    నిర్మాణం Val { గుర్తులేని అక్షరం byte; size_t మాట; } val;
 };
 
 //  ----------------------------- izstream -----------------------------
 
 class izstream
 {
-    public:
+    బహిరంగ:
         izstream() : m_fp(0) {}
         izstream(FILE* fp) : m_fp(0) { open(fp); }
-        izstream(const char* name) : m_fp(0) { open(name); }
+        izstream(స్థిరరాశి అక్షరం* name) : m_fp(0) { open(name); }
         ~izstream() { close(); }
 
         /* Opens a gzip (.gz) file for reading.
@@ -61,14 +61,14 @@ class izstream
          * decompression. errno can be checked to distinguish two error
          * cases (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name) {
-            if (m_fp) close();
+        శూన్య open(స్థిరరాశి అక్షరం* name) {
+            ఒకవేళ (m_fp) close();
             m_fp = ::gzopen(name, "rb");
         }
 
-        void open(FILE* fp) {
-            SET_BINARY_MODE(fp);
-            if (m_fp) close();
+        శూన్య open(FILE* fp) {
+            సమితి_ద్విమాన_బహుళకం(fp);
+            ఒకవేళ (m_fp) close();
             m_fp = ::gzdopen(fileno(fp), "rb");
         }
 
@@ -76,15 +76,15 @@ class izstream
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            int r = ::gzclose(m_fp);
-            m_fp = 0; return r;
+        పూర్ణాంకం close() {
+            పూర్ణాంకం r = ::gzclose(m_fp);
+            m_fp = 0; తిరిగి r;
         }
 
         /* Binary read the given number of bytes from the compressed file.
          */
-        int read(void* buf, size_t len) {
-            return ::gzread(m_fp, buf, len);
+        పూర్ణాంకం పఠ(శూన్య* buf, size_t len) {
+            తిరిగి ::gzread(m_fp, buf, len);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -93,13 +93,13 @@ class izstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        స్థిరరాశి అక్షరం* error(పూర్ణాంకం* errnum) {
+            తిరిగి ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { తిరిగి m_fp; }
 
-    private:
+    అంతరంగ:
         gzFile m_fp;
 };
 
@@ -110,57 +110,57 @@ class izstream
  * returns the number of uncompressed bytes actually read
  * (0 for end of file, -1 for error).
  */
-template <class T, class Items>
-inline int read(izstream& zs, T* x, Items items) {
-    return ::gzread(zs.fp(), x, items*sizeof(T));
+మూస <class T, class వస్తువులు>
+అంతఃవరుస పూర్ణాంకం పఠ(izstream& zs, T* x, వస్తువులు వస్తువులు_2) {
+    తిరిగి ::gzread(zs.fp(), x, వస్తువులు_2*పరిమాణం(T));
 }
 
 /*
  * Binary input with the '>' operator.
  */
-template <class T>
-inline izstream& operator>(izstream& zs, T& x) {
-    ::gzread(zs.fp(), &x, sizeof(T));
-    return zs;
+మూస <class T>
+అంతఃవరుస izstream& క్రియాకారకం>(izstream& zs, T& x) {
+    ::gzread(zs.fp(), &x, పరిమాణం(T));
+    తిరిగి zs;
 }
 
 
-inline zstringlen::zstringlen(izstream& zs) {
+అంతఃవరుస zstringlen::zstringlen(izstream& zs) {
     zs > val.byte;
-    if (val.byte == 255) zs > val.word;
-    else val.word = val.byte;
+    ఒకవేళ (val.byte == 255) zs > val.మాట;
+    లేకపోతే val.మాట = val.byte;
 }
 
 /*
  * Read length of string + the string with the '>' operator.
  */
-inline izstream& operator>(izstream& zs, char* x) {
+అంతఃవరుస izstream& క్రియాకారకం>(izstream& zs, అక్షరం* x) {
     zstringlen len(zs);
-    ::gzread(zs.fp(), x, len.value());
-    x[len.value()] = '\0';
-    return zs;
+    ::gzread(zs.fp(), x, len.విలువ());
+    x[len.విలువ()] = '\0';
+    తిరిగి zs;
 }
 
-inline char* read_string(izstream& zs) {
+అంతఃవరుస అక్షరం* read_string(izstream& zs) {
     zstringlen len(zs);
-    char* x = new char[len.value()+1];
-    ::gzread(zs.fp(), x, len.value());
-    x[len.value()] = '\0';
-    return x;
+    అక్షరం* x = new అక్షరం[len.విలువ()+1];
+    ::gzread(zs.fp(), x, len.విలువ());
+    x[len.విలువ()] = '\0';
+    తిరిగి x;
 }
 
 // ----------------------------- ozstream -----------------------------
 
 class ozstream
 {
-    public:
+    బహిరంగ:
         ozstream() : m_fp(0), m_os(0) {
         }
-        ozstream(FILE* fp, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(FILE* fp, పూర్ణాంకం level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
             open(fp, level);
         }
-        ozstream(const char* name, int level = Z_DEFAULT_COMPRESSION)
+        ozstream(స్థిరరాశి అక్షరం* name, పూర్ణాంకం level = Z_DEFAULT_COMPRESSION)
             : m_fp(0), m_os(0) {
             open(name, level);
         }
@@ -173,39 +173,39 @@ class ozstream
          * errno can be checked to distinguish two error cases
          * (if errno is zero, the zlib error is Z_MEM_ERROR).
          */
-        void open(const char* name, int level = Z_DEFAULT_COMPRESSION) {
-            char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
-            m_fp = ::gzopen(name, mode);
+        శూన్య open(స్థిరరాశి అక్షరం* name, పూర్ణాంకం level = Z_DEFAULT_COMPRESSION) {
+            అక్షరం బహుళకం[4] = "wb\0";
+            ఒకవేళ (level != Z_DEFAULT_COMPRESSION) బహుళకం[2] = '0'+level;
+            ఒకవేళ (m_fp) close();
+            m_fp = ::gzopen(name, బహుళకం);
         }
 
         /* open from a FILE pointer.
          */
-        void open(FILE* fp, int level = Z_DEFAULT_COMPRESSION) {
-            SET_BINARY_MODE(fp);
-            char mode[4] = "wb\0";
-            if (level != Z_DEFAULT_COMPRESSION) mode[2] = '0'+level;
-            if (m_fp) close();
-            m_fp = ::gzdopen(fileno(fp), mode);
+        శూన్య open(FILE* fp, పూర్ణాంకం level = Z_DEFAULT_COMPRESSION) {
+            సమితి_ద్విమాన_బహుళకం(fp);
+            అక్షరం బహుళకం[4] = "wb\0";
+            ఒకవేళ (level != Z_DEFAULT_COMPRESSION) బహుళకం[2] = '0'+level;
+            ఒకవేళ (m_fp) close();
+            m_fp = ::gzdopen(fileno(fp), బహుళకం);
         }
 
         /* Flushes all pending output if necessary, closes the compressed file
          * and deallocates all the (de)compression state. The return value is
          * the zlib error number (see function error() below).
          */
-        int close() {
-            if (m_os) {
+        పూర్ణాంకం close() {
+            ఒకవేళ (m_os) {
                 ::gzwrite(m_fp, m_os->str(), m_os->pcount());
                 delete[] m_os->str(); delete m_os; m_os = 0;
             }
-            int r = ::gzclose(m_fp); m_fp = 0; return r;
+            పూర్ణాంకం r = ::gzclose(m_fp); m_fp = 0; తిరిగి r;
         }
 
         /* Binary write the given number of bytes into the compressed file.
          */
-        int write(const void* buf, size_t len) {
-            return ::gzwrite(m_fp, (voidp) buf, len);
+        పూర్ణాంకం లిఖ(స్థిరరాశి శూన్య* buf, size_t len) {
+            తిరిగి ::gzwrite(m_fp, (voidp) buf, len);
         }
 
         /* Flushes all pending output into the compressed file. The parameter
@@ -215,9 +215,9 @@ class ozstream
          * flush() should be called only when strictly necessary because it can
          * degrade compression.
          */
-        int flush(int _flush) {
+        పూర్ణాంకం flush(పూర్ణాంకం _flush) {
             os_flush();
-            return ::gzflush(m_fp, _flush);
+            తిరిగి ::gzflush(m_fp, _flush);
         }
 
         /* Returns the error message for the last error which occurred on the
@@ -226,30 +226,30 @@ class ozstream
          * errnum is set to Z_ERRNO and the application may consult errno
          * to get the exact error code.
          */
-        const char* error(int* errnum) {
-            return ::gzerror(m_fp, errnum);
+        స్థిరరాశి అక్షరం* error(పూర్ణాంకం* errnum) {
+            తిరిగి ::gzerror(m_fp, errnum);
         }
 
-        gzFile fp() { return m_fp; }
+        gzFile fp() { తిరిగి m_fp; }
 
         ostream& os() {
-            if (m_os == 0) m_os = new ostrstream;
-            return *m_os;
+            ఒకవేళ (m_os == 0) m_os = new ostrstream;
+            తిరిగి *m_os;
         }
 
-        void os_flush() {
-            if (m_os && m_os->pcount()>0) {
+        శూన్య os_flush() {
+            ఒకవేళ (m_os && m_os->pcount()>0) {
                 ostrstream* oss = new ostrstream;
                 oss->fill(m_os->fill());
                 oss->flags(m_os->flags());
                 oss->precision(m_os->precision());
-                oss->width(m_os->width());
+                oss->వెడల్పు(m_os->వెడల్పు());
                 ::gzwrite(m_fp, m_os->str(), m_os->pcount());
                 delete[] m_os->str(); delete m_os; m_os = oss;
             }
         }
 
-    private:
+    అంతరంగ:
         gzFile m_fp;
         ostrstream* m_os;
 };
@@ -259,48 +259,48 @@ class ozstream
  * returns the number of uncompressed bytes actually written
  * (0 in case of error).
  */
-template <class T, class Items>
-inline int write(ozstream& zs, const T* x, Items items) {
-    return ::gzwrite(zs.fp(), (voidp) x, items*sizeof(T));
+మూస <class T, class వస్తువులు>
+అంతఃవరుస పూర్ణాంకం లిఖ(ozstream& zs, స్థిరరాశి T* x, వస్తువులు వస్తువులు_2) {
+    తిరిగి ::gzwrite(zs.fp(), (voidp) x, వస్తువులు_2*పరిమాణం(T));
 }
 
 /*
  * Binary output with the '<' operator.
  */
-template <class T>
-inline ozstream& operator<(ozstream& zs, const T& x) {
-    ::gzwrite(zs.fp(), (voidp) &x, sizeof(T));
-    return zs;
+మూస <class T>
+అంతఃవరుస ozstream& క్రియాకారకం<(ozstream& zs, స్థిరరాశి T& x) {
+    ::gzwrite(zs.fp(), (voidp) &x, పరిమాణం(T));
+    తిరిగి zs;
 }
 
-inline zstringlen::zstringlen(ozstream& zs, const char* x) {
-    val.byte = 255;  val.word = ::strlen(x);
-    if (val.word < 255) zs < (val.byte = val.word);
-    else zs < val;
+అంతఃవరుస zstringlen::zstringlen(ozstream& zs, స్థిరరాశి అక్షరం* x) {
+    val.byte = 255;  val.మాట = ::అక్షరశ్రేణి_పొడవు(x);
+    ఒకవేళ (val.మాట < 255) zs < (val.byte = val.మాట);
+    లేకపోతే zs < val;
 }
 
 /*
  * Write length of string + the string with the '<' operator.
  */
-inline ozstream& operator<(ozstream& zs, const char* x) {
+అంతఃవరుస ozstream& క్రియాకారకం<(ozstream& zs, స్థిరరాశి అక్షరం* x) {
     zstringlen len(zs, x);
-    ::gzwrite(zs.fp(), (voidp) x, len.value());
-    return zs;
+    ::gzwrite(zs.fp(), (voidp) x, len.విలువ());
+    తిరిగి zs;
 }
 
-#ifdef _MSC_VER
-inline ozstream& operator<(ozstream& zs, char* const& x) {
-    return zs < (const char*) x;
+#నిర్వచితమైతే _MSC_VER
+అంతఃవరుస ozstream& క్రియాకారకం<(ozstream& zs, అక్షరం* స్థిరరాశి& x) {
+    తిరిగి zs < (స్థిరరాశి అక్షరం*) x;
 }
-#endif
+#అయితే_ముగింపు
 
 /*
  * Ascii write with the << operator;
  */
-template <class T>
-inline ostream& operator<<(ozstream& zs, const T& x) {
+మూస <class T>
+అంతఃవరుస ostream& క్రియాకారకం<<(ozstream& zs, స్థిరరాశి T& x) {
     zs.os_flush();
-    return zs.os() << x;
+    తిరిగి zs.os() << x;
 }
 
-#endif
+#అయితే_ముగింపు

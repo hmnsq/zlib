@@ -5,185 +5,185 @@
 
 /* @(#) $Id$ */
 
-#include "zutil.h"
-#ifndef Z_SOLO
+#అన్తర్భావ "zutil.h"
+#నిర్వచితం_కాకపోతే Z_SOLO
 #  include "gzguts.h"
-#endif
+#అయితే_ముగింపు
 
-z_const char * const z_errmsg[10] = {
-    (z_const char *)"need dictionary",     /* Z_NEED_DICT       2  */
-    (z_const char *)"stream end",          /* Z_STREAM_END      1  */
-    (z_const char *)"",                    /* Z_OK              0  */
-    (z_const char *)"file error",          /* Z_ERRNO         (-1) */
-    (z_const char *)"stream error",        /* Z_STREAM_ERROR  (-2) */
-    (z_const char *)"data error",          /* Z_DATA_ERROR    (-3) */
-    (z_const char *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
-    (z_const char *)"buffer error",        /* Z_BUF_ERROR     (-5) */
-    (z_const char *)"incompatible version",/* Z_VERSION_ERROR (-6) */
-    (z_const char *)""
+z_const అక్షరం * స్థిరరాశి z_errmsg[10] = {
+    (z_const అక్షరం *)"need dictionary",     /* Z_NEED_DICT       2  */
+    (z_const అక్షరం *)"stream end",          /* Z_STREAM_END      1  */
+    (z_const అక్షరం *)"",                    /* Z_OK              0  */
+    (z_const అక్షరం *)"file error",          /* Z_ERRNO         (-1) */
+    (z_const అక్షరం *)"stream error",        /* Z_STREAM_ERROR  (-2) */
+    (z_const అక్షరం *)"data error",          /* Z_DATA_ERROR    (-3) */
+    (z_const అక్షరం *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
+    (z_const అక్షరం *)"buffer error",        /* Z_BUF_ERROR     (-5) */
+    (z_const అక్షరం *)"incompatible version",/* Z_VERSION_ERROR (-6) */
+    (z_const అక్షరం *)""
 };
 
 
-const char * ZEXPORT zlibVersion(void) {
-    return ZLIB_VERSION;
+స్థిరరాశి అక్షరం * ZEXPORT zlib_సంస్కరణ(శూన్య) {
+    తిరిగి ZLIB_సంస్కరణ;
 }
 
-uLong ZEXPORT zlibCompileFlags(void) {
+uLong ZEXPORT zlibCompileFlags(శూన్య) {
     uLong flags;
 
     flags = 0;
-    switch ((int)(sizeof(uInt))) {
-    case 2:     break;
-    case 4:     flags += 1;     break;
-    case 8:     flags += 2;     break;
-    default:    flags += 3;
+    ఎంపిక ((పూర్ణాంకం)(పరిమాణం(uInt))) {
+    స్థితి 2:     ఆపు;
+    స్థితి 4:     flags += 1;     ఆపు;
+    స్థితి 8:     flags += 2;     ఆపు;
+    అప్రమేయ:    flags += 3;
     }
-    switch ((int)(sizeof(uLong))) {
-    case 2:     break;
-    case 4:     flags += 1 << 2;        break;
-    case 8:     flags += 2 << 2;        break;
-    default:    flags += 3 << 2;
+    ఎంపిక ((పూర్ణాంకం)(పరిమాణం(uLong))) {
+    స్థితి 2:     ఆపు;
+    స్థితి 4:     flags += 1 << 2;        ఆపు;
+    స్థితి 8:     flags += 2 << 2;        ఆపు;
+    అప్రమేయ:    flags += 3 << 2;
     }
-    switch ((int)(sizeof(voidpf))) {
-    case 2:     break;
-    case 4:     flags += 1 << 4;        break;
-    case 8:     flags += 2 << 4;        break;
-    default:    flags += 3 << 4;
+    ఎంపిక ((పూర్ణాంకం)(పరిమాణం(voidpf))) {
+    స్థితి 2:     ఆపు;
+    స్థితి 4:     flags += 1 << 4;        ఆపు;
+    స్థితి 8:     flags += 2 << 4;        ఆపు;
+    అప్రమేయ:    flags += 3 << 4;
     }
-    switch ((int)(sizeof(z_off_t))) {
-    case 2:     break;
-    case 4:     flags += 1 << 6;        break;
-    case 8:     flags += 2 << 6;        break;
-    default:    flags += 3 << 6;
+    ఎంపిక ((పూర్ణాంకం)(పరిమాణం(z_off_t))) {
+    స్థితి 2:     ఆపు;
+    స్థితి 4:     flags += 1 << 6;        ఆపు;
+    స్థితి 8:     flags += 2 << 6;        ఆపు;
+    అప్రమేయ:    flags += 3 << 6;
     }
-#ifdef ZLIB_DEBUG
+#నిర్వచితమైతే ZLIB_DEBUG
     flags += 1 << 8;
-#endif
+#అయితే_ముగింపు
     /*
 #if defined(ASMV) || defined(ASMINF)
     flags += 1 << 9;
 #endif
      */
-#ifdef ZLIB_WINAPI
+#నిర్వచితమైతే ZLIB_WINAPI
     flags += 1 << 10;
-#endif
-#ifdef BUILDFIXED
+#అయితే_ముగింపు
+#నిర్వచితమైతే BUILDFIXED
     flags += 1 << 12;
-#endif
-#ifdef DYNAMIC_CRC_TABLE
+#అయితే_ముగింపు
+#నిర్వచితమైతే DYNAMIC_చక్రీయ_తనిఖీ_పట్టిక
     flags += 1 << 13;
-#endif
-#ifdef NO_GZCOMPRESS
+#అయితే_ముగింపు
+#నిర్వచితమైతే NO_GZCOMPRESS
     flags += 1L << 16;
-#endif
-#ifdef NO_GZIP
+#అయితే_ముగింపు
+#నిర్వచితమైతే NO_GZIP
     flags += 1L << 17;
-#endif
-#ifdef PKZIP_BUG_WORKAROUND
+#అయితే_ముగింపు
+#నిర్వచితమైతే PKZIP_BUG_WORKAROUND
     flags += 1L << 20;
-#endif
-#ifdef FASTEST
+#అయితే_ముగింపు
+#నిర్వచితమైతే FASTEST
     flags += 1L << 21;
-#endif
-#if defined(STDC) || defined(Z_HAVE_STDARG_H)
+#అయితే_ముగింపు
+#ఒకవేళ defined(STDC) || defined(Z_HAVE_STDARG_H)
 #   ifdef NO_vsnprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       లేకపోతే
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_vsprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   లేకపోతే
 #       ifdef HAS_vsnprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
-#else
+#లేకపోతే
     flags += 1L << 24;
 #   ifdef NO_snprintf
 #       ifdef ZLIB_INSECURE
             flags += 1L << 25;
-#       else
+#       లేకపోతే
             flags += 1L << 27;
 #       endif
 #       ifdef HAS_sprintf_void
             flags += 1L << 26;
 #       endif
-#   else
+#   లేకపోతే
 #       ifdef HAS_snprintf_void
             flags += 1L << 26;
 #       endif
 #   endif
-#endif
-    return flags;
+#అయితే_ముగింపు
+    తిరిగి flags;
 }
 
-#ifdef ZLIB_DEBUG
-#include <stdlib.h>
+#నిర్వచితమైతే ZLIB_DEBUG
+#అన్తర్భావ <stdlib.h>
 #  ifndef verbose
 #    define verbose 0
 #  endif
-int ZLIB_INTERNAL z_verbose = verbose;
+పూర్ణాంకం ZLIB_అంతర్గత z_verbose = verbose;
 
-void ZLIB_INTERNAL z_error(char *m) {
+శూన్య ZLIB_అంతర్గత z_error(అక్షరం *m) {
     fprintf(stderr, "%s\n", m);
-    exit(1);
+    నిష్క్రమించు(1);
 }
-#endif
+#అయితే_ముగింపు
 
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(int err) {
-    return ERR_MSG(err);
+స్థిరరాశి అక్షరం * ZEXPORT zError(పూర్ణాంకం err) {
+    తిరిగి ERR_సందేశం(err);
 }
 
-#if defined(_WIN32_WCE) && _WIN32_WCE < 0x800
+#ఒకవేళ defined(_WIN32_WCE) && _WIN32_WCE < 0x800
     /* The older Microsoft C Run-Time Library for Windows CE doesn't have
      * errno.  We define it as a global variable to simplify porting.
      * Its value is always 0 and should not be used.
      */
-    int errno = 0;
-#endif
+    పూర్ణాంకం errno = 0;
+#అయితే_ముగింపు
 
-#ifndef HAVE_MEMCPY
+#నిర్వచితం_కాకపోతే HAVE_MEMCPY
 
-void ZLIB_INTERNAL zmemcpy(void FAR *dst, const void FAR *src, z_size_t n) {
+శూన్య ZLIB_అంతర్గత zmemcpy(శూన్య FAR *dst, స్థిరరాశి శూన్య FAR *src, z_కొలత_t n) {
     uchf *p = dst;
-    const uchf *q = src;
-    while (n) {
+    స్థిరరాశి uchf *q = src;
+    అయితే (n) {
         *p++ = *q++;
         n--;
     }
 }
 
-int ZLIB_INTERNAL zmemcmp(const void FAR *s1, const void FAR *s2, z_size_t n) {
-    const uchf *p = s1, *q = s2;
-    while (n) {
-        if (*p++ != *q++)
-            return (int)p[-1] - (int)q[-1];
+పూర్ణాంకం ZLIB_అంతర్గత zmemcmp(స్థిరరాశి శూన్య FAR *s1, స్థిరరాశి శూన్య FAR *s2, z_కొలత_t n) {
+    స్థిరరాశి uchf *p = s1, *q = s2;
+    అయితే (n) {
+        ఒకవేళ (*p++ != *q++)
+            తిరిగి (పూర్ణాంకం)p[-1] - (పూర్ణాంకం)q[-1];
         n--;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
+శూన్య ZLIB_అంతర్గత zmemzero(శూన్య FAR *b, z_కొలత_t len) {
     uchf *p = b;
-    while (len) {
+    అయితే (len) {
         *p++ = 0;
         len--;
     }
 }
 
-#endif
+#అయితే_ముగింపు
 
-#ifndef Z_SOLO
+#నిర్వచితం_కాకపోతే Z_SOLO
 
-#ifdef SYS16BIT
+#నిర్వచితమైతే SYS16_బిట్టు
 
-#ifdef __TURBOC__
+#నిర్వచితమైతే __TURBOC__
 /* Turbo C in 16-bit mode */
 
 #  define MY_ZCALLOC
@@ -194,17 +194,17 @@ void ZLIB_INTERNAL zmemzero(void FAR *b, z_size_t len) {
  * original form in order to free it, use zcfree().
  */
 
-#define MAX_PTR 10
+#నిర్వచించు MAX_PTR 10
 /* 10*64K = 640K */
 
-local int next_ptr = 0;
+local పూర్ణాంకం తదుపరి_ptr = 0;
 
-typedef struct ptr_table_s {
+రకనిర్వచనం నిర్మాణం ptr_పట్టిక_s {
     voidpf org_ptr;
     voidpf new_ptr;
-} ptr_table;
+} ptr_పట్టిక;
 
-local ptr_table table[MAX_PTR];
+local ptr_పట్టిక పట్టిక_2[MAX_PTR];
 /* This table is used to remember the original form of pointers
  * to large buffers (64K). Such pointers are normalized with a zero offset.
  * Since MSDOS is not a preemptive multitasking OS, this table is not
@@ -212,101 +212,101 @@ local ptr_table table[MAX_PTR];
  * a protected system like OS/2. Use Microsoft C instead.
  */
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
+voidpf ZLIB_అంతర్గత zcalloc(voidpf opaque, గుర్తులేని వస్తువులు_2, గుర్తులేని కొలత) {
     voidpf buf;
-    ulg bsize = (ulg)items*size;
+    ulg bsize = (ulg)వస్తువులు_2*కొలత;
 
-    (void)opaque;
+    (శూన్య)opaque;
 
     /* If we allocate less than 65520 bytes, we assume that farmalloc
      * will return a usable pointer which doesn't have to be normalized.
      */
-    if (bsize < 65520L) {
+    ఒకవేళ (bsize < 65520L) {
         buf = farmalloc(bsize);
-        if (*(ush*)&buf != 0) return buf;
-    } else {
+        ఒకవేళ (*(ush*)&buf != 0) తిరిగి buf;
+    } లేకపోతే {
         buf = farmalloc(bsize + 16L);
     }
-    if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
-    table[next_ptr].org_ptr = buf;
+    ఒకవేళ (buf == ఖాళీ || తదుపరి_ptr >= MAX_PTR) తిరిగి ఖాళీ;
+    పట్టిక_2[తదుపరి_ptr].org_ptr = buf;
 
     /* Normalize the pointer to seg:0 */
     *((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
     *(ush*)&buf = 0;
-    table[next_ptr++].new_ptr = buf;
-    return buf;
+    పట్టిక_2[తదుపరి_ptr++].new_ptr = buf;
+    తిరిగి buf;
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    int n;
+శూన్య ZLIB_అంతర్గత zcfree(voidpf opaque, voidpf ptr) {
+    పూర్ణాంకం n;
 
-    (void)opaque;
+    (శూన్య)opaque;
 
-    if (*(ush*)&ptr != 0) { /* object < 64K */
+    ఒకవేళ (*(ush*)&ptr != 0) { /* object < 64K */
         farfree(ptr);
-        return;
+        తిరిగి;
     }
     /* Find the original pointer */
-    for (n = 0; n < next_ptr; n++) {
-        if (ptr != table[n].new_ptr) continue;
+    కొరకు (n = 0; n < తదుపరి_ptr; n++) {
+        ఒకవేళ (ptr != పట్టిక_2[n].new_ptr) కొనసాగు;
 
-        farfree(table[n].org_ptr);
-        while (++n < next_ptr) {
-            table[n-1] = table[n];
+        farfree(పట్టిక_2[n].org_ptr);
+        అయితే (++n < తదుపరి_ptr) {
+            పట్టిక_2[n-1] = పట్టిక_2[n];
         }
-        next_ptr--;
-        return;
+        తదుపరి_ptr--;
+        తిరిగి;
     }
     Assert(0, "zcfree: ptr not found");
 }
 
-#endif /* __TURBOC__ */
+#అయితే_ముగింపు /* __TURBOC__ */
 
 
-#ifdef M_I86
+#నిర్వచితమైతే M_I86
 /* Microsoft C in 16-bit mode */
 
 #  define MY_ZCALLOC
 
-#if (!defined(_MSC_VER) || (_MSC_VER <= 600))
+#ఒకవేళ (!defined(_MSC_VER) || (_MSC_VER <= 600))
 #  define _halloc  halloc
 #  define _hfree   hfree
-#endif
+#అయితే_ముగింపు
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, uInt items, uInt size) {
-    (void)opaque;
-    return _halloc((long)items, size);
+voidpf ZLIB_అంతర్గత zcalloc(voidpf opaque, uInt వస్తువులు_2, uInt కొలత) {
+    (శూన్య)opaque;
+    తిరిగి _halloc((దీర్ఘ)వస్తువులు_2, కొలత);
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    (void)opaque;
+శూన్య ZLIB_అంతర్గత zcfree(voidpf opaque, voidpf ptr) {
+    (శూన్య)opaque;
     _hfree(ptr);
 }
 
-#endif /* M_I86 */
+#అయితే_ముగింపు /* M_I86 */
 
-#endif /* SYS16BIT */
+#అయితే_ముగింపు /* SYS16BIT */
 
 
-#ifndef MY_ZCALLOC /* Any system without a special alloc function */
+#నిర్వచితం_కాకపోతే MY_ZCALLOC /* Any system without a special alloc function */
 
-#ifndef STDC
-extern voidp malloc(uInt size);
-extern voidp calloc(uInt items, uInt size);
-extern void free(voidpf ptr);
-#endif
+#నిర్వచితం_కాకపోతే STDC
+బాహ్య voidp జ్ఞాపకం_ఇవ్వు(uInt కొలత);
+బాహ్య voidp సున్నా_జ్ఞాపకం_ఇవ్వు(uInt వస్తువులు_2, uInt కొలత);
+బాహ్య శూన్య విడుదల(voidpf ptr);
+#అయితే_ముగింపు
 
-voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
-    (void)opaque;
-    return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
-                              (voidpf)calloc(items, size);
+voidpf ZLIB_అంతర్గత zcalloc(voidpf opaque, గుర్తులేని వస్తువులు_2, గుర్తులేని కొలత) {
+    (శూన్య)opaque;
+    తిరిగి పరిమాణం(uInt) > 2 ? (voidpf)జ్ఞాపకం_ఇవ్వు(వస్తువులు_2 * కొలత) :
+                              (voidpf)సున్నా_జ్ఞాపకం_ఇవ్వు(వస్తువులు_2, కొలత);
 }
 
-void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-    (void)opaque;
-    free(ptr);
+శూన్య ZLIB_అంతర్గత zcfree(voidpf opaque, voidpf ptr) {
+    (శూన్య)opaque;
+    విడుదల(ptr);
 }
 
-#endif /* MY_ZCALLOC */
+#అయితే_ముగింపు /* MY_ZCALLOC */
 
-#endif /* !Z_SOLO */
+#అయితే_ముగింపు /* !Z_SOLO */

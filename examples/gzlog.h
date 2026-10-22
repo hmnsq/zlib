@@ -45,11 +45,11 @@
    opened with gzlog_open().
  */
 
-#ifndef GZLOG_H
-#define GZLOG_H
+#నిర్వచితం_కాకపోతే GZLOG_H
+#నిర్వచించు GZLOG_H
 
 /* gzlog object type */
-typedef void gzlog;
+రకనిర్వచనం శూన్య gzlog;
 
 /* Open a gzlog object, creating the log file if it does not exist.  Return
    NULL on error.  Note that gzlog_open() could take a while to complete if it
@@ -63,7 +63,7 @@ typedef void gzlog;
    lock file, and "foo.repairs" to log recovery operations performed due to
    interrupted gzlog operations.  A gzlog_open() followed by a gzlog_close()
    will recover a previously interrupted operation, if any. */
-gzlog *gzlog_open(char *path);
+gzlog *gzlog_open(అక్షరం *మార్గం);
 
 /* Write to a gzlog object.  Return zero on success, -1 if there is a file i/o
    error on any of the gzlog files (this should not happen if gzlog_open()
@@ -74,7 +74,7 @@ gzlog *gzlog_open(char *path);
    file uncompressed, until 1 MB has been accumulated, at which time that data
    will be compressed.  The log file will be a valid gzip file upon successful
    return. */
-int gzlog_write(gzlog *log, void *data, size_t len);
+పూర్ణాంకం gzlog_write(gzlog *సంవర్గమానం, శూన్య *దత్తాంశం, size_t len);
 
 /* Force compression of any uncompressed data in the log.  This should be used
    sparingly, if at all.  The main application would be when a log file will
@@ -82,10 +82,10 @@ int gzlog_write(gzlog *log, void *data, size_t len);
    appending, it will both significantly increase the execution time and
    reduce the compression ratio.  The return codes are the same as for
    gzlog_write(). */
-int gzlog_compress(gzlog *log);
+పూర్ణాంకం gzlog_compress(gzlog *సంవర్గమానం);
 
 /* Close a gzlog object.  Return zero on success, -3 if the log argument is
    invalid.  The log object is freed, and so cannot be referenced again. */
-int gzlog_close(gzlog *log);
+పూర్ణాంకం gzlog_close(gzlog *సంవర్గమానం);
 
-#endif
+#అయితే_ముగింపు

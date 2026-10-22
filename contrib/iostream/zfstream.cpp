@@ -1,253 +1,253 @@
 
-#include "zfstream.h"
+#అన్తర్భావ "zfstream.h"
 
 gzfilebuf::gzfilebuf() :
-  file(NULL),
-  mode(0),
+  file(ఖాళీ),
+  బహుళకం(0),
   own_file_descriptor(0)
 { }
 
 gzfilebuf::~gzfilebuf() {
 
-  sync();
-  if ( own_file_descriptor )
+  సమకాలీకరణ();
+  ఒకవేళ ( own_file_descriptor )
     close();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::open( స్థిరరాశి అక్షరం *name,
+                            పూర్ణాంకం io_బహుళకం ) {
 
-  if ( is_open() )
-    return NULL;
+  ఒకవేళ ( is_open() )
+    తిరిగి ఖాళీ;
 
-  char char_mode[10];
-  char *p = char_mode;
+  అక్షరం char_బహుళకం[10];
+  అక్షరం *p = char_బహుళకం;
 
-  if ( io_mode & ios::in ) {
-    mode = ios::in;
+  ఒకవేళ ( io_బహుళకం & ios::in ) {
+    బహుళకం = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
-    mode = ios::app;
+  } లేకపోతే ఒకవేళ ( io_బహుళకం & ios::app ) {
+    బహుళకం = ios::app;
     *p++ = 'a';
-  } else {
-    mode = ios::out;
+  } లేకపోతే {
+    బహుళకం = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
-    mode |= ios::binary;
+  ఒకవేళ ( io_బహుళకం & ios::binary ) {
+    బహుళకం |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ఒకవేళ ( io_బహుళకం & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  ఒకవేళ ( (file = gzopen(name, char_బహుళకం)) == ఖాళీ )
+    తిరిగి ఖాళీ;
 
   own_file_descriptor = 1;
 
-  return this;
+  తిరిగి ఇది;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( పూర్ణాంకం file_descriptor,
+                              పూర్ణాంకం io_బహుళకం ) {
 
-  if ( is_open() )
-    return NULL;
+  ఒకవేళ ( is_open() )
+    తిరిగి ఖాళీ;
 
-  char char_mode[10];
-  char *p = char_mode;
+  అక్షరం char_బహుళకం[10];
+  అక్షరం *p = char_బహుళకం;
 
-  if ( io_mode & ios::in ) {
-    mode = ios::in;
+  ఒకవేళ ( io_బహుళకం & ios::in ) {
+    బహుళకం = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
-    mode = ios::app;
+  } లేకపోతే ఒకవేళ ( io_బహుళకం & ios::app ) {
+    బహుళకం = ios::app;
     *p++ = 'a';
-  } else {
-    mode = ios::out;
+  } లేకపోతే {
+    బహుళకం = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
-    mode |= ios::binary;
+  ఒకవేళ ( io_బహుళకం & ios::binary ) {
+    బహుళకం |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ఒకవేళ ( io_బహుళకం & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  ఒకవేళ ( (file = gzdopen(file_descriptor, char_బహుళకం)) == ఖాళీ )
+    తిరిగి ఖాళీ;
 
   own_file_descriptor = 0;
 
-  return this;
+  తిరిగి ఇది;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  ఒకవేళ ( is_open() ) {
 
-    sync();
+    సమకాలీకరణ();
     gzclose( file );
-    file = NULL;
+    file = ఖాళీ;
 
   }
 
-  return this;
+  తిరిగి ఇది;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+పూర్ణాంకం gzfilebuf::setcompressionlevel( పూర్ణాంకం comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  తిరిగి gzsetparams(file, comp_level, -2);
 
 }
 
+పూర్ణాంకం gzfilebuf::setcompressionstrategy( పూర్ణాంకం comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  తిరిగి gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, పూర్ణాంకం which ) {
+
+  తిరిగి streampos(EOF);
+
+}
+
+పూర్ణాంకం gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  ఒకవేళ ( !is_open() || !(బహుళకం & ios::in) )
+    తిరిగి EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  ఒకవేళ ( !పునాది_2() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    ఒకవేళ ( (allocate()) == EOF )
+      తిరిగి EOF;
     setp(0,0);
 
-  } else {
+  } లేకపోతే {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    ఒకవేళ ( in_avail() )
+      తిరిగి (గుర్తులేని అక్షరం) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    ఒకవేళ ( బహిర్గతం_నిరీక్షణ() ) {
+      ఒకవేళ ( flushbuf() == EOF )
+        తిరిగి EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  పూర్ణాంకం ఫలితం = fillbuf();
+  ఒకవేళ ( ఫలితం == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    తిరిగి EOF;
   }
 
-  return (unsigned char) *gptr();
+  తిరిగి (గుర్తులేని అక్షరం) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+పూర్ణాంకం gzfilebuf::overflow( పూర్ణాంకం c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  ఒకవేళ ( !is_open() || !(బహుళకం & ios::out) )
+    తిరిగి EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  ఒకవేళ ( !పునాది_2() ) {
+    ఒకవేళ ( allocate() == EOF )
+      తిరిగి EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } లేకపోతే {
+    ఒకవేళ (in_avail()) {
+        తిరిగి EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    ఒకవేళ (బహిర్గతం_నిరీక్షణ()) {
+      ఒకవేళ (flushbuf() == EOF)
+        తిరిగి EOF;
     }
   }
 
-  int bl = blen();
-  setp( base(), base() + bl);
+  పూర్ణాంకం bl = blen();
+  setp( పునాది_2(), పునాది_2() + bl);
 
-  if ( c != EOF ) {
+  ఒకవేళ ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  తిరిగి 0;
 
 }
 
-int gzfilebuf::sync() {
+పూర్ణాంకం gzfilebuf::సమకాలీకరణ() {
 
-  if ( !is_open() )
-    return EOF;
+  ఒకవేళ ( !is_open() )
+    తిరిగి EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  ఒకవేళ ( బహిర్గతం_నిరీక్షణ() )
+    తిరిగి flushbuf();
 
-  return 0;
+  తిరిగి 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+పూర్ణాంకం gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  పూర్ణాంకం n;
+  అక్షరం *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  ఒకవేళ ( gzwrite( file, q, n) < n )
+    తిరిగి EOF;
 
   setp(0,0);
 
-  return 0;
+  తిరిగి 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+పూర్ణాంకం gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  పూర్ణాంకం required;
+  అక్షరం *p;
 
-  p = base();
+  p = పునాది_2();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  పూర్ణాంకం t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  ఒకవేళ ( t <= 0) తిరిగి EOF;
 
-  setg( base(), base(), base()+t);
+  setg( పునాది_2(), పునాది_2(), పునాది_2()+t);
 
-  return t;
+  తిరిగి t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+శూన్య gzfilestream_common::attach( పూర్ణాంకం fd, పూర్ణాంకం io_బహుళకం ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  ఒకవేళ ( !బఫరు.attach( fd, io_బహుళకం) )
     clear( ios::failbit | ios::badbit );
-  else
+  లేకపోతే
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+శూన్య gzfilestream_common::open( స్థిరరాశి అక్షరం *name, పూర్ణాంకం io_బహుళకం ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  ఒకవేళ ( !బఫరు.open( name, io_బహుళకం ) )
     clear( ios::failbit | ios::badbit );
-  else
+  లేకపోతే
     clear();
 
 }
 
-void gzfilestream_common::close() {
+శూన్య gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  ఒకవేళ ( !బఫరు.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  తిరిగి &బఫరు;
 }
 
 gzifstream::gzifstream() :
@@ -294,16 +294,16 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( స్థిరరాశి అక్షరం *name, పూర్ణాంకం io_బహుళకం ) :
   ios( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::open( name, io_mode );
+  gzfilestream_common::open( name, io_బహుళకం );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( పూర్ణాంకం fd, పూర్ణాంకం io_బహుళకం ) :
   ios( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::attach( fd, io_mode );
+  gzfilestream_common::attach( fd, io_బహుళకం );
 }
 
 gzifstream::~gzifstream() { }
@@ -314,16 +314,16 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( స్థిరరాశి అక్షరం *name, పూర్ణాంకం io_బహుళకం ) :
   ios( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::open( name, io_mode );
+  gzfilestream_common::open( name, io_బహుళకం );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( పూర్ణాంకం fd, పూర్ణాంకం io_బహుళకం ) :
   ios( gzfilestream_common::rdbuf() )
 {
-  gzfilestream_common::attach( fd, io_mode );
+  gzfilestream_common::attach( fd, io_బహుళకం );
 }
 
 gzofstream::~gzofstream() { }

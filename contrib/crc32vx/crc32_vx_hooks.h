@@ -1,9 +1,9 @@
-#ifndef CRC32_VX_HOOKS_H
-#define CRC32_VX_HOOKS_H
+#నిర్వచితం_కాకపోతే చక్రీయ_తనిఖీ_32_VX_HOOKS_H
+#నిర్వచించు చక్రీయ_తనిఖీ_32_VX_HOOKS_H
 
 /**
  * CRC HOOKS
  */
-ZLIB_INTERNAL extern unsigned long (*crc32_z_hook)(unsigned long crc, const unsigned char FAR *buf, z_size_t len);
+ZLIB_అంతర్గత బాహ్య గుర్తులేని దీర్ఘ (*చక్రీయ_తనిఖీ_32_z_hook)(గుర్తులేని దీర్ఘ చక్రీయ_తనిఖీ, స్థిరరాశి గుర్తులేని అక్షరం FAR *buf, z_కొలత_t len);
 
-#endif /* CRC32_VX_HOOKS_H */
+#అయితే_ముగింపు /* CRC32_VX_HOOKS_H */

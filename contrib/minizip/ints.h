@@ -5,53 +5,53 @@
  * There exist compilers with limits.h, but not stdint.h or inttypes.h.
  */
 
-#ifndef INTS_H
-#define INTS_H
-#include <limits.h>
-#if defined(UCHAR_MAX) && UCHAR_MAX == 0xff
-    typedef signed char i8_t;
-    typedef unsigned char ui8_t;
-#else
+#నిర్వచితం_కాకపోతే INTS_H
+#నిర్వచించు INTS_H
+#అన్తర్భావ <limits.h>
+#ఒకవేళ defined(UCHAR_MAX) && UCHAR_MAX == 0xff
+    రకనిర్వచనం గుర్తుగల అక్షరం i8_t;
+    రకనిర్వచనం గుర్తులేని అక్షరం ui8_t;
+#లేకపోతే
 #   error "no 8-bit integer"
-#endif
-#if defined(USHRT_MAX) && USHRT_MAX == 0xffff
-    typedef short i16_t;
-    typedef unsigned short ui16_t;
-#elif defined(UINT_MAX) && UINT_MAX == 0xffff
-    typedef int i16_t;
-    typedef unsigned ui16_t;
-#else
+#అయితే_ముగింపు
+#ఒకవేళ defined(USHRT_MAX) && USHRT_MAX == 0xffff
+    రకనిర్వచనం పొట్టి i16_t;
+    రకనిర్వచనం గుర్తులేని పొట్టి ui16_t;
+#లేదావేళ defined(UINT_MAX) && UINT_MAX == 0xffff
+    రకనిర్వచనం పూర్ణాంకం i16_t;
+    రకనిర్వచనం గుర్తులేని ui16_t;
+#లేకపోతే
 #   error "no 16-bit integer"
-#endif
-#if defined(UINT_MAX) && UINT_MAX == 0xffffffff
-    typedef int i32_t;
-    typedef unsigned ui32_t;
+#అయితే_ముగింపు
+#ఒకవేళ defined(UINT_MAX) && UINT_MAX == 0xffffffff
+    రకనిర్వచనం పూర్ణాంకం i32_t;
+    రకనిర్వచనం గుర్తులేని ui32_t;
 #   define PI32 "d"
 #   define PUI32 "u"
-#elif defined(ULONG_MAX) && ULONG_MAX == 0xffffffff
-    typedef long i32_t;
-    typedef unsigned long ui32_t;
+#లేదావేళ defined(ULONG_MAX) && ULONG_MAX == 0xffffffff
+    రకనిర్వచనం దీర్ఘ i32_t;
+    రకనిర్వచనం గుర్తులేని దీర్ఘ ui32_t;
 #   define PI32 "ld"
 #   define PUI32 "lu"
-#else
+#లేకపోతే
 #   error "no 32-bit integer"
-#endif
-#if defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
-    typedef long i64_t;
-    typedef unsigned long ui64_t;
+#అయితే_ముగింపు
+#ఒకవేళ defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
+    రకనిర్వచనం దీర్ఘ i64_t;
+    రకనిర్వచనం గుర్తులేని దీర్ఘ ui64_t;
 #   define PI64 "ld"
 #   define PUI64 "lu"
-#elif defined(ULLONG_MAX) && ULLONG_MAX == 0xffffffffffffffff
-    typedef long long i64_t;
-    typedef unsigned long long ui64_t;
+#లేదావేళ defined(ULLONG_MAX) && ULLONG_MAX == 0xffffffffffffffff
+    రకనిర్వచనం దీర్ఘ దీర్ఘ i64_t;
+    రకనిర్వచనం గుర్తులేని దీర్ఘ దీర్ఘ ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#elif defined(ULONG_LONG_MAX) && ULONG_LONG_MAX == 0xffffffffffffffff
-    typedef long long i64_t;
-    typedef unsigned long long ui64_t;
+#లేదావేళ defined(ULONG_LONG_MAX) && ULONG_LONG_MAX == 0xffffffffffffffff
+    రకనిర్వచనం దీర్ఘ దీర్ఘ i64_t;
+    రకనిర్వచనం గుర్తులేని దీర్ఘ దీర్ఘ ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#else
+#లేకపోతే
 #   error "no 64-bit integer"
-#endif
-#endif
+#అయితే_ముగింపు
+#అయితే_ముగింపు

@@ -15,43 +15,43 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#ఒకవేళ defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
-#endif
+#అయితే_ముగింపు
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "puff.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#ఒకవేళ defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
+#  define సమితి_ద్విమాన_బహుళకం(file) setmode(fileno(file), O_ద్విమాన)
+#లేకపోతే
+#  define సమితి_ద్విమాన_బహుళకం(file)
+#అయితే_ముగింపు
 
-#define local static
+#నిర్వచించు local స్థిర
 
 /* Return size times approximately the cube root of 2, keeping the result as 1,
    3, or 5 times a power of 2 -- the result is always > size, until the result
    is the maximum value of an unsigned long, where it remains.  This is useful
    to keep reallocations less than ~33% over the actual data. */
-local size_t bythirds(size_t size)
+local size_t bythirds(size_t కొలత)
 {
-    int n;
+    పూర్ణాంకం n;
     size_t m;
 
-    m = size;
-    for (n = 0; m; n++)
+    m = కొలత;
+    కొరకు (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    ఒకవేళ (n < 3)
+        తిరిగి కొలత + 1;
     n -= 3;
-    m = size >> n;
+    m = కొలత >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    తిరిగి m > కొలత ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,109 +60,109 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local శూన్య *ఎక్కించు(స్థిరరాశి అక్షరం *name, size_t *len)
 {
-    size_t size;
-    void *buf, *swap;
-    FILE *in;
+    size_t కొలత;
+    శూన్య *buf, *మార్పిడి;
+    FILE *లోపల;
 
     *len = 0;
-    buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
-    in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
-            size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
-                free(buf);
-                buf = NULL;
-                break;
+    buf = జ్ఞాపకం_ఇవ్వు(కొలత = 4096);
+    ఒకవేళ (buf == ఖాళీ)
+        తిరిగి ఖాళీ;
+    లోపల = name == ఖాళీ ? stdin : fopen(name, "rb");
+    ఒకవేళ (లోపల != ఖాళీ) {
+        కొరకు (;;) {
+            *len += fread((అక్షరం *)buf + *len, 1, కొలత - *len, లోపల);
+            ఒకవేళ (*len < కొలత) ఆపు;
+            కొలత = bythirds(కొలత);
+            ఒకవేళ (కొలత == *len || (మార్పిడి = realloc(buf, కొలత)) == ఖాళీ) {
+                విడుదల(buf);
+                buf = ఖాళీ;
+                ఆపు;
             }
-            buf = swap;
+            buf = మార్పిడి;
         }
-        fclose(in);
+        fclose(లోపల);
     }
-    return buf;
+    తిరిగి buf;
 }
 
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-    int ret, put = 0, fail = 0;
-    unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
+    పూర్ణాంకం ret, put = 0, fail = 0;
+    గుర్తులేని skip = 0;
+    అక్షరం *arg, *name = ఖాళీ;
+    గుర్తులేని అక్షరం *ఆధారం = ఖాళీ, *dest;
     size_t len = 0;
-    unsigned long sourcelen, destlen;
+    గుర్తులేని దీర్ఘ sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    అయితే (arg = *++argv, --argc)
+        ఒకవేళ (arg[0] == '-') {
+            ఒకవేళ (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            లేకపోతే ఒకవేళ (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
-                skip = (unsigned)atoi(arg + 1);
-            else {
+            లేకపోతే ఒకవేళ (arg[1] >= '0' && arg[1] <= '9')
+                skip = (గుర్తులేని)atoi(arg + 1);
+            లేకపోతే {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                తిరిగి 3;
             }
         }
-        else if (name != NULL) {
+        లేకపోతే ఒకవేళ (name != ఖాళీ) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            తిరిగి 3;
         }
-        else
+        లేకపోతే
             name = arg;
-    source = load(name, &len);
-    if (source == NULL) {
+    ఆధారం = ఎక్కించు(name, &len);
+    ఒకవేళ (ఆధారం == ఖాళీ) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        తిరిగి 4;
     }
-    if (len == 0) {
+    ఒకవేళ (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
-                name == NULL ? "<stdin>" : name);
-        free(source);
-        return 3;
+                name == ఖాళీ ? "<stdin>" : name);
+        విడుదల(ఆధారం);
+        తిరిగి 3;
     }
-    if (skip >= len) {
+    ఒకవేళ (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
-        free(source);
-        return 3;
+        విడుదల(ఆధారం);
+        తిరిగి 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
-    sourcelen = (unsigned long)len;
-    ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    sourcelen = (గుర్తులేని దీర్ఘ)len;
+    ret = puff(NIL, &destlen, ఆధారం + skip, &sourcelen);
+    ఒకవేళ (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    లేకపోతే {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        ఒకవేళ (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    ఒకవేళ (put && ret == 0) {
+        ఒకవేళ (fail)
             destlen >>= 1;
-        dest = malloc(destlen);
-        if (dest == NULL) {
+        dest = జ్ఞాపకం_ఇవ్వు(destlen);
+        ఒకవేళ (dest == ఖాళీ) {
             fprintf(stderr, "memory allocation failure\n");
-            free(source);
-            return 4;
+            విడుదల(ఆధారం);
+            తిరిగి 4;
         }
-        puff(dest, &destlen, source + skip, &sourcelen);
-        SET_BINARY_MODE(stdout);
+        puff(dest, &destlen, ఆధారం + skip, &sourcelen);
+        సమితి_ద్విమాన_బహుళకం(stdout);
         fwrite(dest, 1, destlen, stdout);
-        free(dest);
+        విడుదల(dest);
     }
 
     /* clean up */
-    free(source);
-    return ret;
+    విడుదల(ఆధారం);
+    తిరిగి ret;
 }
