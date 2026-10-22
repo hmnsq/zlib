@@ -15,7 +15,7 @@
    testing, and causes pufftest to fail with not enough output space (-f does
    a write like -w, so -w is not required). */
 
-#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#ຖ້າ defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
 #  define _CRT_NONSTDC_NO_DEPRECATE
 #endif
 
@@ -23,11 +23,11 @@
 #include <stdlib.h>
 #include "puff.h"
 
-#if defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
+#ຖ້າ defined(MSDOS) || defined(OS2) || defined(_WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
 #  include <io.h>
 #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
+#ບໍ່ດັ່ງນັ້ນ
 #  define SET_BINARY_MODE(file)
 #endif
 
@@ -39,19 +39,19 @@
    to keep reallocations less than ~33% over the actual data. */
 local size_t bythirds(size_t size)
 {
-    int n;
+    ຈຳນວນເຕັມ n;
     size_t m;
 
     m = size;
-    for (n = 0; m; n++)
+    ສຳລັບ (n = 0; m; n++)
         m >>= 1;
-    if (n < 3)
-        return size + 1;
+    ຖ້າ (n < 3)
+        ສົ່ງຄືນ size + 1;
     n -= 3;
     m = size >> n;
     m += m == 6 ? 2 : 1;
     m <<= n;
-    return m > size ? m : (size_t)(-1);
+    ສົ່ງຄືນ m > size ? m : (size_t)(-1);
 }
 
 /* Read the input file *name, or stdin if name is NULL, into allocated memory.
@@ -60,7 +60,7 @@ local size_t bythirds(size_t size)
    failure.  *len is the number of bytes of data read from the input file (even
    if load() returns NULL).  If the input file was empty or could not be opened
    or read, *len is zero. */
-local void *load(const char *name, size_t *len)
+local void *load(const var_na *name, size_t *len)
 {
     size_t size;
     void *buf, *swap;
@@ -68,93 +68,93 @@ local void *load(const char *name, size_t *len)
 
     *len = 0;
     buf = malloc(size = 4096);
-    if (buf == NULL)
-        return NULL;
+    ຖ້າ (buf == NULL)
+        ສົ່ງຄືນ NULL;
     in = name == NULL ? stdin : fopen(name, "rb");
-    if (in != NULL) {
-        for (;;) {
-            *len += fread((char *)buf + *len, 1, size - *len, in);
-            if (*len < size) break;
+    ຖ້າ (in != NULL) {
+        ສຳລັບ (;;) {
+            *len += fread((var_na *)buf + *len, 1, size - *len, in);
+            ຖ້າ (*len < size) bha_nga;
             size = bythirds(size);
-            if (size == *len || (swap = realloc(buf, size)) == NULL) {
+            ຖ້າ (size == *len || (swap = realloc(buf, size)) == NULL) {
                 free(buf);
                 buf = NULL;
-                break;
+                bha_nga;
             }
             buf = swap;
         }
         fclose(in);
     }
-    return buf;
+    ສົ່ງຄືນ buf;
 }
 
-int main(int argc, char **argv)
+ຈຳນວນເຕັມ main(ຈຳນວນເຕັມ argc, var_na **argv)
 {
-    int ret, put = 0, fail = 0;
+    ຈຳນວນເຕັມ ret, put = 0, fail = 0;
     unsigned skip = 0;
-    char *arg, *name = NULL;
-    unsigned char *source = NULL, *dest;
+    var_na *arg, *name = NULL;
+    unsigned var_na *source = NULL, *dest;
     size_t len = 0;
     unsigned long sourcelen, destlen;
 
     /* process arguments */
-    while (arg = *++argv, --argc)
-        if (arg[0] == '-') {
-            if (arg[1] == 'w' && arg[2] == 0)
+    ໃນຂະນະທີ່ (arg = *++argv, --argc)
+        ຖ້າ (arg[0] == '-') {
+            ຖ້າ (arg[1] == 'w' && arg[2] == 0)
                 put = 1;
-            else if (arg[1] == 'f' && arg[2] == 0)
+            ບໍ່ດັ່ງນັ້ນ ຖ້າ (arg[1] == 'f' && arg[2] == 0)
                 fail = 1, put = 1;
-            else if (arg[1] >= '0' && arg[1] <= '9')
+            ບໍ່ດັ່ງນັ້ນ ຖ້າ (arg[1] >= '0' && arg[1] <= '9')
                 skip = (unsigned)atoi(arg + 1);
-            else {
+            ບໍ່ດັ່ງນັ້ນ {
                 fprintf(stderr, "invalid option %s\n", arg);
-                return 3;
+                ສົ່ງຄືນ 3;
             }
         }
-        else if (name != NULL) {
+        ບໍ່ດັ່ງນັ້ນ ຖ້າ (name != NULL) {
             fprintf(stderr, "only one file name allowed\n");
-            return 3;
+            ສົ່ງຄືນ 3;
         }
-        else
+        ບໍ່ດັ່ງນັ້ນ
             name = arg;
     source = load(name, &len);
-    if (source == NULL) {
+    ຖ້າ (source == NULL) {
         fprintf(stderr, "memory allocation failure\n");
-        return 4;
+        ສົ່ງຄືນ 4;
     }
-    if (len == 0) {
+    ຖ້າ (len == 0) {
         fprintf(stderr, "could not read %s, or it was empty\n",
                 name == NULL ? "<stdin>" : name);
         free(source);
-        return 3;
+        ສົ່ງຄືນ 3;
     }
-    if (skip >= len) {
+    ຖ້າ (skip >= len) {
         fprintf(stderr, "skip request of %d leaves no input\n", skip);
         free(source);
-        return 3;
+        ສົ່ງຄືນ 3;
     }
 
     /* test inflate data with offset skip */
     len -= skip;
     sourcelen = (unsigned long)len;
     ret = puff(NIL, &destlen, source + skip, &sourcelen);
-    if (ret)
+    ຖ້າ (ret)
         fprintf(stderr, "puff() failed with return code %d\n", ret);
-    else {
+    ບໍ່ດັ່ງນັ້ນ {
         fprintf(stderr, "puff() succeeded uncompressing %lu bytes\n", destlen);
-        if (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
+        ຖ້າ (sourcelen < len) fprintf(stderr, "%lu compressed bytes unused\n",
                                      len - sourcelen);
     }
 
     /* if requested, inflate again and write decompressed data to stdout */
-    if (put && ret == 0) {
-        if (fail)
+    ຖ້າ (put && ret == 0) {
+        ຖ້າ (fail)
             destlen >>= 1;
         dest = malloc(destlen);
-        if (dest == NULL) {
+        ຖ້າ (dest == NULL) {
             fprintf(stderr, "memory allocation failure\n");
             free(source);
-            return 4;
+            ສົ່ງຄືນ 4;
         }
         puff(dest, &destlen, source + skip, &sourcelen);
         SET_BINARY_MODE(stdout);
@@ -164,5 +164,5 @@ int main(int argc, char **argv)
 
     /* clean up */
     free(source);
-    return ret;
+    ສົ່ງຄືນ ret;
 }

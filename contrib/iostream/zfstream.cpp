@@ -10,98 +10,98 @@ gzfilebuf::gzfilebuf() :
 gzfilebuf::~gzfilebuf() {
 
   sync();
-  if ( own_file_descriptor )
+  ຖ້າ ( own_file_descriptor )
     close();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::open( const var_na *name,
+                            ຈຳນວນເຕັມ io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ຖ້າ ( is_open() )
+    ສົ່ງຄືນ NULL;
 
-  char char_mode[10];
-  char *p = char_mode;
+  var_na char_mode[10];
+  var_na *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ຖ້າ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } ບໍ່ດັ່ງນັ້ນ ຖ້າ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } ບໍ່ດັ່ງນັ້ນ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ຖ້າ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ຖ້າ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  ຖ້າ ( (file = gzopen(name, char_mode)) == NULL )
+    ສົ່ງຄືນ NULL;
 
   own_file_descriptor = 1;
 
-  return this;
+  ສົ່ງຄືນ this;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( ຈຳນວນເຕັມ file_descriptor,
+                              ຈຳນວນເຕັມ io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ຖ້າ ( is_open() )
+    ສົ່ງຄືນ NULL;
 
-  char char_mode[10];
-  char *p = char_mode;
+  var_na char_mode[10];
+  var_na *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ຖ້າ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } ບໍ່ດັ່ງນັ້ນ ຖ້າ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } ບໍ່ດັ່ງນັ້ນ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ຖ້າ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ຖ້າ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  ຖ້າ ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
+    ສົ່ງຄືນ NULL;
 
   own_file_descriptor = 0;
 
-  return this;
+  ສົ່ງຄືນ this;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  ຖ້າ ( is_open() ) {
 
     sync();
     gzclose( file );
@@ -109,145 +109,145 @@ gzfilebuf *gzfilebuf::close() {
 
   }
 
-  return this;
+  ສົ່ງຄືນ this;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+ຈຳນວນເຕັມ gzfilebuf::setcompressionlevel( ຈຳນວນເຕັມ comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  ສົ່ງຄືນ gzsetparams(file, comp_level, -2);
 
 }
 
+ຈຳນວນເຕັມ gzfilebuf::setcompressionstrategy( ຈຳນວນເຕັມ comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  ສົ່ງຄືນ gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, ຈຳນວນເຕັມ which ) {
+
+  ສົ່ງຄືນ streampos(EOF);
+
+}
+
+ຈຳນວນເຕັມ gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  ຖ້າ ( !is_open() || !(mode & ios::in) )
+    ສົ່ງຄືນ EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  ຖ້າ ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    ຖ້າ ( (allocate()) == EOF )
+      ສົ່ງຄືນ EOF;
     setp(0,0);
 
-  } else {
+  } ບໍ່ດັ່ງນັ້ນ {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    ຖ້າ ( in_avail() )
+      ສົ່ງຄືນ (unsigned var_na) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    ຖ້າ ( out_waiting() ) {
+      ຖ້າ ( flushbuf() == EOF )
+        ສົ່ງຄືນ EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  ຈຳນວນເຕັມ result = fillbuf();
+  ຖ້າ ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    ສົ່ງຄືນ EOF;
   }
 
-  return (unsigned char) *gptr();
+  ສົ່ງຄືນ (unsigned var_na) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+ຈຳນວນເຕັມ gzfilebuf::overflow( ຈຳນວນເຕັມ c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  ຖ້າ ( !is_open() || !(mode & ios::out) )
+    ສົ່ງຄືນ EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  ຖ້າ ( !base() ) {
+    ຖ້າ ( allocate() == EOF )
+      ສົ່ງຄືນ EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } ບໍ່ດັ່ງນັ້ນ {
+    ຖ້າ (in_avail()) {
+        ສົ່ງຄືນ EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    ຖ້າ (out_waiting()) {
+      ຖ້າ (flushbuf() == EOF)
+        ສົ່ງຄືນ EOF;
     }
   }
 
-  int bl = blen();
+  ຈຳນວນເຕັມ bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  ຖ້າ ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  ສົ່ງຄືນ 0;
 
 }
 
-int gzfilebuf::sync() {
+ຈຳນວນເຕັມ gzfilebuf::sync() {
 
-  if ( !is_open() )
-    return EOF;
+  ຖ້າ ( !is_open() )
+    ສົ່ງຄືນ EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  ຖ້າ ( out_waiting() )
+    ສົ່ງຄືນ flushbuf();
 
-  return 0;
+  ສົ່ງຄືນ 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+ຈຳນວນເຕັມ gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  ຈຳນວນເຕັມ n;
+  var_na *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  ຖ້າ ( gzwrite( file, q, n) < n )
+    ສົ່ງຄືນ EOF;
 
   setp(0,0);
 
-  return 0;
+  ສົ່ງຄືນ 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+ຈຳນວນເຕັມ gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  ຈຳນວນເຕັມ required;
+  var_na *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  ຈຳນວນເຕັມ t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  ຖ້າ ( t <= 0) ສົ່ງຄືນ EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  ສົ່ງຄືນ t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+void gzfilestream_common::attach( ຈຳນວນເຕັມ fd, ຈຳນວນເຕັມ io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  ຖ້າ ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  ບໍ່ດັ່ງນັ້ນ
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+void gzfilestream_common::open( const var_na *name, ຈຳນວນເຕັມ io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  ຖ້າ ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  ບໍ່ດັ່ງນັ້ນ
     clear();
 
 }
 
 void gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  ຖ້າ ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  ສົ່ງຄືນ &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( const var_na *name, ຈຳນວນເຕັມ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( ຈຳນວນເຕັມ fd, ຈຳນວນເຕັມ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( const var_na *name, ຈຳນວນເຕັມ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( ຈຳນວນເຕັມ fd, ຈຳນວນເຕັມ io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
