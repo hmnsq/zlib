@@ -8,23 +8,23 @@
 #ifndef INTS_H
 #define INTS_H
 #include <limits.h>
-#if defined(UCHAR_MAX) && UCHAR_MAX == 0xff
-    typedef signed char i8_t;
-    typedef unsigned char ui8_t;
-#else
+#གལ་སྲིད defined(UCHAR_MAX) && UCHAR_MAX == 0xff
+    typedef signed var_na i8_t;
+    typedef unsigned var_na ui8_t;
+#དེ་མིན
 #   error "no 8-bit integer"
 #endif
-#if defined(USHRT_MAX) && USHRT_MAX == 0xffff
+#གལ་སྲིད defined(USHRT_MAX) && USHRT_MAX == 0xffff
     typedef short i16_t;
     typedef unsigned short ui16_t;
 #elif defined(UINT_MAX) && UINT_MAX == 0xffff
-    typedef int i16_t;
+    typedef ཧྲིལ i16_t;
     typedef unsigned ui16_t;
-#else
+#དེ་མིན
 #   error "no 16-bit integer"
 #endif
-#if defined(UINT_MAX) && UINT_MAX == 0xffffffff
-    typedef int i32_t;
+#གལ་སྲིད defined(UINT_MAX) && UINT_MAX == 0xffffffff
+    typedef ཧྲིལ i32_t;
     typedef unsigned ui32_t;
 #   define PI32 "d"
 #   define PUI32 "u"
@@ -33,10 +33,10 @@
     typedef unsigned long ui32_t;
 #   define PI32 "ld"
 #   define PUI32 "lu"
-#else
+#དེ་མིན
 #   error "no 32-bit integer"
 #endif
-#if defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
+#གལ་སྲིད defined(ULONG_MAX) && ULONG_MAX == 0xffffffffffffffff
     typedef long i64_t;
     typedef unsigned long ui64_t;
 #   define PI64 "ld"
@@ -51,7 +51,7 @@
     typedef unsigned long long ui64_t;
 #   define PI64 "lld"
 #   define PUI64 "llu"
-#else
+#དེ་མིན
 #   error "no 64-bit integer"
 #endif
 #endif
