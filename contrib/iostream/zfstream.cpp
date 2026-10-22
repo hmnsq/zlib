@@ -1,253 +1,253 @@
 
-#include "zfstream.h"
+#ضمن "zfstream.h"
 
 gzfilebuf::gzfilebuf() :
-  file(NULL),
+  file(عدم),
   mode(0),
   own_file_descriptor(0)
 { }
 
 gzfilebuf::~gzfilebuf() {
 
-  sync();
-  if ( own_file_descriptor )
+  متزامن();
+  ܐܢ ( own_file_descriptor )
     close();
 
 }
 
-gzfilebuf *gzfilebuf::open( const char *name,
-                            int io_mode ) {
+gzfilebuf *gzfilebuf::open( ثابت حرف *name,
+                            صحيح io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ܐܢ ( is_open() )
+    ܦܢܐ عدم;
 
-  char char_mode[10];
-  char *p = char_mode;
+  حرف char_mode[10];
+  حرف *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ܐܢ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } ܐܚܪܢܐ ܐܢ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } ܐܚܪܢܐ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ܐܢ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ܐܢ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzopen(name, char_mode)) == NULL )
-    return NULL;
+  ܐܢ ( (file = gzopen(name, char_mode)) == عدم )
+    ܦܢܐ عدم;
 
   own_file_descriptor = 1;
 
-  return this;
+  ܦܢܐ هذا;
 
 }
 
-gzfilebuf *gzfilebuf::attach( int file_descriptor,
-                              int io_mode ) {
+gzfilebuf *gzfilebuf::attach( صحيح file_descriptor,
+                              صحيح io_mode ) {
 
-  if ( is_open() )
-    return NULL;
+  ܐܢ ( is_open() )
+    ܦܢܐ عدم;
 
-  char char_mode[10];
-  char *p = char_mode;
+  حرف char_mode[10];
+  حرف *p = char_mode;
 
-  if ( io_mode & ios::in ) {
+  ܐܢ ( io_mode & ios::in ) {
     mode = ios::in;
     *p++ = 'r';
-  } else if ( io_mode & ios::app ) {
+  } ܐܚܪܢܐ ܐܢ ( io_mode & ios::app ) {
     mode = ios::app;
     *p++ = 'a';
-  } else {
+  } ܐܚܪܢܐ {
     mode = ios::out;
     *p++ = 'w';
   }
 
-  if ( io_mode & ios::binary ) {
+  ܐܢ ( io_mode & ios::binary ) {
     mode |= ios::binary;
     *p++ = 'b';
   }
 
   // Hard code the compression level
-  if ( io_mode & (ios::out|ios::app )) {
+  ܐܢ ( io_mode & (ios::out|ios::app )) {
     *p++ = '9';
   }
 
   // Put the end-of-string indicator
   *p = '\0';
 
-  if ( (file = gzdopen(file_descriptor, char_mode)) == NULL )
-    return NULL;
+  ܐܢ ( (file = gzdopen(file_descriptor, char_mode)) == عدم )
+    ܦܢܐ عدم;
 
   own_file_descriptor = 0;
 
-  return this;
+  ܦܢܐ هذا;
 
 }
 
 gzfilebuf *gzfilebuf::close() {
 
-  if ( is_open() ) {
+  ܐܢ ( is_open() ) {
 
-    sync();
+    متزامن();
     gzclose( file );
-    file = NULL;
+    file = عدم;
 
   }
 
-  return this;
+  ܦܢܐ هذا;
 
 }
 
-int gzfilebuf::setcompressionlevel( int comp_level ) {
+صحيح gzfilebuf::setcompressionlevel( صحيح comp_level ) {
 
-  return gzsetparams(file, comp_level, -2);
-
-}
-
-int gzfilebuf::setcompressionstrategy( int comp_strategy ) {
-
-  return gzsetparams(file, -2, comp_strategy);
+  ܦܢܐ gzsetparams(file, comp_level, -2);
 
 }
 
+صحيح gzfilebuf::setcompressionstrategy( صحيح comp_strategy ) {
 
-streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, int which ) {
-
-  return streampos(EOF);
+  ܦܢܐ gzsetparams(file, -2, comp_strategy);
 
 }
 
-int gzfilebuf::underflow() {
+
+streampos gzfilebuf::seekoff( streamoff off, ios::seek_dir dir, صحيح which ) {
+
+  ܦܢܐ streampos(EOF);
+
+}
+
+صحيح gzfilebuf::underflow() {
 
   // If the file hasn't been opened for reading, error.
-  if ( !is_open() || !(mode & ios::in) )
-    return EOF;
+  ܐܢ ( !is_open() || !(mode & ios::in) )
+    ܦܢܐ EOF;
 
   // if a buffer doesn't exists, allocate one.
-  if ( !base() ) {
+  ܐܢ ( !base() ) {
 
-    if ( (allocate()) == EOF )
-      return EOF;
+    ܐܢ ( (allocate()) == EOF )
+      ܦܢܐ EOF;
     setp(0,0);
 
-  } else {
+  } ܐܚܪܢܐ {
 
-    if ( in_avail() )
-      return (unsigned char) *gptr();
+    ܐܢ ( in_avail() )
+      ܦܢܐ (unsigned حرف) *gptr();
 
-    if ( out_waiting() ) {
-      if ( flushbuf() == EOF )
-        return EOF;
+    ܐܢ ( out_waiting() ) {
+      ܐܢ ( flushbuf() == EOF )
+        ܦܢܐ EOF;
     }
 
   }
 
   // Attempt to fill the buffer.
 
-  int result = fillbuf();
-  if ( result == EOF ) {
+  صحيح result = fillbuf();
+  ܐܢ ( result == EOF ) {
     // disable get area
     setg(0,0,0);
-    return EOF;
+    ܦܢܐ EOF;
   }
 
-  return (unsigned char) *gptr();
+  ܦܢܐ (unsigned حرف) *gptr();
 
 }
 
-int gzfilebuf::overflow( int c ) {
+صحيح gzfilebuf::overflow( صحيح c ) {
 
-  if ( !is_open() || !(mode & ios::out) )
-    return EOF;
+  ܐܢ ( !is_open() || !(mode & ios::out) )
+    ܦܢܐ EOF;
 
-  if ( !base() ) {
-    if ( allocate() == EOF )
-      return EOF;
+  ܐܢ ( !base() ) {
+    ܐܢ ( allocate() == EOF )
+      ܦܢܐ EOF;
     setg(0,0,0);
-  } else {
-    if (in_avail()) {
-        return EOF;
+  } ܐܚܪܢܐ {
+    ܐܢ (in_avail()) {
+        ܦܢܐ EOF;
     }
-    if (out_waiting()) {
-      if (flushbuf() == EOF)
-        return EOF;
+    ܐܢ (out_waiting()) {
+      ܐܢ (flushbuf() == EOF)
+        ܦܢܐ EOF;
     }
   }
 
-  int bl = blen();
+  صحيح bl = blen();
   setp( base(), base() + bl);
 
-  if ( c != EOF ) {
+  ܐܢ ( c != EOF ) {
 
     *pptr() = c;
     pbump(1);
 
   }
 
-  return 0;
+  ܦܢܐ 0;
 
 }
 
-int gzfilebuf::sync() {
+صحيح gzfilebuf::متزامن() {
 
-  if ( !is_open() )
-    return EOF;
+  ܐܢ ( !is_open() )
+    ܦܢܐ EOF;
 
-  if ( out_waiting() )
-    return flushbuf();
+  ܐܢ ( out_waiting() )
+    ܦܢܐ flushbuf();
 
-  return 0;
+  ܦܢܐ 0;
 
 }
 
-int gzfilebuf::flushbuf() {
+صحيح gzfilebuf::flushbuf() {
 
-  int n;
-  char *q;
+  صحيح n;
+  حرف *q;
 
   q = pbase();
   n = pptr() - q;
 
-  if ( gzwrite( file, q, n) < n )
-    return EOF;
+  ܐܢ ( gzwrite( file, q, n) < n )
+    ܦܢܐ EOF;
 
   setp(0,0);
 
-  return 0;
+  ܦܢܐ 0;
 
 }
 
-int gzfilebuf::fillbuf() {
+صحيح gzfilebuf::fillbuf() {
 
-  int required;
-  char *p;
+  صحيح required;
+  حرف *p;
 
   p = base();
 
   required = blen();
 
-  int t = gzread( file, p, required );
+  صحيح t = gzread( file, p, required );
 
-  if ( t <= 0) return EOF;
+  ܐܢ ( t <= 0) ܦܢܐ EOF;
 
   setg( base(), base(), base()+t);
 
-  return t;
+  ܦܢܐ t;
 
 }
 
@@ -258,34 +258,34 @@ gzfilestream_common::gzfilestream_common() :
 gzfilestream_common::~gzfilestream_common()
 { }
 
-void gzfilestream_common::attach( int fd, int io_mode ) {
+فراغ gzfilestream_common::attach( صحيح fd, صحيح io_mode ) {
 
-  if ( !buffer.attach( fd, io_mode) )
+  ܐܢ ( !buffer.attach( fd, io_mode) )
     clear( ios::failbit | ios::badbit );
-  else
+  ܐܚܪܢܐ
     clear();
 
 }
 
-void gzfilestream_common::open( const char *name, int io_mode ) {
+فراغ gzfilestream_common::open( ثابت حرف *name, صحيح io_mode ) {
 
-  if ( !buffer.open( name, io_mode ) )
+  ܐܢ ( !buffer.open( name, io_mode ) )
     clear( ios::failbit | ios::badbit );
-  else
+  ܐܚܪܢܐ
     clear();
 
 }
 
-void gzfilestream_common::close() {
+فراغ gzfilestream_common::close() {
 
-  if ( !buffer.close() )
+  ܐܢ ( !buffer.close() )
     clear( ios::failbit | ios::badbit );
 
 }
 
 gzfilebuf *gzfilestream_common::rdbuf()
 {
-  return &buffer;
+  ܦܢܐ &buffer;
 }
 
 gzifstream::gzifstream() :
@@ -294,13 +294,13 @@ gzifstream::gzifstream() :
   clear( ios::badbit );
 }
 
-gzifstream::gzifstream( const char *name, int io_mode ) :
+gzifstream::gzifstream( ثابت حرف *name, صحيح io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzifstream::gzifstream( int fd, int io_mode ) :
+gzifstream::gzifstream( صحيح fd, صحيح io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
@@ -314,13 +314,13 @@ gzofstream::gzofstream() :
   clear( ios::badbit );
 }
 
-gzofstream::gzofstream( const char *name, int io_mode ) :
+gzofstream::gzofstream( ثابت حرف *name, صحيح io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::open( name, io_mode );
 }
 
-gzofstream::gzofstream( int fd, int io_mode ) :
+gzofstream::gzofstream( صحيح fd, صحيح io_mode ) :
   ios( gzfilestream_common::rdbuf() )
 {
   gzfilestream_common::attach( fd, io_mode );
